@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IdeasForgeAI Studio</title>
+  <link rel="stylesheet" href="./studio.css" />
+</head>
+<body>
+  <main class="studio-shell">
+    <section class="hero-panel">
+      <div class="brand-row">
+        <div class="brand-mark">IF</div>
+        <div>
+          <p class="eyebrow">AI Product Factory</p>
+          <h1>IdeasForgeAI Studio</h1>
+        </div>
+      </div>
+
+      <p class="hero-text">
+        Write a simple product idea. IdeasForgeAI will convert it into a structured builder plan and export a starter app folder.
+      </p>
+
+      <div class="form-grid">
+        <label>
+          App Name
+          <input id="appName" value="IdeasForgeAI" placeholder="Example: ShopPilotAI" />
+        </label>
+
+        <label>
+          Product Idea
+          <textarea id="ideaText" placeholder="Write your idea here...">Create an app where anyone can write a simple idea and instantly generate a web tool, backend, database and mobile app package.</textarea>
+        </label>
+
+        <button id="generateBtn">Generate App</button>
+      </div>
+    </section>
+
+    <section class="result-panel">
+      <div class="result-header">
+        <h2>Generation Result</h2>
+        <span id="statusBadge">Waiting</span>
+      </div>
+
+      <div id="summaryBox" class="summary-box">
+        No generation started yet.
+      </div>
+
+      <div class="agent-table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Agent</th>
+              <th>Status</th>
+              <th>Summary</th>
+            </tr>
+          </thead>
+          <tbody id="agentRows"></tbody>
+        </table>
+      </div>
+
+      
+      <div class="gallery-header">
+        <h2>Generated Apps</h2>
+        <button id="refreshProjectsBtn" class="small-btn">Refresh</button>
+      </div>
+
+      <div id="projectsGallery" class="projects-gallery">
+        No generated apps loaded yet.
+      </div>
+
+      <pre id="rawOutput"></pre>
+    
+    </section>
+  </main>
+
+  <script src="./studio.js"></script>
+</body>
+</html>

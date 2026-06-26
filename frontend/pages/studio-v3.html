@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IdeasForgeAI Studio V3</title>
+  <link rel="icon" href="../assets/branding/ideasforgeai-favicon.png" />
+  <link rel="stylesheet" href="./studio-v3.css" />
+</head>
+<body>
+  <div id="studioApp" class="studio-v3 create-mode">
+    <header class="studio-topbar phase2-surface">
+      <a class="brand-lockup" href="./studio-v3.html" aria-label="IdeasForgeAI Studio V3">
+        <span
+          class="brand-logo"
+          data-logo-dark="../assets/branding/ideasforgeai-logo-dark.png"
+          data-logo-light="../assets/branding/ideasforgeai-logo-light.png"
+          data-icon="../assets/branding/ideasforgeai-icon.png"
+          data-app-icon="../assets/branding/ideasforgeai-app-icon-1024.png"
+        >
+          <img src="../assets/branding/ideasforgeai-logo.png" alt="IdeasForgeAI" onerror="this.hidden=true" />
+          <strong>IF</strong>
+        </span>
+        <span>
+          <b>IdeasForgeAI</b>
+          <small>AI Product Builder</small>
+        </span>
+      </a>
+
+      <div class="topbar-center">
+        <span class="project-pill">KisanMitraLite</span>
+        <select id="languageSelect" aria-label="Language">
+          <option>English</option>
+          <option>Hindi</option>
+          <option>Marathi</option>
+        </select>
+        <span class="credits-pill">Credits: <b id="creditsBalance">2,450</b></span>
+        <span id="apiStatusBadgeV3" class="api-status-badge">KisanMitraLite API: Checking</span>
+      </div>
+
+      <nav class="topbar-actions" aria-label="Studio actions">
+        <button id="previewModeBtnV3" class="secondary">Preview</button>
+        <button id="sharePreviewBtnV3" class="secondary">Share</button>
+        <button id="publishBtnV3" class="primary" title="Approval required before publishing" aria-label="Publish, approval required">Publish</button>
+        <button class="profile-button" aria-label="Profile">IF</button>
+      </nav>
+    </header>
+
+    <section id="createModeV3" class="phase2-surface mode-panel create-panel" aria-label="Create Mode">
+      <div class="chat-shell">
+        <section class="welcome-card">
+          <p class="eyebrow">Create Mode</p>
+          <h1>Good morning, Ranjan <span aria-hidden="true">👋</span></h1>
+          <p class="welcome-question">What are we building today?</p>
+          <div class="prompt-cards" aria-label="Example product ideas">
+            <button data-prompt="Build an agriculture platform"><span>🌾</span><strong>Agriculture Platform</strong></button>
+            <button data-prompt="I want a marketplace"><span>🛒</span><strong>Marketplace</strong></button>
+            <button data-prompt="Build a mobile app"><span>📱</span><strong>Mobile App</strong></button>
+            <button data-prompt="Create a CRM"><span>💼</span><strong>CRM</strong></button>
+            <button data-prompt="Build an AI agent"><span>🤖</span><strong>AI Agent</strong></button>
+            <button data-prompt="Create an LMS"><span>🎓</span><strong>LMS</strong></button>
+            <button data-prompt="Build a healthcare platform"><span>🏥</span><strong>Healthcare</strong></button>
+            <button data-prompt="Show me more product ideas"><span>＋</span><strong>More...</strong></button>
+          </div>
+        </section>
+
+        <section id="chatMessagesV3" class="conversation" aria-live="polite">
+          <article class="chat-message assistant">
+            <span>IdeasForgeAI</span>
+            <p>I am ready. Tell me the product idea, and I will shape it like a full product team would.</p>
+          </article>
+        </section>
+
+        <section id="buildBriefV3" class="build-brief-card" hidden>
+          <div class="section-heading">
+            <span>Before I start</span>
+            <small>Build plan</small>
+          </div>
+          <p id="buildBriefIntroV3">Great idea. Before I start, I'll first understand your business.</p>
+          <div class="brief-checks">
+            <span>✓ Product Strategy</span>
+            <span>✓ Requirements</span>
+            <span>✓ Product Blueprint</span>
+            <span>✓ AI Team Review</span>
+            <span>✓ Approval Plan</span>
+            <span>✓ Next Phase Recommendation</span>
+          </div>
+          <p class="brief-time">This usually takes about 2 minutes.</p>
+          <button id="startBuildingBtnV3">Continue</button>
+        </section>
+
+        <section id="productBrainPanelV3" class="product-brain-card" hidden>
+          <div class="section-heading">
+            <span>AI Product Brain</span>
+            <small id="productBrainStatusV3">Understanding</small>
+          </div>
+          <div id="specialistUpdatesV3" class="specialist-updates"></div>
+          <article class="brain-question">
+            <span>One question at a time</span>
+            <strong id="brainQuestionV3">Who is the primary user?</strong>
+            <input id="brainAnswerInputV3" type="text" placeholder="Type your answer..." />
+            <div class="brain-actions">
+              <button id="brainContinueBtnV3" type="button">Continue</button>
+              <button id="brainEditBtnV3" class="secondary" type="button">Edit Answer</button>
+              <button id="brainSkipBtnV3" class="secondary" type="button">Skip</button>
+              <button id="brainSaveDraftBtnV3" class="secondary" type="button">Save Draft</button>
+            </div>
+          </article>
+          <ol id="brainTimelineV3" class="brain-timeline"></ol>
+          <div class="brain-output-grid">
+            <article>
+              <h3>Product Strategy</h3>
+              <div id="strategyOutputV3"></div>
+            </article>
+            <article>
+              <h3>Requirements</h3>
+              <div id="requirementsOutputV3"></div>
+            </article>
+            <article>
+              <h3>Blueprint</h3>
+              <div id="blueprintOutputV3"></div>
+            </article>
+            <article>
+              <h3>Planning</h3>
+              <div id="planningOutputV3"></div>
+            </article>
+            <article>
+              <h3>Design System <small>Draft ready for review</small></h3>
+              <div id="designSystemOutputV3"></div>
+            </article>
+          </div>
+          <p id="brainMemoryV3" class="brain-memory">Session memory is ready.</p>
+        </section>
+
+        <section id="pipelineCardV3" class="pipeline-card" hidden>
+          <div class="section-heading">
+            <span>Live Build</span>
+            <small id="lastBuildStatusV3">Ready</small>
+          </div>
+          <div id="aiThinkingV3" class="ai-thinking">IdeasForgeAI is ready.</div>
+          <ol id="buildTimelineV3" class="build-timeline"></ol>
+          <div id="liveBuildStepsV3" class="live-build-steps"></div>
+        </section>
+
+        <section id="productRevealV3" class="product-reveal-card" hidden>
+          <div id="confettiV3" class="subtle-confetti" aria-hidden="true"></div>
+          <div class="reveal-badge" aria-hidden="true">🎉</div>
+          <h2>Your product is ready.</h2>
+          <div class="reveal-checks">
+            <span>Logo ✓</span>
+            <span>Brand Kit ✓</span>
+            <span>Website ✓</span>
+            <span>Mobile App ✓</span>
+            <span>Dashboard ✓</span>
+            <span>Backend ✓</span>
+            <span>Database ✓</span>
+          </div>
+          <button id="openProductBtnV3">Open Product</button>
+        </section>
+
+        <section id="nextSuggestionsV3" class="suggestions-card" hidden>
+          <div class="section-heading">
+            <span>What would you like to improve next?</span>
+            <small>Suggestions</small>
+          </div>
+          <div class="suggestion-actions">
+            <button class="secondary">Improve Design</button>
+            <button class="secondary">Generate Mobile App</button>
+            <button class="secondary">Add AI Features</button>
+            <button class="secondary">Generate Backend</button>
+            <button class="secondary">Publish</button>
+            <button class="secondary">Export</button>
+          </div>
+        </section>
+
+        <section class="secondary-tools" aria-label="Secondary builder tools">
+          <article class="mini-card">
+            <div class="section-heading">
+              <span>Pixel-Matched Page Converter</span>
+              <small>Placeholder mode</small>
+            </div>
+            <p>Upload or paste a screenshot to begin pixel-matched conversion. Real pixel analysis coming later.</p>
+            <div class="mini-actions">
+              <button id="pixelShortcutBtnV3" class="secondary">Open tools</button>
+              <button id="convertPageBtnV3" class="secondary">Convert placeholder</button>
+            </div>
+          </article>
+
+          <article class="mini-card">
+            <div class="section-heading">
+              <span>Public SaaS Readiness</span>
+              <small>Safe checks only</small>
+            </div>
+            <p>Deployment readiness, public SaaS readiness, custom domain readiness, and publish only after approval.</p>
+            <div class="mini-actions">
+              <button id="dryRunProductionSyncBtnV3" class="secondary">Dry Run</button>
+              <button id="checkGitReadinessBtnV3" class="secondary">Git Check</button>
+              <button id="checkDeploymentReadinessBtnV3" class="secondary">Deploy Check</button>
+            </div>
+          </article>
+        </section>
+      </div>
+
+      <footer class="chat-composer-wrap">
+        <div class="chat-composer">
+          <button id="attachBtnV3" class="icon-button" aria-label="Attach file">+</button>
+          <button id="voiceBtnV3" class="icon-button" aria-label="Voice input">Mic</button>
+          <input id="chatInputV3" type="text" placeholder="Ask IdeasForgeAI to build..." />
+          <button id="generateBtnV3" class="send-button" aria-label="Generate">Send</button>
+        </div>
+        <div class="plan-row">
+          <span>User plan: Founder</span>
+          <span>Credits left: <b id="creditsLeftV3">2,450</b></span>
+          <span>AI status: <b id="aiStatusV3">Ready</b></span>
+          <button id="constitutionBtnV3" class="constitution-link" type="button">Design Constitution</button>
+        </div>
+      </footer>
+    </section>
+
+    <div id="constitutionModalV3" class="constitution-modal" hidden>
+      <section class="constitution-dialog" role="dialog" aria-modal="true" aria-labelledby="constitutionTitleV3">
+        <button id="closeConstitutionBtnV3" class="constitution-close" type="button" aria-label="Close Design Constitution">Close</button>
+        <p class="eyebrow">IdeasForgeAI Rulebook</p>
+        <h2 id="constitutionTitleV3">Design Constitution v1.0</h2>
+        <p class="constitution-mantra">Less UI. More Intelligence.</p>
+        <div class="constitution-summary">
+          <span>Design before code.</span>
+          <span>Safe by default.</span>
+          <span>Human approval required.</span>
+        </div>
+        <p class="constitution-note">This is the guiding UX and product standard for every future IdeasForgeAI phase.</p>
+        <p class="constitution-path">Full file: docs/IdeasForgeAI_Design_Constitution_v1.md</p>
+      </section>
+    </div>
+
+    <section id="designWorkspaceV3" class="phase2-surface mode-panel design-panel" aria-label="Visual Design Workspace" hidden>
+      <header class="design-bar">
+        <button id="backToCreateFromDesignBtnV3" class="secondary">Back to Chat</button>
+        <nav class="design-tabs" aria-label="Generated concept sections">
+          <button data-design-tab="strategy">Strategy</button>
+          <button data-design-tab="blueprint">Blueprint</button>
+          <button class="active" data-design-tab="design">Design</button>
+          <button data-design-tab="preview">Preview</button>
+        </nav>
+        <span id="designStatusV3" class="design-status">Visual Design: Waiting</span>
+      </header>
+
+      <div class="design-workspace">
+        <section class="design-main" data-design-panel="strategy" hidden>
+          <article class="design-card">
+            <div class="section-heading">
+              <span>Product Strategy</span>
+              <small>Placeholder</small>
+            </div>
+            <p id="strategySummaryV3">Strategy appears after Generate runs.</p>
+            <div id="strategyPillsV3" class="strategy-pills"></div>
+          </article>
+        </section>
+
+        <section class="design-main" data-design-panel="blueprint" hidden>
+          <article class="design-card">
+            <div class="section-heading">
+              <span>Blueprint</span>
+              <small>Pre-code</small>
+            </div>
+            <div id="blueprintGridV3" class="blueprint-grid"></div>
+          </article>
+        </section>
+
+        <section class="design-main active" data-design-panel="design">
+          <div class="design-grid">
+            <article class="design-card brand-preview-card">
+              <div class="section-heading">
+                <span>Brand Preview</span>
+                <small>Local placeholder</small>
+              </div>
+              <div class="brand-preview">
+                <div class="logo-preview" id="brandLogoPreviewV3">KM</div>
+                <div class="app-icon-preview" id="brandIconPreviewV3">KM</div>
+                <div>
+                  <p class="eyebrow">Project Name</p>
+                  <h2 id="brandProjectNameV3">KisanMitraLite</h2>
+                  <p id="brandFontV3">Typography recommendation appears here.</p>
+                </div>
+              </div>
+              <div id="brandColorRowV3" class="color-row"></div>
+            </article>
+
+            <article class="design-card">
+              <div class="section-heading">
+                <span>Brand Kit</span>
+                <small>Generated concept</small>
+              </div>
+              <dl id="brandKitListV3" class="brand-kit-list"></dl>
+            </article>
+
+            <article class="design-card">
+              <div class="section-heading">
+                <span>Logo Workflow</span>
+                <small>Prepared</small>
+              </div>
+              <div id="logoWorkflowV3" class="workflow-actions"></div>
+            </article>
+
+            <article class="design-card">
+              <div class="section-heading">
+                <span>App Icon Workflow</span>
+                <small>Preview cards</small>
+              </div>
+              <div id="iconWorkflowV3" class="icon-preview-grid"></div>
+            </article>
+
+            <article class="design-card mockup-card">
+              <div class="section-heading">
+                <span>UI Mockups</span>
+                <small>Desktop, tablet, mobile</small>
+              </div>
+              <div id="mockupGridV3" class="mockup-grid"></div>
+            </article>
+
+            <article class="design-card">
+              <div class="section-heading">
+                <span>Screen Gallery</span>
+                <small>Switch screens</small>
+              </div>
+              <div id="screenTabsV3" class="screen-tabs"></div>
+              <div id="screenPreviewV3" class="screen-preview">Homepage concept preview</div>
+            </article>
+
+            <article class="design-card pipeline-design-card">
+              <div class="section-heading">
+                <span>Image Generation Pipeline</span>
+                <small id="visualPipelineStatusV3">Approval Ready</small>
+              </div>
+              <ol id="visualPipelineV3" class="visual-pipeline"></ol>
+            </article>
+
+            <article class="design-card approval-card">
+              <div class="section-heading">
+                <span>Design Approval</span>
+                <small>Frontend generation locked</small>
+              </div>
+              <p id="approvalNoteV3">Approve, regenerate, or edit the visual design. Frontend generation is a future phase.</p>
+              <div class="approval-actions">
+                <button id="approveDesignBtnV3">Approve Design</button>
+                <button id="regenerateDesignBtnV3" class="secondary">Regenerate Design</button>
+                <button id="editDesignBtnV3" class="secondary">Edit Design</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="previewModeV3" class="phase2-surface mode-panel preview-panel" aria-label="Product Preview Mode" hidden>
+      <header class="preview-bar">
+        <button id="backToChatBtnV3" class="secondary">Back to Chat</button>
+        <select id="pageSelectorV3" aria-label="Select preview page">
+          <option value="home" selected>Homepage</option>
+          <option value="dashboard">Dashboard</option>
+          <option value="farmers">Farmers</option>
+          <option value="fpos">FPOs</option>
+          <option value="buyers">Buyers</option>
+          <option value="farms">Farms</option>
+          <option value="crops">Crops</option>
+          <option value="mandi-deals">Mandi Deals</option>
+          <option value="weather">Weather</option>
+          <option value="accounts">Accounts</option>
+          <option value="settings">Settings</option>
+        </select>
+        <div class="viewport-toggle" aria-label="Preview device">
+          <button class="active" data-preview-viewport="desktop">Desktop</button>
+          <button data-preview-viewport="tablet">Tablet</button>
+          <button data-preview-viewport="mobile">Mobile</button>
+        </div>
+        <button id="openPreviewBtnV3" class="secondary">Open Preview</button>
+      </header>
+
+      <div class="preview-stage">
+        <div id="previewFrameShellV3" class="preview-frame-shell mode-desktop">
+          <div class="frame-chrome">
+            <span></span><span></span><span></span>
+            <strong id="frameTitleV3">KisanMitraLite Homepage</strong>
+          </div>
+          <iframe id="previewFrameV3" title="KisanMitraLite preview"></iframe>
+        </div>
+      </div>
+
+      <aside class="preview-status">
+        <span>Generated apps: <b id="appsCountV3">0</b></span>
+        <span>Backend: <b id="backendValueV3">Checking</b></span>
+        <span>API: <b id="kisanApiStatusV3">Checking</b></span>
+        <span>Preview: <b id="currentPreviewUrlV3">-</b></span>
+      </aside>
+
+      <section id="brainPreviewPanelV3" class="brain-preview-panel" hidden>
+        <div class="section-heading">
+          <span>AI Product Brain</span>
+          <small>Preview Mode</small>
+        </div>
+        <div id="brainPreviewGridV3" class="brain-preview-grid"></div>
+      </section>
+    </section>
+
+    <aside class="command-panel legacy-v3" hidden>
+      <header class="brand-row">
+        <div
+          class="brand-logo"
+          data-logo-dark="../assets/branding/ideasforgeai-logo-dark.png"
+          data-logo-light="../assets/branding/ideasforgeai-logo-light.png"
+          data-icon="../assets/branding/ideasforgeai-icon.png"
+          data-app-icon="../assets/branding/ideasforgeai-app-icon-1024.png"
+        >
+          <img src="../assets/branding/ideasforgeai-logo.png" alt="IdeasForgeAI" onerror="this.hidden=true" />
+          <span class="brand-mark">IF</span>
+        </div>
+        <div>
+          <p>IdeasForgeAI</p>
+          <h1>Studio V3</h1>
+        </div>
+      </header>
+
+      <section class="project-strip">
+        <label for="projectSelect">Project</label>
+        <select id="projectSelect">
+          <option value="kisanmitralite">KisanMitraLite</option>
+        </select>
+        <span class="save-state">Previewing latest saved version</span>
+      </section>
+
+      <section class="panel-card prompt-card">
+        <div class="section-title">
+          <span>AI Build Prompt</span>
+          <small id="lastBuildStatus">Ready</small>
+        </div>
+        <label for="appName">App name</label>
+        <input id="appName" type="text" value="KisanMitraLite" />
+        <label for="ideaText">Prompt</label>
+        <textarea id="ideaText">Create an agriculture management platform with farmer dashboard, FPO dashboard, buyer dashboard, farm records, crop records, mandi deals, weather insights, account records, and AI assistant support.</textarea>
+        <div class="button-grid">
+          <button id="generateBtn">Generate App</button>
+          <button id="generateKisanBtn" class="accent-green">Generate KisanMitraLite</button>
+          <button id="pixelShortcutBtn" class="secondary">Pixel-Matched Converter</button>
+          <button id="premiumHomeShortcutBtn" class="secondary">Premium Landing Page</button>
+        </div>
+      </section>
+
+      <section class="panel-card chat-card">
+        <div class="section-title">
+          <span>AI Chat</span>
+          <button id="clearChatBtn" class="text-button">Clear chat</button>
+        </div>
+        <div id="chatMessages" class="chat-messages" aria-live="polite">
+          <article class="message ai">Tell me what to build, polish, fix, or ship next.</article>
+        </div>
+        <div class="chat-actions">
+          <button data-chat-mode="Build">Build</button>
+          <button data-chat-mode="Plan">Plan</button>
+          <button data-chat-mode="Fix">Fix</button>
+          <button data-chat-mode="Polish">Polish</button>
+          <button data-chat-mode="Deploy">Deploy</button>
+        </div>
+        <div class="chat-input-row">
+          <input id="chatInput" type="text" placeholder="Ask IdeasForgeAI..." />
+          <button id="sendChatBtn">Send</button>
+        </div>
+      </section>
+    </aside>
+
+    <main class="preview-workspace legacy-v3" hidden>
+      <header class="preview-topbar">
+        <div class="topbar-left">
+          <button id="previewModeBtn" class="mode-pill">Preview mode</button>
+          <div class="viewport-toggle" aria-label="Preview size">
+            <button class="active" data-viewport="desktop">Desktop</button>
+            <button data-viewport="tablet">Tablet</button>
+            <button data-viewport="mobile">Mobile</button>
+          </div>
+          <select id="pageSelector" aria-label="Select preview page">
+            <option value="home" selected>Homepage</option>
+            <option value="dashboard">Dashboard</option>
+            <option value="farmers">Farmers</option>
+            <option value="fpos">FPOs</option>
+            <option value="buyers">Buyers</option>
+            <option value="farms">Farms</option>
+            <option value="crops">Crops</option>
+            <option value="mandi-deals">Mandi Deals</option>
+            <option value="weather">Weather</option>
+            <option value="accounts">Accounts</option>
+            <option value="settings">Settings</option>
+          </select>
+        </div>
+        <div class="topbar-actions">
+          <span id="apiStatusBadge" class="api-status-badge">KisanMitraLite API: Checking</span>
+          <button id="openPreviewBtn" class="secondary">Open in new tab</button>
+          <button id="sharePreviewBtn" class="secondary">Share</button>
+          <button id="publishBtn" class="publish-button">Publish</button>
+        </div>
+      </header>
+
+      <section class="preview-stage">
+        <div id="previewFrameShell" class="preview-frame-shell mode-desktop">
+          <div class="frame-chrome">
+            <span></span><span></span><span></span>
+            <strong id="frameTitle">KisanMitraLite Dashboard</strong>
+          </div>
+          <iframe id="previewFrame" title="KisanMitraLite preview"></iframe>
+        </div>
+
+        <nav class="floating-tools" aria-label="Builder tools">
+          <button>Select</button>
+          <button>Text</button>
+          <button>Link</button>
+          <button>Comment</button>
+          <button>Code</button>
+          <button>Layers</button>
+          <button>Data</button>
+          <button>Deploy</button>
+        </nav>
+      </section>
+
+      <section class="inspector-grid">
+        <article class="panel-card status-panel">
+          <div class="section-title">
+            <span>Build Status</span>
+            <small id="backendStatus">Checking backend...</small>
+          </div>
+          <dl>
+            <div><dt>Backend</dt><dd id="backendValue">Checking</dd></div>
+            <div><dt>Generated apps</dt><dd id="appsCount">0</dd></div>
+            <div><dt>Current preview URL</dt><dd id="currentPreviewUrl">-</dd></div>
+            <div><dt>Current backend port</dt><dd>8305</dd></div>
+            <div><dt>KisanMitraLite API</dt><dd id="kisanApiStatus">Checking</dd></div>
+            <div><dt>Last build status</dt><dd id="buildStatusDetail">Ready</dd></div>
+          </dl>
+        </article>
+
+        <article class="panel-card workflow-panel">
+          <div class="section-title">
+            <span>Agent Workflow</span>
+            <small>Live builder chain</small>
+          </div>
+          <div id="agentWorkflow" class="agent-workflow"></div>
+        </article>
+
+        <article id="pixelPanel" class="panel-card pixel-panel">
+          <div class="section-title">
+            <span>Pixel-Matched Page Converter Agent</span>
+            <small class="badge">Placeholder mode</small>
+          </div>
+          <p class="muted">Convert any screenshot into a responsive frontend page.</p>
+          <p class="empty-note">Real pixel analysis coming later.</p>
+          <p class="pixel-safety-note">Upload placeholder only. No image analysis or frontend generation is performed yet.</p>
+          <input id="pixelFileInput" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden />
+          <div class="button-row">
+            <button id="uploadScreenshotBtn">Upload screenshot</button>
+            <button id="pasteImageBtn" class="secondary">Paste image</button>
+            <button id="convertPageBtn" class="accent-green">Check placeholder contract</button>
+            <button id="previewConvertedBtn" class="secondary">Preview placeholder</button>
+          </div>
+          <div id="pixelMetadata" class="pixel-metadata-grid">
+            <article><span>File name</span><strong>No file selected</strong></article>
+            <article><span>File type</span><strong>Waiting</strong></article>
+            <article><span>File size</span><strong>Waiting</strong></article>
+            <article><span>Last modified</span><strong>Waiting</strong></article>
+            <article><span>Validation status</span><strong>PNG, JPG, JPEG, or WEBP expected</strong></article>
+            <article><span>Future conversion status</span><strong>Locked until approval</strong></article>
+          </div>
+          <div id="pixelSafetyFlags" class="pixel-flag-list">
+            <span>real_image_analysis_enabled = false</span>
+            <span>frontend_generation_allowed = false</span>
+            <span>phase_8_unlocked = false</span>
+            <span>external_provider_calls_allowed = false</span>
+            <span>approval_required = true</span>
+          </div>
+          <div id="pixelOutput" class="output-grid">
+            <article><span>Detected layout</span><strong>No screenshot yet</strong></article>
+            <article><span>Component list</span><strong>Waiting</strong></article>
+            <article><span>Color palette</span><strong>Waiting</strong></article>
+            <article><span>Generated page path</span><strong>Locked</strong></article>
+            <article><span>Responsive notes</span><strong>Upload placeholder only. No image analysis or frontend generation is performed yet.</strong></article>
+          </div>
+        </article>
+
+        <article id="productionPanel" class="panel-card roadmap-panel">
+          <div class="section-title">
+            <span>Public SaaS Readiness</span>
+            <small>Approval-gated actions</small>
+          </div>
+          <div class="roadmap-list">
+            <span>Premium Landing Page</span>
+            <span>Public SaaS readiness</span>
+            <span>Git/GitHub readiness</span>
+            <span>Deployment readiness</span>
+            <span>Custom domain readiness</span>
+          </div>
+          <div class="button-row">
+            <button id="dryRunProductionSyncBtn">Check SaaS Readiness</button>
+            <button id="checkGitReadinessBtn" class="secondary">Check Git Readiness</button>
+            <button id="checkDeploymentReadinessBtn" class="secondary">Check Deployment Readiness</button>
+            <button id="openProductionDomainBtn" class="secondary">Custom Domain Check</button>
+          </div>
+          <pre id="roadmapOutput">No deployment action has run in this session.</pre>
+        </article>
+      </section>
+    </main>
+  </div>
+  <script src="./studio-v3.js"></script>
+</body>
+</html>

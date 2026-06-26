@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IdeasForgeAI Studio V2</title>
+  <link rel="stylesheet" href="./studio-v2.css" />
+</head>
+<body>
+  <main class="studio">
+    <aside class="assistant-panel">
+      <header class="brand">
+        <div class="mark">IF</div>
+        <div>
+          <p>AI Product Factory</p>
+          <h1>IdeasForgeAI</h1>
+        </div>
+      </header>
+
+      <section class="panel-card builder-form">
+        <div class="section-head">
+          <span>Prompt</span>
+          <a href="./studio-v3.html">Open Studio V3</a>
+        </div>
+
+        <label>
+          App name
+          <input id="appName" value="KisanMitraLite" autocomplete="off" />
+        </label>
+
+        <label>
+          Idea prompt
+          <textarea id="ideaText">Create an agriculture management platform with farmer dashboard, FPO dashboard, buyer dashboard, farm records, crop records, mandi deals, weather insights, account records, and AI assistant support.</textarea>
+        </label>
+
+        <div class="button-row">
+          <button id="generateBtn">Generate App</button>
+          <button id="kisanBtn" class="secondary">Generate KisanMitraLite</button>
+        </div>
+      </section>
+
+      <section class="panel-card pixel-agent-card">
+        <div class="section-head">
+          <span>Pixel-Matched Page Converter Agent</span>
+          <small>Placeholder mode</small>
+        </div>
+        <p class="agent-subtitle">Convert any screenshot into a responsive frontend page.</p>
+        <ol class="workflow-steps">
+          <li>Upload Screenshot</li>
+          <li>Detect Layout</li>
+          <li>Extract colors, spacing, and components</li>
+          <li>Generate HTML/CSS</li>
+          <li>Connect Navigation</li>
+          <li>Responsive Preview</li>
+        </ol>
+        <input id="pixelFileInput" type="file" accept="image/*" hidden />
+        <div class="pixel-controls">
+          <button id="uploadScreenshotBtn" type="button" class="secondary">Upload Screenshot</button>
+          <button id="pasteImageBtn" type="button" class="secondary">Paste Image</button>
+          <button id="convertPageBtn" type="button">Convert to Page</button>
+          <button id="previewConvertedBtn" type="button" class="secondary">Preview Converted Page</button>
+        </div>
+        <div id="pixelEmptyState" class="pixel-empty-state">Upload or paste a screenshot to begin pixel-matched conversion.</div>
+      </section>
+
+      <section class="panel-card chat-box">
+        <div class="section-head">
+          <span>AI assistant</span>
+          <button id="clearChatBtn" class="text-button">Clear chat</button>
+        </div>
+        <div id="chatMessages" class="chat-messages"></div>
+        <div class="chat-input">
+          <input id="chatInput" placeholder="Ask the builder assistant..." />
+          <button id="sendChatBtn">Send</button>
+        </div>
+      </section>
+
+      <section class="panel-card progress-card">
+        <div class="section-head">
+          <span>Build progress</span>
+          <small id="progressHint">Idle</small>
+        </div>
+        <div id="progressMessages" class="progress-messages">
+          <p>Ready to generate KisanMitraLite.</p>
+        </div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <header class="workspace-top">
+        <div>
+          <p class="eyebrow">Live Builder Workspace</p>
+          <h2 id="workspaceTitle">KisanMitraLite Development</h2>
+        </div>
+        <div class="top-actions">
+          <button id="refreshProjectsBtn" class="secondary">Refresh generated apps</button>
+          <button id="copyPreviewBtn" class="secondary">Copy preview URL</button>
+          <button id="openPreviewBtn">Open current preview</button>
+        </div>
+      </header>
+
+      <section class="status-grid">
+        <article><span>Backend status</span><strong id="backendStatus">Waiting</strong></article>
+        <article><span>Generated App status</span><strong id="generatedStatus">Waiting</strong></article>
+        <article><span>AI Assistant status</span><strong id="aiStatus">Checking</strong></article>
+      </section>
+
+      <section class="roadmap-panel output-card">
+        <div class="section-head">
+          <span>Public SaaS Readiness</span>
+          <small>Safe dry-run workflow</small>
+        </div>
+        <div class="roadmap-cards">
+          <article>Premium Landing Page</article>
+          <article>Pixel-Matched Converter</article>
+          <article>Public SaaS readiness</article>
+          <article>Git/GitHub</article>
+          <article>Deployment</article>
+          <article>Custom domain readiness</article>
+        </div>
+        <div class="roadmap-actions">
+          <button id="generatePremiumHomeBtn" type="button">Generate Premium Home</button>
+          <button id="openPremiumHomeBtn" class="secondary" type="button">Open Premium Home</button>
+          <button id="dryRunProductionSyncBtn" class="secondary" type="button">Check SaaS Readiness</button>
+          <button id="checkGitReadinessBtn" class="secondary" type="button">Check Git Readiness</button>
+          <button id="checkDeploymentReadinessBtn" class="secondary" type="button">Check Deployment Readiness</button>
+          <button id="openProductionDomainBtn" class="secondary" type="button">Custom Domain Check</button>
+        </div>
+        <div id="roadmapOutput" class="roadmap-output">
+          Local-only readiness checks are available. Public release, Git commit, GitHub push, and deployment all require explicit manual approval.
+        </div>
+      </section>
+
+      <section class="preview-shell">
+        <div id="emptyPreview" class="empty-preview">
+          <span class="preview-mark">IF</span>
+          <strong>No preview loaded yet</strong>
+          <p>Generate KisanMitraLite or open an existing generated app to inspect the live product here.</p>
+          <div class="empty-preview-actions">
+            <button id="emptyGenerateBtn" type="button">Generate KisanMitraLite</button>
+            <button id="emptyRefreshBtn" type="button" class="secondary">Refresh gallery</button>
+          </div>
+        </div>
+        <iframe id="previewFrame" title="Generated App Preview"></iframe>
+      </section>
+
+      <section class="converter-output output-card">
+        <div class="section-head">
+          <span>Pixel-Matched Page Converter Output</span>
+          <small id="pixelMode">Waiting for screenshot</small>
+        </div>
+        <div id="pixelOutput" class="pixel-output-grid">
+          <article><span>Detected layout</span><strong>Not started</strong></article>
+          <article><span>Component list</span><strong>No screenshot yet</strong></article>
+          <article><span>Color palette</span><strong>Waiting</strong></article>
+          <article><span>Generated page path</span><strong>converted-page.html</strong></article>
+          <article><span>Responsive notes</span><strong>Upload or paste a screenshot to begin.</strong></article>
+        </div>
+      </section>
+
+      <section class="build-output">
+        <article class="output-card">
+          <div class="section-head">
+            <span>Agent steps</span>
+            <small>Live run log</small>
+          </div>
+          <div id="agentRows" class="agent-rows">No generation yet.</div>
+        </article>
+
+        <article class="output-card">
+          <div class="section-head">
+            <span>Generated apps gallery</span>
+            <small>Latest first</small>
+          </div>
+          <div id="projectsGallery" class="projects-gallery">Loading...</div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script src="./studio-v2.js"></script>
+</body>
+</html>
