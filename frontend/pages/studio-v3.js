@@ -1,4 +1,4 @@
-const API_BASE = window.location.origin && window.location.origin !== "null"
+﻿const API_BASE = window.location.origin && window.location.origin !== "null"
   ? window.location.origin
   : "http://127.0.0.1:8100";
 const KISAN_API = `http://${window.location.hostname || "127.0.0.1"}:8305`;
@@ -6,48 +6,48 @@ const KISAN_IDEA = "Create an agriculture management platform with farmer dashbo
 
 const pageMap = {
   home: {
-    title: "KisanMitraLite Homepage",
-    url: "/generated-apps/kisanmitralite/frontend/home.html",
+    title: "IdeasForgeAI Homepage",
+    url: "/generated-apps/IdeasForgeAI/frontend/home.html",
   },
   dashboard: {
-    title: "KisanMitraLite Dashboard",
-    url: "/generated-apps/kisanmitralite/frontend/index.html",
+    title: "IdeasForgeAI Dashboard",
+    url: "/generated-apps/IdeasForgeAI/frontend/index.html",
   },
   farmers: {
-    title: "KisanMitraLite Farmers",
-    url: "/generated-apps/kisanmitralite/frontend/farmers.html",
+    title: "IdeasForgeAI Farmers",
+    url: "/generated-apps/IdeasForgeAI/frontend/farmers.html",
   },
   fpos: {
-    title: "KisanMitraLite FPOs",
-    url: "/generated-apps/kisanmitralite/frontend/fpos.html",
+    title: "IdeasForgeAI FPOs",
+    url: "/generated-apps/IdeasForgeAI/frontend/fpos.html",
   },
   buyers: {
-    title: "KisanMitraLite Buyers",
-    url: "/generated-apps/kisanmitralite/frontend/buyers.html",
+    title: "IdeasForgeAI Buyers",
+    url: "/generated-apps/IdeasForgeAI/frontend/buyers.html",
   },
   farms: {
-    title: "KisanMitraLite Farms",
-    url: "/generated-apps/kisanmitralite/frontend/farms.html",
+    title: "IdeasForgeAI Farms",
+    url: "/generated-apps/IdeasForgeAI/frontend/farms.html",
   },
   crops: {
-    title: "KisanMitraLite Crops",
-    url: "/generated-apps/kisanmitralite/frontend/crops.html",
+    title: "IdeasForgeAI Crops",
+    url: "/generated-apps/IdeasForgeAI/frontend/crops.html",
   },
   "mandi-deals": {
-    title: "KisanMitraLite Mandi Deals",
-    url: "/generated-apps/kisanmitralite/frontend/mandi-deals.html",
+    title: "IdeasForgeAI Mandi Deals",
+    url: "/generated-apps/IdeasForgeAI/frontend/mandi-deals.html",
   },
   weather: {
-    title: "KisanMitraLite Weather",
-    url: "/generated-apps/kisanmitralite/frontend/weather.html",
+    title: "IdeasForgeAI Weather",
+    url: "/generated-apps/IdeasForgeAI/frontend/weather.html",
   },
   accounts: {
-    title: "KisanMitraLite Accounts",
-    url: "/generated-apps/kisanmitralite/frontend/accounts.html",
+    title: "IdeasForgeAI Accounts",
+    url: "/generated-apps/IdeasForgeAI/frontend/accounts.html",
   },
   settings: {
-    title: "KisanMitraLite Settings",
-    url: "/generated-apps/kisanmitralite/frontend/settings.html",
+    title: "IdeasForgeAI Settings",
+    url: "/generated-apps/IdeasForgeAI/frontend/settings.html",
   },
 };
 
@@ -274,17 +274,17 @@ async function checkKisanApi() {
     const statsData = data.stats || data || {};
     const total = Object.values(statsData).reduce((sum, value) => sum + (Number(value) || 0), 0);
     if (apiStatusBadge) {
-      apiStatusBadge.textContent = "KisanMitraLite API: Online";
+      apiStatusBadge.textContent = "IdeasForgeAI API: Online";
       apiStatusBadge.className = "api-status-badge online";
     }
-    kisanApiStatus.textContent = `KisanMitraLite API: Online, ${total} records`;
+    kisanApiStatus.textContent = `IdeasForgeAI API: Online, ${total} records`;
     kisanApiStatus.className = "ok";
   } catch {
     if (apiStatusBadge) {
-      apiStatusBadge.textContent = "KisanMitraLite API: Offline";
+      apiStatusBadge.textContent = "IdeasForgeAI API: Offline";
       apiStatusBadge.className = "api-status-badge offline";
     }
-    kisanApiStatus.textContent = "KisanMitraLite API: Offline";
+    kisanApiStatus.textContent = "IdeasForgeAI API: Offline";
     kisanApiStatus.className = "bad";
   }
 }
@@ -298,14 +298,14 @@ async function loadProjects() {
     appsCount.textContent = String(projects.length);
     projectSelect.innerHTML = "";
     if (!projects.length) {
-      projectSelect.innerHTML = '<option value="kisanmitralite">KisanMitraLite</option>';
+      projectSelect.innerHTML = '<option value="IdeasForgeAI">IdeasForgeAI</option>';
       return;
     }
     projects.forEach((project) => {
       const option = document.createElement("option");
       option.value = project.slug;
       option.textContent = project.project_name || project.slug;
-      if (project.slug === "kisanmitralite") option.selected = true;
+      if (project.slug === "IdeasForgeAI") option.selected = true;
       projectSelect.appendChild(option);
     });
   } catch {
@@ -339,7 +339,7 @@ async function askAssistant(message) {
 }
 
 async function generateApp(useKisanPreset = false) {
-  const targetName = useKisanPreset ? "KisanMitraLite" : (appName.value.trim() || "Generated App");
+  const targetName = useKisanPreset ? "IdeasForgeAI" : (appName.value.trim() || "Generated App");
   const targetIdea = useKisanPreset ? KISAN_IDEA : (ideaText.value.trim() || KISAN_IDEA);
   const button = useKisanPreset ? generateKisanBtn : generateBtn;
   button.disabled = true;
@@ -400,8 +400,8 @@ async function runRoadmapAction(path, button) {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        app_name: appName.value.trim() || "KisanMitraLite",
-        app_slug: "kisanmitralite",
+        app_name: appName.value.trim() || "IdeasForgeAI",
+        app_slug: "IdeasForgeAI",
       }),
     });
     if (!response.ok) throw new Error("Readiness check is not available right now. No deployment action was taken.");
@@ -591,56 +591,56 @@ init();
 
   const buildSteps = [
     {
-      icon: "🧠",
+      icon: "ðŸ§ ",
       title: "Understanding your idea...",
       status: "Business identified",
       details: ["Business identified", "Target audience found", "Competitors analyzed"],
       thought: "I've detected this is a Marketplace.",
     },
     {
-      icon: "📋",
+      icon: "ðŸ“‹",
       title: "Creating Product Strategy...",
       status: "Strategy ready",
       details: ["Core offer shaped", "User roles mapped", "Launch path prepared"],
       thought: "I'm turning the idea into a clear product strategy.",
     },
     {
-      icon: "🏗",
+      icon: "ðŸ—",
       title: "Designing Architecture...",
       status: "Blueprint ready",
       details: ["Pages organized", "Workflows connected", "Trust points planned"],
       thought: "I've added role-based authentication to the plan.",
     },
     {
-      icon: "🎨",
+      icon: "ðŸŽ¨",
       title: "Creating Design Direction...",
       status: "Design direction ready",
       details: ["Logo direction chosen", "Color system prepared", "Typography selected"],
       thought: "I'm choosing a modern design language.",
     },
     {
-      icon: "📱",
+      icon: "ðŸ“±",
       title: "Designing Mobile Screens...",
       status: "Mobile screens ready",
       details: ["Mobile flow arranged", "Tablet layout adapted", "Landscape and portrait considered"],
       thought: "I'm optimizing for mobile.",
     },
     {
-      icon: "💻",
+      icon: "ðŸ’»",
       title: "Building Website...",
       status: "Website ready",
       details: ["Landing page shaped", "Dashboard prepared", "Responsive layouts created"],
       thought: "I'm preparing responsive layouts.",
     },
     {
-      icon: "⚙",
+      icon: "âš™",
       title: "Creating Backend...",
       status: "Backend planned",
       details: ["APIs organized", "Database structure prepared", "Safe publish remains locked"],
       thought: "I'm preparing the backend architecture.",
     },
     {
-      icon: "🧪",
+      icon: "ðŸ§ª",
       title: "Testing...",
       status: "Product ready",
       details: ["Layout checked", "Preview prepared", "Approval step ready"],
@@ -757,7 +757,7 @@ init();
       const className = index < activeIndex ? "done" : index === activeIndex ? "active" : "";
       const progress = index < activeIndex ? 100 : index === activeIndex ? 82 : 0;
       const details = step.details.map((detail, detailIndex) => {
-        const mark = index < activeIndex || (index === activeIndex && detailIndex === 0) ? "✓" : "•";
+        const mark = index < activeIndex || (index === activeIndex && detailIndex === 0) ? "âœ“" : "â€¢";
         return `<li>${mark} ${detail}</li>`;
       }).join("");
       return `
@@ -1131,9 +1131,9 @@ init();
       mobile_first_rules: ["Design narrow screens first", "Stack cards vertically", "Keep buttons thumb-friendly", "Keep text readable"],
       accessibility_rules: ["Maintain readable contrast", "Use clear labels", "Avoid color-only meaning", "Keep tap targets comfortable"],
       design_readiness: {
-        ready_for_phase_6_review: productBrainData.product_blueprint ? "Yes — draft ready for review" : "Partial - Product Blueprint and Strategy are still needed",
-        ready_for_phase_7_pixel_matched_converter: "No — Design System v1.0 is not approved yet",
-        ready_for_phase_8_frontend_generator: "No — Design System v1.0 is not approved yet",
+        ready_for_phase_6_review: productBrainData.product_blueprint ? "Yes â€” draft ready for review" : "Partial - Product Blueprint and Strategy are still needed",
+        ready_for_phase_7_pixel_matched_converter: "No â€” Design System v1.0 is not approved yet",
+        ready_for_phase_8_frontend_generator: "No â€” Design System v1.0 is not approved yet",
         missing_before_approval: ["Explicit Design System v1.0 approval"],
       },
       approval_needed: {
@@ -1297,7 +1297,7 @@ init();
     phase2Message("user", cleanPrompt);
     phase2Message(
       "assistant",
-      "Great idea.<br><br>Before I start, I'll first understand your business.<br><br>Then I'll create:<br><br>✓ Product Strategy<br>✓ Requirements<br>✓ Product Blueprint<br>✓ AI Team Review<br>✓ Approval Plan<br>✓ Next Phase Recommendation<br><br>This usually takes about 2 minutes."
+      "Great idea.<br><br>Before I start, I'll first understand your business.<br><br>Then I'll create:<br><br>âœ“ Product Strategy<br>âœ“ Requirements<br>âœ“ Product Blueprint<br>âœ“ AI Team Review<br>âœ“ Approval Plan<br>âœ“ Next Phase Recommendation<br><br>This usually takes about 2 minutes."
     );
     phase2Status("Ready to start", "ok");
     buildBrief.scrollIntoView({behavior: "smooth", block: "center"});
@@ -1329,7 +1329,7 @@ init();
 
   function renderVisualDesign(data) {
     const kit = data.brand_kit || {};
-    const projectName = data.project_name || kit.brand_name || "KisanMitraLite";
+    const projectName = data.project_name || kit.brand_name || "IdeasForgeAI";
     const colors = [
       ["Primary", kit.primary_color || "#168A52"],
       ["Secondary", kit.secondary_color || "#0E9FB1"],
@@ -1407,8 +1407,8 @@ init();
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
           idea: prompt,
-          app_name: "KisanMitraLite",
-          app_slug: "kisanmitralite",
+          app_name: "IdeasForgeAI",
+          app_slug: "IdeasForgeAI",
         }),
       });
       if (!response.ok) throw new Error("Visual design is using local fallback placeholders");
@@ -1418,7 +1418,7 @@ init();
       phase2Status("Design approval ready", "ok");
     } catch (error) {
       designStatus.textContent = "Visual Design: Local fallback";
-      renderVisualDesign({project_name: "KisanMitraLite", idea: prompt});
+      renderVisualDesign({project_name: "IdeasForgeAI", idea: prompt});
       phase2Message("assistant", `${error.message}. Showing local fallback placeholders.`);
       phase2Status("Visual design fallback ready", "warn");
     }
@@ -1490,12 +1490,12 @@ init();
     try {
       const health = await fetch(`${KISAN_API}/health`);
       if (!health.ok) throw new Error("offline");
-      apiBadgePhase2.textContent = "KisanMitraLite API: Online";
+      apiBadgePhase2.textContent = "IdeasForgeAI API: Online";
       apiBadgePhase2.className = "api-status-badge online";
       kisanApiPhase2.textContent = "Online";
       kisanApiPhase2.className = "ok";
     } catch {
-      apiBadgePhase2.textContent = "KisanMitraLite API: Offline";
+      apiBadgePhase2.textContent = "IdeasForgeAI API: Offline";
       apiBadgePhase2.className = "api-status-badge offline";
       kisanApiPhase2.textContent = "Offline";
       kisanApiPhase2.className = "bad";
