@@ -1,5 +1,116 @@
 # IdeasForgeAI Project Status
 
+## Phase 25F - Mobile Repair: Clean Chat Viewport
+
+Status: Completed, not frozen.
+
+- Desktop shell leakage on mobile fixed.
+- Mobile creation flow now owns the viewport.
+- Mobile safe-area handling added.
+- Desktop builder remains preserved for laptop/desktop widths.
+- No backend/provider/database/auth/secrets/deployment changes.
+- KisanMitraAI not touched.
+
+## Phase 25F - Mobile-Only Chat First Experience
+
+Status: Completed, not frozen.
+
+- Mobile-only chat-first flow added.
+- Desktop builder hidden on mobile initial screen.
+- Chat auto-slide processing flow added.
+- Animated overlapping processing cards added.
+- Existing desktop builder preserved.
+- No real backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25E - Mobile-First Chat + Processing Flow
+
+Status: Completed, not frozen.
+
+- Mobile-first chat flow added.
+- Mobile auto-swipe processing flow added.
+- Intersecting animated processing cards added.
+- Existing desktop builder preserved.
+- No real generation/backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25E - Responsive App Shell Hardening
+
+Status: Completed, not frozen.
+
+- Responsive app shell hardening completed.
+- Desktop/tablet/mobile rules added.
+- Horizontal overflow prevented.
+- Mobile stacked layout added.
+- Apple-like black/white builder shell preserved.
+- No backend/provider/database/auth/secrets added.
+- No deployment changes.
+- KisanMitraAI not touched.
+
+## Studio V3 Brand Assets
+
+Status: Completed, not frozen.
+
+- IdeasForgeAI brand assets were added to Studio V3 frontend.
+- Favicon and Apple touch icon were connected.
+- Compact IF/spark mark was connected in the top toolbar.
+- No backend/provider/database/auth/secrets/deployment changes.
+- KisanMitraAI not touched.
+
+## Phase 25D - Safe Frontend Mock State Integration
+
+Status: Completed, not frozen.
+
+- Local-only mock state integrated.
+- Workspace/project/chat/preview/approval mock state added.
+- UI labels render from mock state.
+- No backend calls/fetch/XHR.
+- No database/auth/Supabase/secrets added.
+- No deployment changes.
+- KisanMitraAI not touched.
+
+## Phase 25C - Workspace and Project State Planning
+
+Status: Completed, not frozen.
+
+- Workspace/project state planning created.
+- Workspace, project, page, chat message, preview state, and approval gate data models defined.
+- Local temporary frontend state plan defined.
+- Future database plan documented.
+- No frontend behavior changes.
+- No backend generation.
+- No provider/database/auth/secrets added.
+- No deployment changes.
+- KisanMitraAI not touched.
+
+## Phase 25B - Frontend App Shell Cleanup
+
+Status: Completed, not frozen.
+
+- Frontend App Shell Cleanup completed.
+- Studio V3 HTML now uses `./studio-v3.css` and `./studio-v3.js`.
+- Semantic section comments and safe accessibility labels were added.
+- Studio V3 JavaScript selectors were centralized for maintainability.
+- Current Apple-like black/white builder visual layout was preserved.
+- No backend generation.
+- No provider/database/auth/secrets added.
+- No deployment changes.
+- KisanMitraAI not touched.
+
+## Phase 25A - Production Readiness Architecture
+
+Status: Completed, not frozen.
+
+- Production readiness architecture created.
+- Current frontend is live and static.
+- Production module plan defined.
+- Future phase sequence defined from Phase 25B through Phase 25N.
+- No live frontend changes.
+- No backend generation.
+- No provider/database/auth/secrets added.
+- No deployment changes.
+- KisanMitraAI not touched.
+
 ## Phase 23B Layout Tightening Repair
 
 Status: Completed, not frozen.
@@ -10669,3 +10780,256 @@ Current source of truth:
 - Final approved IdeasForgeAI local frontend is the Apple-like black/white builder layout.
 - Phase 24 - Safe Live Frontend Deployment Push is the next recommended approval-gated track.
 - Deployment remains locked until Phase 24.
+
+## Phase 25A Freeze Review - Production Readiness Architecture
+
+Status: Frozen.
+
+Phase 25A freeze review completed.
+
+Confirmed:
+- Phase 25A Production Readiness Architecture is implemented.
+- Phase 25A is documentation/planning only.
+- Production readiness architecture document exists:
+  - docs/phase-25-production-readiness/PHASE_25A_PRODUCTION_READINESS_ARCHITECTURE.md
+- Current production state was documented.
+- Current live frontend was documented as Apple-like static builder shell.
+- Production product goal was defined.
+- Required production modules were defined.
+- Future Phase 25B onward sequence was defined.
+- Safety gates were defined.
+- Deployment policy was defined.
+- Recommended first real coding phase was defined as Phase 25B Frontend App Shell Cleanup.
+- No live frontend files were changed by Phase 25A.
+- No backend generation was added.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No deployment changes were made.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- git status --short reviewed.
+
+Current source of truth:
+- Phase 25A is frozen.
+- Phase 25B - Frontend App Shell Cleanup is the next approval-gated step.
+- Deployment remains locked unless explicitly approved.
+
+## Phase 25B Freeze Review - Frontend App Shell Cleanup
+
+Status: Frozen.
+
+Phase 25B freeze review completed.
+
+Confirmed:
+- Phase 25B Frontend App Shell Cleanup is implemented.
+- Phase 25B was frontend cleanup only.
+- Documentation exists:
+  - docs/phase-25-production-readiness/PHASE_25B_FRONTEND_APP_SHELL_CLEANUP.md
+- Studio V3 references were verified and changed to:
+  - ./studio-v3.css
+  - ./studio-v3.js
+- HTML section comments were added for:
+  - toolbar
+  - AI workspace
+  - preview canvas
+  - bottom controls
+- Safe accessibility labels were added.
+- Visual-only glyphs were hidden from screen readers.
+- CSS section comments were added.
+- JS selectors were centralized into a local SELECTORS object.
+- Existing behavior was preserved.
+- Visual layout was preserved.
+- Apple-like black/white builder shell was preserved.
+- Ranjan Workplace panel was preserved.
+- AI Assistant panel was preserved.
+- Right preview canvas was preserved.
+- No backend generation was added.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No upload/OCR/image analysis/pixel reading/canvas analysis was added.
+- No deployment changes were made.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- Select-String scan for KisanMitra terms in frontend/pages/studio-v3.* returned no matches.
+- git diff review showed only scoped frontend cleanup/status changes.
+
+Current source of truth:
+- Phase 25B is frozen.
+- Phase 25C - Workspace and Project State Planning is the next approval-gated step.
+- Deployment remains locked unless explicitly approved.
+
+## Phase 25C Freeze Review - Workspace and Project State Planning
+
+Status: Frozen.
+
+Phase 25C freeze review completed.
+
+Confirmed:
+- Phase 25C Workspace and Project State Planning is implemented.
+- Phase 25C is documentation/planning only.
+- Documentation exists:
+  - docs/phase-25-production-readiness/PHASE_25C_WORKSPACE_AND_PROJECT_STATE_PLANNING.md
+- Workspace model was defined.
+- Project model was defined.
+- Page model was defined.
+- Chat message model was defined.
+- Preview state model was defined.
+- Approval gate model was defined.
+- Temporary local frontend state plan was defined.
+- Future database plan was documented and explicitly deferred.
+- Safety rules were documented.
+- Recommended next phase was defined:
+  - Phase 25D Safe Frontend Mock State Integration
+- No frontend behavior was changed by Phase 25C.
+- No backend APIs were changed.
+- No backend generation was added.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No upload/OCR/image analysis/pixel reading/canvas analysis was added.
+- No deployment changes were made.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- git status --short reviewed.
+
+Current source of truth:
+- Phase 25C is frozen.
+- Phase 25D - Safe Frontend Mock State Integration is the next approval-gated step.
+- Database/auth/backend generation/provider calls/deployment remain locked.
+
+## Phase 25D Freeze Review - Safe Frontend Mock State Integration
+
+Status: Frozen.
+
+Phase 25D freeze review completed.
+
+Confirmed:
+- Phase 25D Safe Frontend Mock State Integration is implemented.
+- Documentation exists:
+  - docs/phase-25-production-readiness/PHASE_25D_SAFE_FRONTEND_MOCK_STATE_INTEGRATION.md
+- IDEASFORGEAI_MOCK_STATE was added.
+- selectedWorkspace mock state was added.
+- selectedProject mock state was added.
+- pages mock state was added.
+- chatMessages mock state was added.
+- previewState mock state was added.
+- approvalGates mock state was added.
+- Ranjan Workplace label now renders from mock state.
+- Project title now renders from mock state.
+- Current phase now renders from mock state.
+- Preview status now renders from mock state.
+- AI Assistant chat messages now render from mock state.
+- Approval status now renders from mock state.
+- Local mock state, Preview only, and No deployment badges were added.
+- Browser runtime check showed errorLogs: [].
+- No backend calls were added.
+- No fetch/XHR was added.
+- No backend generation was unlocked.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No upload/OCR/image analysis/pixel reading/canvas analysis was added.
+- No deployment changes were made.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- Unsafe frontend scan returned no matches for fetch(, XMLHttpRequest, supabase, localStorage, sessionStorage, api_key, secret, token, or KisanMitra.
+- Local route opened with 200 OK:
+  - http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25d-mock-state
+
+Current source of truth:
+- Phase 25D is frozen.
+- Phase 25E - Responsive App Shell Hardening is the next approval-gated step.
+- Backend/provider/database/auth/secrets/deployment remain locked.
+
+## Phase 25E Freeze Review - Responsive App Shell Hardening
+
+Status: Frozen.
+
+Phase 25E freeze review completed.
+
+Confirmed:
+- Phase 25E Responsive App Shell Hardening is implemented.
+- Documentation exists:
+  - docs/phase-25-production-readiness/PHASE_25E_RESPONSIVE_APP_SHELL_HARDENING.md
+- Fixed horizontal overflow protection.
+- Removed fixed page min-width issues.
+- Added min-width: 0, max-width: 100%, and long-text wrapping safeguards.
+- Desktop split layout is preserved for >=1024px.
+- Tablet layout rules were added.
+- Mobile stacked layout was added for <=767px.
+- iPhone-width hardening was added for <=430px.
+- Preview canvas now appears below AI workspace on narrow screens.
+- Viewport checks passed at:
+  - 1440px
+  - 1024px
+  - 768px
+  - 430px
+  - 390px
+- Overflow reported false at all checked widths.
+- Existing desktop builder layout was preserved.
+- No backend generation was unlocked.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No upload/OCR/image analysis/pixel reading/canvas analysis was added.
+- No deployment changes were made.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- Unsafe scan returned no matches for fetch(, XMLHttpRequest, supabase, localStorage, sessionStorage, api_key, secret, token, or KisanMitra.
+- Local route returned 200 OK:
+  - http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25e-responsive
+
+Current source of truth:
+- Phase 25E is frozen.
+- Phase 25F - Mobile-First Chat Processing Flow is the next approval-gated step.
+- Backend/provider/database/auth/secrets/deployment remain locked.
+
+## Phase 25F Freeze Review - Mobile-First Chat Processing Flow
+
+Status: Frozen.
+
+Phase 25F freeze review completed.
+
+Confirmed:
+- Mobile-first chat flow is implemented.
+- Mobile desktop-shell leakage was repaired.
+- On mobile <= 767px, the desktop builder shell is hidden.
+- Mobile creation flow owns the viewport.
+- Solid graphite/black mobile background is applied.
+- 100dvh mobile viewport sizing is applied.
+- Safe-area support was added using env(safe-area-inset-top) and env(safe-area-inset-bottom).
+- Start building mock flow remains local-only.
+- Processing flow remains local-only.
+- Desktop/laptop layout remains unchanged.
+- No backend generation was unlocked.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No upload/OCR/image analysis/pixel reading/canvas analysis was added.
+- No deployment changes were made during the phase.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- Unsafe scan returned no matches for fetch(, XMLHttpRequest, supabase, localStorage, sessionStorage, api_key, secret, token, or KisanMitra.
+- LAN route returned 200:
+  - http://192.168.1.7:8100/frontend/pages/studio-v3.html?v=phase25f-mobile-clean
+- Local route returned 200:
+  - http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25f-mobile-clean
+
+Current source of truth:
+- Phase 25F is frozen.
+- The mobile-first chat and processing flow is approved for safe frontend deployment.
+- Backend/provider/database/auth/secrets remain locked.

@@ -4,22 +4,26 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IdeasForgeAI Builder Preview</title>
-    <link rel="stylesheet" href="./studio-v3.css?v=phase23-live-fix">
+    <link rel="icon" href="../assets/brand/ideasforgeai-favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/brand/ideasforgeai-favicon-32.png">
+    <link rel="apple-touch-icon" href="../assets/brand/ideasforgeai-apple-touch-icon.png">
+    <link rel="stylesheet" href="./studio-v3.css">
   </head>
   <body>
     <div class="builder-shell">
+      <!-- Top builder toolbar -->
       <header class="top-toolbar" aria-label="Builder toolbar">
         <div class="toolbar-left">
           <a class="brand-lockup" href="#" aria-label="IdeasForgeAI home">
-            <span class="brand-mark">IF</span>
+            <img class="brand-mark" src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
             <span>IdeasForgeAI</span>
           </a>
-          <button class="project-selector" type="button">
-            <span>SaaS Landing Page</span>
+          <button class="project-selector" type="button" aria-label="Select project">
+            <span data-state-field="projectName">SaaS Landing Page</span>
             <span aria-hidden="true">v</span>
           </button>
-          <span class="version-pill">v1.0.0</span>
-          <span class="save-state">All changes saved</span>
+          <span class="version-pill" data-state-field="currentPhase">Static preview</span>
+          <span class="save-state" data-state-field="previewStatus">Preview only</span>
         </div>
 
         <nav class="mode-tabs" aria-label="Builder modes">
@@ -30,30 +34,35 @@
 
         <div class="toolbar-right">
           <div class="preview-toggle" aria-label="Preview device controls">
-            <button class="icon-button is-active" type="button" data-device="desktop" title="Desktop preview" aria-label="Desktop preview">D</button>
-            <button class="icon-button" type="button" data-device="mobile" title="Mobile preview" aria-label="Mobile preview">M</button>
+            <button class="icon-button is-active" type="button" data-device="desktop" title="Desktop preview" aria-label="Desktop preview">
+              <span aria-hidden="true">D</span>
+            </button>
+            <button class="icon-button" type="button" data-device="mobile" title="Mobile preview" aria-label="Mobile preview">
+              <span aria-hidden="true">M</span>
+            </button>
           </div>
-          <button class="size-dropdown" type="button">1280px <span aria-hidden="true">v</span></button>
+          <button class="size-dropdown" type="button" aria-label="Select preview width">1280px <span aria-hidden="true">v</span></button>
           <button class="secondary-action" type="button">Share</button>
           <button class="primary-action" type="button">Publish</button>
         </div>
       </header>
 
-      <main class="builder-stage">
+      <main class="builder-stage" data-mobile-flow="chat">
+        <!-- Left AI workspace -->
         <aside class="ai-rail" aria-label="AI workspace">
           <details class="workspace-menu">
             <summary>
               <span>
-                <strong>Ranjan Workplace</strong>
-                <small>Personal builder space</small>
+                <strong data-state-field="workspaceName">Ranjan Workplace</strong>
+                <small data-state-field="workspacePlan">Personal builder space</small>
               </span>
             </summary>
             <div class="workspace-options">
               <button type="button" class="workspace-option is-current">
                 <span class="option-dot"></span>
                 <span>
-                  <strong>Ranjan Workplace</strong>
-                  <small>3 active projects</small>
+                  <strong data-state-field="workspaceOptionName">Ranjan Workplace</strong>
+                  <small data-state-field="workspaceOptionMeta">3 active projects</small>
                 </span>
               </button>
               <button type="button" class="workspace-option">
@@ -82,7 +91,7 @@
               <span class="status-dot" aria-label="Ready"></span>
             </div>
 
-            <div class="chat-stream">
+            <div class="chat-stream" data-state-field="chatMessages">
               <article class="chat-bubble assistant">
                 <span class="bubble-name">IdeasForgeAI</span>
                 <p>I redesigned the app into a graphite builder shell with a white preview canvas and a SaaS landing page draft.</p>
@@ -93,14 +102,19 @@
               </article>
               <article class="chat-bubble assistant">
                 <span class="bubble-name">IdeasForgeAI</span>
-                <p>Done. No deployment, database, provider calls, secrets, or backend generation unlocks are active in this preview.</p>
+                <p>Done. No deployment, database, provider calls, or backend generation unlocks are active in this preview.</p>
               </article>
             </div>
 
             <div class="generation-card">
               <div class="card-title-row">
                 <h2>Generation Checklist</h2>
-                <span>Phase 23B</span>
+                <span data-state-field="approvalStatus">No approval needed</span>
+              </div>
+              <div class="state-badges" aria-label="Local preview status">
+                <span data-state-field="stateMode">Local mock state</span>
+                <span data-state-field="statePreview">Preview only</span>
+                <span data-state-field="stateDeployment">No deployment</span>
               </div>
               <ul class="checklist">
                 <li><span></span> Apple-like builder shell applied</li>
@@ -121,6 +135,93 @@
           </section>
         </aside>
 
+        <!-- Mobile-only chat-first and mock processing flow -->
+        <section class="mobile-flow mobile-creation-flow" aria-label="Mobile AI creation flow">
+          <div class="mobile-flow-track">
+            <section class="mobile-screen mobile-chat-screen" aria-labelledby="mobile-chat-title">
+              <header class="mobile-flow-header">
+                <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
+                  <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
+                  <span>IdeasForgeAI</span>
+                </a>
+                <div>
+                  <strong data-state-field="mobileWorkspaceName">Ranjan Workplace</strong>
+                  <small data-state-field="mobileProjectName">SaaS Landing Page</small>
+                </div>
+                <span class="mobile-status-pill" data-state-field="mobileFlowStatus">Local mock state / Preview only</span>
+              </header>
+
+              <div class="mobile-chat-body">
+                <p class="eyebrow">Mobile builder</p>
+                <h2 id="mobile-chat-title">What should we build?</h2>
+                <div class="mobile-chat-stream" data-mobile-field="chatMessages"></div>
+              </div>
+
+              <form class="mobile-prompt-box" action="#" method="get">
+                <div class="mobile-prompt-chips" aria-label="Example prompts">
+                  <button type="button" data-mobile-prompt="Create a SaaS landing page for a product analytics app.">Create SaaS landing page</button>
+                  <button type="button" data-mobile-prompt="Build a premium dashboard preview for a founder CRM.">Build dashboard app</button>
+                  <button type="button" data-mobile-prompt="Create a booking website for appointments, services, and customer proof.">Create booking website</button>
+                </div>
+                <label for="mobilePrompt">Describe your idea</label>
+                <textarea id="mobilePrompt" rows="4" placeholder="Describe the product, audience, and desired outcome."></textarea>
+                <button class="mobile-start-button" type="submit" data-mobile-start>Start building</button>
+              </form>
+            </section>
+
+            <section class="mobile-screen mobile-processing-screen" aria-labelledby="mobile-processing-title">
+              <header class="mobile-flow-header">
+                <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
+                  <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
+                  <span>IdeasForgeAI</span>
+                </a>
+                <span class="mobile-status-pill" data-mobile-job-status>Processing</span>
+              </header>
+
+              <div class="processing-copy">
+                <p class="eyebrow">Local mock job</p>
+                <h2 id="mobile-processing-title">Building your idea</h2>
+                <p>Turning your concept into a product-ready preview.</p>
+              </div>
+
+              <div class="processing-card-stack" aria-label="Mock processing stages">
+                <article class="processing-card" data-stage-index="0">
+                  <span>01</span>
+                  <strong>Understanding idea</strong>
+                  <small>Reading the concept and founder intent.</small>
+                </article>
+                <article class="processing-card" data-stage-index="1">
+                  <span>02</span>
+                  <strong>Planning product structure</strong>
+                  <small>Mapping pages, sections, and workflow.</small>
+                </article>
+                <article class="processing-card" data-stage-index="2">
+                  <span>03</span>
+                  <strong>Designing interface</strong>
+                  <small>Applying the black/white builder system.</small>
+                </article>
+                <article class="processing-card" data-stage-index="3">
+                  <span>04</span>
+                  <strong>Creating preview</strong>
+                  <small>Preparing a static local preview state.</small>
+                </article>
+                <article class="processing-card" data-stage-index="4">
+                  <span>05</span>
+                  <strong>Preparing approval gate</strong>
+                  <small>Keeping generation locked until approved.</small>
+                </article>
+              </div>
+
+              <div class="mobile-ready-panel" data-mobile-ready hidden>
+                <strong>Preview ready</strong>
+                <p>Your local mock preview is ready to inspect.</p>
+                <button type="button" data-mobile-view-preview>View preview</button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- Right browser preview canvas -->
         <section class="preview-workspace" aria-label="Website preview">
           <div class="browser-bar">
             <div class="window-controls" aria-hidden="true">
@@ -195,6 +296,7 @@
         </section>
       </main>
 
+      <!-- Bottom preview controls -->
       <footer class="bottom-controls" aria-label="Preview controls">
         <div class="device-pills">
           <button class="device-pill is-active" type="button" data-device="desktop">Desktop</button>
@@ -202,15 +304,21 @@
           <button class="device-pill" type="button" data-device="mobile">Mobile</button>
         </div>
         <div class="history-controls">
-          <button class="icon-button" type="button" title="Undo" aria-label="Undo">U</button>
-          <button class="icon-button" type="button" title="Redo" aria-label="Redo">R</button>
+          <button class="icon-button" type="button" title="Undo" aria-label="Undo">
+            <span aria-hidden="true">U</span>
+          </button>
+          <button class="icon-button" type="button" title="Redo" aria-label="Redo">
+            <span aria-hidden="true">R</span>
+          </button>
           <button class="zoom-pill" type="button">100%</button>
-          <button class="icon-button" type="button" title="Help" aria-label="Help">?</button>
+          <button class="icon-button" type="button" title="Help" aria-label="Help">
+            <span aria-hidden="true">?</span>
+          </button>
         </div>
       </footer>
     </div>
 
-    <script src="./studio-v3.js?v=phase23-live-fix"></script>
+    <script src="./studio-v3.js"></script>
   </body>
 </html>
 
