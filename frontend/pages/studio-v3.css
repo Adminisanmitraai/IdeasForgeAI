@@ -70,6 +70,18 @@ a {
   text-decoration: none;
 }
 
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .builder-shell {
   display: grid;
   grid-template-rows: 58px minmax(0, 1fr) 52px;
@@ -267,6 +279,10 @@ a {
 }
 
 .mobile-flow {
+  display: none;
+}
+
+.mobile-preview-header {
   display: none;
 }
 
@@ -1133,16 +1149,20 @@ a {
   }
 
   .mobile-flow-header {
-    display: grid;
+    display: flex;
+    position: relative;
+    z-index: 2;
     grid-template-columns: 1fr auto;
     gap: 10px;
     align-items: center;
+    justify-content: space-between;
     min-width: 0;
-    padding: 12px;
-    border-radius: 18px;
-    background: #101116;
+    min-height: 48px;
+    padding: 8px 10px;
+    border-radius: 16px;
+    background: #0f1014;
     border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
   }
 
   .mobile-flow-header > div {
@@ -1175,9 +1195,9 @@ a {
   }
 
   .mobile-brand-lockup img {
-    width: 28px;
-    height: 28px;
-    flex: 0 0 28px;
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
     border-radius: 9px;
     background: #ffffff;
   }
@@ -1186,29 +1206,31 @@ a {
     justify-self: end;
     display: inline-flex;
     align-items: center;
-    min-height: 28px;
-    max-width: 170px;
-    padding: 0 10px;
+    min-height: 26px;
+    max-width: 96px;
+    padding: 0 11px;
     border-radius: 999px;
     background: #ffffff;
     color: #101116;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 900;
     text-align: right;
+    white-space: nowrap;
   }
 
   .mobile-chat-body {
     display: grid;
-    grid-template-rows: auto auto minmax(0, 1fr);
-    gap: 10px;
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: 14px;
     min-height: 0;
-    padding: 18px 2px 12px;
+    padding: 18px 2px 14px;
+    overflow: hidden;
   }
 
   .mobile-chat-body h2,
   .processing-copy h2 {
     margin: 0;
-    font-size: clamp(30px, 10vw, 42px);
+    font-size: clamp(28px, 9vw, 38px);
     line-height: 1.04;
     letter-spacing: 0;
   }
@@ -1219,7 +1241,8 @@ a {
     gap: 14px;
     min-height: 0;
     overflow: auto;
-    padding: 2px;
+    padding: 2px 2px 12px;
+    overscroll-behavior: contain;
   }
 
   .mobile-chat-stream .chat-bubble {
@@ -1227,29 +1250,34 @@ a {
   }
 
   .mobile-prompt-box {
+    position: sticky;
+    bottom: env(safe-area-inset-bottom);
     display: grid;
-    gap: 10px;
-    padding: 12px;
-    border-radius: 20px;
-    background: #101116;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+    padding: 10px;
+    border-radius: 24px;
+    background: rgba(16, 17, 22, 0.98);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.24);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+    backdrop-filter: blur(14px);
   }
 
   .mobile-prompt-chips {
+    grid-column: 1 / -1;
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 6px;
   }
 
   .mobile-prompt-chips button {
-    min-height: 34px;
-    padding: 0 11px;
+    min-height: 30px;
+    padding: 0 10px;
     border-radius: 999px;
     background: #1b1d23;
     color: #f6f7f8;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
   }
 
@@ -1261,25 +1289,32 @@ a {
 
   .mobile-prompt-box textarea {
     width: 100%;
-    min-height: 112px;
-    resize: vertical;
+    min-height: 46px;
+    max-height: 118px;
+    resize: none;
     border: 0;
     outline: 0;
     color: #f6f7f8;
     background: #08090b;
-    border-radius: 15px;
-    padding: 12px;
+    border-radius: 18px;
+    padding: 13px 14px;
     line-height: 1.45;
   }
 
   .mobile-start-button,
   .mobile-ready-panel button {
-    min-height: 44px;
+    min-height: 46px;
     border-radius: 999px;
     background: #ffffff;
     color: #08090b;
     font-weight: 900;
     box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12), 0 18px 38px rgba(0, 0, 0, 0.22);
+  }
+
+  .mobile-start-button {
+    align-self: end;
+    min-width: 78px;
+    padding: 0 17px;
   }
 
   .mobile-processing-screen {
@@ -1310,7 +1345,7 @@ a {
     min-height: 126px;
     padding: 16px;
     border-radius: 22px;
-    background: #f8f8f9;
+    background: linear-gradient(180deg, #ffffff 0%, #f4f4f5 100%);
     color: #101116;
     border: 1px solid rgba(255, 255, 255, 0.5);
     box-shadow: 0 26px 70px rgba(0, 0, 0, 0.34);
@@ -1385,6 +1420,7 @@ a {
     border-radius: 20px;
     background: #101116;
     border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
   }
 
   .mobile-ready-panel[hidden] {
@@ -1402,7 +1438,7 @@ a {
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto auto minmax(0, 1fr);
     margin: 0 10px 10px;
   }
 
@@ -1417,6 +1453,33 @@ a {
     pointer-events: auto !important;
     width: calc(100% - 20px);
     max-width: calc(100vw - 20px);
+    margin-top: 10px;
+    margin-bottom: calc(10px + env(safe-area-inset-bottom));
+  }
+
+  .mobile-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 48px;
+    padding: 8px 10px;
+    background: #0f1014;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .mobile-preview-header strong {
+    font-size: 14px;
+  }
+
+  .mobile-preview-header button {
+    min-height: 32px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: #ffffff;
+    color: #08090b;
+    font-size: 12px;
+    font-weight: 900;
   }
 
   @keyframes processing-card-float {

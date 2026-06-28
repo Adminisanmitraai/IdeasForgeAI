@@ -14,7 +14,7 @@
       workspace_id: "workspace_local_ranjan",
       project_name: "SaaS Landing Page",
       project_type: "saas_landing_page",
-      current_phase: "Phase 25F mobile chat flow",
+      current_phase: "Phase 25G mobile chat shell",
       approval_status: "not_required",
       preview_status: "preview_only",
       created_at: "2026-06-28T00:00:00Z",
@@ -86,6 +86,27 @@
       jobStatus: "idle",
       activeStageIndex: 0,
     },
+    mobileChatMessages: [
+      {
+        message_id: "mobile_message_welcome",
+        project_id: "project_local_saas_landing",
+        sender_type: "assistant",
+        message_text:
+          "Hi, I'm IdeasForgeAI. Tell me what you want to build, and I'll turn your idea into a polished app or website preview.",
+        created_at: "2026-06-28T00:00:00Z",
+        linked_action: "mobile_welcome",
+        approval_required: false,
+      },
+      {
+        message_id: "mobile_message_helper",
+        project_id: "project_local_saas_landing",
+        sender_type: "assistant",
+        message_text: "Describe your product, audience, and the outcome you want.",
+        created_at: "2026-06-28T00:00:01Z",
+        linked_action: "mobile_helper",
+        approval_required: false,
+      },
+    ],
   };
 
   const SELECTORS = {
@@ -105,6 +126,7 @@
     mobileJobStatus: "[data-mobile-job-status]",
     mobileReadyPanel: "[data-mobile-ready]",
     mobileViewPreview: "[data-mobile-view-preview]",
+    mobileBackChat: "[data-mobile-back-chat]",
     processingCard: ".processing-card",
   };
 
@@ -180,9 +202,7 @@
   };
 
   const renderMobileLabels = () => {
-    setText("mobileWorkspaceName", IDEASFORGEAI_MOCK_STATE.selectedWorkspace.workspace_name);
-    setText("mobileProjectName", IDEASFORGEAI_MOCK_STATE.selectedProject.project_name);
-    setText("mobileFlowStatus", `${IDEASFORGEAI_MOCK_STATE.previewState.status} / Local mock state`);
+    setText("mobileFlowStatus", "Ready");
   };
 
   const renderMobileChatMessages = () => {
@@ -192,7 +212,7 @@
     }
 
     chatStream.replaceChildren(
-      ...IDEASFORGEAI_MOCK_STATE.chatMessages.map((message) => createChatBubble(message))
+      ...IDEASFORGEAI_MOCK_STATE.mobileChatMessages.map((message) => createChatBubble(message))
     );
     chatStream.scrollTop = chatStream.scrollHeight;
   };
@@ -209,7 +229,7 @@
     }
 
     if (jobStatus) {
-      jobStatus.textContent = status === "preview_ready" ? "Preview ready" : formatStatus(status);
+      jobStatus.textContent = status === "preview_ready" ? "Preview ready" : status === "idle" ? "Ready" : "Building";
     }
 
     if (readyPanel) {
@@ -236,17 +256,40 @@
     return message;
   };
 
+  const addLocalMobileMessage = (messageText, senderType = "user", linkedAction = "mobile_chat") => {
+    const message = {
+      message_id: `mobile_message_${IDEASFORGEAI_MOCK_STATE.mobileChatMessages.length + 1}`,
+      project_id: IDEASFORGEAI_MOCK_STATE.selectedProject.project_id,
+      sender_type: senderType,
+      message_text: messageText,
+      created_at: new Date().toISOString(),
+      linked_action: linkedAction,
+      approval_required: false,
+    };
+
+    IDEASFORGEAI_MOCK_STATE.mobileChatMessages.push(message);
+    return message;
+  };
+
   const startMobileMockJob = (messageText) => {
     if (messageText) {
       addLocalUserMessage(messageText);
+      addLocalMobileMessage(messageText);
+      addLocalMobileMessage(
+        "Got it. I'm turning this into a product plan and preview flow.",
+        "assistant",
+        "mobile_local_reply"
+      );
       renderChatMessages();
       renderMobileChatMessages();
     }
 
-    IDEASFORGEAI_MOCK_STATE.mobileFlow.currentStep = "processing";
-    IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus = "processing";
-    IDEASFORGEAI_MOCK_STATE.mobileFlow.activeStageIndex = 0;
-    renderProcessingState();
+    window.setTimeout(() => {
+      IDEASFORGEAI_MOCK_STATE.mobileFlow.currentStep = "processing";
+      IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus = "processing";
+      IDEASFORGEAI_MOCK_STATE.mobileFlow.activeStageIndex = 0;
+      renderProcessingState();
+    }, 420);
 
     let stageIndex = 0;
     const stageTimer = window.setInterval(() => {
@@ -326,6 +369,7 @@
     const mobilePromptForm = document.querySelector(SELECTORS.mobilePromptForm);
     const mobilePromptInput = document.querySelector(SELECTORS.mobilePromptInput);
     const mobileViewPreview = document.querySelector(SELECTORS.mobileViewPreview);
+    const mobileBackChat = document.querySelector(SELECTORS.mobileBackChat);
     const chips = Array.from(document.querySelectorAll(SELECTORS.mobilePromptChip));
 
     chips.forEach((chip) => {
@@ -340,7 +384,7 @@
     if (mobilePromptForm && mobilePromptInput) {
       mobilePromptForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        const messageText = mobilePromptInput.value.trim() || "Build a premium product-ready preview.";
+        const messageText = mobilePromptInput.value.trim() || "Build a polished app or website preview.";
         mobilePromptInput.value = "";
         startMobileMockJob(messageText);
       });
@@ -351,7 +395,17 @@
         IDEASFORGEAI_MOCK_STATE.mobileFlow.currentStep = "preview";
         IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus = "preview_ready";
         renderProcessingState();
-        document.querySelector(SELECTORS.preview)?.scrollIntoView({ behavior: "smooth", block: "start" });
+        document.querySelector(".preview-workspace")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
+
+    if (mobileBackChat) {
+      mobileBackChat.addEventListener("click", () => {
+        IDEASFORGEAI_MOCK_STATE.mobileFlow.currentStep = "chat";
+        IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus = "idle";
+        IDEASFORGEAI_MOCK_STATE.mobileFlow.activeStageIndex = 0;
+        renderProcessingState();
+        document.querySelector(SELECTORS.mobileStage)?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     }
   };

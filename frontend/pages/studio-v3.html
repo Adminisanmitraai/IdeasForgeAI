@@ -144,28 +144,24 @@
                   <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
                   <span>IdeasForgeAI</span>
                 </a>
-                <div>
-                  <strong data-state-field="mobileWorkspaceName">Ranjan Workplace</strong>
-                  <small data-state-field="mobileProjectName">SaaS Landing Page</small>
-                </div>
-                <span class="mobile-status-pill" data-state-field="mobileFlowStatus">Local mock state / Preview only</span>
+                <span class="mobile-status-pill" data-state-field="mobileFlowStatus">Ready</span>
               </header>
 
               <div class="mobile-chat-body">
-                <p class="eyebrow">Mobile builder</p>
                 <h2 id="mobile-chat-title">What should we build?</h2>
                 <div class="mobile-chat-stream" data-mobile-field="chatMessages"></div>
               </div>
 
               <form class="mobile-prompt-box" action="#" method="get">
                 <div class="mobile-prompt-chips" aria-label="Example prompts">
-                  <button type="button" data-mobile-prompt="Create a SaaS landing page for a product analytics app.">Create SaaS landing page</button>
-                  <button type="button" data-mobile-prompt="Build a premium dashboard preview for a founder CRM.">Build dashboard app</button>
-                  <button type="button" data-mobile-prompt="Create a booking website for appointments, services, and customer proof.">Create booking website</button>
+                  <button type="button" data-mobile-prompt="Create a SaaS landing page for a product analytics app.">SaaS landing page</button>
+                  <button type="button" data-mobile-prompt="Build a premium dashboard preview for a founder CRM.">Dashboard app</button>
+                  <button type="button" data-mobile-prompt="Create a booking website for appointments, services, and customer proof.">Booking website</button>
+                  <button type="button" data-mobile-prompt="Create a mobile app idea for busy professionals.">Mobile app idea</button>
                 </div>
-                <label for="mobilePrompt">Describe your idea</label>
-                <textarea id="mobilePrompt" rows="4" placeholder="Describe the product, audience, and desired outcome."></textarea>
-                <button class="mobile-start-button" type="submit" data-mobile-start>Start building</button>
+                <label class="visually-hidden" for="mobilePrompt">Describe your idea</label>
+                <textarea id="mobilePrompt" rows="3" placeholder="Describe your idea..."></textarea>
+                <button class="mobile-start-button" type="submit" data-mobile-start>Build</button>
               </form>
             </section>
 
@@ -179,42 +175,41 @@
               </header>
 
               <div class="processing-copy">
-                <p class="eyebrow">Local mock job</p>
                 <h2 id="mobile-processing-title">Building your idea</h2>
-                <p>Turning your concept into a product-ready preview.</p>
+                <p>Turning your concept into a product-ready preview</p>
               </div>
 
-              <div class="processing-card-stack" aria-label="Mock processing stages">
+              <div class="processing-card-stack" aria-label="Processing stages">
                 <article class="processing-card" data-stage-index="0">
                   <span>01</span>
-                  <strong>Understanding idea</strong>
-                  <small>Reading the concept and founder intent.</small>
+                  <strong>Understanding your idea</strong>
+                  <small>Reading the product, audience, and outcome.</small>
                 </article>
                 <article class="processing-card" data-stage-index="1">
                   <span>02</span>
-                  <strong>Planning product structure</strong>
+                  <strong>Creating product structure</strong>
                   <small>Mapping pages, sections, and workflow.</small>
                 </article>
                 <article class="processing-card" data-stage-index="2">
                   <span>03</span>
-                  <strong>Designing interface</strong>
-                  <small>Applying the black/white builder system.</small>
+                  <strong>Designing the interface</strong>
+                  <small>Shaping a polished visual direction.</small>
                 </article>
                 <article class="processing-card" data-stage-index="3">
                   <span>04</span>
-                  <strong>Creating preview</strong>
-                  <small>Preparing a static local preview state.</small>
+                  <strong>Preparing responsive preview</strong>
+                  <small>Making the preview work across screen sizes.</small>
                 </article>
                 <article class="processing-card" data-stage-index="4">
                   <span>05</span>
-                  <strong>Preparing approval gate</strong>
-                  <small>Keeping generation locked until approved.</small>
+                  <strong>Creating approval checkpoint</strong>
+                  <small>Getting the next step ready for review.</small>
                 </article>
               </div>
 
               <div class="mobile-ready-panel" data-mobile-ready hidden>
                 <strong>Preview ready</strong>
-                <p>Your local mock preview is ready to inspect.</p>
+                <p>Your preview is ready to inspect.</p>
                 <button type="button" data-mobile-view-preview>View preview</button>
               </div>
             </section>
@@ -223,6 +218,10 @@
 
         <!-- Right browser preview canvas -->
         <section class="preview-workspace" aria-label="Website preview">
+          <div class="mobile-preview-header">
+            <strong>Preview ready</strong>
+            <button type="button" data-mobile-back-chat>Back to chat</button>
+          </div>
           <div class="browser-bar">
             <div class="window-controls" aria-hidden="true">
               <span></span>

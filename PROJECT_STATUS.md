@@ -1,5 +1,18 @@
 # IdeasForgeAI Project Status
 
+## Phase 25G - Mobile Production Chat App Shell
+
+Status: Completed, not frozen.
+
+- Mobile production chat app shell added.
+- User-facing mock/test labels removed from the mobile experience.
+- Welcome-first chat experience added.
+- Live-chat-ready local composer added.
+- Processing flow polished.
+- Desktop builder preserved.
+- No real backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
 ## Phase 25F - Mobile Repair: Clean Chat Viewport
 
 Status: Completed, not frozen.
@@ -11032,4 +11045,45 @@ Validation passed:
 Current source of truth:
 - Phase 25F is frozen.
 - The mobile-first chat and processing flow is approved for safe frontend deployment.
+- Backend/provider/database/auth/secrets remain locked.
+
+## Phase 25G Freeze Review - Mobile Production Chat App Shell
+
+Status: Frozen.
+
+Phase 25G freeze review completed.
+
+Confirmed:
+- Mobile production-style chat app shell is implemented.
+- Mobile header is compact with IdeasForgeAI icon/name and Ready status.
+- User-facing mock/test labels were removed from mobile.
+- Mobile now starts with a welcome-first chat experience.
+- Sticky bottom composer was added.
+- Build button adds the user message locally.
+- Local assistant reply appears after Build.
+- Mobile slides to processing flow after Build.
+- Processing screen copy and cards were polished.
+- Mobile preview screen includes Preview ready and Back to chat.
+- Desktop builder remains preserved.
+- No real backend chat API was added.
+- No backend generation was unlocked.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No Render/DNS/GitHub deployment config changes were made.
+- No deployment was performed during the phase.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- Unsafe frontend scan returned no matches for fetch(, XMLHttpRequest, supabase, localStorage, sessionStorage, api_key, secret, token, or KisanMitra.
+- Local route returned 200:
+  - http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25g-mobile-production-chat
+- LAN route returned 200:
+  - http://192.168.1.7:8100/frontend/pages/studio-v3.html?v=phase25g-mobile-production-chat
+
+Current source of truth:
+- Phase 25G is frozen.
+- Mobile production chat app shell is approved for safe frontend deployment.
+- Real live AI chat requires Phase 26 backend-only API integration.
 - Backend/provider/database/auth/secrets remain locked.
