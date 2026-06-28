@@ -23,7 +23,7 @@
             <span aria-hidden="true">v</span>
           </button>
           <span class="version-pill" data-state-field="currentPhase">Static preview</span>
-          <span class="save-state" data-state-field="previewStatus">Preview only</span>
+          <span class="save-state" data-state-field="previewStatus">Preview ready</span>
         </div>
 
         <nav class="mode-tabs" aria-label="Builder modes">
@@ -69,7 +69,7 @@
                 <span class="option-dot muted"></span>
                 <span>
                   <strong>Client Demos</strong>
-                  <small>Preview only</small>
+                  <small>Static preview</small>
                 </span>
               </button>
               <button type="button" class="workspace-option">
@@ -112,8 +112,8 @@
                 <span data-state-field="approvalStatus">No approval needed</span>
               </div>
               <div class="state-badges" aria-label="Local preview status">
-                <span data-state-field="stateMode">Local mock state</span>
-                <span data-state-field="statePreview">Preview only</span>
+                <span data-state-field="stateMode">Local preview state</span>
+                <span data-state-field="statePreview">Preview ready</span>
                 <span data-state-field="stateDeployment">No deployment</span>
               </div>
               <ul class="checklist">
@@ -137,9 +137,41 @@
 
         <!-- Mobile-only chat-first and mock processing flow -->
         <section class="mobile-flow mobile-creation-flow" aria-label="Mobile AI creation flow">
+          <div class="mobile-drawer-backdrop" data-mobile-drawer-backdrop hidden></div>
+          <aside class="mobile-menu-drawer" data-mobile-drawer aria-label="Mobile menu" hidden>
+            <div class="mobile-drawer-header">
+              <span>
+                <strong>IdeasForgeAI</strong>
+                <small>AI Product Builder</small>
+              </span>
+              <button type="button" data-mobile-drawer-close aria-label="Close menu">
+                <svg aria-hidden="true" viewBox="0 0 24 24">
+                  <path d="M6 6l12 12M18 6 6 18"></path>
+                </svg>
+              </button>
+            </div>
+            <nav class="mobile-drawer-nav" aria-label="Mobile menu options">
+              <button type="button" data-mobile-menu-action="new">New Idea</button>
+              <button type="button" data-mobile-menu-action="placeholder">My Projects</button>
+              <button type="button" data-mobile-menu-action="placeholder">Templates</button>
+              <button type="button" data-mobile-menu-action="placeholder">Preview History</button>
+              <button type="button" data-mobile-menu-action="placeholder">Exports</button>
+              <button type="button" data-mobile-menu-action="placeholder">Credits / Plan</button>
+              <button type="button" data-mobile-menu-action="placeholder">Settings</button>
+              <button type="button" data-mobile-menu-action="placeholder">Help &amp; Support</button>
+            </nav>
+            <p class="mobile-drawer-footer">v1.0.0 Preview</p>
+          </aside>
+          <div class="mobile-toast" data-mobile-toast hidden></div>
+
           <div class="mobile-flow-track">
             <section class="mobile-screen mobile-chat-screen" aria-labelledby="mobile-chat-title">
               <header class="mobile-flow-header">
+                <button class="mobile-menu-button" type="button" aria-label="Open menu">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </button>
                 <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
                   <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
                   <span>
@@ -147,38 +179,59 @@
                     <small>AI Product Builder</small>
                   </span>
                 </a>
-                <span class="mobile-status-pill" data-state-field="mobileFlowStatus">Ready</span>
+                <button class="mobile-profile-button" type="button" aria-label="Profile / Login">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M20 21a8 8 0 0 0-16 0"></path>
+                    <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+                  </svg>
+                </button>
               </header>
 
               <div class="mobile-chat-body">
-                <h2 id="mobile-chat-title">What is your idea to build</h2>
+                <div class="mobile-hero-copy">
+                  <h2 id="mobile-chat-title">What is your idea to build</h2>
+                  <p>Describe your idea and I'll help you build it.</p>
+                </div>
                 <div class="mobile-chat-stream" data-mobile-field="chatMessages"></div>
               </div>
 
               <form class="mobile-prompt-box" action="#" method="get">
-                <button class="mobile-chat-tool" type="button" aria-label="Attach file">
-                  <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M12 5v14M5 12h14"></path>
-                  </svg>
-                </button>
                 <label class="visually-hidden" for="mobilePrompt">Describe your idea</label>
+                <div class="mobile-local-assets" data-mobile-local-assets hidden></div>
                 <textarea id="mobilePrompt" rows="3" placeholder="Describe your idea..."></textarea>
-                <button class="mobile-chat-tool" type="button" aria-label="Record voice note">
-                  <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path>
-                    <path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>
-                  </svg>
-                </button>
-                <button class="mobile-start-button" type="submit" data-mobile-start aria-label="Send idea">
-                  <svg aria-hidden="true" viewBox="0 0 24 24">
-                    <path d="M5 12h13M13 6l6 6-6 6"></path>
-                  </svg>
-                </button>
+                <div class="mobile-composer-controls" aria-label="Composer controls">
+                  <button class="mobile-chat-tool" type="button" aria-label="Attach file" data-mobile-attach-open>
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path d="M12 5v14M5 12h14"></path>
+                    </svg>
+                  </button>
+                  <span class="composer-control-spacer" aria-hidden="true"></span>
+                  <button class="mobile-chat-tool" type="button" aria-label="Record voice note" data-mobile-voice-toggle>
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path>
+                      <path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>
+                    </svg>
+                  </button>
+                  <button class="mobile-start-button" type="submit" data-mobile-start aria-label="Send idea">
+                    <svg aria-hidden="true" viewBox="0 0 24 24">
+                      <path d="M5 12h13M13 6l6 6-6 6"></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="mobile-voice-status" data-mobile-voice-status hidden>Recording 0:00</div>
+                <input class="visually-hidden" type="file" accept="image/*" capture="environment" data-mobile-camera-input>
+                <input class="visually-hidden" type="file" accept="image/*" data-mobile-photos-input>
+                <input class="visually-hidden" type="file" accept="*/*" data-mobile-files-input>
               </form>
             </section>
 
             <section class="mobile-screen mobile-processing-screen" aria-labelledby="mobile-processing-title">
               <header class="mobile-flow-header">
+                <button class="mobile-menu-button" type="button" aria-label="Open menu">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </button>
                 <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
                   <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
                   <span>
@@ -186,7 +239,12 @@
                     <small>AI Product Builder</small>
                   </span>
                 </a>
-                <span class="mobile-status-pill" data-mobile-job-status>Processing</span>
+                <button class="mobile-profile-button" type="button" aria-label="Profile / Login">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M20 21a8 8 0 0 0-16 0"></path>
+                    <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+                  </svg>
+                </button>
               </header>
 
               <div class="processing-copy">
@@ -229,6 +287,40 @@
               </div>
             </section>
           </div>
+
+          <div class="mobile-sheet-backdrop" data-mobile-sheet-backdrop hidden></div>
+          <section class="mobile-attach-sheet" data-mobile-attach-sheet aria-label="Attachment options" hidden>
+            <div class="mobile-sheet-handle" aria-hidden="true"></div>
+            <h3>Add attachment</h3>
+            <button type="button" data-mobile-attach-choice="camera">
+              <span aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M4 8h4l2-3h4l2 3h4v11H4Z"></path>
+                  <path d="M12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+                </svg>
+              </span>
+              Camera
+            </button>
+            <button type="button" data-mobile-attach-choice="photos">
+              <span aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M5 5h14v14H5Z"></path>
+                  <path d="M8 15l3-3 2 2 2-3 3 4"></path>
+                  <path d="M9 9h.01"></path>
+                </svg>
+              </span>
+              Photos
+            </button>
+            <button type="button" data-mobile-attach-choice="files">
+              <span aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M7 3h7l4 4v14H7Z"></path>
+                  <path d="M14 3v5h5"></path>
+                </svg>
+              </span>
+              Files
+            </button>
+          </section>
         </section>
 
         <!-- Right browser preview canvas -->

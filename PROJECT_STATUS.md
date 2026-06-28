@@ -1,5 +1,82 @@
 # IdeasForgeAI Project Status
 
+## Phase 25J - Mobile Chat Flow, Menu Drawer, Attachments, and Voice
+
+Status: Completed, not frozen.
+
+- Normal text submit now stays in chat.
+- Generate Preview starts the processing/preview flow.
+- Mobile menu drawer added.
+- New Idea local reset added.
+- Attachment action sheet added with Camera, Photos, and Files.
+- Local-only attachment chips added.
+- Local-only voice note recording added where browser-supported.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25I - Final Mobile Bottom Gap Micro Repair
+
+Status: Completed, not frozen.
+
+- Mobile composer reserve spacing reduced to 12px.
+- Composer moved closer to the mobile browser bottom bar.
+- Safe-area support preserved.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25I - Mobile Bottom Gap Micro Repair
+
+Status: Completed, not frozen.
+
+- Mobile composer bottom reserve spacing reduced.
+- Composer moved slightly downward while staying visible.
+- Safe-area support preserved.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25I - Mobile Header and Composer Repair
+
+Status: Completed, not frozen.
+
+- Mobile menu icon polished with a rounded soft button, balanced centered lines, subtle border, and soft shadow.
+- Top-right chat icon replaced with a profile/login icon placeholder.
+- Composer moved above mobile browser controls.
+- Safe-area and browser bottom reserve spacing added.
+- Chat body bottom padding improved so messages remain readable above the composer.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25I - Mobile Light Chat Interface Alignment
+
+Status: Completed, not frozen.
+
+- Mobile light ChatGPT-like interface added.
+- Logo aligned immediately after the 3-line menu.
+- `AI Product Builder` tagline added.
+- Clean left/right chat bubbles added with assistant avatar and speech-tail polish.
+- Premium bottom composer added with attachment, voice, and purple circular send controls.
+- Local-only chat behavior preserved.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
+## Phase 25I - Mobile Premium Composer Polish
+
+Status: Completed, not frozen.
+
+- Mobile premium composer polish completed.
+- Larger full-width input added.
+- Bottom control row added for attachment, voice, and send.
+- Purple glowing send button polished.
+- Existing local chat behavior preserved.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
 ## Phase 25H - Mobile Intelligent Chat Bar and Bubble Polish
 
 Status: Completed, not frozen.
