@@ -3,8 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta http-equiv="refresh" content="0; url=pages/studio-v3.html" />
+  <meta http-equiv="refresh" content="0; url=./pages/studio-v3.html" />
   <title>IdeasForgeAI</title>
+  <script>
+    (function () {
+      var target = "./pages/studio-v3.html" + window.location.search + window.location.hash;
+      window.location.replace(target);
+    })();
+  </script>
   <style>
     body {
       min-height: 100vh;
@@ -51,7 +57,15 @@
   <main>
     <h1>IdeasForgeAI</h1>
     <p>Opening the IdeasForgeAI Studio. If it does not open automatically, use the button below.</p>
-    <a href="pages/studio-v3.html">Open IdeasForgeAI Studio</a>
+    <a id="studio-link" href="./pages/studio-v3.html">Open IdeasForgeAI Studio</a>
   </main>
+  <script>
+    (function () {
+      var fallback = document.getElementById("studio-link");
+      if (fallback) {
+        fallback.href = "./pages/studio-v3.html" + window.location.search + window.location.hash;
+      }
+    })();
+  </script>
 </body>
 </html>

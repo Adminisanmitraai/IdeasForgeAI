@@ -1,5 +1,16 @@
 # IdeasForgeAI Project Status
 
+## Root URL Routing to Studio V3
+
+Status: Completed, not frozen.
+
+- Root frontend index now routes to Studio V3.
+- Mobile root URL will show the mobile chat interface through responsive Studio V3.
+- Desktop root URL will show the desktop builder through responsive Studio V3.
+- Query strings are preserved by the static JavaScript redirect.
+- No backend/provider/database/auth/secrets/deployment changes.
+- KisanMitraAI not touched.
+
 ## Phase 25J - Mobile Chat Flow, Menu Drawer, Attachments, and Voice
 
 Status: Completed, not frozen.
