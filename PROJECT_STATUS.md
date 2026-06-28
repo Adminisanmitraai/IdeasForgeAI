@@ -1,5 +1,19 @@
 # IdeasForgeAI Project Status
 
+## Phase 25H - Mobile Intelligent Chat Bar and Bubble Polish
+
+Status: Completed, not frozen.
+
+- Mobile intelligent chat bar added.
+- Attachment, voice, and send icons added as local-only UI placeholders.
+- Chat bubbles polished with left/right speech bubble effect.
+- Prompt chips removed from the mobile chat composer.
+- Headline changed to "What is your idea to build".
+- Logo and tagline polished.
+- Desktop builder preserved.
+- No backend/provider/database/auth/secrets/deployment added.
+- KisanMitraAI not touched.
+
 ## Phase 25G - Mobile Production Chat App Shell
 
 Status: Completed, not frozen.
@@ -11085,5 +11099,47 @@ Validation passed:
 Current source of truth:
 - Phase 25G is frozen.
 - Mobile production chat app shell is approved for safe frontend deployment.
+- Real live AI chat requires Phase 26 backend-only API integration.
+- Backend/provider/database/auth/secrets remain locked.
+
+## Phase 25H Freeze Review - Mobile Intelligent Chat Bar and Bubble Polish
+
+Status: Frozen.
+
+Phase 25H freeze review completed.
+
+Confirmed:
+- Mobile headline changed to: What is your idea to build.
+- IdeasForgeAI logo now has premium border/glow.
+- Mobile tagline added: AI Product Builder.
+- Mobile prompt chips were removed from visible chat composer.
+- Left/right chat bubbles were polished with speech-tail styling.
+- Assistant bubbles now show IdeasForgeAI avatar.
+- Intelligent bottom chat bar was added.
+- Attachment, voice, and send icon controls were added as local-only UI placeholders.
+- Send button is circular with purple glow.
+- Existing local submit behavior still adds user message.
+- Local assistant reply still appears.
+- Local processing flow still starts.
+- Desktop builder remains preserved.
+- No backend generation was unlocked.
+- No provider calls were added.
+- No database/auth/Supabase/secrets were added.
+- No Render/DNS/GitHub deployment config changes were made.
+- No deployment was performed during the phase.
+- KisanMitraAI production was not touched.
+
+Validation passed:
+- node --check frontend/pages/studio-v3.js
+- python -m compileall backend
+- Unsafe frontend scan returned no matches for fetch(, XMLHttpRequest, supabase, localStorage, sessionStorage, api_key, secret, token, or KisanMitra.
+- Local route returned 200:
+  - http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25h-chat-polish
+- LAN route returned 200:
+  - http://192.168.1.7:8100/frontend/pages/studio-v3.html?v=phase25h-chat-polish
+
+Current source of truth:
+- Phase 25H is frozen.
+- Mobile intelligent chat UI is approved for safe frontend deployment.
 - Real live AI chat requires Phase 26 backend-only API integration.
 - Backend/provider/database/auth/secrets remain locked.

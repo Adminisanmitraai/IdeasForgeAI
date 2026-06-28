@@ -142,26 +142,38 @@
               <header class="mobile-flow-header">
                 <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
                   <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
-                  <span>IdeasForgeAI</span>
+                  <span>
+                    <strong>IdeasForgeAI</strong>
+                    <small>AI Product Builder</small>
+                  </span>
                 </a>
                 <span class="mobile-status-pill" data-state-field="mobileFlowStatus">Ready</span>
               </header>
 
               <div class="mobile-chat-body">
-                <h2 id="mobile-chat-title">What should we build?</h2>
+                <h2 id="mobile-chat-title">What is your idea to build</h2>
                 <div class="mobile-chat-stream" data-mobile-field="chatMessages"></div>
               </div>
 
               <form class="mobile-prompt-box" action="#" method="get">
-                <div class="mobile-prompt-chips" aria-label="Example prompts">
-                  <button type="button" data-mobile-prompt="Create a SaaS landing page for a product analytics app.">SaaS landing page</button>
-                  <button type="button" data-mobile-prompt="Build a premium dashboard preview for a founder CRM.">Dashboard app</button>
-                  <button type="button" data-mobile-prompt="Create a booking website for appointments, services, and customer proof.">Booking website</button>
-                  <button type="button" data-mobile-prompt="Create a mobile app idea for busy professionals.">Mobile app idea</button>
-                </div>
+                <button class="mobile-chat-tool" type="button" aria-label="Attach file">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M12 5v14M5 12h14"></path>
+                  </svg>
+                </button>
                 <label class="visually-hidden" for="mobilePrompt">Describe your idea</label>
                 <textarea id="mobilePrompt" rows="3" placeholder="Describe your idea..."></textarea>
-                <button class="mobile-start-button" type="submit" data-mobile-start>Build</button>
+                <button class="mobile-chat-tool" type="button" aria-label="Record voice note">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path>
+                    <path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>
+                  </svg>
+                </button>
+                <button class="mobile-start-button" type="submit" data-mobile-start aria-label="Send idea">
+                  <svg aria-hidden="true" viewBox="0 0 24 24">
+                    <path d="M5 12h13M13 6l6 6-6 6"></path>
+                  </svg>
+                </button>
               </form>
             </section>
 
@@ -169,7 +181,10 @@
               <header class="mobile-flow-header">
                 <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
                   <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
-                  <span>IdeasForgeAI</span>
+                  <span>
+                    <strong>IdeasForgeAI</strong>
+                    <small>AI Product Builder</small>
+                  </span>
                 </a>
                 <span class="mobile-status-pill" data-mobile-job-status>Processing</span>
               </header>

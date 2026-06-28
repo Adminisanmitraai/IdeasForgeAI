@@ -14,7 +14,7 @@
       workspace_id: "workspace_local_ranjan",
       project_name: "SaaS Landing Page",
       project_type: "saas_landing_page",
-      current_phase: "Phase 25G mobile chat shell",
+      current_phase: "Phase 25H chat polish",
       approval_status: "not_required",
       preview_status: "preview_only",
       created_at: "2026-06-28T00:00:00Z",
