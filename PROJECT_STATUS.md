@@ -11609,3 +11609,30 @@ Stage gate:
 - Phase 27C GitHub push passed.
 - Phase 27C Render live verification passed.
 - Phase 27D is now allowed to start.
+
+## Phase 27C - Workflow Mapping Agent
+
+Status: Completed and live verified.
+
+- Backend Workflow Mapping Agent is live.
+- Live endpoint verified: POST /api/workflow-map.
+- Agent converts user idea, sector classification, and requirements into a detailed step-by-step workflow map.
+- Workflow map identifies actors, input flow, main workflow steps, AI decision points, manual review points, exception flows, screens touched, data captured, outputs created, approval gates, status states, notifications, and future automation hooks.
+- Tested with home tiffin/home business assistant workflow.
+- Sector classification remains enabled.
+- Requirement expansion remains enabled.
+- Product planning remains enabled.
+- Preview planning remains enabled.
+- Approval gate remains enabled.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27C local validation passed.
+- Phase 27C GitHub push passed.
+- Phase 27C Render live verification passed.
+- Phase 27D is now allowed to start.
