@@ -11720,3 +11720,26 @@ Stage gate:
 - Phase 27E GitHub push passed.
 - Phase 27E Render live verification passed.
 - Phase 27F is now allowed to start.
+
+## Phase 27F - Frontend Product Flow Connector
+
+Status: Completed and live verified.
+
+- Frontend Product Flow Connector is live.
+- Live script verified: /scripts/product-flow-client.js?v=27f2.
+- Browser console verified: window.IdeasForgeAIProductFlow is available.
+- Live frontend successfully calls backend POST /api/product-flow.
+- Backend response verified: ok true, phase 27E, mode product-flow-orchestration.
+- Product flow returns planning response from live backend.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27F local validation passed.
+- Phase 27F GitHub push passed.
+- Phase 27F Render live verification passed.
+- Phase 27G is now allowed to start.
