@@ -2519,3 +2519,42 @@ a {
   }
 }
 
+
+/* =========================================================
+   PHASE 27P COMPOSER FINAL POSITION FIX
+   Scope: studio-v3 mobile chat only.
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .mobile-chat-screen .ideasforge-mobile-scroll {
+    padding-bottom: 310px !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: max(14px, env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    min-height: 218px !important;
+    max-height: 238px !important;
+    padding: 18px !important;
+    border-radius: 28px !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer textarea {
+    height: 118px !important;
+    min-height: 118px !important;
+    max-height: 118px !important;
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+    border-radius: 22px !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button {
+    flex-shrink: 0 !important;
+  }
+}
+
