@@ -11404,3 +11404,30 @@ Stage gate:
 - Phase 26E GitHub push passed.
 - Phase 26E Render live verification passed.
 - Phase 26F is now allowed to start.
+
+## Phase 26F - Approval Gate Before Code Generation
+
+Status: Completed and live verified.
+
+- Backend Approval Gate Agent is live.
+- Live endpoint verified: POST /api/approval-gate.
+- Live status endpoint verified: GET /api/approval-gate/status.
+- Product planning remains enabled.
+- Preview planning remains enabled.
+- Approval gate is enabled.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend API key was added.
+- No HTML/CSS/JS/file generation is added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 26A backend contract live passed.
+- Phase 26B backend-only OpenAI live passed.
+- Phase 26C frontend chat live passed.
+- Phase 26D product plan generator live passed.
+- Phase 26E preview generator live passed.
+- Phase 26F approval gate live passed.
+- Stage 2 is ready for full app flow review before moving to Phase 27.
