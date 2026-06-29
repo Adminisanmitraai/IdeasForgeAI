@@ -11244,3 +11244,25 @@ Current source of truth:
 - Mobile intelligent chat UI is approved for safe frontend deployment.
 - Real live AI chat requires Phase 26 backend-only API integration.
 - Backend/provider/database/auth/secrets remain locked.
+
+## Phase 26A - Production Safe Backend Chat API Contract
+
+Status: Completed and live verified.
+
+- Backend service created on Render as ideasforgeai-api.
+- Live backend URL: https://ideasforgeai-api.onrender.com
+- GET /api/health verified live.
+- GET /api/contract verified live.
+- POST /api/chat verified live.
+- Backend is contract-only.
+- OpenAI integration is not added yet.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- Frontend connector is not added yet.
+- Frontend service ideasforgeai-web remains unchanged.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 26A local validation passed.
+- Phase 26A GitHub push passed.
+- Phase 26A Render live verification passed.
+- Phase 26B is now allowed to start.
