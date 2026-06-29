@@ -2603,3 +2603,46 @@ a {
   }
 }
 
+
+/* =========================================================
+   PHASE 27P LATEST MESSAGE ABOVE COMPOSER FIX
+   Scope: studio-v3 mobile chat only.
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .mobile-chat-screen .ideasforge-mobile-scroll {
+    padding-bottom: 360px !important;
+    scroll-padding-bottom: 280px !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-scroll > *:last-child {
+    margin-bottom: 280px !important;
+    scroll-margin-bottom: 280px !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer {
+    bottom: max(10px, env(safe-area-inset-bottom)) !important;
+    min-height: 168px !important;
+    max-height: 188px !important;
+    padding: 13px !important;
+    border-radius: 26px !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer textarea {
+    height: 86px !important;
+    min-height: 86px !important;
+    max-height: 86px !important;
+    font-size: 18px !important;
+    line-height: 1.32 !important;
+    padding: 16px 18px !important;
+    border-radius: 20px !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    min-height: 54px !important;
+  }
+}
+
