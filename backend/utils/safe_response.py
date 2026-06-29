@@ -8,8 +8,9 @@ PHASE_26E = "26E"
 PHASE_26F = "26F"
 PHASE_27A = "27A"
 PHASE_27B = "27B"
+PHASE_27C = "27C"
 SERVICE_NAME = "ideasforgeai-backend"
-CONTRACT_VERSION = "2026-06-29-phase-27b"
+CONTRACT_VERSION = "2026-06-29-phase-27c"
 
 DISABLED_CAPABILITIES = [
     "code_generation",
@@ -37,6 +38,7 @@ def safety_flags() -> dict:
         "deploymentEnabled": False,
         "sectorClassificationEnabled": True,
         "requirementExpansionEnabled": True,
+        "workflowMappingEnabled": True,
         "productGenerationEnabled": True,
         "previewGenerationEnabled": True,
         "approvalGateEnabled": True,
@@ -47,7 +49,7 @@ def safety_flags() -> dict:
 def validation_error(message: str, code: str = "VALIDATION_ERROR") -> dict:
     return {
         "ok": False,
-        "phase": PHASE_27B,
+        "phase": PHASE_27C,
         "error": {
             "code": code,
             "message": message,
@@ -64,6 +66,7 @@ def disabled_capability_report() -> dict:
         "deploymentEnabled": False,
         "sectorClassificationEnabled": True,
         "requirementExpansionEnabled": True,
+        "workflowMappingEnabled": True,
         "productGenerationEnabled": True,
         "previewGenerationEnabled": True,
         "approvalGateEnabled": True,
