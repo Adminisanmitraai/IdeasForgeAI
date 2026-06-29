@@ -4,11 +4,12 @@
 PHASE_26A = "26A"
 PHASE_26B = "26B"
 PHASE_26D = "26D"
+PHASE_26E = "26E"
+PHASE_26E = "26E"
 SERVICE_NAME = "ideasforgeai-backend"
-CONTRACT_VERSION = "2026-06-29-phase-26d"
+CONTRACT_VERSION = "2026-06-29-phase-26e"
 
 DISABLED_CAPABILITIES = [
-    "preview_generation",
     "code_generation",
     "database",
     "auth",
@@ -33,7 +34,7 @@ def safety_flags() -> dict:
         "voiceEnabled": False,
         "deploymentEnabled": False,
         "productGenerationEnabled": True,
-        "previewGenerationEnabled": False,
+        "previewGenerationEnabled": True,
         "codeGenerationEnabled": False,
     }
 
@@ -41,7 +42,7 @@ def safety_flags() -> dict:
 def validation_error(message: str, code: str = "VALIDATION_ERROR") -> dict:
     return {
         "ok": False,
-        "phase": PHASE_26D,
+        "phase": PHASE_26E,
         "error": {
             "code": code,
             "message": message,
@@ -57,6 +58,6 @@ def disabled_capability_report() -> dict:
         "fileProcessingEnabled": False,
         "deploymentEnabled": False,
         "productGenerationEnabled": True,
-        "previewGenerationEnabled": False,
+        "previewGenerationEnabled": True,
         "codeGenerationEnabled": False,
     }
