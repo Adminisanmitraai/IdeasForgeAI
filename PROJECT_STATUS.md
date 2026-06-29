@@ -12311,3 +12311,27 @@ Confirmed:
 Stage gate:
 - Phase 27Q desktop visual implementation complete.
 - Phase 27R desktop/mobile regression lock next.
+
+## Phase 27Q-FINAL - Web Browser Builder Layout Freeze
+
+Status: Completed and visually frozen.
+
+Confirmed:
+- Desktop toolbar is clean.
+- Mobile/Tablet/Laptop preview switcher is visible.
+- Share, Publish, and Profile controls are visible.
+- Left desktop preview uses a separate static mobile mock.
+- Real mobile screen is untouched.
+- Left preview has no inner mobile logo/header/profile.
+- Left preview composer is visible and polished.
+- Mic and submit buttons are separated.
+- Right hero display is clean and readable.
+- Feature cards are visible.
+- No global scripts added.
+- No backend changes.
+- No frontend OpenAI API key added.
+- KisanMitraAI not touched.
+
+Freeze rule:
+- Do not modify Phase 27Q layout again unless a new screenshot freeze reference is created.
+- Future dynamic product preview work must update content only, not layout.
