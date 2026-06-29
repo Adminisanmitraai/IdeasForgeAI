@@ -339,21 +339,61 @@
 
     setStatus("Creating product plan...", "loading");
 
-    const response = await fetch(PRODUCT_PLAN_ENDPOINT, {
+    const requestOptions = {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(payload)
-    });
+    };
 
-    const data = await response.json().catch(() => ({
-      ok: false,
-      error: {
-        code: "INVALID_RESPONSE",
-        message: "Backend product plan response was not valid JSON."
+    let response = null;
+    let data = null;
+    let lastError = null;
+
+    for (let attempt = 1; attempt <= 3; attempt += 1) {
+      try {
+        if (attempt > 1) {
+          setStatus("Retrying product plan request... attempt " + attempt, "loading");
+          await new Promise((resolve) => setTimeout(resolve, 1200 * attempt));
+        }
+
+        response = await fetch(PRODUCT_PLAN_ENDPOINT, requestOptions);
+
+        data = await response.json().catch(() => ({
+          ok: false,
+          error: {
+            code: "INVALID_RESPONSE",
+            message: "Backend product plan response was not valid JSON."
+          }
+        }));
+
+        if (response.ok && data && data.ok) {
+          break;
+        }
+
+        lastError = data;
+      } catch (error) {
+        lastError = {
+          ok: false,
+          error: {
+            code: "NETWORK_OR_CORS_RETRY",
+            message: error && error.message ? error.message : "Temporary network/CORS issue while contacting product plan."
+          }
+        };
       }
-    }));
+    }
+
+    if (!response || !data) {
+      data = lastError || {
+        ok: false,
+        error: {
+          code: "PRODUCT_PLAN_UNREACHABLE",
+          message: "Product plan service could not be reached after retry."
+        }
+      };
+      response = { ok: false };
+    }
 
     if (!response.ok || !data.ok) {
       const message = data && data.error && data.error.message
