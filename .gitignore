@@ -70,3 +70,11 @@ coverage/
 *.sqlite
 *.sqlite3
 *.db
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Local secrets
+.env
+backend/.env
