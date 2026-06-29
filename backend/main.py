@@ -26,6 +26,7 @@ from backend.frontend_generator import (
 from backend.api.phase26a_contract import router as phase26a_contract_router
 from backend.api.product_plan import router as product_plan_router
 from backend.api.preview_plan import router as preview_plan_router
+from backend.api.approval_gate import router as approval_gate_router
 from backend.pixel_converter import PixelConverterContractEngine, PixelConverterContractRequest
 from backend.product_brain.workflow_engine import ProductBrainWorkflow
 
@@ -50,6 +51,7 @@ app.include_router(health_router)
 app.include_router(phase26a_contract_router)
 app.include_router(product_plan_router)
 app.include_router(preview_plan_router)
+app.include_router(approval_gate_router)
 
 if GENERATED_APPS_DIR.exists():
     app.mount(
