@@ -4505,3 +4505,58 @@ a {
   }
 }
 
+
+/* =========================================================
+   PHASE 27Q-STATIC-PREVIEW-SUBTITLE-VISIBILITY-FIX
+   Scope: desktop static left preview only.
+   Real mobile screen untouched.
+   ========================================================= */
+
+@media (min-width: 769px) {
+  .studio-web-shell .studio-static-mobile-preview {
+    padding-top: 26px !important;
+  }
+
+  .studio-web-shell .studio-static-preview-hero {
+    margin-bottom: 26px !important;
+    padding: 0 10px !important;
+  }
+
+  .studio-web-shell .studio-static-preview-hero h1 {
+    font-size: 28px !important;
+    line-height: 1.02 !important;
+    margin-bottom: 12px !important;
+  }
+
+  .studio-web-shell .studio-static-preview-hero p {
+    display: block !important;
+    position: relative !important;
+    z-index: 1 !important;
+    font-size: 12.5px !important;
+    line-height: 1.35 !important;
+    font-weight: 400 !important;
+    color: #787a86 !important;
+    margin: 0 !important;
+  }
+
+  .studio-web-shell .studio-static-chat-stream {
+    gap: 11px !important;
+  }
+
+  .studio-web-shell .studio-static-assistant-bubble {
+    font-size: 12.5px !important;
+    line-height: 1.38 !important;
+    font-weight: 450 !important;
+    padding: 12px 13px !important;
+  }
+
+  .studio-web-shell .studio-static-composer {
+    height: 150px !important;
+    min-height: 150px !important;
+  }
+
+  .studio-web-shell .studio-static-composer-input {
+    height: 68px !important;
+  }
+}
+
