@@ -1,5 +1,22 @@
 # IdeasForgeAI Project Status
 
+## Phase 26C - Frontend Chat Backend Connection
+
+Status: Local validation completed, not frozen.
+
+- Studio V3 normal text submit now calls `https://ideasforgeai-api.onrender.com/api/chat`.
+- Frontend sends only chat metadata and message text to the backend; no OpenAI key is exposed in frontend code.
+- Loading/typing assistant bubble added while the backend responds.
+- Backend assistant responses render in the existing assistant bubble UI.
+- Friendly backend-unavailable/error messages are shown in chat.
+- Generate Preview remains gated and separate from normal chat submit.
+- Attachment and voice features remain local-only and are not sent to the backend.
+- Polished mobile chat UI and desktop builder layout preserved.
+- Live backend CORS preflight verified for local and production frontend origins.
+- Live backend `/api/chat` returned a real Phase 26B OpenAI assistant response.
+- No database/auth/billing/upload/OCR/image/voice/preview/code generation added.
+- KisanMitraAI not touched.
+
 ## Phase 26B - Backend-Only OpenAI Chat Integration
 
 Status: Backend code live on Render, OpenAI environment variable pending, not frozen.

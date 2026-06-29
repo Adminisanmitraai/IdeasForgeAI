@@ -1,4 +1,6 @@
 (function () {
+  const BACKEND_CHAT_API_URL = "https://ideasforgeai-api.onrender.com/api/chat";
+
   const IDEASFORGEAI_MOCK_STATE = {
     selectedWorkspace: {
       workspace_id: "workspace_local_ranjan",
@@ -152,8 +154,8 @@
   };
 
   const MOBILE_INITIAL_MESSAGES = IDEASFORGEAI_MOCK_STATE.mobileChatMessages.map((message) => ({ ...message }));
-  const MOBILE_CHAT_REPLY =
-    "Got it. I can help shape this into a product. Add more details, or tap Generate Preview when you're ready.";
+  const CHAT_UNAVAILABLE_MESSAGE =
+    "I could not reach the IdeasForgeAI backend right now. Please try again in a moment.";
 
   let mobileToastTimer = null;
   let mobileProcessingTimer = null;
@@ -211,6 +213,10 @@
     const article = document.createElement("article");
     const senderType = message.sender_type === "user" ? "user" : "assistant";
     article.className = `chat-bubble ${senderType}`;
+    if (message.is_loading) {
+      article.classList.add("is-loading");
+      article.setAttribute("aria-live", "polite");
+    }
 
     const name = document.createElement("span");
     name.className = "bubble-name";
@@ -245,6 +251,9 @@
   const hasMobileUserMessage = () =>
     IDEASFORGEAI_MOCK_STATE.mobileChatMessages.some((message) => message.sender_type === "user");
 
+  const hasPendingBackendReply = () =>
+    IDEASFORGEAI_MOCK_STATE.mobileChatMessages.some((message) => message.is_loading);
+
   const renderChatMessages = () => {
     const chatStream = document.querySelector(SELECTORS.chatStream);
     if (!chatStream) {
@@ -268,7 +277,11 @@
     }
 
     const messageNodes = IDEASFORGEAI_MOCK_STATE.mobileChatMessages.map((message) => createChatBubble(message));
-    if (hasMobileUserMessage() && IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus === "idle") {
+    if (
+      hasMobileUserMessage() &&
+      !hasPendingBackendReply() &&
+      IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus === "idle"
+    ) {
       messageNodes.push(createGeneratePreviewCard());
     }
 
@@ -397,6 +410,77 @@
     return message;
   };
 
+  const addAssistantMessage = (messageText, linkedAction = "backend_chat_reply") => {
+    const desktopMessage = addLocalUserMessage("");
+    desktopMessage.sender_type = "assistant";
+    desktopMessage.message_text = messageText;
+    desktopMessage.linked_action = linkedAction;
+
+    const mobileMessage = addLocalMobileMessage(messageText, "assistant", linkedAction);
+    return { desktopMessage, mobileMessage };
+  };
+
+  const requestBackendChat = async (messageText, client) => {
+    const response = await fetch(BACKEND_CHAT_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        sessionId: `studio-v3-${client}`,
+        message: messageText,
+        client,
+        intent: "chat",
+      }),
+    });
+
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+      const fallback = data?.assistant?.content || data?.error?.message || CHAT_UNAVAILABLE_MESSAGE;
+      throw new Error(fallback);
+    }
+
+    return data?.assistant?.content || CHAT_UNAVAILABLE_MESSAGE;
+  };
+
+  const submitBackendChatMessage = async (messageText, client = "desktop") => {
+    const trimmedMessage = messageText.trim();
+    if (!trimmedMessage) {
+      return;
+    }
+
+    addLocalUserMessage(trimmedMessage);
+    addLocalMobileMessage(trimmedMessage);
+    const { desktopMessage, mobileMessage } = addAssistantMessage("IdeasForgeAI is thinking...", "backend_chat_loading");
+    desktopMessage.is_loading = true;
+    mobileMessage.is_loading = true;
+    IDEASFORGEAI_MOCK_STATE.mobileFlow.currentStep = "chat";
+    IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus = "idle";
+    renderChatMessages();
+    renderMobileChatMessages();
+    renderProcessingState();
+
+    try {
+      const assistantReply = await requestBackendChat(trimmedMessage, client);
+      desktopMessage.message_text = assistantReply;
+      mobileMessage.message_text = assistantReply;
+      desktopMessage.linked_action = "backend_chat_reply";
+      mobileMessage.linked_action = "backend_chat_reply";
+    } catch (error) {
+      const friendlyMessage = error?.message || CHAT_UNAVAILABLE_MESSAGE;
+      desktopMessage.message_text = friendlyMessage;
+      mobileMessage.message_text = friendlyMessage;
+      desktopMessage.linked_action = "backend_chat_error";
+      mobileMessage.linked_action = "backend_chat_error";
+    } finally {
+      desktopMessage.is_loading = false;
+      mobileMessage.is_loading = false;
+      renderChatMessages();
+      renderMobileChatMessages();
+      renderProcessingState();
+    }
+  };
+
   const stopMobileProcessingTimers = () => {
     if (mobileProcessingTimer) {
       window.clearInterval(mobileProcessingTimer);
@@ -415,14 +499,7 @@
       return;
     }
 
-    addLocalUserMessage(trimmedMessage);
-    addLocalMobileMessage(trimmedMessage);
-    addLocalMobileMessage(MOBILE_CHAT_REPLY, "assistant", "mobile_local_reply");
-    IDEASFORGEAI_MOCK_STATE.mobileFlow.currentStep = "chat";
-    IDEASFORGEAI_MOCK_STATE.mobileFlow.jobStatus = "idle";
-    renderChatMessages();
-    renderMobileChatMessages();
-    renderProcessingState();
+    return submitBackendChatMessage(trimmedMessage, "mobile");
   };
 
   const startMobilePreviewJob = () => {
@@ -496,7 +573,7 @@
       return;
     }
 
-    promptForm.addEventListener("submit", (event) => {
+    promptForm.addEventListener("submit", async (event) => {
       event.preventDefault();
 
       const messageText = promptInput.value.trim();
@@ -504,11 +581,11 @@
         return;
       }
 
-      const message = addLocalUserMessage(messageText);
-      chatStream.appendChild(createChatBubble(message));
-      renderMobileChatMessages();
-      chatStream.scrollTop = chatStream.scrollHeight;
       promptInput.value = "";
+      promptInput.disabled = true;
+      await submitBackendChatMessage(messageText, "desktop");
+      promptInput.disabled = false;
+      promptInput.focus();
     });
   };
 
@@ -818,7 +895,7 @@
     });
 
     if (mobilePromptForm && mobilePromptInput) {
-      mobilePromptForm.addEventListener("submit", (event) => {
+      mobilePromptForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         const messageText = mobilePromptInput.value.trim();
         if (!messageText) {
@@ -826,7 +903,10 @@
         }
 
         mobilePromptInput.value = "";
-        submitMobileChatMessage(messageText);
+        mobilePromptInput.disabled = true;
+        await submitMobileChatMessage(messageText);
+        mobilePromptInput.disabled = false;
+        mobilePromptInput.focus();
       });
     }
 

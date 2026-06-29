@@ -464,6 +464,32 @@ a {
   color: inherit;
   font-size: 13px;
   line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.chat-bubble.is-loading p::after {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: 0.55;
+  animation: chatTypingPulse 0.9s ease-in-out infinite;
+}
+
+@keyframes chatTypingPulse {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translateY(-2px);
+    opacity: 0.85;
+  }
 }
 
 .generation-card,
