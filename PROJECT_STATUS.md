@@ -12105,3 +12105,19 @@ Status: Completed locally, live verification pending.
 
 Stage gate:
 - Phase 27P local validation pending.
+
+## Phase 27P Safe Mobile Fixed Bars
+
+Status: Completed locally, live verification pending.
+
+- Removed wrong global fixed shell behavior.
+- Added safe mobile-chat-only fixed top header and bottom composer.
+- Script does not activate on desktop builder shell.
+- Main builder workspace is protected from layout disturbance.
+- Top header remains fixed only on mobile chat page.
+- Bottom chat bar remains fixed only on mobile chat page.
+- Sleek scrollbar styling added.
+- No demo/progress overlays added.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
