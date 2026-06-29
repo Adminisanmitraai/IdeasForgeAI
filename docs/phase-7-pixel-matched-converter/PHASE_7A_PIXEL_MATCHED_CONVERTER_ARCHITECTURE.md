@@ -345,10 +345,11 @@ Phase 7 must move in controlled steps:
 - Phase 7A: Architecture spec only.
 - Phase 7B: Placeholder API contract.
 - Phase 7C: Upload UI and local metadata handling.
-- Phase 7D: Local image analysis placeholder.
-- Phase 7E: Design System alignment output.
-- Phase 7F: Pixel-match score preview.
-- Phase 7G: Freeze review.
+- Phase 7D: Layout detection placeholder.
+- Phase 7E: Component mapping placeholder.
+- Phase 7F: Design System alignment output.
+- Phase 7G: Pixel-match score preview.
+- Phase 7H: Freeze review.
 
 Phase 8 remains locked until Phase 7 is frozen and explicitly approved.
 

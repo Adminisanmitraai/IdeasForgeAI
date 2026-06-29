@@ -11,6 +11,12 @@ class PixelConverterContractRequest(BaseModel):
 
 class PixelConverterFlags(BaseModel):
     real_image_analysis_enabled: bool = False
+    ocr_enabled: bool = False
+    pixel_reading_enabled: bool = False
+    canvas_analysis_enabled: bool = False
+    component_mapping_is_placeholder: bool = True
+    design_system_alignment_is_placeholder: bool = True
+    pixel_match_scoring_is_placeholder: bool = True
     frontend_generation_allowed: bool = False
     phase_8_unlocked: bool = False
     external_provider_calls_allowed: bool = False

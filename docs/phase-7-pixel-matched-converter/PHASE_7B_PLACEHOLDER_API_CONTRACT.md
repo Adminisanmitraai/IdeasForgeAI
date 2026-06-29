@@ -192,10 +192,11 @@ Approval state:
 ## Future Phase Handoff
 
 - Phase 7C: Upload UI and local metadata handling.
-- Phase 7D: Local image analysis placeholder.
-- Phase 7E: Design System alignment output.
-- Phase 7F: Pixel-match score preview.
-- Phase 7G: Freeze review.
+- Phase 7D: Layout detection placeholder.
+- Phase 7E: Component mapping placeholder.
+- Phase 7F: Design System alignment output.
+- Phase 7G: Pixel-match score preview.
+- Phase 7H: Freeze review.
 - Phase 8: Locked until Phase 7 is frozen and explicitly approved.
 
 ## Safety Confirmation

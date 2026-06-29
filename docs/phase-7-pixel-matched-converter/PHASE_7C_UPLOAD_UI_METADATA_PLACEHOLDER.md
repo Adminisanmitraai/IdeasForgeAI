@@ -102,4 +102,4 @@ Confirmed boundaries:
 
 ## Next Phase
 
-Phase 7D - Local image analysis placeholder, only after explicit approval.
+Phase 7D - Layout detection placeholder, only after explicit approval.
