@@ -11743,3 +11743,28 @@ Stage gate:
 - Phase 27F GitHub push passed.
 - Phase 27F Render live verification passed.
 - Phase 27G is now allowed to start.
+
+## Phase 27G - Product Flow UI Renderer
+
+Status: Completed and live verified.
+
+- Product Flow UI Renderer is live.
+- Live frontend renders the product-flow result inside the mobile/builder UI.
+- Browser console verified: window.IdeasForgeAIProductFlowUI is available.
+- Live frontend successfully calls backend POST /api/product-flow.
+- Product flow card shows idea, sector, user role, selected output, planning chain, frontend flow, planned backend flow, quality checklist, stage gate, disabled items, and safety rules.
+- Continue to Product Plan button is visible.
+- Code Generation Locked button is visible.
+- Product flow response verified: ok true, backend phase 27E, mode product-flow-orchestration.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27G local validation passed.
+- Phase 27G GitHub push passed.
+- Phase 27G Render live verification passed.
+- Phase 27H is now allowed to start.
