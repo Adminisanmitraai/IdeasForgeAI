@@ -12084,3 +12084,24 @@ Status: Completed.
 - No backend restart required.
 - No frontend OpenAI API key was added.
 - KisanMitraAI not touched.
+
+## Phase 27P - Fixed Top Header + Fixed Bottom Chat Bar
+
+Status: Completed locally, live verification pending.
+
+- Added fixed top app header behavior.
+- Added fixed bottom chat composer behavior.
+- Middle chat content remains scrollable.
+- Added sleek thin scrollbar styling.
+- Added safe top and bottom spacing so content is not hidden behind fixed bars.
+- Removed dependency on demo/progress overlays.
+- Production frontend layout remains clean.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27P local validation pending.
