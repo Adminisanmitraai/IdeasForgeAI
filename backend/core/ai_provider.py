@@ -1,11 +1,5 @@
 import os
-from pathlib import Path
 from typing import Dict, List
-
-from dotenv import load_dotenv
-
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-load_dotenv(PROJECT_ROOT / ".env")
 
 
 class OpenAIProvider:
@@ -20,7 +14,7 @@ class OpenAIProvider:
         if not self.is_configured():
             return {
                 "status": "not_configured",
-                "message": "OPENAI_API_KEY is missing. Add it to D:\\APPS\\IdeasForgeAI\\.env",
+                "message": "OPENAI_API_KEY is missing from the backend environment.",
             }
 
         try:

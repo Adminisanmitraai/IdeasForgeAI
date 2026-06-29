@@ -1,5 +1,20 @@
 # IdeasForgeAI Project Status
 
+## Phase 26B - Backend-Only OpenAI Chat Integration
+
+Status: Local validation completed, not frozen.
+
+- Backend-only OpenAI chat added to `POST /api/chat`.
+- `OPENAI_API_KEY` is read only from backend environment variables.
+- `GET /api/health` and `GET /api/contract` continue to work without an OpenAI key.
+- Missing OpenAI configuration returns a safe not-configured chat response.
+- Local test without `OPENAI_API_KEY`: health and contract returned Phase 26B, chat returned `OPENAI_NOT_CONFIGURED`, and empty message returned validation error.
+- Local test with `OPENAI_API_KEY`: chat returned a real backend OpenAI assistant response.
+- `truststore` added so local Python/OpenAI SDK calls can use the platform certificate store without disabling TLS verification.
+- Product generation, preview generation, code generation, database, auth, billing, upload processing, OCR, image analysis, voice transcription, and frontend connector remain disabled.
+- No `.env` file or secrets added.
+- KisanMitraAI not touched.
+
 ## Phase 26A - Safe Backend Chat API Contract Agent
 
 Status: Completed, not frozen.

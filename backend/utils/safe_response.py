@@ -1,10 +1,15 @@
+import os
+
+
 PHASE_26A = "26A"
+PHASE_26B = "26B"
 SERVICE_NAME = "ideasforgeai-backend"
-CONTRACT_VERSION = "2026-06-29-phase-26a"
+CONTRACT_VERSION = "2026-06-29-phase-26b"
 
 DISABLED_CAPABILITIES = [
-    "openai_chat",
     "product_generation",
+    "preview_generation",
+    "code_generation",
     "database",
     "auth",
     "billing",
@@ -15,30 +20,43 @@ DISABLED_CAPABILITIES = [
     "deployment",
 ]
 
-SAFETY_FLAGS = {
-    "openaiConnected": False,
-    "databaseConnected": False,
-    "fileProcessingEnabled": False,
-    "voiceEnabled": False,
-    "deploymentEnabled": False,
-}
+
+def is_openai_configured() -> bool:
+    return bool(os.getenv("OPENAI_API_KEY", "").strip())
+
+
+def safety_flags() -> dict:
+    return {
+        "openaiConnected": is_openai_configured(),
+        "databaseConnected": False,
+        "fileProcessingEnabled": False,
+        "voiceEnabled": False,
+        "deploymentEnabled": False,
+        "productGenerationEnabled": False,
+        "previewGenerationEnabled": False,
+        "codeGenerationEnabled": False,
+    }
 
 
 def validation_error(message: str, code: str = "VALIDATION_ERROR") -> dict:
     return {
         "ok": False,
-        "phase": PHASE_26A,
+        "phase": PHASE_26B,
         "error": {
             "code": code,
             "message": message,
         },
+        "safety": safety_flags(),
     }
 
 
 def disabled_capability_report() -> dict:
     return {
-        "openaiConnected": False,
+        "openaiConnected": is_openai_configured(),
         "databaseConnected": False,
         "fileProcessingEnabled": False,
         "deploymentEnabled": False,
+        "productGenerationEnabled": False,
+        "previewGenerationEnabled": False,
+        "codeGenerationEnabled": False,
     }
