@@ -12067,3 +12067,20 @@ Status: Completed and locally verified.
 Stage gate:
 - Phase 27N local validation passed.
 - Phase 27N Render live verification pending.
+
+## Phase 27N Production Frontend Restore
+
+Status: Completed.
+
+- Removed floating demo launcher from production HTML.
+- Removed Build Progress stepper from production HTML.
+- Removed multi-sector validation widget from production HTML.
+- Production/mobile frontend layout restored.
+- Demo/testing scripts remain in repository but are no longer injected into public pages.
+- Future demo tools must be placed in a separate dev/demo page or inside an intentional menu option, never as floating overlays on the production screen.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
