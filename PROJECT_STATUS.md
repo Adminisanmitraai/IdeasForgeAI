@@ -2,7 +2,7 @@
 
 ## Phase 26B - Backend-Only OpenAI Chat Integration
 
-Status: Local validation completed, not frozen.
+Status: Backend code live on Render, OpenAI environment variable pending, not frozen.
 
 - Backend-only OpenAI chat added to `POST /api/chat`.
 - `OPENAI_API_KEY` is read only from backend environment variables.
@@ -10,6 +10,11 @@ Status: Local validation completed, not frozen.
 - Missing OpenAI configuration returns a safe not-configured chat response.
 - Local test without `OPENAI_API_KEY`: health and contract returned Phase 26B, chat returned `OPENAI_NOT_CONFIGURED`, and empty message returned validation error.
 - Local test with `OPENAI_API_KEY`: chat returned a real backend OpenAI assistant response.
+- Live backend URL: `https://ideasforgeai-api.onrender.com`.
+- Live `GET /api/health` verified Phase 26B with `openaiConnected=false`.
+- Live `GET /api/contract` verified Phase 26B with `openai_chat` disabled until the backend Render environment variable is configured.
+- Live `POST /api/chat` verified safe `OPENAI_NOT_CONFIGURED` response.
+- Render service `ideasforgeai-api` needs `OPENAI_API_KEY` added in the backend service environment before live real OpenAI chat can respond.
 - `truststore` added so local Python/OpenAI SDK calls can use the platform certificate store without disabling TLS verification.
 - Product generation, preview generation, code generation, database, auth, billing, upload processing, OCR, image analysis, voice transcription, and frontend connector remain disabled.
 - No `.env` file or secrets added.
