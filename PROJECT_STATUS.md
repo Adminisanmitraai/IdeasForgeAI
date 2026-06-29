@@ -11431,3 +11431,26 @@ Stage gate:
 - Phase 26E preview generator live passed.
 - Phase 26F approval gate live passed.
 - Stage 2 is ready for full app flow review before moving to Phase 27.
+
+## Stage 2 - Full App Flow Review
+
+Status: Completed and passed.
+
+- Live backend health verified.
+- Live backend contract verified.
+- Live OpenAI chat verified.
+- Live product plan generator verified.
+- Live preview generator verified.
+- Live approval gate verified.
+- Frontend chat flow verified.
+- Product planning and preview planning are enabled.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend API key exposure found.
+- KisanMitraAI not touched.
+
+Stage result:
+- IdeasForgeAI can now support live chat, product planning, preview planning, and approval gating.
+- Phase 27 is now allowed to start.
