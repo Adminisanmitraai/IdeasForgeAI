@@ -136,7 +136,10 @@
     const interactions = pickFirst(preview, ["interactions", "userInteractions", "clickFlow"], []);
     const visualNotes = pickFirst(preview, ["visualPolishNotes", "visualNotes", "designNotes"], []);
     const acceptance = pickFirst(preview, ["acceptanceCriteria", "qualityChecklist"], productFlow.qualityChecklist || []);
-    const safety = pickFirst(preview, ["safetyRules", "approvalGates", "notIncludedYet"], productFlow.safetyRules || []);
+    let safety = pickFirst(preview, ["safetyRules", "approvalGates", "notIncludedYet"], productFlow.safetyRules || []);
+    if (Array.isArray(safety)) {
+      safety = safety.filter((item) => typeof item !== "boolean");
+    }
 
     let card = document.getElementById(CARD_ID);
     if (!card) {
@@ -199,9 +202,7 @@
       ` : ""}
 
       <div class="ideasforgeai-flow-actions">
-        <button class="ideasforgeai-flow-action-btn" type="button" disabled>
-          Approval Gate Next
-        </button>
+        <button class="ideasforgeai-flow-action-btn" type="button" data-approval-gate-next>Continue to Approval Gate</button>
         <button class="ideasforgeai-flow-action-btn" type="button" disabled>
           Code Generation Locked
         </button>
