@@ -12365,3 +12365,26 @@ Freeze rule:
 
 Next phase:
 - Phase 27R - Desktop/Mobile Regression Lock.
+
+## Phase 27Q-FINAL - Desktop Web Builder Layout
+
+Status: Final for now. Further visual polish moved to later phase.
+
+Accepted screenshot:
+- Left preview is static and safe.
+- Composer is visible at the bottom of the left preview.
+- Composer shell uses grey/purple variation.
+- Text input is white.
+- Voice and submit icons are separated.
+- Assistant messages are readable.
+- Right hero section is stable.
+- Top toolbar is stable.
+- Real mobile screen remains untouched.
+- Backend remains untouched.
+- Render backend auto-deploy is off.
+
+Freeze rules:
+- Do not keep polishing Phase 27Q in this phase.
+- Future visual polish must be Phase 27Q2 or Phase 27R+.
+- Do not reuse live mobile chat layout inside desktop preview again until a proper component isolation strategy is created.
+- Static preview is accepted for now.

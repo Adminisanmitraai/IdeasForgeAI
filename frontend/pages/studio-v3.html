@@ -559,5 +559,69 @@
   <script src="/scripts/preview-plan-button-connector.js?v=27m5"></script>
   <script src="/scripts/approval-gate-ui-connector.js?v=27j2"></script>
 
+
+<script id="ideasforge-left-preview-static-final">
+(function () {
+  "use strict";
+
+  function renderStaticLeftPreview() {
+    if (window.innerWidth < 769) return;
+
+    var frame = document.querySelector(".studio-web-shell .studio-left-preview-panel .studio-mobile-preview-frame");
+    if (!frame) return;
+
+    frame.innerHTML = `
+      <div class="studio-static-mobile-preview studio-static-mobile-preview--forced">
+        <div class="studio-static-preview-content">
+          <div class="studio-static-preview-hero">
+            <h1>What is your idea to build</h1>
+            <p>Describe your idea and I'll help you build it.</p>
+          </div>
+
+          <div class="studio-static-chat-stream">
+            <div class="studio-static-assistant-row">
+              <div class="studio-static-assistant-icon">✦</div>
+              <div class="studio-static-assistant-bubble">
+                Hi, I'm IdeasForgeAI. Tell me what you want to build, and I'll turn your idea into a polished app or website preview.
+              </div>
+            </div>
+
+            <div class="studio-static-assistant-row">
+              <div class="studio-static-assistant-icon">✦</div>
+              <div class="studio-static-assistant-bubble">
+                What kind of product should we start with?
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="studio-static-composer">
+          <div class="studio-static-composer-input">Describe your idea...</div>
+
+          <div class="studio-static-composer-actions">
+            <div class="studio-static-composer-actions-left">
+              <button class="studio-static-composer-action" type="button" aria-label="Attach">+</button>
+            </div>
+
+            <div class="studio-static-composer-actions-right">
+              <button class="studio-static-composer-action studio-static-composer-action--voice" type="button" aria-label="Voice note">🎙</button>
+              <button class="studio-static-composer-action studio-static-composer-action--send" type="button" aria-label="Submit">→</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderStaticLeftPreview);
+  } else {
+    renderStaticLeftPreview();
+  }
+
+  window.addEventListener("resize", renderStaticLeftPreview);
+})();
+</script>
+
 </body>
 </html>
