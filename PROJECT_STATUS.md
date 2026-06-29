@@ -11663,3 +11663,31 @@ Stage gate:
 - Phase 27C GitHub push passed.
 - Phase 27C Render live verification passed.
 - Phase 27D is now allowed to start.
+
+## Phase 27D - Output Type Selector Agent
+
+Status: Completed and live verified.
+
+- Backend Output Type Selector Agent is live.
+- Live endpoint verified: POST /api/output-type.
+- Agent selects the best output type or multi-output bundle from user idea, classification, requirements, and workflow.
+- Tested with home tiffin/home business assistant workflow.
+- Selected business operations assistant, dashboard, reports, menu plans, grocery lists, payment summaries, and Instagram promo content as planned outputs.
+- Sector classification remains enabled.
+- Requirement expansion remains enabled.
+- Workflow mapping remains enabled.
+- Product planning remains enabled.
+- Preview planning remains enabled.
+- Approval gate remains enabled.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27D local validation passed.
+- Phase 27D GitHub push passed.
+- Phase 27D Render live verification passed.
+- Phase 27E is now allowed to start.
