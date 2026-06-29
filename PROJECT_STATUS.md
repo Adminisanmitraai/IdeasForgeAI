@@ -12032,3 +12032,38 @@ Stage gate:
 - Phase 27M local validation passed.
 - Phase 27M Render live verification passed.
 - Phase 27N is now allowed to start.
+
+## Phase 27N - Guided Build Progress Stepper
+
+Status: Completed and locally verified.
+
+- Guided Build Progress stepper is working locally.
+- Stepper shows the build stages:
+  - Idea
+  - Product Flow
+  - Product Plan
+  - Preview Plan
+  - Approval Gate
+  - Code Locked
+- Stepper is compact by default.
+- Show/Hide behavior works.
+- Main chat screen is not covered.
+- Demo launcher remains compact.
+- Full demo flow passed:
+  - Product Flow rendered.
+  - Product Plan rendered.
+  - Preview Plan rendered.
+  - Approval Gate rendered.
+  - Approval readiness recorded.
+- Backend accepted: Yes.
+- Approved: Yes.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- Database/auth/billing/upload/OCR/image/voice/export/deployment remain disabled.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27N local validation passed.
+- Phase 27N Render live verification pending.

@@ -302,6 +302,8 @@
     const body = document.getElementById("ideasforgeai-floating-demo-panel");
     const status = document.getElementById("ideasforgeai-floating-demo-status");
 
+    body.setAttribute("data-collapsed", "true");
+
     toggle.addEventListener("click", function () {
       body.setAttribute("data-collapsed", body.getAttribute("data-collapsed") === "true" ? "false" : "true");
     });
