@@ -11768,3 +11768,39 @@ Stage gate:
 - Phase 27G GitHub push passed.
 - Phase 27G Render live verification passed.
 - Phase 27H is now allowed to start.
+
+## Phase 27H - Product Plan Button Connector
+
+Status: Completed and live verified.
+
+- Continue to Product Plan button is live.
+- Live frontend calls backend POST /api/product-plan.
+- Product plan renders inside the UI.
+- Product plan card shows product name, sector, output type, problem solved, target users, features, screens, AI behavior, data inputs, and safety notes.
+- Code Generation Locked remains visible.
+- No frontend OpenAI API key was added.
+- Database/auth/billing/upload/OCR/image/voice/export/deployment remain disabled.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27H local validation passed.
+- Phase 27H Render live verification passed.
+- Phase 27I completed next.
+
+## Phase 27I - Preview Plan Button Connector
+
+Status: Completed and live verified.
+
+- Continue to Preview Plan button is live.
+- Live frontend calls backend POST /api/preview-plan.
+- Preview plan renders inside the UI.
+- Preview plan card shows product, preview style, preview screens, sections, user interactions, visual polish notes, acceptance checklist, and safety notes.
+- Code Generation Locked remains visible.
+- No frontend OpenAI API key was added.
+- Database/auth/billing/upload/OCR/image/voice/export/deployment remain disabled.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27I local validation passed.
+- Phase 27I Render live verification passed.
+- Phase 27J is now allowed to start.
