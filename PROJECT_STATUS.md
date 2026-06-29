@@ -11338,3 +11338,25 @@ Stage gate:
 - Phase 26B Render deployment passed.
 - Phase 26B live OpenAI verification passed.
 - Phase 26C is now allowed to start.
+
+## Phase 26C - Frontend-to-Backend Chat Connector
+
+Status: Completed and live verified.
+
+- Live frontend chat is connected to live backend.
+- Frontend calls https://ideasforgeai-api.onrender.com/api/chat.
+- Backend-only OpenAI chat remains secure.
+- No API key added to frontend.
+- Mobile chat UI preserved.
+- Desktop builder preserved.
+- Generate Preview remains gated.
+- Attachments and voice remain local-only.
+- No database/auth/billing/upload/OCR/image/voice/preview/code generation added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 26A backend contract live passed.
+- Phase 26B backend-only OpenAI live passed.
+- Phase 26C live frontend chat test passed.
+- Stage 1 live test passed: live mobile chat ? live backend ? real OpenAI response.
+- Phase 26D is now allowed to start.
