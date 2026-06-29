@@ -12270,3 +12270,44 @@ Confirmed:
 Stage gate:
 - Phase 27Q local implementation complete.
 - Phase 27Q desktop/mobile visual verification pending.
+
+## Phase 27Q-VISUAL-FIX - Desktop Web Builder Layout Polish
+
+Status: Completed locally, live verification pending.
+
+Files changed:
+- frontend/pages/studio-v3.css
+
+CSS selectors changed:
+- .studio-web-shell
+- .studio-web-shell .studio-web-toolbar
+- .studio-web-shell .studio-web-main
+- .studio-web-shell .studio-left-preview-panel
+- .studio-web-shell .studio-mobile-preview-frame
+- .studio-web-shell .studio-mobile-preview-frame .mobile-chat-screen
+- .studio-web-shell .studio-right-display-panel
+- .studio-web-shell .studio-hero-title
+- .studio-web-shell .studio-feature-grid
+- .studio-web-shell .studio-feature-card
+
+Confirmed:
+- Desktop shell now uses stable 76px toolbar.
+- Desktop builder canvas fits viewport height.
+- Left mobile preview is fitted/scaled inside the panel.
+- Right hero headline is smaller and cleaner.
+- Feature cards are compact and visible.
+- Real mobile freeze behavior was not changed.
+- Mobile 3-row shell remains protected.
+- Mobile composer and message visibility were not changed.
+- No global layout scripts added.
+- No banned overlay script references added.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27Q desktop visual implementation complete.
+- Phase 27R desktop/mobile regression lock next.
