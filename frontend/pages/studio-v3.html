@@ -493,5 +493,37 @@
 
 
 
+
+<script id="ideasforge-desktop-preview-scroll-reset">
+(function () {
+  "use strict";
+
+  function resetDesktopPreviewScroll() {
+    if (window.innerWidth < 769) return;
+
+    var previewScroll = document.querySelector(
+      ".studio-web-shell .studio-mobile-preview-frame .ideasforge-mobile-scroll"
+    );
+
+    if (!previewScroll) return;
+    previewScroll.scrollTop = 0;
+  }
+
+  function start() {
+    resetDesktopPreviewScroll();
+    setTimeout(resetDesktopPreviewScroll, 150);
+    setTimeout(resetDesktopPreviewScroll, 500);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+
+  window.addEventListener("resize", resetDesktopPreviewScroll);
+})();
+</script>
+
 </body>
 </html>
