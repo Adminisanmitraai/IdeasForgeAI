@@ -1,5 +1,18 @@
 # IdeasForgeAI Project Status
 
+## Phase 26A - Safe Backend Chat API Contract Agent
+
+Status: Completed, not frozen.
+
+- Backend contract-only API added.
+- `GET /api/health`, `GET /api/contract`, and `POST /api/chat` added under `/api`.
+- Mock/local contract responses only.
+- OpenAI chat, product generation, database, auth, billing, upload processing, OCR, image analysis, voice transcription, and deployment remain disabled.
+- Phase 26B approval is required before real backend OpenAI chat integration.
+- Frontend not connected to the backend chat API.
+- No backend provider/database/auth/secrets/deployment changes added.
+- KisanMitraAI not touched.
+
 ## Root URL Routing to Studio V3
 
 Status: Completed, not frozen.

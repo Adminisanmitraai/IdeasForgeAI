@@ -14,6 +14,7 @@ from backend.agents.orchestrator_agent import create_default_builder_pipeline
 from backend.agents.pixel_matched_page_converter_agent import PixelMatchedPageConverterAgent
 from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
+from backend.api.phase26a_contract import router as phase26a_contract_router
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.design_system_engine import DesignSystemEngine
@@ -38,6 +39,7 @@ app.add_middleware(
 )
 
 app.include_router(health_router)
+app.include_router(phase26a_contract_router)
 
 if GENERATED_APPS_DIR.exists():
     app.mount(
