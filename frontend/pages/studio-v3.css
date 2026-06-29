@@ -2904,3 +2904,43 @@ a {
   }
 }
 
+
+/* =========================================================
+   PHASE 27P AI BUBBLE LEFT + ACTION GAP FIX
+   Scope: studio-v3 mobile chat only.
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .mobile-chat-screen .mobile-chat-stream [data-message-role="assistant"],
+  .mobile-chat-screen .mobile-chat-stream .assistant-message,
+  .mobile-chat-screen .mobile-chat-stream .ai-message {
+    align-self: flex-start !important;
+    margin-left: 76px !important;
+    margin-right: 16px !important;
+    max-width: calc(100% - 92px) !important;
+  }
+
+  .mobile-chat-screen .mobile-chat-stream [data-message-role="assistant"]::before,
+  .mobile-chat-screen .mobile-chat-stream .assistant-message::before,
+  .mobile-chat-screen .mobile-chat-stream .ai-message::before {
+    left: -58px !important;
+    right: auto !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer {
+    --composer-action-gap: 16px;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button {
+    flex-shrink: 0 !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button:nth-last-of-type(2) {
+    margin-right: var(--composer-action-gap) !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button:last-of-type {
+    margin-left: 0 !important;
+  }
+}
+
