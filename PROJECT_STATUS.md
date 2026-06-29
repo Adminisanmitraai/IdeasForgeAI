@@ -2,7 +2,7 @@
 
 ## Phase 26C - Frontend Chat Backend Connection
 
-Status: Local validation completed, not frozen.
+Status: Live verification completed, not frozen.
 
 - Studio V3 normal text submit now calls `https://ideasforgeai-api.onrender.com/api/chat`.
 - Frontend sends only chat metadata and message text to the backend; no OpenAI key is exposed in frontend code.
@@ -14,6 +14,8 @@ Status: Local validation completed, not frozen.
 - Polished mobile chat UI and desktop builder layout preserved.
 - Live backend CORS preflight verified for local and production frontend origins.
 - Live backend `/api/chat` returned a real Phase 26B OpenAI assistant response.
+- Live frontend `https://www.ideasforgeai.com/pages/studio-v3.html` verified reachable.
+- Live frontend script verified deployed with the backend chat API URL.
 - No database/auth/billing/upload/OCR/image/voice/preview/code generation added.
 - KisanMitraAI not touched.
 
