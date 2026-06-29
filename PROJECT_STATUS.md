@@ -12121,3 +12121,23 @@ Status: Completed locally, live verification pending.
 - No backend restart required.
 - No frontend OpenAI API key was added.
 - KisanMitraAI not touched.
+
+## Phase 27P FINAL - Mobile Chat Top and Bottom Placement Freeze
+
+Status: Completed locally, live verification pending.
+
+- Fixed only studio-v3 mobile chat layout.
+- Top mobile header is fixed with safe-area spacing.
+- Bottom mobile composer is fixed with safe-area spacing.
+- Middle chat body is the only scrollable area.
+- Hero title spacing is protected from header overlap.
+- Bottom content spacing is protected from composer/browser overlap.
+- Slim scrollbar is scoped to mobile chat scroll area.
+- Removed old experimental fixed/demo/progress script references from studio-v3.html.
+- Desktop builder shell remains untouched.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27P final mobile layout validation pending.
