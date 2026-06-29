@@ -12335,3 +12335,33 @@ Confirmed:
 Freeze rule:
 - Do not modify Phase 27Q layout again unless a new screenshot freeze reference is created.
 - Future dynamic product preview work must update content only, not layout.
+
+## Phase 27Q-FINAL - Web Browser Builder Layout Freeze
+
+Status: Final for now. Further polish moved to later phase.
+
+Final accepted layout:
+- Desktop web browser builder shell is active.
+- Top toolbar includes IdeasForgeAI brand, Close Sidebar, Mobile/Tablet/Laptop switcher, Profile, Share, and Publish.
+- Left section uses static mobile preview mock.
+- Left preview no longer touches the real frozen mobile screen logic.
+- Left preview has clean white/purple visual variation.
+- Composer is visible inside the preview.
+- Composer input remains white.
+- Mic and submit/send icons are purple-styled and separated.
+- Right section has clean hero display and feature cards.
+- Full page uses clean white variation.
+- Mobile real screen remains protected.
+- No global layout scripts added.
+- No backend changes.
+- No frontend OpenAI API key added.
+- KisanMitraAI not touched.
+
+Freeze rule:
+- Do not modify Phase 27Q layout again in the current phase.
+- Any future polish must be done as a new scoped phase.
+- Real mobile screen remains locked under Phase 27P.
+- Desktop web shell remains locked under Phase 27Q.
+
+Next phase:
+- Phase 27R - Desktop/Mobile Regression Lock.
