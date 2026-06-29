@@ -12180,3 +12180,47 @@ Frontend freeze rule:
 - Future mobile chat changes must patch only studio-v3.html and studio-v3.css with named selectors.
 - No global script injection into frontend/**/*.html.
 - No broad body/header/nav/textarea selector patches.
+
+## Phase 27P-FINAL-REPAIR - Mobile Chat Message Visibility Freeze
+
+Status: Completed and freeze allowed.
+
+Files changed:
+- frontend/pages/studio-v3.css
+- frontend/pages/studio-v3.html
+
+Exact selectors changed:
+- .mobile-screen.ideasforge-mobile-shell.mobile-chat-screen
+- .mobile-chat-screen .ideasforge-mobile-header
+- .mobile-chat-screen .ideasforge-mobile-scroll
+- .mobile-chat-screen .mobile-chat-stream
+- .mobile-chat-screen .ideasforge-mobile-composer
+
+Page-local hook:
+- Targets .mobile-chat-screen [data-mobile-field="chatMessages"]
+
+Confirmed:
+- Mobile chat now uses true 3-row layout.
+- Header is in the top row.
+- Chat/content is in the middle scroll row.
+- Composer is in the third bottom row.
+- Composer is no longer fixed over chat messages.
+- .ideasforge-mobile-scroll is the only chat scroll area.
+- .ideasforge-mobile-scroll has min-height: 0.
+- Latest user message remains fully visible above composer.
+- Latest AI response remains fully visible above composer.
+- No auto-scroll on page load.
+- Scroll-to-bottom runs only after new message append.
+- No global layout scripts added.
+- Desktop builder shell not touched.
+- No demo/progress overlays added.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Freeze status:
+- Phase 27P mobile chat layout freeze allowed.
+- Do not change this mobile layout again without creating a new freeze screenshot first.

@@ -2814,3 +2814,93 @@ a {
   }
 }
 
+
+/* =========================================================
+   PHASE 27P ACTION BUTTON GAP FIX
+   Scope: studio-v3 mobile composer only.
+   Keeps frozen 3-row shell unchanged.
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .mobile-chat-screen .ideasforge-mobile-composer button:nth-last-of-type(2) {
+    margin-right: 12px !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button:last-of-type {
+    margin-left: 0 !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer button {
+    flex-shrink: 0 !important;
+  }
+}
+
+
+/* =========================================================
+   PHASE 27P FINAL REPAIR - MESSAGE VISIBILITY ABOVE COMPOSER
+   Scope: studio-v3 mobile chat only.
+   Keeps header, scroll region, and composer in real grid rows.
+   ========================================================= */
+
+@media (max-width: 520px) {
+  .mobile-screen.ideasforge-mobile-shell.mobile-chat-screen {
+    display: grid !important;
+    grid-template-rows: 86px minmax(0, 1fr) 186px !important;
+    gap: 16px !important;
+    width: 100% !important;
+    max-width: 430px !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    margin: 0 auto !important;
+    padding: max(12px, env(safe-area-inset-top)) 16px max(12px, env(safe-area-inset-bottom)) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-header {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: 86px !important;
+    min-height: 86px !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-scroll {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 52px 0 16px !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  .mobile-chat-screen .mobile-chat-stream {
+    min-height: 0 !important;
+    overflow: visible !important;
+    padding: 24px 2px 0 !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-composer {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 186px !important;
+    max-height: 186px !important;
+    margin: 0 !important;
+    transform: none !important;
+    align-self: end !important;
+    box-sizing: border-box !important;
+  }
+}
+

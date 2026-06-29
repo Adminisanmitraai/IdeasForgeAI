@@ -425,6 +425,30 @@
     </div>
 
     <script src="./studio-v3.js"></script>
+    <script>
+      (() => {
+        const scrollLatestMobileChatMessage = () => {
+          const scrollRegion = document.querySelector(".mobile-chat-screen .ideasforge-mobile-scroll");
+          if (!scrollRegion) return;
+
+          window.requestAnimationFrame(() => {
+            scrollRegion.scrollTop = scrollRegion.scrollHeight;
+          });
+        };
+
+        const messageStream = document.querySelector('.mobile-chat-screen [data-mobile-field="chatMessages"]');
+        if (!messageStream || !("MutationObserver" in window)) return;
+
+        const observer = new MutationObserver((mutations) => {
+          const hasNewMessage = mutations.some((mutation) => mutation.addedNodes.length > 0);
+          if (hasNewMessage) {
+            scrollLatestMobileChatMessage();
+          }
+        });
+
+        observer.observe(messageStream, { childList: true });
+      })();
+    </script>
     
   <script src="/scripts/product-flow-client.js?v=27f2"></script>
   <script src="/scripts/product-flow-ui-renderer.js?v=27g"></script>
