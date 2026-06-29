@@ -12388,3 +12388,35 @@ Freeze rules:
 - Future visual polish must be Phase 27Q2 or Phase 27R+.
 - Do not reuse live mobile chat layout inside desktop preview again until a proper component isolation strategy is created.
 - Static preview is accepted for now.
+
+## Phase 28A - Backend Protection + Clean Frontend Reset
+
+Status: Completed locally, backend protected.
+
+- Backend protected.
+- Render auto-deploy off.
+- Backend health endpoint already verified.
+- Future frontend commits must not trigger/backend-deploy.
+- Backend folder was not modified.
+- No frontend OpenAI API key was added.
+
+## Phase 28A.3 - Studio V4 Top Bar Premium Alignment Polish
+
+Status: Completed and locally verified.
+
+Files changed:
+- frontend/pages/studio-v4.css
+
+Confirmed:
+- Top toolbar polished with premium white/lavender variation.
+- Device icons remain clickable through existing JS.
+- URL preview value updates locally only.
+- Backend untouched.
+- studio-v3 untouched.
+- No API connection added.
+- No OpenAI key added.
+
+Freeze:
+- Studio V4 top toolbar is frozen for now.
+- Next work must not modify the top toolbar unless explicitly required.
+- Next phase: Phase 28B - Left Real Chat Section.
