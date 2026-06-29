@@ -12002,3 +12002,33 @@ Stage gate:
 - Phase 27L local validation passed.
 - Phase 27L Render live verification passed.
 - Phase 27M is now allowed to start.
+
+## Phase 27M - Demo Launcher UI Polish + Home Placement
+
+Status: Completed and live verified.
+
+- Demo launcher polish is live.
+- Floating “Try ready demos” launcher is visible.
+- Popular demo buttons are visible:
+  - Bank
+  - Retail
+  - Student
+  - Catalog
+  - Clinic
+  - Farming
+- Demo launcher script is live and available.
+- Browser console verified: window.IdeasForgeAIDemoPolish is available.
+- Demo flow remains connected to Product Flow, Product Plan, Preview Plan, and Approval Gate.
+- Continue to Approval Gate remains visible.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- Boolean safety-note cleanup added to prevent true/false list items from showing in preview cards.
+- Database/auth/billing/upload/OCR/image/voice/export/deployment remain disabled.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27M local validation passed.
+- Phase 27M Render live verification passed.
+- Phase 27N is now allowed to start.

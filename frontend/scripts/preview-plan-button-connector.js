@@ -28,11 +28,20 @@
   }
 
   function normalizeList(value) {
+    function keep(item) {
+      if (item === null || typeof item === "undefined") return false;
+      if (typeof item === "boolean") return false;
+      const text = String(item).trim().toLowerCase();
+      if (!text) return false;
+      if (text === "true" || text === "false") return false;
+      return true;
+    }
+
     if (!value) return [];
-    if (Array.isArray(value)) return value;
-    if (typeof value === "string") return [value];
-    if (typeof value === "object") return Object.values(value).filter(Boolean);
-    return [String(value)];
+    if (Array.isArray(value)) return value.filter(keep);
+    if (typeof value === "string") return keep(value) ? [value] : [];
+    if (typeof value === "object") return Object.values(value).filter(keep);
+    return keep(value) ? [String(value)] : [];
   }
 
   function findRenderTarget() {
