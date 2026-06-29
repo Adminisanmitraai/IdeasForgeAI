@@ -11454,3 +11454,27 @@ Status: Completed and passed.
 Stage result:
 - IdeasForgeAI can now support live chat, product planning, preview planning, and approval gating.
 - Phase 27 is now allowed to start.
+
+## Phase 27A - Universal Sector Classifier Agent
+
+Status: Completed and live verified.
+
+- Backend Universal Sector Classifier Agent is live.
+- Live endpoint verified: POST /api/sector-classifier.
+- Agent classifies user sector, role, workflow type, output type, assistant category, required agents, safety level, and next recommended endpoint.
+- Supports banking, finance, share broking, retail, accounts, inventory, restaurants, farming, creative agencies, sales, data entry, medical admin, education, logistics, real estate, construction, manufacturing, students, research, reports, presentations, catalogs, reels, Instagram promos, online sellers, housewives, household productivity, and home businesses.
+- Product planning remains enabled.
+- Preview planning remains enabled.
+- Approval gate remains enabled.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27A local validation passed.
+- Phase 27A GitHub push passed.
+- Phase 27A Render live verification passed.
+- Phase 27B is now allowed to start.
