@@ -11286,3 +11286,13 @@ Stage gate:
 - Phase 26A GitHub push passed.
 - Phase 26A Render live verification passed.
 - Phase 26B is now allowed to start.
+
+## IdeasForgeAI Product Expansion Standard
+
+Status: Locked.
+
+- IdeasForgeAI is now positioned as a universal AI builder for work, business, study, content creation, and daily life.
+- It must support AI assistants, apps, websites, dashboards, reports, research documents, presentations, catalogs, proposals, retail tools, accounts tools, inventory tools, restaurant tools, farming tools, social media/reels tools, and household/home-business assistants.
+- Every result must aim to be more polished, practical, professional, mobile-ready, approval-gated, and production-useful than a generic app builder result.
+- Full standard saved at: docs/product-strategy/IDEASFORGEAI_PRODUCT_EXPANSION_STANDARD.md
+
