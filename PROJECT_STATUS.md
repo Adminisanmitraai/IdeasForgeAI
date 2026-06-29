@@ -11530,3 +11530,29 @@ Stage gate:
 - Phase 27B GitHub push passed.
 - Phase 27B Render live verification passed.
 - Phase 27C is now allowed to start.
+
+## Phase 27B - Requirement Expansion Agent
+
+Status: Completed and live verified.
+
+- Backend Requirement Expansion Agent is live.
+- Live endpoint verified: POST /api/requirements.
+- Agent expands user ideas and sector classification into detailed approval-ready requirements.
+- It identifies workflow, inputs, data fields, AI tasks, review points, screens, outputs, missing questions, safety rules, acceptance criteria, and priority features.
+- Tested with home tiffin/home business assistant workflow.
+- Sector classification remains enabled.
+- Product planning remains enabled.
+- Preview planning remains enabled.
+- Approval gate remains enabled.
+- Code generation remains disabled.
+- Export generation remains disabled.
+- Deployment remains disabled.
+- Database/auth/billing/upload/OCR/image/voice processing are not added.
+- No frontend API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27B local validation passed.
+- Phase 27B GitHub push passed.
+- Phase 27B Render live verification passed.
+- Phase 27C is now allowed to start.
