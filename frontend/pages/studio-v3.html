@@ -432,74 +432,7 @@
   <script src="/scripts/preview-plan-button-connector.js?v=27m5"></script>
   <script src="/scripts/approval-gate-ui-connector.js?v=27j2"></script>
 
-<script id="ideasforge-mobile-autoscroll-fix">
-(function () {
-  "use strict";
 
-  function isMobileChat() {
-    return window.innerWidth <= 520 &&
-      document.querySelector(".mobile-chat-screen .ideasforge-mobile-scroll") &&
-      document.querySelector(".mobile-chat-screen .ideasforge-mobile-composer");
-  }
-
-  function getScrollArea() {
-    return document.querySelector(".mobile-chat-screen .ideasforge-mobile-scroll");
-  }
-
-  function scrollMobileChatToBottom() {
-    if (!isMobileChat()) return;
-
-    const scrollArea = getScrollArea();
-    if (!scrollArea) return;
-
-    requestAnimationFrame(function () {
-      scrollArea.scrollTo({
-        top: scrollArea.scrollHeight,
-        behavior: "smooth"
-      });
-    });
-  }
-
-  function start() {
-    if (!isMobileChat()) return;
-
-    const scrollArea = getScrollArea();
-    if (!scrollArea || scrollArea.dataset.autoscrollFix === "true") return;
-
-    scrollArea.dataset.autoscrollFix = "true";
-
-    const observer = new MutationObserver(function () {
-      setTimeout(scrollMobileChatToBottom, 80);
-      setTimeout(scrollMobileChatToBottom, 260);
-    });
-
-    observer.observe(scrollArea, {
-      childList: true,
-      subtree: true,
-      characterData: true
-    });
-
-    document.addEventListener("click", function (event) {
-      const target = event.target;
-      if (!target || !target.closest) return;
-
-      if (target.closest(".ideasforge-mobile-composer")) {
-        setTimeout(scrollMobileChatToBottom, 220);
-      }
-    }, true);
-
-    window.IdeasForgeAIMobileScrollFreeze = {
-      scrollToBottom: scrollMobileChatToBottom
-    };
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start);
-  } else {
-    start();
-  }
-})();
-</script>
 
 </body>
 </html>

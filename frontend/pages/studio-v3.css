@@ -2605,44 +2605,86 @@ a {
 
 
 /* =========================================================
-   PHASE 27P LATEST MESSAGE ABOVE COMPOSER FIX
+   PHASE 27P SAFE MOBILE FREEZE FINAL
    Scope: studio-v3 mobile chat only.
+   No auto-scroll. No global script.
    ========================================================= */
 
 @media (max-width: 520px) {
-  .mobile-chat-screen .ideasforge-mobile-scroll {
-    padding-bottom: 360px !important;
-    scroll-padding-bottom: 280px !important;
+  .mobile-screen.ideasforge-mobile-shell,
+  .mobile-chat-screen {
+    width: 100%;
+    max-width: 430px;
+    min-height: 100dvh;
+    margin: 0 auto;
+    overflow-x: hidden;
+    position: relative;
   }
 
-  .mobile-chat-screen .ideasforge-mobile-scroll > *:last-child {
-    margin-bottom: 280px !important;
-    scroll-margin-bottom: 280px !important;
+  .mobile-chat-screen .ideasforge-mobile-header {
+    position: fixed !important;
+    top: max(12px, env(safe-area-inset-top)) !important;
+    left: 16px !important;
+    right: 16px !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    z-index: 50 !important;
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-scroll {
+    height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-top: 132px !important;
+    padding-bottom: 245px !important;
+    box-sizing: border-box !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .mobile-chat-screen .ideasforge-mobile-hero {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
   }
 
   .mobile-chat-screen .ideasforge-mobile-composer {
-    bottom: max(10px, env(safe-area-inset-bottom)) !important;
-    min-height: 168px !important;
-    max-height: 188px !important;
-    padding: 13px !important;
+    position: fixed !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: max(12px, env(safe-area-inset-bottom)) !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    min-height: 178px !important;
+    max-height: 198px !important;
+    padding: 14px !important;
     border-radius: 26px !important;
+    box-sizing: border-box !important;
+    z-index: 55 !important;
+    margin: 0 !important;
+    transform: none !important;
   }
 
   .mobile-chat-screen .ideasforge-mobile-composer textarea {
-    height: 86px !important;
-    min-height: 86px !important;
-    max-height: 86px !important;
+    height: 92px !important;
+    min-height: 92px !important;
+    max-height: 92px !important;
     font-size: 18px !important;
-    line-height: 1.32 !important;
-    padding: 16px 18px !important;
+    line-height: 1.35 !important;
     border-radius: 20px !important;
+    padding: 18px !important;
+    box-sizing: border-box !important;
+    resize: none !important;
+    overflow-y: auto !important;
   }
 
   .mobile-chat-screen .ideasforge-mobile-composer button {
-    width: 54px !important;
-    height: 54px !important;
-    min-width: 54px !important;
-    min-height: 54px !important;
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    flex-shrink: 0 !important;
   }
 }
 
