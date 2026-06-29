@@ -4472,3 +4472,36 @@ a {
   }
 }
 
+
+/* =========================================================
+   PHASE 27Q-STATIC-PREVIEW-MICRO-POLISH
+   Scope: desktop static left preview only.
+   ========================================================= */
+
+@media (min-width: 769px) {
+  .studio-web-shell .studio-static-preview-hero {
+    padding-top: 8px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .studio-web-shell .studio-static-preview-hero h1 {
+    font-size: 30px !important;
+    line-height: 1.02 !important;
+    margin-bottom: 10px !important;
+  }
+
+  .studio-web-shell .studio-static-preview-hero p {
+    font-weight: 400 !important;
+    font-size: 13px !important;
+    color: #777986 !important;
+  }
+
+  .studio-web-shell .studio-static-assistant-bubble {
+    font-weight: 450 !important;
+  }
+
+  .studio-web-shell .studio-static-composer-input {
+    font-weight: 400 !important;
+  }
+}
+
