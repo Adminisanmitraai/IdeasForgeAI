@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from backend.utils.safe_response import (
     CONTRACT_VERSION,
     DISABLED_CAPABILITIES,
-    PHASE_27A,
+    PHASE_27B,
     SERVICE_NAME,
     disabled_capability_report,
     is_openai_configured,
@@ -48,7 +48,7 @@ def phase26a_health():
     return {
         "ok": True,
         "service": SERVICE_NAME,
-        "phase": PHASE_27A,
+        "phase": PHASE_27B,
         "status": "healthy",
         "mode": "backend-openai-chat" if is_openai_configured() else "backend-chat-not-configured",
         **disabled_capability_report(),
@@ -58,7 +58,7 @@ def phase26a_health():
 @router.get("/contract")
 def phase26a_contract_manifest():
     openai_enabled = is_openai_configured()
-    enabled_capabilities = ["openai_chat", "sector_classification", "product_generation", "preview_generation", "approval_gate"] if openai_enabled else []
+    enabled_capabilities = ["openai_chat", "sector_classification", "requirement_expansion", "product_generation", "preview_generation", "approval_gate"] if openai_enabled else []
     disabled_capabilities = list(DISABLED_CAPABILITIES)
     if not openai_enabled:
         disabled_capabilities.insert(0, "openai_chat")
@@ -68,13 +68,14 @@ def phase26a_contract_manifest():
     return {
         "ok": True,
         "service": SERVICE_NAME,
-        "phase": PHASE_27A,
+        "phase": PHASE_27B,
         "contractVersion": CONTRACT_VERSION,
         "enabledEndpoints": [
             "GET /api/health",
             "GET /api/contract",
             "POST /api/chat",
             "POST /api/sector-classifier",
+            "POST /api/requirements",
             "POST /api/product-plan",
             "POST /api/preview-plan",
             "POST /api/approval-gate",
@@ -138,7 +139,7 @@ async def phase26a_chat_contract(request: Request):
             status_code=503,
             content={
                 "ok": False,
-                "phase": PHASE_27A,
+                "phase": PHASE_27B,
                 "mode": "backend-chat-not-configured",
                 "sessionId": session_id,
                 "assistant": {
@@ -245,7 +246,7 @@ async def phase26a_chat_contract(request: Request):
 
     return {
         "ok": True,
-        "phase": PHASE_27A,
+        "phase": PHASE_27B,
         "mode": "backend-openai-chat",
         "sessionId": session_id,
         "assistant": {
@@ -265,7 +266,7 @@ async def phase26a_chat_contract(request: Request):
 def _openai_error_response(session_id: str, code: str, message: str) -> dict:
     return {
         "ok": False,
-        "phase": PHASE_27A,
+        "phase": PHASE_27B,
         "mode": "backend-openai-chat",
         "sessionId": session_id,
         "assistant": {

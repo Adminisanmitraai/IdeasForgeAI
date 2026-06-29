@@ -28,6 +28,7 @@ from backend.api.product_plan import router as product_plan_router
 from backend.api.preview_plan import router as preview_plan_router
 from backend.api.approval_gate import router as approval_gate_router
 from backend.api.sector_classifier import router as sector_classifier_router
+from backend.api.requirements import router as requirements_router
 from backend.pixel_converter import PixelConverterContractEngine, PixelConverterContractRequest
 from backend.product_brain.workflow_engine import ProductBrainWorkflow
 
@@ -54,6 +55,7 @@ app.include_router(product_plan_router)
 app.include_router(preview_plan_router)
 app.include_router(approval_gate_router)
 app.include_router(sector_classifier_router)
+app.include_router(requirements_router)
 
 if GENERATED_APPS_DIR.exists():
     app.mount(
