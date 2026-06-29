@@ -165,51 +165,73 @@
           <div class="mobile-toast" data-mobile-toast hidden></div>
 
           <div class="mobile-flow-track studio-mobile-preview-frame">
-            <section class="studio-static-mobile-preview" aria-label="Static mobile chat preview">
-              <div class="studio-static-preview-hero">
-                <h2>What is your idea to build</h2>
-                <p>Describe your idea and I'll help you build it.</p>
-              </div>
+            <div class="studio-mobile-live-preview-shell" aria-label="Desktop preview of mobile chat home">
+              <div class="studio-mobile-live-preview-scale">
+                <section class="mobile-screen mobile-chat-screen ideasforge-mobile-shell studio-mobile-preview-copy" aria-label="IdeasForgeAI mobile chat preview">
+                  <header class="mobile-flow-header ideasforge-mobile-header">
+                    <button class="mobile-menu-button" type="button" aria-label="Open menu">
+                      <span></span>
+                      <span></span>
+                      <span></span>
+                    </button>
+                    <a class="mobile-brand-lockup" href="#" aria-label="IdeasForgeAI home">
+                      <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
+                      <span>
+                        <strong>IdeasForgeAI</strong>
+                        <small>AI Product Builder</small>
+                      </span>
+                    </a>
+                    <button class="mobile-profile-button" type="button" aria-label="Profile / Login">
+                      <svg aria-hidden="true" viewBox="0 0 24 24">
+                        <path d="M20 21a8 8 0 0 0-16 0"></path>
+                        <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+                      </svg>
+                    </button>
+                  </header>
 
-              <div class="studio-static-chat-stream">
-                <div class="studio-static-assistant-row">
-                  <span class="studio-static-assistant-icon" aria-hidden="true">
-                    <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="">
-                  </span>
-                  <p class="studio-static-assistant-bubble">Hi, I'm IdeasForgeAI. Tell me what you want to build, and I'll turn your idea into a polished app or website preview.</p>
-                </div>
-                <div class="studio-static-assistant-row">
-                  <span class="studio-static-assistant-icon" aria-hidden="true">
-                    <img src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="">
-                  </span>
-                  <p class="studio-static-assistant-bubble">What kind of product should we start with?</p>
-                </div>
-              </div>
+                  <div class="mobile-chat-body ideasforge-mobile-scroll">
+                    <div class="mobile-hero-copy ideasforge-mobile-hero">
+                      <h2>What is your idea to build</h2>
+                      <p>Describe your idea and I'll help you build it.</p>
+                    </div>
+                    <div class="mobile-chat-stream">
+                      <article class="chat-bubble assistant">
+                        <span class="bubble-name">IdeasForgeAI</span>
+                        <p>Hi, I'm IdeasForgeAI. Tell me what you want to build, and I'll turn your idea into a polished app or website preview.</p>
+                      </article>
+                      <article class="chat-bubble assistant">
+                        <span class="bubble-name">IdeasForgeAI</span>
+                        <p>What kind of product should we start with?</p>
+                      </article>
+                    </div>
+                  </div>
 
-              <form class="studio-static-composer" action="#" method="get">
-                <label class="visually-hidden" for="studioStaticPreviewPrompt">Describe your idea</label>
-                <textarea class="studio-static-composer-input" id="studioStaticPreviewPrompt" rows="3" placeholder="Describe your idea..."></textarea>
-                <div class="studio-static-composer-actions" aria-label="Static composer controls">
-                  <button type="button" aria-label="Attach file">
-                    <svg aria-hidden="true" viewBox="0 0 24 24">
-                      <path d="M12 5v14M5 12h14"></path>
-                    </svg>
-                  </button>
-                  <span aria-hidden="true"></span>
-                  <button type="button" aria-label="Voice note">
-                    <svg aria-hidden="true" viewBox="0 0 24 24">
-                      <path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path>
-                      <path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>
-                    </svg>
-                  </button>
-                  <button class="studio-static-submit" type="submit" aria-label="Send idea">
-                    <svg aria-hidden="true" viewBox="0 0 24 24">
-                      <path d="M5 12h13M13 6l6 6-6 6"></path>
-                    </svg>
-                  </button>
-                </div>
-              </form>
-            </section>
+                  <form class="mobile-prompt-box ideasforge-mobile-composer" action="#" method="get">
+                    <label class="visually-hidden">Describe your idea</label>
+                    <textarea rows="3" placeholder="Describe your idea..." aria-label="Describe your idea"></textarea>
+                    <div class="mobile-composer-controls" aria-label="Composer controls">
+                      <button class="mobile-chat-tool" type="button" aria-label="Attach file">
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M12 5v14M5 12h14"></path>
+                        </svg>
+                      </button>
+                      <span class="composer-control-spacer" aria-hidden="true"></span>
+                      <button class="mobile-chat-tool" type="button" aria-label="Record voice note">
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path>
+                          <path d="M5 11a7 7 0 0 0 14 0M12 18v3"></path>
+                        </svg>
+                      </button>
+                      <button class="mobile-start-button" type="submit" aria-label="Send idea">
+                        <svg aria-hidden="true" viewBox="0 0 24 24">
+                          <path d="M5 12h13M13 6l6 6-6 6"></path>
+                        </svg>
+                      </button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+            </div>
 
             <section class="mobile-screen mobile-chat-screen ideasforge-mobile-shell" aria-labelledby="mobile-chat-title">
               <header class="mobile-flow-header ideasforge-mobile-header">
@@ -536,40 +558,6 @@
   <script src="/scripts/product-plan-button-connector.js?v=27l2"></script>
   <script src="/scripts/preview-plan-button-connector.js?v=27m5"></script>
   <script src="/scripts/approval-gate-ui-connector.js?v=27j2"></script>
-
-
-
-
-<script id="ideasforge-desktop-preview-scroll-reset">
-(function () {
-  "use strict";
-
-  function resetDesktopPreviewScroll() {
-    if (window.innerWidth < 769) return;
-
-    var previewScroll = document.querySelector(
-      ".studio-web-shell .studio-mobile-preview-frame .ideasforge-mobile-scroll"
-    );
-
-    if (!previewScroll) return;
-    previewScroll.scrollTop = 0;
-  }
-
-  function start() {
-    resetDesktopPreviewScroll();
-    setTimeout(resetDesktopPreviewScroll, 150);
-    setTimeout(resetDesktopPreviewScroll, 500);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start);
-  } else {
-    start();
-  }
-
-  window.addEventListener("resize", resetDesktopPreviewScroll);
-})();
-</script>
 
 </body>
 </html>
