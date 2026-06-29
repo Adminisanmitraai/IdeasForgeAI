@@ -11804,3 +11804,26 @@ Stage gate:
 - Phase 27I local validation passed.
 - Phase 27I Render live verification passed.
 - Phase 27J is now allowed to start.
+
+## Phase 27J - Approval Gate UI Connector
+
+Status: Completed and locally verified.
+
+- Approval Gate UI Connector is working locally.
+- Continue to Approval Gate button opens approval gate card.
+- Approval gate shows product plan approval, preview approval, and code-generation lock acknowledgement.
+- Required APPROVE confirmation works.
+- Submit Approval Gate calls backend POST /api/approval-gate.
+- Approval result card renders in the UI.
+- Backend accepted: Yes.
+- Approved: Yes.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- Database/auth/billing/upload/OCR/image/voice/export/deployment remain disabled.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27J local validation passed.
+- Phase 27J Render live verification pending.
