@@ -10,44 +10,44 @@
     <link rel="stylesheet" href="./studio-v3.css">
   </head>
   <body>
-    <div class="builder-shell">
+    <div class="builder-shell studio-web-shell">
       <!-- Top builder toolbar -->
-      <header class="top-toolbar" aria-label="Builder toolbar">
-        <div class="toolbar-left">
-          <a class="brand-lockup" href="#" aria-label="IdeasForgeAI home">
+      <header class="top-toolbar studio-web-toolbar" aria-label="Builder toolbar">
+        <div class="toolbar-left studio-web-toolbar-left">
+          <a class="brand-lockup studio-web-brand" href="#" aria-label="IdeasForgeAI home">
             <img class="brand-mark" src="../assets/brand/ideasforgeai-if-spark-icon-cropped.png" alt="IdeasForgeAI">
-            <span>IdeasForgeAI</span>
+            <span>
+              <strong>IdeasForgeAI</strong>
+              <small>AI Product Builder</small>
+            </span>
           </a>
-          <button class="project-selector" type="button" aria-label="Select project">
-            <span data-state-field="projectName">SaaS Landing Page</span>
-            <span aria-hidden="true">v</span>
+          <button class="studio-sidebar-toggle" type="button" aria-label="Close sidebar">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M4 6h16M4 12h10M4 18h16"></path>
+            </svg>
+            <span>Close Sidebar</span>
           </button>
-          <span class="version-pill" data-state-field="currentPhase">Static preview</span>
-          <span class="save-state" data-state-field="previewStatus">Preview ready</span>
         </div>
 
-        <nav class="mode-tabs" aria-label="Builder modes">
-          <button class="mode-tab is-active" type="button" data-mode="builder">Builder</button>
-          <button class="mode-tab" type="button" data-mode="code">Code</button>
-          <button class="mode-tab" type="button" data-mode="database">Database</button>
+        <nav class="mode-tabs studio-web-toolbar-center studio-preview-mode-switcher" aria-label="Preview device modes">
+          <button class="studio-preview-mode-button is-active" type="button" data-device="mobile">Mobile</button>
+          <button class="studio-preview-mode-button" type="button" data-device="tablet">Tablet</button>
+          <button class="studio-preview-mode-button" type="button" data-device="laptop">Laptop</button>
         </nav>
 
-        <div class="toolbar-right">
-          <div class="preview-toggle" aria-label="Preview device controls">
-            <button class="icon-button is-active" type="button" data-device="desktop" title="Desktop preview" aria-label="Desktop preview">
-              <span aria-hidden="true">D</span>
-            </button>
-            <button class="icon-button" type="button" data-device="mobile" title="Mobile preview" aria-label="Mobile preview">
-              <span aria-hidden="true">M</span>
-            </button>
-          </div>
-          <button class="size-dropdown" type="button" aria-label="Select preview width">1280px <span aria-hidden="true">v</span></button>
-          <button class="secondary-action" type="button">Share</button>
-          <button class="primary-action" type="button">Publish</button>
+        <div class="toolbar-right studio-web-toolbar-right">
+          <button class="studio-profile-button" type="button" aria-label="Profile">
+            <svg aria-hidden="true" viewBox="0 0 24 24">
+              <path d="M20 21a8 8 0 0 0-16 0"></path>
+              <path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+            </svg>
+          </button>
+          <button class="studio-share-button" type="button">Share</button>
+          <button class="studio-publish-button" type="button">Publish</button>
         </div>
       </header>
 
-      <main class="builder-stage" data-mobile-flow="chat">
+      <main class="builder-stage studio-web-main" data-mobile-flow="chat">
         <!-- Left AI workspace -->
         <aside class="ai-rail" aria-label="AI workspace">
           <details class="workspace-menu">
@@ -136,7 +136,7 @@
         </aside>
 
         <!-- Mobile-only chat-first and mock processing flow -->
-        <section class="mobile-flow mobile-creation-flow" aria-label="Mobile AI creation flow">
+        <section class="mobile-flow mobile-creation-flow studio-left-preview-panel" aria-label="Mobile AI creation flow">
           <div class="mobile-drawer-backdrop" data-mobile-drawer-backdrop hidden></div>
           <aside class="mobile-menu-drawer" data-mobile-drawer aria-label="Mobile menu" hidden>
             <div class="mobile-drawer-header">
@@ -164,7 +164,7 @@
           </aside>
           <div class="mobile-toast" data-mobile-toast hidden></div>
 
-          <div class="mobile-flow-track">
+          <div class="mobile-flow-track studio-mobile-preview-frame">
             <section class="mobile-screen mobile-chat-screen ideasforge-mobile-shell" aria-labelledby="mobile-chat-title">
               <header class="mobile-flow-header ideasforge-mobile-header">
                 <button class="mobile-menu-button" type="button" aria-label="Open menu">
@@ -321,6 +321,41 @@
               Files
             </button>
           </section>
+        </section>
+
+        <section class="studio-right-display-panel" aria-label="IdeasForgeAI product overview">
+          <div class="studio-hero-badge">AI-Powered Product Creation</div>
+          <h1 class="studio-hero-title">Turn Your Ideas Into<br>Stunning Products</h1>
+          <p class="studio-hero-text">IdeasForgeAI helps you build apps, websites, and digital products faster with the power of AI.</p>
+
+          <div class="studio-feature-grid">
+            <article class="studio-feature-card">
+              <strong>AI Product Builder</strong>
+              <p>Describe your idea and get an instant product preview.</p>
+            </article>
+            <article class="studio-feature-card">
+              <strong>Smart Code Generation</strong>
+              <p>Get clean, production-ready code for your project.</p>
+            </article>
+            <article class="studio-feature-card">
+              <strong>Beautiful Design</strong>
+              <p>Stunning UI/UX generated automatically for you.</p>
+            </article>
+            <article class="studio-feature-card">
+              <strong>Rapid Prototyping</strong>
+              <p>Go from idea to prototype in minutes, not weeks.</p>
+            </article>
+            <article class="studio-feature-card">
+              <strong>Export &amp; Deploy</strong>
+              <p>Export your project and deploy anywhere.</p>
+            </article>
+            <article class="studio-feature-card">
+              <strong>Secure &amp; Reliable</strong>
+              <p>Built with security and scalability in mind.</p>
+            </article>
+          </div>
+
+          <p class="studio-hero-bottom-line">Build smarter. Ship faster. Grow bigger. ✨</p>
         </section>
 
         <!-- Right browser preview canvas -->

@@ -12224,3 +12224,49 @@ Confirmed:
 Freeze status:
 - Phase 27P mobile chat layout freeze allowed.
 - Do not change this mobile layout again without creating a new freeze screenshot first.
+
+## Phase 27Q - Web Browser Builder Layout
+
+Status: Completed locally, live verification pending.
+
+Files changed:
+- frontend/pages/studio-v3.html
+- frontend/pages/studio-v3.css
+
+Main HTML sections added:
+- .studio-web-shell
+- .studio-web-toolbar
+- .studio-left-preview-panel
+- .studio-mobile-preview-frame
+- .studio-right-display-panel
+
+CSS selectors added:
+- .studio-web-shell
+- .studio-web-toolbar*
+- .studio-preview-mode-*
+- .studio-web-main
+- .studio-left-preview-panel
+- .studio-mobile-preview-frame
+- .studio-right-display-panel
+- .studio-hero-*
+- .studio-feature-*
+
+Confirmed:
+- Desktop web browser layout added.
+- Top toolbar includes Close Sidebar, Mobile/Tablet/Laptop preview controls, Profile, Share, and Publish.
+- Left section displays mobile preview.
+- Right section displays clean hero/product display section.
+- Frozen mobile 3-row behavior preserved.
+- Protected mobile selectors were only styled inside .studio-mobile-preview-frame for desktop preview.
+- No global layout scripts added.
+- No banned overlay script references found.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Stage gate:
+- Phase 27Q local implementation complete.
+- Phase 27Q desktop/mobile visual verification pending.
