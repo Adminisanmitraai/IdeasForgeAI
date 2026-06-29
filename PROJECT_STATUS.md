@@ -12141,3 +12141,42 @@ Status: Completed locally, live verification pending.
 
 Stage gate:
 - Phase 27P final mobile layout validation pending.
+
+## Phase 27P-FINAL-LOCK - Mobile Chat Screen Freeze
+
+Status: Completed and frozen.
+
+Files changed:
+- frontend/pages/studio-v3.html
+- frontend/pages/studio-v3.css
+
+CSS selectors changed:
+- .mobile-screen.ideasforge-mobile-shell
+- .mobile-chat-screen .ideasforge-mobile-header
+- .mobile-chat-screen .ideasforge-mobile-scroll
+- .mobile-chat-screen .ideasforge-mobile-hero
+- .mobile-chat-screen .ideasforge-mobile-composer
+- .mobile-chat-screen .ideasforge-mobile-composer textarea
+
+Confirmed:
+- Mobile header is fixed and fully visible.
+- Header uses top: max(12px, env(safe-area-inset-top)).
+- Content padding reserves header height + 36px.
+- Hero title is fully visible and not hidden under header.
+- Bottom composer remains fixed and unchanged.
+- Middle content scrolls.
+- No demo/progress overlays visible.
+- Desktop builder shell was not touched.
+- No global layout scripts were added.
+- Code generation remains locked.
+- Export remains locked.
+- Deployment remains locked.
+- No backend restart required.
+- No frontend OpenAI API key was added.
+- KisanMitraAI not touched.
+
+Frontend freeze rule:
+- This mobile screen is now frozen.
+- Future mobile chat changes must patch only studio-v3.html and studio-v3.css with named selectors.
+- No global script injection into frontend/**/*.html.
+- No broad body/header/nav/textarea selector patches.
