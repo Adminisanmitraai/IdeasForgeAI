@@ -1133,6 +1133,134 @@ textarea:focus-visible {
   }
 }
 
+@media (max-width: 768px) {
+  html,
+  body,
+  .studio-v4-shell {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  .studio-v4-toolbar {
+    width: 100vw;
+    max-width: 100vw;
+    grid-template-columns: minmax(0, 1fr) auto;
+    overflow: hidden;
+  }
+
+  .brand-lockup,
+  .brand-copy {
+    min-width: 0;
+  }
+
+  .brand-copy strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .toolbar-right {
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .secondary-button,
+  .primary-button {
+    min-height: 34px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .studio-v4-workspace,
+  .studio-v4-shell.is-chat-collapsed .studio-v4-workspace {
+    width: 100vw;
+    max-width: 100vw;
+    grid-template-columns: 100vw 100vw;
+    overflow: hidden;
+  }
+
+  .studio-v4-shell.is-chat-collapsed .studio-v4-workspace {
+    transform: translateX(-100vw);
+  }
+
+  .chat-panel,
+  .preview-placeholder {
+    width: 100vw;
+    max-width: 100vw;
+    min-width: 0;
+  }
+
+  .chat-panel-header,
+  .chat-stream,
+  .chat-composer {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .chat-panel-header {
+    overflow: hidden;
+  }
+
+  .chat-title-group {
+    min-width: 0;
+  }
+
+  .chat-title-group strong,
+  .chat-title-group span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-message,
+  .assistant-message,
+  .user-message {
+    max-width: calc(100vw - 96px);
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
+  .message-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .chat-composer {
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    margin: 0 8px max(8px, env(safe-area-inset-bottom));
+    padding: 8px;
+    gap: 8px;
+    overflow: visible;
+  }
+
+  .chat-composer textarea {
+    min-width: 0;
+    min-height: 42px;
+    max-height: 96px;
+    overflow-y: auto;
+    padding: 11px 12px;
+  }
+
+  .composer-actions {
+    flex: 0 0 auto;
+    gap: 8px;
+  }
+
+  .composer-tool-button,
+  .composer-icon-button,
+  .composer-submit-button {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+  }
+
+  .attachment-menu,
+  .chat-header-menu {
+    max-width: calc(100vw - 24px);
+  }
+}
+
 
 /* =========================================================
    PHASE 28C MENU ICON SVG POLISH

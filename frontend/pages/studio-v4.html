@@ -132,7 +132,7 @@
             <strong>AI Assistant</strong>
             <span>IdeasForgeAI Product Builder</span>
           </span>
-          <button class="chat-panel-close-button" type="button" aria-label="Collapse chat panel" title="Collapse panel">
+          <button class="chat-panel-close-button" type="button" aria-label="Show preview" title="Show preview" data-chat-panel-toggle>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="4" y="5" width="16" height="14" rx="2"></rect>
               <path d="M9 5v14"></path>
@@ -142,11 +142,13 @@
         </header>
 
         <div class="chat-stream" data-chat-stream aria-live="polite">
-          <article class="chat-message assistant-message">
-            Hi, I'm IdeasForgeAI. Tell me what you want to build, and I'll turn your idea into a polished app or website preview.
+          <article class="chat-message assistant-message" data-time="10:10 AM">
+            <span class="message-text">Hi, I'm IdeasForgeAI. Tell me what you want to build, and I'll turn your idea into a polished app or website preview.</span>
+            <span class="message-meta">10:10 AM</span>
           </article>
-          <article class="chat-message assistant-message">
-            What kind of product should we start with?
+          <article class="chat-message assistant-message" data-time="10:11 AM">
+            <span class="message-text">What kind of product should we start with?</span>
+            <span class="message-meta">10:11 AM</span>
           </article>
         </div>
 
@@ -205,7 +207,27 @@
         </form>
       </aside>
 
-      <section class="preview-placeholder" aria-label="Future preview area"></section>
+      <section class="preview-placeholder" aria-label="Future preview area">
+        <button class="return-chat-button" type="button" data-chat-panel-toggle>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5"></path>
+            <path d="m11 6-6 6 6 6"></path>
+          </svg>
+          <span>Return to chat</span>
+        </button>
+        <div class="preview-empty-state">
+          <span class="preview-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <rect x="9" y="11" width="30" height="24" rx="5"></rect>
+              <path d="M15 19h18"></path>
+              <path d="M15 25h10"></path>
+              <path d="M30 31l4 4 7-8"></path>
+            </svg>
+          </span>
+          <h2>Your preview will appear here</h2>
+          <p>Tell the AI Assistant about your idea to generate a live preview of your app or website.</p>
+        </div>
+      </section>
     </section>
   </main>
   <script src="./studio-v4.js" defer></script>
