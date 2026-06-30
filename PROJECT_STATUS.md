@@ -12461,3 +12461,16 @@ Confirmed:
 Freeze:
 - Right preview empty state is accepted for now.
 - Next phase: Phase 28E - Backend Chat Bridge.
+
+## Phase 29A - Codespaces Travel Dev Setup
+
+Status: Codespaces travel workflow added, not frozen.
+
+- Codespaces enabled with a Python 3.12 dev container.
+- Backend port 8000 is forwarded as IdeasForgeAI Backend.
+- Frontend port 8088 is forwarded as IdeasForgeAI Frontend.
+- iPhone travel workflow documented in README_TRAVEL_DEV.md.
+- Studio V4 detects GitHub Codespaces forwarded frontend URLs and routes chat to the forwarded backend URL.
+- Backend CORS allows local frontend origins, production IdeasForgeAI, and GitHub Codespaces *.app.github.dev preview origins.
+- No secrets or frontend API keys added.
+- studio-v3 untouched.

@@ -11,10 +11,20 @@ const chatSubmitButton = document.querySelector(".composer-submit-button");
 const studioShell = document.querySelector(".studio-v4-shell");
 const chatPanelToggles = document.querySelectorAll("[data-chat-panel-toggle]");
 const previewStatus = document.querySelector("[data-preview-status]");
-const STUDIO_API_BASE =
-  window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost"
-    ? "http://127.0.0.1:8000"
-    : "https://ideasforgeai-api.onrender.com";
+const getStudioApiBase = () => {
+  const hostname = window.location.hostname;
+
+  if (hostname.includes(".app.github.dev")) {
+    return `https://${hostname.replace(/-\d+\.app\.github\.dev$/, "-8000.app.github.dev")}`;
+  }
+
+  if (hostname === "127.0.0.1" || hostname === "localhost") {
+    return "http://127.0.0.1:8000";
+  }
+
+  return "https://ideasforgeai-api.onrender.com";
+};
+const STUDIO_API_BASE = getStudioApiBase();
 const studioChatEndpoint = `${STUDIO_API_BASE}/api/studio/chat`;
 const fallbackAssistantReply = "I saved your idea locally. Backend connection will be retried later.";
 let chatRequestPending = false;
@@ -179,9 +189,11 @@ const setChatPanelCollapsed = (isCollapsed) => {
   }
 
   studioShell.classList.toggle("is-chat-collapsed", isCollapsed);
+  document.body.classList.toggle("mobile-preview-open", isCollapsed);
   chatPanelToggles.forEach((toggle) => {
     toggle.setAttribute("aria-expanded", String(!isCollapsed));
-    toggle.setAttribute("aria-label", isCollapsed ? "Show Chat" : "Show preview");
+    toggle.setAttribute("aria-label", isCollapsed ? "Show Chat" : "Show Preview");
+    toggle.setAttribute("title", isCollapsed ? "Show Chat" : "Show Preview");
   });
 
   closeAttachmentMenu();

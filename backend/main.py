@@ -47,12 +47,17 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
+        "http://127.0.0.1",
+        "http://localhost",
+        "http://127.0.0.1:8088",
+        "http://localhost:8088",
         "http://127.0.0.1:5173",
         "http://localhost:5173",
         "https://www.ideasforgeai.com",
         "https://ideasforgeai.com",
         "null",
     ],
+    allow_origin_regex=r"https://.*\.app\.github\.dev",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

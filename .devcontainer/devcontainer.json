@@ -1,0 +1,26 @@
+{
+  "name": "IdeasForgeAI Travel Dev",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "lts"
+    }
+  },
+  "forwardPorts": [8000, 8088],
+  "portsAttributes": {
+    "8000": {
+      "label": "IdeasForgeAI Backend",
+      "onAutoForward": "notify"
+    },
+    "8088": {
+      "label": "IdeasForgeAI Frontend",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "postCreateCommand": "python -m pip install --upgrade pip && if [ -f requirements.txt ]; then python -m pip install -r requirements.txt; fi && if [ -f backend/requirements.txt ]; then python -m pip install -r backend/requirements.txt; fi",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  }
+}
