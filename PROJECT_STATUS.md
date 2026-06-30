@@ -12520,3 +12520,16 @@ Status: Completed locally, visual verification pending.
 - Mobile preview mode keeps a fixed Chat return pill under the top toolbar.
 - Desktop layout preserved.
 - Backend untouched.
+
+## Phase 28D.10 - iPhone Safari Keyboard Scroll Lock
+
+Status: Completed locally, visual verification pending.
+
+- Added final mobile-only fixed page lock for html/body and Studio V4 shell.
+- Only the Studio V4 chat message stream scrolls on mobile.
+- Composer remains fixed inside the visual viewport with 16px input text to avoid iOS zoom.
+- Added mobile shell class and keyboard-open class management.
+- JS now clamps window scroll to 0 on load, focus, blur, resize, orientation, and visual viewport events.
+- Body-level touchmove is prevented outside the chat stream on mobile.
+- Desktop layout preserved.
+- Backend untouched.

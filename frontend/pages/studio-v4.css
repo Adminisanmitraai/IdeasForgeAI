@@ -3451,3 +3451,143 @@ body {
   }
 }
 
+/* =========================================================
+   PHASE 28D.10 IPHONE SAFARI KEYBOARD SCROLL LOCK
+   Scope: mobile-only locked app shell; chat stream is sole scroller
+   ========================================================= */
+
+@media (max-width: 768px) {
+  html,
+  body {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    overscroll-behavior: none !important;
+    touch-action: manipulation !important;
+  }
+
+  body.is-mobile-shell {
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important;
+  }
+
+  .studio-v4-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    height: var(--ifai-vh, 100dvh) !important;
+    max-height: var(--ifai-vh, 100dvh) !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .studio-v4-toolbar {
+    flex: 0 0 86px !important;
+    height: 86px !important;
+    min-height: 86px !important;
+    max-height: 86px !important;
+    overflow: hidden !important;
+    z-index: 60 !important;
+  }
+
+  .studio-v4-workspace,
+  .studio-v4-main,
+  .studio-v4-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+  }
+
+  .chat-panel {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .chat-panel-header {
+    flex: 0 0 104px !important;
+    height: 104px !important;
+    min-height: 104px !important;
+    max-height: 104px !important;
+    overflow: hidden !important;
+  }
+
+  .chat-panel-close-button {
+    flex-shrink: 0 !important;
+  }
+
+  .chat-stream {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+    overscroll-behavior: contain !important;
+    touch-action: pan-y !important;
+  }
+
+  .chat-composer {
+    position: fixed !important;
+    left: 14px !important;
+    right: 14px !important;
+    bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    max-width: none !important;
+    z-index: 100 !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+
+  .chat-composer textarea,
+  .chat-composer input,
+  textarea,
+  input {
+    font-size: 16px !important;
+  }
+
+  .attachment-control,
+  .composer-actions,
+  .composer-tool-button,
+  .composer-icon-button,
+  .composer-submit-button {
+    flex-shrink: 0 !important;
+  }
+
+  .composer-submit-button svg {
+    max-width: 22px !important;
+    max-height: 22px !important;
+  }
+
+  .studio-v4-shell.is-chat-collapsed .chat-composer {
+    display: none !important;
+  }
+
+  .return-chat-button,
+  .force-mobile-show-chat {
+    top: 98px !important;
+    left: 18px !important;
+    z-index: 100 !important;
+  }
+}
+

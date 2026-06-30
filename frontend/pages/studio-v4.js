@@ -363,30 +363,68 @@ document.addEventListener("keydown", (event) => {
 })();
 
 
-/* PHASE 28D.8 MOBILE VISUAL VIEWPORT HEIGHT LOCK */
+/* PHASE 28D.10 MOBILE SAFARI KEYBOARD SCROLL LOCK */
 (function () {
   "use strict";
 
   const mobileQuery = window.matchMedia("(max-width: 768px)");
+  const chatScrollSelector = ".chat-stream";
+
+  const isMobile = () => mobileQuery.matches;
+
+  const lockWindowScroll = () => {
+    if (!isMobile()) {
+      return;
+    }
+
+    window.scrollTo(0, 0);
+  };
 
   const setMobileViewportHeight = () => {
-    if (!mobileQuery.matches) {
+    if (!isMobile()) {
       document.documentElement.style.removeProperty("--ifai-vh");
+      document.body.classList.remove("is-mobile-shell");
       document.body.classList.remove("mobile-keyboard-open");
       return;
     }
 
     const viewportHeight = window.visualViewport?.height || window.innerHeight;
     document.documentElement.style.setProperty("--ifai-vh", `${viewportHeight}px`);
+    document.body.classList.add("is-mobile-shell");
     document.body.classList.toggle("mobile-keyboard-open", viewportHeight < window.innerHeight - 120);
+    lockWindowScroll();
+  };
+
+  const handleComposerFocusChange = () => {
+    lockWindowScroll();
+    window.setTimeout(lockWindowScroll, 60);
+    window.setTimeout(lockWindowScroll, 220);
+  };
+
+  const preventPageTouchScroll = (event) => {
+    if (!isMobile()) {
+      return;
+    }
+
+    if (event.target.closest(chatScrollSelector)) {
+      return;
+    }
+
+    event.preventDefault();
   };
 
   setMobileViewportHeight();
-  window.addEventListener("load", setMobileViewportHeight);
+  window.addEventListener("load", () => {
+    setMobileViewportHeight();
+    lockWindowScroll();
+  });
   window.addEventListener("resize", setMobileViewportHeight);
   window.addEventListener("orientationchange", setMobileViewportHeight);
   mobileQuery.addEventListener?.("change", setMobileViewportHeight);
   window.visualViewport?.addEventListener("resize", setMobileViewportHeight);
   window.visualViewport?.addEventListener("scroll", setMobileViewportHeight);
+  document.addEventListener("focusin", handleComposerFocusChange);
+  document.addEventListener("focusout", handleComposerFocusChange);
+  document.addEventListener("touchmove", preventPageTouchScroll, { passive: false });
 })();
 
