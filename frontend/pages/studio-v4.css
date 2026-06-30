@@ -1557,3 +1557,135 @@ textarea:focus-visible {
   }
 }
 
+
+/* =========================================================
+   PHASE 28D.3 MOBILE COMPOSER CENTER FIX
+   ========================================================= */
+
+@media (max-width: 768px) {
+  :root {
+    --mobile-composer-side-gap: 16px;
+    --mobile-composer-bottom-gap: calc(env(safe-area-inset-bottom, 0px) + 14px);
+  }
+
+  /* Main mobile chat panel */
+  .studio-v4-chat-panel,
+  .studio-chat-panel,
+  .assistant-chat-panel,
+  .left-chat-panel,
+  [data-chat-panel] {
+    position: relative !important;
+    padding-bottom: 120px !important;
+  }
+
+  /* Composer wrapper */
+  .studio-v4-composer,
+  .chat-composer,
+  .assistant-composer,
+  .studio-chat-composer,
+  [data-chat-composer] {
+    position: fixed !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    bottom: var(--mobile-composer-bottom-gap) !important;
+    width: calc(100vw - (var(--mobile-composer-side-gap) * 2)) !important;
+    max-width: 560px !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+
+    padding: 10px 12px !important;
+    border-radius: 24px !important;
+    border: 1px solid rgba(17, 24, 39, 0.08) !important;
+    background: rgba(244, 243, 250, 0.96) !important;
+    box-shadow:
+      0 14px 40px rgba(17, 24, 39, 0.10),
+      0 2px 10px rgba(17, 24, 39, 0.06),
+      inset 0 1px 0 rgba(255,255,255,0.95) !important;
+    backdrop-filter: blur(18px) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+  }
+
+  /* Input box */
+  .studio-v4-composer textarea,
+  .studio-v4-composer input,
+  .chat-composer textarea,
+  .chat-composer input,
+  .assistant-composer textarea,
+  .assistant-composer input,
+  .studio-chat-composer textarea,
+  .studio-chat-composer input,
+  [data-chat-composer] textarea,
+  [data-chat-composer] input {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    height: 52px !important;
+    max-height: 52px !important;
+    padding: 0 18px !important;
+    margin: 0 !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(17, 24, 39, 0.08) !important;
+    background: rgba(255,255,255,0.96) !important;
+    color: #111827 !important;
+    font-size: 16px !important;
+    line-height: 52px !important;
+    box-shadow: inset 0 1px 2px rgba(17,24,39,0.03) !important;
+  }
+
+  .studio-v4-composer textarea::placeholder,
+  .studio-v4-composer input::placeholder,
+  .chat-composer textarea::placeholder,
+  .chat-composer input::placeholder,
+  .assistant-composer textarea::placeholder,
+  .assistant-composer input::placeholder,
+  .studio-chat-composer textarea::placeholder,
+  .studio-chat-composer input::placeholder,
+  [data-chat-composer] textarea::placeholder,
+  [data-chat-composer] input::placeholder {
+    color: #8e8aa0 !important;
+    opacity: 1 !important;
+  }
+
+  /* Action buttons */
+  .studio-v4-composer button,
+  .chat-composer button,
+  .assistant-composer button,
+  .studio-chat-composer button,
+  [data-chat-composer] button {
+    flex: 0 0 auto !important;
+  }
+
+  /* Round icon buttons */
+  .studio-v4-composer .icon-button,
+  .studio-v4-composer .composer-action,
+  .chat-composer .icon-button,
+  .chat-composer .composer-action,
+  .assistant-composer .icon-button,
+  .assistant-composer .composer-action,
+  .studio-chat-composer .icon-button,
+  .studio-chat-composer .composer-action,
+  [data-chat-composer] .icon-button,
+  [data-chat-composer] .composer-action {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* If preview-only state is active, hide composer completely */
+  body.mobile-preview-open .studio-v4-composer,
+  body.mobile-preview-open .chat-composer,
+  body.mobile-preview-open .assistant-composer,
+  body.mobile-preview-open .studio-chat-composer,
+  body.mobile-preview-open [data-chat-composer] {
+    display: none !important;
+  }
+}
+
