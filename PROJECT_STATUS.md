@@ -12474,3 +12474,33 @@ Status: Codespaces travel workflow added, not frozen.
 - Backend CORS allows local frontend origins, production IdeasForgeAI, and GitHub Codespaces *.app.github.dev preview origins.
 - No secrets or frontend API keys added.
 - studio-v3 untouched.
+
+## Phase 28D.6 - Studio V4 Mobile + Desktop Responsive Polish
+
+Status: Completed locally, visual verification pending.
+
+- Studio V4 mobile viewport width locked to prevent horizontal overflow.
+- Mobile top toolbar tightened so IdeasForgeAI, Share, and Publish fit without clipping.
+- Mobile AI Assistant header tightened so the menu and Show Preview icons remain fully visible.
+- Mobile chat composer fixed, centered, safe-area aware, and kept above the browser bottom bar.
+- Attachment tray stays within the mobile viewport and still closes on outside click.
+- Mobile preview mode uses the existing compact Chat return button below the logo bar.
+- Tapping Chat returns to the chat panel and composer.
+- Desktop keeps the fixed-width left chat panel and spacious right preview layout.
+- Backend untouched.
+- studio-v3 untouched.
+
+## Phase 28D.8 - Hard Reset Studio V4 Mobile Chat Layout
+
+Status: Completed locally, visual verification pending.
+
+- Added mobile-only visual viewport height support through --ifai-vh.
+- Hard reset Studio V4 mobile shell to a fixed-height chat app layout.
+- Mobile top IdeasForgeAI toolbar remains visible with Share and Publish.
+- Mobile AI Assistant header is fully visible below the toolbar.
+- Chat messages are the only scrolling region on mobile.
+- Composer uses fixed mobile chat positioning with plus, input, mic, and submit contained.
+- Attachment tray stays above the composer and inside the viewport.
+- Mobile preview mode shows a fixed Chat return pill below the toolbar.
+- Desktop layout preserved.
+- Backend untouched.

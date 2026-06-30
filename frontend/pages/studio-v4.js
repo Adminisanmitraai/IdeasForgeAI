@@ -189,6 +189,7 @@ const setChatPanelCollapsed = (isCollapsed) => {
   }
 
   studioShell.classList.toggle("is-chat-collapsed", isCollapsed);
+  document.documentElement.classList.toggle("mobile-preview-open", isCollapsed);
   document.body.classList.toggle("mobile-preview-open", isCollapsed);
   chatPanelToggles.forEach((toggle) => {
     toggle.setAttribute("aria-expanded", String(!isCollapsed));
@@ -344,7 +345,7 @@ document.addEventListener("keydown", (event) => {
 })();
 
 
-/* PHASE 28D.2 MOBILE PREVIEW RETURN LOCK */
+/* PHASE 28D.6 MOBILE PREVIEW RETURN LOCK */
 (function () {
   "use strict";
 
@@ -352,234 +353,36 @@ document.addEventListener("keydown", (event) => {
     return window.matchMedia("(max-width: 768px)").matches;
   }
 
-  function q(selectors) {
-    for (const selector of selectors) {
-      const el = document.querySelector(selector);
-      if (el) return el;
-    }
-    return null;
-  }
-
-  function chatPanel() {
-    return q([
-      "[data-chat-panel]",
-      ".studio-v4-chat-panel",
-      ".chat-panel",
-      ".left-chat-panel",
-      ".assistant-chat-panel",
-      ".studio-chat-panel"
-    ]);
-  }
-
-  function previewPanel() {
-    return q([
-      "[data-preview-panel]",
-      ".studio-v4-preview-panel",
-      ".preview-panel",
-      ".right-preview-panel",
-      ".studio-preview-panel"
-    ]);
-  }
-
-  function workspace() {
-    return q([
-      ".studio-v4-workspace",
-      ".studio-workspace",
-      ".workspace",
-      ".builder-workspace",
-      "main"
-    ]);
-  }
-
-  function createShowChatButton() {
-    let btn = document.querySelector("[data-force-show-chat]");
-    if (btn) return btn;
-
-    btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "force-mobile-show-chat";
-    btn.setAttribute("data-force-show-chat", "true");
-    btn.innerHTML = '<span>←</span><strong>Show Chat</strong>';
-    document.body.appendChild(btn);
-
-    btn.addEventListener("click", function () {
-      showChat();
-    });
-
-    return btn;
-  }
-
-  function createPreviewEmptyState() {
-    const preview = previewPanel();
-    if (!preview) return;
-
-    if (preview.querySelector("[data-mobile-preview-empty]")) return;
-
-    const empty = document.createElement("section");
-    empty.className = "force-mobile-preview-empty";
-    empty.setAttribute("data-mobile-preview-empty", "true");
-    empty.innerHTML = `
-      <div class="force-mobile-preview-icon">✦</div>
-      <h2>Your preview will appear here</h2>
-      <p>Tell the AI Assistant about your idea to generate a live preview of your app or website.</p>
-      <button type="button" data-mobile-preview-return>
-        <span>←</span>
-        <strong>Show Chat</strong>
-      </button>
-    `;
-
-    preview.appendChild(empty);
-
-    empty.querySelector("[data-mobile-preview-return]").addEventListener("click", showChat);
-  }
-
-  function showPreview() {
-    if (!isMobile()) return;
-
-    const chat = chatPanel();
-    const preview = previewPanel();
-    const work = workspace();
-
-    createShowChatButton();
-    createPreviewEmptyState();
-
-    document.documentElement.classList.add("mobile-preview-open");
-    document.body.classList.add("mobile-preview-open");
-
-    if (work) {
-      work.classList.add("mobile-preview-open");
-    }
-
-    if (chat) {
-      chat.style.setProperty("display", "none", "important");
-      chat.style.setProperty("visibility", "hidden", "important");
-      chat.style.setProperty("opacity", "0", "important");
-      chat.style.setProperty("pointer-events", "none", "important");
-    }
-
-    if (preview) {
-      preview.style.setProperty("display", "flex", "important");
-      preview.style.setProperty("visibility", "visible", "important");
-      preview.style.setProperty("opacity", "1", "important");
-      preview.style.setProperty("pointer-events", "auto", "important");
-      preview.style.setProperty("width", "100vw", "important");
-      preview.style.setProperty("max-width", "100vw", "important");
-      preview.style.setProperty("min-height", "calc(100dvh - 118px)", "important");
-    }
-  }
-
-  function showChat() {
-    const chat = chatPanel();
-    const preview = previewPanel();
-    const work = workspace();
-
-    document.documentElement.classList.remove("mobile-preview-open");
-    document.body.classList.remove("mobile-preview-open");
-
-    if (work) {
-      work.classList.remove("mobile-preview-open");
-    }
-
-    if (chat) {
-      chat.style.removeProperty("display");
-      chat.style.removeProperty("visibility");
-      chat.style.removeProperty("opacity");
-      chat.style.removeProperty("pointer-events");
-      chat.style.removeProperty("transform");
-      chat.style.setProperty("display", "flex", "important");
-      chat.style.setProperty("visibility", "visible", "important");
-      chat.style.setProperty("opacity", "1", "important");
-      chat.style.setProperty("pointer-events", "auto", "important");
-      chat.scrollIntoView({ block: "start", inline: "nearest" });
-    }
-
-    if (preview && isMobile()) {
-      preview.style.setProperty("display", "none", "important");
-      preview.style.setProperty("visibility", "hidden", "important");
-      preview.style.setProperty("opacity", "0", "important");
-      preview.style.setProperty("pointer-events", "none", "important");
-    }
-  }
-
-  function wirePreviewButtons() {
-    const buttons = Array.from(document.querySelectorAll("button, [role='button']"));
-
-    buttons.forEach(function (btn) {
-      if (btn.dataset.previewToggleWired === "true") return;
-
-      const label = (
-        btn.getAttribute("aria-label") ||
-        btn.getAttribute("title") ||
-        btn.textContent ||
-        ""
-      ).toLowerCase();
-
-      const looksLikePreviewToggle =
-        label.includes("preview") ||
-        label.includes("sidebar") ||
-        label.includes("close") ||
-        btn.matches("[data-close-sidebar], [data-toggle-preview], .close-sidebar-button, .chat-close-button, .sidebar-toggle-button");
-
-      if (!looksLikePreviewToggle) return;
-
-      btn.dataset.previewToggleWired = "true";
-
-      btn.addEventListener("click", function () {
-        if (!isMobile()) return;
-        setTimeout(showPreview, 80);
-      });
-    });
-  }
-
-  function detectBlankPreviewState() {
-    if (!isMobile()) return;
-
-    createShowChatButton();
-
-    const chat = chatPanel();
-    const chatVisible = chat && chat.offsetParent !== null && getComputedStyle(chat).visibility !== "hidden";
-
-    const hasComposer = !!document.querySelector("textarea, input[placeholder*='idea' i]");
-    const hasAssistantTitle = document.body.innerText.includes("AI Assistant");
-
-    if (!chatVisible && (!hasComposer || !hasAssistantTitle)) {
-      document.body.classList.add("mobile-preview-open");
-      createPreviewEmptyState();
-    }
-  }
-
-  function init() {
-    createShowChatButton();
-    wirePreviewButtons();
-
-    setTimeout(wirePreviewButtons, 300);
-    setTimeout(detectBlankPreviewState, 500);
-    setTimeout(detectBlankPreviewState, 1200);
-
-    const observer = new MutationObserver(function () {
-      wirePreviewButtons();
-      detectBlankPreviewState();
-    });
-
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["class", "style", "aria-hidden"]
-    });
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    init();
-  }
-
-  window.addEventListener("resize", function () {
+  window.addEventListener("resize", () => {
     if (!isMobile()) {
       document.documentElement.classList.remove("mobile-preview-open");
       document.body.classList.remove("mobile-preview-open");
+      studioShell?.classList.remove("is-chat-collapsed");
     }
   });
+})();
+
+
+/* PHASE 28D.8 MOBILE VISUAL VIEWPORT HEIGHT LOCK */
+(function () {
+  "use strict";
+
+  const mobileQuery = window.matchMedia("(max-width: 768px)");
+
+  const setMobileViewportHeight = () => {
+    if (!mobileQuery.matches) {
+      document.documentElement.style.removeProperty("--ifai-vh");
+      return;
+    }
+
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    document.documentElement.style.setProperty("--ifai-vh", `${viewportHeight}px`);
+  };
+
+  setMobileViewportHeight();
+  window.addEventListener("resize", setMobileViewportHeight);
+  window.addEventListener("orientationchange", setMobileViewportHeight);
+  mobileQuery.addEventListener?.("change", setMobileViewportHeight);
+  window.visualViewport?.addEventListener("resize", setMobileViewportHeight);
 })();
 
