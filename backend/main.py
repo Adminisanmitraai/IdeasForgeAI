@@ -98,6 +98,11 @@ class AIChatRequest(BaseModel):
     idea: Optional[str] = None
 
 
+class StudioChatRequest(BaseModel):
+    message: str
+    mode: Optional[str] = "local-product-plan"
+
+
 class PixelConvertRequest(BaseModel):
     app_name: Optional[str] = "kisanmitralite"
     image_name: Optional[str] = None
@@ -182,6 +187,15 @@ def frontend_generator_contract(request: FrontendGeneratorContractRequest):
 def frontend_generator_static_preview(request: StaticPreviewRequest):
     engine = StaticPreviewEngine()
     return engine.generate_preview(request).model_dump()
+
+
+@app.post("/api/studio/chat")
+def studio_chat(request: StudioChatRequest):
+    return {
+        "ok": True,
+        "reply": "Great idea. I can prepare a structured product plan, feature list, and preview flow from this.",
+        "preview_status": "Idea received",
+    }
 
 
 @app.post("/api/visual-design")

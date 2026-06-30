@@ -11,7 +11,12 @@ const chatSubmitButton = document.querySelector(".composer-submit-button");
 const studioShell = document.querySelector(".studio-v4-shell");
 const chatPanelToggles = document.querySelectorAll("[data-chat-panel-toggle]");
 const previewStatus = document.querySelector("[data-preview-status]");
-const localAssistantReply = "Great idea. I can prepare a clean product plan and preview from this.";
+const studioChatEndpoint =
+  window.IDEASFORGEAI_STUDIO_CHAT_ENDPOINT ||
+  (window.location.protocol.startsWith("http") && window.location.port === "8011"
+    ? "/api/studio/chat"
+    : "http://127.0.0.1:8011/api/studio/chat");
+const fallbackAssistantReply = "I saved your idea locally. Backend connection will be retried later.";
 let chatRequestPending = false;
 
 const previewUrls = {
@@ -77,7 +82,7 @@ const setChatPending = (isPending) => {
   }
 };
 
-const submitChatMessage = () => {
+const submitChatMessage = async () => {
   if (!chatInput || chatRequestPending) {
     return;
   }
@@ -93,14 +98,61 @@ const submitChatMessage = () => {
   resizeChatInput();
   setChatPending(true);
 
-  appendChatMessage(localAssistantReply, "assistant");
-  if (previewStatus) {
-    previewStatus.textContent = "Idea received";
-  }
-  setChatPending(false);
+  const loadingBubble = appendChatMessage("Thinking…", "assistant");
 
-  if (chatStream) {
-    chatStream.scrollTop = chatStream.scrollHeight;
+  try {
+    const response = await fetch(studioChatEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        message,
+        mode: "local-product-plan",
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+
+    if (!response.ok || !data.ok) {
+      throw new Error("Studio chat request failed.");
+    }
+
+    const reply = data.reply || fallbackAssistantReply;
+    if (loadingBubble) {
+      const text = loadingBubble.querySelector(".message-text");
+      if (text) {
+        text.textContent = reply;
+      } else {
+        loadingBubble.textContent = reply;
+      }
+    } else {
+      appendChatMessage(reply, "assistant");
+    }
+
+    if (previewStatus) {
+      previewStatus.textContent = data.preview_status || "Idea received";
+    }
+  } catch (error) {
+    if (loadingBubble) {
+      const text = loadingBubble.querySelector(".message-text");
+      if (text) {
+        text.textContent = fallbackAssistantReply;
+      } else {
+        loadingBubble.textContent = fallbackAssistantReply;
+      }
+    } else {
+      appendChatMessage(fallbackAssistantReply, "assistant");
+    }
+
+    if (previewStatus) {
+      previewStatus.textContent = "Idea received";
+    }
+  } finally {
+    setChatPending(false);
+
+    if (chatStream) {
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
   }
 };
 
