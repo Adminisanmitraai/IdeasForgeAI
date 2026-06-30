@@ -5,6 +5,8 @@ const chatInput = document.querySelector("[data-chat-input]");
 const chatStream = document.querySelector("[data-chat-stream]");
 const attachmentToggle = document.querySelector("[data-attachment-toggle]");
 const attachmentMenu = document.querySelector("[data-attachment-menu]");
+const chatMenuToggle = document.querySelector("[data-chat-menu-toggle]");
+const chatMenu = document.querySelector("[data-chat-menu]");
 const chatSubmitButton = document.querySelector(".composer-submit-button");
 const API_BASE = window.IDEASFORGEAI_API_BASE || "http://127.0.0.1:8010";
 let studioV4SessionId = window.localStorage.getItem("ideasforgeai_studio_v4_session_id") || "";
@@ -151,6 +153,16 @@ const closeAttachmentMenu = () => {
   attachmentToggle.setAttribute("aria-expanded", "false");
 };
 
+const closeChatHeaderMenu = () => {
+  if (!chatMenu || !chatMenuToggle) {
+    return;
+  }
+
+  chatMenu.hidden = true;
+  chatMenuToggle.classList.remove("is-active");
+  chatMenuToggle.setAttribute("aria-expanded", "false");
+};
+
 const toggleAttachmentMenu = () => {
   if (!attachmentMenu || !attachmentToggle) {
     return;
@@ -162,9 +174,25 @@ const toggleAttachmentMenu = () => {
   attachmentToggle.setAttribute("aria-expanded", String(willOpen));
 };
 
+const toggleChatHeaderMenu = () => {
+  if (!chatMenu || !chatMenuToggle) {
+    return;
+  }
+
+  const willOpen = chatMenu.hidden;
+  chatMenu.hidden = !willOpen;
+  chatMenuToggle.classList.toggle("is-active", willOpen);
+  chatMenuToggle.setAttribute("aria-expanded", String(willOpen));
+
+  if (willOpen) {
+    closeAttachmentMenu();
+  }
+};
+
 if (attachmentToggle) {
   attachmentToggle.addEventListener("click", (event) => {
     event.stopPropagation();
+    closeChatHeaderMenu();
     toggleAttachmentMenu();
   });
 }
@@ -175,9 +203,31 @@ if (attachmentMenu) {
   });
 }
 
-document.addEventListener("click", closeAttachmentMenu);
+if (chatMenuToggle) {
+  chatMenuToggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    toggleChatHeaderMenu();
+  });
+}
+
+if (chatMenu) {
+  chatMenu.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    const item = event.target.closest("button");
+    if (item) {
+      closeChatHeaderMenu();
+    }
+  });
+}
+
+document.addEventListener("click", () => {
+  closeAttachmentMenu();
+  closeChatHeaderMenu();
+});
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeAttachmentMenu();
+    closeChatHeaderMenu();
   }
 });
