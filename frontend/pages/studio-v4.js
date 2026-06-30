@@ -129,7 +129,7 @@ const setChatPanelCollapsed = (isCollapsed) => {
   studioShell.classList.toggle("is-chat-collapsed", isCollapsed);
   chatPanelToggles.forEach((toggle) => {
     toggle.setAttribute("aria-expanded", String(!isCollapsed));
-    toggle.setAttribute("aria-label", isCollapsed ? "Return to chat" : "Show preview");
+    toggle.setAttribute("aria-label", isCollapsed ? "Show Chat" : "Show preview");
   });
 
   closeAttachmentMenu();
