@@ -12420,3 +12420,25 @@ Freeze:
 - Studio V4 top toolbar is frozen for now.
 - Next work must not modify the top toolbar unless explicitly required.
 - Next phase: Phase 28B - Left Real Chat Section.
+
+## Phase 28B.4 - Studio V4 Local Chat Lock
+
+Status: Completed and visually verified.
+
+Confirmed:
+- Studio V4 chat is local-only.
+- Backend error message removed.
+- No backend/API call required for chat submit.
+- User message bubble appears.
+- Assistant local reply appears.
+- Textarea remains writable.
+- Composer remains inside left chat panel.
+- Top toolbar remains stable.
+- Right section remains placeholder.
+- Backend untouched.
+- studio-v3 ignored.
+
+Freeze:
+- Left chat local behavior is accepted for now.
+- Do not reconnect backend until Phase 28E.
+- Next phase: Phase 28C - Left Chat Final Polish / Menu Verification.
