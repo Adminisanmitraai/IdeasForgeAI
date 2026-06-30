@@ -807,21 +807,108 @@ textarea:focus-visible {
 .preview-placeholder {
   position: relative;
   display: grid;
-  place-items: center;
+  grid-template-rows: auto minmax(0, 1fr);
   min-height: calc(100vh - 100px);
-  padding: 28px;
+  min-width: 0;
+  padding: 16px;
   border: 1.5px dashed rgba(196, 186, 225, 0.78);
   border-radius: 22px;
   background:
-    radial-gradient(circle at 50% 35%, rgba(124, 58, 237, 0.055), transparent 36%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.68) 0%, rgba(252, 250, 255, 0.5) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    radial-gradient(circle at 50% 35%, rgba(124, 58, 237, 0.07), transparent 38%),
+    radial-gradient(circle at 82% 12%, rgba(53, 132, 255, 0.055), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(251, 249, 255, 0.64) 100%);
+  box-shadow:
+    0 24px 58px rgba(44, 39, 74, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 42px rgba(124, 58, 237, 0.045);
   transition: transform 220ms ease;
+}
+
+.preview-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 52px;
+  padding: 10px 12px 10px 14px;
+  border: 1px solid rgba(220, 216, 234, 0.9);
+  border-radius: 17px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(249, 247, 255, 0.78) 100%);
+  box-shadow: 0 12px 30px rgba(49, 43, 90, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.preview-panel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.preview-panel-title span {
+  color: #1f2430;
+  font-size: 14px;
+  font-weight: 780;
+}
+
+.preview-panel-title strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(218, 213, 235, 0.95);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  color: #70687d;
+  font-size: 12px;
+  font-weight: 720;
+  white-space: nowrap;
+}
+
+.preview-panel-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.preview-panel-actions button {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(220, 216, 234, 0.95);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #faf9fe 100%);
+  color: #333844;
+  box-shadow: 0 8px 18px rgba(39, 35, 65, 0.055);
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease, background 150ms ease;
+}
+
+.preview-panel-actions button:hover {
+  border-color: rgba(191, 186, 207, 0.98);
+  background: #ffffff;
+  box-shadow: 0 12px 24px rgba(39, 35, 65, 0.1);
+}
+
+.preview-panel-actions button:active {
+  transform: translateY(1px);
+}
+
+.preview-panel-actions svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .preview-empty-state {
   display: grid;
   justify-items: center;
+  align-self: center;
+  justify-self: center;
   gap: 10px;
   max-width: 440px;
   text-align: center;
@@ -867,8 +954,8 @@ textarea:focus-visible {
 
 .return-chat-button {
   position: absolute;
-  top: 16px;
-  left: 16px;
+  top: 22px;
+  left: 22px;
   display: none;
   align-items: center;
   gap: 8px;
@@ -1105,12 +1192,42 @@ textarea:focus-visible {
     display: grid;
     width: 100%;
     min-height: calc(100dvh - 64px);
-    padding: 82px 22px 26px;
+    padding: 76px 14px 26px;
     border-width: 0;
     border-radius: 0;
     background:
       radial-gradient(circle at 50% 26%, rgba(124, 58, 237, 0.075), transparent 36%),
       linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(244, 242, 252, 0.96) 100%);
+  }
+
+  .preview-panel-header {
+    min-height: 48px;
+    padding: 8px 9px 8px 12px;
+    border-radius: 15px;
+  }
+
+  .preview-panel-title {
+    gap: 8px;
+  }
+
+  .preview-panel-title span {
+    font-size: 13px;
+  }
+
+  .preview-panel-title strong {
+    min-height: 26px;
+    padding: 0 9px;
+    font-size: 11px;
+  }
+
+  .preview-panel-actions {
+    gap: 6px;
+  }
+
+  .preview-panel-actions button {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
   }
 
   .preview-empty-state h2 {
@@ -1124,8 +1241,9 @@ textarea:focus-visible {
 
   .return-chat-button {
     display: inline-flex;
-    top: 16px;
+    top: 14px;
     left: 14px;
+    z-index: 2;
   }
 
   .studio-v4-shell:not(.is-chat-collapsed) .return-chat-button {

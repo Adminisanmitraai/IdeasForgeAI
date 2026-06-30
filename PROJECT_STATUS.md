@@ -12442,3 +12442,22 @@ Freeze:
 - Left chat local behavior is accepted for now.
 - Do not reconnect backend until Phase 28E.
 - Next phase: Phase 28C - Left Chat Final Polish / Menu Verification.
+
+## Phase 28D - Studio V4 Right Preview Section
+
+Status: Completed and locally verified.
+
+Confirmed:
+- Right preview canvas added.
+- Empty preview state polished.
+- Preview status pill works locally.
+- Mobile chat-to-preview toggle works.
+- Return to chat works.
+- Chat remains local-only.
+- No backend/API call added.
+- Backend untouched.
+- studio-v3 untouched.
+
+Freeze:
+- Right preview empty state is accepted for now.
+- Next phase: Phase 28E - Backend Chat Bridge.

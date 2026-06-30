@@ -10,6 +10,7 @@ const chatMenu = document.querySelector("[data-chat-menu]");
 const chatSubmitButton = document.querySelector(".composer-submit-button");
 const studioShell = document.querySelector(".studio-v4-shell");
 const chatPanelToggles = document.querySelectorAll("[data-chat-panel-toggle]");
+const previewStatus = document.querySelector("[data-preview-status]");
 const localAssistantReply = "Great idea. I can prepare a clean product plan and preview from this.";
 let chatRequestPending = false;
 
@@ -93,6 +94,9 @@ const submitChatMessage = () => {
   setChatPending(true);
 
   appendChatMessage(localAssistantReply, "assistant");
+  if (previewStatus) {
+    previewStatus.textContent = "Idea received";
+  }
   setChatPending(false);
 
   if (chatStream) {
