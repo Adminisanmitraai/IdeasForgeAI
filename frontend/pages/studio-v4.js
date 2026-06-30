@@ -372,17 +372,21 @@ document.addEventListener("keydown", (event) => {
   const setMobileViewportHeight = () => {
     if (!mobileQuery.matches) {
       document.documentElement.style.removeProperty("--ifai-vh");
+      document.body.classList.remove("mobile-keyboard-open");
       return;
     }
 
     const viewportHeight = window.visualViewport?.height || window.innerHeight;
     document.documentElement.style.setProperty("--ifai-vh", `${viewportHeight}px`);
+    document.body.classList.toggle("mobile-keyboard-open", viewportHeight < window.innerHeight - 120);
   };
 
   setMobileViewportHeight();
+  window.addEventListener("load", setMobileViewportHeight);
   window.addEventListener("resize", setMobileViewportHeight);
   window.addEventListener("orientationchange", setMobileViewportHeight);
   mobileQuery.addEventListener?.("change", setMobileViewportHeight);
   window.visualViewport?.addEventListener("resize", setMobileViewportHeight);
+  window.visualViewport?.addEventListener("scroll", setMobileViewportHeight);
 })();
 

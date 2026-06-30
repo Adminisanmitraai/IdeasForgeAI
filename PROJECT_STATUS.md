@@ -12504,3 +12504,19 @@ Status: Completed locally, visual verification pending.
 - Mobile preview mode shows a fixed Chat return pill below the toolbar.
 - Desktop layout preserved.
 - Backend untouched.
+
+## Phase 28D.9 - Final Mobile App Shell Fix for Studio V4
+
+Status: Completed locally, visual verification pending.
+
+- Added final mobile-only fixed single-screen app shell override.
+- Mobile shell now uses fixed inset layout with var(--ifai-vh, 100dvh).
+- Mobile top toolbar remains visible with brand, Share, and Publish.
+- Mobile AI Assistant header uses large fixed controls and full-width safe spacing.
+- Mobile chat stream is the only scrollable message area.
+- Mobile composer uses fixed side insets with contained plus, input, mic, and send buttons.
+- Visual viewport JS now updates on load, resize, orientationchange, visualViewport resize, and visualViewport scroll.
+- mobile-keyboard-open class is toggled when visual viewport height drops significantly.
+- Mobile preview mode keeps a fixed Chat return pill under the top toolbar.
+- Desktop layout preserved.
+- Backend untouched.
