@@ -8,8 +8,7 @@ const attachmentMenu = document.querySelector("[data-attachment-menu]");
 const chatMenuToggle = document.querySelector("[data-chat-menu-toggle]");
 const chatMenu = document.querySelector("[data-chat-menu]");
 const chatSubmitButton = document.querySelector(".composer-submit-button");
-const API_BASE = window.IDEASFORGEAI_API_BASE || "http://127.0.0.1:8010";
-let studioV4SessionId = window.localStorage.getItem("ideasforgeai_studio_v4_session_id") || "";
+const localAssistantReply = "Great idea. I can prepare a clean product plan and preview from this.";
 let chatRequestPending = false;
 
 const previewUrls = {
@@ -60,7 +59,7 @@ const setChatPending = (isPending) => {
   }
 };
 
-const submitChatMessage = async () => {
+const submitChatMessage = () => {
   if (!chatInput || chatRequestPending) {
     return;
   }
@@ -76,53 +75,11 @@ const submitChatMessage = async () => {
   resizeChatInput();
   setChatPending(true);
 
-  const loadingBubble = appendChatMessage("Thinking...", "assistant");
+  appendChatMessage(localAssistantReply, "assistant");
+  setChatPending(false);
 
-  try {
-    const response = await fetch(`${API_BASE}/api/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message,
-        session_id: studioV4SessionId || undefined,
-        mode: "studio-v4",
-        context: {
-          current_step: "discovery",
-        },
-      }),
-    });
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || !data.ok) {
-      throw new Error(data.reply || "Backend chat request failed.");
-    }
-
-    if (data.session_id) {
-      studioV4SessionId = data.session_id;
-      window.localStorage.setItem("ideasforgeai_studio_v4_session_id", studioV4SessionId);
-    }
-
-    if (loadingBubble) {
-      loadingBubble.textContent = data.reply || "I received your message.";
-    } else {
-      appendChatMessage(data.reply || "I received your message.", "assistant");
-    }
-  } catch (error) {
-    const offlineMessage = "Backend is not reachable. Please start IdeasForgeAI backend.";
-
-    if (loadingBubble) {
-      loadingBubble.textContent = offlineMessage;
-    } else {
-      appendChatMessage(offlineMessage, "assistant");
-    }
-  } finally {
-    setChatPending(false);
-    if (chatStream) {
-      chatStream.scrollTop = chatStream.scrollHeight;
-    }
+  if (chatStream) {
+    chatStream.scrollTop = chatStream.scrollHeight;
   }
 };
 
