@@ -12677,3 +12677,9 @@ Status: Completed locally, verification passed.
 - Added has-generated-preview state for real iframe previews so mobile spacing can be tightened only after generation.
 - Moved the preview back arrow closer to the mobile header and cropped iframe top whitespace to remove the remaining generated-preview gap.
 - Preserved back-to-chat, fullscreen toggle, desktop layout, backend behavior, and generated app templates.
+
+## Phase 29B-FIX-5 - Live Backend API Connection
+- Updated Studio V4 API base resolution so ideasforgeai.com and www.ideasforgeai.com call https://ideasforgeai-api.onrender.com.
+- Preserved localhost and private LAN backend routing for desktop and iPhone testing.
+- Confirmed generated preview URLs returned as /generated-apps/... resolve through the selected API base.
+- Confirmed backend CORS allows the live IdeasForgeAI origin; no UI, CSS, HTML, generated templates, deployment settings, secrets, or API keys changed.

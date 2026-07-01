@@ -26,6 +26,7 @@ const previewLabels = {
 const getApiBase = () => {
   const { hostname, protocol } = window.location;
   const isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+  const isLiveHost = hostname === "ideasforgeai.com" || hostname === "www.ideasforgeai.com";
   const isLanHost =
     /^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
     /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
@@ -37,6 +38,10 @@ const getApiBase = () => {
 
   if (protocol === "http:" && isLanHost) {
     return `http://${hostname}:8000`;
+  }
+
+  if (protocol === "https:" && isLiveHost) {
+    return "https://ideasforgeai-api.onrender.com";
   }
 
   return "";
