@@ -5,6 +5,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from backend.product_flow import create_product_plan
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 27E product flow orchestrator"])
@@ -214,11 +215,36 @@ async def orchestrate_product_flow(request: Request):
             content=validation_error("file, image, audio, and upload payloads are disabled in Phase 27E"),
         )
 
+    message = payload.get("message")
+    mode = _safe_text(payload.get("mode"))
+    if isinstance(message, str) and message.strip() and mode in {"local-product-plan", "app_creation"}:
+        message = message.strip()
+        plan = create_product_plan(message)
+        return {
+            "ok": True,
+            "reply": "I created a structured product plan. Review it, then approve generation when you are ready.",
+            "plan": plan,
+            "next_action": "approve_generate",
+        }
+
     idea = payload.get("idea")
     if not isinstance(idea, str) or not idea.strip():
         return JSONResponse(status_code=400, content=validation_error("idea is required"))
 
     idea = idea.strip()
+    has_orchestration_context = any(
+        payload.get(key)
+        for key in ["classification", "requirements", "workflow", "outputSelection", "userRole", "userGoal"]
+    )
+    if not has_orchestration_context or mode in {"local-product-plan", "structured-product-plan", "app_creation"}:
+        plan = create_product_plan(idea)
+        return {
+            "ok": True,
+            "reply": "I created a structured product plan. Review it, then approve generation when you are ready.",
+            "plan": plan,
+            "next_action": "approve_generate",
+        }
+
     user_role = _safe_text(payload.get("userRole"))
     user_goal = _safe_text(payload.get("userGoal"))
     classification = payload.get("classification") or {}

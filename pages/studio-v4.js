@@ -2,7 +2,6 @@
 const modeButtons = document.querySelectorAll("[data-mode-tab]");
 const previewButtons = document.querySelectorAll("[data-preview-mode]");
 const previewLabel = document.querySelector("[data-preview-label]");
-const previewStatuses = document.querySelectorAll("[data-preview-status]");
 const showPreviewButton = document.querySelector("[data-show-preview]");
 const showChatButtons = document.querySelectorAll("[data-show-chat]");
 const chatForm = document.querySelector("[data-chat-form]");
@@ -13,13 +12,37 @@ const attachmentMenu = document.querySelector("[data-attachment-menu]");
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const menu = document.querySelector("[data-menu]");
 const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
+const previewMount = document.querySelector("[data-preview-mount]");
 
-const assistantReply = "Great idea. I can prepare a structured product plan and preview flow from this.";
+let currentPlan = null;
+let isGenerating = false;
+
 const previewLabels = {
   mobile: "Mobile canvas",
   tablet: "Tablet canvas",
   laptop: "Laptop canvas",
 };
+
+const getApiBase = () => {
+  const { hostname, protocol } = window.location;
+  const isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+  const isLanHost =
+    /^192\.168\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+    /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(hostname) ||
+    /^172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}$/.test(hostname);
+
+  if (isLocalHost) {
+    return "http://127.0.0.1:8000";
+  }
+
+  if (protocol === "http:" && isLanHost) {
+    return `http://${hostname}:8000`;
+  }
+
+  return "";
+};
+
+const API_BASE = getApiBase();
 
 const getMessageTime = () =>
   new Intl.DateTimeFormat("en-US", {
@@ -33,19 +56,92 @@ const scrollMessagesToBottom = () => {
   }
 };
 
-const appendMessage = (message, type) => {
+const setPreviewStatus = (message) => {
+  document.querySelectorAll("[data-preview-status]").forEach((status) => {
+    status.textContent = message;
+  });
+};
+
+const appendMessage = (message, type, className = "") => {
   if (!chatStream) {
-    return;
+    return null;
   }
 
   const bubble = document.createElement("article");
   const text = document.createElement("p");
   const meta = document.createElement("span");
 
-  bubble.className = `message ${type}-message`;
+  bubble.className = `message ${type}-message ${className}`.trim();
   text.textContent = message;
   meta.textContent = getMessageTime();
   bubble.append(text, meta);
+  chatStream.appendChild(bubble);
+  scrollMessagesToBottom();
+  return bubble;
+};
+
+const appendThinkingMessage = () => appendMessage("Thinking through your product plan...", "assistant", "is-loading");
+
+const createList = (items) => {
+  const list = document.createElement("ul");
+  const values = Array.isArray(items) ? items : items ? [items] : [];
+  values.forEach((item) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = item;
+    list.appendChild(listItem);
+  });
+  return list;
+};
+
+const appendPlanMessage = (reply, plan) => {
+  if (!chatStream) {
+    return;
+  }
+
+  const bubble = document.createElement("article");
+  const meta = document.createElement("span");
+  const intro = document.createElement("p");
+  const card = document.createElement("div");
+  const title = document.createElement("strong");
+  const summary = document.createElement("p");
+  const grid = document.createElement("div");
+  const overview = document.createElement("div");
+  const features = document.createElement("div");
+  const screens = document.createElement("div");
+  const dataNeeds = document.createElement("div");
+  const apiNeeds = document.createElement("div");
+  const overviewTitle = document.createElement("small");
+  const featureTitle = document.createElement("small");
+  const screensTitle = document.createElement("small");
+  const dataTitle = document.createElement("small");
+  const apiTitle = document.createElement("small");
+  const button = document.createElement("button");
+
+  bubble.className = "message assistant-message plan-message";
+  intro.textContent = reply || "I created a structured product plan.";
+  card.className = "plan-card";
+  title.textContent = plan.app_name || plan.product_name || "Generated Product";
+  summary.textContent = plan.preview_summary || "A clean first product preview is ready to generate.";
+  grid.className = "plan-grid";
+  overviewTitle.textContent = "App type and users";
+  featureTitle.textContent = "Core features";
+  screensTitle.textContent = "Screens";
+  dataTitle.textContent = "Data needs";
+  apiTitle.textContent = "API needs";
+  button.className = "approve-generate-button";
+  button.type = "button";
+  button.dataset.approveGenerate = "true";
+  button.textContent = "Approve & Generate";
+  meta.textContent = getMessageTime();
+
+  overview.append(overviewTitle, createList([plan.app_type, ...(Array.isArray(plan.target_users) ? plan.target_users : [plan.target_users]).filter(Boolean)]));
+  features.append(featureTitle, createList(plan.core_features));
+  screens.append(screensTitle, createList(plan.screens));
+  dataNeeds.append(dataTitle, createList(plan.data_needs));
+  apiNeeds.append(apiTitle, createList(plan.api_needs?.length ? plan.api_needs : ["No external API required for this prototype"]));
+  grid.append(overview, features, screens, dataNeeds, apiNeeds);
+  card.append(title, summary, grid, button);
+  bubble.append(intro, card, meta);
   chatStream.appendChild(bubble);
   scrollMessagesToBottom();
 };
@@ -57,6 +153,32 @@ const resizeChatInput = () => {
 
   chatInput.style.height = "auto";
   chatInput.style.height = `${Math.min(chatInput.scrollHeight, 96)}px`;
+};
+
+const postJSON = async (path, body) => {
+  const response = await fetch(`${API_BASE}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || data.ok === false) {
+    throw new Error(data?.error?.message || data?.reply || `${path} failed`);
+  }
+  return data;
+};
+
+const resolvePreviewUrl = (previewUrl) => {
+  if (!previewUrl || /^https?:\/\//i.test(previewUrl)) {
+    return previewUrl;
+  }
+
+  if (previewUrl.startsWith("/")) {
+    return `${API_BASE}${previewUrl}`;
+  }
+
+  return previewUrl;
 };
 
 const closeAttachmentMenu = () => {
@@ -87,6 +209,80 @@ const setPreviewOpen = (isOpen) => {
   }
   closeAttachmentMenu();
   closeMenu();
+};
+
+const renderPreviewPlaceholder = (plan, message = "Generated preview placeholder is ready.") => {
+  if (!previewMount) {
+    return;
+  }
+
+  studioShell?.classList.remove("has-generated-preview");
+  previewMount.className = "preview-empty generated-preview-placeholder";
+  previewMount.innerHTML = "";
+
+  const card = document.createElement("div");
+  const badge = document.createElement("span");
+  const title = document.createElement("h1");
+  const text = document.createElement("p");
+
+  card.className = "preview-card";
+  badge.className = "status-pill";
+  badge.textContent = "Generated placeholder";
+  title.textContent = plan?.product_name || "Preview ready";
+  text.textContent = message;
+
+  card.append(badge, title, text);
+  previewMount.appendChild(card);
+};
+
+const renderPreviewFrame = (previewUrl, plan) => {
+  if (!previewMount) {
+    return;
+  }
+
+  if (!previewUrl) {
+    renderPreviewPlaceholder(plan, "Generation completed, but no preview URL was returned yet.");
+    return;
+  }
+
+  studioShell?.classList.add("has-generated-preview");
+  previewMount.className = "generated-preview-shell";
+  previewMount.innerHTML = "";
+
+  const frame = document.createElement("iframe");
+  frame.className = "generated-preview-frame";
+  frame.title = `${plan?.app_name || plan?.product_name || "Generated app"} preview`;
+  frame.src = resolvePreviewUrl(previewUrl);
+  frame.loading = "lazy";
+  previewMount.appendChild(frame);
+};
+
+const handleGenerate = async (button) => {
+  if (!currentPlan || isGenerating) {
+    return;
+  }
+
+  isGenerating = true;
+  button.disabled = true;
+  button.textContent = "Generating...";
+  setPreviewStatus("Generating");
+
+  try {
+    const data = await postJSON("/api/generate-app", { plan: currentPlan });
+    renderPreviewFrame(data.preview_url, currentPlan);
+    setPreviewStatus(data.preview_url ? "Preview ready" : "Generated");
+    appendMessage("Generation complete. I opened the preview so you can review it.", "assistant");
+    setPreviewOpen(true);
+  } catch (error) {
+    renderPreviewPlaceholder(currentPlan, "The preview generator did not return a live URL yet.");
+    setPreviewStatus("Preview placeholder");
+    appendMessage("Generation could not complete. I kept your approved plan and prepared a clean placeholder preview.", "assistant");
+    setPreviewOpen(true);
+  } finally {
+    isGenerating = false;
+    button.disabled = false;
+    button.textContent = "Approve & Generate";
+  }
 };
 
 modeButtons.forEach((button) => {
@@ -161,7 +357,14 @@ chatInput?.addEventListener("keydown", (event) => {
   }
 });
 
-chatForm?.addEventListener("submit", (event) => {
+chatStream?.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-approve-generate]");
+  if (button) {
+    handleGenerate(button);
+  }
+});
+
+chatForm?.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!chatInput) {
@@ -177,11 +380,24 @@ chatForm?.addEventListener("submit", (event) => {
   appendMessage(message, "user");
   chatInput.value = "";
   resizeChatInput();
-  appendMessage(assistantReply, "assistant");
+  setPreviewStatus("Planning");
+  const thinkingMessage = appendThinkingMessage();
 
-  previewStatuses.forEach((status) => {
-    status.textContent = "Idea received";
-  });
+  try {
+    const data = await postJSON("/api/product-flow", {
+      idea: message,
+      message,
+      mode: "app_creation",
+    });
+    thinkingMessage?.remove();
+    currentPlan = data.plan;
+    appendPlanMessage(data.reply, currentPlan);
+    setPreviewStatus("Plan ready");
+  } catch (error) {
+    thinkingMessage?.remove();
+    appendMessage("Backend connection failed. I saved your idea locally and can retry.", "assistant");
+    setPreviewStatus("Waiting for idea");
+  }
 });
 
 document.addEventListener("click", () => {

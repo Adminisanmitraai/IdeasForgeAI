@@ -1,7 +1,7 @@
 import json
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -34,8 +34,10 @@ from backend.api.output_type_selector import router as output_type_selector_rout
 from backend.api.product_flow_orchestrator import router as product_flow_orchestrator_router
 from backend.pixel_converter import PixelConverterContractEngine, PixelConverterContractRequest
 from backend.product_brain.workflow_engine import ProductBrainWorkflow
+from backend.product_flow import BACKEND_GENERATED_APPS_DIR, create_product_plan, generate_static_app
 
 ensure_project_folders()
+BACKEND_GENERATED_APPS_DIR.mkdir(parents=True, exist_ok=True)
 product_brain = ProductBrainWorkflow()
 
 app = FastAPI(
@@ -51,17 +53,47 @@ app.add_middleware(
         "http://localhost",
         "http://127.0.0.1:8088",
         "http://localhost:8088",
+        "http://192.168.1.7:8088",
         "http://127.0.0.1:5173",
         "http://localhost:5173",
         "https://www.ideasforgeai.com",
         "https://ideasforgeai.com",
         "null",
     ],
-    allow_origin_regex=r"https://.*\.app\.github\.dev",
+    allow_origin_regex=r"^(https://.*\.app\.github\.dev|http://(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}):8088)$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def _studio_v4_app_creation_plan(user_text: str) -> Dict[str, Any]:
+    plan = create_product_plan(user_text)
+    plan["product_name"] = plan["app_name"]
+    plan["category"] = plan["app_type"]
+    return plan
+
+
+@app.post("/api/product-flow")
+async def studio_v4_product_flow(request: Request):
+    payload = await request.json()
+    user_text = (payload.get("message") or payload.get("idea") or "").strip()
+
+    if not user_text:
+        return {
+            "ok": False,
+            "reply": "Please describe the app you want to build.",
+            "plan": None,
+            "next_action": "retry",
+        }
+
+    plan = _studio_v4_app_creation_plan(user_text)
+    return {
+        "ok": True,
+        "reply": "I created a structured app plan. Review it, then approve generation when you are ready.",
+        "plan": plan,
+        "next_action": "approve_generate",
+    }
 
 app.include_router(health_router)
 app.include_router(phase26a_contract_router)
@@ -74,10 +106,10 @@ app.include_router(workflow_map_router)
 app.include_router(output_type_selector_router)
 app.include_router(product_flow_orchestrator_router)
 
-if GENERATED_APPS_DIR.exists():
+if BACKEND_GENERATED_APPS_DIR.exists():
     app.mount(
         "/generated-apps",
-        StaticFiles(directory=str(GENERATED_APPS_DIR)),
+        StaticFiles(directory=str(BACKEND_GENERATED_APPS_DIR)),
         name="generated-apps",
     )
 
@@ -91,10 +123,15 @@ if frontend_dir.exists():
 
 
 class GenerateRequest(BaseModel):
-    idea: str
+    idea: Optional[str] = None
     app_name: Optional[str] = None
     preferred_style: Optional[str] = None
     target_platforms: List[str] = Field(default_factory=lambda: ["web"])
+    plan: Optional[Dict[str, Any]] = None
+
+
+class GenerateAppRequest(BaseModel):
+    plan: Dict[str, Any]
 
 
 class AIChatRequest(BaseModel):
@@ -147,18 +184,50 @@ class RoadmapRequest(BaseModel):
 
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
+    plan = request.plan or {}
+    idea = (
+        request.idea
+        or plan.get("preview_summary")
+        or plan.get("product_name")
+        or "Generated product from approved IdeasForgeAI plan"
+    )
+    app_name = request.app_name or plan.get("product_name")
     pipeline = create_default_builder_pipeline()
 
     result = pipeline.run(
         {
-            "idea": request.idea,
-            "app_name": request.app_name,
+            "idea": idea,
+            "app_name": app_name,
             "preferred_style": request.preferred_style,
             "target_platforms": request.target_platforms,
         }
     )
 
-    return result.model_dump()
+    result_data = result.model_dump()
+    files = []
+    preview_url = None
+
+    for agent_result in result_data.get("results", []):
+        data = agent_result.get("data", {})
+        if agent_result.get("agent_name") == "generated_app_export_agent":
+            project_slug = data.get("project_slug")
+            if project_slug:
+                preview_url = f"/generated-apps/{project_slug}/frontend/index.html"
+            for key in ["frontend_entry", "backend_entry", "start_script"]:
+                if data.get(key):
+                    files.append(data[key])
+
+    return {
+        "ok": result.status == "success",
+        "preview_url": preview_url,
+        "files": files,
+        "result": result_data,
+    }
+
+
+@app.post("/api/generate-app")
+def generate_app(request: GenerateAppRequest):
+    return generate_static_app(request.plan)
 
 
 @app.post("/api/pixel-convert")

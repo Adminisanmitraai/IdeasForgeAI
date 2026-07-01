@@ -12632,3 +12632,48 @@ Status: Completed locally, visual verification pending.
 - Preserved the single bottom-right fullscreen toggle that switches between expand and close states.
 - Desktop behavior unchanged.
 - Backend and studio-v3 untouched.
+
+## Phase 29B - Real Builder Flow for Studio V4
+- Connected Studio V4 chat submit to POST /api/product-flow with local-product-plan mode.
+- Added structured plan rendering with Approve & Generate in the chat stream.
+- Connected approval to POST /api/generate using the approved plan payload.
+- Added generated preview iframe rendering with clean placeholder fallback and preserved mobile/desktop preview controls.
+- Kept frontend secrets-free; API keys remain backend-only.
+
+## Phase 29B - Real App Creation Engine Completion
+
+Status: Completed locally, verification passed.
+
+- Connected Studio V4 chat submit to POST /api/product-flow with local-product-plan mode.
+- Product plan returns app_name, app_type, target_users, core_features, screens, data_needs, api_needs, monetization, preview_summary, and next_action approve_generate.
+- Added POST /api/generate-app for approved plan generation.
+- Generated static prototype files are written under backend/generated_apps/<app_id>/ as index.html, style.css, app.js, and manifest.json.
+- /generated-apps/<app_id>/index.html serves the generated backend app folder for iframe preview.
+- Approve & Generate loads the returned preview_url inside the existing Studio V4 preview iframe.
+- Generated prototypes are mobile-first static apps with title, feature cards, screen sections, mock actions, placeholder dashboard metrics, data needs, and API proxy placeholders.
+- API-key-ready placeholders use /api/runtime/<app_id>/<service_name>; generated frontend files include no real API keys.
+- TODO comments added for billing, metering, safety gateway, and illegal-usage blocking before runtime service execution.
+- Back to chat, fullscreen toggle, mobile preview behavior, and desktop layout remain unchanged.
+- studio-v3, deployment settings, secrets, and KisanMitraAI were not touched.
+
+## Phase 29B-FIX-2 - iPhone Local Backend Connection
+- Added Studio V4 API base resolution for localhost, 127.0.0.1, and private LAN hosts.
+- Routed mobile LAN product-flow and generate-app calls to the same host on backend port 8000.
+- Added local LAN CORS support for iPhone testing from http://192.168.1.7:8088 and private 8088 origins.
+- Preserved mobile UI, preview design, and frontend secret safety.
+
+## Phase 29B-FIX-3 - Generated App Specificity and Preview Spacing
+- Improved Studio V4 product planning with domain-specific app plans for wedding venue, restaurant, education, retail, clinic, and generic business apps.
+- Updated generated static prototypes so wedding venue ideas render packages, gallery, enquiry form, admin dashboard, and booking lead status instead of generic product-builder content.
+- Added backend-proxy API placeholders only; no frontend secrets or API keys are emitted.
+- Added mobile generated-preview spacing so the Studio V4 back button no longer overlaps generated app titles while fullscreen/back controls remain intact.
+
+## Phase 29B-FIX-4 - Mobile Preview Top Gap
+- Reduced mobile generated-preview shell top padding so the iframe starts close under the IdeasForgeAI header.
+- Kept the Studio back button visible and usable without changing the approved header, generated app content, fullscreen behavior, or backend flow.
+- Mirrored the spacing fix across frontend/pages and pages Studio V4 CSS copies.
+
+## Phase 29B-FIX-4 - Remove Remaining Mobile Preview Top Gap
+- Added has-generated-preview state for real iframe previews so mobile spacing can be tightened only after generation.
+- Moved the preview back arrow closer to the mobile header and cropped iframe top whitespace to remove the remaining generated-preview gap.
+- Preserved back-to-chat, fullscreen toggle, desktop layout, backend behavior, and generated app templates.
