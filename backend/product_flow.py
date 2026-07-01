@@ -446,6 +446,54 @@ def _render_status_rows(rows: List[tuple[str, str, str]]) -> str:
     )
 
 
+def _screen_slug(label: str) -> str:
+    return _slugify(label).replace("-", "_")
+
+
+def _domain_screen_labels(domain: str, plan: Dict[str, Any]) -> List[str]:
+    labels = {
+        "car_detailing": [
+            "Dashboard",
+            "Service Packages",
+            "Doorstep Booking",
+            "Before-After Gallery",
+            "Booking Calendar",
+            "Payment Status",
+            "Admin Dashboard",
+        ],
+        "gym": [
+            "Dashboard",
+            "Membership Plans",
+            "Trainer Profiles",
+            "Class Booking",
+            "Attendance Tracking",
+            "Diet Consultation",
+            "Payment Dashboard",
+        ],
+        "wedding_venue": [
+            "Dashboard",
+            "Wedding Packages",
+            "Haldi Theme",
+            "Mehendi Theme",
+            "Gallery",
+            "Booking Calendar",
+            "Enquiry Form",
+            "Admin Lead Dashboard",
+        ],
+    }
+    if domain in labels:
+        return labels[domain]
+    screens = [screen for screen in plan["screens"] if screen.lower() != "home"]
+    return ["Dashboard", *screens[:7]]
+
+
+def _render_screen_nav(labels: List[str]) -> str:
+    return "\n".join(
+        f'<button type="button" data-screen="{html.escape(_screen_slug(label))}">{html.escape(label)}</button>'
+        for label in labels
+    )
+
+
 def _render_form_fields(fields: List[tuple[str, str]]) -> str:
     return "\n".join(
         f"<label>{html.escape(label)}<input value=\"{html.escape(value)}\" readonly></label>"
@@ -832,6 +880,7 @@ def _build_html(plan: Dict[str, Any]) -> str:
     app_type = html.escape(plan["app_type"])
     summary = html.escape(plan["preview_summary"])
     domain = _domain_from_plan(plan)
+    screen_labels = _domain_screen_labels(domain, plan)
     actions = {
         "car_detailing": ("Service Packages", "Doorstep Booking"),
         "gym": ("Membership Plans", "Class Booking"),
@@ -856,21 +905,33 @@ def _build_html(plan: Dict[str, Any]) -> str:
     <header class="hero">
       <nav class="top-nav" aria-label="Prototype navigation">
         <strong>{app_name}</strong>
-        <button type="button">Preview</button>
+        <button type="button" data-screen="dashboard">Preview</button>
       </nav>
       <section class="hero-content">
         <span class="eyebrow">{app_type}</span>
         <h1>{app_name}</h1>
         <p>{summary}</p>
         <div class="hero-actions">
-          <button type="button">{html.escape(primary_action)}</button>
-          <button type="button" class="ghost-button">{html.escape(secondary_action)}</button>
+          <button type="button" data-screen="{html.escape(_screen_slug(primary_action))}">{html.escape(primary_action)}</button>
+          <button type="button" class="ghost-button" data-screen="{html.escape(_screen_slug(secondary_action))}">{html.escape(secondary_action)}</button>
         </div>
       </section>
     </header>
 
+    <section class="app-screen-nav" aria-label="Generated app screens">
+      {_render_screen_nav(screen_labels)}
+    </section>
+
     <section class="metric-grid" aria-label="Dashboard metrics">
       {_render_metric_cards(domain)}
+    </section>
+
+    <section class="interactive-screen-panel" aria-live="polite">
+      <div class="section-heading">
+        <span class="eyebrow">Active screen</span>
+        <h2>Dashboard</h2>
+      </div>
+      <p>Select a generated app screen to preview the real in-app flow.</p>
     </section>
 
     {_render_domain_sections(domain, plan)}
@@ -923,12 +984,27 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 68px); line-height: .96; lett
 .hero p { max-width: 620px; color: rgba(255,255,255,.78); font-size: 16px; line-height: 1.55; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero-actions .ghost-button { background: rgba(255,255,255,.12); color: #fff; outline: 1px solid rgba(255,255,255,.25); }
+.app-screen-nav { display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: thin; }
+.app-screen-nav button { flex: 0 0 auto; min-height: 38px; border: 1px solid #e4e7ef; border-radius: 999px; padding: 0 14px; background: #fff; color: #3c4354; font-size: 13px; font-weight: 850; }
+.app-screen-nav button.is-active { border-color: #171923; background: #171923; color: #fff; }
 .metric-grid, .feature-grid, .package-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 14px; }
-.metric-grid article, .feature-card, .screen-section, .data-panel, .package-card, .enquiry-card, .admin-card, .gallery-panel { border: 1px solid #e4e7ef; border-radius: 18px; background: #fff; box-shadow: 0 14px 34px rgba(36,42,66,.08); }
+.metric-grid article, .feature-card, .screen-section, .data-panel, .package-card, .enquiry-card, .admin-card, .gallery-panel, .interactive-screen-panel, .screen-card { border: 1px solid #e4e7ef; border-radius: 18px; background: #fff; box-shadow: 0 14px 34px rgba(36,42,66,.08); }
 .metric-grid article { display: grid; gap: 6px; padding: 16px; }
 .metric-grid span { color: #697184; font-size: 12px; font-weight: 750; }
 .metric-grid strong { font-size: 28px; }
 .content-block { display: grid; gap: 14px; margin-top: 26px; }
+.interactive-screen-panel { display: grid; gap: 14px; margin-top: 14px; padding: 18px; }
+.interactive-screen-panel p { color: #697184; font-size: 14px; line-height: 1.5; }
+.screen-card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+.screen-card { display: grid; gap: 8px; min-height: 130px; padding: 16px; box-shadow: none; }
+.screen-card strong { font-size: 17px; }
+.screen-card span { color: #697184; font-size: 13px; line-height: 1.45; }
+.screen-form { display: grid; gap: 10px; }
+.screen-form label { display: grid; gap: 6px; color: #5f6677; font-size: 13px; font-weight: 750; }
+.screen-form input, .screen-form select, .screen-form textarea { width: 100%; min-height: 42px; border: 1px solid #e4e7ef; border-radius: 12px; padding: 0 12px; color: #171923; font: inherit; background: #fff; }
+.screen-form textarea { min-height: 78px; padding-top: 10px; resize: vertical; }
+.screen-form button { min-height: 42px; border-radius: 999px; background: #171923; color: #fff; font-weight: 850; }
+.form-success { min-height: 20px; color: #16825d; font-size: 13px; font-weight: 850; }
 .section-heading { display: grid; gap: 6px; }
 .section-heading h2, .data-panel h2 { font-size: 24px; line-height: 1.1; }
 .feature-card { display: grid; gap: 12px; min-height: 168px; padding: 18px; }
@@ -976,18 +1052,228 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 68px); line-height: .96; lett
 
 def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
     api_services = [_slugify(service) for service in plan["api_needs"]] or ["future-service"]
+    domain = _domain_from_plan(plan)
     return f"""const APP_ID = {json.dumps(app_id)};
 const API_PROXY_PLACEHOLDERS = {json.dumps([f"/api/runtime/{app_id}/{service}" for service in api_services])};
+const APP_DOMAIN = {json.dumps(domain)};
+
+const SCREEN_CONFIG = {{
+  car_detailing: {{
+    dashboard: {{
+      title: "Dashboard",
+      summary: "Daily bookings, revenue, leads, and payment status for the detailing business.",
+      cards: [["Daily Bookings", "18 scheduled services"], ["Revenue", "$4.6k this week"], ["Customer Leads", "7 callback requests"]]
+    }},
+    service_packages: {{
+      title: "Service Packages",
+      summary: "Customers compare detailing packages and choose the service that matches their vehicle.",
+      cards: [["Express Wash", "$29 quick exterior care"], ["Interior Deep Clean", "$79 cabin reset"], ["Premium Ceramic Detail", "$249 finish protection"]]
+    }},
+    doorstep_booking: {{
+      title: "Doorstep Booking",
+      summary: "A realistic booking preview with customer, mobile, date, service, and message fields.",
+      formType: "booking",
+      serviceOptions: ["Express Wash", "Interior Deep Clean", "Premium Ceramic Detail"]
+    }},
+    before_after_gallery: {{
+      title: "Before-After Gallery",
+      summary: "Proof-focused visual sections for exterior shine, interior reset, wheel detail, and ceramic finish.",
+      cards: [["Exterior Shine", "Paint-safe foam wash result"], ["Interior Reset", "Seats, mats, and dashboard"], ["Ceramic Finish", "Premium gloss outcome"]]
+    }},
+    booking_calendar: {{
+      title: "Booking Calendar",
+      summary: "Upcoming doorstep slots and service status for the operations team.",
+      cards: [["Today 4:30 PM", "SUV ceramic detail"], ["Tomorrow 10:00 AM", "Interior deep clean"], ["Friday 2:00 PM", "Express wash route"]]
+    }},
+    payment_status: {{
+      title: "Payment Status",
+      summary: "Payment and invoice states stay visible before the real backend payment proxy is connected.",
+      cards: [["Express wash", "Paid"], ["Ceramic detail", "Invoice sent"], ["Interior clean", "Awaiting payment"]]
+    }},
+    admin_dashboard: {{
+      title: "Admin Dashboard",
+      summary: "Admin view for bookings, revenue, lead follow-up, and service completion.",
+      cards: [["Bookings", "18 active"], ["Revenue", "$4.6k"], ["Leads", "7 open"]]
+    }}
+  }},
+  gym: {{
+    dashboard: {{
+      title: "Dashboard",
+      summary: "Fitness studio snapshot for members, attendance, class bookings, and revenue.",
+      cards: [["Member Records", "286 active"], ["Class Bookings", "34 today"], ["Attendance", "91% this week"]]
+    }},
+    membership_plans: {{
+      title: "Membership Plans",
+      summary: "Members can compare starter, transformation, and elite coaching plans.",
+      cards: [["Starter Plan", "$39/mo gym access"], ["Transformation Plan", "$89/mo trainer match"], ["Elite Coaching", "$149/mo premium sessions"]]
+    }},
+    trainer_profiles: {{
+      title: "Trainer Profiles",
+      summary: "Trainer cards highlight coaching type, availability, and consultation options.",
+      cards: [["Riya Kapoor", "Strength and HIIT"], ["Kabir Mehta", "Mobility and yoga"], ["Neha Singh", "Diet consultation"]]
+    }},
+    class_booking: {{
+      title: "Class Booking",
+      summary: "A realistic class booking preview with member, mobile, date, class, and message fields.",
+      formType: "booking",
+      serviceOptions: ["HIIT Class", "Yoga Session", "Strength Coaching"]
+    }},
+    attendance_tracking: {{
+      title: "Attendance Tracking",
+      summary: "Track check-ins, weekly attendance rate, and missed-session follow-ups.",
+      cards: [["Ananya Rao", "Checked in"], ["Karan Singh", "HIIT at 7 PM"], ["Weekly Rate", "91%"]]
+    }},
+    diet_consultation: {{
+      title: "Diet Consultation",
+      summary: "Preview diet consultation requests and trainer follow-up notes.",
+      cards: [["Consultation", "Follow-up due"], ["Goal", "Fat loss plan"], ["Coach Note", "Review on Friday"]]
+    }},
+    payment_dashboard: {{
+      title: "Payment Dashboard",
+      summary: "Membership payments, trainer add-ons, and pending invoices in one screen.",
+      cards: [["Monthly Revenue", "$12.4k"], ["Paid Members", "248"], ["Pending", "18 invoices"]]
+    }}
+  }},
+  wedding_venue: {{
+    dashboard: {{
+      title: "Dashboard",
+      summary: "Lead, package, enquiry, and date-hold overview for the venue manager.",
+      cards: [["New Leads", "24 this week"], ["Date Holds", "8 active"], ["Package Revenue", "$38k pipeline"]]
+    }},
+    wedding_packages: {{
+      title: "Wedding Packages",
+      summary: "Families compare Haldi, Mehendi, and full wedding packages.",
+      cards: [["Haldi Theme", "$2,499 outdoor decor"], ["Mehendi Theme", "$4,999 family lounge"], ["Royal Wedding", "$8,999 full venue"]]
+    }},
+    haldi_theme: {{
+      title: "Haldi Theme",
+      summary: "Theme screen for marigold decor, turmeric palette, lawn setup, and welcome drinks.",
+      cards: [["Decor", "Marigold entry"], ["Lawn", "Outdoor ceremony"], ["Guest Flow", "Welcome drinks"]]
+    }},
+    mehendi_theme: {{
+      title: "Mehendi Theme",
+      summary: "Theme screen for stage seating, artist corner, photo wall, and lounge setup.",
+      cards: [["Stage", "Family seating"], ["Artist Corner", "Mehendi stations"], ["Photo Wall", "Guest memories"]]
+    }},
+    gallery: {{
+      title: "Gallery",
+      summary: "Visual gallery sections for Haldi, Mehendi, outdoor lawn, and reception stage.",
+      cards: [["Haldi", "Yellow lawn setup"], ["Mehendi", "Artist corner"], ["Reception", "Lit stage"]]
+    }},
+    booking_calendar: {{
+      title: "Booking Calendar",
+      summary: "Calendar preview for date holds, site visits, and confirmed events.",
+      cards: [["24 Feb 2027", "Royal wedding hold"], ["02 Mar 2027", "Site visit"], ["15 Apr 2027", "Mehendi confirmed"]]
+    }},
+    enquiry_form: {{
+      title: "Enquiry Form",
+      summary: "A realistic enquiry preview with name, mobile, date, package, and message fields.",
+      formType: "enquiry",
+      serviceOptions: ["Haldi Theme", "Mehendi Theme", "Royal Wedding Package"]
+    }},
+    admin_lead_dashboard: {{
+      title: "Admin Lead Dashboard",
+      summary: "Lead status, quotations, site visits, and package interest for venue staff.",
+      cards: [["Aarav & Meera", "Site visit booked"], ["Kapoor Family", "Date hold pending"], ["Nisha Events", "Quotation sent"]]
+    }}
+  }}
+}};
+
+const SCREEN_ALIASES = {{
+  preview: "dashboard",
+  view_packages: APP_DOMAIN === "wedding_venue" ? "wedding_packages" : "service_packages",
+  send_enquiry: "enquiry_form",
+  gallery: APP_DOMAIN === "car_detailing" ? "before_after_gallery" : "gallery",
+  admin: APP_DOMAIN === "wedding_venue" ? "admin_lead_dashboard" : "admin_dashboard",
+  trainers: "trainer_profiles",
+  payments: APP_DOMAIN === "gym" ? "payment_dashboard" : "payment_status",
+  book_package: "service_packages",
+  compare_package: "wedding_packages",
+  choose_plan: "membership_plans",
+  book_class: "class_booking",
+  submit_booking: "doorstep_booking",
+  order_food: "dashboard",
+  book_table: "dashboard",
+  book_appointment: "dashboard",
+  doctor_schedule: "dashboard",
+  parent_portal: "dashboard",
+  attendance: "dashboard",
+  update_stock: "dashboard",
+  sales_dashboard: "dashboard"
+}};
 
 // TODO: Add API key billing layer before enabling paid runtime services.
 // TODO: Add runtime usage metering for every backend proxy call.
 // TODO: Route all third-party keys through the backend safety gateway before public launch.
 // TODO: Add illegal-usage blocking before API key issuance.
-document.querySelectorAll("button").forEach((button) => {{
-  button.addEventListener("click", () => {{
-    button.dataset.clicked = "true";
+function slugFromLabel(label) {{
+  return String(label || "").trim().toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+}}
+
+function cardMarkup(cards) {{
+  return `<div class="screen-card-grid">${{(cards || []).map(([title, detail]) => `
+    <article class="screen-card"><strong>${{title}}</strong><span>${{detail}}</span></article>
+  `).join("")}}</div>`;
+}}
+
+function formMarkup(screen) {{
+  const options = (screen.serviceOptions || ["Service Package"]).map((option) => `<option>${{option}}</option>`).join("");
+  const action = screen.formType === "enquiry" ? "Send Enquiry" : "Submit Booking";
+  return `
+    <form class="screen-form" data-local-form>
+      <label>Name<input name="name" value="Priya Sharma"></label>
+      <label>Mobile<input name="mobile" value="+91 98765 43210"></label>
+      <label>Date<input name="date" type="date" value="2027-02-24"></label>
+      <label>Service / Package<select name="service">${{options}}</select></label>
+      <label>Message<textarea name="message">Please confirm availability and next steps.</textarea></label>
+      <button type="submit">${{action}}</button>
+      <span class="form-success" role="status"></span>
+    </form>
+  `;
+}}
+
+function renderScreen(screenKey, shouldScroll = true) {{
+  const config = SCREEN_CONFIG[APP_DOMAIN] || {{}};
+  const key = SCREEN_ALIASES[screenKey] || screenKey || "dashboard";
+  const screen = config[key] || config.dashboard;
+  const panel = document.querySelector(".interactive-screen-panel");
+  if (!panel || !screen) return;
+  panel.innerHTML = `
+    <div class="section-heading">
+      <span class="eyebrow">Active screen</span>
+      <h2>${{screen.title}}</h2>
+    </div>
+    <p>${{screen.summary}}</p>
+    ${{screen.formType ? formMarkup(screen) : cardMarkup(screen.cards)}}
+  `;
+  document.querySelectorAll("[data-screen]").forEach((button) => {{
+    const candidate = SCREEN_ALIASES[button.dataset.screen] || button.dataset.screen;
+    button.classList.toggle("is-active", candidate === key);
   }});
+  if (shouldScroll) {{
+    panel.scrollIntoView({{ behavior: "smooth", block: "start" }});
+  }}
+}}
+
+document.addEventListener("click", (event) => {{
+  const button = event.target.closest("button");
+  if (!button) return;
+  button.dataset.clicked = "true";
+  const screenKey = button.dataset.screen || slugFromLabel(button.textContent);
+  renderScreen(screenKey);
 }});
+
+document.addEventListener("submit", (event) => {{
+  const form = event.target.closest("[data-local-form]");
+  if (!form) return;
+  event.preventDefault();
+  const success = form.querySelector(".form-success");
+  if (success) {{
+    success.textContent = "Saved locally for preview. Backend submission will use a runtime proxy later.";
+  }}
+}});
+
+renderScreen("dashboard", false);
 
 window.generatedAppRuntime = {{
   appId: APP_ID,

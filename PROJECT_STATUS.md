@@ -1,5 +1,19 @@
 # IdeasForgeAI Project Status
 
+## Phase 30B - Clickable Multi-Screen Generated Apps
+
+Status: Completed locally, verification passed.
+
+- Generated static app previews now include a lightweight vanilla JavaScript screen state renderer.
+- Generated app CTAs, navigation buttons, package buttons, booking buttons, enquiry buttons, gallery buttons, admin buttons, trainer buttons, and payment buttons route to matching in-preview screens where available.
+- Car detailing previews include clickable Dashboard, Service Packages, Doorstep Booking, Before-After Gallery, Booking Calendar, Payment Status, and Admin Dashboard screens.
+- Gym previews include clickable Dashboard, Membership Plans, Trainer Profiles, Class Booking, Attendance Tracking, Diet Consultation, and Payment Dashboard screens.
+- Wedding/event lawn previews include clickable Dashboard, Wedding Packages, Haldi Theme, Mehendi Theme, Gallery, Booking Calendar, Enquiry Form, and Admin Lead Dashboard screens.
+- Booking and enquiry screens render realistic local form previews with name, mobile, date, service/package, message, submit action, and local success status.
+- Generated apps remain mobile-first with horizontal screen tabs, active screen styling, responsive cards, and desktop grid layouts.
+- Runtime integrations remain API-key-ready through `/api/runtime/<app_id>/<service_name>` placeholders only, with TODOs for billing, metering, safety gateway, and illegal-usage blocking.
+- No frontend secrets, external dependencies, Studio V4 files, deployment settings, KisanMitraAI files, freeze branches, tags, or previous phase snapshots were touched.
+
 ## Phase 30A - App Output Quality Engine
 
 Status: Completed locally, verification passed.
