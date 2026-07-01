@@ -49,6 +49,15 @@ Important rules:
 - Do not claim database/auth/upload/OCR/voice/export/deployment are active.
 - Keep code/export/deployment approval-gated.
 - Produce a clean orchestrated plan better than generic app builders.
+- Make the plan sector-specific. For car detailing include service packages, doorstep booking,
+  before-after gallery, booking calendar, payment status, admin dashboard, daily bookings,
+  revenue, and customer leads. For gyms include membership plans, trainer profiles,
+  class booking, attendance tracking, diet consultation, payment dashboard, and member records.
+  For wedding/event lawns include wedding packages, Haldi theme, Mehendi theme, gallery,
+  booking calendar, enquiry form, admin lead dashboard, and package comparison.
+- Avoid stale generic preview wording such as AI Product Builder, Active users, and Open tasks
+  unless the user's requested product is actually a builder/admin SaaS tool.
+- Keep runtime API integrations backend-proxy-only and never place real API keys in generated frontend plans.
 - Return JSON only. No markdown. No code fences.
 
 Return:

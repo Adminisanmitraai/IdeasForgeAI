@@ -100,16 +100,33 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "preview_summary": "Book premium car detailing packages, doorstep washing, enquiries, payments, and admin revenue from one mobile-first app.",
     },
     "gym": {
-        "keywords": ["gym", "fitness", "trainer", "membership"],
-        "app_name": "Fit Membership Hub",
-        "app_type": "gym membership and trainer booking app",
+        "keywords": ["gym", "fitness", "trainer", "membership", "workout", "class booking"],
+        "app_name": "Fitness Studio",
+        "app_type": "fitness studio membership and class booking app",
         "target_users": ["gym owners", "members", "trainers", "front desk admins"],
-        "core_features": ["membership plans", "trainer booking", "class schedule", "attendance tracking", "payment status", "admin dashboard"],
-        "screens": ["Home", "Membership Plans", "Trainer Booking", "Class Schedule", "Attendance", "Payment Status", "Admin Dashboard"],
-        "data_needs": ["member name", "mobile number", "membership plan", "trainer", "class time", "payment status"],
-        "api_needs": ["membership signup via backend proxy", "payment status via backend proxy", "optional SMS reminders via backend proxy"],
-        "monetization": ["monthly gym subscription", "trainer session fees", "premium membership upsell"],
-        "preview_summary": "Manage memberships, trainer bookings, class schedules, attendance, and payments in one gym app.",
+        "core_features": [
+            "membership plans",
+            "trainer profiles",
+            "class booking",
+            "attendance tracking",
+            "diet consultation",
+            "payment dashboard",
+            "member records",
+        ],
+        "screens": [
+            "Home",
+            "Membership Plans",
+            "Trainer Profiles",
+            "Class Booking",
+            "Attendance Tracking",
+            "Diet Consultation",
+            "Payment Dashboard",
+            "Member Records",
+        ],
+        "data_needs": ["member name", "mobile number", "membership plan", "trainer", "class time", "attendance status", "diet consultation notes", "payment status"],
+        "api_needs": ["membership signup via backend proxy", "class booking via backend proxy", "payment status via backend proxy", "optional SMS reminders via backend proxy"],
+        "monetization": ["monthly gym subscription", "trainer session fees", "diet consultation add-on", "premium membership upsell"],
+        "preview_summary": "Run memberships, trainer slots, class bookings, attendance, diet consultations, member records, and payments in one polished fitness studio app.",
     },
     "wedding_venue": {
         "keywords": ["wedding", "venue", "lawn", "event", "haldi", "mehendi", "banquet", "marriage"],
@@ -117,16 +134,19 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "app_type": "wedding venue booking app",
         "target_users": ["couples", "families", "wedding planners", "venue managers"],
         "core_features": [
-            "venue packages",
-            "photo/video gallery",
+            "wedding packages",
+            "Haldi theme",
+            "Mehendi theme",
+            "gallery",
             "enquiry form",
+            "booking calendar",
             "booking lead capture",
             "package comparison",
-            "admin dashboard",
+            "admin lead dashboard",
             "enquiry management",
             "event date tracking",
         ],
-        "screens": ["Home", "Packages", "Gallery", "Enquiry", "Booking Leads", "Admin Dashboard"],
+        "screens": ["Home", "Wedding Packages", "Haldi Theme", "Mehendi Theme", "Gallery", "Booking Calendar", "Enquiry Form", "Admin Lead Dashboard", "Package Comparison"],
         "data_needs": [
             "package name",
             "package price",
@@ -148,55 +168,55 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
             "premium listing",
             "commission per booking",
         ],
-        "preview_summary": "Manage packages, gallery, enquiries, and booking leads from one mobile-first app.",
+        "preview_summary": "Show wedding packages, Haldi and Mehendi themes, gallery, booking calendar, enquiry form, lead dashboard, and package comparison from one mobile-first venue app.",
     },
     "restaurant": {
         "keywords": ["restaurant", "menu", "table", "order", "food", "tiffin", "cafe"],
         "app_name": "Restaurant Order Hub",
         "app_type": "restaurant ordering app",
         "target_users": ["restaurant owners", "kitchen staff", "customers"],
-        "core_features": ["menu catalog", "order capture", "table enquiries", "daily specials", "kitchen dashboard"],
-        "screens": ["Home", "Menu", "Orders", "Reservations", "Admin Dashboard"],
-        "data_needs": ["dish name", "price", "category", "order status", "customer mobile"],
-        "api_needs": ["order submission via backend proxy", "payment gateway via backend proxy"],
-        "monetization": ["monthly restaurant subscription", "online order fees", "premium menu listing"],
-        "preview_summary": "Take menu orders, enquiries, and reservations from one mobile-first restaurant app.",
+        "core_features": ["menu catalog", "food ordering", "table booking", "daily specials", "kitchen order queue", "payment status", "customer reorder list"],
+        "screens": ["Home", "Menu", "Food Ordering", "Table Booking", "Kitchen Queue", "Payment Dashboard", "Admin Dashboard"],
+        "data_needs": ["dish name", "price", "category", "order status", "customer mobile", "table size", "payment status"],
+        "api_needs": ["order submission via backend proxy", "table booking via backend proxy", "payment gateway via backend proxy", "optional WhatsApp notification via backend proxy"],
+        "monetization": ["monthly restaurant subscription", "online order fees", "featured daily specials", "loyalty add-on"],
+        "preview_summary": "Take menu orders, table bookings, kitchen queue updates, payments, and repeat customer requests from one restaurant app.",
     },
     "school": {
         "keywords": ["school", "parents", "homework", "fees", "attendance", "education", "student", "teacher"],
         "app_name": "School Parent Connect",
         "app_type": "school parent communication and attendance app",
         "target_users": ["school admins", "teachers", "parents", "students"],
-        "core_features": ["attendance tracking", "homework updates", "fee status", "parent notices", "class dashboard"],
-        "screens": ["Home", "Attendance", "Homework", "Fees", "Parent Notices", "Admin Dashboard"],
-        "data_needs": ["student name", "class", "attendance status", "homework", "fee status", "parent mobile"],
-        "api_needs": ["parent notification via backend proxy", "fee status via backend proxy"],
-        "monetization": ["monthly school subscription", "per-student communication plan"],
-        "preview_summary": "Track attendance, homework, fees, and parent updates in one school communication app.",
+        "core_features": ["attendance tracking", "homework updates", "fee status", "parent notices", "teacher remarks", "student records", "class dashboard"],
+        "screens": ["Home", "Parent Portal", "Attendance", "Homework", "Fees", "Parent Notices", "Student Records", "Admin Dashboard"],
+        "data_needs": ["student name", "class", "attendance status", "homework", "fee status", "parent mobile", "teacher remarks"],
+        "api_needs": ["parent notification via backend proxy", "fee status via backend proxy", "attendance sync via backend proxy"],
+        "monetization": ["monthly school subscription", "per-student communication plan", "premium analytics for administrators"],
+        "preview_summary": "Give parents a clear portal for attendance, homework, fee status, notices, teacher remarks, and student records.",
     },
     "retail": {
         "keywords": ["shop", "inventory", "retail", "stock", "store", "catalog", "ecommerce"],
         "app_name": "Retail Inventory Hub",
         "app_type": "retail inventory app",
         "target_users": ["store owners", "sales staff", "inventory managers"],
-        "core_features": ["product catalog", "inventory tracking", "sales dashboard", "customer enquiries"],
-        "screens": ["Home", "Products", "Inventory", "Orders", "Admin Dashboard"],
-        "data_needs": ["product name", "SKU", "price", "stock", "customer mobile"],
-        "api_needs": ["inventory sync via backend proxy", "payment gateway via backend proxy"],
-        "monetization": ["monthly store subscription", "premium catalog listing"],
-        "preview_summary": "Track products, stock, sales, and customer enquiries from one retail dashboard.",
+        "core_features": ["product catalog", "inventory tracking", "low-stock alerts", "sales dashboard", "purchase orders", "customer enquiries", "payment status"],
+        "screens": ["Home", "Product Catalog", "Inventory", "Low Stock", "Orders", "Purchase Orders", "Admin Dashboard"],
+        "data_needs": ["product name", "SKU", "price", "stock", "supplier", "customer mobile", "payment status"],
+        "api_needs": ["inventory sync via backend proxy", "payment gateway via backend proxy", "supplier notification via backend proxy"],
+        "monetization": ["monthly store subscription", "premium catalog listing", "multi-branch inventory add-on"],
+        "preview_summary": "Track products, low stock, orders, supplier purchases, payments, and customer enquiries from one retail inventory app.",
     },
     "clinic": {
         "keywords": ["clinic", "doctor", "dental", "patient", "appointment", "health"],
         "app_name": "Clinic Appointment Hub",
         "app_type": "clinic appointment app",
         "target_users": ["doctors", "clinic staff", "patients"],
-        "core_features": ["appointment booking", "patient enquiries", "doctor schedule", "admin dashboard"],
-        "screens": ["Home", "Appointments", "Patients", "Schedule", "Admin Dashboard"],
-        "data_needs": ["patient name", "mobile", "appointment date", "doctor", "status"],
-        "api_needs": ["appointment submission via backend proxy", "notification service via backend proxy"],
-        "monetization": ["monthly clinic subscription", "appointment credits"],
-        "preview_summary": "Manage appointments, patient enquiries, and schedules in a mobile-first clinic app.",
+        "core_features": ["appointment booking", "doctor schedule", "patient records", "queue status", "follow-up reminders", "payment status", "admin dashboard"],
+        "screens": ["Home", "Appointments", "Doctor Schedule", "Patients", "Queue Status", "Follow-ups", "Admin Dashboard"],
+        "data_needs": ["patient name", "mobile", "appointment date", "doctor", "visit reason", "queue status", "payment status"],
+        "api_needs": ["appointment submission via backend proxy", "notification service via backend proxy", "payment status via backend proxy"],
+        "monetization": ["monthly clinic subscription", "appointment credits", "follow-up reminder add-on"],
+        "preview_summary": "Manage appointment booking, doctor schedules, patient records, queue status, follow-ups, and payments in one clinic app.",
     },
 }
 
@@ -381,20 +401,20 @@ def _render_metric_cards(domain: str) -> str:
             ("Daily Bookings", "18"),
             ("Revenue", "$4.6k"),
             ("Payment Status", "7 pending"),
-            ("Completed Details", "42"),
+            ("Customer Leads", "31"),
         ],
-        "gym": [("Active Members", "286"), ("Trainer Sessions", "34"), ("Renewals Due", "19"), ("Monthly Revenue", "$12.4k")],
+        "gym": [("Member Records", "286"), ("Class Bookings", "34"), ("Attendance", "91%"), ("Payment Dashboard", "$12.4k")],
         "wedding_venue": [
             ("Total Enquiries", "128"),
             ("Pending Bookings", "24"),
-            ("Popular Package", "Royal"),
-            ("Gallery Views", "4.8k"),
+            ("Booked Dates", "17"),
+            ("Package Revenue", "$84k"),
         ],
-        "restaurant": [("Today Orders", "86"), ("Pending Tables", "12"), ("Top Item", "Chef Special"), ("Repeat Guests", "41%")],
+        "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", "$6.8k")],
         "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
         "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", "$8.2k")],
-        "clinic": [("Appointments", "42"), ("Waiting", "8"), ("Follow-ups", "16"), ("Open Slots", "11")],
-    }.get(domain, [("Active Records", "1,248"), ("Open Tasks", "36"), ("New Leads", "18"), ("Completion", "82%")])
+        "clinic": [("Appointments", "42"), ("Queue Status", "8 waiting"), ("Follow-ups", "16"), ("Open Slots", "11")],
+    }.get(domain, [("Workflow Items", "1,248"), ("Approvals Due", "36"), ("New Requests", "18"), ("Completion", "82%")])
 
     return "\n".join(
         f"<article><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></article>"
@@ -402,36 +422,81 @@ def _render_metric_cards(domain: str) -> str:
     )
 
 
-def _render_wedding_venue_sections() -> str:
-    packages = [
-        ("Silver Wedding Package", "$2,499", "Up to 150 guests with decor starter kit"),
-        ("Premium Wedding Package", "$4,999", "Up to 300 guests with catering and photo zones"),
-        ("Royal Wedding Package", "$8,999", "Full venue, premium decor, VIP support, and event desk"),
-    ]
-    package_cards = "\n".join(
+def _render_package_cards(items: List[tuple[str, str, str]], button_label: str) -> str:
+    return "\n".join(
         f"""
         <article class="package-card">
           <span>{html.escape(price)}</span>
           <h3>{html.escape(name)}</h3>
           <p>{html.escape(detail)}</p>
-          <button type="button">Compare Package</button>
+          <button type="button">{html.escape(button_label)}</button>
         </article>"""
-        for name, price, detail in packages
+        for name, price, detail in items
     )
-    leads = [
-        ("Aarav & Meera", "Premium Wedding Package", "Site visit booked"),
-        ("Kapoor Family", "Royal Wedding Package", "Date hold pending"),
-        ("Nisha Events", "Silver Wedding Package", "Quotation sent"),
+
+
+def _render_gallery_tiles(items: List[str]) -> str:
+    return "\n".join(f"<span>{html.escape(item)}</span>" for item in items)
+
+
+def _render_status_rows(rows: List[tuple[str, str, str]]) -> str:
+    return "\n".join(
+        f"<li><strong>{html.escape(name)}</strong><span>{html.escape(detail)}</span><em>{html.escape(status)}</em></li>"
+        for name, detail, status in rows
+    )
+
+
+def _render_form_fields(fields: List[tuple[str, str]]) -> str:
+    return "\n".join(
+        f"<label>{html.escape(label)}<input value=\"{html.escape(value)}\" readonly></label>"
+        for label, value in fields
+    )
+
+
+def _render_operations_section(
+    eyebrow: str,
+    title: str,
+    form_title: str,
+    form_fields: List[tuple[str, str]],
+    button_label: str,
+    admin_eyebrow: str,
+    admin_title: str,
+    rows: List[tuple[str, str, str]],
+) -> str:
+    return f"""
+    <section class="content-block enquiry-admin-grid" aria-label="{html.escape(title)}">
+      <div class="workflow-label">{html.escape(title)}</div>
+      <article class="enquiry-card">
+        <span class="eyebrow">{html.escape(eyebrow)}</span>
+        <h2>{html.escape(form_title)}</h2>
+        {_render_form_fields(form_fields)}
+        <button type="button">{html.escape(button_label)}</button>
+      </article>
+      <article class="admin-card">
+        <span class="eyebrow">{html.escape(admin_eyebrow)}</span>
+        <h2>{html.escape(admin_title)}</h2>
+        <ul>{_render_status_rows(rows)}</ul>
+      </article>
+    </section>"""
+
+
+def _render_wedding_venue_sections() -> str:
+    packages = [
+        ("Haldi Theme", "$2,499", "Outdoor lawn, marigold decor, turmeric color palette, and welcome drinks"),
+        ("Mehendi Theme", "$4,999", "Stage seating, artist corner, photo wall, and family lounge setup"),
+        ("Royal Wedding Package", "$8,999", "Full venue, premium decor, catering coordination, and VIP support desk"),
     ]
-    lead_rows = "\n".join(
-        f"<li><strong>{html.escape(name)}</strong><span>{html.escape(package)}</span><em>{html.escape(status)}</em></li>"
-        for name, package, status in leads
-    )
+    package_cards = _render_package_cards(packages, "Compare Package")
+    leads = [
+        ("Aarav & Meera", "Royal Wedding Package", "Site visit booked"),
+        ("Kapoor Family", "Royal Wedding Package", "Date hold pending"),
+        ("Nisha Events", "Haldi Theme", "Quotation sent"),
+    ]
     return f"""
     <section class="content-block">
       <div class="section-heading">
-        <span class="eyebrow">Packages</span>
-        <h2>Wedding venue packages</h2>
+        <span class="eyebrow">Wedding Packages</span>
+        <h2>Package Comparison for theme-led events</h2>
       </div>
       <div class="package-grid">{package_cards}</div>
     </section>
@@ -439,31 +504,23 @@ def _render_wedding_venue_sections() -> str:
     <section class="content-block gallery-panel">
       <div class="section-heading">
         <span class="eyebrow">Gallery</span>
-        <h2>Photo and video showcase</h2>
+        <h2>Haldi, Mehendi, and wedding lawn showcase</h2>
       </div>
       <div class="gallery-grid">
-        <span>Mandap Decor</span>
-        <span>Banquet Hall</span>
-        <span>Outdoor Lawn</span>
-        <span>Reception Stage</span>
+        {_render_gallery_tiles(["Haldi Theme", "Mehendi Theme", "Outdoor Lawn", "Reception Stage"])}
       </div>
     </section>
 
-    <section class="content-block enquiry-admin-grid">
-      <article class="enquiry-card">
-        <span class="eyebrow">Enquiry form preview</span>
-        <h2>Capture booking leads</h2>
-        <label>Customer name<input value="Priya Sharma" readonly></label>
-        <label>Event date<input value="24 Feb 2027" readonly></label>
-        <label>Guest capacity<input value="300 guests" readonly></label>
-        <button type="button">Send Enquiry</button>
-      </article>
-      <article class="admin-card">
-        <span class="eyebrow">Admin dashboard preview</span>
-        <h2>Lead status list</h2>
-        <ul>{lead_rows}</ul>
-      </article>
-    </section>"""
+    {_render_operations_section(
+        "Enquiry Form",
+        "Booking Calendar",
+        "Capture event enquiries",
+        [("Customer name", "Priya Sharma"), ("Event date", "24 Feb 2027"), ("Guest capacity", "300 guests")],
+        "Send Enquiry",
+        "Admin Lead Dashboard",
+        "Booking calendar and lead status",
+        leads,
+    )}"""
 
 
 def _render_car_detailing_sections() -> str:
@@ -472,26 +529,14 @@ def _render_car_detailing_sections() -> str:
         ("Interior Deep Clean", "$79", "Seats, mats, dashboard, odor treatment, and stain care"),
         ("Premium Ceramic Detail", "$249", "Paint polish, ceramic coating prep, and premium finish protection"),
     ]
-    package_cards = "\n".join(
-        f"""
-        <article class="package-card">
-          <span>{html.escape(price)}</span>
-          <h3>{html.escape(name)}</h3>
-          <p>{html.escape(detail)}</p>
-          <button type="button">Book Package</button>
-        </article>"""
-        for name, price, detail in packages
-    )
+    package_cards = _render_package_cards(packages, "Book Package")
     bookings = [
         ("Doorstep Booking", "SUV ceramic detail", "Today 4:30 PM"),
         ("Booking Calendar", "Interior deep clean", "Tomorrow 10:00 AM"),
         ("Payment Status", "Express wash", "Paid"),
         ("Admin Dashboard", "Daily Bookings", "Revenue $4.6k"),
+        ("Customer Leads", "Ceramic detail enquiry", "Call back"),
     ]
-    booking_rows = "\n".join(
-        f"<li><strong>{html.escape(name)}</strong><span>{html.escape(detail)}</span><em>{html.escape(status)}</em></li>"
-        for name, detail, status in bookings
-    )
     return f"""
     <section class="content-block">
       <div class="section-heading">
@@ -507,28 +552,235 @@ def _render_car_detailing_sections() -> str:
         <h2>Show visible detailing results</h2>
       </div>
       <div class="gallery-grid">
-        <span>Exterior Shine</span>
-        <span>Interior Reset</span>
-        <span>Wheel Detail</span>
-        <span>Ceramic Finish</span>
+        {_render_gallery_tiles(["Exterior Shine", "Interior Reset", "Wheel Detail", "Ceramic Finish"])}
       </div>
     </section>
 
-    <section class="content-block enquiry-admin-grid">
-      <article class="enquiry-card">
-        <span class="eyebrow">Doorstep Booking</span>
-        <h2>Customer enquiry form</h2>
-        <label>Customer name<input value="Rohan Mehta" readonly></label>
-        <label>Vehicle type<input value="Premium SUV" readonly></label>
-        <label>Booking date<input value="Today, 4:30 PM" readonly></label>
-        <button type="button">Submit Booking</button>
-      </article>
-      <article class="admin-card">
-        <span class="eyebrow">Admin Dashboard</span>
-        <h2>Booking calendar and revenue</h2>
-        <ul>{booking_rows}</ul>
-      </article>
-    </section>"""
+    {_render_operations_section(
+        "Doorstep Booking",
+        "Booking Calendar",
+        "Customer enquiry form",
+        [("Customer name", "Rohan Mehta"), ("Vehicle type", "Premium SUV"), ("Booking date", "Today, 4:30 PM")],
+        "Submit Booking",
+        "Admin Dashboard",
+        "Daily bookings, revenue, and leads",
+        bookings,
+    )}"""
+
+
+def _render_gym_sections() -> str:
+    plans = [
+        ("Starter Plan", "$39/mo", "Gym floor access, progress check-in, and monthly attendance summary"),
+        ("Transformation Plan", "$89/mo", "Personal trainer profile match, class booking, and diet consultation"),
+        ("Elite Coaching", "$149/mo", "Premium trainer sessions, weekly diet review, and payment dashboard access"),
+    ]
+    rows = [
+        ("Ananya Rao", "Transformation Plan", "Paid"),
+        ("Karan Singh", "HIIT class booking", "Today 7 PM"),
+        ("Neha Patel", "Diet consultation", "Follow-up due"),
+        ("Front Desk", "Attendance Tracking", "91% this week"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Membership Plans</span>
+        <h2>Fitness studio plans and trainer-led upsells</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(plans, "Choose Plan")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Trainer Profiles</span>
+        <h2>Class booking and coaching preview</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Strength Coach", "Yoga Trainer", "HIIT Classes", "Diet Consultation"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Class Booking",
+        "Member Records",
+        "Book a fitness session",
+        [("Member name", "Ananya Rao"), ("Trainer", "Riya Kapoor"), ("Class time", "Today, 7:00 PM")],
+        "Book Class",
+        "Payment Dashboard",
+        "Attendance, payments, and member records",
+        rows,
+    )}"""
+
+
+def _render_restaurant_sections() -> str:
+    menu_items = [
+        ("Chef Thali", "$12", "Best-selling lunch combo with dal, curry, rice, roti, and dessert"),
+        ("Paneer Tikka Bowl", "$9", "Fast ordering item with add-on beverage and spice preference"),
+        ("Family Dinner Pack", "$34", "Four-person bundle with payment status and kitchen queue tracking"),
+    ]
+    rows = [
+        ("Order #2184", "Family Dinner Pack", "Preparing"),
+        ("Table Booking", "6 guests at 8:30 PM", "Confirmed"),
+        ("Payment Status", "Chef Thali x 4", "Paid"),
+        ("Kitchen Queue", "Paneer Tikka Bowl", "8 min"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Menu Catalog</span>
+        <h2>Food ordering with realistic menu cards</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(menu_items, "Add to Order")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Daily Specials</span>
+        <h2>Customer-facing food sections</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Lunch Combos", "Dinner Packs", "Cafe Snacks", "Chef Specials"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Food Ordering",
+        "Kitchen Queue",
+        "Place a customer order",
+        [("Customer name", "Isha Menon"), ("Order type", "Dine-in table 6"), ("Pickup time", "Today, 8:30 PM")],
+        "Send Order",
+        "Restaurant Dashboard",
+        "Orders, tables, and payment status",
+        rows,
+    )}"""
+
+
+def _render_clinic_sections() -> str:
+    services = [
+        ("General Consultation", "$25", "Appointment booking with visit reason and queue status"),
+        ("Dental Checkup", "$40", "Doctor schedule slot with follow-up reminder"),
+        ("Health Package", "$99", "Patient records, payment status, and admin dashboard review"),
+    ]
+    rows = [
+        ("Meera Shah", "General Consultation", "Checked in"),
+        ("Ravi Jain", "Dental Checkup", "Waiting"),
+        ("Dr. Kapoor", "Doctor schedule", "3 open slots"),
+        ("Follow-up Reminder", "Health package", "Tomorrow"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Appointment Booking</span>
+        <h2>Clinic services with schedule-aware booking</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(services, "Book Visit")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Doctor Schedule</span>
+        <h2>Patient flow and care sections</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Doctor Schedule", "Patient Records", "Queue Status", "Follow-ups"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Patient Intake",
+        "Admin Dashboard",
+        "Book an appointment",
+        [("Patient name", "Meera Shah"), ("Doctor", "Dr. Kapoor"), ("Visit time", "Today, 5:15 PM")],
+        "Confirm Appointment",
+        "Clinic Dashboard",
+        "Queue, payments, and follow-ups",
+        rows,
+    )}"""
+
+
+def _render_school_sections() -> str:
+    modules = [
+        ("Parent Portal", "$2/student", "Attendance, notices, homework, and teacher remarks in one parent view"),
+        ("Class Dashboard", "$79/mo", "Teacher workload, class attendance, and assignment status"),
+        ("Fee Desk", "$129/mo", "Fee status, reminders, receipts, and school admin overview"),
+    ]
+    rows = [
+        ("Aarohi Class 5A", "Attendance tracking", "Present"),
+        ("Homework", "Math worksheet", "Due tomorrow"),
+        ("Fee Status", "Term 2", "Pending"),
+        ("Parent Notice", "Sports day", "Sent"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Parent Portal</span>
+        <h2>School communication modules</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(modules, "View Module")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Student Records</span>
+        <h2>Daily parent-facing updates</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Attendance", "Homework", "Fees", "Parent Notices"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Teacher Update",
+        "Class Dashboard",
+        "Send parent update",
+        [("Student name", "Aarohi Sharma"), ("Class", "5A"), ("Update", "Homework assigned")],
+        "Send Notice",
+        "Admin Dashboard",
+        "Attendance, fees, and notices",
+        rows,
+    )}"""
+
+
+def _render_retail_sections() -> str:
+    items = [
+        ("Wireless Earbuds", "$49", "SKU EB-204, 48 in stock, high reorder velocity"),
+        ("Travel Backpack", "$39", "SKU BG-118, 12 in stock, low-stock alert active"),
+        ("Smart Watch", "$89", "SKU SW-331, supplier purchase order pending"),
+    ]
+    rows = [
+        ("Low Stock", "Travel Backpack", "12 left"),
+        ("Purchase Order", "Smart Watch", "Supplier sent"),
+        ("Customer Enquiry", "Wireless Earbuds", "Callback"),
+        ("Payment Status", "Order #8841", "Paid"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Product Catalog</span>
+        <h2>Inventory shop cards with stock context</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(items, "Update Stock")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Inventory Tracking</span>
+        <h2>Shop operations at a glance</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Low Stock", "Purchase Orders", "Sales Dashboard", "Customer Enquiries"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Inventory Update",
+        "Admin Dashboard",
+        "Record a stock movement",
+        [("Product", "Travel Backpack"), ("SKU", "BG-118"), ("New stock", "12 units")],
+        "Save Stock",
+        "Retail Dashboard",
+        "Stock, orders, and payments",
+        rows,
+    )}"""
 
 
 def _render_domain_sections(domain: str, plan: Dict[str, Any]) -> str:
@@ -537,6 +789,21 @@ def _render_domain_sections(domain: str, plan: Dict[str, Any]) -> str:
 
     if domain == "wedding_venue":
         return _render_wedding_venue_sections()
+
+    if domain == "gym":
+        return _render_gym_sections()
+
+    if domain == "restaurant":
+        return _render_restaurant_sections()
+
+    if domain == "clinic":
+        return _render_clinic_sections()
+
+    if domain == "school":
+        return _render_school_sections()
+
+    if domain == "retail":
+        return _render_retail_sections()
 
     return f"""
     <section class="content-block">
@@ -565,15 +832,16 @@ def _build_html(plan: Dict[str, Any]) -> str:
     app_type = html.escape(plan["app_type"])
     summary = html.escape(plan["preview_summary"])
     domain = _domain_from_plan(plan)
-    if domain == "wedding_venue":
-        primary_action = "View Packages"
-        secondary_action = "Send Enquiry"
-    elif domain == "car_detailing":
-        primary_action = "Service Packages"
-        secondary_action = "Doorstep Booking"
-    else:
-        primary_action = "Start workflow"
-        secondary_action = "View dashboard"
+    actions = {
+        "car_detailing": ("Service Packages", "Doorstep Booking"),
+        "gym": ("Membership Plans", "Class Booking"),
+        "wedding_venue": ("Wedding Packages", "Send Enquiry"),
+        "restaurant": ("Order Food", "Book Table"),
+        "clinic": ("Book Appointment", "Doctor Schedule"),
+        "school": ("Parent Portal", "Attendance"),
+        "retail": ("Update Stock", "Sales Dashboard"),
+    }
+    primary_action, secondary_action = actions.get(domain, ("Open Workflow", "View Dashboard"))
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -643,7 +911,7 @@ def _build_css() -> str:
 body { margin: 0; background: #f6f7fb; }
 button { border: 0; font: inherit; cursor: pointer; }
 .app-shell { min-height: 100svh; padding: 14px; }
-.hero { overflow: hidden; border-radius: 28px; background: linear-gradient(135deg, #171923, #314159); color: #fff; }
+.hero { overflow: hidden; border-radius: 28px; background: linear-gradient(135deg, #151823 0%, #29374c 58%, #475466 100%); color: #fff; }
 .top-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; }
 .top-nav strong { overflow-wrap: anywhere; font-size: 15px; }
 .top-nav button, .hero-actions button, .screen-section button { min-height: 42px; border-radius: 999px; padding: 0 15px; background: #fff; color: #171923; font-weight: 800; }
@@ -672,13 +940,14 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 68px); line-height: .96; lett
 .screen-section button { flex: 0 0 auto; background: #171923; color: #fff; }
 .data-panel { display: grid; gap: 18px; padding: 18px; }
 .data-panel ul { display: grid; gap: 8px; margin: 10px 0 0; padding-left: 18px; color: #3c4354; }
-.package-card { display: grid; gap: 12px; padding: 18px; }
+.package-card { display: grid; gap: 12px; align-content: start; min-height: 190px; padding: 18px; }
 .package-card span { color: #6d5dfc; font-size: 22px; font-weight: 900; }
 .package-card button, .enquiry-card button { min-height: 42px; border-radius: 999px; background: #171923; color: #fff; font-weight: 850; }
 .gallery-panel { padding: 18px; }
 .gallery-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 12px; }
-.gallery-grid span { display: grid; min-height: 110px; place-items: end start; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #fff2f6, #edf4ff); color: #33394a; font-weight: 850; }
+.gallery-grid span { display: grid; min-height: 110px; place-items: end start; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #fff7ed, #e8f7f1 48%, #edf4ff); color: #33394a; font-weight: 850; }
 .enquiry-admin-grid { display: grid; gap: 14px; }
+.workflow-label { color: #697184; font-size: 12px; font-weight: 850; text-transform: uppercase; }
 .enquiry-card, .admin-card { display: grid; gap: 12px; padding: 18px; }
 .enquiry-card label { display: grid; gap: 6px; color: #5f6677; font-size: 13px; font-weight: 750; }
 .enquiry-card input { width: 100%; min-height: 42px; border: 1px solid #e4e7ef; border-radius: 12px; padding: 0 12px; color: #171923; font: inherit; }
@@ -689,6 +958,9 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 68px); line-height: .96; lett
 @media (max-width: 640px) {
   .app-shell { padding: 72px 10px 10px; }
   .hero { border-radius: 22px; }
+  .hero-content { padding: 34px 16px 24px; }
+  .metric-grid, .package-grid, .feature-grid { grid-template-columns: 1fr; }
+  .gallery-grid { grid-template-columns: 1fr 1fr; }
   .screen-section { align-items: flex-start; flex-direction: column; }
   .screen-section button { width: 100%; }
 }
@@ -697,6 +969,7 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 68px); line-height: .96; lett
   .hero-content { padding: 72px 42px 46px; }
   .data-panel { grid-template-columns: 1fr 1fr; }
   .enquiry-admin-grid { grid-template-columns: 1fr 1fr; }
+  .workflow-label { grid-column: 1 / -1; }
 }
 """
 
@@ -739,7 +1012,7 @@ def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
                 "app_type": normalized["app_type"],
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "preview_url": f"/generated-apps/{app_id}/index.html",
-                "source": "phase-29b-static-prototype",
+                "source": "phase-30a-output-quality-engine",
                 "plan": normalized,
             },
             indent=2,
