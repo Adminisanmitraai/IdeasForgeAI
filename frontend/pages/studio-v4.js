@@ -15,6 +15,7 @@ const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
 const previewMount = document.querySelector("[data-preview-mount]");
 
 let currentPlan = null;
+let currentPlanId = 0;
 let isGenerating = false;
 
 const previewLabels = {
@@ -98,7 +99,7 @@ const createList = (items) => {
   return list;
 };
 
-const appendPlanMessage = (reply, plan) => {
+const appendPlanMessage = (reply, plan, planId) => {
   if (!chatStream) {
     return;
   }
@@ -136,6 +137,7 @@ const appendPlanMessage = (reply, plan) => {
   button.className = "approve-generate-button";
   button.type = "button";
   button.dataset.approveGenerate = "true";
+  button.dataset.planId = String(planId);
   button.textContent = "Approve & Generate";
   meta.textContent = getMessageTime();
 
@@ -233,7 +235,7 @@ const renderPreviewPlaceholder = (plan, message = "Generated preview placeholder
   card.className = "preview-card";
   badge.className = "status-pill";
   badge.textContent = "Generated placeholder";
-  title.textContent = plan?.product_name || "Preview ready";
+  title.textContent = plan?.app_name || plan?.product_name || "Preview ready";
   text.textContent = message;
 
   card.append(badge, title, text);
@@ -264,6 +266,12 @@ const renderPreviewFrame = (previewUrl, plan) => {
 
 const handleGenerate = async (button) => {
   if (!currentPlan || isGenerating) {
+    return;
+  }
+
+  if (button?.dataset.planId !== String(currentPlanId)) {
+    button.disabled = true;
+    button.textContent = "Superseded";
     return;
   }
 
@@ -385,7 +393,15 @@ chatForm?.addEventListener("submit", async (event) => {
   appendMessage(message, "user");
   chatInput.value = "";
   resizeChatInput();
+  currentPlan = null;
+  currentPlanId += 1;
+  isGenerating = false;
+  studioShell?.classList.remove("has-generated-preview");
+  if (previewMount?.classList.contains("generated-preview-shell")) {
+    renderPreviewPlaceholder(null, "Approve the new plan to generate an updated preview.");
+  }
   setPreviewStatus("Planning");
+  const requestPlanId = currentPlanId;
   const thinkingMessage = appendThinkingMessage();
 
   try {
@@ -395,8 +411,11 @@ chatForm?.addEventListener("submit", async (event) => {
       mode: "app_creation",
     });
     thinkingMessage?.remove();
+    if (requestPlanId !== currentPlanId) {
+      return;
+    }
     currentPlan = data.plan;
-    appendPlanMessage(data.reply, currentPlan);
+    appendPlanMessage(data.reply, currentPlan, requestPlanId);
     setPreviewStatus("Plan ready");
   } catch (error) {
     thinkingMessage?.remove();

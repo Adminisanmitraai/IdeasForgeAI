@@ -52,8 +52,67 @@ def _title_from_idea(idea: str) -> str:
 
 
 DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
+    "car_detailing": {
+        "keywords": ["car", "detailing", "washing", "vehicle", "doorstep", "car wash", "auto detailing"],
+        "app_name": "Premium Car Detailing",
+        "app_type": "car detailing and washing service booking app",
+        "target_users": ["car owners", "premium vehicle owners", "doorstep service customers", "service admins"],
+        "core_features": [
+            "service packages",
+            "doorstep booking",
+            "before-after gallery",
+            "customer enquiry form",
+            "booking calendar",
+            "payment status",
+            "admin dashboard",
+            "daily bookings and revenue",
+        ],
+        "screens": [
+            "Home",
+            "Service Packages",
+            "Doorstep Booking",
+            "Before-After Gallery",
+            "Enquiry",
+            "Booking Calendar",
+            "Payment Status",
+            "Admin Dashboard",
+        ],
+        "data_needs": [
+            "customer name",
+            "mobile number",
+            "vehicle type",
+            "service package",
+            "booking date",
+            "address",
+            "payment status",
+            "service status",
+        ],
+        "api_needs": [
+            "booking submission via backend proxy",
+            "payment status via backend proxy",
+            "optional WhatsApp/SMS notification via backend proxy",
+        ],
+        "monetization": [
+            "monthly service business subscription",
+            "booking credits",
+            "premium service package upsell",
+        ],
+        "preview_summary": "Book premium car detailing packages, doorstep washing, enquiries, payments, and admin revenue from one mobile-first app.",
+    },
+    "gym": {
+        "keywords": ["gym", "fitness", "trainer", "membership"],
+        "app_name": "Fit Membership Hub",
+        "app_type": "gym membership and trainer booking app",
+        "target_users": ["gym owners", "members", "trainers", "front desk admins"],
+        "core_features": ["membership plans", "trainer booking", "class schedule", "attendance tracking", "payment status", "admin dashboard"],
+        "screens": ["Home", "Membership Plans", "Trainer Booking", "Class Schedule", "Attendance", "Payment Status", "Admin Dashboard"],
+        "data_needs": ["member name", "mobile number", "membership plan", "trainer", "class time", "payment status"],
+        "api_needs": ["membership signup via backend proxy", "payment status via backend proxy", "optional SMS reminders via backend proxy"],
+        "monetization": ["monthly gym subscription", "trainer session fees", "premium membership upsell"],
+        "preview_summary": "Manage memberships, trainer bookings, class schedules, attendance, and payments in one gym app.",
+    },
     "wedding_venue": {
-        "keywords": ["wedding", "venue", "event", "banquet", "marriage"],
+        "keywords": ["wedding", "venue", "lawn", "event", "haldi", "mehendi", "banquet", "marriage"],
         "app_name": "Wedding Venue Booking",
         "app_type": "wedding venue booking app",
         "target_users": ["couples", "families", "wedding planners", "venue managers"],
@@ -92,7 +151,7 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "preview_summary": "Manage packages, gallery, enquiries, and booking leads from one mobile-first app.",
     },
     "restaurant": {
-        "keywords": ["restaurant", "food", "tiffin", "menu", "cafe"],
+        "keywords": ["restaurant", "menu", "table", "order", "food", "tiffin", "cafe"],
         "app_name": "Restaurant Order Hub",
         "app_type": "restaurant ordering app",
         "target_users": ["restaurant owners", "kitchen staff", "customers"],
@@ -103,20 +162,20 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "monetization": ["monthly restaurant subscription", "online order fees", "premium menu listing"],
         "preview_summary": "Take menu orders, enquiries, and reservations from one mobile-first restaurant app.",
     },
-    "education": {
-        "keywords": ["school", "education", "student", "course", "teacher", "learn"],
-        "app_name": "Learning Portal",
-        "app_type": "education workflow app",
-        "target_users": ["students", "teachers", "parents", "administrators"],
-        "core_features": ["course modules", "assignment tracking", "progress dashboard", "announcements"],
-        "screens": ["Home", "Courses", "Assignments", "Progress", "Admin Dashboard"],
-        "data_needs": ["student name", "course", "assignment", "score", "status"],
-        "api_needs": ["content delivery via backend proxy", "notification service via backend proxy"],
-        "monetization": ["per-classroom subscription", "premium course packs"],
-        "preview_summary": "Manage courses, assignments, progress, and notices in a mobile-first learning portal.",
+    "school": {
+        "keywords": ["school", "parents", "homework", "fees", "attendance", "education", "student", "teacher"],
+        "app_name": "School Parent Connect",
+        "app_type": "school parent communication and attendance app",
+        "target_users": ["school admins", "teachers", "parents", "students"],
+        "core_features": ["attendance tracking", "homework updates", "fee status", "parent notices", "class dashboard"],
+        "screens": ["Home", "Attendance", "Homework", "Fees", "Parent Notices", "Admin Dashboard"],
+        "data_needs": ["student name", "class", "attendance status", "homework", "fee status", "parent mobile"],
+        "api_needs": ["parent notification via backend proxy", "fee status via backend proxy"],
+        "monetization": ["monthly school subscription", "per-student communication plan"],
+        "preview_summary": "Track attendance, homework, fees, and parent updates in one school communication app.",
     },
     "retail": {
-        "keywords": ["shop", "inventory", "retail", "store", "catalog", "ecommerce"],
+        "keywords": ["shop", "inventory", "retail", "stock", "store", "catalog", "ecommerce"],
         "app_name": "Retail Inventory Hub",
         "app_type": "retail inventory app",
         "target_users": ["store owners", "sales staff", "inventory managers"],
@@ -128,7 +187,7 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "preview_summary": "Track products, stock, sales, and customer enquiries from one retail dashboard.",
     },
     "clinic": {
-        "keywords": ["clinic", "doctor", "health", "patient", "appointment"],
+        "keywords": ["clinic", "doctor", "dental", "patient", "appointment", "health"],
         "app_name": "Clinic Appointment Hub",
         "app_type": "clinic appointment app",
         "target_users": ["doctors", "clinic staff", "patients"],
@@ -144,9 +203,15 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
 
 def _detect_domain(text: str) -> str:
     lower_text = text.lower()
+    tokens = set(re.findall(r"[a-z0-9]+", lower_text))
     for domain, blueprint in DOMAIN_BLUEPRINTS.items():
-        if any(keyword in lower_text for keyword in blueprint["keywords"]):
-            return domain
+        for keyword in blueprint["keywords"]:
+            normalized_keyword = keyword.lower()
+            if " " in normalized_keyword:
+                if normalized_keyword in lower_text:
+                    return domain
+            elif normalized_keyword in tokens:
+                return domain
     return "generic"
 
 
@@ -168,6 +233,7 @@ def create_product_plan(idea: str) -> Dict[str, Any]:
     if domain in DOMAIN_BLUEPRINTS:
         blueprint = DOMAIN_BLUEPRINTS[domain]
         return {
+            "idea": clean_idea,
             "app_name": blueprint["app_name"],
             "app_type": blueprint["app_type"],
             "target_users": list(blueprint["target_users"]),
@@ -228,6 +294,7 @@ def create_product_plan(idea: str) -> Dict[str, Any]:
     ]
 
     return {
+        "idea": clean_idea,
         "app_name": app_name,
         "app_type": app_type,
         "target_users": target_users,
@@ -246,22 +313,28 @@ def create_product_plan(idea: str) -> Dict[str, Any]:
 
 
 def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
-    idea = _clean_text(plan.get("idea") or plan.get("preview_summary") or plan.get("product_name"))
+    idea = _clean_text(plan.get("idea") or plan.get("source_idea") or plan.get("preview_summary") or plan.get("product_name"))
     domain_text = " ".join(
         str(item)
         for value in plan.values()
         for item in (value if isinstance(value, list) else [value])
     )
-    normalized = create_product_plan(domain_text or idea or "Generated app prototype")
-    normalized["app_name"] = _clean_text(plan.get("app_name") or plan.get("product_name"), normalized["app_name"])
-    normalized["app_type"] = _clean_text(plan.get("app_type") or plan.get("category"), normalized["app_type"])
-    normalized["target_users"] = _clean_list(plan.get("target_users"), normalized["target_users"])
-    normalized["core_features"] = _clean_list(plan.get("core_features"), normalized["core_features"])
-    normalized["screens"] = _clean_list(plan.get("screens"), normalized["screens"])
-    normalized["data_needs"] = _clean_list(plan.get("data_needs"), normalized["data_needs"])
-    normalized["api_needs"] = _clean_list(plan.get("api_needs"), normalized["api_needs"])
-    normalized["monetization"] = _clean_list(plan.get("monetization"), normalized["monetization"] if isinstance(normalized["monetization"], list) else [normalized["monetization"]])
-    normalized["preview_summary"] = _clean_text(plan.get("preview_summary"), normalized["preview_summary"])
+    idea_domain = _detect_domain(idea) if idea else "generic"
+    plan_domain = _domain_from_plan(plan)
+    normalized = create_product_plan(idea if idea_domain != "generic" else domain_text or idea or "Generated app prototype")
+    can_preserve_plan_fields = idea_domain == "generic" or idea_domain == plan_domain
+
+    if can_preserve_plan_fields:
+        normalized["app_name"] = _clean_text(plan.get("app_name") or plan.get("product_name"), normalized["app_name"])
+        normalized["app_type"] = _clean_text(plan.get("app_type") or plan.get("category"), normalized["app_type"])
+        normalized["target_users"] = _clean_list(plan.get("target_users"), normalized["target_users"])
+        normalized["core_features"] = _clean_list(plan.get("core_features"), normalized["core_features"])
+        normalized["screens"] = _clean_list(plan.get("screens"), normalized["screens"])
+        normalized["data_needs"] = _clean_list(plan.get("data_needs"), normalized["data_needs"])
+        normalized["api_needs"] = _clean_list(plan.get("api_needs"), normalized["api_needs"])
+        normalized["monetization"] = _clean_list(plan.get("monetization"), normalized["monetization"] if isinstance(normalized["monetization"], list) else [normalized["monetization"]])
+        normalized["preview_summary"] = _clean_text(plan.get("preview_summary"), normalized["preview_summary"])
+
     normalized["next_action"] = "approve_generate"
     return normalized
 
@@ -304,6 +377,13 @@ def _render_screen_sections(screens: List[str]) -> str:
 
 def _render_metric_cards(domain: str) -> str:
     metrics = {
+        "car_detailing": [
+            ("Daily Bookings", "18"),
+            ("Revenue", "$4.6k"),
+            ("Payment Status", "7 pending"),
+            ("Completed Details", "42"),
+        ],
+        "gym": [("Active Members", "286"), ("Trainer Sessions", "34"), ("Renewals Due", "19"), ("Monthly Revenue", "$12.4k")],
         "wedding_venue": [
             ("Total Enquiries", "128"),
             ("Pending Bookings", "24"),
@@ -311,7 +391,7 @@ def _render_metric_cards(domain: str) -> str:
             ("Gallery Views", "4.8k"),
         ],
         "restaurant": [("Today Orders", "86"), ("Pending Tables", "12"), ("Top Item", "Chef Special"), ("Repeat Guests", "41%")],
-        "education": [("Active Students", "420"), ("Assignments Due", "38"), ("Course Progress", "72%"), ("Parent Updates", "19")],
+        "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
         "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", "$8.2k")],
         "clinic": [("Appointments", "42"), ("Waiting", "8"), ("Follow-ups", "16"), ("Open Slots", "11")],
     }.get(domain, [("Active Records", "1,248"), ("Open Tasks", "36"), ("New Leads", "18"), ("Completion", "82%")])
@@ -386,7 +466,75 @@ def _render_wedding_venue_sections() -> str:
     </section>"""
 
 
+def _render_car_detailing_sections() -> str:
+    packages = [
+        ("Express Wash", "$29", "Exterior foam wash, tyre shine, and quick interior vacuum"),
+        ("Interior Deep Clean", "$79", "Seats, mats, dashboard, odor treatment, and stain care"),
+        ("Premium Ceramic Detail", "$249", "Paint polish, ceramic coating prep, and premium finish protection"),
+    ]
+    package_cards = "\n".join(
+        f"""
+        <article class="package-card">
+          <span>{html.escape(price)}</span>
+          <h3>{html.escape(name)}</h3>
+          <p>{html.escape(detail)}</p>
+          <button type="button">Book Package</button>
+        </article>"""
+        for name, price, detail in packages
+    )
+    bookings = [
+        ("Doorstep Booking", "SUV ceramic detail", "Today 4:30 PM"),
+        ("Booking Calendar", "Interior deep clean", "Tomorrow 10:00 AM"),
+        ("Payment Status", "Express wash", "Paid"),
+        ("Admin Dashboard", "Daily Bookings", "Revenue $4.6k"),
+    ]
+    booking_rows = "\n".join(
+        f"<li><strong>{html.escape(name)}</strong><span>{html.escape(detail)}</span><em>{html.escape(status)}</em></li>"
+        for name, detail, status in bookings
+    )
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Service Packages</span>
+        <h2>Premium car detailing packages</h2>
+      </div>
+      <div class="package-grid">{package_cards}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Before-After Gallery</span>
+        <h2>Show visible detailing results</h2>
+      </div>
+      <div class="gallery-grid">
+        <span>Exterior Shine</span>
+        <span>Interior Reset</span>
+        <span>Wheel Detail</span>
+        <span>Ceramic Finish</span>
+      </div>
+    </section>
+
+    <section class="content-block enquiry-admin-grid">
+      <article class="enquiry-card">
+        <span class="eyebrow">Doorstep Booking</span>
+        <h2>Customer enquiry form</h2>
+        <label>Customer name<input value="Rohan Mehta" readonly></label>
+        <label>Vehicle type<input value="Premium SUV" readonly></label>
+        <label>Booking date<input value="Today, 4:30 PM" readonly></label>
+        <button type="button">Submit Booking</button>
+      </article>
+      <article class="admin-card">
+        <span class="eyebrow">Admin Dashboard</span>
+        <h2>Booking calendar and revenue</h2>
+        <ul>{booking_rows}</ul>
+      </article>
+    </section>"""
+
+
 def _render_domain_sections(domain: str, plan: Dict[str, Any]) -> str:
+    if domain == "car_detailing":
+        return _render_car_detailing_sections()
+
     if domain == "wedding_venue":
         return _render_wedding_venue_sections()
 
@@ -417,8 +565,15 @@ def _build_html(plan: Dict[str, Any]) -> str:
     app_type = html.escape(plan["app_type"])
     summary = html.escape(plan["preview_summary"])
     domain = _domain_from_plan(plan)
-    primary_action = "View Packages" if domain == "wedding_venue" else "Start workflow"
-    secondary_action = "Send Enquiry" if domain == "wedding_venue" else "View dashboard"
+    if domain == "wedding_venue":
+        primary_action = "View Packages"
+        secondary_action = "Send Enquiry"
+    elif domain == "car_detailing":
+        primary_action = "Service Packages"
+        secondary_action = "Doorstep Booking"
+    else:
+        primary_action = "Start workflow"
+        secondary_action = "View dashboard"
     return f"""<!doctype html>
 <html lang="en">
 <head>

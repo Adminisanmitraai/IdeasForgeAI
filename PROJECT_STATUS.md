@@ -12683,3 +12683,9 @@ Status: Completed locally, verification passed.
 - Preserved localhost and private LAN backend routing for desktop and iPhone testing.
 - Confirmed generated preview URLs returned as /generated-apps/... resolve through the selected API base.
 - Confirmed backend CORS allows the live IdeasForgeAI origin; no UI, CSS, HTML, generated templates, deployment settings, secrets, or API keys changed.
+
+## Phase 29B-FIX-6 - Current Idea Product Planning
+- Removed stale wedding-default behavior by adding explicit domain rules for car detailing, gym, restaurant, school, clinic, wedding/event venue, and retail inventory ideas.
+- Added exact car detailing planning and generated-preview sections for Premium Car Detailing with service packages, doorstep booking, before-after gallery, calendar, payment status, admin dashboard, daily bookings, and revenue.
+- Updated Studio V4 chat state so each new idea clears the active plan/generation reference and Approve & Generate can only use the latest returned plan.
+- Preserved live/local API routing, approved UI layout, backend secrets safety, and studio-v3 isolation.
