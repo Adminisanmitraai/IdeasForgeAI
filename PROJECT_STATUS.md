@@ -12568,3 +12568,16 @@ Status: Completed locally, visual verification pending.
 - Mobile preview mode hides chat, shows a blank preview panel, and provides a Chat return pill.
 - Attachment menu, preview toggle, tabs, device selection, and local chat replies are handled by minimal frontend-only JS.
 - No backend calls, product-flow wiring, /api/generate calls, iframe injection, API key changes, Render config changes, backend changes, or studio-v3 changes were made.
+
+## Phase 28E.1 - Mobile Polish on Clean Studio V4 Shell
+
+Status: Completed locally, visual verification pending.
+
+- Added mobile-only CSS polish for the clean Studio V4 shell.
+- Hid the profile/R button on mobile while keeping brand, Share, and Publish visible.
+- Removed mobile workspace spacing so the AI Assistant panel starts directly below the top bar.
+- Set the mobile top bar to 86px and AI Assistant header to 104px with stable sticky placement.
+- Adjusted mobile message spacing so the first assistant bubble is fully visible below the header.
+- Composer safe-area positioning and icon containment preserved.
+- Desktop unchanged.
+- Backend and studio-v3 untouched.
