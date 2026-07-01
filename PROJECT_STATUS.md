@@ -12581,3 +12581,54 @@ Status: Completed locally, visual verification pending.
 - Composer safe-area positioning and icon containment preserved.
 - Desktop unchanged.
 - Backend and studio-v3 untouched.
+
+## Phase 28E.2 - Clean Mobile Spacing and First Message Fix
+
+Status: Completed locally, visual verification pending.
+
+- Fixed mobile-only spacing in the clean Studio V4 shell.
+- Strengthened mobile profile/R button hiding.
+- Removed mobile workspace top spacing and gap.
+- Changed the mobile AI Assistant header from sticky overlay behavior to normal document flow.
+- Adjusted mobile message padding so the first assistant bubble starts fully below the header.
+- Composer placement was preserved.
+- Desktop unchanged.
+
+## Phase 28E.3 - Mobile Preview Screen Header Polish
+
+Status: Completed locally, visual verification pending.
+
+- Moved the mobile Back to Chat control into the preview header before the Preview title.
+- Changed the mobile Chat return pill into a 44px icon-only Back to Chat button.
+- Added preview header actions for refresh and expand, with expand hidden on tight mobile layouts.
+- Removed the mobile preview-mode gap below the top IdeasForgeAI bar.
+- Mobile preview panel now starts directly below the top bar and uses full available mobile height.
+- Preview blank state spacing was centered and tightened for mobile.
+- Chat return behavior continues to use the existing frontend toggle.
+- Desktop layout preserved and backend untouched.
+
+## Phase 28E.4 - Mobile Preview Single Top Bar
+
+Status: Completed locally, visual verification pending.
+
+- Added a mobile-only preview context inside the main Studio V4 top bar.
+- Mobile preview mode now shows Back to Chat, Preview, status, refresh, and Publish in the single top bar.
+- Mobile preview mode hides the brand and Share button to preserve space.
+- The second preview header is hidden on mobile preview mode so it does not consume vertical preview space.
+- Preview blank state now uses the full available mobile height below the main top bar.
+- Back to Chat controls now share the same JS return behavior.
+- Desktop preview header behavior remains preserved.
+- Backend and studio-v3 untouched.
+
+## Phase 28E.6 - Final Mobile Preview Header Polish
+
+Status: Completed locally, visual verification pending.
+
+- Refined the mobile preview screen while keeping the main IdeasForgeAI top header intact.
+- Kept top Share and Publish actions visible as compact icon buttons on mobile.
+- Replaced the mobile Share SVG with a cleaner iOS-style share icon.
+- Removed the second body logo from the mobile preview area.
+- Moved the Back to Chat arrow into the upper-left body position formerly occupied by the second logo.
+- Preserved the single bottom-right fullscreen toggle that switches between expand and close states.
+- Desktop behavior unchanged.
+- Backend and studio-v3 untouched.

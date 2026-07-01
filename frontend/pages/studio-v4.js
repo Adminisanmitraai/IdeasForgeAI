@@ -2,9 +2,9 @@
 const modeButtons = document.querySelectorAll("[data-mode-tab]");
 const previewButtons = document.querySelectorAll("[data-preview-mode]");
 const previewLabel = document.querySelector("[data-preview-label]");
-const previewStatus = document.querySelector("[data-preview-status]");
+const previewStatuses = document.querySelectorAll("[data-preview-status]");
 const showPreviewButton = document.querySelector("[data-show-preview]");
-const showChatButton = document.querySelector("[data-show-chat]");
+const showChatButtons = document.querySelectorAll("[data-show-chat]");
 const chatForm = document.querySelector("[data-chat-form]");
 const chatInput = document.querySelector("[data-chat-input]");
 const chatStream = document.querySelector("[data-chat-stream]");
@@ -12,6 +12,7 @@ const attachmentToggle = document.querySelector("[data-attachment-toggle]");
 const attachmentMenu = document.querySelector("[data-attachment-menu]");
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const menu = document.querySelector("[data-menu]");
+const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
 
 const assistantReply = "Great idea. I can prepare a structured product plan and preview flow from this.";
 const previewLabels = {
@@ -78,6 +79,12 @@ const closeMenu = () => {
 
 const setPreviewOpen = (isOpen) => {
   studioShell?.classList.toggle("is-preview-open", isOpen);
+  if (!isOpen) {
+    studioShell?.classList.remove("is-preview-fullscreen");
+    fullscreenToggle?.setAttribute("aria-label", "Open fullscreen preview");
+    fullscreenToggle?.setAttribute("title", "Open fullscreen preview");
+    fullscreenToggle?.setAttribute("aria-pressed", "false");
+  }
   closeAttachmentMenu();
   closeMenu();
 };
@@ -101,7 +108,17 @@ previewButtons.forEach((button) => {
 });
 
 showPreviewButton?.addEventListener("click", () => setPreviewOpen(true));
-showChatButton?.addEventListener("click", () => setPreviewOpen(false));
+showChatButtons.forEach((button) => {
+  button.addEventListener("click", () => setPreviewOpen(false));
+});
+
+fullscreenToggle?.addEventListener("click", () => {
+  const isFullscreen = !studioShell?.classList.contains("is-preview-fullscreen");
+  studioShell?.classList.toggle("is-preview-fullscreen", isFullscreen);
+  fullscreenToggle.setAttribute("aria-label", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
+  fullscreenToggle.setAttribute("title", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
+  fullscreenToggle.setAttribute("aria-pressed", String(isFullscreen));
+});
 
 attachmentToggle?.addEventListener("click", (event) => {
   event.stopPropagation();
@@ -162,9 +179,9 @@ chatForm?.addEventListener("submit", (event) => {
   resizeChatInput();
   appendMessage(assistantReply, "assistant");
 
-  if (previewStatus) {
-    previewStatus.textContent = "Idea received";
-  }
+  previewStatuses.forEach((status) => {
+    status.textContent = "Idea received";
+  });
 });
 
 document.addEventListener("click", () => {

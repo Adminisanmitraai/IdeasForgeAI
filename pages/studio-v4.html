@@ -31,8 +31,8 @@
 
       <div class="toolbar-actions">
         <button class="profile-button" type="button" aria-label="Profile">R</button>
-        <button class="secondary-button" type="button">Share</button>
-        <button class="primary-button" type="button">Publish</button>
+        <button class="secondary-button" type="button" aria-label="Share"><svg class="button-icon share-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4"></path><path d="m8 8 4-4 4 4"></path><path d="M7 11.5H5.8A1.8 1.8 0 0 0 4 13.3v4.9A1.8 1.8 0 0 0 5.8 20h12.4a1.8 1.8 0 0 0 1.8-1.8v-4.9a1.8 1.8 0 0 0-1.8-1.8H17"></path></svg><span>Share</span></button>
+        <button class="primary-button" type="button" aria-label="Publish"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path><path d="M5 19h14"></path></svg><span>Publish</span></button>
       </div>
     </header>
 
@@ -76,9 +76,25 @@
       </section>
 
       <section class="preview-panel" aria-label="Preview panel">
-        <button class="chat-return-button" type="button" data-show-chat><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg><span>Chat</span></button>
-        <header class="preview-header"><div><strong>Preview</strong><span data-preview-label>Mobile canvas</span></div><span class="status-pill" data-preview-status>Waiting for idea</span></header>
-        <div class="preview-empty"><div class="preview-card"><span class="preview-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="11" width="30" height="24" rx="5"></rect><path d="M15 20h18"></path><path d="M15 26h11"></path><path d="M29 32l4 4 7-8"></path></svg></span><h1>Your preview will appear here</h1><p>This clean shell is ready for future preview work.</p></div></div>
+        <header class="preview-header">
+          <div class="preview-title-row">
+            <button class="chat-return-button" type="button" aria-label="Back to chat" title="Back to chat" data-show-chat><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg><span>Chat</span></button>
+            <div class="preview-title"><strong>Preview</strong><span data-preview-label>Mobile canvas</span></div>
+            <span class="status-pill" data-preview-status>Waiting for idea</span>
+          </div>
+          <div class="preview-header-actions" aria-label="Preview actions">
+            <button type="button" aria-label="Refresh preview" title="Refresh preview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"></path><path d="M20 4v6h-6"></path></svg></button>
+            <button type="button" aria-label="Expand preview" title="Expand preview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4"></path><path d="M4 4l6 6"></path><path d="M16 20h4v-4"></path><path d="M20 20l-6-6"></path></svg></button>
+          </div>
+        </header>
+        <div class="mobile-preview-rail" aria-hidden="false">
+          <button class="preview-body-back" type="button" aria-label="Back to chat" title="Back to chat" data-show-chat><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg></button>
+        </div>
+        <div class="preview-empty"><div class="preview-card"><span class="preview-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="11" width="30" height="24" rx="5"></rect><path d="M15 20h18"></path><path d="M15 26h11"></path><path d="M29 32l4 4 7-8"></path></svg></span><h1>Your preview will appear here</h1><p>This clean shell is ready for future preview work.</p><span class="mobile-preview-status status-pill" data-preview-status>Waiting for idea</span></div></div>
+        <button class="preview-fullscreen-toggle" type="button" aria-label="Open fullscreen preview" aria-pressed="false" title="Open fullscreen preview" data-fullscreen-toggle>
+          <svg class="fullscreen-open-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4"></path><path d="M4 4l6 6"></path><path d="M16 20h4v-4"></path><path d="M20 20l-6-6"></path></svg>
+          <svg class="fullscreen-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
+        </button>
       </section>
     </section>
   </main>
