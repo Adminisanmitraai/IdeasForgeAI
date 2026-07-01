@@ -12556,3 +12556,15 @@ Status: Completed locally, visual verification pending.
 - Mobile composer is fixed above the safe area with side insets so icons remain inside the screen.
 - Desktop CSS remains unchanged.
 - Backend and studio-v3 untouched.
+
+## Phase 28E - Clean Rebuild Studio V4 Frontend Shell
+
+Status: Completed locally, visual verification pending.
+
+- Rebuilt Studio V4 frontend shell with a clean mobile-first HTML/CSS/JS structure.
+- Desktop now has the IdeasForgeAI brand, AI Product Builder selector, Preview/Code/Database tabs, device controls, local URL pill, profile button, Share, and Publish.
+- Desktop workspace uses a 430px chat panel, 18px gap, and flexible right preview panel.
+- Mobile keeps only the brand, Share, and Publish in the top bar, with a simple chat-first layout and bottom composer.
+- Mobile preview mode hides chat, shows a blank preview panel, and provides a Chat return pill.
+- Attachment menu, preview toggle, tabs, device selection, and local chat replies are handled by minimal frontend-only JS.
+- No backend calls, product-flow wiring, /api/generate calls, iframe injection, API key changes, Render config changes, backend changes, or studio-v3 changes were made.

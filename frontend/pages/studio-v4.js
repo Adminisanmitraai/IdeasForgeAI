@@ -8,30 +8,12 @@ const showChatButton = document.querySelector("[data-show-chat]");
 const chatForm = document.querySelector("[data-chat-form]");
 const chatInput = document.querySelector("[data-chat-input]");
 const chatStream = document.querySelector("[data-chat-stream]");
-const submitButton = document.querySelector(".send-button");
 const attachmentToggle = document.querySelector("[data-attachment-toggle]");
 const attachmentMenu = document.querySelector("[data-attachment-menu]");
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const menu = document.querySelector("[data-menu]");
 
-const fallbackAssistantReply = "Great idea. I can prepare a structured product plan and preview flow from this.";
-let chatRequestPending = false;
-
-const getStudioApiBase = () => {
-  const hostname = window.location.hostname;
-
-  if (hostname.includes(".app.github.dev")) {
-    return `https://${hostname.replace(/-\d+\.app\.github\.dev$/, "-8000.app.github.dev")}`;
-  }
-
-  if (hostname === "127.0.0.1" || hostname === "localhost") {
-    return "http://127.0.0.1:8000";
-  }
-
-  return "https://ideasforgeai-api.onrender.com";
-};
-
-const studioChatEndpoint = `${getStudioApiBase()}/api/studio/chat`;
+const assistantReply = "Great idea. I can prepare a structured product plan and preview flow from this.";
 const previewLabels = {
   mobile: "Mobile canvas",
   tablet: "Tablet canvas",
@@ -45,16 +27,14 @@ const getMessageTime = () =>
   }).format(new Date());
 
 const scrollMessagesToBottom = () => {
-  if (!chatStream) {
-    return;
+  if (chatStream) {
+    chatStream.scrollTop = chatStream.scrollHeight;
   }
-
-  chatStream.scrollTop = chatStream.scrollHeight;
 };
 
 const appendMessage = (message, type) => {
   if (!chatStream) {
-    return null;
+    return;
   }
 
   const bubble = document.createElement("article");
@@ -67,7 +47,6 @@ const appendMessage = (message, type) => {
   bubble.append(text, meta);
   chatStream.appendChild(bubble);
   scrollMessagesToBottom();
-  return bubble;
 };
 
 const resizeChatInput = () => {
@@ -79,22 +58,12 @@ const resizeChatInput = () => {
   chatInput.style.height = `${Math.min(chatInput.scrollHeight, 96)}px`;
 };
 
-const setChatPending = (isPending) => {
-  chatRequestPending = isPending;
-
-  if (submitButton) {
-    submitButton.disabled = isPending;
-    submitButton.setAttribute("aria-busy", String(isPending));
-  }
-};
-
 const closeAttachmentMenu = () => {
   if (!attachmentMenu || !attachmentToggle) {
     return;
   }
 
   attachmentMenu.hidden = true;
-  attachmentToggle.classList.remove("is-active");
   attachmentToggle.setAttribute("aria-expanded", "false");
 };
 
@@ -104,67 +73,13 @@ const closeMenu = () => {
   }
 
   menu.hidden = true;
-  menuToggle.classList.remove("is-active");
   menuToggle.setAttribute("aria-expanded", "false");
 };
 
-const setMobilePreviewOpen = (isOpen) => {
+const setPreviewOpen = (isOpen) => {
   studioShell?.classList.toggle("is-preview-open", isOpen);
   closeAttachmentMenu();
   closeMenu();
-};
-
-const submitChatMessage = async () => {
-  if (!chatInput || chatRequestPending) {
-    return;
-  }
-
-  const message = chatInput.value.trim();
-
-  if (!message) {
-    return;
-  }
-
-  appendMessage(message, "user");
-  chatInput.value = "";
-  resizeChatInput();
-  setChatPending(true);
-
-  const loadingBubble = appendMessage("Thinking...", "assistant");
-
-  try {
-    const response = await fetch(studioChatEndpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        message,
-        mode: "studio-v4-clean",
-      }),
-    });
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok || data.ok === false) {
-      throw new Error("Studio chat request failed.");
-    }
-
-    const reply = data.reply || fallbackAssistantReply;
-    loadingBubble.querySelector("p").textContent = reply;
-
-    if (previewStatus) {
-      previewStatus.textContent = data.preview_status || "Idea received";
-    }
-  } catch (error) {
-    loadingBubble.querySelector("p").textContent = fallbackAssistantReply;
-
-    if (previewStatus) {
-      previewStatus.textContent = "Idea received";
-    }
-  } finally {
-    setChatPending(false);
-    scrollMessagesToBottom();
-  }
 };
 
 modeButtons.forEach((button) => {
@@ -185,15 +100,14 @@ previewButtons.forEach((button) => {
   });
 });
 
-showPreviewButton?.addEventListener("click", () => setMobilePreviewOpen(true));
-showChatButton?.addEventListener("click", () => setMobilePreviewOpen(false));
+showPreviewButton?.addEventListener("click", () => setPreviewOpen(true));
+showChatButton?.addEventListener("click", () => setPreviewOpen(false));
 
 attachmentToggle?.addEventListener("click", (event) => {
   event.stopPropagation();
   closeMenu();
   const willOpen = attachmentMenu?.hidden;
   attachmentMenu.hidden = !willOpen;
-  attachmentToggle.classList.toggle("is-active", willOpen);
   attachmentToggle.setAttribute("aria-expanded", String(willOpen));
 });
 
@@ -210,7 +124,6 @@ menuToggle?.addEventListener("click", (event) => {
   closeAttachmentMenu();
   const willOpen = menu?.hidden;
   menu.hidden = !willOpen;
-  menuToggle.classList.toggle("is-active", willOpen);
   menuToggle.setAttribute("aria-expanded", String(willOpen));
 });
 
@@ -227,13 +140,31 @@ chatInput?.addEventListener("focus", scrollMessagesToBottom);
 chatInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
-    submitChatMessage();
+    chatForm?.requestSubmit();
   }
 });
 
 chatForm?.addEventListener("submit", (event) => {
   event.preventDefault();
-  submitChatMessage();
+
+  if (!chatInput) {
+    return;
+  }
+
+  const message = chatInput.value.trim();
+
+  if (!message) {
+    return;
+  }
+
+  appendMessage(message, "user");
+  chatInput.value = "";
+  resizeChatInput();
+  appendMessage(assistantReply, "assistant");
+
+  if (previewStatus) {
+    previewStatus.textContent = "Idea received";
+  }
 });
 
 document.addEventListener("click", () => {

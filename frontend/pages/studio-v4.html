@@ -13,19 +13,24 @@
         <span class="brand-mark" aria-hidden="true"><span class="brand-spark"></span></span>
         <span class="brand-text"><strong>IdeasForgeAI</strong><span>AI Product Builder</span></span>
       </a>
-      <div class="toolbar-center" aria-label="Builder tools">
+
+      <div class="desktop-tools" aria-label="Builder tools">
+        <button class="project-selector" type="button">AI Product Builder</button>
         <nav class="mode-tabs" aria-label="Builder mode">
           <button class="tab-button is-active" type="button" data-mode-tab="preview">Preview</button>
           <button class="tab-button" type="button" data-mode-tab="code">Code</button>
           <button class="tab-button" type="button" data-mode-tab="database">Database</button>
         </nav>
         <nav class="device-tabs" aria-label="Preview device">
-          <button class="icon-button is-active" type="button" data-preview-mode="mobile" aria-label="Mobile preview" title="Mobile"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M10.5 18h3"></path></svg></button>
-          <button class="icon-button" type="button" data-preview-mode="tablet" aria-label="Tablet preview" title="Tablet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.8"></rect><path d="M11 18h2"></path></svg></button>
-          <button class="icon-button" type="button" data-preview-mode="laptop" aria-label="Laptop preview" title="Laptop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14v9H5z"></path><path d="M3.5 18h17"></path><path d="M8.5 15.5 7.5 18"></path><path d="m15.5 15.5 1 2.5"></path></svg></button>
+          <button class="device-button is-active" type="button" data-preview-mode="mobile" aria-label="Mobile preview" title="Mobile"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M10.5 18h3"></path></svg></button>
+          <button class="device-button" type="button" data-preview-mode="tablet" aria-label="Tablet preview" title="Tablet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.8"></rect><path d="M11 18h2"></path></svg></button>
+          <button class="device-button" type="button" data-preview-mode="laptop" aria-label="Laptop preview" title="Laptop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14v9H5z"></path><path d="M3.5 18h17"></path><path d="M8.5 15.5 7.5 18"></path><path d="m15.5 15.5 1 2.5"></path></svg></button>
         </nav>
+        <label class="url-pill" aria-label="Local preview URL"><span>ideasforge.local/mobile-preview</span></label>
       </div>
+
       <div class="toolbar-actions">
+        <button class="profile-button" type="button" aria-label="Profile">R</button>
         <button class="secondary-button" type="button">Share</button>
         <button class="primary-button" type="button">Publish</button>
       </div>
@@ -37,11 +42,15 @@
           <div class="menu-wrap">
             <button class="round-button" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg></button>
             <div class="menu-popover" data-menu hidden>
-              <button type="button">New Chat</button><button type="button">Chat History</button><button type="button">Projects</button><button type="button">Templates</button><button type="button">Settings</button>
+              <button type="button">New Chat</button>
+              <button type="button">Chat History</button>
+              <button type="button">Projects</button>
+              <button type="button">Templates</button>
+              <button type="button">Settings</button>
             </div>
           </div>
           <div class="chat-title"><strong>AI Assistant</strong><span>IdeasForgeAI Product Builder</span></div>
-          <button class="round-button preview-toggle" type="button" aria-label="Show preview" title="Show preview" data-show-preview><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M9 5v14"></path><path d="m14 9 3 3-3 3"></path></svg></button>
+          <button class="round-button preview-toggle" type="button" aria-label="Show Preview" title="Show Preview" data-show-preview><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M9 5v14"></path><path d="m14 9 3 3-3 3"></path></svg></button>
         </header>
 
         <div class="messages" data-chat-stream aria-live="polite">
@@ -52,7 +61,11 @@
         <form class="composer" data-chat-form>
           <div class="attachment-wrap">
             <button class="composer-button" type="button" aria-label="Add attachment" aria-expanded="false" data-attachment-toggle><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
-            <div class="attachment-menu" data-attachment-menu hidden><button type="button">Camera</button><button type="button">Photos</button><button type="button">Files</button></div>
+            <div class="attachment-menu" data-attachment-menu hidden>
+              <button type="button">Camera</button>
+              <button type="button">Photos</button>
+              <button type="button">Files</button>
+            </div>
           </div>
           <textarea data-chat-input rows="1" placeholder="Describe your idea..." aria-label="Describe your idea"></textarea>
           <div class="composer-actions">
@@ -65,10 +78,11 @@
       <section class="preview-panel" aria-label="Preview panel">
         <button class="chat-return-button" type="button" data-show-chat><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg><span>Chat</span></button>
         <header class="preview-header"><div><strong>Preview</strong><span data-preview-label>Mobile canvas</span></div><span class="status-pill" data-preview-status>Waiting for idea</span></header>
-        <div class="preview-empty"><div class="preview-card"><span class="preview-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="11" width="30" height="24" rx="5"></rect><path d="M15 20h18"></path><path d="M15 26h11"></path><path d="M29 32l4 4 7-8"></path></svg></span><h1>Your preview will appear here</h1><p>Send an idea in chat to begin shaping a product flow. Code generation and iframe preview remain locked for now.</p></div></div>
+        <div class="preview-empty"><div class="preview-card"><span class="preview-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="11" width="30" height="24" rx="5"></rect><path d="M15 20h18"></path><path d="M15 26h11"></path><path d="M29 32l4 4 7-8"></path></svg></span><h1>Your preview will appear here</h1><p>This clean shell is ready for future preview work.</p></div></div>
       </section>
     </section>
   </main>
   <script src="./studio-v4.js" defer></script>
 </body>
 </html>
+
