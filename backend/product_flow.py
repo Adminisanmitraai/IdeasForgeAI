@@ -406,9 +406,9 @@ def _render_metric_cards(domain: str) -> str:
         "gym": [("Member Records", "286"), ("Class Bookings", "34"), ("Attendance", "91%"), ("Payment Dashboard", "$12.4k")],
         "wedding_venue": [
             ("Total Enquiries", "128"),
-            ("Pending Bookings", "24"),
-            ("Booked Dates", "17"),
-            ("Package Revenue", "$84k"),
+            ("Booking Leads", "24"),
+            ("Lawn Bookings", "17"),
+            ("Package Revenue", "₹84L"),
         ],
         "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", "$6.8k")],
         "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
@@ -480,6 +480,43 @@ def _domain_screen_labels(domain: str, plan: Dict[str, Any]) -> List[str]:
             "Enquiry Form",
             "Admin Lead Dashboard",
         ],
+        "restaurant": [
+            "Dashboard",
+            "Menu",
+            "Food Ordering",
+            "Table Booking",
+            "Kitchen Queue",
+            "Payment Dashboard",
+            "Admin Dashboard",
+        ],
+        "clinic": [
+            "Dashboard",
+            "Appointments",
+            "Doctor Schedule",
+            "Patients",
+            "Queue Status",
+            "Follow-ups",
+            "Admin Dashboard",
+        ],
+        "school": [
+            "Dashboard",
+            "Parent Portal",
+            "Attendance",
+            "Homework",
+            "Fees",
+            "Parent Notices",
+            "Exam Results",
+            "Teacher Contact",
+        ],
+        "retail": [
+            "Dashboard",
+            "Product Catalog",
+            "Inventory",
+            "Low Stock",
+            "Sales Records",
+            "Revenue Dashboard",
+            "Admin Dashboard",
+        ],
     }
     if domain in labels:
         return labels[domain]
@@ -492,6 +529,36 @@ def _render_screen_nav(labels: List[str]) -> str:
         f'<button type="button" data-screen="{html.escape(_screen_slug(label))}">{html.escape(label)}</button>'
         for label in labels
     )
+
+
+def _domain_theme_class(domain: str) -> str:
+    return f"theme-{domain.replace('_', '-')}" if domain != "generic" else "theme-generic"
+
+
+def _render_app_visual(domain: str) -> str:
+    visual = {
+        "car_detailing": ("Detail route", "Ceramic SUV", "Paid", ["Foam wash", "Interior reset", "Coating prep"]),
+        "gym": ("Tonight", "HIIT 7 PM", "34 booked", ["Strength", "Yoga", "Diet consult"]),
+        "wedding_venue": ("Date hold", "Royal Lawn", "Visit booked", ["Haldi", "Mehendi", "Reception"]),
+        "restaurant": ("Kitchen", "Order #2184", "8 min", ["Thali", "Table 6", "Paid"]),
+        "clinic": ("Queue", "Dr. Kapoor", "3 slots", ["Checked in", "Follow-up", "Invoice"]),
+        "school": ("Parent view", "Class 5A", "92%", ["Homework", "Fees", "Notice"]),
+        "retail": ("Stock desk", "Backpack", "12 left", ["Low stock", "Sales", "PO sent"]),
+    }.get(domain, ("Workspace", "Live preview", "82%", ["Intake", "Review", "Dashboard"]))
+    title, focus, status, chips = visual
+    chip_markup = "".join(f"<span>{html.escape(chip)}</span>" for chip in chips)
+    return f"""
+        <aside class="hero-visual" aria-label="Generated app visual preview">
+          <div class="phone-mock">
+            <div class="phone-top"><span>{html.escape(title)}</span><strong>{html.escape(status)}</strong></div>
+            <div class="phone-focus">
+              <small>Featured screen</small>
+              <strong>{html.escape(focus)}</strong>
+            </div>
+            <div class="phone-chip-grid">{chip_markup}</div>
+            <div class="phone-bar"><span></span><span></span><span></span></div>
+          </div>
+        </aside>"""
 
 
 def _render_form_fields(fields: List[tuple[str, str]]) -> str:
@@ -530,21 +597,21 @@ def _render_operations_section(
 
 def _render_wedding_venue_sections() -> str:
     packages = [
-        ("Haldi Theme", "$2,499", "Outdoor lawn, marigold decor, turmeric color palette, and welcome drinks"),
-        ("Mehendi Theme", "$4,999", "Stage seating, artist corner, photo wall, and family lounge setup"),
-        ("Royal Wedding Package", "$8,999", "Full venue, premium decor, catering coordination, and VIP support desk"),
+        ("Haldi Theme", "₹2.49L", "Outdoor lawn booking, marigold decor, turmeric color palette, and welcome drinks"),
+        ("Mehendi Theme", "₹4.99L", "Stage seating, artist corner, photo wall, and family lounge setup"),
+        ("Royal Wedding", "₹8.99L", "Full venue, banquet package, premium decor, catering coordination, and VIP support desk"),
     ]
     package_cards = _render_package_cards(packages, "Compare Package")
     leads = [
-        ("Aarav & Meera", "Royal Wedding Package", "Site visit booked"),
-        ("Kapoor Family", "Royal Wedding Package", "Date hold pending"),
+        ("Aarav & Meera", "Royal Wedding", "Booking Lead"),
+        ("Kapoor Family", "Banquet Package", "Date hold pending"),
         ("Nisha Events", "Haldi Theme", "Quotation sent"),
     ]
     return f"""
     <section class="content-block">
       <div class="section-heading">
         <span class="eyebrow">Wedding Packages</span>
-        <h2>Package Comparison for theme-led events</h2>
+        <h2>Package Comparison for lawn and banquet events</h2>
       </div>
       <div class="package-grid">{package_cards}</div>
     </section>
@@ -555,7 +622,7 @@ def _render_wedding_venue_sections() -> str:
         <h2>Haldi, Mehendi, and wedding lawn showcase</h2>
       </div>
       <div class="gallery-grid">
-        {_render_gallery_tiles(["Haldi Theme", "Mehendi Theme", "Outdoor Lawn", "Reception Stage"])}
+        {_render_gallery_tiles(["Haldi Theme", "Mehendi Theme", "Lawn Booking", "Banquet Package"])}
       </div>
     </section>
 
@@ -900,7 +967,7 @@ def _build_html(plan: Dict[str, Any]) -> str:
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<body class="{html.escape(_domain_theme_class(domain))}">
   <main class="app-shell">
     <header class="hero">
       <nav class="top-nav" aria-label="Prototype navigation">
@@ -908,13 +975,16 @@ def _build_html(plan: Dict[str, Any]) -> str:
         <button type="button" data-screen="dashboard">Preview</button>
       </nav>
       <section class="hero-content">
-        <span class="eyebrow">{app_type}</span>
-        <h1>{app_name}</h1>
-        <p>{summary}</p>
-        <div class="hero-actions">
-          <button type="button" data-screen="{html.escape(_screen_slug(primary_action))}">{html.escape(primary_action)}</button>
-          <button type="button" class="ghost-button" data-screen="{html.escape(_screen_slug(secondary_action))}">{html.escape(secondary_action)}</button>
+        <div class="hero-copy">
+          <span class="eyebrow">{app_type}</span>
+          <h1>{app_name}</h1>
+          <p>{summary}</p>
+          <div class="hero-actions">
+            <button type="button" data-screen="{html.escape(_screen_slug(primary_action))}">{html.escape(primary_action)}</button>
+            <button type="button" class="ghost-button" data-screen="{html.escape(_screen_slug(secondary_action))}">{html.escape(secondary_action)}</button>
+          </div>
         </div>
+        {_render_app_visual(domain)}
       </section>
     </header>
 
@@ -964,85 +1034,125 @@ def _build_css() -> str:
     return """:root {
   color-scheme: light;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background: #f6f7fb;
-  color: #171923;
+  background: #f4f6fb;
+  color: #151821;
+  --bg: #f4f6fb;
+  --surface: rgba(255,255,255,.94);
+  --surface-strong: #fff;
+  --text: #151821;
+  --muted: #697184;
+  --line: #e5e9f2;
+  --accent: #3657ff;
+  --accent-2: #16a085;
+  --accent-soft: #eef2ff;
+  --hero-a: #10131d;
+  --hero-b: #28364d;
+  --hero-c: #4a5f7c;
+  --shadow: 0 18px 45px rgba(27, 35, 58, .12);
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; background: #f6f7fb; }
-button { border: 0; font: inherit; cursor: pointer; }
-.app-shell { min-height: 100svh; padding: 14px; }
-.hero { overflow: hidden; border-radius: 28px; background: linear-gradient(135deg, #151823 0%, #29374c 58%, #475466 100%); color: #fff; }
+html { min-width: 0; overflow-x: hidden; background: var(--bg); }
+body { margin: 0; overflow-x: hidden; background: radial-gradient(circle at top left, rgba(54,87,255,.08), transparent 28rem), var(--bg); color: var(--text); }
+button { border: 0; font: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 35%, transparent); outline-offset: 2px; }
+.theme-car-detailing { --bg: #090b10; --surface: rgba(20,23,31,.94); --surface-strong: #151923; --text: #f6f7fb; --muted: #a8b0c2; --line: #2a3140; --accent: #f8c15c; --accent-2: #7fd7ff; --accent-soft: #241d12; --hero-a: #06070a; --hero-b: #141923; --hero-c: #b8863b; }
+.theme-gym { --bg: #101215; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #151821; --muted: #616b7d; --line: #e6eaf1; --accent: #ff4d2e; --accent-2: #00c782; --accent-soft: #fff0ec; --hero-a: #111318; --hero-b: #28312d; --hero-c: #ff5b34; }
+.theme-wedding-venue { --bg: #fbf7fb; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #2b1f2c; --muted: #7d6b7f; --line: #eee3ee; --accent: #b84f7a; --accent-2: #c7974b; --accent-soft: #fff0f6; --hero-a: #3a2334; --hero-b: #8e456b; --hero-c: #d6a85b; }
+.theme-restaurant { --bg: #fff8f0; --accent: #d94f21; --accent-2: #16825d; --accent-soft: #fff1e8; --hero-a: #2c1510; --hero-b: #88402a; --hero-c: #e3a045; }
+.theme-clinic { --bg: #f2fbfb; --accent: #0f8f94; --accent-2: #4a73d9; --accent-soft: #e8f8f8; --hero-a: #12333a; --hero-b: #176b72; --hero-c: #8ad7d6; }
+.theme-school { --bg: #f7f9ff; --accent: #4a67d6; --accent-2: #f0a322; --accent-soft: #edf1ff; --hero-a: #1e2a4f; --hero-b: #4a67d6; --hero-c: #f2c55c; }
+.theme-retail { --bg: #f6f9f5; --accent: #27825f; --accent-2: #3357c9; --accent-soft: #eaf6ef; --hero-a: #13251f; --hero-b: #27624b; --hero-c: #83b366; }
+.app-shell { min-height: 100svh; width: min(100%, 1180px); margin: 0 auto; padding: 14px 14px max(92px, calc(env(safe-area-inset-bottom) + 76px)); }
+.hero { overflow: hidden; border-radius: 26px; background: linear-gradient(135deg, var(--hero-a) 0%, var(--hero-b) 56%, var(--hero-c) 100%); color: #fff; box-shadow: 0 24px 70px rgba(12,16,26,.24); }
 .top-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; }
-.top-nav strong { overflow-wrap: anywhere; font-size: 15px; }
-.top-nav button, .hero-actions button, .screen-section button { min-height: 42px; border-radius: 999px; padding: 0 15px; background: #fff; color: #171923; font-weight: 800; }
-.hero-content { display: grid; gap: 16px; padding: 42px 18px 28px; }
-.eyebrow, .screen-kicker { color: #6d5dfc; font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
-.hero .eyebrow { color: #b9d6ff; }
+.top-nav strong { min-width: 0; overflow-wrap: anywhere; font-size: 15px; letter-spacing: 0; }
+.top-nav button, .hero-actions button, .screen-section button { min-height: 42px; border-radius: 999px; padding: 0 16px; background: #fff; color: #151821; font-weight: 850; box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+.hero-content { display: grid; gap: 22px; padding: 34px 18px 24px; }
+.hero-copy { display: grid; gap: 16px; align-content: center; min-width: 0; }
+.eyebrow, .screen-kicker { color: var(--accent); font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.hero .eyebrow { color: rgba(255,255,255,.76); }
 h1, h2, h3, p { margin: 0; }
-h1 { max-width: 720px; font-size: clamp(34px, 8vw, 68px); line-height: .96; letter-spacing: 0; }
+h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; letter-spacing: 0; overflow-wrap: anywhere; }
 .hero p { max-width: 620px; color: rgba(255,255,255,.78); font-size: 16px; line-height: 1.55; }
 .hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 .hero-actions .ghost-button { background: rgba(255,255,255,.12); color: #fff; outline: 1px solid rgba(255,255,255,.25); }
-.app-screen-nav { display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; padding: 2px 0 8px; scrollbar-width: thin; }
-.app-screen-nav button { flex: 0 0 auto; min-height: 38px; border: 1px solid #e4e7ef; border-radius: 999px; padding: 0 14px; background: #fff; color: #3c4354; font-size: 13px; font-weight: 850; }
-.app-screen-nav button.is-active { border-color: #171923; background: #171923; color: #fff; }
+.hero-visual { min-width: 0; }
+.phone-mock { display: grid; gap: 14px; max-width: 360px; margin: 0 auto; padding: 16px; border: 1px solid rgba(255,255,255,.2); border-radius: 28px; background: rgba(255,255,255,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.2); backdrop-filter: blur(12px); }
+.phone-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: rgba(255,255,255,.82); font-size: 12px; font-weight: 800; }
+.phone-focus { display: grid; gap: 5px; min-height: 118px; align-content: end; padding: 16px; border-radius: 22px; background: rgba(255,255,255,.9); color: #151821; }
+.phone-focus small { color: #697184; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; }
+.phone-focus strong { font-size: 26px; line-height: 1; }
+.phone-chip-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.phone-chip-grid span { min-height: 56px; padding: 10px; border-radius: 16px; background: rgba(255,255,255,.16); color: #fff; font-size: 12px; font-weight: 850; overflow-wrap: anywhere; }
+.phone-bar { display: grid; gap: 7px; }
+.phone-bar span { height: 8px; border-radius: 999px; background: rgba(255,255,255,.24); }
+.phone-bar span:nth-child(2) { width: 72%; }
+.phone-bar span:nth-child(3) { width: 48%; }
+.app-screen-nav { position: sticky; top: 0; z-index: 2; display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; padding: 8px 0 10px; scrollbar-width: thin; background: linear-gradient(to bottom, var(--bg), color-mix(in srgb, var(--bg) 82%, transparent)); }
+.app-screen-nav button { flex: 0 0 auto; min-height: 38px; border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; background: var(--surface-strong); color: var(--text); font-size: 13px; font-weight: 850; box-shadow: 0 8px 20px rgba(20,28,45,.06); }
+.app-screen-nav button.is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
 .metric-grid, .feature-grid, .package-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 14px; }
-.metric-grid article, .feature-card, .screen-section, .data-panel, .package-card, .enquiry-card, .admin-card, .gallery-panel, .interactive-screen-panel, .screen-card { border: 1px solid #e4e7ef; border-radius: 18px; background: #fff; box-shadow: 0 14px 34px rgba(36,42,66,.08); }
-.metric-grid article { display: grid; gap: 6px; padding: 16px; }
-.metric-grid span { color: #697184; font-size: 12px; font-weight: 750; }
-.metric-grid strong { font-size: 28px; }
+.metric-grid article, .feature-card, .screen-section, .data-panel, .package-card, .enquiry-card, .admin-card, .gallery-panel, .interactive-screen-panel, .screen-card { border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); color: var(--text); }
+.metric-grid article { position: relative; display: grid; gap: 7px; overflow: hidden; padding: 17px; }
+.metric-grid article::after { content: ""; position: absolute; inset: auto 14px 14px auto; width: 34px; height: 34px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.metric-grid span { color: var(--muted); font-size: 12px; font-weight: 750; }
+.metric-grid strong { font-size: 28px; line-height: 1; overflow-wrap: anywhere; }
 .content-block { display: grid; gap: 14px; margin-top: 26px; }
-.interactive-screen-panel { display: grid; gap: 14px; margin-top: 14px; padding: 18px; }
-.interactive-screen-panel p { color: #697184; font-size: 14px; line-height: 1.5; }
+.interactive-screen-panel { display: grid; gap: 14px; margin-top: 14px; padding: 18px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 46%, var(--surface-strong))); }
+.interactive-screen-panel p { color: var(--muted); font-size: 14px; line-height: 1.5; }
 .screen-card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
-.screen-card { display: grid; gap: 8px; min-height: 130px; padding: 16px; box-shadow: none; }
+.screen-card { display: grid; gap: 8px; min-height: 130px; padding: 16px; box-shadow: none; background: var(--surface-strong); }
 .screen-card strong { font-size: 17px; }
-.screen-card span { color: #697184; font-size: 13px; line-height: 1.45; }
+.screen-card span { color: var(--muted); font-size: 13px; line-height: 1.45; }
 .screen-form { display: grid; gap: 10px; }
-.screen-form label { display: grid; gap: 6px; color: #5f6677; font-size: 13px; font-weight: 750; }
-.screen-form input, .screen-form select, .screen-form textarea { width: 100%; min-height: 42px; border: 1px solid #e4e7ef; border-radius: 12px; padding: 0 12px; color: #171923; font: inherit; background: #fff; }
+.screen-form label { display: grid; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 750; }
+.screen-form input, .screen-form select, .screen-form textarea { width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; color: var(--text); font: inherit; background: var(--surface-strong); }
 .screen-form textarea { min-height: 78px; padding-top: 10px; resize: vertical; }
-.screen-form button { min-height: 42px; border-radius: 999px; background: #171923; color: #fff; font-weight: 850; }
+.screen-form button { min-height: 42px; border-radius: 999px; background: var(--accent); color: #fff; font-weight: 850; }
 .form-success { min-height: 20px; color: #16825d; font-size: 13px; font-weight: 850; }
 .section-heading { display: grid; gap: 6px; }
 .section-heading h2, .data-panel h2 { font-size: 24px; line-height: 1.1; }
 .feature-card { display: grid; gap: 12px; min-height: 168px; padding: 18px; }
-.feature-card span { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: #f0edff; color: #6d5dfc; font-weight: 900; }
+.feature-card span { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: var(--accent-soft); color: var(--accent); font-weight: 900; }
 .feature-card h3 { font-size: 18px; line-height: 1.2; }
-.feature-card p, .screen-section p { color: #697184; font-size: 14px; line-height: 1.5; }
+.feature-card p, .screen-section p { color: var(--muted); font-size: 14px; line-height: 1.5; }
 .screen-list { display: grid; gap: 12px; }
 .screen-section { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; }
-.screen-section button { flex: 0 0 auto; background: #171923; color: #fff; }
+.screen-section button { flex: 0 0 auto; background: var(--accent); color: #fff; }
 .data-panel { display: grid; gap: 18px; padding: 18px; }
-.data-panel ul { display: grid; gap: 8px; margin: 10px 0 0; padding-left: 18px; color: #3c4354; }
-.package-card { display: grid; gap: 12px; align-content: start; min-height: 190px; padding: 18px; }
-.package-card span { color: #6d5dfc; font-size: 22px; font-weight: 900; }
-.package-card button, .enquiry-card button { min-height: 42px; border-radius: 999px; background: #171923; color: #fff; font-weight: 850; }
+.data-panel ul { display: grid; gap: 8px; margin: 10px 0 0; padding-left: 18px; color: var(--text); }
+.package-card { position: relative; display: grid; gap: 12px; align-content: start; min-height: 190px; overflow: hidden; padding: 18px; }
+.package-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+.package-card span { color: var(--accent); font-size: 22px; font-weight: 900; }
+.package-card p { color: var(--muted); line-height: 1.45; }
+.package-card button, .enquiry-card button { min-height: 42px; border-radius: 999px; background: var(--text); color: #fff; font-weight: 850; }
 .gallery-panel { padding: 18px; }
 .gallery-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 12px; }
-.gallery-grid span { display: grid; min-height: 110px; place-items: end start; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, #fff7ed, #e8f7f1 48%, #edf4ff); color: #33394a; font-weight: 850; }
+.gallery-grid span { display: grid; min-height: 112px; place-items: end start; padding: 14px; border-radius: 16px; background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, #fff), color-mix(in srgb, var(--accent-2) 18%, #fff)); color: var(--text); font-weight: 850; box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
 .enquiry-admin-grid { display: grid; gap: 14px; }
-.workflow-label { color: #697184; font-size: 12px; font-weight: 850; text-transform: uppercase; }
+.workflow-label { color: var(--muted); font-size: 12px; font-weight: 850; text-transform: uppercase; letter-spacing: .08em; }
 .enquiry-card, .admin-card { display: grid; gap: 12px; padding: 18px; }
-.enquiry-card label { display: grid; gap: 6px; color: #5f6677; font-size: 13px; font-weight: 750; }
-.enquiry-card input { width: 100%; min-height: 42px; border: 1px solid #e4e7ef; border-radius: 12px; padding: 0 12px; color: #171923; font: inherit; }
+.enquiry-card label { display: grid; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 750; }
+.enquiry-card input { width: 100%; min-height: 42px; border: 1px solid var(--line); border-radius: 12px; padding: 0 12px; color: var(--text); font: inherit; background: var(--surface-strong); }
 .admin-card ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
-.admin-card li { display: grid; gap: 3px; padding: 12px; border-radius: 14px; background: #f7f8fc; }
-.admin-card li span { color: #697184; font-size: 13px; }
-.admin-card li em { color: #6d5dfc; font-size: 12px; font-style: normal; font-weight: 850; }
+.admin-card li { display: grid; gap: 3px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--accent-soft) 62%, var(--surface-strong)); }
+.admin-card li span { color: var(--muted); font-size: 13px; }
+.admin-card li em { color: var(--accent); font-size: 12px; font-style: normal; font-weight: 850; }
 @media (max-width: 640px) {
-  .app-shell { padding: 72px 10px 10px; }
+  .app-shell { padding: 72px 10px max(108px, calc(env(safe-area-inset-bottom) + 88px)); }
   .hero { border-radius: 22px; }
-  .hero-content { padding: 34px 16px 24px; }
+  .hero-content { padding: 32px 16px 20px; }
+  .phone-mock { max-width: none; }
+  .phone-chip-grid span { min-height: 52px; }
   .metric-grid, .package-grid, .feature-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: 1fr 1fr; }
   .screen-section { align-items: flex-start; flex-direction: column; }
   .screen-section button { width: 100%; }
 }
 @media (min-width: 860px) {
-  .app-shell { max-width: 1160px; margin: 0 auto; padding: 20px; }
-  .hero-content { padding: 72px 42px 46px; }
+  .app-shell { max-width: 1160px; margin: 0 auto; padding: 20px 20px 104px; }
+  .hero-content { grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); align-items: center; padding: 64px 42px 44px; }
   .data-panel { grid-template-columns: 1fr 1fr; }
   .enquiry-admin-grid { grid-template-columns: 1fr 1fr; }
   .workflow-label { grid-column: 1 / -1; }
@@ -1137,13 +1247,13 @@ const SCREEN_CONFIG = {{
   wedding_venue: {{
     dashboard: {{
       title: "Dashboard",
-      summary: "Lead, package, enquiry, and date-hold overview for the venue manager.",
-      cards: [["New Leads", "24 this week"], ["Date Holds", "8 active"], ["Package Revenue", "$38k pipeline"]]
+      summary: "Booking lead, package, enquiry, and date-hold overview for the venue manager.",
+      cards: [["Booking Leads", "24 this week"], ["Date Holds", "8 active"], ["Package Revenue", "₹38L pipeline"]]
     }},
     wedding_packages: {{
       title: "Wedding Packages",
-      summary: "Families compare Haldi, Mehendi, and full wedding packages.",
-      cards: [["Haldi Theme", "$2,499 outdoor decor"], ["Mehendi Theme", "$4,999 family lounge"], ["Royal Wedding", "$8,999 full venue"]]
+      summary: "Families compare Haldi, Mehendi, lawn booking, banquet package, and full wedding options.",
+      cards: [["Haldi Theme", "₹2.49L outdoor decor"], ["Mehendi Theme", "₹4.99L family lounge"], ["Royal Wedding", "₹8.99L full venue"]]
     }},
     haldi_theme: {{
       title: "Haldi Theme",
@@ -1157,8 +1267,8 @@ const SCREEN_CONFIG = {{
     }},
     gallery: {{
       title: "Gallery",
-      summary: "Visual gallery sections for Haldi, Mehendi, outdoor lawn, and reception stage.",
-      cards: [["Haldi", "Yellow lawn setup"], ["Mehendi", "Artist corner"], ["Reception", "Lit stage"]]
+      summary: "Visual gallery sections for Haldi, Mehendi, lawn booking, and banquet package setups.",
+      cards: [["Haldi Theme", "Yellow lawn setup"], ["Mehendi Theme", "Artist corner"], ["Lawn Booking", "Outdoor venue"], ["Banquet Package", "Premium indoor stage"]]
     }},
     booking_calendar: {{
       title: "Booking Calendar",
@@ -1169,20 +1279,178 @@ const SCREEN_CONFIG = {{
       title: "Enquiry Form",
       summary: "A realistic enquiry preview with name, mobile, date, package, and message fields.",
       formType: "enquiry",
-      serviceOptions: ["Haldi Theme", "Mehendi Theme", "Royal Wedding Package"]
+      serviceOptions: ["Haldi Theme", "Mehendi Theme", "Royal Wedding", "Lawn Booking", "Banquet Package"]
     }},
     admin_lead_dashboard: {{
       title: "Admin Lead Dashboard",
-      summary: "Lead status, quotations, site visits, and package interest for venue staff.",
-      cards: [["Aarav & Meera", "Site visit booked"], ["Kapoor Family", "Date hold pending"], ["Nisha Events", "Quotation sent"]]
+      summary: "Booking Lead status, quotations, site visits, and package interest for venue staff.",
+      cards: [["Aarav & Meera", "Royal Wedding site visit"], ["Kapoor Family", "Banquet Package date hold"], ["Nisha Events", "Haldi Theme quotation"]]
+    }}
+  }},
+  restaurant: {{
+    dashboard: {{
+      title: "Owner Dashboard",
+      summary: "Orders, table reservations, kitchen queue, and revenue for today's service.",
+      cards: [["Today Orders", "86 orders"], ["Reservations", "18 tables"], ["Revenue", "$6.8k"]]
+    }},
+    menu: {{
+      title: "Menu",
+      summary: "Customer-facing menu cards with popular dishes, prices, and add-to-order actions.",
+      cards: [["Chef Thali", "$12 lunch combo"], ["Paneer Tikka Bowl", "$9 bestseller"], ["Family Dinner Pack", "$34 bundle"]]
+    }},
+    food_ordering: {{
+      title: "Food Ordering",
+      summary: "A realistic order preview with customer, mobile, date, item, and notes.",
+      formType: "order",
+      serviceOptions: ["Chef Thali", "Paneer Tikka Bowl", "Family Dinner Pack"]
+    }},
+    table_booking: {{
+      title: "Table Booking",
+      summary: "Reservation screen for party size, preferred slot, and confirmation status.",
+      formType: "booking",
+      serviceOptions: ["Table for 2", "Table for 4", "Family table"]
+    }},
+    kitchen_queue: {{
+      title: "Kitchen Queue",
+      summary: "Live-style preparation cards for kitchen staff and owners.",
+      cards: [["Order #2184", "Preparing"], ["Table 6", "Ready in 8 min"], ["Takeaway #2190", "Packed"]]
+    }},
+    payment_dashboard: {{
+      title: "Payment Dashboard",
+      summary: "Paid, pending, and refunded order states before real payment proxy wiring.",
+      cards: [["Paid Orders", "72"], ["Pending", "9"], ["UPI Settled", "$5.9k"]]
+    }},
+    admin_dashboard: {{
+      title: "Admin Dashboard",
+      summary: "Owner view for reservations, sales records, popular dishes, and staff workload.",
+      cards: [["Popular Dish", "Chef Thali"], ["Reservations", "18"], ["Repeat Customers", "41"]]
+    }}
+  }},
+  clinic: {{
+    dashboard: {{
+      title: "Clinic Dashboard",
+      summary: "Appointments, doctor schedule, queue status, follow-ups, and payments.",
+      cards: [["Appointments", "42 today"], ["Queue", "8 waiting"], ["Open Slots", "11"]]
+    }},
+    appointments: {{
+      title: "Appointments",
+      summary: "A calm appointment form for patient details, doctor, date, and visit reason.",
+      formType: "appointment",
+      serviceOptions: ["General Consultation", "Dental Checkup", "Health Package"]
+    }},
+    doctor_schedule: {{
+      title: "Doctor Schedule",
+      summary: "Doctor availability, booked visits, and open consultation slots.",
+      cards: [["Dr. Kapoor", "3 open slots"], ["Dr. Shah", "Fully booked"], ["Dental Wing", "2 slots"]]
+    }},
+    patients: {{
+      title: "Patients",
+      summary: "Patient enquiry and record preview for clinic staff.",
+      cards: [["Meera Shah", "Checked in"], ["Ravi Jain", "Waiting"], ["Aditi Rao", "Follow-up due"]]
+    }},
+    queue_status: {{
+      title: "Queue Status",
+      summary: "Reception-ready queue board for waiting, checked-in, and completed visits.",
+      cards: [["Waiting", "8 patients"], ["In consultation", "3"], ["Completed", "31"]]
+    }},
+    follow_ups: {{
+      title: "Follow-ups",
+      summary: "Follow-up reminders and care notes before notification proxy integration.",
+      cards: [["Health Package", "Tomorrow"], ["Dental Review", "Friday"], ["Lab Report", "Call patient"]]
+    }},
+    admin_dashboard: {{
+      title: "Admin Dashboard",
+      summary: "Admin schedule, payments, queue, and daily clinic operations.",
+      cards: [["Collections", "$2.8k"], ["Pending Bills", "6"], ["Reminders", "16"]]
+    }}
+  }},
+  school: {{
+    dashboard: {{
+      title: "Parent Dashboard",
+      summary: "Attendance, notices, homework, fees, exam results, and teacher contact.",
+      cards: [["Attendance", "92%"], ["Homework", "3 due"], ["Fees", "Term 2 pending"]]
+    }},
+    parent_portal: {{
+      title: "Parent Portal",
+      summary: "Parent-facing view with child status, notices, and teacher remarks.",
+      cards: [["Aarohi Sharma", "Class 5A"], ["Teacher Remark", "Good progress"], ["Notice", "Sports day"]]
+    }},
+    attendance: {{
+      title: "Attendance",
+      summary: "Daily and monthly attendance view for parents and school admins.",
+      cards: [["Today", "Present"], ["This Month", "92%"], ["Late Marks", "1"]]
+    }},
+    homework: {{
+      title: "Homework",
+      summary: "Homework assignments, due dates, and completion status.",
+      cards: [["Math", "Due tomorrow"], ["Science", "Submitted"], ["English", "Reading task"]]
+    }},
+    fees: {{
+      title: "Fees",
+      summary: "Fee status, receipts, reminders, and admin follow-up states.",
+      cards: [["Term 2", "Pending"], ["Transport", "Paid"], ["Receipt", "Ready"]]
+    }},
+    parent_notices: {{
+      title: "Parent Notices",
+      summary: "School notices and announcements sent to parents.",
+      cards: [["Sports Day", "Saturday"], ["PTM", "March 2"], ["Holiday", "Monday"]]
+    }},
+    exam_results: {{
+      title: "Exam Results",
+      summary: "Exam result cards with subject marks and teacher notes.",
+      cards: [["Math", "88%"], ["Science", "91%"], ["English", "84%"]]
+    }},
+    teacher_contact: {{
+      title: "Teacher Contact",
+      summary: "Contact and meeting request preview for parents.",
+      formType: "enquiry",
+      serviceOptions: ["Class Teacher", "Math Teacher", "Admin Office"]
+    }}
+  }},
+  retail: {{
+    dashboard: {{
+      title: "Inventory Dashboard",
+      summary: "Stock cards, low-stock alerts, sales records, revenue, and product movement.",
+      cards: [["Products", "312 SKUs"], ["Low Stock", "14 alerts"], ["Revenue", "$8.2k"]]
+    }},
+    product_catalog: {{
+      title: "Product Catalog",
+      summary: "Product cards with SKU, pricing, and stock context.",
+      cards: [["Wireless Earbuds", "48 in stock"], ["Travel Backpack", "12 left"], ["Smart Watch", "PO pending"]]
+    }},
+    inventory: {{
+      title: "Inventory",
+      summary: "A stock update preview for product, SKU, quantity, and notes.",
+      formType: "stock",
+      serviceOptions: ["Wireless Earbuds", "Travel Backpack", "Smart Watch"]
+    }},
+    low_stock: {{
+      title: "Low Stock",
+      summary: "Low-stock alerts and reorder signals for store teams.",
+      cards: [["Travel Backpack", "12 left"], ["Phone Stand", "6 left"], ["Water Bottle", "9 left"]]
+    }},
+    sales_records: {{
+      title: "Sales Records",
+      summary: "Recent sales, customer enquiries, payment status, and order records.",
+      cards: [["Order #8841", "Paid"], ["Order #8842", "Pending"], ["Customer Enquiry", "Callback"]]
+    }},
+    revenue_dashboard: {{
+      title: "Revenue Dashboard",
+      summary: "Revenue, margin, and fast-moving product overview.",
+      cards: [["Today Revenue", "$8.2k"], ["Top SKU", "Earbuds"], ["Margin", "31%"]]
+    }},
+    admin_dashboard: {{
+      title: "Admin Dashboard",
+      summary: "Admin operations for stock, orders, purchases, and payments.",
+      cards: [["Purchase Orders", "7 open"], ["Supplier Updates", "4"], ["Low Stock", "14"]]
     }}
   }}
 }};
 
 const SCREEN_ALIASES = {{
   preview: "dashboard",
-  view_packages: APP_DOMAIN === "wedding_venue" ? "wedding_packages" : "service_packages",
-  send_enquiry: "enquiry_form",
+  view_packages: APP_DOMAIN === "wedding_venue" ? "wedding_packages" : APP_DOMAIN === "gym" ? "membership_plans" : "service_packages",
+  send_enquiry: APP_DOMAIN === "wedding_venue" ? "enquiry_form" : "teacher_contact",
   gallery: APP_DOMAIN === "car_detailing" ? "before_after_gallery" : "gallery",
   admin: APP_DOMAIN === "wedding_venue" ? "admin_lead_dashboard" : "admin_dashboard",
   trainers: "trainer_profiles",
@@ -1192,14 +1460,21 @@ const SCREEN_ALIASES = {{
   choose_plan: "membership_plans",
   book_class: "class_booking",
   submit_booking: "doorstep_booking",
-  order_food: "dashboard",
-  book_table: "dashboard",
-  book_appointment: "dashboard",
-  doctor_schedule: "dashboard",
-  parent_portal: "dashboard",
-  attendance: "dashboard",
-  update_stock: "dashboard",
-  sales_dashboard: "dashboard"
+  add_to_order: "food_ordering",
+  send_order: "food_ordering",
+  order_food: "food_ordering",
+  book_table: "table_booking",
+  book_visit: "appointments",
+  confirm_appointment: "appointments",
+  book_appointment: "appointments",
+  doctor_schedule: "doctor_schedule",
+  view_module: "parent_portal",
+  send_notice: "parent_notices",
+  parent_portal: "parent_portal",
+  attendance: "attendance",
+  save_stock: "inventory",
+  update_stock: "inventory",
+  sales_dashboard: "revenue_dashboard"
 }};
 
 // TODO: Add API key billing layer before enabling paid runtime services.
@@ -1218,7 +1493,14 @@ function cardMarkup(cards) {{
 
 function formMarkup(screen) {{
   const options = (screen.serviceOptions || ["Service Package"]).map((option) => `<option>${{option}}</option>`).join("");
-  const action = screen.formType === "enquiry" ? "Send Enquiry" : "Submit Booking";
+  const actions = {{
+    appointment: "Confirm Appointment",
+    booking: "Submit Booking",
+    enquiry: "Send Enquiry",
+    order: "Send Order",
+    stock: "Save Stock"
+  }};
+  const action = actions[screen.formType] || "Submit";
   return `
     <form class="screen-form" data-local-form>
       <label>Name<input name="name" value="Priya Sharma"></label>

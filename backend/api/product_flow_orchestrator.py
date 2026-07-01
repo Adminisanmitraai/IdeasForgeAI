@@ -54,7 +54,14 @@ Important rules:
   revenue, and customer leads. For gyms include membership plans, trainer profiles,
   class booking, attendance tracking, diet consultation, payment dashboard, and member records.
   For wedding/event lawns include wedding packages, Haldi theme, Mehendi theme, gallery,
-  booking calendar, enquiry form, admin lead dashboard, and package comparison.
+  booking calendar, enquiry form, admin lead dashboard, package comparison, India-friendly
+  labels such as Lawn Booking, Banquet Package, Booking Lead, and Indian rupee pricing.
+  For restaurants include menu cards, table booking, order summary, popular dishes,
+  owner dashboard, and reservations. For clinics include calm doctor profiles, treatment
+  packages, appointment booking, patient enquiry, and admin schedule. For schools include
+  parent dashboard, notices, fees, homework, attendance, exam results, and teacher contact.
+  For retail include inventory dashboard, stock cards, low-stock alerts, sales records,
+  revenue dashboard, and product cards.
 - Avoid stale generic preview wording such as AI Product Builder, Active users, and Open tasks
   unless the user's requested product is actually a builder/admin SaaS tool.
 - Keep runtime API integrations backend-proxy-only and never place real API keys in generated frontend plans.
@@ -105,6 +112,24 @@ def _fallback_flow(idea: str, user_role: str, user_goal: str) -> dict:
     if any(word in lower_idea for word in ["tiffin", "restaurant", "menu", "grocery", "food"]):
         sector = "restaurant and home food business"
         output_type = "business operations assistant + dashboard + Instagram promo pack"
+    elif any(word in lower_idea for word in ["car", "detailing", "washing", "vehicle", "auto"]):
+        sector = "car detailing and vehicle service"
+        output_type = "premium service booking app + admin revenue dashboard"
+    elif any(word in lower_idea for word in ["gym", "fitness", "trainer", "workout", "membership"]):
+        sector = "gym and fitness studio"
+        output_type = "membership, class booking, and payment dashboard app"
+    elif any(word in lower_idea for word in ["wedding", "venue", "lawn", "haldi", "mehendi", "event"]):
+        sector = "wedding and event venue"
+        output_type = "event package, enquiry, and lead dashboard app"
+    elif any(word in lower_idea for word in ["clinic", "doctor", "patient", "appointment", "dental"]):
+        sector = "clinic and appointment booking"
+        output_type = "appointment booking and admin schedule app"
+    elif any(word in lower_idea for word in ["school", "parent", "homework", "attendance", "fees"]):
+        sector = "school parent portal"
+        output_type = "parent dashboard and school communication app"
+    elif any(word in lower_idea for word in ["shop", "retail", "inventory", "stock", "store"]):
+        sector = "retail inventory"
+        output_type = "inventory, sales, and revenue dashboard app"
     elif any(word in lower_idea for word in ["bank", "reconcile", "excel", "sheet"]):
         sector = "banking and finance operations"
         output_type = "Excel reconciliation assistant + exception report dashboard"

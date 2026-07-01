@@ -1,5 +1,19 @@
 # IdeasForgeAI Project Status
 
+## Phase 31A - High Quality Visual Interface Engine
+
+Status: Completed locally, verification passed.
+
+- Generated app previews now use a premium mobile-first visual system with richer hero sections, phone-style app visuals, stronger hierarchy, better spacing, polished cards, sticky screen tabs, modern gradients, and app-specific accent themes.
+- Car detailing previews now use a darker premium automotive style with service package cards, before-after gallery tiles, doorstep booking, payment states, booking calendar, customer leads, and admin revenue dashboard visuals.
+- Gym previews now use energetic fitness styling with membership cards, trainer/profile sections, class booking, attendance progress, diet consultation, and payment dashboard screens.
+- Wedding/event lawn previews now use an elegant event visual style with Haldi/Mehendi package comparison, gallery mosaic, booking calendar, enquiry form preview, and admin lead dashboard screens.
+- Restaurant, clinic, school, and retail generated previews now include industry-specific clickable screen configs for menu/order/table flows, appointment/patient/admin flows, parent portal/fees/homework/results flows, and inventory/low-stock/sales/revenue flows.
+- Phase 30B clickable behavior remains intact through vanilla JS data-screen routing, screen aliases, local form submission, and local success status messages.
+- Generated CSS remains dependency-free, responsive inside Studio V4 iframes, mobile-first, and guarded against horizontal overflow.
+- Runtime integrations remain API-key-ready through /api/runtime/<app_id>/<service_name> placeholders only, with TODOs for billing, metering, safety gateway, and illegal-usage blocking.
+- No frontend secrets, external dependencies, Studio V4 files, studio-v3 files, deployment settings, freeze branches, tags, previous phase snapshots, or KisanMitraAI files were touched.
+
 ## Phase 30B - Clickable Multi-Screen Generated Apps
 
 Status: Completed locally, verification passed.
@@ -12716,3 +12730,8 @@ Status: Completed locally, verification passed.
 - Added exact car detailing planning and generated-preview sections for Premium Car Detailing with service packages, doorstep booking, before-after gallery, calendar, payment status, admin dashboard, daily bookings, and revenue.
 - Updated Studio V4 chat state so each new idea clears the active plan/generation reference and Approve & Generate can only use the latest returned plan.
 - Preserved live/local API routing, approved UI layout, backend secrets safety, and studio-v3 isolation.
+
+## Phase 31A-FIX-1 - Indian Wedding Pricing and Fullscreen Spacing
+- Updated generated wedding/event/lawn output to use Indian rupee package pricing and India-friendly labels including Haldi Theme, Mehendi Theme, Royal Wedding, Lawn Booking, Banquet Package, and Booking Lead.
+- Added generated app shell bottom safe spacing so the Studio fullscreen close control does not cover package buttons or important content.
+- Preserved generated clickable screen behavior, Phase 31A premium styling, Studio V4 UI isolation, and secrets safety.
