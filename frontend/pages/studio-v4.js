@@ -1,16 +1,22 @@
+﻿const studioShell = document.querySelector(".studio-shell");
+const modeButtons = document.querySelectorAll("[data-mode-tab]");
 const previewButtons = document.querySelectorAll("[data-preview-mode]");
-const previewUrl = document.querySelector("[data-preview-url]");
+const previewLabel = document.querySelector("[data-preview-label]");
+const previewStatus = document.querySelector("[data-preview-status]");
+const showPreviewButton = document.querySelector("[data-show-preview]");
+const showChatButton = document.querySelector("[data-show-chat]");
 const chatForm = document.querySelector("[data-chat-form]");
 const chatInput = document.querySelector("[data-chat-input]");
 const chatStream = document.querySelector("[data-chat-stream]");
+const submitButton = document.querySelector(".send-button");
 const attachmentToggle = document.querySelector("[data-attachment-toggle]");
 const attachmentMenu = document.querySelector("[data-attachment-menu]");
-const chatMenuToggle = document.querySelector("[data-chat-menu-toggle]");
-const chatMenu = document.querySelector("[data-chat-menu]");
-const chatSubmitButton = document.querySelector(".composer-submit-button");
-const studioShell = document.querySelector(".studio-v4-shell");
-const chatPanelToggles = document.querySelectorAll("[data-chat-panel-toggle]");
-const previewStatus = document.querySelector("[data-preview-status]");
+const menuToggle = document.querySelector("[data-menu-toggle]");
+const menu = document.querySelector("[data-menu]");
+
+const fallbackAssistantReply = "Great idea. I can prepare a structured product plan and preview flow from this.";
+let chatRequestPending = false;
+
 const getStudioApiBase = () => {
   const hostname = window.location.hostname;
 
@@ -24,27 +30,13 @@ const getStudioApiBase = () => {
 
   return "https://ideasforgeai-api.onrender.com";
 };
-const STUDIO_API_BASE = getStudioApiBase();
-const studioChatEndpoint = `${STUDIO_API_BASE}/api/studio/chat`;
-const fallbackAssistantReply = "I saved your idea locally. Backend connection will be retried later.";
-let chatRequestPending = false;
 
-const previewUrls = {
-  mobile: "ideasforge.local/mobile-preview",
-  tablet: "ideasforge.local/tablet-preview",
-  laptop: "ideasforge.local/laptop-preview",
+const studioChatEndpoint = `${getStudioApiBase()}/api/studio/chat`;
+const previewLabels = {
+  mobile: "Mobile canvas",
+  tablet: "Tablet canvas",
+  laptop: "Laptop canvas",
 };
-
-previewButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    previewButtons.forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
-
-    if (previewUrl) {
-      previewUrl.value = previewUrls[button.dataset.previewMode] || previewUrls.mobile;
-    }
-  });
-});
 
 const getMessageTime = () =>
   new Intl.DateTimeFormat("en-US", {
@@ -52,25 +44,29 @@ const getMessageTime = () =>
     minute: "2-digit",
   }).format(new Date());
 
-const appendChatMessage = (message, type) => {
+const scrollMessagesToBottom = () => {
+  if (!chatStream) {
+    return;
+  }
+
+  chatStream.scrollTop = chatStream.scrollHeight;
+};
+
+const appendMessage = (message, type) => {
   if (!chatStream) {
     return null;
   }
 
   const bubble = document.createElement("article");
-  const time = getMessageTime();
-  const text = document.createElement("span");
+  const text = document.createElement("p");
   const meta = document.createElement("span");
 
-  bubble.className = `chat-message ${type}-message`;
-  bubble.dataset.time = time;
-  text.className = "message-text";
+  bubble.className = `message ${type}-message`;
   text.textContent = message;
-  meta.className = "message-meta";
-  meta.textContent = type === "user" ? `${time}  ✓✓` : time;
+  meta.textContent = getMessageTime();
   bubble.append(text, meta);
   chatStream.appendChild(bubble);
-  chatStream.scrollTop = chatStream.scrollHeight;
+  scrollMessagesToBottom();
   return bubble;
 };
 
@@ -80,16 +76,42 @@ const resizeChatInput = () => {
   }
 
   chatInput.style.height = "auto";
-  chatInput.style.height = `${Math.min(chatInput.scrollHeight, 108)}px`;
+  chatInput.style.height = `${Math.min(chatInput.scrollHeight, 96)}px`;
 };
 
 const setChatPending = (isPending) => {
   chatRequestPending = isPending;
 
-  if (chatSubmitButton) {
-    chatSubmitButton.disabled = isPending;
-    chatSubmitButton.setAttribute("aria-busy", String(isPending));
+  if (submitButton) {
+    submitButton.disabled = isPending;
+    submitButton.setAttribute("aria-busy", String(isPending));
   }
+};
+
+const closeAttachmentMenu = () => {
+  if (!attachmentMenu || !attachmentToggle) {
+    return;
+  }
+
+  attachmentMenu.hidden = true;
+  attachmentToggle.classList.remove("is-active");
+  attachmentToggle.setAttribute("aria-expanded", "false");
+};
+
+const closeMenu = () => {
+  if (!menu || !menuToggle) {
+    return;
+  }
+
+  menu.hidden = true;
+  menuToggle.classList.remove("is-active");
+  menuToggle.setAttribute("aria-expanded", "false");
+};
+
+const setMobilePreviewOpen = (isOpen) => {
+  studioShell?.classList.toggle("is-preview-open", isOpen);
+  closeAttachmentMenu();
+  closeMenu();
 };
 
 const submitChatMessage = async () => {
@@ -103,12 +125,12 @@ const submitChatMessage = async () => {
     return;
   }
 
-  appendChatMessage(message, "user");
+  appendMessage(message, "user");
   chatInput.value = "";
   resizeChatInput();
   setChatPending(true);
 
-  const loadingBubble = appendChatMessage("Thinking…", "assistant");
+  const loadingBubble = appendMessage("Thinking...", "assistant");
 
   try {
     const response = await fetch(studioChatEndpoint, {
@@ -118,317 +140,110 @@ const submitChatMessage = async () => {
       },
       body: JSON.stringify({
         message,
-        mode: "local-product-plan",
+        mode: "studio-v4-clean",
       }),
     });
     const data = await response.json().catch(() => ({}));
 
-    if (!response.ok || !data.ok) {
+    if (!response.ok || data.ok === false) {
       throw new Error("Studio chat request failed.");
     }
 
     const reply = data.reply || fallbackAssistantReply;
-    if (loadingBubble) {
-      const text = loadingBubble.querySelector(".message-text");
-      if (text) {
-        text.textContent = reply;
-      } else {
-        loadingBubble.textContent = reply;
-      }
-    } else {
-      appendChatMessage(reply, "assistant");
-    }
+    loadingBubble.querySelector("p").textContent = reply;
 
     if (previewStatus) {
       previewStatus.textContent = data.preview_status || "Idea received";
     }
   } catch (error) {
-    if (loadingBubble) {
-      const text = loadingBubble.querySelector(".message-text");
-      if (text) {
-        text.textContent = fallbackAssistantReply;
-      } else {
-        loadingBubble.textContent = fallbackAssistantReply;
-      }
-    } else {
-      appendChatMessage(fallbackAssistantReply, "assistant");
-    }
+    loadingBubble.querySelector("p").textContent = fallbackAssistantReply;
 
     if (previewStatus) {
       previewStatus.textContent = "Idea received";
     }
   } finally {
     setChatPending(false);
-
-    if (chatStream) {
-      chatStream.scrollTop = chatStream.scrollHeight;
-    }
+    scrollMessagesToBottom();
   }
 };
 
-if (chatForm) {
-  chatForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    submitChatMessage();
+modeButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    modeButtons.forEach((item) => item.classList.remove("is-active"));
+    button.classList.add("is-active");
   });
-}
+});
 
-if (chatInput) {
-  chatInput.addEventListener("input", resizeChatInput);
-  chatInput.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" && !event.shiftKey) {
-      event.preventDefault();
-      submitChatMessage();
+previewButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    previewButtons.forEach((item) => item.classList.remove("is-active"));
+    button.classList.add("is-active");
+
+    if (previewLabel) {
+      previewLabel.textContent = previewLabels[button.dataset.previewMode] || previewLabels.mobile;
     }
   });
-}
+});
 
-const setChatPanelCollapsed = (isCollapsed) => {
-  if (!studioShell) {
-    return;
-  }
+showPreviewButton?.addEventListener("click", () => setMobilePreviewOpen(true));
+showChatButton?.addEventListener("click", () => setMobilePreviewOpen(false));
 
-  studioShell.classList.toggle("is-chat-collapsed", isCollapsed);
-  document.documentElement.classList.toggle("mobile-preview-open", isCollapsed);
-  document.body.classList.toggle("mobile-preview-open", isCollapsed);
-  chatPanelToggles.forEach((toggle) => {
-    toggle.setAttribute("aria-expanded", String(!isCollapsed));
-    toggle.setAttribute("aria-label", isCollapsed ? "Show Chat" : "Show Preview");
-    toggle.setAttribute("title", isCollapsed ? "Show Chat" : "Show Preview");
-  });
-
-  closeAttachmentMenu();
-  closeChatHeaderMenu();
-};
-
-const closeAttachmentMenu = () => {
-  if (!attachmentMenu || !attachmentToggle) {
-    return;
-  }
-
-  attachmentMenu.hidden = true;
-  attachmentToggle.classList.remove("is-active");
-  attachmentToggle.setAttribute("aria-expanded", "false");
-};
-
-const closeChatHeaderMenu = () => {
-  if (!chatMenu || !chatMenuToggle) {
-    return;
-  }
-
-  chatMenu.hidden = true;
-  chatMenuToggle.classList.remove("is-active");
-  chatMenuToggle.setAttribute("aria-expanded", "false");
-};
-
-const toggleAttachmentMenu = () => {
-  if (!attachmentMenu || !attachmentToggle) {
-    return;
-  }
-
-  const willOpen = attachmentMenu.hidden;
+attachmentToggle?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  closeMenu();
+  const willOpen = attachmentMenu?.hidden;
   attachmentMenu.hidden = !willOpen;
   attachmentToggle.classList.toggle("is-active", willOpen);
   attachmentToggle.setAttribute("aria-expanded", String(willOpen));
-};
+});
 
-const toggleChatHeaderMenu = () => {
-  if (!chatMenu || !chatMenuToggle) {
-    return;
-  }
+attachmentMenu?.addEventListener("click", (event) => {
+  event.stopPropagation();
 
-  const willOpen = chatMenu.hidden;
-  chatMenu.hidden = !willOpen;
-  chatMenuToggle.classList.toggle("is-active", willOpen);
-  chatMenuToggle.setAttribute("aria-expanded", String(willOpen));
-
-  if (willOpen) {
+  if (event.target.closest("button")) {
     closeAttachmentMenu();
   }
-};
+});
 
-if (attachmentToggle) {
-  attachmentToggle.addEventListener("click", (event) => {
-    event.stopPropagation();
-    closeChatHeaderMenu();
-    toggleAttachmentMenu();
-  });
-}
+menuToggle?.addEventListener("click", (event) => {
+  event.stopPropagation();
+  closeAttachmentMenu();
+  const willOpen = menu?.hidden;
+  menu.hidden = !willOpen;
+  menuToggle.classList.toggle("is-active", willOpen);
+  menuToggle.setAttribute("aria-expanded", String(willOpen));
+});
 
-if (attachmentMenu) {
-  attachmentMenu.addEventListener("click", (event) => {
-    event.stopPropagation();
+menu?.addEventListener("click", (event) => {
+  event.stopPropagation();
 
-    const item = event.target.closest("button");
-    if (item) {
-      closeAttachmentMenu();
-    }
-  });
-}
+  if (event.target.closest("button")) {
+    closeMenu();
+  }
+});
 
-if (chatMenuToggle) {
-  chatMenuToggle.addEventListener("click", (event) => {
-    event.stopPropagation();
-    toggleChatHeaderMenu();
-  });
-}
+chatInput?.addEventListener("input", resizeChatInput);
+chatInput?.addEventListener("focus", scrollMessagesToBottom);
+chatInput?.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && !event.shiftKey) {
+    event.preventDefault();
+    submitChatMessage();
+  }
+});
 
-if (chatMenu) {
-  chatMenu.addEventListener("click", (event) => {
-    event.stopPropagation();
-
-    const item = event.target.closest("button");
-    if (item) {
-      closeChatHeaderMenu();
-    }
-  });
-}
-
-chatPanelToggles.forEach((toggle) => {
-  toggle.addEventListener("click", (event) => {
-    event.stopPropagation();
-    setChatPanelCollapsed(!studioShell?.classList.contains("is-chat-collapsed"));
-  });
+chatForm?.addEventListener("submit", (event) => {
+  event.preventDefault();
+  submitChatMessage();
 });
 
 document.addEventListener("click", () => {
   closeAttachmentMenu();
-  closeChatHeaderMenu();
+  closeMenu();
 });
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
     closeAttachmentMenu();
-    closeChatHeaderMenu();
+    closeMenu();
   }
 });
-
-
-/* PHASE 28C MENU ICON SVG POLISH */
-(function () {
-  function polishChatMenuIcon() {
-    const panel =
-      document.querySelector(".chat-panel") ||
-      document.querySelector(".studio-chat-panel") ||
-      document.querySelector(".studio-v4-chat-panel") ||
-      document.querySelector("[data-chat-panel]") ||
-      document.querySelector(".ai-chat-panel") ||
-      document.querySelector(".left-chat-panel");
-
-    if (!panel) return;
-
-    const menuButton =
-      panel.querySelector("[data-chat-menu-button]") ||
-      panel.querySelector("[aria-label*='menu' i]") ||
-      panel.querySelector(".chat-menu-button") ||
-      panel.querySelector(".hamburger-button") ||
-      panel.querySelector(".menu-button");
-
-    if (!menuButton) return;
-
-    menuButton.classList.add("studio-v4-menu-icon-button");
-    menuButton.innerHTML = `
-      <svg class="studio-v4-menu-icon-svg" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M7 9.25H17"></path>
-        <path d="M7 12H17"></path>
-        <path d="M7 14.75H17"></path>
-      </svg>
-    `;
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", polishChatMenuIcon);
-  } else {
-    polishChatMenuIcon();
-  }
-
-  window.addEventListener("resize", polishChatMenuIcon);
-})();
-
-
-/* PHASE 28D.6 MOBILE PREVIEW RETURN LOCK */
-(function () {
-  "use strict";
-
-  function isMobile() {
-    return window.matchMedia("(max-width: 768px)").matches;
-  }
-
-  window.addEventListener("resize", () => {
-    if (!isMobile()) {
-      document.documentElement.classList.remove("mobile-preview-open");
-      document.body.classList.remove("mobile-preview-open");
-      studioShell?.classList.remove("is-chat-collapsed");
-    }
-  });
-})();
-
-
-/* PHASE 28D.10 MOBILE SAFARI KEYBOARD SCROLL LOCK */
-(function () {
-  "use strict";
-
-  const mobileQuery = window.matchMedia("(max-width: 768px)");
-  const chatScrollSelector = ".chat-stream";
-
-  const isMobile = () => mobileQuery.matches;
-
-  const lockWindowScroll = () => {
-    if (!isMobile()) {
-      return;
-    }
-
-    window.scrollTo(0, 0);
-  };
-
-  const setMobileViewportHeight = () => {
-    if (!isMobile()) {
-      document.documentElement.style.removeProperty("--ifai-vh");
-      document.body.classList.remove("is-mobile-shell");
-      document.body.classList.remove("mobile-keyboard-open");
-      return;
-    }
-
-    const viewportHeight = window.visualViewport?.height || window.innerHeight;
-    document.documentElement.style.setProperty("--ifai-vh", `${viewportHeight}px`);
-    document.body.classList.add("is-mobile-shell");
-    document.body.classList.toggle("mobile-keyboard-open", viewportHeight < window.innerHeight - 120);
-    lockWindowScroll();
-  };
-
-  const handleComposerFocusChange = () => {
-    lockWindowScroll();
-    window.requestAnimationFrame(lockWindowScroll);
-    window.setTimeout(lockWindowScroll, 60);
-    window.setTimeout(lockWindowScroll, 220);
-    window.setTimeout(lockWindowScroll, 420);
-  };
-
-  const preventPageTouchScroll = (event) => {
-    if (!isMobile()) {
-      return;
-    }
-
-    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
-
-    if (target?.closest(chatScrollSelector)) {
-      return;
-    }
-
-    event.preventDefault();
-  };
-
-  setMobileViewportHeight();
-  window.addEventListener("load", () => {
-    setMobileViewportHeight();
-    lockWindowScroll();
-  });
-  window.addEventListener("resize", setMobileViewportHeight);
-  window.addEventListener("orientationchange", setMobileViewportHeight);
-  mobileQuery.addEventListener?.("change", setMobileViewportHeight);
-  window.visualViewport?.addEventListener("resize", setMobileViewportHeight);
-  window.visualViewport?.addEventListener("scroll", setMobileViewportHeight);
-  document.addEventListener("focusin", handleComposerFocusChange);
-  document.addEventListener("focusout", handleComposerFocusChange);
-  document.addEventListener("touchmove", preventPageTouchScroll, { passive: false });
-})();
-

@@ -12533,3 +12533,15 @@ Status: Completed locally, visual verification pending.
 - Body-level touchmove is prevented outside the chat stream on mobile.
 - Desktop layout preserved.
 - Backend untouched.
+
+## Phase 28E - Clean Rebuild Studio V4 From Scratch
+
+Status: Completed locally, visual verification pending.
+
+- Studio V4 HTML, CSS, and JS were replaced with a clean mobile-first implementation.
+- Mobile uses a single-column chat experience with a visible top bar, AI Assistant header, messages, attachment menu, and bottom composer.
+- Desktop uses a stable top toolbar, left chat panel, and right preview panel.
+- Preview mode toggles on mobile with a Chat return button.
+- Old accumulated Studio V4 layout hacks and aggressive iPhone scroll-lock behavior were removed from the rebuilt files.
+- Backend endpoint usage remains limited to the existing Studio chat endpoint with a safe fallback response.
+- No product-flow, /api/generate, iframe pipeline, Render config, API key, backend, or studio-v3 changes were made.
