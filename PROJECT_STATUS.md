@@ -12545,3 +12545,14 @@ Status: Completed locally, visual verification pending.
 - Old accumulated Studio V4 layout hacks and aggressive iPhone scroll-lock behavior were removed from the rebuilt files.
 - Backend endpoint usage remains limited to the existing Studio chat endpoint with a safe fallback response.
 - No product-flow, /api/generate, iframe pipeline, Render config, API key, backend, or studio-v3 changes were made.
+
+## Phase 28D.12 - Mobile Top Header Visibility Fix
+
+Status: Completed locally, visual verification pending.
+
+- Added mobile-only CSS to keep the IdeasForgeAI top bar sticky and visible on iPhone Safari.
+- AI Assistant header now sticks below the 86px top bar with a 104px visible header area.
+- Mobile chat messages reserve top and bottom spacing and prevent horizontal overflow.
+- Mobile composer is fixed above the safe area with side insets so icons remain inside the screen.
+- Desktop CSS remains unchanged.
+- Backend and studio-v3 untouched.
