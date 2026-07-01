@@ -10,6 +10,8 @@ from backend.core.project_paths import PROJECT_ROOT
 
 
 BACKEND_GENERATED_APPS_DIR = PROJECT_ROOT / "backend" / "generated_apps"
+MAX_REFERENCE_IMAGE_TEXT_LENGTH = 1200
+REFERENCE_IMAGE_KEYS = {"referenceImage", "reference_image", "imageReference", "image_metadata"}
 
 
 def _clean_text(value: Any, fallback: str = "") -> str:
@@ -28,6 +30,91 @@ def _clean_list(value: Any, fallback: Iterable[str]) -> List[str]:
     if isinstance(value, str) and value.strip():
         return [_clean_text(value)]
     return list(fallback)
+
+
+def normalize_reference_image_metadata(payload: Dict[str, Any]) -> Dict[str, Any]:
+    raw = None
+    for key in REFERENCE_IMAGE_KEYS:
+        if key in payload:
+            raw = payload.get(key)
+            break
+
+    if not isinstance(raw, dict):
+        return {}
+
+    allowed = {
+        "name",
+        "fileName",
+        "type",
+        "mimeType",
+        "size",
+        "sourcePath",
+        "path",
+        "width",
+        "height",
+        "layoutHint",
+        "visualNotes",
+        "source",
+    }
+    normalized: Dict[str, Any] = {}
+    for key in allowed:
+        value = raw.get(key)
+        if isinstance(value, str):
+            value = value.strip()[:MAX_REFERENCE_IMAGE_TEXT_LENGTH]
+            if value:
+                normalized[key] = value
+        elif isinstance(value, (int, float)) and value >= 0:
+            normalized[key] = value
+
+    if not normalized:
+        return {}
+
+    normalized["inputMode"] = "image-guided-metadata-only"
+    normalized["binaryUploadReceived"] = False
+    normalized["ocrOrVisionPerformed"] = False
+    return normalized
+
+
+def _apply_image_guidance(plan: Dict[str, Any], reference_image: Dict[str, Any]) -> Dict[str, Any]:
+    if not reference_image:
+        return plan
+
+    source_label = (
+        reference_image.get("name")
+        or reference_image.get("fileName")
+        or reference_image.get("sourcePath")
+        or reference_image.get("path")
+        or "reference image metadata"
+    )
+    guided = dict(plan)
+    guided["input_mode"] = "image-guided"
+    guided["image_guided"] = True
+    guided["reference_image"] = reference_image
+    guided["visual_reference_summary"] = (
+        f"Using {source_label} metadata as a visual guide for mobile layout, hierarchy, spacing, "
+        "and interface rhythm. No image bytes, OCR, or pixel analysis are processed in this phase."
+    )
+    guided["interface_design_priorities"] = [
+        "Reference-inspired mobile first screen",
+        "App-like header/navigation hierarchy",
+        "Compact card/list sections instead of generic landing content",
+        "Sticky primary actions and clean iPhone-sized rendering",
+    ]
+    guided["screens"] = [
+        "Image-guided Home",
+        "Reference Layout Dashboard",
+        "Primary Action Flow",
+        "Details and Form",
+        "Review and Approval",
+    ]
+    base_features = _clean_list(guided.get("core_features"), [])
+    guided["core_features"] = [
+        "Reference-inspired mobile interface structure",
+        "Visual hierarchy and spacing scaffold",
+        "Mobile dashboard and action flow",
+        *base_features[:4],
+    ]
+    return guided
 
 
 def _slugify(value: str) -> str:
@@ -245,14 +332,15 @@ def _domain_from_plan(plan: Dict[str, Any]) -> str:
     return _detect_domain(" ".join(values))
 
 
-def create_product_plan(idea: str) -> Dict[str, Any]:
+def create_product_plan(idea: str, reference_image: Dict[str, Any] | None = None) -> Dict[str, Any]:
     clean_idea = _clean_text(idea, "A useful mobile-first product")
     lower_idea = clean_idea.lower()
     domain = _detect_domain(clean_idea)
+    reference_image = reference_image or {}
 
     if domain in DOMAIN_BLUEPRINTS:
         blueprint = DOMAIN_BLUEPRINTS[domain]
-        return {
+        return _apply_image_guidance({
             "idea": clean_idea,
             "app_name": blueprint["app_name"],
             "app_type": blueprint["app_type"],
@@ -264,7 +352,7 @@ def create_product_plan(idea: str) -> Dict[str, Any]:
             "monetization": list(blueprint["monetization"]),
             "preview_summary": blueprint["preview_summary"],
             "next_action": "approve_generate",
-        }
+        }, reference_image)
 
     app_type = "mobile-first web app"
     target_users = ["busy operators", "team members", "decision makers"]
@@ -313,7 +401,7 @@ def create_product_plan(idea: str) -> Dict[str, Any]:
         "Reports and insights",
     ]
 
-    return {
+    return _apply_image_guidance({
         "idea": clean_idea,
         "app_name": app_name,
         "app_type": app_type,
@@ -329,7 +417,7 @@ def create_product_plan(idea: str) -> Dict[str, Any]:
             "screen sections, mock actions, and placeholder data."
         ),
         "next_action": "approve_generate",
-    }
+    }, reference_image)
 
 
 def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
@@ -341,7 +429,13 @@ def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
     )
     idea_domain = _detect_domain(idea) if idea else "generic"
     plan_domain = _domain_from_plan(plan)
-    normalized = create_product_plan(idea if idea_domain != "generic" else domain_text or idea or "Generated app prototype")
+    reference_image = normalize_reference_image_metadata(plan)
+    if not reference_image and isinstance(plan.get("reference_image"), dict):
+        reference_image = normalize_reference_image_metadata({"referenceImage": plan.get("reference_image")})
+    normalized = create_product_plan(
+        idea if idea_domain != "generic" else domain_text or idea or "Generated app prototype",
+        reference_image=reference_image,
+    )
     can_preserve_plan_fields = idea_domain == "generic" or idea_domain == plan_domain
 
     if can_preserve_plan_fields:
@@ -356,6 +450,8 @@ def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
         normalized["preview_summary"] = _clean_text(plan.get("preview_summary"), normalized["preview_summary"])
 
     normalized["next_action"] = "approve_generate"
+    if reference_image:
+        normalized = _apply_image_guidance(normalized, reference_image)
     return normalized
 
 
@@ -393,6 +489,55 @@ def _render_screen_sections(screens: List[str]) -> str:
           </section>"""
         )
     return "\n".join(sections)
+
+
+def _render_image_guided_reference(plan: Dict[str, Any]) -> str:
+    if not plan.get("image_guided"):
+        return ""
+
+    reference = plan.get("reference_image") if isinstance(plan.get("reference_image"), dict) else {}
+    source_label = html.escape(
+        _clean_text(
+            reference.get("name")
+            or reference.get("fileName")
+            or reference.get("sourcePath")
+            or reference.get("path"),
+            "Reference image metadata",
+        )
+    )
+    visual_summary = html.escape(
+        _clean_text(
+            plan.get("visual_reference_summary"),
+            "This preview uses reference metadata as safe layout guidance. No image bytes, OCR, or pixel analysis are processed.",
+        )
+    )
+    priorities = _clean_list(
+        plan.get("interface_design_priorities"),
+        [
+            "Reference-inspired mobile first screen",
+            "App-like hierarchy and spacing",
+            "Compact cards and clear bottom actions",
+        ],
+    )
+
+    return f"""
+    <section class="content-block image-guided-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Image-guided preview</span>
+        <h2>Reference-inspired mobile interface</h2>
+      </div>
+      <div class="image-guided-grid">
+        <article>
+          <span>Reference</span>
+          <strong>{source_label}</strong>
+          <p>{visual_summary}</p>
+        </article>
+        <article>
+          <span>Design scaffold</span>
+          <ul>{_render_list(priorities)}</ul>
+        </article>
+      </div>
+    </section>"""
 
 
 def _render_metric_cards(domain: str) -> str:
@@ -967,7 +1112,7 @@ def _build_html(plan: Dict[str, Any]) -> str:
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body class="{html.escape(_domain_theme_class(domain))}">
+<body class="{html.escape(_domain_theme_class(domain))}{' is-image-guided' if plan.get('image_guided') else ''}">
   <main class="app-shell">
     <header class="hero">
       <nav class="top-nav" aria-label="Prototype navigation">
@@ -1003,6 +1148,8 @@ def _build_html(plan: Dict[str, Any]) -> str:
       </div>
       <p>Select a generated app screen to preview the real in-app flow.</p>
     </section>
+
+    {_render_image_guided_reference(plan)}
 
     {_render_domain_sections(domain, plan)}
 
@@ -1139,11 +1286,25 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .admin-card li { display: grid; gap: 3px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--accent-soft) 62%, var(--surface-strong)); }
 .admin-card li span { color: var(--muted); font-size: 13px; }
 .admin-card li em { color: var(--accent); font-size: 12px; font-style: normal; font-weight: 850; }
+.is-image-guided .hero { border-radius: 30px; background: linear-gradient(160deg, #171b24 0%, var(--hero-b) 54%, var(--accent) 100%); }
+.is-image-guided .hero-content { align-items: stretch; }
+.is-image-guided .phone-mock { border-radius: 34px; background: rgba(255,255,255,.18); }
+.is-image-guided .phone-focus { min-height: 150px; border-radius: 26px; background: linear-gradient(180deg, #ffffff, color-mix(in srgb, var(--accent-soft) 58%, #ffffff)); }
+.is-image-guided .phone-chip-grid { grid-template-columns: 1fr 1fr; }
+.is-image-guided .phone-chip-grid span:first-child { grid-column: 1 / -1; min-height: 72px; }
+.image-guided-panel { padding: 18px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 55%, var(--surface-strong))); box-shadow: var(--shadow); }
+.image-guided-grid { display: grid; gap: 12px; }
+.image-guided-grid article { display: grid; gap: 10px; min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-strong); }
+.image-guided-grid span { color: var(--accent); font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.image-guided-grid strong { overflow-wrap: anywhere; font-size: 19px; }
+.image-guided-grid p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.image-guided-grid ul { display: grid; gap: 8px; margin: 0; padding-left: 18px; color: var(--text); }
 @media (max-width: 640px) {
   .app-shell { padding: 72px 10px max(108px, calc(env(safe-area-inset-bottom) + 88px)); }
   .hero { border-radius: 22px; }
   .hero-content { padding: 32px 16px 20px; }
   .phone-mock { max-width: none; }
+  .is-image-guided .phone-mock { min-height: 360px; }
   .phone-chip-grid span { min-height: 52px; }
   .metric-grid, .package-grid, .feature-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: 1fr 1fr; }
@@ -1154,6 +1315,7 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
   .app-shell { max-width: 1160px; margin: 0 auto; padding: 20px 20px 104px; }
   .hero-content { grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); align-items: center; padding: 64px 42px 44px; }
   .data-panel { grid-template-columns: 1fr 1fr; }
+  .image-guided-grid { grid-template-columns: 1fr 1fr; }
   .enquiry-admin-grid { grid-template-columns: 1fr 1fr; }
   .workflow-label { grid-column: 1 / -1; }
 }
@@ -1581,6 +1743,9 @@ def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "preview_url": f"/generated-apps/{app_id}/index.html",
                 "source": "phase-30a-output-quality-engine",
+                "input_mode": "image-guided" if normalized.get("image_guided") else "text-only",
+                "image_guided": bool(normalized.get("image_guided")),
+                "reference_image": normalized.get("reference_image") if normalized.get("image_guided") else None,
                 "plan": normalized,
             },
             indent=2,

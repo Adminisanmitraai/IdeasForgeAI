@@ -14,6 +14,8 @@ SERVICE_NAME = "ideasforgeai-backend"
 OPENAI_TIMEOUT_SECONDS = 45
 DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
 MAX_IDEA_LENGTH = 12000
+MAX_REFERENCE_IMAGE_TEXT_LENGTH = 1200
+REFERENCE_IMAGE_KEYS = {"referenceImage", "reference_image", "imageReference", "image_metadata"}
 
 BLOCKED_PAYLOAD_FIELDS = {
     "file",
@@ -51,6 +53,8 @@ Important safety:
 - Do not generate code.
 - Do not generate preview HTML.
 - Do not claim database/auth/upload/OCR/voice/export is active yet.
+- If referenceImage metadata is provided, mark the plan as image-guided and use it only as layout/style guidance.
+- Do not claim image pixels were analyzed. Use metadata, user notes, and safe inference only.
 - Do not create medical, legal, financial, or credit decisions as final decisions.
 - Keep human approval gates.
 - Make every result more polished, practical, professional, mobile-ready, and production-useful than a generic app builder result.
@@ -73,11 +77,82 @@ def _safe_text(value, fallback=""):
     return fallback
 
 
-def _fallback_plan(idea: str, sector: str, output_type: str) -> dict:
+def _normalize_reference_image(payload: dict) -> dict:
+    raw = None
+    for key in REFERENCE_IMAGE_KEYS:
+        if key in payload:
+            raw = payload.get(key)
+            break
+
+    if not isinstance(raw, dict):
+        return {}
+
+    allowed = {
+        "name",
+        "fileName",
+        "type",
+        "mimeType",
+        "size",
+        "sourcePath",
+        "path",
+        "width",
+        "height",
+        "layoutHint",
+        "visualNotes",
+        "source",
+    }
+    normalized = {}
+    for key in allowed:
+        value = raw.get(key)
+        if isinstance(value, str):
+            value = value.strip()[:MAX_REFERENCE_IMAGE_TEXT_LENGTH]
+            if value:
+                normalized[key] = value
+        elif isinstance(value, (int, float)) and value >= 0:
+            normalized[key] = value
+
+    if not normalized:
+        return {}
+
+    normalized["inputMode"] = "image-guided-metadata-only"
+    normalized["binaryUploadReceived"] = False
+    normalized["ocrOrVisionPerformed"] = False
+    return normalized
+
+
+def _image_guidance_fields(reference_image: dict) -> dict:
+    if not reference_image:
+        return {}
+
+    source_label = (
+        reference_image.get("name")
+        or reference_image.get("fileName")
+        or reference_image.get("sourcePath")
+        or reference_image.get("path")
+        or "reference image metadata"
+    )
+    return {
+        "inputMode": "image-guided",
+        "imageGuided": True,
+        "referenceImage": reference_image,
+        "visualReferenceSummary": (
+            f"Use {source_label} as a safe visual guide for layout density, hierarchy, spacing, "
+            "navigation placement, and mobile interface feel. This phase does not inspect pixels."
+        ),
+        "interfaceDesignPriorities": [
+            "Mobile-first screen structure inspired by the reference",
+            "Clear top navigation and primary action hierarchy",
+            "Card, list, and form density selected for app-interface work",
+            "Preview must be polished even without full vision automation",
+        ],
+    }
+
+
+def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: dict | None = None) -> dict:
     guessed_sector = sector or "general professional workflow"
     guessed_output = output_type or "AI assistant app / workflow tool"
 
-    return {
+    plan = {
         "productName": "IdeasForgeAI Work Assistant",
         "sector": guessed_sector,
         "outputType": guessed_output,
@@ -144,6 +219,16 @@ def _fallback_plan(idea: str, sector: str, output_type: str) -> dict:
             "Clear safety and approval gates"
         ]
     }
+    plan.update(_image_guidance_fields(reference_image or {}))
+    if reference_image:
+        plan["requiredScreens"] = [
+            "Image-guided mobile home screen",
+            "Reference-inspired dashboard screen",
+            "Primary action flow screen",
+            "Detail/form screen",
+            "Approval gate screen",
+        ]
+    return plan
 
 
 @router.post("/product-plan")
@@ -161,7 +246,7 @@ async def generate_product_plan(request: Request):
         return JSONResponse(
             status_code=400,
             content=validation_error(
-                "file, image, audio, and upload payloads are disabled in Phase 26D"
+                "raw file, image, audio, and upload payloads are disabled; send referenceImage metadata only"
             ),
         )
 
@@ -188,6 +273,7 @@ async def generate_product_plan(request: Request):
 
     sector = _safe_text(payload.get("sector"))
     output_type = _safe_text(payload.get("outputType"))
+    reference_image = _normalize_reference_image(payload)
 
     if not is_openai_configured():
         return JSONResponse(
@@ -214,6 +300,8 @@ async def generate_product_plan(request: Request):
         "idea": idea,
         "sector": sector or "infer from idea",
         "outputType": output_type or "infer best output type",
+        "inputMode": "image-guided" if reference_image else "text-only",
+        "referenceImage": reference_image,
         "requiredJsonShape": {
             "productName": "string",
             "sector": "string",
@@ -234,7 +322,10 @@ async def generate_product_plan(request: Request):
                 "beforeExport": True
             },
             "futurePhasesNeeded": ["string"],
-            "betterThanLovableQualityNotes": ["string"]
+            "betterThanLovableQualityNotes": ["string"],
+            "imageGuided": "boolean when referenceImage is present",
+            "visualReferenceSummary": "string when referenceImage is present",
+            "interfaceDesignPriorities": ["string when referenceImage is present"]
         }
     }
 
@@ -259,7 +350,7 @@ async def generate_product_plan(request: Request):
         try:
             plan = json.loads(output_text)
         except Exception:
-            plan = _fallback_plan(idea, sector, output_type)
+            plan = _fallback_plan(idea, sector, output_type, reference_image)
             plan["rawAIPlan"] = output_text
 
     except AuthenticationError:
@@ -275,6 +366,9 @@ async def generate_product_plan(request: Request):
     except Exception:
         return JSONResponse(status_code=500, content=_agent_error(session_id, "PRODUCT_PLAN_FAILURE", "Product plan generation failed safely. Try again shortly."))
 
+    if reference_image and isinstance(plan, dict):
+        plan.update(_image_guidance_fields(reference_image))
+
     return {
         "ok": True,
         "phase": PHASE_26D,
@@ -283,7 +377,7 @@ async def generate_product_plan(request: Request):
         "sessionId": session_id,
         "assistant": {
             "role": "assistant",
-            "content": "Product plan generated. Preview generation and code generation remain approval-gated for later phases."
+            "content": "Image-guided product plan generated from safe metadata." if reference_image else "Product plan generated. Preview generation and code generation remain approval-gated for later phases."
         },
         "plan": plan,
         "next": {

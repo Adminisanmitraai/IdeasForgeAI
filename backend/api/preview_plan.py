@@ -14,6 +14,8 @@ SERVICE_NAME = "ideasforgeai-backend"
 OPENAI_TIMEOUT_SECONDS = 45
 DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
 MAX_PREVIEW_INPUT_LENGTH = 20000
+MAX_REFERENCE_IMAGE_TEXT_LENGTH = 1200
+REFERENCE_IMAGE_KEYS = {"referenceImage", "reference_image", "imageReference", "image_metadata"}
 
 BLOCKED_PAYLOAD_FIELDS = {
     "file",
@@ -56,6 +58,8 @@ Important rules:
 - Do not claim export generation is active.
 - Keep code generation approval-gated.
 - Keep database/auth/upload/OCR/voice disabled.
+- If referenceImage metadata is provided, mark the preview as image-guided and use it only as layout/style guidance.
+- Do not claim image pixels were analyzed. Use metadata, user notes, and safe inference only.
 - Return JSON only. No markdown. No code fences.
 
 Return a preview specification with:
@@ -87,12 +91,97 @@ def _strip_json_fence(text: str) -> str:
     return text
 
 
-def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: str) -> dict:
+def _normalize_reference_image(payload: dict) -> dict:
+    raw = None
+    for key in REFERENCE_IMAGE_KEYS:
+        if key in payload:
+            raw = payload.get(key)
+            break
+
+    if not isinstance(raw, dict) and isinstance(payload.get("productPlan"), dict):
+        raw = payload["productPlan"].get("referenceImage")
+
+    if not isinstance(raw, dict):
+        return {}
+
+    allowed = {
+        "name",
+        "fileName",
+        "type",
+        "mimeType",
+        "size",
+        "sourcePath",
+        "path",
+        "width",
+        "height",
+        "layoutHint",
+        "visualNotes",
+        "source",
+    }
+    normalized = {}
+    for key in allowed:
+        value = raw.get(key)
+        if isinstance(value, str):
+            value = value.strip()[:MAX_REFERENCE_IMAGE_TEXT_LENGTH]
+            if value:
+                normalized[key] = value
+        elif isinstance(value, (int, float)) and value >= 0:
+            normalized[key] = value
+
+    if not normalized:
+        return {}
+
+    normalized["inputMode"] = "image-guided-metadata-only"
+    normalized["binaryUploadReceived"] = False
+    normalized["ocrOrVisionPerformed"] = False
+    return normalized
+
+
+def _image_guided_preview_fields(reference_image: dict) -> dict:
+    if not reference_image:
+        return {}
+
+    source_label = (
+        reference_image.get("name")
+        or reference_image.get("fileName")
+        or reference_image.get("sourcePath")
+        or reference_image.get("path")
+        or "reference image metadata"
+    )
+    return {
+        "inputMode": "image-guided",
+        "imageGuided": True,
+        "referenceImage": reference_image,
+        "referenceImageSummary": (
+            f"Preview is guided by {source_label} metadata for layout, rhythm, hierarchy, and mobile interface feel. "
+            "No image bytes, OCR, or pixel analysis are used in this phase."
+        ),
+        "designDirection": {
+            "style": "reference-inspired, mobile-first, app-interface-aware",
+            "layout": "phone-sized surface with top status/header, high-signal content bands, compact cards, and clear bottom actions",
+            "tone": "polished, practical, visual-reference-aware",
+        },
+        "mobileExperience": [
+            "Reference-inspired first screen",
+            "App-like header and navigation hierarchy",
+            "Dense but readable card/list sections",
+            "Sticky primary action area suitable for iPhone-sized screens",
+        ],
+        "visualPolishNotes": [
+            "Use the reference metadata to guide spacing and hierarchy",
+            "Prefer mobile app interface patterns over generic landing-page sections",
+            "Keep card radius, contrast, and tap targets consistent",
+            "State clearly that full vision automation is not enabled yet",
+        ],
+    }
+
+
+def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: str, reference_image: dict | None = None) -> dict:
     plan_name = ""
     if isinstance(product_plan, dict):
         plan_name = product_plan.get("productName", "")
 
-    return {
+    preview = {
         "previewName": plan_name or "IdeasForgeAI Professional Preview",
         "sector": sector or product_plan.get("sector", "general professional workflow") if isinstance(product_plan, dict) else sector or "general professional workflow",
         "outputType": output_type or product_plan.get("outputType", "AI assistant app preview") if isinstance(product_plan, dict) else output_type or "AI assistant app preview",
@@ -194,6 +283,30 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
             "Business-ready presentation"
         ]
     }
+    preview.update(_image_guided_preview_fields(reference_image or {}))
+    if reference_image:
+        preview["screens"] = [
+            "Image-guided mobile home",
+            "Reference-inspired dashboard",
+            "Primary action flow",
+            "Detail/form screen",
+            "Approval gate",
+        ]
+        preview["sections"] = [
+            "Status/header area",
+            "Primary content band",
+            "Compact card/list stack",
+            "Sticky action controls",
+            "Safety and approval notes",
+        ]
+        preview["components"] = [
+            "Mobile status/header",
+            "Reference-guided hero panel",
+            "Metric/list cards",
+            "Segmented navigation",
+            "Bottom primary action",
+        ]
+    return preview
 
 
 @router.post("/preview-plan")
@@ -210,7 +323,7 @@ async def generate_preview_plan(request: Request):
     if blocked_fields:
         return JSONResponse(
             status_code=400,
-            content=validation_error("file, image, audio, and upload payloads are disabled in Phase 26E"),
+            content=validation_error("raw file, image, audio, and upload payloads are disabled; send referenceImage metadata only"),
         )
 
     session_id = payload.get("sessionId")
@@ -221,11 +334,16 @@ async def generate_preview_plan(request: Request):
     sector = _safe_text(payload.get("sector"))
     output_type = _safe_text(payload.get("outputType"))
     product_plan = payload.get("productPlan") or payload.get("plan")
+    reference_image = _normalize_reference_image(payload)
 
     if product_plan is None and not idea:
         return JSONResponse(status_code=400, content=validation_error("productPlan or idea is required"))
 
-    input_size = len(idea) + len(json.dumps(product_plan, ensure_ascii=False, default=str))
+    input_size = (
+        len(idea)
+        + len(json.dumps(product_plan, ensure_ascii=False, default=str))
+        + len(json.dumps(reference_image, ensure_ascii=False, default=str))
+    )
     if input_size > MAX_PREVIEW_INPUT_LENGTH:
         return JSONResponse(
             status_code=413,
@@ -261,6 +379,8 @@ async def generate_preview_plan(request: Request):
         "sector": sector or "infer from idea/product plan",
         "outputType": output_type or "infer best output type",
         "productPlan": product_plan or {},
+        "inputMode": "image-guided" if reference_image else "text-only",
+        "referenceImage": reference_image,
     }
 
     try:
@@ -284,7 +404,7 @@ async def generate_preview_plan(request: Request):
         try:
             preview = json.loads(output_text)
         except Exception:
-            preview = _fallback_preview(idea, product_plan if isinstance(product_plan, dict) else {}, sector, output_type)
+            preview = _fallback_preview(idea, product_plan if isinstance(product_plan, dict) else {}, sector, output_type, reference_image)
             preview["rawAIPreview"] = output_text
 
     except AuthenticationError:
@@ -300,6 +420,15 @@ async def generate_preview_plan(request: Request):
     except Exception:
         return JSONResponse(status_code=500, content=_agent_error(session_id, "PREVIEW_PLAN_FAILURE", "Preview plan generation failed safely. Try again shortly."))
 
+    if reference_image and isinstance(preview, dict):
+        guided_fields = _image_guided_preview_fields(reference_image)
+        existing_direction = preview.get("designDirection")
+        preview.update(guided_fields)
+        if isinstance(existing_direction, dict):
+            merged_direction = dict(guided_fields.get("designDirection", {}))
+            merged_direction.update(existing_direction)
+            preview["designDirection"] = merged_direction
+
     return {
         "ok": True,
         "phase": PHASE_26E,
@@ -308,7 +437,7 @@ async def generate_preview_plan(request: Request):
         "sessionId": session_id,
         "assistant": {
             "role": "assistant",
-            "content": "Preview specification generated. Code generation, export, and deployment remain approval-gated for later phases."
+            "content": "Image-guided preview specification generated from safe metadata." if reference_image else "Preview specification generated. Code generation, export, and deployment remain approval-gated for later phases."
         },
         "preview": preview,
         "next": {

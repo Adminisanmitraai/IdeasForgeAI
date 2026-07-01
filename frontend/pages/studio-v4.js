@@ -9,6 +9,9 @@ const chatInput = document.querySelector("[data-chat-input]");
 const chatStream = document.querySelector("[data-chat-stream]");
 const attachmentToggle = document.querySelector("[data-attachment-toggle]");
 const attachmentMenu = document.querySelector("[data-attachment-menu]");
+const referenceCameraInput = document.querySelector("[data-reference-camera-input]");
+const referencePhotosInput = document.querySelector("[data-reference-photos-input]");
+const referenceFilesInput = document.querySelector("[data-reference-files-input]");
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const menu = document.querySelector("[data-menu]");
 const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
@@ -17,6 +20,7 @@ const previewMount = document.querySelector("[data-preview-mount]");
 let currentPlan = null;
 let currentPlanId = 0;
 let isGenerating = false;
+let referenceImageMetadata = null;
 
 const previewLabels = {
   mobile: "Mobile canvas",
@@ -99,6 +103,63 @@ const createList = (items) => {
   return list;
 };
 
+const sanitizeReferenceImage = (file, source) => {
+  if (!file || !String(file.type || "").startsWith("image/")) {
+    return null;
+  }
+
+  return {
+    name: file.name || "reference-image",
+    type: file.type || "image/*",
+    size: Number.isFinite(file.size) ? file.size : 0,
+    source: source || "local image",
+    layoutHint: "Use as a safe visual guide for mobile app layout, spacing, hierarchy, and component density.",
+    binaryUploadReceived: false,
+    ocrOrVisionPerformed: false,
+  };
+};
+
+const renderReferenceImageChip = () => {
+  const existing = document.querySelector("[data-reference-image-chip]");
+  existing?.remove();
+
+  if (!referenceImageMetadata || !chatForm) {
+    return;
+  }
+
+  const chip = document.createElement("div");
+  const label = document.createElement("span");
+  const remove = document.createElement("button");
+
+  chip.className = "reference-image-chip";
+  chip.dataset.referenceImageChip = "true";
+  label.textContent = `Image guide: ${referenceImageMetadata.name || "reference image"}`;
+  remove.type = "button";
+  remove.setAttribute("aria-label", "Remove reference image");
+  remove.textContent = "Remove";
+  remove.addEventListener("click", () => {
+    referenceImageMetadata = null;
+    renderReferenceImageChip();
+  });
+
+  chip.append(label, remove);
+  chatForm.insertAdjacentElement("beforebegin", chip);
+};
+
+const setReferenceImageFromFiles = (files, source) => {
+  const file = Array.from(files || []).find((item) => String(item.type || "").startsWith("image/"));
+  const metadata = sanitizeReferenceImage(file, source);
+
+  if (!metadata) {
+    appendMessage("Please choose an image file to use as the interface reference.", "assistant");
+    return;
+  }
+
+  referenceImageMetadata = metadata;
+  renderReferenceImageChip();
+  appendMessage(`I added ${metadata.name} as an image guide. I will use metadata only, not upload or analyze the image bytes.`, "assistant");
+};
+
 const appendPlanMessage = (reply, plan, planId) => {
   if (!chatStream) {
     return;
@@ -116,11 +177,13 @@ const appendPlanMessage = (reply, plan, planId) => {
   const screens = document.createElement("div");
   const dataNeeds = document.createElement("div");
   const apiNeeds = document.createElement("div");
+  const imageGuide = document.createElement("div");
   const overviewTitle = document.createElement("small");
   const featureTitle = document.createElement("small");
   const screensTitle = document.createElement("small");
   const dataTitle = document.createElement("small");
   const apiTitle = document.createElement("small");
+  const imageGuideTitle = document.createElement("small");
   const button = document.createElement("button");
 
   bubble.className = "message assistant-message plan-message";
@@ -134,6 +197,7 @@ const appendPlanMessage = (reply, plan, planId) => {
   screensTitle.textContent = "Screens";
   dataTitle.textContent = "Data needs";
   apiTitle.textContent = "API needs";
+  imageGuideTitle.textContent = "Image guide";
   button.className = "approve-generate-button";
   button.type = "button";
   button.dataset.approveGenerate = "true";
@@ -146,7 +210,20 @@ const appendPlanMessage = (reply, plan, planId) => {
   screens.append(screensTitle, createList(plan.screens));
   dataNeeds.append(dataTitle, createList(plan.data_needs));
   apiNeeds.append(apiTitle, createList(plan.api_needs?.length ? plan.api_needs : ["No external API required for this prototype"]));
+  if (plan.image_guided || plan.imageGuided) {
+    imageGuide.append(
+      imageGuideTitle,
+      createList([
+        plan.reference_image?.name || plan.referenceImage?.name || "Reference image metadata",
+        "Metadata-only guidance; no upload, OCR, or pixel analysis.",
+      ])
+    );
+  }
   grid.append(overview, features, screens, dataNeeds, apiNeeds);
+  if (plan.image_guided || plan.imageGuided) {
+    grid.append(imageGuide);
+    card.classList.add("is-image-guided");
+  }
   card.append(title, summary, grid, button);
   bubble.append(intro, card, meta);
   chatStream.appendChild(bubble);
@@ -340,9 +417,38 @@ attachmentToggle?.addEventListener("click", (event) => {
 attachmentMenu?.addEventListener("click", (event) => {
   event.stopPropagation();
 
+  const actionButton = event.target.closest("[data-reference-image-action]");
+  if (actionButton) {
+    const action = actionButton.dataset.referenceImageAction;
+    if (action === "camera") {
+      referenceCameraInput?.click();
+    } else if (action === "photos") {
+      referencePhotosInput?.click();
+    } else {
+      referenceFilesInput?.click();
+    }
+    closeAttachmentMenu();
+    return;
+  }
+
   if (event.target.closest("button")) {
     closeAttachmentMenu();
   }
+});
+
+referenceCameraInput?.addEventListener("change", (event) => {
+  setReferenceImageFromFiles(event.target.files, "camera");
+  event.target.value = "";
+});
+
+referencePhotosInput?.addEventListener("change", (event) => {
+  setReferenceImageFromFiles(event.target.files, "photos");
+  event.target.value = "";
+});
+
+referenceFilesInput?.addEventListener("change", (event) => {
+  setReferenceImageFromFiles(event.target.files, "files");
+  event.target.value = "";
 });
 
 menuToggle?.addEventListener("click", (event) => {
@@ -409,6 +515,7 @@ chatForm?.addEventListener("submit", async (event) => {
       idea: message,
       message,
       mode: "app_creation",
+      referenceImage: referenceImageMetadata || undefined,
     });
     thinkingMessage?.remove();
     if (requestPlanId !== currentPlanId) {

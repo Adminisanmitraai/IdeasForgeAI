@@ -62,10 +62,13 @@
           <div class="attachment-wrap">
             <button class="composer-button" type="button" aria-label="Add attachment" aria-expanded="false" data-attachment-toggle><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
             <div class="attachment-menu" data-attachment-menu hidden>
-              <button type="button">Camera</button>
-              <button type="button">Photos</button>
-              <button type="button">Files</button>
+              <button type="button" data-reference-image-action="camera">Camera</button>
+              <button type="button" data-reference-image-action="photos">Photos</button>
+              <button type="button" data-reference-image-action="files">Files</button>
             </div>
+            <input type="file" accept="image/*" capture="environment" data-reference-camera-input hidden>
+            <input type="file" accept="image/*" data-reference-photos-input hidden>
+            <input type="file" accept="image/*" data-reference-files-input hidden>
           </div>
           <textarea data-chat-input rows="1" placeholder="Describe your idea..." aria-label="Describe your idea"></textarea>
           <div class="composer-actions">

@@ -34,7 +34,12 @@ from backend.api.output_type_selector import router as output_type_selector_rout
 from backend.api.product_flow_orchestrator import router as product_flow_orchestrator_router
 from backend.pixel_converter import PixelConverterContractEngine, PixelConverterContractRequest
 from backend.product_brain.workflow_engine import ProductBrainWorkflow
-from backend.product_flow import BACKEND_GENERATED_APPS_DIR, create_product_plan, generate_static_app
+from backend.product_flow import (
+    BACKEND_GENERATED_APPS_DIR,
+    create_product_plan,
+    generate_static_app,
+    normalize_reference_image_metadata,
+)
 
 ensure_project_folders()
 BACKEND_GENERATED_APPS_DIR.mkdir(parents=True, exist_ok=True)
@@ -67,8 +72,9 @@ app.add_middleware(
 )
 
 
-def _studio_v4_app_creation_plan(user_text: str) -> Dict[str, Any]:
-    plan = create_product_plan(user_text)
+def _studio_v4_app_creation_plan(user_text: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    reference_image = normalize_reference_image_metadata(payload or {})
+    plan = create_product_plan(user_text, reference_image=reference_image)
     plan["product_name"] = plan["app_name"]
     plan["category"] = plan["app_type"]
     return plan
@@ -87,7 +93,7 @@ async def studio_v4_product_flow(request: Request):
             "next_action": "retry",
         }
 
-    plan = _studio_v4_app_creation_plan(user_text)
+    plan = _studio_v4_app_creation_plan(user_text, payload)
     return {
         "ok": True,
         "reply": "I created a structured app plan. Review it, then approve generation when you are ready.",

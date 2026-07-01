@@ -5,7 +5,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
-from backend.product_flow import create_product_plan
+from backend.product_flow import create_product_plan, normalize_reference_image_metadata
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 27E product flow orchestrator"])
@@ -47,6 +47,8 @@ Important rules:
 - Do not write files.
 - Do not generate real PDF/DOCX/PPTX/Excel exports.
 - Do not claim database/auth/upload/OCR/voice/export/deployment are active.
+- If referenceImage metadata is provided, mark the flow as image-guided and use it only as layout/style guidance.
+- Do not claim image pixels were analyzed. Use metadata, user notes, and safe inference only.
 - Keep code/export/deployment approval-gated.
 - Produce a clean orchestrated plan better than generic app builders.
 - Make the plan sector-specific. For car detailing include service packages, doorstep booking,
@@ -246,14 +248,14 @@ async def orchestrate_product_flow(request: Request):
     if blocked_fields:
         return JSONResponse(
             status_code=400,
-            content=validation_error("file, image, audio, and upload payloads are disabled in Phase 27E"),
+            content=validation_error("raw file, image, audio, and upload payloads are disabled; send referenceImage metadata only"),
         )
 
     message = payload.get("message")
     mode = _safe_text(payload.get("mode"))
     if isinstance(message, str) and message.strip() and mode in {"local-product-plan", "app_creation"}:
         message = message.strip()
-        plan = create_product_plan(message)
+        plan = create_product_plan(message, reference_image=normalize_reference_image_metadata(payload))
         return {
             "ok": True,
             "reply": "I created a structured product plan. Review it, then approve generation when you are ready.",
@@ -271,7 +273,7 @@ async def orchestrate_product_flow(request: Request):
         for key in ["classification", "requirements", "workflow", "outputSelection", "userRole", "userGoal"]
     )
     if not has_orchestration_context or mode in {"local-product-plan", "structured-product-plan", "app_creation"}:
-        plan = create_product_plan(idea)
+        plan = create_product_plan(idea, reference_image=normalize_reference_image_metadata(payload))
         return {
             "ok": True,
             "reply": "I created a structured product plan. Review it, then approve generation when you are ready.",
@@ -285,6 +287,7 @@ async def orchestrate_product_flow(request: Request):
     requirements = payload.get("requirements") or {}
     workflow = payload.get("workflow") or {}
     output_selection = payload.get("outputSelection") or {}
+    reference_image = normalize_reference_image_metadata(payload)
 
     input_size = (
         len(idea)
@@ -294,6 +297,7 @@ async def orchestrate_product_flow(request: Request):
         + len(json.dumps(requirements, ensure_ascii=False, default=str))
         + len(json.dumps(workflow, ensure_ascii=False, default=str))
         + len(json.dumps(output_selection, ensure_ascii=False, default=str))
+        + len(json.dumps(reference_image, ensure_ascii=False, default=str))
     )
 
     if input_size > MAX_INPUT_LENGTH:
@@ -338,6 +342,8 @@ async def orchestrate_product_flow(request: Request):
         "requirements": requirements,
         "workflow": workflow,
         "outputSelection": output_selection,
+        "inputMode": "image-guided" if reference_image else "text-only",
+        "referenceImage": reference_image,
     }
 
     try:
