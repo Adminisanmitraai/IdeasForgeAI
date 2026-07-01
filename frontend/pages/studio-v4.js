@@ -397,8 +397,10 @@ document.addEventListener("keydown", (event) => {
 
   const handleComposerFocusChange = () => {
     lockWindowScroll();
+    window.requestAnimationFrame(lockWindowScroll);
     window.setTimeout(lockWindowScroll, 60);
     window.setTimeout(lockWindowScroll, 220);
+    window.setTimeout(lockWindowScroll, 420);
   };
 
   const preventPageTouchScroll = (event) => {
@@ -406,7 +408,9 @@ document.addEventListener("keydown", (event) => {
       return;
     }
 
-    if (event.target.closest(chatScrollSelector)) {
+    const target = event.target instanceof Element ? event.target : event.target?.parentElement;
+
+    if (target?.closest(chatScrollSelector)) {
       return;
     }
 

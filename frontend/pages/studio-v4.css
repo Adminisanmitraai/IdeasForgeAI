@@ -3467,6 +3467,7 @@ body {
     height: 100% !important;
     max-height: 100% !important;
     margin: 0 !important;
+    padding: 0 !important;
     overflow: hidden !important;
     overflow-x: hidden !important;
     overflow-y: hidden !important;
@@ -3509,13 +3510,17 @@ body {
   .studio-v4-content {
     flex: 1 1 auto !important;
     min-height: 0 !important;
+    min-width: 0 !important;
     height: auto !important;
+    max-height: none !important;
     overflow: hidden !important;
     width: 100vw !important;
     max-width: 100vw !important;
   }
 
   .chat-panel {
+    width: 100vw !important;
+    max-width: 100vw !important;
     height: 100% !important;
     min-height: 0 !important;
     max-height: 100% !important;
@@ -3534,6 +3539,12 @@ body {
 
   .chat-panel-close-button {
     flex-shrink: 0 !important;
+    z-index: 2 !important;
+    overflow: visible !important;
+  }
+
+  .chat-panel-close-button svg {
+    overflow: visible !important;
   }
 
   .chat-stream {
@@ -3554,8 +3565,11 @@ body {
     bottom: max(14px, env(safe-area-inset-bottom, 0px)) !important;
     width: auto !important;
     max-width: none !important;
+    min-width: 0 !important;
     z-index: 100 !important;
     box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
     overflow: visible !important;
   }
 
