@@ -25,6 +25,7 @@ let isPlanning = false;
 let isGenerating = false;
 let referenceImageMetadata = null;
 let activeExperienceCard = null;
+let activeExperienceHost = null;
 let activeExperienceTimer = null;
 let generationModeTimer = null;
 
@@ -51,7 +52,6 @@ const experienceStages = {
       "Understanding your idea",
       "Detecting sector",
       "Building business blueprint",
-      "Creating premium UI concept",
       "Preparing preview",
       "Running quality checks",
     ],
@@ -251,6 +251,17 @@ const stopExperienceProgress = () => {
   }
 };
 
+const clearActiveExperience = ({ removeHost = false } = {}) => {
+  stopExperienceProgress();
+
+  if (removeHost) {
+    activeExperienceHost?.remove();
+  }
+
+  activeExperienceCard = null;
+  activeExperienceHost = null;
+};
+
 const updateExperienceCard = (card, activeIndex) => {
   if (!card?.isConnected) {
     return;
@@ -319,16 +330,24 @@ const createExperienceCard = (kind = "planning") => {
 };
 
 const mountExperienceCard = (kind, target = chatStream) => {
-  stopExperienceProgress();
-  activeExperienceCard?.remove();
+  clearActiveExperience({ removeHost: true });
   activeExperienceCard = createExperienceCard(kind);
 
   if (target === previewMount) {
+    activeExperienceHost = previewMount;
     previewMount.className = "preview-empty generation-preview-state";
     previewMount.innerHTML = "";
     previewMount.appendChild(activeExperienceCard);
   } else {
-    target?.appendChild(activeExperienceCard);
+    const host = document.createElement("article");
+    const meta = document.createElement("span");
+
+    host.className = "generation-experience-message";
+    meta.className = "generation-experience-meta";
+    meta.textContent = getMessageTime();
+    host.append(activeExperienceCard, meta);
+    target?.appendChild(host);
+    activeExperienceHost = host;
     scrollMessagesToBottom();
   }
 
@@ -346,7 +365,7 @@ const mountExperienceCard = (kind, target = chatStream) => {
   return activeExperienceCard;
 };
 
-const completeExperienceCard = () => {
+const completeExperienceCard = ({ removeHost = false } = {}) => {
   if (!activeExperienceCard) {
     return;
   }
@@ -354,6 +373,18 @@ const completeExperienceCard = () => {
   const steps = activeExperienceCard.querySelectorAll("[data-experience-step]");
   updateExperienceCard(activeExperienceCard, Math.max(0, steps.length - 1));
   activeExperienceCard.classList.add("is-complete");
+
+  if (removeHost && activeExperienceHost && activeExperienceHost !== previewMount) {
+    activeExperienceHost.classList.add("is-collapsing");
+    const hostToRemove = activeExperienceHost;
+    window.setTimeout(() => {
+      if (activeExperienceHost === hostToRemove) {
+        clearActiveExperience({ removeHost: true });
+      } else {
+        hostToRemove.remove();
+      }
+    }, 220);
+  }
 };
 
 const appendQualityReveal = () => {
@@ -608,7 +639,7 @@ const renderPreviewPlaceholder = (plan, message = "Generated preview placeholder
   }
 
   completeExperienceCard();
-  activeExperienceCard = null;
+  clearActiveExperience();
   studioShell?.classList.remove("has-generated-preview");
   previewMount.className = "preview-empty generated-preview-placeholder";
   previewMount.innerHTML = "";
@@ -639,7 +670,7 @@ const renderPreviewFrame = (previewUrl, plan) => {
   }
 
   completeExperienceCard();
-  activeExperienceCard = null;
+  clearActiveExperience();
   studioShell?.classList.add("has-generated-preview");
   previewMount.className = "generated-preview-shell";
   previewMount.innerHTML = "";
@@ -858,7 +889,7 @@ chatForm?.addEventListener("submit", async (event) => {
     });
     await waitForThinkingMinimum(thinkingStartedAt);
     removeThinkingMessage(thinkingMessage);
-    completeExperienceCard();
+    completeExperienceCard({ removeHost: true });
     if (requestPlanId !== currentPlanId) {
       return;
     }
@@ -867,9 +898,7 @@ chatForm?.addEventListener("submit", async (event) => {
     setPreviewStatus("Plan ready");
   } catch (error) {
     await waitForThinkingMinimum(thinkingStartedAt);
-    stopExperienceProgress();
-    activeExperienceCard?.remove();
-    activeExperienceCard = null;
+    clearActiveExperience({ removeHost: true });
     replaceThinkingMessage(thinkingMessage, "I could not finish this request. Please try again.");
     setPreviewStatus("Waiting for idea");
   } finally {
