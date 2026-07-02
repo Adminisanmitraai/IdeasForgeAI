@@ -1,5 +1,15 @@
 # IdeasForgeAI Project Status
 
+## Phase 32C - Sector Test Suite + Auto QA
+
+Status: Completed locally, verification passed.
+
+- Added an import-safe sector test suite covering agriculture/farmer, insurance broker, mutual fund advisor, school/teacher/parent, clinic/healthcare, car detailing, gym/fitness, wedding/event lawn, restaurant/food, retail inventory, government/civic, real estate, travel agency, salon/beauty, accounting/CA, logistics/delivery, construction/project, hotel/resort, NGO/social, and generic SaaS.
+- Added `python backend/sector_qa_runner.py` for automatic sector QA across detection, forbidden sectors, confidence, theme family, clarification behavior, currency expectations, required screens, clickable aliases, and safety expectations.
+- Added generated app QA helpers for raw runtime URL visibility, developer-only sections, monetization leakage, required screens, clickable aliases, generic CRM fallback, fake policy/certificate/document language, and investment guaranteed-return claims.
+- Connected generated app quality notes to reusable QA rule IDs without changing runtime app generation behavior.
+- Validation command: `python backend/sector_qa_runner.py`.
+
 ## Phase 32B - Sector Intelligence Router + Template Registry
 
 Status: Completed locally, verification pending.
