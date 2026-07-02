@@ -72,6 +72,26 @@ app.add_middleware(
 )
 
 
+
+@app.get("/")
+def ideasforgeai_root():
+    return {
+        "service": "IdeasForgeAI API",
+        "status": "ok",
+        "phase": "33A",
+        "message": "IdeasForgeAI backend is live"
+    }
+
+
+@app.get("/health")
+def ideasforgeai_health():
+    return {
+        "service": "ideasforgeai-api",
+        "status": "ok",
+        "phase": "33A"
+    }
+
+
 def _studio_v4_app_creation_plan(user_text: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     reference_image = normalize_reference_image_metadata(payload or {})
     plan = create_product_plan(user_text, reference_image=reference_image)
