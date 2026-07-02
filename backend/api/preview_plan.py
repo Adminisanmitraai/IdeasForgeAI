@@ -6,6 +6,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from backend.product_flow import resolve_currency_profile
+from backend.sector_router import route_sector
+from backend.sector_templates import create_sector_template
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 26E preview generator"])
@@ -205,6 +207,11 @@ def _image_guided_preview_fields(reference_image: dict) -> dict:
 
 
 def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: str, reference_image: dict | None = None) -> dict:
+    sector_result = route_sector(
+        f"{idea} {sector} {output_type} {json.dumps(product_plan, ensure_ascii=False, default=str) if isinstance(product_plan, dict) else ''}",
+        reference_image=reference_image,
+    )
+    sector_template = create_sector_template(sector_result, idea, reference_image)
     plan_name = ""
     if isinstance(product_plan, dict):
         plan_name = product_plan.get("productName", "")
@@ -225,6 +232,12 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
 
     preview = {
         "previewName": "Farmer Dashboard" if is_agriculture else "Mutual Fund Advisor" if is_mutual_fund else plan_name or "IdeasForgeAI Professional Preview",
+        "sector_id": sector_result["sector_id"],
+        "sector_confidence": sector_result["confidence"],
+        "sector_reasons": sector_result["reasons"],
+        "theme_family": sector_result["theme_family"],
+        "layout_family": sector_result["layout_family"],
+        "clickable_aliases": sector_template["clickable_aliases"],
         "sector": "agriculture and farmer dashboard" if is_agriculture else "mutual fund broker and investment advisor" if is_mutual_fund else sector or product_plan.get("sector", "general professional workflow") if isinstance(product_plan, dict) else sector or "general professional workflow",
         "outputType": "agriculture farm intelligence and farmer dashboard app" if is_agriculture else "mutual fund broker and investment advisor customer service app" if is_mutual_fund else output_type or product_plan.get("outputType", "AI assistant app preview") if isinstance(product_plan, dict) else output_type or "AI assistant app preview",
         "designDirection": {
@@ -468,7 +481,12 @@ async def generate_preview_plan(request: Request):
     product_plan = payload.get("productPlan") or payload.get("plan")
     reference_image = _normalize_reference_image(payload)
     client_currency = _client_currency_metadata(payload)
-    currency_profile = resolve_currency_profile(f"{idea} {sector} {output_type}", client_currency)
+    sector_result = route_sector(
+        f"{idea} {sector} {output_type} {json.dumps(product_plan, ensure_ascii=False, default=str) if isinstance(product_plan, dict) else ''}",
+        reference_image=reference_image,
+        locale_currency_metadata=client_currency,
+    )
+    currency_profile = resolve_currency_profile(f"{idea} {sector} {output_type}", client_currency, detected_domain=sector_result["sector_id"])
 
     if product_plan is None and not idea:
         return JSONResponse(status_code=400, content=validation_error("productPlan or idea is required"))
@@ -511,6 +529,8 @@ async def generate_preview_plan(request: Request):
         "task": "Create a safe preview specification for IdeasForgeAI. Do not generate code.",
         "idea": idea,
         "sector": sector or "infer from idea/product plan",
+        "sectorRouter": sector_result,
+        "sectorTemplate": create_sector_template(sector_result, idea, reference_image),
         "outputType": output_type or "infer best output type",
         "productPlan": product_plan or {},
         "inputMode": "image-guided" if reference_image else "text-only",
@@ -565,6 +585,19 @@ async def generate_preview_plan(request: Request):
             merged_direction.update(existing_direction)
             preview["designDirection"] = merged_direction
     if isinstance(preview, dict):
+        preview.update(
+            {
+                "sector_id": sector_result["sector_id"],
+                "sector_confidence": sector_result["confidence"],
+                "sector_reasons": sector_result["reasons"],
+                "sector_top_candidates": sector_result["top_candidates"],
+                "theme_family": sector_result["theme_family"],
+                "layout_family": sector_result["layout_family"],
+                "clarification_needed": sector_result["clarification_needed"],
+                "clarification_prompt": sector_result["clarification_prompt"],
+                "clickable_aliases": create_sector_template(sector_result, idea, reference_image)["clickable_aliases"],
+            }
+        )
         preview.update(currency_profile)
 
     return {

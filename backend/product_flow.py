@@ -8,6 +8,10 @@ from typing import Any, Dict, Iterable, List
 from uuid import uuid4
 
 from backend.core.project_paths import PROJECT_ROOT
+from backend.generated_app_quality_agent import quality_notes_for_generated_app
+from backend.sector_registry import LEGACY_DOMAIN_TO_SECTOR_ID, SECTOR_ID_TO_LEGACY_DOMAIN, get_sector_entry
+from backend.sector_router import route_sector
+from backend.sector_templates import product_plan_from_sector
 
 
 BACKEND_GENERATED_APPS_DIR = PROJECT_ROOT / "backend" / "generated_apps"
@@ -124,6 +128,11 @@ THEME_FAMILIES: Dict[str, Dict[str, Any]] = {
         "domains": ["finance_insurance", "mutual_fund_advisor"],
         "keywords": ["insurance", "finance", "policy", "claim", "quote", "loan", "bank", "mutual fund", "sip", "investment advisor", "portfolio", "nav"],
         "style": "blue and white finance trust interface with policy, investment, portfolio, advisor, and clean dashboard panels",
+    },
+    "finance-trust-blue-green": {
+        "domains": ["mutual_fund_advisor"],
+        "keywords": ["mutual fund", "sip", "investment advisor", "portfolio", "kyc", "risk profile", "nav"],
+        "style": "blue and green finance trust interface with SIP, fund comparison, portfolio, KYC, risk profile, and advisor guidance panels",
     },
     "premium-automotive-dark": {
         "domains": ["car_detailing"],
@@ -701,32 +710,23 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
 
 
 def _detect_domain(text: str) -> str:
-    lower_text = text.lower()
-    tokens = set(re.findall(r"[a-z0-9]+", lower_text))
-    if _matches_keywords(lower_text, tokens, MUTUAL_FUND_KEYWORDS):
-        return "mutual_fund_advisor"
-    if _matches_keywords(lower_text, tokens, AGRICULTURE_KEYWORDS):
-        return "agriculture"
-    if _matches_keywords(lower_text, tokens, CLINIC_KEYWORDS):
-        return "clinic"
-    for domain, blueprint in DOMAIN_BLUEPRINTS.items():
-        if domain in {"mutual_fund_advisor", "agriculture", "clinic"}:
-            continue
-        for keyword in blueprint["keywords"]:
-            normalized_keyword = keyword.lower()
-            if " " in normalized_keyword:
-                if normalized_keyword in lower_text:
-                    return domain
-            elif normalized_keyword in tokens:
-                return domain
-    return "generic"
+    sector_result = route_sector(text)
+    sector_id = sector_result["sector_id"]
+    return SECTOR_ID_TO_LEGACY_DOMAIN.get(sector_id, "generic")
 
 
 def _domain_from_plan(plan: Dict[str, Any]) -> str:
+    explicit_sector = _clean_text(plan.get("sector_id") or plan.get("detected_sector") or plan.get("detectedSector"))
+    if explicit_sector:
+        return SECTOR_ID_TO_LEGACY_DOMAIN.get(explicit_sector, explicit_sector if explicit_sector in DOMAIN_BLUEPRINTS else "generic")
+
     explicit_domain = _clean_text(plan.get("detected_domain") or plan.get("detectedIndustry") or plan.get("industry"))
     normalized_explicit = explicit_domain.lower().replace("-", "_").replace(" ", "_")
     if normalized_explicit in DOMAIN_BLUEPRINTS or normalized_explicit == "generic":
         return normalized_explicit
+    if normalized_explicit in LEGACY_DOMAIN_TO_SECTOR_ID:
+        sector_id = LEGACY_DOMAIN_TO_SECTOR_ID[normalized_explicit]
+        return SECTOR_ID_TO_LEGACY_DOMAIN.get(sector_id, normalized_explicit)
 
     values = []
     for value in plan.values():
@@ -744,14 +744,25 @@ def create_product_plan(
 ) -> Dict[str, Any]:
     clean_idea = _clean_text(idea, "A useful mobile-first product")
     lower_idea = clean_idea.lower()
-    domain = _detect_domain(clean_idea)
     reference_image = reference_image or {}
+    sector_result = route_sector(clean_idea, reference_image=reference_image, locale_currency_metadata=client_metadata)
+    domain = SECTOR_ID_TO_LEGACY_DOMAIN.get(sector_result["sector_id"], "generic")
 
     if domain in DOMAIN_BLUEPRINTS:
         blueprint = DOMAIN_BLUEPRINTS[domain]
         plan = {
             "idea": clean_idea,
             "detected_domain": domain,
+            "sector_id": sector_result["sector_id"],
+            "sector_confidence": sector_result["confidence"],
+            "sector_reasons": sector_result["reasons"],
+            "sector_top_candidates": sector_result["top_candidates"],
+            "clarification_needed": sector_result["clarification_needed"],
+            "clarification_prompt": sector_result["clarification_prompt"],
+            "theme_family": sector_result["theme_family"],
+            "layout_family": sector_result["layout_family"],
+            "visualThemeFamily": sector_result["theme_family"],
+            "layoutVariant": sector_result["layout_family"],
             "app_name": blueprint["app_name"],
             "app_type": blueprint["app_type"],
             "target_users": list(blueprint["target_users"]),
@@ -761,9 +772,17 @@ def create_product_plan(
             "api_needs": list(blueprint["api_needs"]),
             "monetization": list(blueprint["monetization"]),
             "preview_summary": blueprint["preview_summary"],
+            "clickable_aliases": get_sector_entry(sector_result["sector_id"]).get("clickable_aliases", {}),
+            "admin_dashboard_fields": get_sector_entry(sector_result["sector_id"]).get("admin_dashboard_fields", []),
+            "safety_rules": get_sector_entry(sector_result["sector_id"]).get("safety_rules", []),
+            "forbidden_outputs": get_sector_entry(sector_result["sector_id"]).get("forbidden_outputs", []),
             "next_action": "approve_generate",
         }
         return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
+
+    if sector_result["sector_id"] != "generic_saas":
+        template_plan = product_plan_from_sector(sector_result, clean_idea, reference_image)
+        return _apply_image_guidance(_apply_currency_profile(template_plan, clean_idea, client_metadata), reference_image)
 
     app_type = "mobile-first web app"
     target_users = ["busy operators", "team members", "decision makers"]
@@ -815,6 +834,16 @@ def create_product_plan(
     plan = {
         "idea": clean_idea,
         "detected_domain": domain,
+        "sector_id": sector_result["sector_id"],
+        "sector_confidence": sector_result["confidence"],
+        "sector_reasons": sector_result["reasons"],
+        "sector_top_candidates": sector_result["top_candidates"],
+        "clarification_needed": sector_result["clarification_needed"],
+        "clarification_prompt": sector_result["clarification_prompt"],
+        "theme_family": sector_result["theme_family"],
+        "layout_family": sector_result["layout_family"],
+        "visualThemeFamily": sector_result["theme_family"],
+        "layoutVariant": sector_result["layout_family"],
         "app_name": app_name,
         "app_type": app_type,
         "target_users": target_users,
@@ -828,6 +857,10 @@ def create_product_plan(
             "The first prototype includes a mobile dashboard, feature cards, "
             "screen sections, mock actions, and placeholder data."
         ),
+        "clickable_aliases": get_sector_entry(sector_result["sector_id"]).get("clickable_aliases", {}),
+        "admin_dashboard_fields": get_sector_entry(sector_result["sector_id"]).get("admin_dashboard_fields", []),
+        "safety_rules": get_sector_entry(sector_result["sector_id"]).get("safety_rules", []),
+        "forbidden_outputs": get_sector_entry(sector_result["sector_id"]).get("forbidden_outputs", []),
         "next_action": "approve_generate",
     }
     return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
@@ -1246,16 +1279,18 @@ def select_visual_theme(plan: Dict[str, Any], app_id: str) -> Dict[str, Any]:
     ).lower()
     combined_text = f"{source_text} {image_metadata_text}"
 
-    family = "generic-modern-saas"
-    for candidate, config in THEME_FAMILIES.items():
-        if domain in config["domains"]:
-            family = candidate
-            break
-    else:
+    requested_family = _clean_text(plan.get("theme_family") or plan.get("visualThemeFamily"))
+    family = requested_family if requested_family in THEME_FAMILIES else "generic-modern-saas"
+    if not requested_family:
         for candidate, config in THEME_FAMILIES.items():
-            if any(re.search(rf"\b{re.escape(keyword)}\b", combined_text) for keyword in config["keywords"]):
+            if domain in config["domains"]:
                 family = candidate
                 break
+        else:
+            for candidate, config in THEME_FAMILIES.items():
+                if any(re.search(rf"\b{re.escape(keyword)}\b", combined_text) for keyword in config["keywords"]):
+                    family = candidate
+                    break
 
     layout_pool = {
         "finance_insurance": ["timeline-tracker", "hero-stat-stack", "card-first-dashboard"],
@@ -1271,8 +1306,9 @@ def select_visual_theme(plan: Dict[str, Any], app_id: str) -> Dict[str, Any]:
         "government": ["timeline-tracker", "admin-metrics-grid", "card-first-dashboard"],
         "generic": LAYOUT_VARIANTS,
     }.get(domain, LAYOUT_VARIANTS)
+    requested_layout = _clean_text(plan.get("layout_family") or plan.get("layoutVariant"))
     seed = _theme_hash_key(plan, app_id, domain)
-    layout_variant = layout_pool[_stable_index(seed, len(layout_pool))]
+    layout_variant = requested_layout if requested_layout in LAYOUT_VARIANTS else layout_pool[_stable_index(seed, len(layout_pool))]
     density = ["compact", "balanced", "spacious"][_stable_index(f"{seed}|density", 3)]
     radius = ["sharp", "soft", "rounded"][_stable_index(f"{seed}|cards", 3)]
 
@@ -2030,6 +2066,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .theme-school { --bg: #f7f9ff; --accent: #4a67d6; --accent-2: #f0a322; --accent-soft: #edf1ff; --hero-a: #1e2a4f; --hero-b: #4a67d6; --hero-c: #f2c55c; }
 .theme-retail { --bg: #f6f9f5; --accent: #27825f; --accent-2: #3357c9; --accent-soft: #eaf6ef; --hero-a: #13251f; --hero-b: #27624b; --hero-c: #83b366; }
 .theme-family-finance-trust-blue { --bg: #f4f8ff; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #14213d; --muted: #61708c; --line: #dbe6f7; --accent: #1d5fd1; --accent-2: #27a7d8; --accent-soft: #eaf2ff; --hero-a: #10284f; --hero-b: #174b90; --hero-c: #dcecff; }
+.theme-family-finance-trust-blue-green { --bg: #f3faf8; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #10243d; --muted: #607384; --line: #d8e9e5; --accent: #1d65d1; --accent-2: #18a078; --accent-soft: #e8f7f2; --hero-a: #10284f; --hero-b: #126b70; --hero-c: #dff5ee; }
 .theme-family-premium-automotive-dark { --bg: #090b10; --surface: rgba(20,23,31,.94); --surface-strong: #151923; --text: #f6f7fb; --muted: #a8b0c2; --line: #2a3140; --accent: #f8c15c; --accent-2: #7fd7ff; --accent-soft: #241d12; --hero-a: #06070a; --hero-b: #141923; --hero-c: #b8863b; }
 .theme-family-fitness-energy-bold { --bg: #101215; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #151821; --muted: #616b7d; --line: #e6eaf1; --accent: #ff4d2e; --accent-2: #00c782; --accent-soft: #fff0ec; --hero-a: #111318; --hero-b: #28312d; --hero-c: #ff5b34; }
 .theme-family-wedding-elegant-warm { --bg: #fff8f4; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #2b1f2c; --muted: #7d6b7f; --line: #f0dfd8; --accent: #b84f7a; --accent-2: #c7974b; --accent-soft: #fff0e6; --hero-a: #3a2334; --hero-b: #8e456b; --hero-c: #d6a85b; }
@@ -2188,6 +2225,7 @@ const API_PROXY_PLACEHOLDERS = [];
 const APP_DOMAIN = {json.dumps(domain)};
 const CURRENCY = {json.dumps(currency_metadata, ensure_ascii=False)};
 const MONEY = CURRENCY.samples;
+const REGISTRY_SCREEN_ALIASES = {json.dumps(plan.get("clickable_aliases") if isinstance(plan.get("clickable_aliases"), dict) else {}, ensure_ascii=False)};
 
 const SCREEN_CONFIG = {{
   finance_insurance: {{
@@ -2654,6 +2692,17 @@ const SCREEN_CONFIG = {{
   }}
 }};
 
+SCREEN_CONFIG.generic = {{
+  dashboard: {{
+    title: {json.dumps(plan["app_name"])},
+    summary: {json.dumps(plan["preview_summary"])},
+    cards: {json.dumps([[item, "Registry-backed screen"] for item in plan["screens"][:6]], ensure_ascii=False)}
+  }}
+}};
+if (!SCREEN_CONFIG[APP_DOMAIN]) {{
+  SCREEN_CONFIG[APP_DOMAIN] = SCREEN_CONFIG.generic;
+}}
+
 const SCREEN_ALIASES = {{
   dashboard: "dashboard",
   preview: "dashboard",
@@ -2730,6 +2779,8 @@ const SCREEN_ALIASES = {{
   audit_status: "audit_status",
   submit_request: "service_request"
 }};
+
+Object.assign(SCREEN_ALIASES, REGISTRY_SCREEN_ALIASES);
 
 // TODO: Add API key billing layer before enabling paid runtime services.
 // TODO: Add runtime usage metering for every backend proxy call.
@@ -2850,6 +2901,11 @@ def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "preview_url": f"/generated-apps/{app_id}/index.html",
                 "source": "phase-32a-visual-theme-generator",
+                "sector_id": normalized.get("sector_id"),
+                "sector_confidence": normalized.get("sector_confidence"),
+                "sector_reasons": normalized.get("sector_reasons"),
+                "theme_family": normalized.get("theme_family") or visual_theme.get("family"),
+                "layout_family": normalized.get("layout_family") or visual_theme.get("layout_variant"),
                 "currency_code": normalized.get("currency_code"),
                 "currency_symbol": normalized.get("currency_symbol"),
                 "currency_locale": normalized.get("currency_locale"),
@@ -2859,6 +2915,7 @@ def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
                 "reference_image": normalized.get("reference_image") if normalized.get("image_guided") else None,
                 "visual_theme": visual_theme,
                 "design_inspiration_note": normalized.get("design_inspiration_note"),
+                "quality": quality_notes_for_generated_app(normalized),
                 "plan": normalized,
             },
             indent=2,

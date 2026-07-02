@@ -1,5 +1,14 @@
 # IdeasForgeAI Project Status
 
+## Phase 32B - Sector Intelligence Router + Template Registry
+
+Status: Completed locally, verification pending.
+
+- Added centralized sector registry entries for agriculture, insurance, mutual fund advisor, school, clinic, car detailing, gym, wedding/event lawn, restaurant, retail, government/civic, real estate, travel agency, salon, accounting/CA, logistics, construction, hotel/resort, NGO/social, and generic SaaS.
+- Added deterministic sector router with strong/weak/negative keyword scoring, priority handling, top candidates, confidence, clarification flags, and false-positive guards for crop health versus clinic and SIP/mutual fund versus insurance.
+- Added sector template helpers for app names, app types, users, features, screens, sample metrics/cards, CTAs, admin dashboard fields, safety rules, forbidden outputs, theme family, layout family, and clickable aliases.
+- Integrated sector metadata into product flow plans, generated app manifests, product-plan endpoint prompts/fallbacks, preview-plan endpoint prompts/fallbacks, product-flow orchestrator context, visual theme selection, currency resolution context, and quality alias helpers.
+- Preserved image-guided metadata-only behavior, backend-proxy-only runtime placeholders, generated frontend secret safety, mobile-first generated preview CSS, and desktop responsive layout behavior.
 ## Phase 32A-FIX-1 - Agriculture Detection Priority Fix
 
 Status: Completed locally, verification passed.

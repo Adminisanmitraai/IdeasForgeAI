@@ -6,6 +6,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from backend.product_flow import resolve_currency_profile
+from backend.sector_router import route_sector
+from backend.sector_templates import product_plan_from_sector
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 26D product plan generator"])
@@ -180,6 +182,33 @@ def _image_guidance_fields(reference_image: dict) -> dict:
 
 
 def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: dict | None = None) -> dict:
+    sector_result = route_sector(idea, reference_image=reference_image)
+    routed_plan = product_plan_from_sector(sector_result, idea, reference_image)
+    if sector_result["sector_id"] not in {"generic_saas"}:
+        routed_plan.update(
+            {
+                "productName": routed_plan["app_name"],
+                "sector": sector_result["sector_id"],
+                "outputType": routed_plan["app_type"],
+                "userRole": routed_plan["target_users"][0],
+                "targetUsers": routed_plan["target_users"],
+                "problemSolved": idea,
+                "coreWorkflow": [
+                    f"Open {routed_plan['app_name']}",
+                    "Review sector-specific dashboard metrics",
+                    "Open the relevant workflow screen",
+                    "Submit or save preview data locally",
+                    "Use admin dashboard fields for follow-up",
+                ],
+                "requiredScreens": routed_plan["screens"],
+                "dataInputs": routed_plan["data_needs"],
+                "aiAssistantBehavior": routed_plan["safety_rules"][:5],
+                "visualThemeFamily": routed_plan["theme_family"],
+                "layoutVariant": routed_plan["layout_family"],
+            }
+        )
+        return routed_plan
+
     lower_idea = idea.lower()
     agriculture_terms = [
         "farmer", "farm", "farming", "agriculture", "crop", "crop health", "mandi",
@@ -404,7 +433,8 @@ async def generate_product_plan(request: Request):
     output_type = _safe_text(payload.get("outputType"))
     reference_image = _normalize_reference_image(payload)
     client_currency = _client_currency_metadata(payload)
-    currency_profile = resolve_currency_profile(idea, client_currency)
+    sector_result = route_sector(idea, reference_image=reference_image, locale_currency_metadata=client_currency)
+    currency_profile = resolve_currency_profile(idea, client_currency, detected_domain=sector_result["sector_id"])
 
     if not is_openai_configured():
         return JSONResponse(
@@ -430,6 +460,8 @@ async def generate_product_plan(request: Request):
         "task": "Create an approval-ready IdeasForgeAI product plan.",
         "idea": idea,
         "sector": sector or "infer from idea",
+        "sectorRouter": sector_result,
+        "sectorTemplate": product_plan_from_sector(sector_result, idea, reference_image),
         "outputType": output_type or "infer best output type",
         "inputMode": "image-guided" if reference_image else "text-only",
         "referenceImage": reference_image,
@@ -509,6 +541,18 @@ async def generate_product_plan(request: Request):
     if reference_image and isinstance(plan, dict):
         plan.update(_image_guidance_fields(reference_image))
     if isinstance(plan, dict):
+        plan.update(
+            {
+                "sector_id": sector_result["sector_id"],
+                "sector_confidence": sector_result["confidence"],
+                "sector_reasons": sector_result["reasons"],
+                "sector_top_candidates": sector_result["top_candidates"],
+                "theme_family": sector_result["theme_family"],
+                "layout_family": sector_result["layout_family"],
+                "clarification_needed": sector_result["clarification_needed"],
+                "clarification_prompt": sector_result["clarification_prompt"],
+            }
+        )
         plan.update(currency_profile)
 
     return {

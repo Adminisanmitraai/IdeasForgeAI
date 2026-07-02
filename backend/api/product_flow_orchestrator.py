@@ -6,6 +6,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from backend.product_flow import create_product_plan, normalize_reference_image_metadata
+from backend.sector_router import route_sector
+from backend.sector_templates import create_sector_template
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 27E product flow orchestrator"])
@@ -133,6 +135,8 @@ def _client_currency_metadata(payload: dict) -> dict:
 
 
 def _fallback_flow(idea: str, user_role: str, user_goal: str) -> dict:
+    sector_result = route_sector(idea)
+    sector_template = create_sector_template(sector_result, idea)
     lower_idea = idea.lower()
     agriculture_terms = [
         "farmer", "farm", "farming", "agriculture", "crop", "crop health", "mandi",
@@ -184,6 +188,15 @@ def _fallback_flow(idea: str, user_role: str, user_goal: str) -> dict:
     return {
         "flowTitle": "IdeasForgeAI Product Flow",
         "ideaSummary": idea,
+        "sector_id": sector_result["sector_id"],
+        "sector_confidence": sector_result["confidence"],
+        "sector_reasons": sector_result["reasons"],
+        "sector_top_candidates": sector_result["top_candidates"],
+        "theme_family": sector_result["theme_family"],
+        "layout_family": sector_result["layout_family"],
+        "clarification_needed": sector_result["clarification_needed"],
+        "clarification_prompt": sector_result["clarification_prompt"],
+        "clickable_aliases": sector_template["clickable_aliases"],
         "detectedSector": sector,
         "userRole": user_role or "professional user",
         "selectedOutputType": output_type,
@@ -345,6 +358,7 @@ async def orchestrate_product_flow(request: Request):
     workflow = payload.get("workflow") or {}
     output_selection = payload.get("outputSelection") or {}
     reference_image = normalize_reference_image_metadata(payload)
+    sector_result = route_sector(idea, reference_image=reference_image, locale_currency_metadata=_client_currency_metadata(payload))
 
     input_size = (
         len(idea)
@@ -396,6 +410,8 @@ async def orchestrate_product_flow(request: Request):
         "userRole": user_role or "infer",
         "userGoal": user_goal or "infer",
         "classification": classification,
+        "sectorRouter": sector_result,
+        "sectorTemplate": create_sector_template(sector_result, idea, reference_image),
         "requirements": requirements,
         "workflow": workflow,
         "outputSelection": output_selection,
@@ -451,6 +467,7 @@ async def orchestrate_product_flow(request: Request):
             "content": "Product flow orchestrated. Code generation, export, deployment, database, upload, OCR, and voice remain disabled."
         },
         "flow": flow,
+        "sector_router": sector_result,
         "next": {
             "canClassifySector": True,
             "canExpandRequirements": True,
