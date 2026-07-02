@@ -583,16 +583,20 @@ const closeMenu = () => {
   menuToggle.setAttribute("aria-expanded", "false");
 };
 
+const setPreviewFullscreen = (isFullscreen) => {
+  studioShell?.classList.toggle("is-preview-fullscreen", isFullscreen);
+  fullscreenToggles.forEach((toggle) => {
+    toggle.setAttribute("aria-label", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
+    toggle.setAttribute("title", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
+    toggle.setAttribute("aria-pressed", String(isFullscreen));
+  });
+};
+
 const setPreviewOpen = (isOpen) => {
   studioShell?.classList.toggle("is-preview-open", isOpen);
   studioShell?.setAttribute("data-active-panel", isOpen ? "preview" : "chat");
   if (!isOpen) {
-    studioShell?.classList.remove("is-preview-fullscreen");
-    fullscreenToggles.forEach((toggle) => {
-      toggle.setAttribute("aria-label", "Open fullscreen preview");
-      toggle.setAttribute("title", "Open fullscreen preview");
-      toggle.setAttribute("aria-pressed", "false");
-    });
+    setPreviewFullscreen(false);
   }
   closeAttachmentMenu();
   closeMenu();
@@ -728,12 +732,7 @@ showChatButtons.forEach((button) => {
 fullscreenToggles.forEach((toggle) => {
   toggle.addEventListener("click", () => {
     const isFullscreen = !studioShell?.classList.contains("is-preview-fullscreen");
-    studioShell?.classList.toggle("is-preview-fullscreen", isFullscreen);
-    fullscreenToggles.forEach((item) => {
-      item.setAttribute("aria-label", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
-      item.setAttribute("title", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
-      item.setAttribute("aria-pressed", String(isFullscreen));
-    });
+    setPreviewFullscreen(isFullscreen);
   });
 });
 
@@ -799,7 +798,10 @@ menu?.addEventListener("click", (event) => {
 });
 
 chatInput?.addEventListener("input", resizeChatInput);
-chatInput?.addEventListener("focus", scrollMessagesToBottom);
+chatInput?.addEventListener("focus", () => {
+  scrollMessagesToBottom();
+  window.setTimeout(scrollMessagesToBottom, 250);
+});
 chatInput?.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
@@ -952,6 +954,10 @@ document.addEventListener("click", () => {
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
+    if (studioShell?.classList.contains("is-preview-fullscreen")) {
+      setPreviewFullscreen(false);
+      return;
+    }
     closeAttachmentMenu();
     closeMenu();
   }
