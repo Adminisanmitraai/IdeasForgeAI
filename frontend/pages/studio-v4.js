@@ -909,24 +909,32 @@ chatForm?.addEventListener("submit", async (event) => {
   }
 });
 
+const MOBILE_PANEL_QUERY = "(max-width: 768px)";
+const SWIPE_THRESHOLD_PX = 56;
+const SWIPE_DIRECTION_RATIO = 1.2;
+
 let swipeStartX = 0;
 let swipeStartY = 0;
+let swipeLastX = 0;
+let swipeLastY = 0;
 let swipeStartTarget = null;
 
 const canUseWorkspaceSwipe = (target) => {
-  if (window.matchMedia("(min-width: 769px)").matches) {
+  if (!target || !window.matchMedia(MOBILE_PANEL_QUERY).matches) {
     return false;
   }
 
   if (
     target.closest?.(
-      "button, textarea, input, select, a, iframe, [contenteditable='true'], .composer, .attachment-menu, .menu-popover, .plan-card, .generated-preview-frame"
+      "button, textarea, input, select, option, label, a, iframe, [contenteditable=''], [contenteditable='true'], .composer, .attachment-menu, .menu-popover, .plan-card, .generated-preview-frame"
     )
   ) {
     return false;
   }
 
-  const horizontalScroller = target.closest?.("[data-horizontal-scroll], .screen-tabs, .carousel, .cards-row");
+  const horizontalScroller = target.closest?.(
+    "[data-horizontal-scroll], [data-swipe-ignore], .screen-tabs, .carousel, .cards-row, .device-tabs, .mode-tabs"
+  );
   return !horizontalScroller;
 };
 
@@ -942,22 +950,41 @@ workspace?.addEventListener(
     }
     swipeStartX = touch.clientX;
     swipeStartY = touch.clientY;
+    swipeLastX = touch.clientX;
+    swipeLastY = touch.clientY;
     swipeStartTarget = event.target;
   },
   { passive: true }
 );
 
 workspace?.addEventListener(
-  "touchend",
+  "touchmove",
   (event) => {
-    const touch = event.changedTouches?.[0];
-    if (!touch || !swipeStartTarget || !canUseWorkspaceSwipe(swipeStartTarget)) {
+    const touch = event.touches?.[0];
+    if (!touch || !swipeStartTarget) {
       return;
     }
 
-    const deltaX = touch.clientX - swipeStartX;
-    const deltaY = touch.clientY - swipeStartY;
-    const isHorizontalSwipe = Math.abs(deltaX) > 74 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35;
+    swipeLastX = touch.clientX;
+    swipeLastY = touch.clientY;
+  },
+  { passive: true }
+);
+
+workspace?.addEventListener(
+  "touchend",
+  () => {
+    if (!swipeStartTarget || !canUseWorkspaceSwipe(swipeStartTarget)) {
+      swipeStartTarget = null;
+      return;
+    }
+
+    const deltaX = swipeLastX - swipeStartX;
+    const deltaY = swipeLastY - swipeStartY;
+    swipeStartTarget = null;
+
+    const isHorizontalSwipe =
+      Math.abs(deltaX) >= SWIPE_THRESHOLD_PX && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DIRECTION_RATIO;
     if (!isHorizontalSwipe) {
       return;
     }
@@ -972,6 +999,14 @@ workspace?.addEventListener(
     } else if (deltaX > 0 && studioShell?.classList.contains("is-preview-open")) {
       setPreviewOpen(false);
     }
+  },
+  { passive: true }
+);
+
+workspace?.addEventListener(
+  "touchcancel",
+  () => {
+    swipeStartTarget = null;
   },
   { passive: true }
 );

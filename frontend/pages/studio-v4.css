@@ -272,6 +272,7 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(37,132,25
   }
 
   .preview-panel {
+    position: relative;
     display: block;
     flex: 0 0 100vw;
     width: 100vw;
@@ -425,6 +426,10 @@ button:focus-visible, textarea:focus-visible { outline: 3px solid rgba(37,132,25
     top: max(8px, calc(env(safe-area-inset-top) + 8px));
     left: max(10px, calc(env(safe-area-inset-left) + 10px));
     z-index: 5;
+    display: none;
+  }
+
+  .studio-shell.is-preview-open .mobile-preview-rail {
     display: block;
   }
 
