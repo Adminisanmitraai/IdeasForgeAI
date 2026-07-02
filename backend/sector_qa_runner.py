@@ -45,6 +45,11 @@ def _flatten_visible_text(value: Any) -> str:
     return str(value)
 
 
+def _concept_text(plan: Dict[str, Any]) -> str:
+    concept = plan.get("premium_ui_image_concept")
+    return _flatten_visible_text(concept).lower() if isinstance(concept, dict) else ""
+
+
 def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     prompt = case["prompt"]
     sector_result = route_sector(prompt)
@@ -54,6 +59,7 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     entry = get_sector_entry(sector_result["sector_id"])
     failures: List[str] = []
     visible_text = f"{_flatten_visible_text(template)} {_flatten_visible_text(plan)}".lower()
+    concept_text = _concept_text(plan)
 
     expected_sector = case["expected_sector_id"]
     if sector_result["sector_id"] != expected_sector:
@@ -107,6 +113,23 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     ]
     if required_terms:
         failures.append("missing required visible terms: " + ", ".join(required_terms))
+
+    if case.get("requires_premium_ui_image_concept") and not isinstance(plan.get("premium_ui_image_concept"), dict):
+        failures.append("missing premium_ui_image_concept")
+
+    missing_concept_terms = [
+        term for term in case.get("required_concept_terms", [])
+        if term.strip().lower() not in concept_text
+    ]
+    if missing_concept_terms:
+        failures.append("missing concept terms: " + ", ".join(missing_concept_terms))
+
+    forbidden_concept_terms = [
+        term for term in case.get("forbidden_concept_terms", [])
+        if term.strip().lower() in concept_text
+    ]
+    if forbidden_concept_terms:
+        failures.append("forbidden concept terms appeared: " + ", ".join(forbidden_concept_terms))
 
     aliases = template.get("clickable_aliases", {})
     missing_aliases = [alias for alias in case.get("required_aliases", []) if alias not in aliases]
