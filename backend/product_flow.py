@@ -12,6 +12,7 @@ from backend.generated_app_quality_agent import quality_notes_for_generated_app
 from backend.sector_registry import LEGACY_DOMAIN_TO_SECTOR_ID, SECTOR_ID_TO_LEGACY_DOMAIN, get_sector_entry
 from backend.sector_router import route_sector
 from backend.sector_templates import product_plan_from_sector
+from backend.sector_ui_rendering import get_sector_ui_profile, sector_ui_class_names
 
 
 BACKEND_GENERATED_APPS_DIR = PROJECT_ROOT / "backend" / "generated_apps"
@@ -1020,7 +1021,7 @@ def _render_metric_cards(domain: str, plan: Dict[str, Any]) -> str:
         }.get(domain, [("Workflow Items", "1,248"), ("Approvals Due", "36"), ("New Requests", "18"), ("Completion", "82%")])
 
     return "\n".join(
-        f"<article><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></article>"
+        f'<article data-screen="{html.escape(_screen_slug(label))}"><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></article>'
         for label, value in metrics
     )
 
@@ -1085,10 +1086,35 @@ def _blueprint_text(plan: Dict[str, Any], key: str, fallback: str = "") -> str:
     return _clean_text(blueprint.get(key), fallback)
 
 
+def _sector_key_from_plan(plan: Dict[str, Any]) -> str:
+    blueprint = _blueprint_ui(plan)
+    sector_key = _clean_text(
+        blueprint.get("sector_key")
+        or plan.get("sector_id")
+        or plan.get("detected_sector")
+        or plan.get("detected_domain")
+        or plan.get("theme_family"),
+        "generic_saas",
+    )
+    if sector_key in LEGACY_DOMAIN_TO_SECTOR_ID:
+        return LEGACY_DOMAIN_TO_SECTOR_ID[sector_key]
+    return sector_key
+
+
+def _sector_ui_profile(plan: Dict[str, Any]) -> Dict[str, Any]:
+    return get_sector_ui_profile(_sector_key_from_plan(plan))
+
+
+def _premium_section(profile: Dict[str, Any], key: str, fallback: str) -> str:
+    sections = profile.get("premium_sections") if isinstance(profile.get("premium_sections"), dict) else {}
+    return _clean_text(sections.get(key), fallback)
+
+
 def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
     if not _blueprint_ui(plan):
         return ""
 
+    profile = _sector_ui_profile(plan)
     actions = _blueprint_list(plan, "primary_actions")
     sample_records = _blueprint_list(plan, "sample_records")
     guidance = _blueprint_text(plan, "empty_state_guidance")
@@ -1097,19 +1123,19 @@ def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
 
     action_cards = "\n".join(
         f"""
-        <article class="feature-card" data-screen="{html.escape(_screen_slug(action))}">
-          <span>Action</span>
+        <article class="feature-card premium-action-card" data-screen="{html.escape(_screen_slug(action))}">
+          <span>{html.escape(_display_label(profile.get("hero_kicker"), "Action"))}</span>
           <h3>{html.escape(action)}</h3>
-          <p>Blueprint-backed primary workflow ready for this prototype.</p>
+          <p>{html.escape(_premium_section(profile, "actions_summary", "Blueprint-backed primary workflow ready for this prototype."))}</p>
         </article>"""
         for action in actions
     )
     record_cards = "\n".join(
         f"""
-        <article class="package-card" data-screen="{html.escape(_screen_slug(record))}">
-          <span>Sample record</span>
+        <article class="package-card premium-record-card" data-screen="{html.escape(_screen_slug(record))}">
+          <span>{html.escape(_premium_section(profile, "records_kicker", "Sample record"))}</span>
           <h3>{html.escape(record)}</h3>
-          <p>Representative data row from the selected sector blueprint.</p>
+          <p>{html.escape(_premium_section(profile, "records_summary", "Representative data row from the selected sector blueprint."))}</p>
           <button type="button" data-screen="{html.escape(_screen_slug(record))}">Open {html.escape(record)}</button>
         </article>"""
         for record in sample_records
@@ -1133,8 +1159,8 @@ def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
             f"""
     <section class="content-block blueprint-panel">
       <div class="section-heading">
-        <span class="eyebrow">Blueprint actions</span>
-        <h2>Primary workflows from the sector blueprint</h2>
+        <span class="eyebrow">{html.escape(_premium_section(profile, "actions_kicker", "Blueprint actions"))}</span>
+        <h2>{html.escape(_premium_section(profile, "actions_title", "Primary workflows from the sector blueprint"))}</h2>
       </div>
       <div class="feature-grid">{action_cards}</div>
     </section>"""
@@ -1144,8 +1170,8 @@ def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
             f"""
     <section class="content-block blueprint-panel">
       <div class="section-heading">
-        <span class="eyebrow">Sample records</span>
-        <h2>Realistic seed examples for this preview</h2>
+        <span class="eyebrow">{html.escape(_premium_section(profile, "records_kicker", "Sample records"))}</span>
+        <h2>{html.escape(_premium_section(profile, "records_title", "Realistic seed examples for this preview"))}</h2>
       </div>
       <div class="package-grid">{record_cards}</div>
     </section>"""
@@ -1155,8 +1181,8 @@ def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
             f"""
     <section class="content-block blueprint-panel">
       <div class="section-heading">
-        <span class="eyebrow">Blueprint guidance</span>
-        <h2>Empty state, trust, and domain language</h2>
+        <span class="eyebrow">{html.escape(_premium_section(profile, "guidance_kicker", "Blueprint guidance"))}</span>
+        <h2>{html.escape(_premium_section(profile, "guidance_title", "Empty state, trust, and domain language"))}</h2>
       </div>
       <ul class="status-list">{''.join(guidance_items)}</ul>
     </section>"""
@@ -1463,7 +1489,7 @@ def _domain_theme_class(domain: str, theme: Dict[str, Any] | None = None) -> str
     return f"theme-{domain.replace('_', '-')}" if domain != "generic" else "theme-generic"
 
 
-def _render_app_visual(domain: str) -> str:
+def _render_app_visual(domain: str, profile: Dict[str, Any] | None = None) -> str:
     visual = {
         "car_detailing": ("Detail route", "Ceramic SUV", "Paid", ["Foam wash", "Interior reset", "Coating prep"]),
         "gym": ("Tonight", "HIIT 7 PM", "34 booked", ["Strength", "Yoga", "Diet consult"]),
@@ -1478,6 +1504,10 @@ def _render_app_visual(domain: str) -> str:
         "government": ("Civic desk", "Service status", "96%", ["Citizen", "Officer", "Audit"]),
     }.get(domain, ("Workspace", "Live preview", "82%", ["Intake", "Review", "Dashboard"]))
     title, focus, status, chips = visual
+    if profile:
+        title = _clean_text(profile.get("hero_kicker"), title)
+        focus = _clean_text(profile.get("hero_visual_title"), focus)
+        chips = _clean_list(profile.get("sample_component_labels"), chips)
     chip_markup = "".join(f"<span>{html.escape(chip)}</span>" for chip in chips)
     return f"""
         <aside class="hero-visual" aria-label="Generated app visual preview">
@@ -2084,6 +2114,9 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
     summary = html.escape(plan["preview_summary"])
     domain = _domain_from_plan(plan)
     theme = plan.get("visual_theme") if isinstance(plan.get("visual_theme"), dict) else select_visual_theme(plan, app_id)
+    sector_profile = _sector_ui_profile(plan)
+    sector_classes = html.escape(sector_ui_class_names(sector_profile))
+    hero_kicker = html.escape(_clean_text(sector_profile.get("hero_kicker"), plan["app_type"]))
     screen_labels = _domain_screen_labels(domain, plan)
     blueprint_actions = _blueprint_list(plan, "primary_actions")
     actions = {
@@ -2111,7 +2144,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body class="{_domain_theme_class(domain, theme)}{' is-image-guided' if plan.get('image_guided') else ''}">
+<body class="{_domain_theme_class(domain, theme)} {sector_classes}{' is-image-guided' if plan.get('image_guided') else ''}">
   <main class="app-shell">
     <header class="hero">
       <nav class="top-nav" aria-label="Prototype navigation">
@@ -2120,7 +2153,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
       </nav>
       <section class="hero-content">
         <div class="hero-copy">
-          <span class="eyebrow">{app_type}</span>
+          <span class="eyebrow">{hero_kicker}</span>
           <h1>{app_name}</h1>
           <p>{summary}</p>
           <div class="hero-actions">
@@ -2128,7 +2161,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
             <button type="button" class="ghost-button" data-screen="{html.escape(_screen_slug(secondary_action))}">{html.escape(secondary_action)}</button>
           </div>
         </div>
-        {_render_app_visual(domain)}
+        {_render_app_visual(domain, sector_profile)}
       </section>
     </header>
 
@@ -2240,6 +2273,15 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .metric-grid article::after { content: ""; position: absolute; inset: auto 14px 14px auto; width: 34px; height: 34px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 16%, transparent); }
 .metric-grid span { color: var(--muted); font-size: 12px; font-weight: 750; }
 .metric-grid strong { font-size: 28px; line-height: 1; overflow-wrap: anywhere; }
+.metric-elegant .metric-grid article { background: linear-gradient(160deg, #fff, color-mix(in srgb, var(--accent-soft) 78%, #fff)); border-color: color-mix(in srgb, var(--accent) 22%, var(--line)); }
+.metric-trust .metric-grid article { background: linear-gradient(160deg, #fff, color-mix(in srgb, var(--accent-soft) 84%, #fff)); }
+.metric-leaf .metric-grid article { background: linear-gradient(160deg, #fff, #f1fae9); }
+.metric-calm .metric-grid article { background: linear-gradient(160deg, #fff, #edfafa); }
+.metric-dark .metric-grid article { background: linear-gradient(160deg, color-mix(in srgb, var(--surface) 92%, #000), color-mix(in srgb, var(--accent-soft) 35%, var(--surface))); }
+.metric-energy .metric-grid article { background: linear-gradient(160deg, #fff, #fff3ef); }
+.metric-warm .metric-grid article { background: linear-gradient(160deg, #fff, #fff3e8); }
+.metric-gridline .metric-grid article { background-image: linear-gradient(160deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 62%, var(--surface-strong))), linear-gradient(90deg, color-mix(in srgb, var(--line) 55%, transparent) 1px, transparent 1px); background-size: auto, 18px 18px; }
+.metric-civic .metric-grid article { background: linear-gradient(160deg, #fff, #f2f6fb); border-style: solid; }
 .content-block { display: grid; gap: 14px; margin-top: 26px; }
 .interactive-screen-panel { display: grid; gap: 14px; margin-top: 14px; padding: 18px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 46%, var(--surface-strong))); }
 .interactive-screen-panel p { color: var(--muted); font-size: 14px; line-height: 1.5; }
@@ -2259,6 +2301,21 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .feature-card span { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 14px; background: var(--accent-soft); color: var(--accent); font-weight: 900; }
 .feature-card h3 { font-size: 18px; line-height: 1.2; }
 .feature-card p, .screen-section p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.blueprint-panel { position: relative; }
+.blueprint-panel::before { content: ""; width: 48px; height: 4px; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+.premium-action-card, .premium-record-card { border-color: color-mix(in srgb, var(--accent) 24%, var(--line)); }
+.premium-action-card { background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 58%, var(--surface-strong))); }
+.premium-record-card { box-shadow: 0 18px 38px rgba(20,28,45,.1); }
+.action-card-elegant .premium-action-card { background: linear-gradient(160deg, #fff, #fff2f6); }
+.action-card-organic .premium-action-card { background: linear-gradient(160deg, #fff, #eef9e8); }
+.action-card-trust .premium-action-card { background: linear-gradient(160deg, #fff, #edf4ff); }
+.action-card-calm .premium-action-card { background: linear-gradient(160deg, #fff, #eafafa); }
+.action-card-warm .premium-action-card { background: linear-gradient(160deg, #fff, #fff1e8); }
+.action-card-civic .premium-action-card { background: linear-gradient(160deg, #fff, #f1f5fa); }
+.record-card-event .premium-record-card { background: linear-gradient(180deg, #fff, #fff7ed); }
+.record-card-harvest .premium-record-card { background: linear-gradient(180deg, #fff, #f4fae9); }
+.record-card-ledger .premium-record-card { background: linear-gradient(180deg, #fff, #f4f8ff); }
+.record-card-clinic .premium-record-card { background: linear-gradient(180deg, #fff, #eefafa); }
 .screen-list { display: grid; gap: 12px; }
 .screen-section { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; }
 .screen-section button { flex: 0 0 auto; background: var(--accent); color: #fff; }
@@ -2285,6 +2342,12 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .status-list li { display: grid; gap: 5px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
 .status-list strong { color: var(--text); }
 .status-list span { color: var(--muted); line-height: 1.45; }
+.empty-state-event .status-list li:first-child, .trust-note-event .status-list li { background: linear-gradient(160deg, #fff, #fff4e8); }
+.empty-state-field .status-list li:first-child, .trust-note-advisory .status-list li { background: linear-gradient(160deg, #fff, #eff9e8); }
+.empty-state-clinic .status-list li:first-child, .trust-note-medical .status-list li { background: linear-gradient(160deg, #fff, #eafafa); }
+.empty-state-compliance .status-list li:first-child, .trust-note-compliance .status-list li { background: linear-gradient(160deg, #fff, #eef4ff); }
+.trust-note-privacy .status-list li { background: linear-gradient(160deg, #fff, #f6f7ff); }
+.trust-note-civic .status-list li { background: linear-gradient(160deg, #fff, #f2f6fb); }
 .card-style-sharp .metric-grid article, .card-style-sharp .feature-card, .card-style-sharp .screen-section, .card-style-sharp .package-card, .card-style-sharp .enquiry-card, .card-style-sharp .admin-card, .card-style-sharp .gallery-panel, .card-style-sharp .interactive-screen-panel, .card-style-sharp .screen-card { border-radius: 10px; }
 .card-style-soft .metric-grid article, .card-style-soft .feature-card, .card-style-soft .screen-section, .card-style-soft .package-card, .card-style-soft .enquiry-card, .card-style-soft .admin-card, .card-style-soft .gallery-panel, .card-style-soft .interactive-screen-panel, .card-style-soft .screen-card { border-radius: 18px; }
 .card-style-rounded .metric-grid article, .card-style-rounded .feature-card, .card-style-rounded .screen-section, .card-style-rounded .package-card, .card-style-rounded .enquiry-card, .card-style-rounded .admin-card, .card-style-rounded .gallery-panel, .card-style-rounded .interactive-screen-panel, .card-style-rounded .screen-card { border-radius: 24px; }
@@ -2342,13 +2405,16 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
     api_services = [_slugify(service) for service in plan["api_needs"]] or ["future-service"]
     domain = _domain_from_plan(plan)
+    sector_profile = _sector_ui_profile(plan)
     blueprint_actions = _blueprint_list(plan, "primary_actions")
     blueprint_records = _blueprint_list(plan, "sample_records")
     blueprint_guidance = _blueprint_text(plan, "empty_state_guidance", "Blueprint-backed preview screen.")
+    screen_summary = _premium_section(sector_profile, "actions_summary", blueprint_guidance)
+    record_summary = _premium_section(sector_profile, "records_summary", "Sample blueprint record for this generated app.")
     blueprint_screen_config = {
         _screen_slug(label): {
             "title": label,
-            "summary": blueprint_guidance,
+            "summary": screen_summary,
             "cards": [[action, "Primary action"] for action in blueprint_actions[:3]]
             or [[record, "Sample record"] for record in blueprint_records[:3]]
             or [[label, "Blueprint screen"]],
@@ -2360,7 +2426,7 @@ def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
             _screen_slug(action),
             {
                 "title": action,
-                "summary": "Primary blueprint workflow ready for local preview.",
+                "summary": screen_summary,
                 "cards": [[record, "Sample record"] for record in blueprint_records[:3]]
                 or [[action, "Action preview"]],
             },
@@ -2370,7 +2436,7 @@ def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
             _screen_slug(record),
             {
                 "title": record,
-                "summary": "Sample blueprint record for this generated app.",
+                "summary": record_summary,
                 "cards": [[action, "Related action"] for action in blueprint_actions[:3]]
                 or [[record, "Sample record"]],
             },

@@ -1,5 +1,14 @@
 # IdeasForgeAI Project Status
 
+## Phase 34 - Sector UI Rendering Engine
+
+Status: In progress locally, validation pending.
+
+- Added backend-only sector UI rendering guidance for all 20 supported sectors.
+- Integrated sector-specific hero wording, visual titles, premium blueprint sections, action cards, sample record cards, empty-state guidance, trust notes, and domain terms into generated static previews.
+- Files changed: `backend/sector_ui_rendering.py`, `backend/product_flow.py`, `PROJECT_STATUS.md`.
+- Validation commands: `python -m py_compile backend/product_flow.py backend/sector_ui_rendering.py backend/blueprint_ui_adapter.py backend/main.py backend/sector_blueprints.py backend/sector_qa_runner.py backend/generated_app_qa.py backend/sector_test_cases.py`; `python backend/sector_qa_runner.py`; Phase 34 generated app smoke test.
+- Safety notes: backend renderer only; no Studio V4 frontend, deployment settings, secrets, `.env`, Render config, external assets, external network calls, or KisanMitraAI files.
 ## Phase 32C - Sector Test Suite + Auto QA
 
 Status: Completed locally, verification passed.
