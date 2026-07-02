@@ -12813,3 +12813,23 @@ Safety:
 - No deployment settings touched.
 - No API keys or secrets touched.
 - No KisanMitraAI files touched.
+
+## Phase 33B — Blueprint-to-Generated-App UI Integration
+
+Status: IN PROGRESS
+
+Connected Phase 33A sector blueprints into the Studio V4 generated app plan flow.
+
+Files:
+- backend/blueprint_ui_adapter.py
+- backend/main.py
+
+Validation commands:
+- python -m py_compile backend/blueprint_ui_adapter.py backend/main.py
+- python backend/sector_qa_runner.py
+
+Safety:
+- No frontend/mobile files touched.
+- No deployment settings touched.
+- No API keys or secrets touched.
+- No KisanMitraAI files touched.
