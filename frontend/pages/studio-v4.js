@@ -18,6 +18,7 @@ const menu = document.querySelector("[data-menu]");
 const fullscreenToggles = document.querySelectorAll("[data-fullscreen-toggle]");
 const previewMount = document.querySelector("[data-preview-mount]");
 const workspace = document.querySelector(".workspace");
+const mobilePreviewRail = document.querySelector(".mobile-preview-rail");
 
 let currentPlan = null;
 let currentPlanId = 0;
@@ -621,6 +622,19 @@ const setPreviewFullscreen = (isFullscreen) => {
     toggle.setAttribute("title", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
     toggle.setAttribute("aria-pressed", String(isFullscreen));
   });
+  syncMobilePreviewRail();
+};
+
+const syncMobilePreviewRail = () => {
+  const isMobile = window.matchMedia(MOBILE_PANEL_QUERY).matches;
+  const isPreviewOpen = studioShell?.getAttribute("data-active-panel") === "preview";
+  const isFullscreen = studioShell?.classList.contains("is-preview-fullscreen");
+  const shouldShow = Boolean(isMobile && isPreviewOpen && !isFullscreen);
+  if (!mobilePreviewRail) {
+    return;
+  }
+  mobilePreviewRail.hidden = !shouldShow;
+  mobilePreviewRail.setAttribute("aria-hidden", String(!shouldShow));
 };
 
 const setPreviewOpen = (isOpen) => {
@@ -631,6 +645,7 @@ const setPreviewOpen = (isOpen) => {
   }
   closeAttachmentMenu();
   closeMenu();
+  syncMobilePreviewRail();
 };
 
 const renderPreviewPlaceholder = (plan, message = "Generated preview placeholder is ready.") => {
@@ -889,7 +904,7 @@ chatForm?.addEventListener("submit", async (event) => {
     });
     await waitForThinkingMinimum(thinkingStartedAt);
     removeThinkingMessage(thinkingMessage);
-    completeExperienceCard({ removeHost: true });
+    clearActiveExperience({ removeHost: true });
     if (requestPlanId !== currentPlanId) {
       return;
     }
@@ -918,6 +933,26 @@ let swipeStartY = 0;
 let swipeLastX = 0;
 let swipeLastY = 0;
 let swipeStartTarget = null;
+let swipeAxisLock = null;
+let swipeStartPanel = "chat";
+
+const setWorkspaceDragOffset = (offset) => {
+  workspace?.style.setProperty("--workspace-drag-offset", `${offset}px`);
+};
+
+const resetWorkspaceDragState = () => {
+  studioShell?.classList.remove("is-swipe-dragging");
+  setWorkspaceDragOffset(0);
+};
+
+const canSwipeToPreview = () => true;
+
+const getSwipeDragOffset = (deltaX) => {
+  if (swipeStartPanel === "preview") {
+    return deltaX < 0 ? deltaX * 0.18 : deltaX;
+  }
+  return deltaX > 0 ? deltaX * 0.18 : deltaX;
+};
 
 const canUseWorkspaceSwipe = (target) => {
   if (!target || !window.matchMedia(MOBILE_PANEL_QUERY).matches) {
@@ -953,6 +988,9 @@ workspace?.addEventListener(
     swipeLastX = touch.clientX;
     swipeLastY = touch.clientY;
     swipeStartTarget = event.target;
+    swipeAxisLock = null;
+    swipeStartPanel = studioShell?.getAttribute("data-active-panel") || "chat";
+    resetWorkspaceDragState();
   },
   { passive: true }
 );
@@ -967,6 +1005,30 @@ workspace?.addEventListener(
 
     swipeLastX = touch.clientX;
     swipeLastY = touch.clientY;
+    const deltaX = swipeLastX - swipeStartX;
+    const deltaY = swipeLastY - swipeStartY;
+
+    if (!swipeAxisLock) {
+      if (Math.abs(deltaY) > 10 && Math.abs(deltaY) > Math.abs(deltaX) * 1.05) {
+        swipeAxisLock = "vertical";
+        resetWorkspaceDragState();
+        return;
+      }
+      if (Math.abs(deltaX) > 10 && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DIRECTION_RATIO) {
+        swipeAxisLock = "horizontal";
+      }
+    }
+
+    if (swipeAxisLock !== "horizontal") {
+      return;
+    }
+
+    if (swipeStartPanel === "chat" && !canSwipeToPreview()) {
+      return;
+    }
+
+    studioShell?.classList.add("is-swipe-dragging");
+    setWorkspaceDragOffset(getSwipeDragOffset(deltaX));
   },
   { passive: true }
 );
@@ -976,27 +1038,29 @@ workspace?.addEventListener(
   () => {
     if (!swipeStartTarget || !canUseWorkspaceSwipe(swipeStartTarget)) {
       swipeStartTarget = null;
+      swipeAxisLock = null;
+      resetWorkspaceDragState();
       return;
     }
 
     const deltaX = swipeLastX - swipeStartX;
     const deltaY = swipeLastY - swipeStartY;
     swipeStartTarget = null;
+    const wasHorizontalSwipe = swipeAxisLock === "horizontal";
+    swipeAxisLock = null;
+    resetWorkspaceDragState();
 
     const isHorizontalSwipe =
-      Math.abs(deltaX) >= SWIPE_THRESHOLD_PX && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DIRECTION_RATIO;
+      wasHorizontalSwipe &&
+      Math.abs(deltaX) >= SWIPE_THRESHOLD_PX &&
+      Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DIRECTION_RATIO;
     if (!isHorizontalSwipe) {
       return;
     }
 
-    const previewExists =
-      studioShell?.classList.contains("has-generated-preview") ||
-      isGenerating ||
-      previewMount?.classList.contains("generated-preview-placeholder");
-
-    if (deltaX < 0 && previewExists) {
+    if (deltaX < 0 && swipeStartPanel === "chat" && canSwipeToPreview()) {
       setPreviewOpen(true);
-    } else if (deltaX > 0 && studioShell?.classList.contains("is-preview-open")) {
+    } else if (deltaX > 0 && swipeStartPanel === "preview") {
       setPreviewOpen(false);
     }
   },
@@ -1007,6 +1071,8 @@ workspace?.addEventListener(
   "touchcancel",
   () => {
     swipeStartTarget = null;
+    swipeAxisLock = null;
+    resetWorkspaceDragState();
   },
   { passive: true }
 );
@@ -1027,4 +1093,7 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+window.addEventListener("resize", syncMobilePreviewRail);
+
 studioShell?.setAttribute("data-active-panel", studioShell.classList.contains("is-preview-open") ? "preview" : "chat");
+syncMobilePreviewRail();

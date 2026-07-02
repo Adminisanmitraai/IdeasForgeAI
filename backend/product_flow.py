@@ -733,27 +733,70 @@ def _is_tutor_idea(lower_idea: str) -> bool:
     return any(keyword in lower_idea for keyword in TUTOR_KEYWORDS)
 
 
+def _tutor_product_title_for_idea(lower_idea: str) -> str:
+    if "coaching" in lower_idea:
+        return "Coaching Class App"
+    if "tuition" in lower_idea:
+        return "Tuition Teacher App"
+    return "Private Tutor App"
+
+
 def _apply_tutor_plan_language(plan: Dict[str, Any]) -> Dict[str, Any]:
-    plan["app_name"] = "Private Tutor App"
-    plan["product_name"] = "Private Tutor App"
-    plan["app_type"] = "private tutor class management app"
-    plan["target_users"] = ["private tutors", "students", "parents"]
+    lower_idea = _clean_text(plan.get("idea")).lower()
+    tutor_title = _tutor_product_title_for_idea(lower_idea)
+    plan["app_name"] = tutor_title
+    plan["product_name"] = tutor_title
+    plan["app_type"] = "private tutor, tuition, and coaching class management app"
+    plan["target_users"] = ["private tutors", "tuition teachers", "coaching class owners", "students", "parents"]
     plan["core_features"] = [
         "student records",
-        "class and batch schedule",
+        "student batches",
+        "class schedule",
         "attendance tracking",
-        "homework updates",
-        "fee status",
+        "homework and assignments",
+        "fees pending tracker",
         "parent messages",
-        "class dashboard",
+        "student progress",
+        "test results",
+        "payment reminders",
+        "tutor dashboard",
     ]
-    plan["screens"] = ["Home", "Students", "Classes", "Attendance", "Homework", "Fees", "Parent Messages", "Schedule", "Admin Dashboard"]
-    plan["data_needs"] = ["student name", "class or batch", "attendance status", "homework", "fee status", "parent mobile", "class schedule"]
-    plan["api_needs"] = ["parent notification via backend proxy", "fee status via backend proxy", "attendance sync via backend proxy", "schedule sync via backend proxy"]
+    plan["screens"] = [
+        "Tutor Dashboard",
+        "Students",
+        "Student Batches",
+        "Class Schedule",
+        "Attendance",
+        "Homework",
+        "Fees Pending",
+        "Parent Messages",
+        "Student Progress",
+        "Test Results",
+        "Notes & Assignments",
+        "Payment Reminders",
+    ]
+    plan["data_needs"] = [
+        "student name",
+        "batch or class",
+        "attendance status",
+        "homework and notes",
+        "fee status",
+        "parent mobile",
+        "class schedule",
+        "test result summary",
+    ]
+    plan["api_needs"] = [
+        "parent notification via backend proxy",
+        "fee reminder via backend proxy",
+        "attendance sync via backend proxy",
+        "class schedule sync via backend proxy",
+    ]
     plan["monetization"] = ["monthly tutor subscription", "per-student class management plan", "parent communication add-on"]
+    plan["tutor_mode"] = True
+    plan["tutor_subdomain"] = "private_tutor"
     plan["preview_summary"] = (
-        "Private Tutor App helps tutors manage students, classes, attendance, homework, fees, "
-        "parent messages, schedules, and student records from one mobile dashboard."
+        f"{tutor_title} helps tutors run student batches, class schedules, attendance, homework, fees pending, "
+        "parent messages, student progress, test results, notes, and payment reminders from one tutor dashboard."
     )
     return plan
 
@@ -942,6 +985,10 @@ def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
         normalized["preview_summary"] = _clean_text(plan.get("preview_summary"), normalized["preview_summary"])
 
     normalized["next_action"] = "approve_generate"
+    if plan.get("tutor_mode"):
+        normalized["tutor_mode"] = True
+    if _clean_text(plan.get("tutor_subdomain")):
+        normalized["tutor_subdomain"] = _clean_text(plan.get("tutor_subdomain"))
     normalized = _apply_currency_profile(normalized, f"{idea} {domain_text}", plan)
     if reference_image:
         normalized = _apply_image_guidance(normalized, reference_image)
@@ -2615,6 +2662,7 @@ def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
 // Internal runtime proxy placeholders only: {json.dumps([f"/api/runtime/{app_id}/{service}" for service in api_services])}
 const API_PROXY_PLACEHOLDERS = [];
 const APP_DOMAIN = {json.dumps(domain)};
+const IS_TUTOR_MODE = {json.dumps(bool(plan.get("tutor_mode")))};
 const CURRENCY = {json.dumps(currency_metadata, ensure_ascii=False)};
 const MONEY = CURRENCY.samples;
 const REGISTRY_SCREEN_ALIASES = {json.dumps(plan.get("clickable_aliases") if isinstance(plan.get("clickable_aliases"), dict) else {}, ensure_ascii=False)};
@@ -2918,9 +2966,32 @@ const SCREEN_CONFIG = {{
   }},
   school: {{
     dashboard: {{
-      title: "Parent Dashboard",
-      summary: "Attendance, notices, homework, fees, exam results, and teacher contact.",
-      cards: [["Attendance", "92%"], ["Homework", "3 due"], ["Fees", "Term 2 pending"]]
+      title: IS_TUTOR_MODE ? "Tutor Dashboard" : "Parent Dashboard",
+      summary: IS_TUTOR_MODE
+        ? "Student batches, class schedule, attendance, homework, fees pending, and parent messages."
+        : "Attendance, notices, homework, fees, exam results, and teacher contact.",
+      cards: IS_TUTOR_MODE
+        ? [["Student Batches", "6 active"], ["Attendance", "92%"], ["Fees Pending", "12 dues"]]
+        : [["Attendance", "92%"], ["Homework", "3 due"], ["Fees", "Term 2 pending"]]
+    }},
+    students: {{
+      title: "Students",
+      summary: "Tutor-ready student records with batch, progress, and fee status.",
+      cards: [["Aarohi Sharma", "Batch A"], ["Vivaan Mehta", "Fees pending"], ["Riya Patel", "Progress updated"]]
+    }},
+    classes: {{
+      title: IS_TUTOR_MODE ? "Student Batches" : "Classes",
+      summary: IS_TUTOR_MODE
+        ? "Batch-wise view for tutoring groups, subject focus, and upcoming sessions."
+        : "Class and section overview for school coordination.",
+      cards: IS_TUTOR_MODE
+        ? [["Batch A", "Math revision"], ["Batch B", "Science practice"], ["One-to-one", "English grammar"]]
+        : [["Class 5A", "24 students"], ["Class 6B", "Homework pending"], ["Class 8", "Exam prep"]]
+    }},
+    schedule: {{
+      title: "Class Schedule",
+      summary: "Upcoming tutoring sessions, reschedules, and parent-visible timing updates.",
+      cards: [["4:00 PM", "Batch A Math"], ["5:30 PM", "Science practice"], ["7:00 PM", "Parent review call"]]
     }},
     parent_portal: {{
       title: "Parent Portal",
@@ -2938,9 +3009,38 @@ const SCREEN_CONFIG = {{
       cards: [["Math", "Due tomorrow"], ["Science", "Submitted"], ["English", "Reading task"]]
     }},
     fees: {{
-      title: "Fees",
-      summary: "Fee status, receipts, reminders, and admin follow-up states.",
-      cards: [["Term 2", "Pending"], ["Transport", "Paid"], ["Receipt", "Ready"]]
+      title: IS_TUTOR_MODE ? "Fees Pending" : "Fees",
+      summary: IS_TUTOR_MODE
+        ? "Pending fees, receipts, monthly dues, and reminder status for tutor collections."
+        : "Fee status, receipts, reminders, and admin follow-up states.",
+      cards: IS_TUTOR_MODE
+        ? [["Aarohi Sharma", "Pending"], ["Batch B", "Paid"], ["July Reminder", "Ready"]]
+        : [["Term 2", "Pending"], ["Transport", "Paid"], ["Receipt", "Ready"]]
+    }},
+    parent_messages: {{
+      title: "Parent Messages",
+      summary: "Tutor-to-parent updates for attendance, homework, and progress follow-up.",
+      cards: [["Homework reminder", "Sent to 12 parents"], ["Attendance note", "3 pending replies"], ["Fee reminder", "Ready to send"]]
+    }},
+    student_progress: {{
+      title: "Student Progress",
+      summary: "Track concept coverage, weak topics, and tutor remarks for each student.",
+      cards: [["Fractions", "Improving"], ["Reading", "Needs revision"], ["Weekly score", "82%"]]
+    }},
+    test_results: {{
+      title: "Test Results",
+      summary: "Recent test marks, batch comparisons, and follow-up coaching notes.",
+      cards: [["Math Test", "18/20"], ["Science Quiz", "16/20"], ["Revision Test", "Scheduled"]]
+    }},
+    notes_assignments: {{
+      title: "Notes & Assignments",
+      summary: "Share notes, assignments, and homework follow-ups for each batch.",
+      cards: [["Fractions worksheet", "Assigned"], ["Grammar notes", "Shared"], ["Science revision", "Due tomorrow"]]
+    }},
+    payment_reminders: {{
+      title: "Payment Reminders",
+      summary: "Payment reminder queue for overdue monthly tuition and coaching fees.",
+      cards: [["Batch A", "3 reminders"], ["Riya Patel", "Due tomorrow"], ["Auto reminders", "Ready"]]
     }},
     parent_notices: {{
       title: "Parent Notices",
@@ -3121,6 +3221,11 @@ const SCREEN_ALIASES = {{
   doctor_schedule: "doctor_schedule",
   view_module: "parent_portal",
   send_notice: "parent_notices",
+  parent_messages: "parent_messages",
+  student_progress: "student_progress",
+  test_results: "test_results",
+  notes_assignments: "notes_assignments",
+  payment_reminders: "payment_reminders",
   parent_portal: "parent_portal",
   attendance: "attendance",
   save_stock: "inventory",
