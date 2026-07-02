@@ -86,6 +86,19 @@ CLINIC_KEYWORDS = [
     "opd",
 ]
 
+TUTOR_KEYWORDS = [
+    "private tutor",
+    "private tutors",
+    "tutor",
+    "tutors",
+    "tuition",
+    "tuition teacher",
+    "coaching class",
+    "private class",
+    "student batch",
+    "tutor student",
+]
+
 MUTUAL_FUND_KEYWORDS = [
     "mutual fund",
     "sip",
@@ -628,16 +641,16 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "preview_summary": "Take menu orders, table bookings, kitchen queue updates, payments, and repeat customer requests from one restaurant app.",
     },
     "school": {
-        "keywords": ["school", "parents", "homework", "fees", "attendance", "education", "student", "teacher"],
+        "keywords": ["school", "parents", "homework", "fees", "attendance", "education", "student", "teacher", *TUTOR_KEYWORDS],
         "app_name": "School Parent Connect",
-        "app_type": "school parent communication and attendance app",
-        "target_users": ["school admins", "teachers", "parents", "students"],
-        "core_features": ["attendance tracking", "homework updates", "fee status", "parent notices", "teacher remarks", "student records", "class dashboard"],
-        "screens": ["Home", "Parent Portal", "Attendance", "Homework", "Fees", "Parent Notices", "Student Records", "Admin Dashboard"],
-        "data_needs": ["student name", "class", "attendance status", "homework", "fee status", "parent mobile", "teacher remarks"],
-        "api_needs": ["parent notification via backend proxy", "fee status via backend proxy", "attendance sync via backend proxy"],
-        "monetization": ["monthly school subscription", "per-student communication plan", "premium analytics for administrators"],
-        "preview_summary": "Give parents a clear portal for attendance, homework, fee status, notices, teacher remarks, and student records.",
+        "app_type": "school, tutor, parent communication, and attendance app",
+        "target_users": ["private tutors", "teachers", "parents", "students"],
+        "core_features": ["student records", "class and batch schedule", "attendance tracking", "homework updates", "fee status", "parent messages", "class dashboard"],
+        "screens": ["Home", "Students", "Classes", "Attendance", "Homework", "Fees", "Parent Messages", "Schedule", "Admin Dashboard"],
+        "data_needs": ["student name", "class or batch", "attendance status", "homework", "fee status", "parent mobile", "teacher remarks", "class schedule"],
+        "api_needs": ["parent notification via backend proxy", "fee status via backend proxy", "attendance sync via backend proxy", "class schedule sync via backend proxy"],
+        "monetization": ["monthly tutor subscription", "per-student communication plan", "premium analytics for educators"],
+        "preview_summary": "Give tutors and parents a clear portal for students, classes, attendance, homework, fees, parent messages, schedule, and student records.",
     },
     "retail": {
         "keywords": ["shop", "inventory", "retail", "stock", "store", "catalog", "ecommerce"],
@@ -716,6 +729,35 @@ def _detect_domain(text: str) -> str:
     return SECTOR_ID_TO_LEGACY_DOMAIN.get(sector_id, "generic")
 
 
+def _is_tutor_idea(lower_idea: str) -> bool:
+    return any(keyword in lower_idea for keyword in TUTOR_KEYWORDS)
+
+
+def _apply_tutor_plan_language(plan: Dict[str, Any]) -> Dict[str, Any]:
+    plan["app_name"] = "Private Tutor App"
+    plan["product_name"] = "Private Tutor App"
+    plan["app_type"] = "private tutor class management app"
+    plan["target_users"] = ["private tutors", "students", "parents"]
+    plan["core_features"] = [
+        "student records",
+        "class and batch schedule",
+        "attendance tracking",
+        "homework updates",
+        "fee status",
+        "parent messages",
+        "class dashboard",
+    ]
+    plan["screens"] = ["Home", "Students", "Classes", "Attendance", "Homework", "Fees", "Parent Messages", "Schedule", "Admin Dashboard"]
+    plan["data_needs"] = ["student name", "class or batch", "attendance status", "homework", "fee status", "parent mobile", "class schedule"]
+    plan["api_needs"] = ["parent notification via backend proxy", "fee status via backend proxy", "attendance sync via backend proxy", "schedule sync via backend proxy"]
+    plan["monetization"] = ["monthly tutor subscription", "per-student class management plan", "parent communication add-on"]
+    plan["preview_summary"] = (
+        "Private Tutor App helps tutors manage students, classes, attendance, homework, fees, "
+        "parent messages, schedules, and student records from one mobile dashboard."
+    )
+    return plan
+
+
 def _domain_from_plan(plan: Dict[str, Any]) -> str:
     explicit_sector = _clean_text(plan.get("sector_id") or plan.get("detected_sector") or plan.get("detectedSector"))
     if explicit_sector:
@@ -779,6 +821,8 @@ def create_product_plan(
             "forbidden_outputs": get_sector_entry(sector_result["sector_id"]).get("forbidden_outputs", []),
             "next_action": "approve_generate",
         }
+        if domain == "school" and _is_tutor_idea(lower_idea):
+            plan = _apply_tutor_plan_language(plan)
         return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
 
     if sector_result["sector_id"] != "generic_saas":
@@ -811,11 +855,11 @@ def create_product_plan(
         target_users = ["home chefs", "restaurant teams", "repeat customers"]
         data_needs = ["menus", "orders", "delivery slots", "customer feedback"]
         api_needs = ["WhatsApp notifications", "payment gateway", "delivery status"]
-    elif any(word in lower_idea for word in ["student", "school", "course", "learn", "teacher"]):
+    elif any(word in lower_idea for word in ["student", "school", "course", "learn", "teacher", *TUTOR_KEYWORDS]):
         app_type = "education workflow app"
-        target_users = ["students", "teachers", "parents"]
-        data_needs = ["courses", "assignments", "progress", "resources"]
-        api_needs = ["content library", "calendar reminders"]
+        target_users = ["students", "teachers", "parents", "private tutors"]
+        data_needs = ["students", "classes", "attendance", "homework", "fees", "parent messages"]
+        api_needs = ["parent notifications", "calendar reminders", "fee status sync"]
         monetization = "per-classroom or per-student subscription"
 
     app_name = _title_from_idea(clean_idea)
@@ -993,8 +1037,34 @@ def _render_metric_cards(domain: str, plan: Dict[str, Any]) -> str:
     money = _currency_sample_values(plan)
     blueprint_cards = _blueprint_list(plan, "dashboard_cards")
     if blueprint_cards:
-        sample_values = ["12", "8", money["serviceLarge"], money["weddingPipeline"], "96%"]
-        metrics = [(label, sample_values[index % len(sample_values)]) for index, label in enumerate(blueprint_cards)]
+        sector_values = {
+            "school": {
+                "attendance": "12",
+                "homework due": "8",
+                "homework": "8",
+                "parent messages": "249",
+                "messages": "249",
+                "class notices": "38",
+                "notices": "38",
+                "fees pending": f"{money['feesPending']} fees",
+                "fees": f"{money['feesPending']} fees",
+            },
+            "agriculture": {
+                "crop health": "86%",
+                "today weather": "31C",
+                "weather": "31C",
+                "mandi price": money["mandiRate"],
+                "mandi rate": money["mandiRate"],
+                "farm tasks": "8",
+                "expected income": money["profitEstimate"],
+            },
+        }.get(domain, {})
+        generic_values = ["12", "8", "96%", "38", "24"]
+        metrics = []
+        for index, label in enumerate(blueprint_cards):
+            normalized_label = str(label).strip().lower()
+            value = sector_values.get(normalized_label, generic_values[index % len(generic_values)])
+            metrics.append((label, value))
     else:
         metrics = {
             "car_detailing": [
@@ -1011,12 +1081,12 @@ def _render_metric_cards(domain: str, plan: Dict[str, Any]) -> str:
                 ("Package Revenue", money["weddingPipeline"]),
             ],
             "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", money["dailyRevenue"])],
-            "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
+            "school": [("Attendance", "12"), ("Homework Due", "8"), ("Parent Messages", "249"), ("Class Notices", "38")],
             "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", money["retailRevenue"])],
             "clinic": [("Appointments", "42"), ("Queue Status", "8 waiting"), ("Follow-ups", "16"), ("Open Slots", "11")],
             "mutual_fund_advisor": [("SIP Amount", f"{money['sipAmount']}/mo"), ("Portfolio Value", money["portfolioValue"]), ("Advisory Leads", "28"), ("KYC Pending", "12")],
             "finance_insurance": [("Active Policies", "248"), ("Quote Requests", "31"), ("Claims Open", "12"), ("Renewals", "44")],
-            "agriculture": [("Crop Health", "86%"), ("Weather Risk", "Low"), ("Mandi Rate", money["mandiRate"]), ("Farm Tasks", "9")],
+            "agriculture": [("Crop Health", "86%"), ("Today Weather", "31C"), ("Mandi Price", money["mandiRate"]), ("Farm Tasks", "8")],
             "government": [("Citizen Services", "74"), ("Officer Reviews", "18"), ("Audit Status", "96%"), ("Pending Cases", "11")],
         }.get(domain, [("Workflow Items", "1,248"), ("Approvals Due", "36"), ("New Requests", "18"), ("Completion", "82%")])
 
@@ -1329,6 +1399,37 @@ def _render_screen_nav(labels: List[str]) -> str:
     )
 
 
+def _strip_universal_screen_config(script: str) -> str:
+    start_marker = "const SCREEN_CONFIG = {\n"
+    end_marker = "SCREEN_CONFIG.generic = {"
+    start = script.find(start_marker)
+    end = script.find(end_marker)
+    if start == -1 or end == -1 or end <= start:
+        return script
+    return f"{script[:start]}const SCREEN_CONFIG = {{}};\n\n{script[end:]}"
+
+
+def _strip_inactive_domain_aliases(script: str, domain: str) -> str:
+    if domain == "agriculture":
+        return script
+    agriculture_alias_terms = (
+        "crop",
+        "mandi",
+        "satellite",
+        "farmer",
+        "farm_records",
+        "view_field",
+        "save_update",
+    )
+    kept_lines = []
+    for line in script.splitlines():
+        normalized = line.strip().lower()
+        if any(term in normalized for term in agriculture_alias_terms):
+            continue
+        kept_lines.append(line)
+    return "\n".join(kept_lines) + ("\n" if script.endswith("\n") else "")
+
+
 def _theme_hash_key(plan: Dict[str, Any], app_id: str, domain: str) -> str:
     reference = plan.get("reference_image") if isinstance(plan.get("reference_image"), dict) else {}
     reference_bits = " ".join(
@@ -1384,6 +1485,7 @@ def _currency_sample_values(plan: Dict[str, Any]) -> Dict[str, str]:
             "sipAmount": f"{symbol}5,000",
             "monthlyInvestment": f"{symbol}10,000",
             "portfolioValue": f"{symbol}4.6L",
+            "feesPending": f"{symbol}38k",
         }
     if code == "AED":
         prefix = "AED "
@@ -1416,6 +1518,7 @@ def _currency_sample_values(plan: Dict[str, Any]) -> Dict[str, str]:
         "sipAmount": f"{prefix}100",
         "monthlyInvestment": f"{prefix}250",
         "portfolioValue": f"{prefix}4.6k",
+        "feesPending": f"{prefix}38k",
     }
 
 
@@ -2398,7 +2501,7 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .image-guided-grid p { color: var(--muted); font-size: 14px; line-height: 1.5; }
 .image-guided-grid ul { display: grid; gap: 8px; margin: 0; padding-left: 18px; color: var(--text); }
 @media (max-width: 640px) {
-  .app-shell { padding: 72px 10px max(108px, calc(env(safe-area-inset-bottom) + 88px)); }
+  .app-shell { padding: 18px 10px max(108px, calc(env(safe-area-inset-bottom) + 88px)); }
   .hero { border-radius: 22px; }
   .hero-content { padding: 32px 16px 20px; }
   .phone-mock { max-width: none; }
@@ -2412,7 +2515,7 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 @media (max-width: 720px) {
   html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
   body { background: var(--bg); }
-  .app-shell { width: 100%; max-width: 100%; padding: max(36px, calc(env(safe-area-inset-top) + 30px)) 10px max(112px, calc(env(safe-area-inset-bottom) + 96px)); }
+  .app-shell { width: 100%; max-width: 100%; padding: max(12px, calc(env(safe-area-inset-top) + 8px)) 10px max(112px, calc(env(safe-area-inset-bottom) + 96px)); }
   .hero { border-radius: 18px; box-shadow: 0 14px 34px rgba(12,16,26,.18); }
   .top-nav { min-height: 40px; padding: 8px 12px 0; }
   .top-nav strong { font-size: 13px; }
@@ -2497,7 +2600,18 @@ def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
         "country": _clean_text(plan.get("country_hint"), "United States"),
         "samples": _currency_sample_values(plan),
     }
-    return f"""const APP_ID = {json.dumps(app_id)};
+    if domain == "school":
+        currency_metadata["samples"] = {
+            "feesPending": currency_metadata["samples"]["feesPending"],
+        }
+    elif domain != "agriculture":
+        currency_metadata["samples"] = {
+            key: value
+            for key, value in currency_metadata["samples"].items()
+            if "mandi" not in key.lower()
+            and key not in {"inputCost", "dieselCost", "profitEstimate", "weddingPipeline"}
+        }
+    script = f"""const APP_ID = {json.dumps(app_id)};
 // Internal runtime proxy placeholders only: {json.dumps([f"/api/runtime/{app_id}/{service}" for service in api_services])}
 const API_PROXY_PLACEHOLDERS = [];
 const APP_DOMAIN = {json.dumps(domain)};
@@ -3168,6 +3282,7 @@ window.generatedAppRuntime = {{
   secretsInFrontend: false,
 }};
 """
+    return _strip_inactive_domain_aliases(_strip_universal_screen_config(script), domain)
 
 
 def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:

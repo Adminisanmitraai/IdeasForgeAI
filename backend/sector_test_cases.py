@@ -55,6 +55,18 @@ SECTOR_TEST_CASES: List[SectorTestCase] = [
         "safety_expectations": ["frontend secrets", "illegal advice"],
     },
     {
+        "test_id": "private_tutor_intent_alignment",
+        "prompt": "create an app for private tutors",
+        "expected_sector_id": "school_teacher_parent",
+        "expected_theme_family": "education-soft-blue",
+        "required_screens": ["Students", "Classes", "Attendance", "Homework", "Fees", "Parent Messages", "Schedule"],
+        "forbidden_sector_ids": ["agriculture_farmer"],
+        "forbidden_visible_terms": ["Farmer Dashboard", "crop", "mandi", "satellite", "farm records", "farmer recommendations"],
+        "required_visible_terms": ["Private Tutor App", "tutor", "student", "class", "homework", "attendance", "fees", "parent", "student records"],
+        "required_aliases": ["students", "classes", "attendance", "homework", "fees", "parent_messages", "schedule"],
+        "safety_expectations": ["student data", "frontend secrets"],
+    },
+    {
         "test_id": "clinic_appointment_queue",
         "prompt": "Create a clinic appointment app with doctor profiles, patient records, appointment booking, queue status, and admin schedule dashboard.",
         "expected_sector_id": "clinic_healthcare",

@@ -89,7 +89,10 @@ def _fallback_classification(idea: str, user_role: str, output_goal: str) -> dic
     elif any(word in text for word in ["retail", "shop", "sales", "stock", "inventory"]):
         sector = "retail sales and inventory"
         assistant_category = "retail_inventory_assistant"
-    elif any(word in text for word in ["student", "project report", "research", "assignment", "presentation"]):
+    elif any(word in text for word in ["private tutor", "private tutors", "tutor", "tutors", "tuition", "tuition teacher", "coaching class", "private class", "student batch", "student", "school", "teacher", "homework", "attendance", "fees"]):
+        sector = "education and tutoring"
+        assistant_category = "education_tutor_assistant"
+    elif any(word in text for word in ["project report", "research", "assignment", "presentation"]):
         sector = "student and research"
         assistant_category = "student_report_assistant"
     elif any(word in text for word in ["reel", "instagram", "promo", "content", "caption"]):

@@ -9,7 +9,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from backend.product_flow import resolve_currency_profile
+from backend.product_flow import create_product_plan, resolve_currency_profile
 from backend.sector_registry import get_sector_entry
 from backend.sector_router import route_sector
 from backend.sector_templates import create_sector_template
@@ -24,13 +24,36 @@ def _contains_all(container: List[str], required: List[str]) -> List[str]:
     return [item for item in required if item.strip().lower() not in normalized]
 
 
+def _flatten_visible_text(value: Any) -> str:
+    if isinstance(value, dict):
+        hidden_keys = {
+            "safety_rules",
+            "forbidden_outputs",
+            "forbidden_generic_terms",
+            "trust_and_safety_notes",
+            "compliance_notes",
+        }
+        return " ".join(
+            _flatten_visible_text(item)
+            for key, item in value.items()
+            if str(key).strip().lower() not in hidden_keys
+        )
+    if isinstance(value, list):
+        return " ".join(_flatten_visible_text(item) for item in value)
+    if value is None:
+        return ""
+    return str(value)
+
+
 def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     prompt = case["prompt"]
     sector_result = route_sector(prompt)
     template = create_sector_template(sector_result, prompt)
+    plan = create_product_plan(prompt)
     currency = resolve_currency_profile(prompt, {}, detected_domain=sector_result["sector_id"])
     entry = get_sector_entry(sector_result["sector_id"])
     failures: List[str] = []
+    visible_text = f"{_flatten_visible_text(template)} {_flatten_visible_text(plan)}".lower()
 
     expected_sector = case["expected_sector_id"]
     if sector_result["sector_id"] != expected_sector:
@@ -70,6 +93,20 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     missing_screens = _contains_all(template.get("screens", []), case.get("required_screens", []))
     if missing_screens:
         failures.append("missing template screens: " + ", ".join(missing_screens))
+
+    forbidden_terms = [
+        term for term in case.get("forbidden_visible_terms", [])
+        if term.strip().lower() in visible_text
+    ]
+    if forbidden_terms:
+        failures.append("forbidden visible terms appeared: " + ", ".join(forbidden_terms))
+
+    required_terms = [
+        term for term in case.get("required_visible_terms", [])
+        if term.strip().lower() not in visible_text
+    ]
+    if required_terms:
+        failures.append("missing required visible terms: " + ", ".join(required_terms))
 
     aliases = template.get("clickable_aliases", {})
     missing_aliases = [alias for alias in case.get("required_aliases", []) if alias not in aliases]

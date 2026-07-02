@@ -72,7 +72,8 @@ def route_sector(
         if sector_id == "insurance_broker" and ("sip" in tokens or "mutual fund" in lower_text):
             negative.append("mutual fund/SIP belongs to investment")
 
-        score = len(strong) * 10 + len(weak) * 3 + entry["priority"] / 20 - len(negative) * 9
+        priority_boost = entry["priority"] / 20 if strong or weak else 0
+        score = len(strong) * 10 + len(weak) * 3 + priority_boost - len(negative) * 9
         if sector_id == "generic_saas":
             score = max(score, 1.0)
         reasons = [f"strong: {item}" for item in strong[:4]]
