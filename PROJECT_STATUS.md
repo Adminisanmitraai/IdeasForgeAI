@@ -12793,3 +12793,23 @@ Status: Completed locally, verification passed.
 - Added mutual fund generated app content for fund categories, compare funds, SIP calculator, portfolio tracker, KYC upload, risk profile, advisor booking, SIP reminders, customer enquiry, and admin dashboard.
 - Mutual fund previews use finance-trust-blue styling, India/SIP rupee defaults such as SIP Amount ?5,000/mo and Portfolio Value ?4.6L, safety wording for estimated growth and advisor guidance, and clickable aliases for compare, funds, sip, portfolio, kyc, risk, advisor, reminders, enquiry, admin, and dashboard.
 - Verified mutual fund and SIP prompts classify as mutual_fund_advisor with ? values, while an insurance policy/claim/renewal prompt still classifies as finance_insurance.
+
+## Phase 33A — Sector Blueprint Pack + QA-Gated Generated App Improvements
+
+Status: IN PROGRESS
+
+Added backend sector blueprint foundation for all 20 supported sectors.
+
+Files:
+- backend/sector_blueprints.py
+
+Validation commands:
+- python -m py_compile backend/sector_blueprints.py
+- python backend/sector_blueprints.py
+- python backend/sector_qa_runner.py
+
+Safety:
+- No frontend/mobile files touched.
+- No deployment settings touched.
+- No API keys or secrets touched.
+- No KisanMitraAI files touched.
