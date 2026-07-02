@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
+from backend.generated_app_qa import QA_RULE_IDS
 from backend.sector_registry import get_sector_entry
 
 
@@ -28,5 +29,6 @@ def quality_notes_for_generated_app(plan: Dict[str, Any]) -> Dict[str, Any]:
             "Do not show raw /api/runtime URLs in the generated UI.",
             "Do not show developer-only Data Model, API Ready, or Monetization sections in the preview UI.",
         ],
+        "qa_rule_ids": list(QA_RULE_IDS),
     }
 
