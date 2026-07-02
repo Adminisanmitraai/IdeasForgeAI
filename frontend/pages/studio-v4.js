@@ -17,12 +17,16 @@ const menuToggle = document.querySelector("[data-menu-toggle]");
 const menu = document.querySelector("[data-menu]");
 const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
 const previewMount = document.querySelector("[data-preview-mount]");
+const workspace = document.querySelector(".workspace");
 
 let currentPlan = null;
 let currentPlanId = 0;
 let isPlanning = false;
 let isGenerating = false;
 let referenceImageMetadata = null;
+let activeExperienceCard = null;
+let activeExperienceTimer = null;
+let generationModeTimer = null;
 
 const thinkingStatuses = [
   "Understanding your idea...",
@@ -37,6 +41,47 @@ const previewThinkingStatuses = [
   "Loading generated preview...",
   "Finalizing response...",
 ];
+
+const experienceStages = {
+  planning: {
+    eyebrow: "Intelligent generation",
+    title: "Shaping your product plan",
+    description: "IdeasForgeAI is turning the idea into a focused product blueprint.",
+    steps: [
+      "Understanding your idea",
+      "Detecting sector",
+      "Building business blueprint",
+      "Creating premium UI concept",
+      "Preparing preview",
+      "Running quality checks",
+    ],
+  },
+  image: {
+    eyebrow: "Image concept generation",
+    title: "Creating premium UI image",
+    description: "Composing the visual direction before the interface is converted.",
+    steps: [
+      "Creating premium UI image",
+      "Composing layout",
+      "Applying sector visual style",
+      "Preparing approval preview",
+    ],
+  },
+  coding: {
+    eyebrow: "Pixel mapping",
+    title: "Converting design to frontend",
+    description: "Mapping the approved visual direction into responsive app code.",
+    steps: [
+      "Pixel-mapping approved design",
+      "Detecting layout grid",
+      "Extracting colors and typography",
+      "Building responsive components",
+      "Generating HTML/CSS/JS",
+      "Running visual QA",
+    ],
+    files: ["index.html", "style.css", "app.js"],
+  },
+};
 
 const MIN_THINKING_MS = 650;
 
@@ -193,6 +238,158 @@ const appendThinkingMessage = (statuses = thinkingStatuses) => {
   chatStream.appendChild(bubble);
   scrollMessagesToBottom();
   return bubble;
+};
+
+const stopExperienceProgress = () => {
+  if (activeExperienceTimer) {
+    window.clearInterval(activeExperienceTimer);
+    activeExperienceTimer = null;
+  }
+  if (generationModeTimer) {
+    window.clearTimeout(generationModeTimer);
+    generationModeTimer = null;
+  }
+};
+
+const updateExperienceCard = (card, activeIndex) => {
+  if (!card?.isConnected) {
+    return;
+  }
+
+  const steps = card.querySelectorAll("[data-experience-step]");
+  const fill = card.querySelector("[data-experience-progress]");
+  steps.forEach((step, index) => {
+    step.classList.toggle("is-active", index === activeIndex);
+    step.classList.toggle("is-complete", index < activeIndex);
+  });
+
+  if (fill && steps.length > 1) {
+    fill.style.width = `${Math.min(100, Math.max(12, (activeIndex / (steps.length - 1)) * 100))}%`;
+  }
+};
+
+const createExperienceCard = (kind = "planning") => {
+  const config = experienceStages[kind] || experienceStages.planning;
+  const card = document.createElement("section");
+  const glow = document.createElement("span");
+  const eyebrow = document.createElement("span");
+  const title = document.createElement("strong");
+  const description = document.createElement("p");
+  const progress = document.createElement("div");
+  const fill = document.createElement("i");
+  const steps = document.createElement("div");
+
+  card.className = `generation-experience-card generation-experience-card--${kind}`;
+  card.setAttribute("aria-label", config.title);
+  card.setAttribute("aria-live", "polite");
+  glow.className = "generation-glow";
+  glow.setAttribute("aria-hidden", "true");
+  eyebrow.className = "generation-eyebrow";
+  eyebrow.textContent = config.eyebrow;
+  title.textContent = config.title;
+  description.textContent = config.description;
+  progress.className = "generation-progress";
+  fill.dataset.experienceProgress = "true";
+  progress.appendChild(fill);
+  steps.className = "generation-steps";
+
+  config.steps.forEach((stepLabel) => {
+    const step = document.createElement("span");
+    step.dataset.experienceStep = "true";
+    step.textContent = stepLabel;
+    steps.appendChild(step);
+  });
+
+  card.append(glow, eyebrow, title, description);
+
+  if (config.files?.length) {
+    const files = document.createElement("div");
+    files.className = "generation-file-chips";
+    config.files.forEach((fileName) => {
+      const file = document.createElement("span");
+      file.textContent = fileName;
+      files.appendChild(file);
+    });
+    card.appendChild(files);
+  }
+
+  card.append(progress, steps);
+  updateExperienceCard(card, 0);
+  return card;
+};
+
+const mountExperienceCard = (kind, target = chatStream) => {
+  stopExperienceProgress();
+  activeExperienceCard?.remove();
+  activeExperienceCard = createExperienceCard(kind);
+
+  if (target === previewMount) {
+    previewMount.className = "preview-empty generation-preview-state";
+    previewMount.innerHTML = "";
+    previewMount.appendChild(activeExperienceCard);
+  } else {
+    target?.appendChild(activeExperienceCard);
+    scrollMessagesToBottom();
+  }
+
+  const steps = activeExperienceCard.querySelectorAll("[data-experience-step]");
+  let activeIndex = 0;
+  activeExperienceTimer = window.setInterval(() => {
+    if (!activeExperienceCard?.isConnected) {
+      stopExperienceProgress();
+      return;
+    }
+    activeIndex = Math.min(activeIndex + 1, Math.max(0, steps.length - 1));
+    updateExperienceCard(activeExperienceCard, activeIndex);
+  }, 1150);
+
+  return activeExperienceCard;
+};
+
+const completeExperienceCard = () => {
+  if (!activeExperienceCard) {
+    return;
+  }
+  stopExperienceProgress();
+  const steps = activeExperienceCard.querySelectorAll("[data-experience-step]");
+  updateExperienceCard(activeExperienceCard, Math.max(0, steps.length - 1));
+  activeExperienceCard.classList.add("is-complete");
+};
+
+const appendQualityReveal = () => {
+  if (!chatStream) {
+    return;
+  }
+
+  const bubble = document.createElement("article");
+  const card = document.createElement("div");
+  const title = document.createElement("strong");
+  const list = document.createElement("div");
+  const meta = document.createElement("span");
+  const checks = [
+    ["Sector match", "Preview check"],
+    ["Visual readiness", "Preview check"],
+    ["Clickable flow", "Preview check"],
+    ["Mobile fit", "Preview check"],
+    ["Safety check", "Preview check"],
+  ];
+
+  bubble.className = "message assistant-message qa-reveal-message";
+  card.className = "qa-reveal-card";
+  title.textContent = "Preview quality checks";
+  list.className = "qa-reveal-grid";
+  meta.textContent = getMessageTime();
+
+  checks.forEach(([label, value]) => {
+    const item = document.createElement("span");
+    item.innerHTML = `<b>${label}</b><small>${value}</small>`;
+    list.appendChild(item);
+  });
+
+  card.append(title, list);
+  bubble.append(card, meta);
+  chatStream.appendChild(bubble);
+  scrollMessagesToBottom();
 };
 
 const createList = (items) => {
@@ -388,6 +585,7 @@ const closeMenu = () => {
 
 const setPreviewOpen = (isOpen) => {
   studioShell?.classList.toggle("is-preview-open", isOpen);
+  studioShell?.setAttribute("data-active-panel", isOpen ? "preview" : "chat");
   if (!isOpen) {
     studioShell?.classList.remove("is-preview-fullscreen");
     fullscreenToggle?.setAttribute("aria-label", "Open fullscreen preview");
@@ -403,6 +601,8 @@ const renderPreviewPlaceholder = (plan, message = "Generated preview placeholder
     return;
   }
 
+  completeExperienceCard();
+  activeExperienceCard = null;
   studioShell?.classList.remove("has-generated-preview");
   previewMount.className = "preview-empty generated-preview-placeholder";
   previewMount.innerHTML = "";
@@ -432,6 +632,8 @@ const renderPreviewFrame = (previewUrl, plan) => {
     return;
   }
 
+  completeExperienceCard();
+  activeExperienceCard = null;
   studioShell?.classList.add("has-generated-preview");
   previewMount.className = "generated-preview-shell";
   previewMount.innerHTML = "";
@@ -459,6 +661,14 @@ const handleGenerate = async (button) => {
   button.disabled = true;
   button.textContent = "Generating...";
   setPreviewStatus("Generating");
+  setPreviewOpen(true);
+  mountExperienceCard("image", previewMount);
+  generationModeTimer = window.setTimeout(() => {
+    if (isGenerating) {
+      mountExperienceCard("coding", previewMount);
+      setPreviewStatus("Building preview");
+    }
+  }, 1400);
   const thinkingMessage = appendThinkingMessage(previewThinkingStatuses);
   const thinkingStartedAt = performance.now();
 
@@ -474,6 +684,7 @@ const handleGenerate = async (button) => {
     renderPreviewFrame(data.preview_url, currentPlan);
     setPreviewStatus(data.preview_url ? "Preview ready" : "Generated");
     replaceThinkingMessage(thinkingMessage, "Generation complete. I opened the preview so you can review it.");
+    appendQualityReveal();
     setPreviewOpen(true);
   } catch (error) {
     await waitForThinkingMinimum(thinkingStartedAt);
@@ -482,6 +693,7 @@ const handleGenerate = async (button) => {
     replaceThinkingMessage(thinkingMessage, "I could not finish this request. Please try again. I kept your approved plan and prepared a clean placeholder preview.");
     setPreviewOpen(true);
   } finally {
+    stopExperienceProgress();
     isGenerating = false;
     button.disabled = false;
     button.textContent = "Approve & Generate";
@@ -625,6 +837,7 @@ chatForm?.addEventListener("submit", async (event) => {
   setPreviewStatus("Planning");
   const requestPlanId = currentPlanId;
   const thinkingMessage = appendThinkingMessage();
+  mountExperienceCard("planning", chatStream);
   const thinkingStartedAt = performance.now();
 
   try {
@@ -637,6 +850,7 @@ chatForm?.addEventListener("submit", async (event) => {
     });
     await waitForThinkingMinimum(thinkingStartedAt);
     removeThinkingMessage(thinkingMessage);
+    completeExperienceCard();
     if (requestPlanId !== currentPlanId) {
       return;
     }
@@ -645,6 +859,9 @@ chatForm?.addEventListener("submit", async (event) => {
     setPreviewStatus("Plan ready");
   } catch (error) {
     await waitForThinkingMinimum(thinkingStartedAt);
+    stopExperienceProgress();
+    activeExperienceCard?.remove();
+    activeExperienceCard = null;
     replaceThinkingMessage(thinkingMessage, "I could not finish this request. Please try again.");
     setPreviewStatus("Waiting for idea");
   } finally {
@@ -654,6 +871,73 @@ chatForm?.addEventListener("submit", async (event) => {
     scrollMessagesToBottom();
   }
 });
+
+let swipeStartX = 0;
+let swipeStartY = 0;
+let swipeStartTarget = null;
+
+const canUseWorkspaceSwipe = (target) => {
+  if (window.matchMedia("(min-width: 769px)").matches) {
+    return false;
+  }
+
+  if (
+    target.closest?.(
+      "button, textarea, input, select, a, iframe, [contenteditable='true'], .composer, .attachment-menu, .menu-popover, .plan-card, .generated-preview-frame"
+    )
+  ) {
+    return false;
+  }
+
+  const horizontalScroller = target.closest?.("[data-horizontal-scroll], .screen-tabs, .carousel, .cards-row");
+  return !horizontalScroller;
+};
+
+workspace?.addEventListener(
+  "touchstart",
+  (event) => {
+    const touch = event.touches?.[0];
+    if (!touch || !canUseWorkspaceSwipe(event.target)) {
+      swipeStartX = 0;
+      swipeStartY = 0;
+      swipeStartTarget = null;
+      return;
+    }
+    swipeStartX = touch.clientX;
+    swipeStartY = touch.clientY;
+    swipeStartTarget = event.target;
+  },
+  { passive: true }
+);
+
+workspace?.addEventListener(
+  "touchend",
+  (event) => {
+    const touch = event.changedTouches?.[0];
+    if (!touch || !swipeStartTarget || !canUseWorkspaceSwipe(swipeStartTarget)) {
+      return;
+    }
+
+    const deltaX = touch.clientX - swipeStartX;
+    const deltaY = touch.clientY - swipeStartY;
+    const isHorizontalSwipe = Math.abs(deltaX) > 74 && Math.abs(deltaX) > Math.abs(deltaY) * 1.35;
+    if (!isHorizontalSwipe) {
+      return;
+    }
+
+    const previewExists =
+      studioShell?.classList.contains("has-generated-preview") ||
+      isGenerating ||
+      previewMount?.classList.contains("generated-preview-placeholder");
+
+    if (deltaX < 0 && previewExists) {
+      setPreviewOpen(true);
+    } else if (deltaX > 0 && studioShell?.classList.contains("is-preview-open")) {
+      setPreviewOpen(false);
+    }
+  },
+  { passive: true }
+);
 
 document.addEventListener("click", () => {
   closeAttachmentMenu();
@@ -666,3 +950,5 @@ document.addEventListener("keydown", (event) => {
     closeMenu();
   }
 });
+
+studioShell?.setAttribute("data-active-panel", studioShell.classList.contains("is-preview-open") ? "preview" : "chat");

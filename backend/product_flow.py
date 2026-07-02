@@ -2297,6 +2297,9 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .content-block { display: grid; gap: 14px; margin-top: 26px; }
 .interactive-screen-panel { display: grid; gap: 14px; margin-top: 14px; padding: 18px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 46%, var(--surface-strong))); }
 .interactive-screen-panel p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.section-heading-row { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.screen-panel-close { display: inline-flex; align-items: center; justify-content: center; min-width: 38px; min-height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px; background: color-mix(in srgb, var(--surface-strong) 84%, var(--accent-soft)); color: var(--text); font-size: 12px; font-weight: 850; box-shadow: none; }
+.screen-panel-close[hidden] { display: none; }
 .screen-card-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
 .screen-card { display: grid; gap: 8px; min-height: 130px; padding: 16px; box-shadow: none; background: var(--surface-strong); }
 .screen-card strong { font-size: 17px; }
@@ -2409,27 +2412,29 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 @media (max-width: 720px) {
   html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
   body { background: var(--bg); }
-  .app-shell { width: 100%; max-width: 100%; padding: max(48px, calc(env(safe-area-inset-top) + 44px)) 10px max(86px, calc(env(safe-area-inset-bottom) + 72px)); }
-  .hero { border-radius: 22px; box-shadow: 0 14px 34px rgba(12,16,26,.18); }
-  .top-nav { min-height: 44px; padding: 10px 12px 0; }
+  .app-shell { width: 100%; max-width: 100%; padding: max(36px, calc(env(safe-area-inset-top) + 30px)) 10px max(112px, calc(env(safe-area-inset-bottom) + 96px)); }
+  .hero { border-radius: 18px; box-shadow: 0 14px 34px rgba(12,16,26,.18); }
+  .top-nav { min-height: 40px; padding: 8px 12px 0; }
   .top-nav strong { font-size: 13px; }
-  .top-nav button { min-height: 32px; padding: 0 10px; font-size: 12px; box-shadow: none; }
-  .hero-content { display: block; padding: 16px 14px 16px; }
-  .hero-copy { gap: 10px; }
+  .top-nav button { min-height: 30px; padding: 0 10px; font-size: 12px; box-shadow: none; }
+  .hero-content { display: block; padding: 12px 12px 14px; }
+  .hero-copy { gap: 8px; }
   .hero .eyebrow { font-size: 10px; letter-spacing: .07em; }
-  h1 { font-size: clamp(28px, 9vw, 38px); line-height: 1.02; }
-  .hero p { max-width: none; font-size: 13px; line-height: 1.42; }
+  h1 { font-size: clamp(24px, 8.2vw, 34px); line-height: 1.02; }
+  .hero p { max-width: none; font-size: 12.5px; line-height: 1.38; }
   .hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .hero-actions button { min-height: 36px; padding: 0 10px; font-size: 12px; box-shadow: 0 8px 18px rgba(0,0,0,.12); }
+  .hero-actions button { min-height: 34px; padding: 0 10px; font-size: 11.5px; box-shadow: 0 8px 18px rgba(0,0,0,.12); }
   .hero-visual { display: none; }
-  .app-screen-nav { margin-top: 8px; padding: 7px 0; gap: 6px; }
-  .app-screen-nav button { min-height: 34px; padding: 0 11px; font-size: 12px; }
+  .app-screen-nav { margin-top: 8px; gap: 6px; padding: 7px 2px 9px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain; }
+  .app-screen-nav button { flex-shrink: 0; min-height: 34px; padding: 0 12px; font-size: 12px; scroll-snap-align: start; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
   .metric-grid article { min-height: 86px; padding: 12px; border-radius: 16px; }
   .metric-grid article::after { width: 24px; height: 24px; border-radius: 9px; right: 10px; bottom: 10px; }
   .metric-grid span { font-size: 10px; line-height: 1.2; }
   .metric-grid strong { font-size: 20px; }
-  .interactive-screen-panel { margin-top: 10px; padding: 14px; border-radius: 18px; }
+  .interactive-screen-panel { margin-top: 10px; padding: 12px; border-radius: 16px; }
+  .screen-panel-close { min-width: 32px; min-height: 32px; padding: 0 10px; font-size: 11px; }
+  .section-heading-row { align-items: center; }
   .content-block { margin-top: 18px; }
   .feature-grid, .package-grid { grid-template-columns: 1fr; gap: 10px; }
   .feature-card, .package-card { min-height: auto; padding: 14px; border-radius: 18px; }
@@ -3102,10 +3107,14 @@ function renderScreen(screenKey, shouldScroll = true) {{
   const screen = config[key] || config.dashboard;
   const panel = document.querySelector(".interactive-screen-panel");
   if (!panel || !screen) return;
+  const showClose = key !== "dashboard";
   panel.innerHTML = `
-    <div class="section-heading">
-      <span class="eyebrow">Active screen</span>
-      <h2>${{screen.title}}</h2>
+    <div class="section-heading-row">
+      <div class="section-heading">
+        <span class="eyebrow">Active screen</span>
+        <h2>${{screen.title}}</h2>
+      </div>
+      <button type="button" class="screen-panel-close" data-screen-close="dashboard" ${{showClose ? "" : "hidden"}}>Close</button>
     </div>
     <p>${{screen.summary}}</p>
     ${{screen.formType ? formMarkup(screen) : cardMarkup(screen.cards)}}
@@ -3120,6 +3129,11 @@ function renderScreen(screenKey, shouldScroll = true) {{
 }}
 
 document.addEventListener("click", (event) => {{
+  const closeButton = event.target.closest("[data-screen-close]");
+  if (closeButton) {{
+    renderScreen(closeButton.dataset.screenClose || "dashboard", false);
+    return;
+  }}
   const target = event.target.closest("button, .screen-card, .package-card, .metric-grid article, .gallery-grid span, .feature-card, .screen-section");
   if (!target) return;
   target.dataset.clicked = "true";
