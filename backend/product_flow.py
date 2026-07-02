@@ -1110,6 +1110,18 @@ def _premium_section(profile: Dict[str, Any], key: str, fallback: str) -> str:
     return _clean_text(sections.get(key), fallback)
 
 
+def _action_description(profile: Dict[str, Any], action: str) -> str:
+    descriptions = profile.get("action_descriptions") if isinstance(profile.get("action_descriptions"), dict) else {}
+    exact = _clean_text(descriptions.get(action))
+    if exact:
+        return exact
+    normalized = action.strip().lower()
+    for label, description in descriptions.items():
+        if str(label).strip().lower() == normalized:
+            return _clean_text(description)
+    return f"Open the {action.lower()} workflow with sector-ready fields and next steps."
+
+
 def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
     if not _blueprint_ui(plan):
         return ""
@@ -1124,9 +1136,9 @@ def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
     action_cards = "\n".join(
         f"""
         <article class="feature-card premium-action-card" data-screen="{html.escape(_screen_slug(action))}">
-          <span>{html.escape(_display_label(profile.get("hero_kicker"), "Action"))}</span>
+          <span>{html.escape(_display_label(profile.get("action_badge"), "Workflow"))}</span>
           <h3>{html.escape(action)}</h3>
-          <p>{html.escape(_premium_section(profile, "actions_summary", "Blueprint-backed primary workflow ready for this prototype."))}</p>
+          <p>{html.escape(_action_description(profile, action))}</p>
         </article>"""
         for action in actions
     )
@@ -2304,7 +2316,10 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .blueprint-panel { position: relative; }
 .blueprint-panel::before { content: ""; width: 48px; height: 4px; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
 .premium-action-card, .premium-record-card { border-color: color-mix(in srgb, var(--accent) 24%, var(--line)); }
-.premium-action-card { background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 58%, var(--surface-strong))); }
+.premium-action-card { align-content: start; min-height: 154px; gap: 10px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 58%, var(--surface-strong))); }
+.premium-action-card span { display: inline-flex; width: fit-content; height: auto; min-height: 26px; padding: 0 10px; place-items: initial; align-items: center; border-radius: 999px; font-size: 10px; line-height: 1; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; }
+.premium-action-card h3 { font-size: 19px; line-height: 1.15; }
+.premium-action-card p { max-width: 30rem; }
 .premium-record-card { box-shadow: 0 18px 38px rgba(20,28,45,.1); }
 .action-card-elegant .premium-action-card { background: linear-gradient(160deg, #fff, #fff2f6); }
 .action-card-organic .premium-action-card { background: linear-gradient(160deg, #fff, #eef9e8); }
@@ -2390,6 +2405,35 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
   .gallery-grid { grid-template-columns: 1fr 1fr; }
   .screen-section { align-items: flex-start; flex-direction: column; }
   .screen-section button { width: 100%; }
+}
+@media (max-width: 720px) {
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  body { background: var(--bg); }
+  .app-shell { width: 100%; max-width: 100%; padding: max(48px, calc(env(safe-area-inset-top) + 44px)) 10px max(86px, calc(env(safe-area-inset-bottom) + 72px)); }
+  .hero { border-radius: 22px; box-shadow: 0 14px 34px rgba(12,16,26,.18); }
+  .top-nav { min-height: 44px; padding: 10px 12px 0; }
+  .top-nav strong { font-size: 13px; }
+  .top-nav button { min-height: 32px; padding: 0 10px; font-size: 12px; box-shadow: none; }
+  .hero-content { display: block; padding: 16px 14px 16px; }
+  .hero-copy { gap: 10px; }
+  .hero .eyebrow { font-size: 10px; letter-spacing: .07em; }
+  h1 { font-size: clamp(28px, 9vw, 38px); line-height: 1.02; }
+  .hero p { max-width: none; font-size: 13px; line-height: 1.42; }
+  .hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .hero-actions button { min-height: 36px; padding: 0 10px; font-size: 12px; box-shadow: 0 8px 18px rgba(0,0,0,.12); }
+  .hero-visual { display: none; }
+  .app-screen-nav { margin-top: 8px; padding: 7px 0; gap: 6px; }
+  .app-screen-nav button { min-height: 34px; padding: 0 11px; font-size: 12px; }
+  .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+  .metric-grid article { min-height: 86px; padding: 12px; border-radius: 16px; }
+  .metric-grid article::after { width: 24px; height: 24px; border-radius: 9px; right: 10px; bottom: 10px; }
+  .metric-grid span { font-size: 10px; line-height: 1.2; }
+  .metric-grid strong { font-size: 20px; }
+  .interactive-screen-panel { margin-top: 10px; padding: 14px; border-radius: 18px; }
+  .content-block { margin-top: 18px; }
+  .feature-grid, .package-grid { grid-template-columns: 1fr; gap: 10px; }
+  .feature-card, .package-card { min-height: auto; padding: 14px; border-radius: 18px; }
+  .premium-action-card { min-height: 128px; }
 }
 @media (min-width: 860px) {
   .app-shell { max-width: 1160px; margin: 0 auto; padding: 20px 20px 104px; }
