@@ -50,6 +50,11 @@ def _concept_text(plan: Dict[str, Any]) -> str:
     return _flatten_visible_text(concept).lower() if isinstance(concept, dict) else ""
 
 
+def _mockup_text(plan: Dict[str, Any]) -> str:
+    mockup = plan.get("image_first_mockup")
+    return _flatten_visible_text(mockup).lower() if isinstance(mockup, dict) else ""
+
+
 def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     prompt = case["prompt"]
     sector_result = route_sector(prompt)
@@ -60,6 +65,7 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     failures: List[str] = []
     visible_text = f"{_flatten_visible_text(template)} {_flatten_visible_text(plan)}".lower()
     concept_text = _concept_text(plan)
+    mockup_text = _mockup_text(plan)
 
     expected_sector = case["expected_sector_id"]
     if sector_result["sector_id"] != expected_sector:
@@ -114,6 +120,9 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     if required_terms:
         failures.append("missing required visible terms: " + ", ".join(required_terms))
 
+    if case.get("requires_image_first_mockup") and not isinstance(plan.get("image_first_mockup"), dict):
+        failures.append("missing image_first_mockup")
+
     if case.get("requires_premium_ui_image_concept") and not isinstance(plan.get("premium_ui_image_concept"), dict):
         failures.append("missing premium_ui_image_concept")
 
@@ -130,6 +139,20 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     ]
     if forbidden_concept_terms:
         failures.append("forbidden concept terms appeared: " + ", ".join(forbidden_concept_terms))
+
+    missing_mockup_terms = [
+        term for term in case.get("required_mockup_terms", [])
+        if term.strip().lower() not in mockup_text
+    ]
+    if missing_mockup_terms:
+        failures.append("missing mockup terms: " + ", ".join(missing_mockup_terms))
+
+    forbidden_mockup_terms = [
+        term for term in case.get("forbidden_mockup_terms", [])
+        if term.strip().lower() in mockup_text
+    ]
+    if forbidden_mockup_terms:
+        failures.append("forbidden mockup terms appeared: " + ", ".join(forbidden_mockup_terms))
 
     aliases = template.get("clickable_aliases", {})
     missing_aliases = [alias for alias in case.get("required_aliases", []) if alias not in aliases]

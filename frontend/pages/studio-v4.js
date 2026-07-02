@@ -25,7 +25,10 @@ let currentPlanId = 0;
 let isPlanning = false;
 let isGenerating = false;
 let referenceImageMetadata = null;
-let visualConceptState = "visualConceptReady";
+let imageMockupReady = true;
+let imageMockupApproved = false;
+let imageMockupRevisionRequested = false;
+let imageMockupStyleRequest = false;
 let activeExperienceCard = null;
 let activeExperienceHost = null;
 let activeExperienceTimer = null;
@@ -54,17 +57,17 @@ const experienceStages = {
       "Understanding your idea",
       "Detecting sector",
       "Building business blueprint",
-      "Creating premium UI concept",
-      "Preparing preview",
+      "Creating premium UI mockup",
+      "Preparing approval preview",
       "Running quality checks",
     ],
   },
   image: {
-    eyebrow: "Image concept generation",
-    title: "Creating premium UI concept",
-    description: "Composing the visual direction before the interface is converted.",
+    eyebrow: "Image-first mockup generation",
+    title: "Creating premium UI mockup",
+    description: "Composing the approval-ready visual target before the interface is converted.",
     steps: [
-      "Creating premium UI concept",
+      "Creating premium UI mockup",
       "Composing layout",
       "Applying sector visual style",
       "Preparing approval preview",
@@ -437,11 +440,12 @@ const createList = (items) => {
   return list;
 };
 
-const visualConceptStateLabels = {
-  visualConceptReady: "Ready for review",
-  visualConceptApproved: "Approved",
-  visualConceptRejected: "Revision requested",
-  visualConceptRevisionRequested: "Regenerating direction",
+const imageMockupStateLabels = {
+  imageMockupReady: "Ready for approval",
+  imageMockupApproved: "Approved for pixel mapping",
+  imageMockupRevisionRequested: "Revision requested",
+  imageMockupStyleRequest: "Color style requested",
+  imageMockupRegenerationRequested: "Regeneration requested",
 };
 
 const getConceptSummary = (concept) => {
@@ -449,23 +453,40 @@ const getConceptSummary = (concept) => {
     return "";
   }
   return (
+    concept.visual_prompt_summary ||
     concept.prompt_summary ||
     concept.visual_prompt ||
+    concept.mobile_visual_prompt ||
+    concept.desktop_visual_prompt ||
     concept.mobile_prompt ||
     concept.desktop_prompt ||
     ""
   );
 };
 
-const updateVisualConceptCardState = (card, state) => {
+const getImageMockupStateKey = () => {
+  if (imageMockupApproved) {
+    return "imageMockupApproved";
+  }
+  if (imageMockupStyleRequest) {
+    return "imageMockupStyleRequest";
+  }
+  if (imageMockupRevisionRequested) {
+    return "imageMockupRevisionRequested";
+  }
+  return imageMockupReady ? "imageMockupReady" : "imageMockupRegenerationRequested";
+};
+
+const updateImageMockupCardState = (card) => {
   if (!card) {
     return;
   }
 
-  card.dataset.visualConceptState = state;
-  const status = card.querySelector("[data-visual-concept-status]");
+  const state = getImageMockupStateKey();
+  card.dataset.imageMockupState = state;
+  const status = card.querySelector("[data-image-mockup-status]");
   if (status) {
-    status.textContent = visualConceptStateLabels[state] || visualConceptStateLabels.visualConceptReady;
+    status.textContent = imageMockupStateLabels[state] || imageMockupStateLabels.imageMockupReady;
   }
 };
 
@@ -544,7 +565,7 @@ const appendPlanMessage = (reply, plan, planId) => {
   const dataNeeds = document.createElement("div");
   const apiNeeds = document.createElement("div");
   const imageGuide = document.createElement("div");
-  const concept = plan.premium_ui_image_concept;
+  const concept = plan.image_first_mockup || plan.premium_ui_image_concept;
   let conceptCard = null;
   const overviewTitle = document.createElement("small");
   const featureTitle = document.createElement("small");
@@ -603,6 +624,7 @@ const appendPlanMessage = (reply, plan, planId) => {
     const conceptStatus = document.createElement("span");
     const conceptGrid = document.createElement("div");
     const sectorBlock = document.createElement("div");
+    const appBlock = document.createElement("div");
     const styleBlock = document.createElement("div");
     const layoutBlock = document.createElement("div");
     const contentBlock = document.createElement("div");
@@ -615,42 +637,49 @@ const appendPlanMessage = (reply, plan, planId) => {
 
     conceptCard = conceptWrap;
     conceptWrap.className = "visual-concept-card";
-    conceptWrap.dataset.visualConceptCard = "true";
+    conceptWrap.dataset.imageMockupCard = "true";
     conceptHeader.className = "visual-concept-header";
     conceptTitle.className = "visual-concept-title";
-    conceptHeading.textContent = "Premium UI Concept";
+    conceptHeading.textContent = "Premium UI Mockup";
     conceptSubheading.textContent = "Image-first design target ready";
     conceptStatus.className = "status-pill visual-concept-status";
-    conceptStatus.dataset.visualConceptStatus = "true";
+    conceptStatus.dataset.imageMockupStatus = "true";
     conceptGrid.className = "visual-concept-grid";
     actions.className = "visual-concept-actions";
 
+    appBlock.innerHTML = `<small>App name</small><p>${concept.app_name || plan.app_name || plan.product_name || "IdeasForgeAI Product"}</p>`;
     sectorBlock.innerHTML = `<small>Sector</small><p>${plan.sector_id || plan.detected_domain || "generic_saas"}</p>`;
-    styleBlock.innerHTML = `<small>Visual style</small><p>${concept.style_tokens?.style_label || "Premium UI direction"}</p>`;
+    styleBlock.innerHTML = `<small>Style direction</small><p>${concept.style_direction || concept.style_tokens?.style_label || "Premium UI direction"}</p>`;
     layoutBlock.append(
-      Object.assign(document.createElement("small"), { textContent: "Key layout targets" }),
+      Object.assign(document.createElement("small"), { textContent: "Layout targets" }),
       createList(concept.layout_targets)
     );
     contentBlock.append(
       Object.assign(document.createElement("small"), { textContent: "Required visible content" }),
       createList(concept.required_visible_content)
     );
-    promptBlock.innerHTML = `<small>Preview prompt summary</small><p>${getConceptSummary(concept)}</p>`;
+    promptBlock.innerHTML = `<small>Visual prompt summary</small><p>${getConceptSummary(concept)}</p>`;
 
     approveVisualButton.type = "button";
     approveVisualButton.className = "approve-generate-button";
-    approveVisualButton.dataset.visualConceptAction = "approve";
-    approveVisualButton.textContent = "Approve visual direction";
+    approveVisualButton.dataset.imageMockupAction = "approve";
+    approveVisualButton.textContent = "Approve visual mockup";
 
     premiumButton.type = "button";
     premiumButton.className = "secondary-action-button";
-    premiumButton.dataset.visualConceptAction = "premium";
+    premiumButton.dataset.imageMockupAction = "premium";
     premiumButton.textContent = "Make more premium";
 
     regenerateButton.type = "button";
     regenerateButton.className = "secondary-action-button";
-    regenerateButton.dataset.visualConceptAction = "regenerate";
-    regenerateButton.textContent = "Regenerate concept";
+    regenerateButton.dataset.imageMockupAction = "regenerate";
+    regenerateButton.textContent = "Regenerate mockup";
+
+    const colorStyleButton = document.createElement("button");
+    colorStyleButton.type = "button";
+    colorStyleButton.className = "secondary-action-button";
+    colorStyleButton.dataset.imageMockupAction = "style";
+    colorStyleButton.textContent = "Change color style";
 
     continueButton.type = "button";
     continueButton.className = "secondary-action-button";
@@ -660,10 +689,10 @@ const appendPlanMessage = (reply, plan, planId) => {
 
     conceptTitle.append(conceptHeading, conceptSubheading);
     conceptHeader.append(conceptTitle, conceptStatus);
-    conceptGrid.append(sectorBlock, styleBlock, layoutBlock, contentBlock, promptBlock);
-    actions.append(approveVisualButton, premiumButton, regenerateButton, continueButton);
+    conceptGrid.append(appBlock, sectorBlock, styleBlock, layoutBlock, contentBlock, promptBlock);
+    actions.append(approveVisualButton, premiumButton, regenerateButton, colorStyleButton, continueButton);
     conceptWrap.append(conceptHeader, conceptGrid, actions);
-    updateVisualConceptCardState(conceptWrap, visualConceptState);
+    updateImageMockupCardState(conceptWrap);
     card.append(conceptWrap);
   }
 
@@ -966,22 +995,38 @@ chatInput?.addEventListener("keydown", (event) => {
 });
 
 chatStream?.addEventListener("click", (event) => {
-  const visualConceptButton = event.target.closest("[data-visual-concept-action]");
-  if (visualConceptButton) {
-    const card = visualConceptButton.closest("[data-visual-concept-card]");
-    const action = visualConceptButton.dataset.visualConceptAction;
+  const imageMockupButton = event.target.closest("[data-image-mockup-action]");
+  if (imageMockupButton) {
+    const card = imageMockupButton.closest("[data-image-mockup-card]");
+    const action = imageMockupButton.dataset.imageMockupAction;
     if (action === "approve") {
-      visualConceptState = "visualConceptApproved";
-      updateVisualConceptCardState(card, visualConceptState);
-      appendMessage("Visual direction approved. You can continue to the frontend preview when ready.", "assistant");
+      imageMockupReady = true;
+      imageMockupApproved = true;
+      imageMockupRevisionRequested = false;
+      imageMockupStyleRequest = false;
+      updateImageMockupCardState(card);
+      appendMessage("Approved for pixel mapping. You can continue to the frontend preview when ready.", "assistant");
     } else if (action === "premium") {
-      visualConceptState = "visualConceptRevisionRequested";
-      updateVisualConceptCardState(card, visualConceptState);
-      appendMessage("Premium refinement is queued as a frontend-only revision state for the next phase.", "assistant");
+      imageMockupReady = true;
+      imageMockupApproved = false;
+      imageMockupRevisionRequested = true;
+      imageMockupStyleRequest = false;
+      updateImageMockupCardState(card);
+      appendMessage("Premium refinement requested. The mockup stays visible while this frontend-only approval state is tracked.", "assistant");
     } else if (action === "regenerate") {
-      visualConceptState = "visualConceptRejected";
-      updateVisualConceptCardState(card, visualConceptState);
-      appendMessage("Concept regeneration is staged. The current card stays visible until backend concept revisions are added.", "assistant");
+      imageMockupReady = false;
+      imageMockupApproved = false;
+      imageMockupRevisionRequested = false;
+      imageMockupStyleRequest = false;
+      updateImageMockupCardState(card);
+      appendMessage("Mockup regeneration requested. The current card stays visible until regeneration is added in a later phase.", "assistant");
+    } else if (action === "style") {
+      imageMockupReady = true;
+      imageMockupApproved = false;
+      imageMockupRevisionRequested = false;
+      imageMockupStyleRequest = true;
+      updateImageMockupCardState(card);
+      appendMessage("Color style change requested. The request is stored as frontend state for the next phase.", "assistant");
     }
     return;
   }
@@ -1012,7 +1057,10 @@ chatForm?.addEventListener("submit", async (event) => {
   chatInput.value = "";
   resizeChatInput();
   currentPlan = null;
-  visualConceptState = "visualConceptReady";
+  imageMockupReady = true;
+  imageMockupApproved = false;
+  imageMockupRevisionRequested = false;
+  imageMockupStyleRequest = false;
   currentPlanId += 1;
   isGenerating = false;
   studioShell?.classList.remove("has-generated-preview");

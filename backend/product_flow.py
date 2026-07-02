@@ -9,6 +9,7 @@ from uuid import uuid4
 
 from backend.core.project_paths import PROJECT_ROOT
 from backend.generated_app_quality_agent import quality_notes_for_generated_app
+from backend.image_first_mockup_engine import build_image_first_mockup
 from backend.premium_ui_image_concept import build_premium_ui_image_concept
 from backend.sector_registry import LEGACY_DOMAIN_TO_SECTOR_ID, SECTOR_ID_TO_LEGACY_DOMAIN, get_sector_entry
 from backend.sector_router import route_sector
@@ -436,6 +437,9 @@ def _apply_currency_profile(
 
 def _attach_premium_ui_image_concept(plan: Dict[str, Any]) -> Dict[str, Any]:
     enriched = dict(plan)
+    mockup = build_image_first_mockup(enriched)
+    if mockup.get("ok"):
+        enriched["image_first_mockup"] = mockup
     concept = build_premium_ui_image_concept(enriched)
     if concept.get("ok"):
         enriched["premium_ui_image_concept"] = concept
