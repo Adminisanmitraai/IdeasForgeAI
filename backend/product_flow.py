@@ -990,29 +990,34 @@ def _render_image_guided_reference(plan: Dict[str, Any]) -> str:
 
 def _render_metric_cards(domain: str, plan: Dict[str, Any]) -> str:
     money = _currency_sample_values(plan)
-    metrics = {
-        "car_detailing": [
-            ("Daily Bookings", "18"),
-            ("Revenue", money["revenueShort"]),
-            ("Payment Status", "7 pending"),
-            ("Customer Leads", "31"),
-        ],
-        "gym": [("Member Records", "286"), ("Class Bookings", "34"), ("Attendance", "91%"), ("Payment Dashboard", money["monthlyRevenue"])],
-        "wedding_venue": [
-            ("Total Enquiries", "128"),
-            ("Booking Leads", "24"),
-            ("Lawn Bookings", "17"),
-            ("Package Revenue", money["weddingPipeline"]),
-        ],
-        "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", money["dailyRevenue"])],
-        "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
-        "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", money["retailRevenue"])],
-        "clinic": [("Appointments", "42"), ("Queue Status", "8 waiting"), ("Follow-ups", "16"), ("Open Slots", "11")],
-        "mutual_fund_advisor": [("SIP Amount", f"{money['sipAmount']}/mo"), ("Portfolio Value", money["portfolioValue"]), ("Advisory Leads", "28"), ("KYC Pending", "12")],
-        "finance_insurance": [("Active Policies", "248"), ("Quote Requests", "31"), ("Claims Open", "12"), ("Renewals", "44")],
-        "agriculture": [("Crop Health", "86%"), ("Weather Risk", "Low"), ("Mandi Rate", money["mandiRate"]), ("Farm Tasks", "9")],
-        "government": [("Citizen Services", "74"), ("Officer Reviews", "18"), ("Audit Status", "96%"), ("Pending Cases", "11")],
-    }.get(domain, [("Workflow Items", "1,248"), ("Approvals Due", "36"), ("New Requests", "18"), ("Completion", "82%")])
+    blueprint_cards = _blueprint_list(plan, "dashboard_cards")
+    if blueprint_cards:
+        sample_values = ["12", "8", money["serviceLarge"], money["weddingPipeline"], "96%"]
+        metrics = [(label, sample_values[index % len(sample_values)]) for index, label in enumerate(blueprint_cards)]
+    else:
+        metrics = {
+            "car_detailing": [
+                ("Daily Bookings", "18"),
+                ("Revenue", money["revenueShort"]),
+                ("Payment Status", "7 pending"),
+                ("Customer Leads", "31"),
+            ],
+            "gym": [("Member Records", "286"), ("Class Bookings", "34"), ("Attendance", "91%"), ("Payment Dashboard", money["monthlyRevenue"])],
+            "wedding_venue": [
+                ("Total Enquiries", "128"),
+                ("Booking Leads", "24"),
+                ("Lawn Bookings", "17"),
+                ("Package Revenue", money["weddingPipeline"]),
+            ],
+            "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", money["dailyRevenue"])],
+            "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
+            "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", money["retailRevenue"])],
+            "clinic": [("Appointments", "42"), ("Queue Status", "8 waiting"), ("Follow-ups", "16"), ("Open Slots", "11")],
+            "mutual_fund_advisor": [("SIP Amount", f"{money['sipAmount']}/mo"), ("Portfolio Value", money["portfolioValue"]), ("Advisory Leads", "28"), ("KYC Pending", "12")],
+            "finance_insurance": [("Active Policies", "248"), ("Quote Requests", "31"), ("Claims Open", "12"), ("Renewals", "44")],
+            "agriculture": [("Crop Health", "86%"), ("Weather Risk", "Low"), ("Mandi Rate", money["mandiRate"]), ("Farm Tasks", "9")],
+            "government": [("Citizen Services", "74"), ("Officer Reviews", "18"), ("Audit Status", "96%"), ("Pending Cases", "11")],
+        }.get(domain, [("Workflow Items", "1,248"), ("Approvals Due", "36"), ("New Requests", "18"), ("Completion", "82%")])
 
     return "\n".join(
         f"<article><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></article>"
@@ -1048,7 +1053,123 @@ def _screen_slug(label: str) -> str:
     return _slugify(label).replace("-", "_")
 
 
+def _display_label(value: Any, fallback: str = "") -> str:
+    text = _clean_text(value, fallback).replace("_", " ").replace("-", " ")
+    if not text:
+        return fallback
+    preserved = {"ai", "api", "aum", "gst", "id", "kyc", "pod", "sip", "sla", "sku"}
+    words = []
+    for word in text.split():
+        stripped = word.strip()
+        if stripped.lower() in preserved:
+            words.append(stripped.upper())
+        elif stripped.isupper() and len(stripped) > 1:
+            words.append(stripped)
+        else:
+            words.append(stripped[:1].upper() + stripped[1:])
+    return " ".join(words)
+
+
+def _blueprint_ui(plan: Dict[str, Any]) -> Dict[str, Any]:
+    value = plan.get("blueprint_ui")
+    return value if isinstance(value, dict) else {}
+
+
+def _blueprint_list(plan: Dict[str, Any], key: str, fallback: Iterable[str] = ()) -> List[str]:
+    blueprint = _blueprint_ui(plan)
+    return [_display_label(item) for item in _clean_list(blueprint.get(key), fallback)]
+
+
+def _blueprint_text(plan: Dict[str, Any], key: str, fallback: str = "") -> str:
+    blueprint = _blueprint_ui(plan)
+    return _clean_text(blueprint.get(key), fallback)
+
+
+def _render_blueprint_sections(plan: Dict[str, Any]) -> str:
+    if not _blueprint_ui(plan):
+        return ""
+
+    actions = _blueprint_list(plan, "primary_actions")
+    sample_records = _blueprint_list(plan, "sample_records")
+    guidance = _blueprint_text(plan, "empty_state_guidance")
+    trust_notes = _blueprint_list(plan, "trust_and_safety_notes")
+    domain_terms = _blueprint_list(plan, "domain_terms")
+
+    action_cards = "\n".join(
+        f"""
+        <article class="feature-card" data-screen="{html.escape(_screen_slug(action))}">
+          <span>Action</span>
+          <h3>{html.escape(action)}</h3>
+          <p>Blueprint-backed primary workflow ready for this prototype.</p>
+        </article>"""
+        for action in actions
+    )
+    record_cards = "\n".join(
+        f"""
+        <article class="package-card" data-screen="{html.escape(_screen_slug(record))}">
+          <span>Sample record</span>
+          <h3>{html.escape(record)}</h3>
+          <p>Representative data row from the selected sector blueprint.</p>
+          <button type="button" data-screen="{html.escape(_screen_slug(record))}">Open {html.escape(record)}</button>
+        </article>"""
+        for record in sample_records
+    )
+
+    guidance_items = []
+    if guidance:
+        guidance_items.append(f"<li><strong>Empty state</strong><span>{html.escape(guidance)}</span></li>")
+    guidance_items.extend(
+        f"<li><strong>Safety note</strong><span>{html.escape(note)}</span></li>"
+        for note in trust_notes
+    )
+    if domain_terms:
+        guidance_items.append(
+            f"<li><strong>Domain terms</strong><span>{html.escape(', '.join(domain_terms))}</span></li>"
+        )
+
+    sections = []
+    if action_cards:
+        sections.append(
+            f"""
+    <section class="content-block blueprint-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Blueprint actions</span>
+        <h2>Primary workflows from the sector blueprint</h2>
+      </div>
+      <div class="feature-grid">{action_cards}</div>
+    </section>"""
+        )
+    if record_cards:
+        sections.append(
+            f"""
+    <section class="content-block blueprint-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Sample records</span>
+        <h2>Realistic seed examples for this preview</h2>
+      </div>
+      <div class="package-grid">{record_cards}</div>
+    </section>"""
+        )
+    if guidance_items:
+        sections.append(
+            f"""
+    <section class="content-block blueprint-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Blueprint guidance</span>
+        <h2>Empty state, trust, and domain language</h2>
+      </div>
+      <ul class="status-list">{''.join(guidance_items)}</ul>
+    </section>"""
+        )
+
+    return "\n".join(sections)
+
+
 def _domain_screen_labels(domain: str, plan: Dict[str, Any]) -> List[str]:
+    blueprint_screens = _blueprint_list(plan, "must_have_screens")
+    if blueprint_screens:
+        return blueprint_screens
+
     labels = {
         "car_detailing": [
             "Dashboard",
@@ -1900,40 +2021,42 @@ def _render_government_sections() -> str:
 
 
 def _render_domain_sections(domain: str, plan: Dict[str, Any]) -> str:
+    blueprint_sections = _render_blueprint_sections(plan)
+
     if domain == "finance_insurance":
-        return _render_finance_insurance_sections(plan)
+        return blueprint_sections + _render_finance_insurance_sections(plan)
 
     if domain == "mutual_fund_advisor":
-        return _render_mutual_fund_sections(plan)
+        return blueprint_sections + _render_mutual_fund_sections(plan)
 
     if domain == "car_detailing":
-        return _render_car_detailing_sections(plan)
+        return blueprint_sections + _render_car_detailing_sections(plan)
 
     if domain == "wedding_venue":
-        return _render_wedding_venue_sections(plan)
+        return blueprint_sections + _render_wedding_venue_sections(plan)
 
     if domain == "gym":
-        return _render_gym_sections(plan)
+        return blueprint_sections + _render_gym_sections(plan)
 
     if domain == "restaurant":
-        return _render_restaurant_sections(plan)
+        return blueprint_sections + _render_restaurant_sections(plan)
 
     if domain == "clinic":
-        return _render_clinic_sections(plan)
+        return blueprint_sections + _render_clinic_sections(plan)
 
     if domain == "school":
-        return _render_school_sections(plan)
+        return blueprint_sections + _render_school_sections(plan)
 
     if domain == "retail":
-        return _render_retail_sections(plan)
+        return blueprint_sections + _render_retail_sections(plan)
 
     if domain == "agriculture":
-        return _render_agriculture_sections(plan)
+        return blueprint_sections + _render_agriculture_sections(plan)
 
     if domain == "government":
-        return _render_government_sections()
+        return blueprint_sections + _render_government_sections()
 
-    return f"""
+    return blueprint_sections + f"""
     <section class="content-block">
       <div class="section-heading">
         <span class="eyebrow">Core features</span>
@@ -1962,6 +2085,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
     domain = _domain_from_plan(plan)
     theme = plan.get("visual_theme") if isinstance(plan.get("visual_theme"), dict) else select_visual_theme(plan, app_id)
     screen_labels = _domain_screen_labels(domain, plan)
+    blueprint_actions = _blueprint_list(plan, "primary_actions")
     actions = {
         "finance_insurance": ("Quote Builder", "Claim Tracker"),
         "mutual_fund_advisor": ("Compare Funds", "SIP Calculator"),
@@ -1975,7 +2099,9 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
         "agriculture": ("Crop Health", "Mandi Prices"),
         "government": ("Citizen Services", "Officer Dashboard"),
     }
-    primary_action, secondary_action = actions.get(domain, ("Open Workflow", "View Dashboard"))
+    default_primary, default_secondary = actions.get(domain, ("Open Workflow", "View Dashboard"))
+    primary_action = blueprint_actions[0] if blueprint_actions else default_primary
+    secondary_action = blueprint_actions[1] if len(blueprint_actions) > 1 else default_secondary
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -2155,6 +2281,10 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .admin-card li { display: grid; gap: 3px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--accent-soft) 62%, var(--surface-strong)); }
 .admin-card li span { color: var(--muted); font-size: 13px; }
 .admin-card li em { color: var(--accent); font-size: 12px; font-style: normal; font-weight: 850; }
+.status-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.status-list li { display: grid; gap: 5px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+.status-list strong { color: var(--text); }
+.status-list span { color: var(--muted); line-height: 1.45; }
 .card-style-sharp .metric-grid article, .card-style-sharp .feature-card, .card-style-sharp .screen-section, .card-style-sharp .package-card, .card-style-sharp .enquiry-card, .card-style-sharp .admin-card, .card-style-sharp .gallery-panel, .card-style-sharp .interactive-screen-panel, .card-style-sharp .screen-card { border-radius: 10px; }
 .card-style-soft .metric-grid article, .card-style-soft .feature-card, .card-style-soft .screen-section, .card-style-soft .package-card, .card-style-soft .enquiry-card, .card-style-soft .admin-card, .card-style-soft .gallery-panel, .card-style-soft .interactive-screen-panel, .card-style-soft .screen-card { border-radius: 18px; }
 .card-style-rounded .metric-grid article, .card-style-rounded .feature-card, .card-style-rounded .screen-section, .card-style-rounded .package-card, .card-style-rounded .enquiry-card, .card-style-rounded .admin-card, .card-style-rounded .gallery-panel, .card-style-rounded .interactive-screen-panel, .card-style-rounded .screen-card { border-radius: 24px; }
@@ -2212,6 +2342,39 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
     api_services = [_slugify(service) for service in plan["api_needs"]] or ["future-service"]
     domain = _domain_from_plan(plan)
+    blueprint_actions = _blueprint_list(plan, "primary_actions")
+    blueprint_records = _blueprint_list(plan, "sample_records")
+    blueprint_guidance = _blueprint_text(plan, "empty_state_guidance", "Blueprint-backed preview screen.")
+    blueprint_screen_config = {
+        _screen_slug(label): {
+            "title": label,
+            "summary": blueprint_guidance,
+            "cards": [[action, "Primary action"] for action in blueprint_actions[:3]]
+            or [[record, "Sample record"] for record in blueprint_records[:3]]
+            or [[label, "Blueprint screen"]],
+        }
+        for label in _domain_screen_labels(domain, plan)
+    }
+    for action in blueprint_actions:
+        blueprint_screen_config.setdefault(
+            _screen_slug(action),
+            {
+                "title": action,
+                "summary": "Primary blueprint workflow ready for local preview.",
+                "cards": [[record, "Sample record"] for record in blueprint_records[:3]]
+                or [[action, "Action preview"]],
+            },
+        )
+    for record in blueprint_records:
+        blueprint_screen_config.setdefault(
+            _screen_slug(record),
+            {
+                "title": record,
+                "summary": "Sample blueprint record for this generated app.",
+                "cards": [[action, "Related action"] for action in blueprint_actions[:3]]
+                or [[record, "Sample record"]],
+            },
+        )
     currency_metadata = {
         "code": _clean_text(plan.get("currency_code"), "USD"),
         "symbol": _clean_text(plan.get("currency_symbol"), "$"),
@@ -2226,6 +2389,7 @@ const APP_DOMAIN = {json.dumps(domain)};
 const CURRENCY = {json.dumps(currency_metadata, ensure_ascii=False)};
 const MONEY = CURRENCY.samples;
 const REGISTRY_SCREEN_ALIASES = {json.dumps(plan.get("clickable_aliases") if isinstance(plan.get("clickable_aliases"), dict) else {}, ensure_ascii=False)};
+const BLUEPRINT_SCREEN_CONFIG = {json.dumps(blueprint_screen_config, ensure_ascii=False)};
 
 const SCREEN_CONFIG = {{
   finance_insurance: {{
@@ -2702,6 +2866,7 @@ SCREEN_CONFIG.generic = {{
 if (!SCREEN_CONFIG[APP_DOMAIN]) {{
   SCREEN_CONFIG[APP_DOMAIN] = SCREEN_CONFIG.generic;
 }}
+SCREEN_CONFIG[APP_DOMAIN] = Object.assign({{}}, SCREEN_CONFIG[APP_DOMAIN] || {{}}, BLUEPRINT_SCREEN_CONFIG);
 
 const SCREEN_ALIASES = {{
   dashboard: "dashboard",
@@ -2883,6 +3048,8 @@ window.generatedAppRuntime = {{
 
 def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
     normalized = normalize_product_plan(plan)
+    from backend.blueprint_ui_adapter import apply_blueprint_to_generated_plan as _phase33c_apply_blueprint
+    normalized = _phase33c_apply_blueprint(normalized, user_text=str(plan.get('source_prompt_hint') or plan.get('user_text') or ''))
     app_id = f"{_slugify(normalized['app_name'])}-{uuid4().hex[:8]}"
     visual_theme = select_visual_theme(normalized, app_id)
     normalized["visual_theme"] = visual_theme
