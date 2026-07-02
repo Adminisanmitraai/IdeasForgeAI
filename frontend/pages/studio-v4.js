@@ -25,6 +25,7 @@ let currentPlanId = 0;
 let isPlanning = false;
 let isGenerating = false;
 let referenceImageMetadata = null;
+let visualConceptState = "visualConceptReady";
 let activeExperienceCard = null;
 let activeExperienceHost = null;
 let activeExperienceTimer = null;
@@ -53,16 +54,17 @@ const experienceStages = {
       "Understanding your idea",
       "Detecting sector",
       "Building business blueprint",
+      "Creating premium UI concept",
       "Preparing preview",
       "Running quality checks",
     ],
   },
   image: {
     eyebrow: "Image concept generation",
-    title: "Creating premium UI image",
+    title: "Creating premium UI concept",
     description: "Composing the visual direction before the interface is converted.",
     steps: [
-      "Creating premium UI image",
+      "Creating premium UI concept",
       "Composing layout",
       "Applying sector visual style",
       "Preparing approval preview",
@@ -435,6 +437,38 @@ const createList = (items) => {
   return list;
 };
 
+const visualConceptStateLabels = {
+  visualConceptReady: "Ready for review",
+  visualConceptApproved: "Approved",
+  visualConceptRejected: "Revision requested",
+  visualConceptRevisionRequested: "Regenerating direction",
+};
+
+const getConceptSummary = (concept) => {
+  if (!concept) {
+    return "";
+  }
+  return (
+    concept.prompt_summary ||
+    concept.visual_prompt ||
+    concept.mobile_prompt ||
+    concept.desktop_prompt ||
+    ""
+  );
+};
+
+const updateVisualConceptCardState = (card, state) => {
+  if (!card) {
+    return;
+  }
+
+  card.dataset.visualConceptState = state;
+  const status = card.querySelector("[data-visual-concept-status]");
+  if (status) {
+    status.textContent = visualConceptStateLabels[state] || visualConceptStateLabels.visualConceptReady;
+  }
+};
+
 const sanitizeReferenceImage = (file, source) => {
   if (!file || !String(file.type || "").startsWith("image/")) {
     return null;
@@ -510,6 +544,8 @@ const appendPlanMessage = (reply, plan, planId) => {
   const dataNeeds = document.createElement("div");
   const apiNeeds = document.createElement("div");
   const imageGuide = document.createElement("div");
+  const concept = plan.premium_ui_image_concept;
+  let conceptCard = null;
   const overviewTitle = document.createElement("small");
   const featureTitle = document.createElement("small");
   const screensTitle = document.createElement("small");
@@ -557,6 +593,80 @@ const appendPlanMessage = (reply, plan, planId) => {
     card.classList.add("is-image-guided");
   }
   card.append(title, summary, grid, button);
+
+  if (concept?.ok) {
+    const conceptWrap = document.createElement("section");
+    const conceptHeader = document.createElement("div");
+    const conceptTitle = document.createElement("div");
+    const conceptHeading = document.createElement("strong");
+    const conceptSubheading = document.createElement("p");
+    const conceptStatus = document.createElement("span");
+    const conceptGrid = document.createElement("div");
+    const sectorBlock = document.createElement("div");
+    const styleBlock = document.createElement("div");
+    const layoutBlock = document.createElement("div");
+    const contentBlock = document.createElement("div");
+    const promptBlock = document.createElement("div");
+    const actions = document.createElement("div");
+    const approveVisualButton = document.createElement("button");
+    const premiumButton = document.createElement("button");
+    const regenerateButton = document.createElement("button");
+    const continueButton = document.createElement("button");
+
+    conceptCard = conceptWrap;
+    conceptWrap.className = "visual-concept-card";
+    conceptWrap.dataset.visualConceptCard = "true";
+    conceptHeader.className = "visual-concept-header";
+    conceptTitle.className = "visual-concept-title";
+    conceptHeading.textContent = "Premium UI Concept";
+    conceptSubheading.textContent = "Image-first design target ready";
+    conceptStatus.className = "status-pill visual-concept-status";
+    conceptStatus.dataset.visualConceptStatus = "true";
+    conceptGrid.className = "visual-concept-grid";
+    actions.className = "visual-concept-actions";
+
+    sectorBlock.innerHTML = `<small>Sector</small><p>${plan.sector_id || plan.detected_domain || "generic_saas"}</p>`;
+    styleBlock.innerHTML = `<small>Visual style</small><p>${concept.style_tokens?.style_label || "Premium UI direction"}</p>`;
+    layoutBlock.append(
+      Object.assign(document.createElement("small"), { textContent: "Key layout targets" }),
+      createList(concept.layout_targets)
+    );
+    contentBlock.append(
+      Object.assign(document.createElement("small"), { textContent: "Required visible content" }),
+      createList(concept.required_visible_content)
+    );
+    promptBlock.innerHTML = `<small>Preview prompt summary</small><p>${getConceptSummary(concept)}</p>`;
+
+    approveVisualButton.type = "button";
+    approveVisualButton.className = "approve-generate-button";
+    approveVisualButton.dataset.visualConceptAction = "approve";
+    approveVisualButton.textContent = "Approve visual direction";
+
+    premiumButton.type = "button";
+    premiumButton.className = "secondary-action-button";
+    premiumButton.dataset.visualConceptAction = "premium";
+    premiumButton.textContent = "Make more premium";
+
+    regenerateButton.type = "button";
+    regenerateButton.className = "secondary-action-button";
+    regenerateButton.dataset.visualConceptAction = "regenerate";
+    regenerateButton.textContent = "Regenerate concept";
+
+    continueButton.type = "button";
+    continueButton.className = "secondary-action-button";
+    continueButton.dataset.approveGenerate = "true";
+    continueButton.dataset.planId = String(planId);
+    continueButton.textContent = "Continue to frontend preview";
+
+    conceptTitle.append(conceptHeading, conceptSubheading);
+    conceptHeader.append(conceptTitle, conceptStatus);
+    conceptGrid.append(sectorBlock, styleBlock, layoutBlock, contentBlock, promptBlock);
+    actions.append(approveVisualButton, premiumButton, regenerateButton, continueButton);
+    conceptWrap.append(conceptHeader, conceptGrid, actions);
+    updateVisualConceptCardState(conceptWrap, visualConceptState);
+    card.append(conceptWrap);
+  }
+
   bubble.append(intro, card, meta);
   chatStream.appendChild(bubble);
   scrollMessagesToBottom();
@@ -856,6 +966,26 @@ chatInput?.addEventListener("keydown", (event) => {
 });
 
 chatStream?.addEventListener("click", (event) => {
+  const visualConceptButton = event.target.closest("[data-visual-concept-action]");
+  if (visualConceptButton) {
+    const card = visualConceptButton.closest("[data-visual-concept-card]");
+    const action = visualConceptButton.dataset.visualConceptAction;
+    if (action === "approve") {
+      visualConceptState = "visualConceptApproved";
+      updateVisualConceptCardState(card, visualConceptState);
+      appendMessage("Visual direction approved. You can continue to the frontend preview when ready.", "assistant");
+    } else if (action === "premium") {
+      visualConceptState = "visualConceptRevisionRequested";
+      updateVisualConceptCardState(card, visualConceptState);
+      appendMessage("Premium refinement is queued as a frontend-only revision state for the next phase.", "assistant");
+    } else if (action === "regenerate") {
+      visualConceptState = "visualConceptRejected";
+      updateVisualConceptCardState(card, visualConceptState);
+      appendMessage("Concept regeneration is staged. The current card stays visible until backend concept revisions are added.", "assistant");
+    }
+    return;
+  }
+
   const button = event.target.closest("[data-approve-generate]");
   if (button) {
     handleGenerate(button);
@@ -882,6 +1012,7 @@ chatForm?.addEventListener("submit", async (event) => {
   chatInput.value = "";
   resizeChatInput();
   currentPlan = null;
+  visualConceptState = "visualConceptReady";
   currentPlanId += 1;
   isGenerating = false;
   studioShell?.classList.remove("has-generated-preview");

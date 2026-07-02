@@ -9,6 +9,7 @@ from uuid import uuid4
 
 from backend.core.project_paths import PROJECT_ROOT
 from backend.generated_app_quality_agent import quality_notes_for_generated_app
+from backend.premium_ui_image_concept import build_premium_ui_image_concept
 from backend.sector_registry import LEGACY_DOMAIN_TO_SECTOR_ID, SECTOR_ID_TO_LEGACY_DOMAIN, get_sector_entry
 from backend.sector_router import route_sector
 from backend.sector_templates import product_plan_from_sector
@@ -430,6 +431,14 @@ def _apply_currency_profile(
         "client_timezone": _extract_client_currency_context(client_metadata).get("client_timezone", ""),
         "live_exchange_conversion": False,
     }
+    return enriched
+
+
+def _attach_premium_ui_image_concept(plan: Dict[str, Any]) -> Dict[str, Any]:
+    enriched = dict(plan)
+    concept = build_premium_ui_image_concept(enriched)
+    if concept.get("ok"):
+        enriched["premium_ui_image_concept"] = concept
     return enriched
 
 
@@ -866,11 +875,15 @@ def create_product_plan(
         }
         if domain == "school" and _is_tutor_idea(lower_idea):
             plan = _apply_tutor_plan_language(plan)
-        return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
+        plan = _apply_currency_profile(plan, clean_idea, client_metadata)
+        plan = _attach_premium_ui_image_concept(plan)
+        return _apply_image_guidance(plan, reference_image)
 
     if sector_result["sector_id"] != "generic_saas":
         template_plan = product_plan_from_sector(sector_result, clean_idea, reference_image)
-        return _apply_image_guidance(_apply_currency_profile(template_plan, clean_idea, client_metadata), reference_image)
+        template_plan = _apply_currency_profile(template_plan, clean_idea, client_metadata)
+        template_plan = _attach_premium_ui_image_concept(template_plan)
+        return _apply_image_guidance(template_plan, reference_image)
 
     app_type = "mobile-first web app"
     target_users = ["busy operators", "team members", "decision makers"]
@@ -951,7 +964,9 @@ def create_product_plan(
         "forbidden_outputs": get_sector_entry(sector_result["sector_id"]).get("forbidden_outputs", []),
         "next_action": "approve_generate",
     }
-    return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
+    plan = _apply_currency_profile(plan, clean_idea, client_metadata)
+    plan = _attach_premium_ui_image_concept(plan)
+    return _apply_image_guidance(plan, reference_image)
 
 
 def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
@@ -990,6 +1005,7 @@ def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
     if _clean_text(plan.get("tutor_subdomain")):
         normalized["tutor_subdomain"] = _clean_text(plan.get("tutor_subdomain"))
     normalized = _apply_currency_profile(normalized, f"{idea} {domain_text}", plan)
+    normalized = _attach_premium_ui_image_concept(normalized)
     if reference_image:
         normalized = _apply_image_guidance(normalized, reference_image)
     return normalized

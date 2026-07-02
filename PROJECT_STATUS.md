@@ -12853,3 +12853,15 @@ Status: Completed locally, verification pending.
 - Validation commands: `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`; static frontend safety search for `KisanMitraAI`, `API_KEY`, `SECRET`, `service_role`, `render.com`, and raw URLs in changed Studio V4 frontend files.
 - Safety notes: UX/motion only; no backend API changes, deployment settings, `.env`, secrets, external JS/CSS/CDN, or KisanMitraAI files touched.
 - Validation update: `node --check frontend/pages/studio-v4.js` passed; `python backend/sector_qa_runner.py` passed with 20/20 sector QA cases; Studio V4 frontend safety search found only pre-existing API base URL constants and no new secrets or KisanMitraAI references in changed frontend files.
+
+## Phase 34G - Image-First Premium UI Generation
+
+Status: Completed locally, backend validation passed, browser-based manual Studio V4 verification blocked by unavailable in-app browser runtime.
+
+- Added deterministic backend image-first concept generation in `backend/premium_ui_image_concept.py` with structured `premium_ui_image_concept` output for sector-specific premium UI planning.
+- Integrated the concept object into product-plan creation and normalization so `/api/product-flow` now returns the image-first concept without breaking generated preview flow.
+- Added Studio V4 Premium UI Concept rendering with sector/style/layout/content summary blocks, frontend approval/revision state foundation, and clean future-facing controls for approve, make more premium, regenerate, and continue to frontend preview.
+- Updated intelligent generation stages so planning includes `Creating premium UI concept` before preview generation.
+- Extended sector QA coverage with concept assertions for private tutor and wedding/event lawn prompts.
+- Validation commands run: `python -m py_compile backend/product_flow.py backend/sector_ui_rendering.py backend/blueprint_ui_adapter.py backend/main.py backend/sector_blueprints.py backend/sector_qa_runner.py backend/generated_app_qa.py backend/sector_test_cases.py backend/api/sector_classifier.py backend/premium_ui_image_concept.py`; `python backend/sector_qa_runner.py`; `node --check frontend/pages/studio-v4.js`; local `/api/product-flow` smoke test for tutor, wedding lawn, and mutual fund prompts.
+- Safety notes: no deployment changes, no secrets, no external image API calls, no provider URL exposure, and no KisanMitraAI files touched.
