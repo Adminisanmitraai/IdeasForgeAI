@@ -37,10 +37,10 @@ from backend.product_brain.workflow_engine import ProductBrainWorkflow
 from backend.product_flow import (
     BACKEND_GENERATED_APPS_DIR,
     create_product_plan,
-from backend.blueprint_ui_adapter import apply_blueprint_to_generated_plan
     generate_static_app,
     normalize_reference_image_metadata,
 )
+from backend.blueprint_ui_adapter import apply_blueprint_to_generated_plan
 
 ensure_project_folders()
 BACKEND_GENERATED_APPS_DIR.mkdir(parents=True, exist_ok=True)
