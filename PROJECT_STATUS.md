@@ -12865,3 +12865,16 @@ Status: Completed locally, backend validation passed, browser-based manual Studi
 - Extended sector QA coverage with concept assertions for private tutor and wedding/event lawn prompts.
 - Validation commands run: `python -m py_compile backend/product_flow.py backend/sector_ui_rendering.py backend/blueprint_ui_adapter.py backend/main.py backend/sector_blueprints.py backend/sector_qa_runner.py backend/generated_app_qa.py backend/sector_test_cases.py backend/api/sector_classifier.py backend/premium_ui_image_concept.py`; `python backend/sector_qa_runner.py`; `node --check frontend/pages/studio-v4.js`; local `/api/product-flow` smoke test for tutor, wedding lawn, and mutual fund prompts.
 - Safety notes: no deployment changes, no secrets, no external image API calls, no provider URL exposure, and no KisanMitraAI files touched.
+
+## Phase 34H - Real Image-First Mockup Approval Gate
+
+Status: Completed locally, validation pending.
+
+- Added `plan["image_first_mockup"]` as a safe Phase 34H approval object with sector-specific visual prompts, style direction, layout targets, visible-content requirements, approval actions, and provider-ready placeholder state.
+- Preserved `premium_ui_image_concept` for compatibility by rebuilding it from the same Phase 34H image-first mockup data.
+- Updated Studio V4 to render a new `Premium UI Mockup` card with app name, sector, style direction, layout targets, required visible content, visual prompt summary, and approval controls for approve, premium revision, regeneration, color-style request, and continue-to-preview.
+- Added frontend approval state foundation for `imageMockupReady`, `imageMockupApproved`, `imageMockupRevisionRequested`, and `imageMockupStyleRequest`, while keeping existing preview generation, fullscreen, swipe navigation, chat composer, and generated preview behavior intact.
+- Updated intelligent generation stages to include premium UI mockup and approval preview steps.
+- Extended sector QA coverage so tutor and wedding prompts validate the new `image_first_mockup` object and required sector-specific mockup terms.
+- Files changed: `backend/image_first_mockup_engine.py`, `backend/premium_ui_image_concept.py`, `backend/product_flow.py`, `backend/sector_test_cases.py`, `backend/sector_qa_runner.py`, `frontend/pages/studio-v4.js`, `frontend/pages/studio-v4.css`, `frontend/pages/studio-v4.html`, `PROJECT_STATUS.md`.
+- Safety notes: no deployment settings, Render config, GitHub workflow settings, secrets, `.env`, external image provider URLs, or KisanMitraAI files touched.

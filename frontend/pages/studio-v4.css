@@ -105,9 +105,10 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .visual-concept-title strong { font-size: 16px; font-weight: 830; }
 .visual-concept-title p { margin: 0; color: #625a69; font-size: 13px; }
 .visual-concept-status { background: #efe9ff; color: #5f51d8; }
-.visual-concept-card[data-visual-concept-state="visualConceptApproved"] .visual-concept-status { background: #e9f7f0; color: #1f7d61; }
-.visual-concept-card[data-visual-concept-state="visualConceptRejected"] .visual-concept-status,
-.visual-concept-card[data-visual-concept-state="visualConceptRevisionRequested"] .visual-concept-status { background: #fff1e2; color: #a15a13; }
+.visual-concept-card[data-image-mockup-state="imageMockupApproved"] .visual-concept-status { background: #e9f7f0; color: #1f7d61; }
+.visual-concept-card[data-image-mockup-state="imageMockupRevisionRequested"] .visual-concept-status,
+.visual-concept-card[data-image-mockup-state="imageMockupStyleRequest"] .visual-concept-status,
+.visual-concept-card[data-image-mockup-state="imageMockupRegenerationRequested"] .visual-concept-status { background: #fff1e2; color: #a15a13; }
 .visual-concept-grid { display: grid; gap: 12px; }
 .visual-concept-grid > div { padding: 12px; border: 1px solid #ebe4f3; border-radius: 14px; background: rgba(255,255,255,.82); }
 .visual-concept-grid small { display: block; margin-bottom: 7px; color: #706c7b; font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
