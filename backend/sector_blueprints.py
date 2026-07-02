@@ -1,4 +1,4 @@
-﻿"""
+"""
 IdeasForgeAI Phase 33A — Sector Blueprint Pack
 
 Purpose:
