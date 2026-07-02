@@ -1,4 +1,5 @@
 import html
+import hashlib
 import json
 import re
 from datetime import datetime, timezone
@@ -12,6 +13,169 @@ from backend.core.project_paths import PROJECT_ROOT
 BACKEND_GENERATED_APPS_DIR = PROJECT_ROOT / "backend" / "generated_apps"
 MAX_REFERENCE_IMAGE_TEXT_LENGTH = 1200
 REFERENCE_IMAGE_KEYS = {"referenceImage", "reference_image", "imageReference", "image_metadata"}
+
+AGRICULTURE_KEYWORDS = [
+    "farmer",
+    "farm",
+    "farming",
+    "agriculture",
+    "crop",
+    "crop health",
+    "mandi",
+    "soil",
+    "weather",
+    "satellite",
+    "ndvi",
+    "farm records",
+    "farmer profile",
+    "agri",
+    "kisan",
+    "fpo",
+    "buyer matching",
+    "harvest",
+    "irrigation",
+]
+
+CURRENCY_PROFILES: Dict[str, Dict[str, str]] = {
+    "INR": {"currency_code": "INR", "currency_symbol": "₹", "currency_locale": "en-IN", "country_hint": "India"},
+    "USD": {"currency_code": "USD", "currency_symbol": "$", "currency_locale": "en-US", "country_hint": "United States"},
+    "GBP": {"currency_code": "GBP", "currency_symbol": "£", "currency_locale": "en-GB", "country_hint": "United Kingdom"},
+    "EUR": {"currency_code": "EUR", "currency_symbol": "€", "currency_locale": "de-DE", "country_hint": "Europe"},
+    "AED": {"currency_code": "AED", "currency_symbol": "AED", "currency_locale": "en-AE", "country_hint": "United Arab Emirates"},
+    "SAR": {"currency_code": "SAR", "currency_symbol": "SAR", "currency_locale": "ar-SA", "country_hint": "Saudi Arabia"},
+    "BDT": {"currency_code": "BDT", "currency_symbol": "৳", "currency_locale": "bn-BD", "country_hint": "Bangladesh"},
+    "JPY": {"currency_code": "JPY", "currency_symbol": "¥", "currency_locale": "ja-JP", "country_hint": "Japan"},
+}
+
+LOCATION_CURRENCY_RULES = [
+    ("INR", ["india", "delhi", "punjab", "kolkata", "mumbai", "assam", "bihar", "west bengal", "kisan", "mandi", "farmer"]),
+    ("USD", ["usa", "u.s.", "united states", "new york", "california"]),
+    ("GBP", ["uk", "u.k.", "united kingdom", "london"]),
+    ("EUR", ["europe", "germany", "france", "italy", "spain"]),
+    ("AED", ["uae", "dubai", "abu dhabi", "united arab emirates"]),
+    ("SAR", ["saudi", "riyadh", "saudi arabia"]),
+    ("BDT", ["bangladesh", "dhaka"]),
+    ("JPY", ["japan", "tokyo"]),
+]
+
+LOCALE_CURRENCY_RULES = [
+    ("INR", ["en-in", "hi-in", "asia/kolkata", "asia/calcutta"]),
+    ("USD", ["en-us", "america/new_york", "america/los_angeles", "america/chicago"]),
+    ("GBP", ["en-gb", "europe/london"]),
+    ("EUR", ["de-de", "fr-fr", "it-it", "es-es", "europe/berlin", "europe/paris", "europe/rome", "europe/madrid"]),
+    ("AED", ["en-ae", "ar-ae", "asia/dubai"]),
+    ("SAR", ["ar-sa", "en-sa", "asia/riyadh"]),
+    ("BDT", ["bn-bd", "en-bd", "asia/dhaka"]),
+    ("JPY", ["ja-jp", "en-jp", "asia/tokyo"]),
+]
+CLINIC_KEYWORDS = [
+    "clinic",
+    "doctor",
+    "patient",
+    "appointment",
+    "hospital",
+    "dental",
+    "treatment",
+    "prescription",
+    "queue",
+    "opd",
+]
+
+MUTUAL_FUND_KEYWORDS = [
+    "mutual fund",
+    "sip",
+    "systematic investment plan",
+    "investment advisor",
+    "wealth advisor",
+    "portfolio tracker",
+    "kyc",
+    "risk profile",
+    "fund comparison",
+    "asset management",
+    "amc",
+    "portfolio",
+    "nav",
+    "investment guidance",
+]
+
+INSURANCE_KEYWORDS = [
+    "insurance",
+    "policy",
+    "claim",
+    "premium",
+    "renewal",
+    "coverage",
+    "insurer",
+    "policy holder",
+]
+
+LAYOUT_VARIANTS = [
+    "hero-stat-stack",
+    "hero-feature-grid",
+    "split-action-dashboard",
+    "card-first-dashboard",
+    "gallery-first-showcase",
+    "timeline-tracker",
+    "admin-metrics-grid",
+]
+
+THEME_FAMILIES: Dict[str, Dict[str, Any]] = {
+    "finance-trust-blue": {
+        "domains": ["finance_insurance", "mutual_fund_advisor"],
+        "keywords": ["insurance", "finance", "policy", "claim", "quote", "loan", "bank", "mutual fund", "sip", "investment advisor", "portfolio", "nav"],
+        "style": "blue and white finance trust interface with policy, investment, portfolio, advisor, and clean dashboard panels",
+    },
+    "premium-automotive-dark": {
+        "domains": ["car_detailing"],
+        "keywords": ["car", "detailing", "vehicle", "ceramic", "auto"],
+        "style": "premium dark automotive interface with metallic accent, service packages, before-after proof, booking, and payment cards",
+    },
+    "fitness-energy-bold": {
+        "domains": ["gym"],
+        "keywords": ["gym", "fitness", "trainer", "workout", "membership"],
+        "style": "bold energetic fitness interface with strong CTAs, membership cards, trainer cards, progress, and attendance sections",
+    },
+    "wedding-elegant-warm": {
+        "domains": ["wedding_venue"],
+        "keywords": ["wedding", "venue", "haldi", "mehendi", "banquet", "lawn"],
+        "style": "elegant warm event interface with Haldi and Mehendi accents, gallery mosaic, packages, enquiry, and lead dashboard",
+    },
+    "education-soft-blue": {
+        "domains": ["school"],
+        "keywords": ["school", "student", "teacher", "parent", "homework", "attendance"],
+        "style": "soft blue education interface with student cards, homework cards, attendance, notices, and parent communication",
+    },
+    "healthcare-calm-teal": {
+        "domains": ["clinic"],
+        "keywords": CLINIC_KEYWORDS,
+        "style": "calm teal healthcare interface with doctor cards, appointments, patient enquiries, and treatment packages",
+    },
+    "restaurant-warm-food": {
+        "domains": ["restaurant"],
+        "keywords": ["restaurant", "menu", "food", "table", "order", "cafe"],
+        "style": "warm food interface with menu cards, table booking, order summary, and popular dishes",
+    },
+    "retail-inventory-grid": {
+        "domains": ["retail"],
+        "keywords": ["retail", "shop", "inventory", "stock", "store", "catalog"],
+        "style": "inventory grid interface with product cards, stock alert chips, and revenue dashboard",
+    },
+    "agriculture-green-dashboard": {
+        "domains": ["agriculture"],
+        "keywords": AGRICULTURE_KEYWORDS,
+        "style": "green, earthy, farm-friendly mobile dashboard with crop health cards, weather cards, mandi price cards, satellite intelligence, farmer profile, farm records, and AI chat CTA",
+    },
+    "government-civic-clean": {
+        "domains": ["government"],
+        "keywords": ["government", "civic", "citizen", "officer", "audit", "municipal", "scheme"],
+        "style": "clean official civic interface with role cards, citizen services, officer dashboard, and audit status cards",
+    },
+    "generic-modern-saas": {
+        "domains": ["generic"],
+        "keywords": [],
+        "style": "modern SaaS interface with balanced cards, workflow metrics, and clear action states",
+    },
+}
 
 
 def _clean_text(value: Any, fallback: str = "") -> str:
@@ -94,6 +258,9 @@ def _apply_image_guidance(plan: Dict[str, Any], reference_image: Dict[str, Any])
         f"Using {source_label} metadata as a visual guide for mobile layout, hierarchy, spacing, "
         "and interface rhythm. No image bytes, OCR, or pixel analysis are processed in this phase."
     )
+    guided["design_inspiration_note"] = (
+        "Use safe reference metadata only to guide visual rhythm, hierarchy, spacing, and mobile screen feel."
+    )
     guided["interface_design_priorities"] = [
         "Reference-inspired mobile first screen",
         "App-like header/navigation hierarchy",
@@ -138,7 +305,188 @@ def _title_from_idea(idea: str) -> str:
     return " ".join(words[:3])
 
 
+def _matches_keywords(lower_text: str, tokens: set[str], keywords: Iterable[str]) -> bool:
+    for keyword in keywords:
+        normalized_keyword = keyword.lower()
+        if " " in normalized_keyword:
+            if normalized_keyword in lower_text:
+                return True
+        elif normalized_keyword in tokens:
+            return True
+    return False
+
+
+def _text_has_location(lower_text: str, keyword: str) -> bool:
+    normalized = keyword.lower()
+    if "." in normalized:
+        return normalized in lower_text
+    if " " in normalized:
+        return normalized in lower_text
+    return re.search(rf"\b{re.escape(normalized)}\b", lower_text) is not None
+
+
+def _extract_client_currency_context(payload: Dict[str, Any] | None) -> Dict[str, str]:
+    if not isinstance(payload, dict):
+        return {}
+    context = payload.get("client_context") or payload.get("clientContext") or payload.get("client_metadata") or payload.get("clientMetadata")
+    if not isinstance(context, dict):
+        context = payload
+    return {
+        "client_locale": _clean_text(
+            context.get("client_locale")
+            or context.get("clientLocale")
+            or context.get("browser_locale")
+            or context.get("browserLocale")
+            or context.get("locale")
+            or context.get("language")
+        ),
+        "client_timezone": _clean_text(
+            context.get("client_timezone")
+            or context.get("clientTimezone")
+            or context.get("browser_timezone")
+            or context.get("browserTimezone")
+            or context.get("timeZone")
+            or context.get("timezone")
+        ),
+        "currency_hint": _clean_text(context.get("currency_hint") or context.get("currencyHint")),
+    }
+
+
+def resolve_currency_profile(
+    source_text: str,
+    client_metadata: Dict[str, Any] | None = None,
+    detected_domain: str = "generic",
+) -> Dict[str, str]:
+    lower_text = _clean_text(source_text).lower()
+    client_context = _extract_client_currency_context(client_metadata)
+    hint = client_context.get("currency_hint", "").upper()
+    if hint in CURRENCY_PROFILES:
+        return dict(CURRENCY_PROFILES[hint])
+
+    for code, keywords in LOCATION_CURRENCY_RULES:
+        if any(_text_has_location(lower_text, keyword) for keyword in keywords):
+            return dict(CURRENCY_PROFILES[code])
+
+    locale_text = f"{client_context.get('client_locale', '')} {client_context.get('client_timezone', '')}".lower()
+    for code, keywords in LOCALE_CURRENCY_RULES:
+        if any(keyword in locale_text for keyword in keywords):
+            return dict(CURRENCY_PROFILES[code])
+
+    if detected_domain in {"agriculture", "mutual_fund_advisor"} or any(
+        _text_has_location(lower_text, keyword)
+        for keyword in [
+            "farmer",
+            "farm",
+            "agriculture",
+            "crop",
+            "mandi",
+            "kisan",
+            "fpo",
+            "mutual fund",
+            "sip",
+            "systematic investment plan",
+        ]
+    ):
+        return dict(CURRENCY_PROFILES["INR"])
+
+    return dict(CURRENCY_PROFILES["USD"])
+
+
+def _apply_currency_profile(
+    plan: Dict[str, Any],
+    source_text: str,
+    client_metadata: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
+    enriched = dict(plan)
+    domain = _domain_from_plan(enriched)
+    profile = resolve_currency_profile(source_text, client_metadata, detected_domain=domain)
+    enriched.update(profile)
+    enriched["currency_resolution"] = {
+        "source_priority": "prompt-location, browser-locale-timezone, industry-fallback",
+        "client_locale": _extract_client_currency_context(client_metadata).get("client_locale", ""),
+        "client_timezone": _extract_client_currency_context(client_metadata).get("client_timezone", ""),
+        "live_exchange_conversion": False,
+    }
+    return enriched
+
+
 DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
+    "mutual_fund_advisor": {
+        "keywords": MUTUAL_FUND_KEYWORDS,
+        "app_name": "Mutual Fund Advisor",
+        "app_name_options": ["Mutual Fund Advisor", "SIP Investment Hub", "Wealth Advisor App", "Fund Portfolio Desk"],
+        "app_type": "mutual fund broker and investment advisor customer service app",
+        "target_users": ["investors", "SIP customers", "mutual fund advisors", "broker admins"],
+        "core_features": [
+            "mutual fund categories",
+            "compare funds",
+            "SIP calculator",
+            "portfolio tracker",
+            "KYC document upload",
+            "risk profile form",
+            "advisor call booking",
+            "SIP reminders",
+            "customer enquiry form",
+            "admin dashboard",
+        ],
+        "screens": [
+            "Home Dashboard",
+            "Mutual Fund Categories",
+            "Compare Funds",
+            "SIP Calculator",
+            "Portfolio Tracker",
+            "KYC Upload",
+            "Risk Profile",
+            "Advisor Booking",
+            "SIP Reminders",
+            "Admin Dashboard",
+        ],
+        "data_needs": [
+            "investor name",
+            "mobile number",
+            "monthly SIP amount",
+            "risk profile",
+            "portfolio value",
+            "KYC status",
+            "fund category",
+            "advisor booking date",
+            "enquiry note",
+        ],
+        "api_needs": [
+            "customer enquiry via backend proxy",
+            "advisor booking via backend proxy",
+            "portfolio summary via backend proxy",
+            "SIP reminder notification via backend proxy",
+        ],
+        "monetization": ["advisor subscription", "broker admin seat", "investment enquiry lead credits"],
+        "preview_summary": "Help investors review mutual fund categories, compare funds, estimate SIP growth, track portfolio summaries, upload KYC documents, complete risk profiles, book advisor calls, and manage SIP reminders without promising returns.",
+        "safety_rules": [
+            "Show estimated growth only, never guaranteed returns.",
+            "Do not create fake investment documents or fake KYC approvals.",
+            "Do not provide illegal financial advice, promise profit, or mislead users.",
+            "Use advisor guidance, risk profile, portfolio summary, and SIP reminder wording.",
+        ],
+    },
+    "finance_insurance": {
+        "keywords": INSURANCE_KEYWORDS,
+        "app_name": "Insurance Trust Desk",
+        "app_type": "insurance policy, quote, and claim tracker app",
+        "target_users": ["insurance advisors", "policy holders", "finance admins", "claim support teams"],
+        "core_features": [
+            "policy cards",
+            "quote cards",
+            "claim tracker timeline",
+            "advisor contact cards",
+            "renewal reminders",
+            "customer enquiry form",
+            "finance dashboard",
+        ],
+        "screens": ["Home", "Policy Cards", "Quote Builder", "Claim Tracker", "Advisor Contacts", "Renewals", "Admin Dashboard"],
+        "data_needs": ["customer name", "policy type", "premium amount", "claim status", "renewal date", "advisor", "contact number"],
+        "api_needs": ["quote submission via backend proxy", "claim status via backend proxy", "advisor notification via backend proxy"],
+        "monetization": ["monthly advisor subscription", "policy lead credits", "premium support desk add-on"],
+        "preview_summary": "Manage policy cards, quote requests, claim tracker timelines, renewals, advisor contact, and finance admin follow-up in one trust-focused app.",
+    },
     "car_detailing": {
         "keywords": ["car", "detailing", "washing", "vehicle", "doorstep", "car wash", "auto detailing"],
         "app_name": "Premium Car Detailing",
@@ -294,7 +642,7 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "preview_summary": "Track products, low stock, orders, supplier purchases, payments, and customer enquiries from one retail inventory app.",
     },
     "clinic": {
-        "keywords": ["clinic", "doctor", "dental", "patient", "appointment", "health"],
+        "keywords": CLINIC_KEYWORDS,
         "app_name": "Clinic Appointment Hub",
         "app_type": "clinic appointment app",
         "target_users": ["doctors", "clinic staff", "patients"],
@@ -305,13 +653,65 @@ DOMAIN_BLUEPRINTS: Dict[str, Dict[str, Any]] = {
         "monetization": ["monthly clinic subscription", "appointment credits", "follow-up reminder add-on"],
         "preview_summary": "Manage appointment booking, doctor schedules, patient records, queue status, follow-ups, and payments in one clinic app.",
     },
+    "agriculture": {
+        "keywords": AGRICULTURE_KEYWORDS,
+        "app_name": "Farmer Dashboard",
+        "app_type": "agriculture farm intelligence and farmer dashboard app",
+        "target_users": ["farmers", "FPO teams", "agri advisors", "farm admins"],
+        "core_features": [
+            "crop health cards",
+            "weather cards",
+            "mandi price cards",
+            "satellite intelligence",
+            "farmer profile",
+            "farm records",
+            "AI chat button",
+            "soil and crop advisory",
+            "alerts and recommendations",
+        ],
+        "screens": [
+            "Home Dashboard",
+            "Crop Health",
+            "Weather",
+            "Mandi Prices",
+            "Satellite Intelligence",
+            "Farmer Profile",
+            "Farm Records",
+            "AI Chat",
+            "Admin Dashboard",
+        ],
+        "data_needs": ["farmer name", "crop", "acreage", "soil health", "weather risk", "mandi price", "farm records", "advisory status"],
+        "api_needs": ["weather feed via backend proxy", "mandi price feed via backend proxy", "farm advisory via backend proxy"],
+        "monetization": ["monthly farm advisory subscription", "FPO dashboard license", "premium crop intelligence add-on"],
+        "preview_summary": "Show a green Farmer Dashboard with crop health, weather, mandi prices, satellite intelligence, farmer profile, farm records, AI chat, and admin recommendations.",
+    },
+    "government": {
+        "keywords": ["government", "civic", "citizen", "officer", "audit", "municipal", "scheme", "department"],
+        "app_name": "Civic Service Desk",
+        "app_type": "government citizen service and officer dashboard app",
+        "target_users": ["citizens", "field officers", "department admins", "audit teams"],
+        "core_features": ["role-based cards", "citizen services", "officer dashboard", "audit/status cards", "application tracker", "service request form", "department metrics"],
+        "screens": ["Home", "Citizen Services", "Officer Dashboard", "Application Tracker", "Audit Status", "Service Request", "Department Metrics"],
+        "data_needs": ["citizen name", "service type", "application ID", "officer", "status", "submission date", "audit note"],
+        "api_needs": ["service request via backend proxy", "status sync via backend proxy", "department notification via backend proxy"],
+        "monetization": ["department SaaS license", "service desk support plan", "workflow analytics add-on"],
+        "preview_summary": "Offer a clean official portal for citizen services, officer review, status tracking, audit cards, and department metrics.",
+    },
 }
 
 
 def _detect_domain(text: str) -> str:
     lower_text = text.lower()
     tokens = set(re.findall(r"[a-z0-9]+", lower_text))
+    if _matches_keywords(lower_text, tokens, MUTUAL_FUND_KEYWORDS):
+        return "mutual_fund_advisor"
+    if _matches_keywords(lower_text, tokens, AGRICULTURE_KEYWORDS):
+        return "agriculture"
+    if _matches_keywords(lower_text, tokens, CLINIC_KEYWORDS):
+        return "clinic"
     for domain, blueprint in DOMAIN_BLUEPRINTS.items():
+        if domain in {"mutual_fund_advisor", "agriculture", "clinic"}:
+            continue
         for keyword in blueprint["keywords"]:
             normalized_keyword = keyword.lower()
             if " " in normalized_keyword:
@@ -323,6 +723,11 @@ def _detect_domain(text: str) -> str:
 
 
 def _domain_from_plan(plan: Dict[str, Any]) -> str:
+    explicit_domain = _clean_text(plan.get("detected_domain") or plan.get("detectedIndustry") or plan.get("industry"))
+    normalized_explicit = explicit_domain.lower().replace("-", "_").replace(" ", "_")
+    if normalized_explicit in DOMAIN_BLUEPRINTS or normalized_explicit == "generic":
+        return normalized_explicit
+
     values = []
     for value in plan.values():
         if isinstance(value, list):
@@ -332,7 +737,11 @@ def _domain_from_plan(plan: Dict[str, Any]) -> str:
     return _detect_domain(" ".join(values))
 
 
-def create_product_plan(idea: str, reference_image: Dict[str, Any] | None = None) -> Dict[str, Any]:
+def create_product_plan(
+    idea: str,
+    reference_image: Dict[str, Any] | None = None,
+    client_metadata: Dict[str, Any] | None = None,
+) -> Dict[str, Any]:
     clean_idea = _clean_text(idea, "A useful mobile-first product")
     lower_idea = clean_idea.lower()
     domain = _detect_domain(clean_idea)
@@ -340,8 +749,9 @@ def create_product_plan(idea: str, reference_image: Dict[str, Any] | None = None
 
     if domain in DOMAIN_BLUEPRINTS:
         blueprint = DOMAIN_BLUEPRINTS[domain]
-        return _apply_image_guidance({
+        plan = {
             "idea": clean_idea,
+            "detected_domain": domain,
             "app_name": blueprint["app_name"],
             "app_type": blueprint["app_type"],
             "target_users": list(blueprint["target_users"]),
@@ -352,7 +762,8 @@ def create_product_plan(idea: str, reference_image: Dict[str, Any] | None = None
             "monetization": list(blueprint["monetization"]),
             "preview_summary": blueprint["preview_summary"],
             "next_action": "approve_generate",
-        }, reference_image)
+        }
+        return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
 
     app_type = "mobile-first web app"
     target_users = ["busy operators", "team members", "decision makers"]
@@ -401,8 +812,9 @@ def create_product_plan(idea: str, reference_image: Dict[str, Any] | None = None
         "Reports and insights",
     ]
 
-    return _apply_image_guidance({
+    plan = {
         "idea": clean_idea,
+        "detected_domain": domain,
         "app_name": app_name,
         "app_type": app_type,
         "target_users": target_users,
@@ -417,7 +829,8 @@ def create_product_plan(idea: str, reference_image: Dict[str, Any] | None = None
             "screen sections, mock actions, and placeholder data."
         ),
         "next_action": "approve_generate",
-    }, reference_image)
+    }
+    return _apply_image_guidance(_apply_currency_profile(plan, clean_idea, client_metadata), reference_image)
 
 
 def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
@@ -435,6 +848,7 @@ def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
     normalized = create_product_plan(
         idea if idea_domain != "generic" else domain_text or idea or "Generated app prototype",
         reference_image=reference_image,
+        client_metadata=plan,
     )
     can_preserve_plan_fields = idea_domain == "generic" or idea_domain == plan_domain
 
@@ -450,6 +864,7 @@ def normalize_product_plan(plan: Dict[str, Any]) -> Dict[str, Any]:
         normalized["preview_summary"] = _clean_text(plan.get("preview_summary"), normalized["preview_summary"])
 
     normalized["next_action"] = "approve_generate"
+    normalized = _apply_currency_profile(normalized, f"{idea} {domain_text}", plan)
     if reference_image:
         normalized = _apply_image_guidance(normalized, reference_image)
     return normalized
@@ -540,25 +955,30 @@ def _render_image_guided_reference(plan: Dict[str, Any]) -> str:
     </section>"""
 
 
-def _render_metric_cards(domain: str) -> str:
+def _render_metric_cards(domain: str, plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     metrics = {
         "car_detailing": [
             ("Daily Bookings", "18"),
-            ("Revenue", "$4.6k"),
+            ("Revenue", money["revenueShort"]),
             ("Payment Status", "7 pending"),
             ("Customer Leads", "31"),
         ],
-        "gym": [("Member Records", "286"), ("Class Bookings", "34"), ("Attendance", "91%"), ("Payment Dashboard", "$12.4k")],
+        "gym": [("Member Records", "286"), ("Class Bookings", "34"), ("Attendance", "91%"), ("Payment Dashboard", money["monthlyRevenue"])],
         "wedding_venue": [
             ("Total Enquiries", "128"),
             ("Booking Leads", "24"),
             ("Lawn Bookings", "17"),
-            ("Package Revenue", "₹84L"),
+            ("Package Revenue", money["weddingPipeline"]),
         ],
-        "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", "$6.8k")],
+        "restaurant": [("Today Orders", "86"), ("Kitchen Queue", "12"), ("Table Bookings", "18"), ("Revenue", money["dailyRevenue"])],
         "school": [("Attendance", "92%"), ("Homework Due", "38"), ("Fees Pending", "17"), ("Parent Updates", "19")],
-        "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", "$8.2k")],
+        "retail": [("Total Products", "312"), ("Low Stock", "14"), ("Today Orders", "57"), ("Revenue", money["retailRevenue"])],
         "clinic": [("Appointments", "42"), ("Queue Status", "8 waiting"), ("Follow-ups", "16"), ("Open Slots", "11")],
+        "mutual_fund_advisor": [("SIP Amount", f"{money['sipAmount']}/mo"), ("Portfolio Value", money["portfolioValue"]), ("Advisory Leads", "28"), ("KYC Pending", "12")],
+        "finance_insurance": [("Active Policies", "248"), ("Quote Requests", "31"), ("Claims Open", "12"), ("Renewals", "44")],
+        "agriculture": [("Crop Health", "86%"), ("Weather Risk", "Low"), ("Mandi Rate", money["mandiRate"]), ("Farm Tasks", "9")],
+        "government": [("Citizen Services", "74"), ("Officer Reviews", "18"), ("Audit Status", "96%"), ("Pending Cases", "11")],
     }.get(domain, [("Workflow Items", "1,248"), ("Approvals Due", "36"), ("New Requests", "18"), ("Completion", "82%")])
 
     return "\n".join(
@@ -662,6 +1082,47 @@ def _domain_screen_labels(domain: str, plan: Dict[str, Any]) -> List[str]:
             "Revenue Dashboard",
             "Admin Dashboard",
         ],
+        "finance_insurance": [
+            "Dashboard",
+            "Policy Cards",
+            "Quote Builder",
+            "Claim Tracker",
+            "Advisor Contacts",
+            "Renewals",
+            "Admin Dashboard",
+        ],
+        "mutual_fund_advisor": [
+            "Dashboard",
+            "Mutual Fund Categories",
+            "Compare Funds",
+            "SIP Calculator",
+            "Portfolio Tracker",
+            "KYC Upload",
+            "Risk Profile",
+            "Advisor Booking",
+            "SIP Reminders",
+            "Admin Dashboard",
+        ],
+        "agriculture": [
+            "Dashboard",
+            "Crop Health",
+            "Weather",
+            "Mandi Prices",
+            "Satellite Intelligence",
+            "Farmer Profile",
+            "Farm Records",
+            "AI Chat",
+            "Admin Dashboard",
+        ],
+        "government": [
+            "Dashboard",
+            "Citizen Services",
+            "Officer Dashboard",
+            "Application Tracker",
+            "Audit Status",
+            "Service Request",
+            "Department Metrics",
+        ],
     }
     if domain in labels:
         return labels[domain]
@@ -676,7 +1137,172 @@ def _render_screen_nav(labels: List[str]) -> str:
     )
 
 
-def _domain_theme_class(domain: str) -> str:
+def _theme_hash_key(plan: Dict[str, Any], app_id: str, domain: str) -> str:
+    reference = plan.get("reference_image") if isinstance(plan.get("reference_image"), dict) else {}
+    reference_bits = " ".join(
+        _clean_text(reference.get(key))
+        for key in ("name", "fileName", "layoutHint", "visualNotes", "source")
+        if reference.get(key)
+    )
+    return "|".join(
+        [
+            app_id,
+            domain,
+            _clean_text(plan.get("app_name")),
+            _clean_text(plan.get("app_type")),
+            _clean_text(plan.get("preview_summary")),
+            reference_bits,
+        ]
+    )
+
+
+def _stable_index(seed: str, count: int) -> int:
+    if count <= 0:
+        return 0
+    digest = hashlib.sha256(seed.encode("utf-8")).hexdigest()
+    return int(digest[:12], 16) % count
+
+
+def _currency_sample_values(plan: Dict[str, Any]) -> Dict[str, str]:
+    code = _clean_text(plan.get("currency_code"), "USD").upper()
+    symbol = _clean_text(plan.get("currency_symbol"), "$")
+    if code == "INR":
+        return {
+            "basic": f"{symbol}499",
+            "premium": f"{symbol}2,499",
+            "serviceSmall": f"{symbol}29",
+            "serviceMedium": f"{symbol}79",
+            "serviceLarge": f"{symbol}249",
+            "revenueShort": f"{symbol}4.6L",
+            "revenueWeekly": f"{symbol}4.6L this week",
+            "monthlyRevenue": f"{symbol}12.4L",
+            "dailyRevenue": f"{symbol}6.8L",
+            "settled": f"{symbol}5.9L",
+            "collections": f"{symbol}2.8L",
+            "retailRevenue": f"{symbol}8.2L",
+            "weddingPipeline": f"{symbol}38L pipeline",
+            "weddingPackage": f"{symbol}2.49L",
+            "weddingPremium": f"{symbol}4.99L",
+            "weddingRoyal": f"{symbol}8.99L",
+            "mandiRate": f"{symbol}4,200/q",
+            "mandiSoybean": f"{symbol}5,100/q",
+            "inputCost": f"{symbol}1,250",
+            "dieselCost": f"{symbol}3,800",
+            "profitEstimate": f"{symbol}82,000",
+            "sipAmount": f"{symbol}5,000",
+            "monthlyInvestment": f"{symbol}10,000",
+            "portfolioValue": f"{symbol}4.6L",
+        }
+    if code == "AED":
+        prefix = "AED "
+    elif code == "SAR":
+        prefix = "SAR "
+    else:
+        prefix = symbol
+    return {
+        "basic": f"{prefix}29",
+        "premium": f"{prefix}249",
+        "serviceSmall": f"{prefix}29",
+        "serviceMedium": f"{prefix}79",
+        "serviceLarge": f"{prefix}249",
+        "revenueShort": f"{prefix}4.6k",
+        "revenueWeekly": f"{prefix}4.6k this week",
+        "monthlyRevenue": f"{prefix}12.4k",
+        "dailyRevenue": f"{prefix}6.8k",
+        "settled": f"{prefix}5.9k",
+        "collections": f"{prefix}2.8k",
+        "retailRevenue": f"{prefix}8.2k",
+        "weddingPipeline": f"{prefix}38k pipeline",
+        "weddingPackage": f"{prefix}2.49k",
+        "weddingPremium": f"{prefix}4.99k",
+        "weddingRoyal": f"{prefix}8.99k",
+        "mandiRate": f"{prefix}42/q",
+        "mandiSoybean": f"{prefix}51/q",
+        "inputCost": f"{prefix}125",
+        "dieselCost": f"{prefix}380",
+        "profitEstimate": f"{prefix}820",
+        "sipAmount": f"{prefix}100",
+        "monthlyInvestment": f"{prefix}250",
+        "portfolioValue": f"{prefix}4.6k",
+    }
+
+
+def select_visual_theme(plan: Dict[str, Any], app_id: str) -> Dict[str, Any]:
+    domain = _domain_from_plan(plan)
+    source_text = " ".join(
+        [
+            domain,
+            _clean_text(plan.get("app_name")),
+            _clean_text(plan.get("app_type")),
+            _clean_text(plan.get("preview_summary")),
+            " ".join(_clean_list(plan.get("core_features"), [])),
+        ]
+    ).lower()
+    reference = plan.get("reference_image") if isinstance(plan.get("reference_image"), dict) else {}
+    image_metadata_text = " ".join(
+        _clean_text(reference.get(key))
+        for key in ("name", "fileName", "layoutHint", "visualNotes", "source")
+        if reference.get(key)
+    ).lower()
+    combined_text = f"{source_text} {image_metadata_text}"
+
+    family = "generic-modern-saas"
+    for candidate, config in THEME_FAMILIES.items():
+        if domain in config["domains"]:
+            family = candidate
+            break
+    else:
+        for candidate, config in THEME_FAMILIES.items():
+            if any(re.search(rf"\b{re.escape(keyword)}\b", combined_text) for keyword in config["keywords"]):
+                family = candidate
+                break
+
+    layout_pool = {
+        "finance_insurance": ["timeline-tracker", "hero-stat-stack", "card-first-dashboard"],
+        "mutual_fund_advisor": ["hero-stat-stack", "card-first-dashboard", "admin-metrics-grid"],
+        "car_detailing": ["gallery-first-showcase", "split-action-dashboard", "hero-feature-grid"],
+        "gym": ["hero-feature-grid", "card-first-dashboard", "admin-metrics-grid"],
+        "wedding_venue": ["gallery-first-showcase", "hero-feature-grid", "split-action-dashboard"],
+        "school": ["card-first-dashboard", "hero-stat-stack", "admin-metrics-grid"],
+        "clinic": ["timeline-tracker", "card-first-dashboard", "hero-stat-stack"],
+        "restaurant": ["gallery-first-showcase", "split-action-dashboard", "card-first-dashboard"],
+        "retail": ["admin-metrics-grid", "card-first-dashboard", "hero-stat-stack"],
+        "agriculture": ["hero-stat-stack", "admin-metrics-grid", "card-first-dashboard"],
+        "government": ["timeline-tracker", "admin-metrics-grid", "card-first-dashboard"],
+        "generic": LAYOUT_VARIANTS,
+    }.get(domain, LAYOUT_VARIANTS)
+    seed = _theme_hash_key(plan, app_id, domain)
+    layout_variant = layout_pool[_stable_index(seed, len(layout_pool))]
+    density = ["compact", "balanced", "spacious"][_stable_index(f"{seed}|density", 3)]
+    radius = ["sharp", "soft", "rounded"][_stable_index(f"{seed}|cards", 3)]
+
+    return {
+        "family": family,
+        "class_name": f"theme-family-{family}",
+        "layout_variant": layout_variant,
+        "layout_class": f"layout-{layout_variant}",
+        "card_style": radius,
+        "density": density,
+        "detected_industry": domain,
+        "style_notes": THEME_FAMILIES[family]["style"],
+        "image_guided_design_note": (
+            "Reference metadata influenced visual rhythm, hierarchy, and spacing; no image bytes, OCR, or pixel analysis were used."
+            if plan.get("image_guided")
+            else ""
+        ),
+    }
+
+
+def _domain_theme_class(domain: str, theme: Dict[str, Any] | None = None) -> str:
+    if theme:
+        return " ".join(
+            [
+                html.escape(theme["class_name"]),
+                html.escape(theme["layout_class"]),
+                f"card-style-{html.escape(theme['card_style'])}",
+                f"density-{html.escape(theme['density'])}",
+            ]
+        )
     return f"theme-{domain.replace('_', '-')}" if domain != "generic" else "theme-generic"
 
 
@@ -689,6 +1315,10 @@ def _render_app_visual(domain: str) -> str:
         "clinic": ("Queue", "Dr. Kapoor", "3 slots", ["Checked in", "Follow-up", "Invoice"]),
         "school": ("Parent view", "Class 5A", "92%", ["Homework", "Fees", "Notice"]),
         "retail": ("Stock desk", "Backpack", "12 left", ["Low stock", "Sales", "PO sent"]),
+        "finance_insurance": ("Policy desk", "Claim timeline", "12 open", ["Quote", "Renewal", "Advisor"]),
+        "mutual_fund_advisor": ("SIP desk", "Portfolio summary", "₹4.6L", ["Compare", "Risk", "KYC"]),
+        "agriculture": ("Farm view", "Crop health", "86%", ["Weather", "Mandi", "Advisory"]),
+        "government": ("Civic desk", "Service status", "96%", ["Citizen", "Officer", "Audit"]),
     }.get(domain, ("Workspace", "Live preview", "82%", ["Intake", "Review", "Dashboard"]))
     title, focus, status, chips = visual
     chip_markup = "".join(f"<span>{html.escape(chip)}</span>" for chip in chips)
@@ -740,11 +1370,12 @@ def _render_operations_section(
     </section>"""
 
 
-def _render_wedding_venue_sections() -> str:
+def _render_wedding_venue_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     packages = [
-        ("Haldi Theme", "₹2.49L", "Outdoor lawn booking, marigold decor, turmeric color palette, and welcome drinks"),
-        ("Mehendi Theme", "₹4.99L", "Stage seating, artist corner, photo wall, and family lounge setup"),
-        ("Royal Wedding", "₹8.99L", "Full venue, banquet package, premium decor, catering coordination, and VIP support desk"),
+        ("Haldi Theme", money["weddingPackage"], "Outdoor lawn booking, marigold decor, turmeric color palette, and welcome drinks"),
+        ("Mehendi Theme", money["weddingPremium"], "Stage seating, artist corner, photo wall, and family lounge setup"),
+        ("Royal Wedding", money["weddingRoyal"], "Full venue, banquet package, premium decor, catering coordination, and VIP support desk"),
     ]
     package_cards = _render_package_cards(packages, "Compare Package")
     leads = [
@@ -783,18 +1414,19 @@ def _render_wedding_venue_sections() -> str:
     )}"""
 
 
-def _render_car_detailing_sections() -> str:
+def _render_car_detailing_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     packages = [
-        ("Express Wash", "$29", "Exterior foam wash, tyre shine, and quick interior vacuum"),
-        ("Interior Deep Clean", "$79", "Seats, mats, dashboard, odor treatment, and stain care"),
-        ("Premium Ceramic Detail", "$249", "Paint polish, ceramic coating prep, and premium finish protection"),
+        ("Express Wash", money["serviceSmall"], "Exterior foam wash, tyre shine, and quick interior vacuum"),
+        ("Interior Deep Clean", money["serviceMedium"], "Seats, mats, dashboard, odor treatment, and stain care"),
+        ("Premium Ceramic Detail", money["serviceLarge"], "Paint polish, ceramic coating prep, and premium finish protection"),
     ]
     package_cards = _render_package_cards(packages, "Book Package")
     bookings = [
         ("Doorstep Booking", "SUV ceramic detail", "Today 4:30 PM"),
         ("Booking Calendar", "Interior deep clean", "Tomorrow 10:00 AM"),
         ("Payment Status", "Express wash", "Paid"),
-        ("Admin Dashboard", "Daily Bookings", "Revenue $4.6k"),
+        ("Admin Dashboard", "Daily Bookings", f"Revenue {money['revenueShort']}"),
         ("Customer Leads", "Ceramic detail enquiry", "Call back"),
     ]
     return f"""
@@ -828,11 +1460,12 @@ def _render_car_detailing_sections() -> str:
     )}"""
 
 
-def _render_gym_sections() -> str:
+def _render_gym_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     plans = [
-        ("Starter Plan", "$39/mo", "Gym floor access, progress check-in, and monthly attendance summary"),
-        ("Transformation Plan", "$89/mo", "Personal trainer profile match, class booking, and diet consultation"),
-        ("Elite Coaching", "$149/mo", "Premium trainer sessions, weekly diet review, and payment dashboard access"),
+        ("Starter Plan", f"{money['basic']}/mo", "Gym floor access, progress check-in, and monthly attendance summary"),
+        ("Transformation Plan", f"{money['serviceMedium']}/mo", "Personal trainer profile match, class booking, and diet consultation"),
+        ("Elite Coaching", f"{money['serviceLarge']}/mo", "Premium trainer sessions, weekly diet review, and payment dashboard access"),
     ]
     rows = [
         ("Ananya Rao", "Transformation Plan", "Paid"),
@@ -871,11 +1504,12 @@ def _render_gym_sections() -> str:
     )}"""
 
 
-def _render_restaurant_sections() -> str:
+def _render_restaurant_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     menu_items = [
-        ("Chef Thali", "$12", "Best-selling lunch combo with dal, curry, rice, roti, and dessert"),
-        ("Paneer Tikka Bowl", "$9", "Fast ordering item with add-on beverage and spice preference"),
-        ("Family Dinner Pack", "$34", "Four-person bundle with payment status and kitchen queue tracking"),
+        ("Chef Thali", money["serviceSmall"], "Best-selling lunch combo with dal, curry, rice, roti, and dessert"),
+        ("Paneer Tikka Bowl", money["basic"], "Fast ordering item with add-on beverage and spice preference"),
+        ("Family Dinner Pack", money["serviceMedium"], "Four-person bundle with payment status and kitchen queue tracking"),
     ]
     rows = [
         ("Order #2184", "Family Dinner Pack", "Preparing"),
@@ -914,11 +1548,12 @@ def _render_restaurant_sections() -> str:
     )}"""
 
 
-def _render_clinic_sections() -> str:
+def _render_clinic_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     services = [
-        ("General Consultation", "$25", "Appointment booking with visit reason and queue status"),
-        ("Dental Checkup", "$40", "Doctor schedule slot with follow-up reminder"),
-        ("Health Package", "$99", "Patient records, payment status, and admin dashboard review"),
+        ("General Consultation", money["serviceSmall"], "Appointment booking with visit reason and queue status"),
+        ("Dental Checkup", money["serviceMedium"], "Doctor schedule slot with follow-up reminder"),
+        ("Health Package", money["serviceLarge"], "Patient records, payment status, and admin dashboard review"),
     ]
     rows = [
         ("Meera Shah", "General Consultation", "Checked in"),
@@ -957,11 +1592,12 @@ def _render_clinic_sections() -> str:
     )}"""
 
 
-def _render_school_sections() -> str:
+def _render_school_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     modules = [
-        ("Parent Portal", "$2/student", "Attendance, notices, homework, and teacher remarks in one parent view"),
-        ("Class Dashboard", "$79/mo", "Teacher workload, class attendance, and assignment status"),
-        ("Fee Desk", "$129/mo", "Fee status, reminders, receipts, and school admin overview"),
+        ("Parent Portal", f"{money['basic']}/student", "Attendance, notices, homework, and teacher remarks in one parent view"),
+        ("Class Dashboard", f"{money['serviceMedium']}/mo", "Teacher workload, class attendance, and assignment status"),
+        ("Fee Desk", f"{money['serviceLarge']}/mo", "Fee status, reminders, receipts, and school admin overview"),
     ]
     rows = [
         ("Aarohi Class 5A", "Attendance tracking", "Present"),
@@ -1000,11 +1636,12 @@ def _render_school_sections() -> str:
     )}"""
 
 
-def _render_retail_sections() -> str:
+def _render_retail_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
     items = [
-        ("Wireless Earbuds", "$49", "SKU EB-204, 48 in stock, high reorder velocity"),
-        ("Travel Backpack", "$39", "SKU BG-118, 12 in stock, low-stock alert active"),
-        ("Smart Watch", "$89", "SKU SW-331, supplier purchase order pending"),
+        ("Wireless Earbuds", money["serviceMedium"], "SKU EB-204, 48 in stock, high reorder velocity"),
+        ("Travel Backpack", money["serviceSmall"], "SKU BG-118, 12 in stock, low-stock alert active"),
+        ("Smart Watch", money["serviceLarge"], "SKU SW-331, supplier purchase order pending"),
     ]
     rows = [
         ("Low Stock", "Travel Backpack", "12 left"),
@@ -1043,27 +1680,222 @@ def _render_retail_sections() -> str:
     )}"""
 
 
+def _render_finance_insurance_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
+    policies = [
+        ("Family Health Protect", f"{money['serviceMedium']}/mo", "Policy card with coverage summary, renewal date, and advisor contact"),
+        ("Vehicle Shield Plus", f"{money['serviceSmall']}/mo", "Quote card for premium comparison, document checklist, and payment state"),
+        ("Term Life Secure", f"{money['basic']}/mo", "Claim-ready record with nominee details and review status"),
+    ]
+    rows = [
+        ("Claim Tracker", "Health Protect", "Documents received"),
+        ("Quote Request", "Vehicle Shield", "Advisor review"),
+        ("Renewal", "Term Life Secure", "Due in 14 days"),
+        ("Advisor Contact", "Meera Kapoor", "Call scheduled"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Policy Cards</span>
+        <h2>Trust-first insurance workspace</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(policies, "View Quote")}</div>
+    </section>
+
+    <section class="content-block gallery-panel timeline-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Claim Tracker</span>
+        <h2>Policy status timeline and advisor follow-up</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Quote Cards", "Policy Review", "Claim Timeline", "Advisor Contact"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Quote Builder",
+        "Advisor Dashboard",
+        "Capture a policy enquiry",
+        [("Customer name", "Asha Mehta"), ("Policy type", "Family Health"), ("Renewal date", "14 Aug 2026")],
+        "Send Enquiry",
+        "Finance Desk",
+        "Claims, quotes, renewals, and advisors",
+        rows,
+    )}"""
+
+
+def _render_mutual_fund_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
+    funds = [
+        ("Equity Funds", "Estimated growth", "Compare category, risk profile, NAV trend, and advisor guidance"),
+        ("Hybrid Funds", "Balanced risk", "Review portfolio fit, SIP reminders, and customer enquiry readiness"),
+        ("Debt Funds", "Lower volatility", "Summarize category notes, risk profile, and advisor follow-up"),
+    ]
+    rows = [
+        ("SIP Calculator", "Monthly Investment", money["monthlyInvestment"]),
+        ("Portfolio Tracker", "Portfolio Value", money["portfolioValue"]),
+        ("KYC Upload", "Pending documents", "12"),
+        ("Risk Profile", "Moderate investors", "18"),
+        ("Advisor Booking", "Calls scheduled", "9"),
+        ("SIP Reminders", "Due this week", "24"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Mutual Fund Categories</span>
+        <h2>Finance-oriented fund discovery and comparison</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(funds, "Compare Funds")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">SIP Investment Hub</span>
+        <h2>SIP, portfolio, KYC, and risk profile workflow</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["SIP Calculator", "Portfolio Tracker", "KYC Upload", "Risk Profile", "Advisor Booking", "SIP Reminders"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Customer Enquiry",
+        "Advisor Dashboard",
+        "Capture investor enquiry",
+        [("Investor name", "Priya Sharma"), ("SIP Amount", f"{money['sipAmount']}/mo"), ("Risk profile", "Moderate")],
+        "Book Advisor",
+        "Admin Dashboard",
+        "Advisor guidance, reminders, and portfolio summary",
+        rows,
+    )}"""
+
+
+def _render_agriculture_sections(plan: Dict[str, Any]) -> str:
+    money = _currency_sample_values(plan)
+    cards = [
+        ("Wheat Crop Health", money["mandiRate"], "Crop health card with field status, mandi price, and weather risk"),
+        ("Input Cost", money["inputCost"], "Seed, fertilizer, and input cost tracking for the current crop cycle"),
+        ("Profit Estimate", money["profitEstimate"], "Estimated profit after input and diesel cost review"),
+        ("Weather Advisory", "Low risk", "Rain window, temperature signal, and irrigation reminder"),
+        ("Satellite Intelligence", "86%", "Satellite intelligence card with scouting priority and NDVI-style status"),
+    ]
+    rows = [
+        ("Crop Health", "North field wheat", "86% stable"),
+        ("Weather Card", "Rain chance", "Low risk"),
+        ("Mandi Rate", "Wheat", money["mandiRate"]),
+        ("Input Cost", "Current crop", money["inputCost"]),
+        ("Diesel Cost", "This week", money["dieselCost"]),
+        ("Farmer Profile", "Ramesh Patel", "Advisory sent"),
+        ("Farm Records", "8 acres", "Updated today"),
+        ("AI Chat", "Ask advisory", "Ready"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Farmer Dashboard</span>
+        <h2>Crop health, weather, mandi, and satellite intelligence</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(cards, "View Field")}</div>
+    </section>
+
+    <section class="content-block gallery-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Agriculture Intelligence Hub</span>
+        <h2>Green agri cards for daily decisions</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Crop Health", "Weather", "Mandi Prices", "Satellite Intelligence", "Farmer Profile", "Farm Records", "AI Chat"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "AI Chat",
+        "Farmer Profile",
+        "Record a farm update",
+        [("Farmer name", "Ramesh Patel"), ("Crop", "Wheat"), ("Field status", "Healthy")],
+        "Save Update",
+        "Admin Dashboard",
+        "Weather, prices, and field status",
+        rows,
+    )}"""
+
+
+def _render_government_sections() -> str:
+    services = [
+        ("Citizen Certificate", "4 days", "Citizen service card with application status and officer routing"),
+        ("Municipal Request", "Open", "Service request with department assignment and SLA status"),
+        ("Scheme Application", "Review", "Role-based card for officer review and audit trail"),
+    ]
+    rows = [
+        ("Application Tracker", "CERT-4821", "Officer review"),
+        ("Citizen Service", "Water request", "In progress"),
+        ("Audit Status", "Scheme application", "Verified"),
+        ("Officer Dashboard", "Ward 12", "11 pending"),
+    ]
+    return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Citizen Services</span>
+        <h2>Clean official service and officer workspace</h2>
+      </div>
+      <div class="package-grid">{_render_package_cards(services, "Track Status")}</div>
+    </section>
+
+    <section class="content-block gallery-panel timeline-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Audit Status</span>
+        <h2>Role-based cards for service accountability</h2>
+      </div>
+      <div class="gallery-grid">
+        {_render_gallery_tiles(["Citizen Services", "Officer Dashboard", "Application Tracker", "Audit Cards"])}
+      </div>
+    </section>
+
+    {_render_operations_section(
+        "Service Request",
+        "Department Metrics",
+        "Capture a citizen request",
+        [("Citizen name", "Nitin Rao"), ("Service type", "Certificate"), ("Application ID", "CERT-4821")],
+        "Submit Request",
+        "Officer Dashboard",
+        "Services, officers, and audit status",
+        rows,
+    )}"""
+
+
 def _render_domain_sections(domain: str, plan: Dict[str, Any]) -> str:
+    if domain == "finance_insurance":
+        return _render_finance_insurance_sections(plan)
+
+    if domain == "mutual_fund_advisor":
+        return _render_mutual_fund_sections(plan)
+
     if domain == "car_detailing":
-        return _render_car_detailing_sections()
+        return _render_car_detailing_sections(plan)
 
     if domain == "wedding_venue":
-        return _render_wedding_venue_sections()
+        return _render_wedding_venue_sections(plan)
 
     if domain == "gym":
-        return _render_gym_sections()
+        return _render_gym_sections(plan)
 
     if domain == "restaurant":
-        return _render_restaurant_sections()
+        return _render_restaurant_sections(plan)
 
     if domain == "clinic":
-        return _render_clinic_sections()
+        return _render_clinic_sections(plan)
 
     if domain == "school":
-        return _render_school_sections()
+        return _render_school_sections(plan)
 
     if domain == "retail":
-        return _render_retail_sections()
+        return _render_retail_sections(plan)
+
+    if domain == "agriculture":
+        return _render_agriculture_sections(plan)
+
+    if domain == "government":
+        return _render_government_sections()
 
     return f"""
     <section class="content-block">
@@ -1087,13 +1919,16 @@ def _render_domain_sections(domain: str, plan: Dict[str, Any]) -> str:
     </section>"""
 
 
-def _build_html(plan: Dict[str, Any]) -> str:
+def _build_html(plan: Dict[str, Any], app_id: str) -> str:
     app_name = html.escape(plan["app_name"])
     app_type = html.escape(plan["app_type"])
     summary = html.escape(plan["preview_summary"])
     domain = _domain_from_plan(plan)
+    theme = plan.get("visual_theme") if isinstance(plan.get("visual_theme"), dict) else select_visual_theme(plan, app_id)
     screen_labels = _domain_screen_labels(domain, plan)
     actions = {
+        "finance_insurance": ("Quote Builder", "Claim Tracker"),
+        "mutual_fund_advisor": ("Compare Funds", "SIP Calculator"),
         "car_detailing": ("Service Packages", "Doorstep Booking"),
         "gym": ("Membership Plans", "Class Booking"),
         "wedding_venue": ("Wedding Packages", "Send Enquiry"),
@@ -1101,6 +1936,8 @@ def _build_html(plan: Dict[str, Any]) -> str:
         "clinic": ("Book Appointment", "Doctor Schedule"),
         "school": ("Parent Portal", "Attendance"),
         "retail": ("Update Stock", "Sales Dashboard"),
+        "agriculture": ("Crop Health", "Mandi Prices"),
+        "government": ("Citizen Services", "Officer Dashboard"),
     }
     primary_action, secondary_action = actions.get(domain, ("Open Workflow", "View Dashboard"))
     return f"""<!doctype html>
@@ -1112,7 +1949,7 @@ def _build_html(plan: Dict[str, Any]) -> str:
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body class="{html.escape(_domain_theme_class(domain))}{' is-image-guided' if plan.get('image_guided') else ''}">
+<body class="{_domain_theme_class(domain, theme)}{' is-image-guided' if plan.get('image_guided') else ''}">
   <main class="app-shell">
     <header class="hero">
       <nav class="top-nav" aria-label="Prototype navigation">
@@ -1138,7 +1975,7 @@ def _build_html(plan: Dict[str, Any]) -> str:
     </section>
 
     <section class="metric-grid" aria-label="Dashboard metrics">
-      {_render_metric_cards(domain)}
+      {_render_metric_cards(domain, plan)}
     </section>
 
     <section class="interactive-screen-panel" aria-live="polite">
@@ -1152,24 +1989,6 @@ def _build_html(plan: Dict[str, Any]) -> str:
     {_render_image_guided_reference(plan)}
 
     {_render_domain_sections(domain, plan)}
-
-    <section class="content-block data-panel">
-      <div>
-        <span class="eyebrow">Data model</span>
-        <h2>Placeholder data needs</h2>
-        <ul>{_render_list(plan["data_needs"])}</ul>
-      </div>
-      <div>
-        <span class="eyebrow">API ready</span>
-        <h2>Backend proxy placeholders</h2>
-        <ul>{_render_list([f"/api/runtime/{{app_id}}/{_slugify(service)}" for service in plan["api_needs"]] or ["/api/runtime/{app_id}/future-service"])}</ul>
-      </div>
-      <div>
-        <span class="eyebrow">Monetization</span>
-        <h2>Business model</h2>
-        <ul>{_render_list(plan["monetization"] if isinstance(plan["monetization"], list) else [plan["monetization"]])}</ul>
-      </div>
-    </section>
   </main>
   <script src="./app.js"></script>
 </body>
@@ -1210,6 +2029,17 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .theme-clinic { --bg: #f2fbfb; --accent: #0f8f94; --accent-2: #4a73d9; --accent-soft: #e8f8f8; --hero-a: #12333a; --hero-b: #176b72; --hero-c: #8ad7d6; }
 .theme-school { --bg: #f7f9ff; --accent: #4a67d6; --accent-2: #f0a322; --accent-soft: #edf1ff; --hero-a: #1e2a4f; --hero-b: #4a67d6; --hero-c: #f2c55c; }
 .theme-retail { --bg: #f6f9f5; --accent: #27825f; --accent-2: #3357c9; --accent-soft: #eaf6ef; --hero-a: #13251f; --hero-b: #27624b; --hero-c: #83b366; }
+.theme-family-finance-trust-blue { --bg: #f4f8ff; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #14213d; --muted: #61708c; --line: #dbe6f7; --accent: #1d5fd1; --accent-2: #27a7d8; --accent-soft: #eaf2ff; --hero-a: #10284f; --hero-b: #174b90; --hero-c: #dcecff; }
+.theme-family-premium-automotive-dark { --bg: #090b10; --surface: rgba(20,23,31,.94); --surface-strong: #151923; --text: #f6f7fb; --muted: #a8b0c2; --line: #2a3140; --accent: #f8c15c; --accent-2: #7fd7ff; --accent-soft: #241d12; --hero-a: #06070a; --hero-b: #141923; --hero-c: #b8863b; }
+.theme-family-fitness-energy-bold { --bg: #101215; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #151821; --muted: #616b7d; --line: #e6eaf1; --accent: #ff4d2e; --accent-2: #00c782; --accent-soft: #fff0ec; --hero-a: #111318; --hero-b: #28312d; --hero-c: #ff5b34; }
+.theme-family-wedding-elegant-warm { --bg: #fff8f4; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #2b1f2c; --muted: #7d6b7f; --line: #f0dfd8; --accent: #b84f7a; --accent-2: #c7974b; --accent-soft: #fff0e6; --hero-a: #3a2334; --hero-b: #8e456b; --hero-c: #d6a85b; }
+.theme-family-education-soft-blue { --bg: #f7f9ff; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #172244; --muted: #64708a; --line: #dfe7fb; --accent: #4a67d6; --accent-2: #f0a322; --accent-soft: #edf1ff; --hero-a: #1e2a4f; --hero-b: #4a67d6; --hero-c: #f2c55c; }
+.theme-family-healthcare-calm-teal { --bg: #f2fbfb; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #11313a; --muted: #5d7378; --line: #d8eeee; --accent: #0f8f94; --accent-2: #4a73d9; --accent-soft: #e8f8f8; --hero-a: #12333a; --hero-b: #176b72; --hero-c: #8ad7d6; }
+.theme-family-restaurant-warm-food { --bg: #fff8f0; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #2c1510; --muted: #7d6659; --line: #f0ded1; --accent: #d94f21; --accent-2: #16825d; --accent-soft: #fff1e8; --hero-a: #2c1510; --hero-b: #88402a; --hero-c: #e3a045; }
+.theme-family-retail-inventory-grid { --bg: #f6f9f5; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #14251f; --muted: #64736c; --line: #dfe9df; --accent: #27825f; --accent-2: #3357c9; --accent-soft: #eaf6ef; --hero-a: #13251f; --hero-b: #27624b; --hero-c: #83b366; }
+.theme-family-agriculture-green-dashboard { --bg: #f3fbef; --surface: rgba(255,255,255,.96); --surface-strong: #fff; --text: #18331e; --muted: #61755e; --line: #dcebd5; --accent: #2f8f46; --accent-2: #b28b22; --accent-soft: #eaf7df; --hero-a: #17351f; --hero-b: #2f7640; --hero-c: #b9d981; }
+.theme-family-government-civic-clean { --bg: #f7f8fa; --surface: rgba(255,255,255,.97); --surface-strong: #fff; --text: #172033; --muted: #687082; --line: #dfe3ea; --accent: #2457a6; --accent-2: #64748b; --accent-soft: #edf3fb; --hero-a: #182235; --hero-b: #315f9f; --hero-c: #e7edf5; }
+.theme-family-generic-modern-saas { --bg: #f4f6fb; --surface: rgba(255,255,255,.94); --surface-strong: #fff; --text: #151821; --muted: #697184; --line: #e5e9f2; --accent: #3657ff; --accent-2: #16a085; --accent-soft: #eef2ff; --hero-a: #10131d; --hero-b: #28364d; --hero-c: #4a5f7c; }
 .app-shell { min-height: 100svh; width: min(100%, 1180px); margin: 0 auto; padding: 14px 14px max(92px, calc(env(safe-area-inset-bottom) + 76px)); }
 .hero { overflow: hidden; border-radius: 26px; background: linear-gradient(135deg, var(--hero-a) 0%, var(--hero-b) 56%, var(--hero-c) 100%); color: #fff; box-shadow: 0 24px 70px rgba(12,16,26,.24); }
 .top-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px; }
@@ -1241,6 +2071,8 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .app-screen-nav button.is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
 .metric-grid, .feature-grid, .package-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-top: 14px; }
 .metric-grid article, .feature-card, .screen-section, .data-panel, .package-card, .enquiry-card, .admin-card, .gallery-panel, .interactive-screen-panel, .screen-card { border: 1px solid var(--line); border-radius: 20px; background: var(--surface); box-shadow: var(--shadow); color: var(--text); }
+.metric-grid article, .feature-card, .screen-section, .package-card, .gallery-grid span, .screen-card { cursor: pointer; transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.metric-grid article:hover, .feature-card:hover, .screen-section:hover, .package-card:hover, .gallery-grid span:hover, .screen-card:hover { transform: translateY(-2px); border-color: color-mix(in srgb, var(--accent) 42%, var(--line)); }
 .metric-grid article { position: relative; display: grid; gap: 7px; overflow: hidden; padding: 17px; }
 .metric-grid article::after { content: ""; position: absolute; inset: auto 14px 14px auto; width: 34px; height: 34px; border-radius: 12px; background: color-mix(in srgb, var(--accent) 16%, transparent); }
 .metric-grid span { color: var(--muted); font-size: 12px; font-weight: 750; }
@@ -1286,6 +2118,24 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .admin-card li { display: grid; gap: 3px; padding: 12px; border-radius: 14px; background: color-mix(in srgb, var(--accent-soft) 62%, var(--surface-strong)); }
 .admin-card li span { color: var(--muted); font-size: 13px; }
 .admin-card li em { color: var(--accent); font-size: 12px; font-style: normal; font-weight: 850; }
+.card-style-sharp .metric-grid article, .card-style-sharp .feature-card, .card-style-sharp .screen-section, .card-style-sharp .package-card, .card-style-sharp .enquiry-card, .card-style-sharp .admin-card, .card-style-sharp .gallery-panel, .card-style-sharp .interactive-screen-panel, .card-style-sharp .screen-card { border-radius: 10px; }
+.card-style-soft .metric-grid article, .card-style-soft .feature-card, .card-style-soft .screen-section, .card-style-soft .package-card, .card-style-soft .enquiry-card, .card-style-soft .admin-card, .card-style-soft .gallery-panel, .card-style-soft .interactive-screen-panel, .card-style-soft .screen-card { border-radius: 18px; }
+.card-style-rounded .metric-grid article, .card-style-rounded .feature-card, .card-style-rounded .screen-section, .card-style-rounded .package-card, .card-style-rounded .enquiry-card, .card-style-rounded .admin-card, .card-style-rounded .gallery-panel, .card-style-rounded .interactive-screen-panel, .card-style-rounded .screen-card { border-radius: 24px; }
+.density-compact .content-block { margin-top: 18px; gap: 10px; }
+.density-compact .metric-grid, .density-compact .feature-grid, .density-compact .package-grid { gap: 9px; }
+.density-spacious .content-block { margin-top: 34px; gap: 18px; }
+.density-spacious .metric-grid, .density-spacious .feature-grid, .density-spacious .package-grid { gap: 16px; }
+.layout-card-first-dashboard .metric-grid { order: -1; }
+.layout-card-first-dashboard .interactive-screen-panel { background: var(--surface-strong); }
+.layout-gallery-first-showcase .gallery-panel { background: linear-gradient(135deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 74%, var(--surface-strong))); }
+.layout-gallery-first-showcase .gallery-grid span { min-height: 148px; }
+.layout-timeline-tracker .timeline-panel, .layout-timeline-tracker .admin-card { border-left: 5px solid var(--accent); }
+.layout-admin-metrics-grid .metric-grid { grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); }
+.layout-admin-metrics-grid .metric-grid article { min-height: 118px; }
+.layout-hero-stat-stack .phone-chip-grid { grid-template-columns: 1fr; }
+.layout-hero-stat-stack .phone-chip-grid span { min-height: 42px; }
+.layout-hero-feature-grid .phone-focus { min-height: 150px; }
+.layout-split-action-dashboard .interactive-screen-panel { border-color: color-mix(in srgb, var(--accent) 35%, var(--line)); }
 .is-image-guided .hero { border-radius: 30px; background: linear-gradient(160deg, #171b24 0%, var(--hero-b) 54%, var(--accent) 100%); }
 .is-image-guided .hero-content { align-items: stretch; }
 .is-image-guided .phone-mock { border-radius: 34px; background: rgba(255,255,255,.18); }
@@ -1325,21 +2175,130 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 def _build_js(app_id: str, plan: Dict[str, Any]) -> str:
     api_services = [_slugify(service) for service in plan["api_needs"]] or ["future-service"]
     domain = _domain_from_plan(plan)
+    currency_metadata = {
+        "code": _clean_text(plan.get("currency_code"), "USD"),
+        "symbol": _clean_text(plan.get("currency_symbol"), "$"),
+        "locale": _clean_text(plan.get("currency_locale"), "en-US"),
+        "country": _clean_text(plan.get("country_hint"), "United States"),
+        "samples": _currency_sample_values(plan),
+    }
     return f"""const APP_ID = {json.dumps(app_id)};
-const API_PROXY_PLACEHOLDERS = {json.dumps([f"/api/runtime/{app_id}/{service}" for service in api_services])};
+// Internal runtime proxy placeholders only: {json.dumps([f"/api/runtime/{app_id}/{service}" for service in api_services])}
+const API_PROXY_PLACEHOLDERS = [];
 const APP_DOMAIN = {json.dumps(domain)};
+const CURRENCY = {json.dumps(currency_metadata, ensure_ascii=False)};
+const MONEY = CURRENCY.samples;
 
 const SCREEN_CONFIG = {{
+  finance_insurance: {{
+    dashboard: {{
+      title: "Finance Dashboard",
+      summary: "Policies, quote requests, claim timelines, advisor follow-up, and renewal reminders.",
+      cards: [["Active Policies", "248 covered customers"], ["Quote Requests", "31 awaiting advisor"], ["Claims Open", "12 in progress"]]
+    }},
+    policy_cards: {{
+      title: "Policy Cards",
+      summary: "Clean policy cards for premium, coverage, renewal date, and claim readiness.",
+      cards: [["Health Protect", `${{MONEY.serviceMedium}}/mo renewal`], ["Vehicle Shield", "Quote pending"], ["Term Life Secure", "Nominee verified"]]
+    }},
+    quote_builder: {{
+      title: "Quote Builder",
+      summary: "A trust-focused quote form for customer details, policy type, date, and advisor notes.",
+      formType: "enquiry",
+      serviceOptions: ["Health Policy", "Vehicle Insurance", "Term Life"]
+    }},
+    claim_tracker: {{
+      title: "Claim Tracker",
+      summary: "Timeline-style cards for submitted documents, review status, advisor action, and payout stage.",
+      cards: [["Documents", "Received"], ["Review", "Advisor assigned"], ["Settlement", "Awaiting approval"]]
+    }},
+    advisor_contacts: {{
+      title: "Advisor Contacts",
+      summary: "Advisor cards keep contact and follow-up visible without a dark generic CRM feel.",
+      cards: [["Meera Kapoor", "Health policies"], ["Rohan Sethi", "Vehicle claims"], ["Aisha Khan", "Renewals"]]
+    }},
+    renewals: {{
+      title: "Renewals",
+      summary: "Upcoming policy renewals and quote reminders for the finance team.",
+      cards: [["Health Protect", "Due in 14 days"], ["Vehicle Shield", "Quote sent"], ["Term Secure", "Call scheduled"]]
+    }},
+    admin_dashboard: {{
+      title: "Admin Dashboard",
+      summary: "Finance admin view for policies, quotes, claims, and advisor workload.",
+      cards: [["Policies", "248"], ["Claims", "12"], ["Renewals", "44"]]
+    }}
+  }},
+  mutual_fund_advisor: {{
+    dashboard: {{
+      title: "Mutual Fund Dashboard",
+      summary: "Investors, SIP customers, advisor leads, KYC pending items, and portfolio summaries in one clean finance app.",
+      cards: [["SIP Amount", `${{MONEY.sipAmount}}/mo`], ["Portfolio Value", `${{MONEY.portfolioValue}}`], ["Advisory Leads", "28 enquiries"]]
+    }},
+    funds: {{
+      title: "Mutual Fund Categories",
+      summary: "Category cards help investors review equity, hybrid, and debt funds with risk-aware advisor guidance.",
+      cards: [["Equity Funds", "Estimated growth view"], ["Hybrid Funds", "Balanced risk profile"], ["Debt Funds", "Lower volatility category"]]
+    }},
+    compare: {{
+      title: "Compare Funds",
+      summary: "Compare fund categories, NAV context, risk profile fit, and portfolio suitability without promising returns.",
+      cards: [["Large Cap Fund", "NAV summary"], ["Balanced Advantage", "Risk profile fit"], ["Short Duration Debt", "Portfolio allocation"]]
+    }},
+    sip: {{
+      title: "SIP Calculator",
+      summary: "Estimate SIP growth scenarios from monthly investment, duration, and risk profile inputs.",
+      formType: "sip",
+      serviceOptions: ["Monthly SIP", "Step-up SIP", "Goal-based SIP"]
+    }},
+    portfolio: {{
+      title: "Portfolio Tracker",
+      summary: "Portfolio summary cards show current value, monthly investment, allocation, and advisor follow-up.",
+      cards: [["Portfolio Value", `${{MONEY.portfolioValue}}`], ["Monthly Investment", `${{MONEY.monthlyInvestment}}`], ["Review", "Advisor guidance due"]]
+    }},
+    kyc: {{
+      title: "KYC Upload",
+      summary: "Document upload readiness screen for PAN, address proof, bank proof, and pending checks. No fake KYC approval is shown.",
+      cards: [["PAN", "Pending upload"], ["Address Proof", "Review needed"], ["Bank Proof", "Checklist ready"]]
+    }},
+    risk: {{
+      title: "Risk Profile",
+      summary: "Risk profile form preview for investor goals, horizon, volatility comfort, and advisor guidance.",
+      formType: "risk",
+      serviceOptions: ["Conservative", "Moderate", "Aggressive"]
+    }},
+    advisor: {{
+      title: "Advisor Booking",
+      summary: "Book advisor calls for portfolio review, SIP guidance, KYC help, and customer enquiry follow-up.",
+      formType: "booking",
+      serviceOptions: ["Portfolio Review", "SIP Guidance", "KYC Help"]
+    }},
+    reminders: {{
+      title: "SIP Reminders",
+      summary: "Upcoming SIP reminders and customer follow-up cards for investors and advisor teams.",
+      cards: [["Priya Sharma", `${{MONEY.sipAmount}} due Friday`], ["Arjun Mehta", "Step-up reminder"], ["Neha Rao", "Portfolio review call"]]
+    }},
+    enquiry: {{
+      title: "Customer Enquiry",
+      summary: "Capture investor enquiry details for advisor guidance and broker admin follow-up.",
+      formType: "enquiry",
+      serviceOptions: ["New SIP", "Fund Comparison", "Portfolio Review"]
+    }},
+    admin: {{
+      title: "Admin Dashboard",
+      summary: "Broker admin view for advisory leads, KYC pending items, SIP reminders, and portfolio review workload.",
+      cards: [["Advisory Leads", "28"], ["KYC Pending", "12"], ["SIP Reminders", "24"]]
+    }}
+  }},
   car_detailing: {{
     dashboard: {{
       title: "Dashboard",
       summary: "Daily bookings, revenue, leads, and payment status for the detailing business.",
-      cards: [["Daily Bookings", "18 scheduled services"], ["Revenue", "$4.6k this week"], ["Customer Leads", "7 callback requests"]]
+      cards: [["Daily Bookings", "18 scheduled services"], ["Revenue", `${{MONEY.revenueWeekly}}`], ["Customer Leads", "7 callback requests"]]
     }},
     service_packages: {{
       title: "Service Packages",
       summary: "Customers compare detailing packages and choose the service that matches their vehicle.",
-      cards: [["Express Wash", "$29 quick exterior care"], ["Interior Deep Clean", "$79 cabin reset"], ["Premium Ceramic Detail", "$249 finish protection"]]
+      cards: [["Express Wash", `${{MONEY.serviceSmall}} quick exterior care`], ["Interior Deep Clean", `${{MONEY.serviceMedium}} cabin reset`], ["Premium Ceramic Detail", `${{MONEY.serviceLarge}} finish protection`]]
     }},
     doorstep_booking: {{
       title: "Doorstep Booking",
@@ -1365,7 +2324,7 @@ const SCREEN_CONFIG = {{
     admin_dashboard: {{
       title: "Admin Dashboard",
       summary: "Admin view for bookings, revenue, lead follow-up, and service completion.",
-      cards: [["Bookings", "18 active"], ["Revenue", "$4.6k"], ["Leads", "7 open"]]
+      cards: [["Bookings", "18 active"], ["Revenue", `${{MONEY.revenueShort}}`], ["Leads", "7 open"]]
     }}
   }},
   gym: {{
@@ -1377,7 +2336,7 @@ const SCREEN_CONFIG = {{
     membership_plans: {{
       title: "Membership Plans",
       summary: "Members can compare starter, transformation, and elite coaching plans.",
-      cards: [["Starter Plan", "$39/mo gym access"], ["Transformation Plan", "$89/mo trainer match"], ["Elite Coaching", "$149/mo premium sessions"]]
+      cards: [["Starter Plan", `${{MONEY.basic}}/mo gym access`], ["Transformation Plan", `${{MONEY.serviceMedium}}/mo trainer match`], ["Elite Coaching", `${{MONEY.serviceLarge}}/mo premium sessions`]]
     }},
     trainer_profiles: {{
       title: "Trainer Profiles",
@@ -1403,19 +2362,19 @@ const SCREEN_CONFIG = {{
     payment_dashboard: {{
       title: "Payment Dashboard",
       summary: "Membership payments, trainer add-ons, and pending invoices in one screen.",
-      cards: [["Monthly Revenue", "$12.4k"], ["Paid Members", "248"], ["Pending", "18 invoices"]]
+      cards: [["Monthly Revenue", `${{MONEY.monthlyRevenue}}`], ["Paid Members", "248"], ["Pending", "18 invoices"]]
     }}
   }},
   wedding_venue: {{
     dashboard: {{
       title: "Dashboard",
       summary: "Booking lead, package, enquiry, and date-hold overview for the venue manager.",
-      cards: [["Booking Leads", "24 this week"], ["Date Holds", "8 active"], ["Package Revenue", "₹38L pipeline"]]
+      cards: [["Booking Leads", "24 this week"], ["Date Holds", "8 active"], ["Package Revenue", `${{MONEY.weddingPipeline}}`]]
     }},
     wedding_packages: {{
       title: "Wedding Packages",
       summary: "Families compare Haldi, Mehendi, lawn booking, banquet package, and full wedding options.",
-      cards: [["Haldi Theme", "₹2.49L outdoor decor"], ["Mehendi Theme", "₹4.99L family lounge"], ["Royal Wedding", "₹8.99L full venue"]]
+      cards: [["Haldi Theme", `${{MONEY.weddingPackage}} outdoor decor`], ["Mehendi Theme", `${{MONEY.weddingPremium}} family lounge`], ["Royal Wedding", `${{MONEY.weddingRoyal}} full venue`]]
     }},
     haldi_theme: {{
       title: "Haldi Theme",
@@ -1453,12 +2412,12 @@ const SCREEN_CONFIG = {{
     dashboard: {{
       title: "Owner Dashboard",
       summary: "Orders, table reservations, kitchen queue, and revenue for today's service.",
-      cards: [["Today Orders", "86 orders"], ["Reservations", "18 tables"], ["Revenue", "$6.8k"]]
+      cards: [["Today Orders", "86 orders"], ["Reservations", "18 tables"], ["Revenue", `${{MONEY.dailyRevenue}}`]]
     }},
     menu: {{
       title: "Menu",
       summary: "Customer-facing menu cards with popular dishes, prices, and add-to-order actions.",
-      cards: [["Chef Thali", "$12 lunch combo"], ["Paneer Tikka Bowl", "$9 bestseller"], ["Family Dinner Pack", "$34 bundle"]]
+      cards: [["Chef Thali", `${{MONEY.serviceSmall}} lunch combo`], ["Paneer Tikka Bowl", `${{MONEY.basic}} bestseller`], ["Family Dinner Pack", `${{MONEY.serviceMedium}} bundle`]]
     }},
     food_ordering: {{
       title: "Food Ordering",
@@ -1480,7 +2439,7 @@ const SCREEN_CONFIG = {{
     payment_dashboard: {{
       title: "Payment Dashboard",
       summary: "Paid, pending, and refunded order states before real payment proxy wiring.",
-      cards: [["Paid Orders", "72"], ["Pending", "9"], ["UPI Settled", "$5.9k"]]
+      cards: [["Paid Orders", "72"], ["Pending", "9"], ["UPI Settled", `${{MONEY.settled}}`]]
     }},
     admin_dashboard: {{
       title: "Admin Dashboard",
@@ -1523,7 +2482,7 @@ const SCREEN_CONFIG = {{
     admin_dashboard: {{
       title: "Admin Dashboard",
       summary: "Admin schedule, payments, queue, and daily clinic operations.",
-      cards: [["Collections", "$2.8k"], ["Pending Bills", "6"], ["Reminders", "16"]]
+      cards: [["Collections", `${{MONEY.collections}}`], ["Pending Bills", "6"], ["Reminders", "16"]]
     }}
   }},
   school: {{
@@ -1573,7 +2532,7 @@ const SCREEN_CONFIG = {{
     dashboard: {{
       title: "Inventory Dashboard",
       summary: "Stock cards, low-stock alerts, sales records, revenue, and product movement.",
-      cards: [["Products", "312 SKUs"], ["Low Stock", "14 alerts"], ["Revenue", "$8.2k"]]
+      cards: [["Products", "312 SKUs"], ["Low Stock", "14 alerts"], ["Revenue", `${{MONEY.retailRevenue}}`]]
     }},
     product_catalog: {{
       title: "Product Catalog",
@@ -1599,22 +2558,109 @@ const SCREEN_CONFIG = {{
     revenue_dashboard: {{
       title: "Revenue Dashboard",
       summary: "Revenue, margin, and fast-moving product overview.",
-      cards: [["Today Revenue", "$8.2k"], ["Top SKU", "Earbuds"], ["Margin", "31%"]]
+      cards: [["Today Revenue", `${{MONEY.retailRevenue}}`], ["Top SKU", "Earbuds"], ["Margin", "31%"]]
     }},
     admin_dashboard: {{
       title: "Admin Dashboard",
       summary: "Admin operations for stock, orders, purchases, and payments.",
       cards: [["Purchase Orders", "7 open"], ["Supplier Updates", "4"], ["Low Stock", "14"]]
     }}
+  }},
+  agriculture: {{
+    dashboard: {{
+      title: "Farmer Dashboard",
+      summary: "Crop health, weather, mandi prices, satellite intelligence, farmer profile, farm records, and AI chat.",
+      cards: [["Crop Health", "86% stable"], ["Weather", "Low risk"], ["Mandi Rate", `${{MONEY.mandiRate}}`]]
+    }},
+    crop: {{
+      title: "Crop Health",
+      summary: "Field cards for crop condition, scouting priority, and disease risk.",
+      cards: [["North Field", "Wheat healthy"], ["Soil Moisture", "Good"], ["Scout Priority", "Medium"]]
+    }},
+    weather: {{
+      title: "Weather",
+      summary: "Weather cards for rain window, temperature, and irrigation planning.",
+      cards: [["Rain Window", "Low chance"], ["Temperature", "29 C"], ["Irrigation", "Tomorrow"]]
+    }},
+    mandi: {{
+      title: "Mandi Prices",
+      summary: "Mandi price cards and buyer signals for farmers and FPO teams.",
+      cards: [["Wheat", `${{MONEY.mandiRate}}`], ["Soybean", `${{MONEY.mandiSoybean}}`], ["Buyer Interest", "3 calls"]]
+    }},
+    satellite: {{
+      title: "Satellite Intelligence",
+      summary: "Satellite intelligence cards for NDVI-style field health and action planning.",
+      cards: [["Vegetation", "Stable"], ["Risk", "Low"], ["Task", "Scout west patch"]]
+    }},
+    profile: {{
+      title: "Farmer Profile",
+      summary: "Farmer profile with crop, acreage, advisory state, and contact readiness.",
+      cards: [["Ramesh Patel", "8 acres"], ["Crop", "Wheat"], ["Advisory", "Sent"]]
+    }},
+    records: {{
+      title: "Farm Records",
+      summary: "Farm records for acreage, crop history, soil health, irrigation, and advisory notes.",
+      cards: [["North Farm", "8 acres"], ["Soil Health", "Good"], ["Irrigation", "Tomorrow"]]
+    }},
+    chat: {{
+      title: "AI Chat",
+      summary: "AI chat button and advisory form for crop, date, field status, and next action.",
+      formType: "stock",
+      serviceOptions: ["Crop Health Update", "Weather Advisory", "Mandi Follow-up"]
+    }},
+    admin: {{
+      title: "Admin Dashboard",
+      summary: "Admin dashboard for farmer records, alerts, recommendations, and FPO team follow-up.",
+      cards: [["Farmers", "128"], ["Alerts", "9"], ["Recommendations", "24"]]
+    }}
+  }},
+  government: {{
+    dashboard: {{
+      title: "Civic Dashboard",
+      summary: "Citizen services, officer reviews, application status, audit cards, and department metrics.",
+      cards: [["Citizen Services", "74 active"], ["Officer Reviews", "18 pending"], ["Audit Status", "96% verified"]]
+    }},
+    citizen_services: {{
+      title: "Citizen Services",
+      summary: "Official service cards for certificates, requests, scheme applications, and status.",
+      cards: [["Certificate", "Officer review"], ["Water Request", "In progress"], ["Scheme Form", "Verified"]]
+    }},
+    officer_dashboard: {{
+      title: "Officer Dashboard",
+      summary: "Officer workload, pending applications, SLA status, and next review actions.",
+      cards: [["Ward 12", "11 pending"], ["SLA", "4 near due"], ["Reviews", "18 today"]]
+    }},
+    application_tracker: {{
+      title: "Application Tracker",
+      summary: "Status tracker for citizen applications and department routing.",
+      cards: [["CERT-4821", "Officer review"], ["MUNI-2098", "Assigned"], ["SCHEME-112", "Verified"]]
+    }},
+    audit_status: {{
+      title: "Audit Status",
+      summary: "Audit cards show verification, officer trail, and official status.",
+      cards: [["Verified", "96%"], ["Needs Review", "4 files"], ["Officer Trail", "Complete"]]
+    }},
+    service_request: {{
+      title: "Service Request",
+      summary: "A civic service request form for citizen details, service type, date, and notes.",
+      formType: "enquiry",
+      serviceOptions: ["Certificate", "Municipal Request", "Scheme Application"]
+    }},
+    department_metrics: {{
+      title: "Department Metrics",
+      summary: "Department-level metrics for services, officer workload, and audit status.",
+      cards: [["Services", "74"], ["Officers", "18"], ["Pending", "11"]]
+    }}
   }}
 }};
 
 const SCREEN_ALIASES = {{
+  dashboard: "dashboard",
   preview: "dashboard",
   view_packages: APP_DOMAIN === "wedding_venue" ? "wedding_packages" : APP_DOMAIN === "gym" ? "membership_plans" : "service_packages",
-  send_enquiry: APP_DOMAIN === "wedding_venue" ? "enquiry_form" : "teacher_contact",
+  send_enquiry: APP_DOMAIN === "wedding_venue" ? "enquiry_form" : APP_DOMAIN === "mutual_fund_advisor" ? "enquiry" : "teacher_contact",
   gallery: APP_DOMAIN === "car_detailing" ? "before_after_gallery" : "gallery",
-  admin: APP_DOMAIN === "wedding_venue" ? "admin_lead_dashboard" : "admin_dashboard",
+  admin: APP_DOMAIN === "wedding_venue" ? "admin_lead_dashboard" : APP_DOMAIN === "agriculture" || APP_DOMAIN === "mutual_fund_advisor" ? "admin" : "admin_dashboard",
   trainers: "trainer_profiles",
   payments: APP_DOMAIN === "gym" ? "payment_dashboard" : "payment_status",
   book_package: "service_packages",
@@ -1636,7 +2682,53 @@ const SCREEN_ALIASES = {{
   attendance: "attendance",
   save_stock: "inventory",
   update_stock: "inventory",
-  sales_dashboard: "revenue_dashboard"
+  sales_dashboard: "revenue_dashboard",
+  view_quote: "quote_builder",
+  quote_builder: "quote_builder",
+  policy_cards: "policy_cards",
+  claim_tracker: "claim_tracker",
+  advisor_contacts: "advisor_contacts",
+  compare_funds: "compare",
+  compare: "compare",
+  mutual_fund_categories: "funds",
+  fund_categories: "funds",
+  funds: "funds",
+  sip_calculator: "sip",
+  sip: "sip",
+  sip_reminders: "reminders",
+  reminders: "reminders",
+  portfolio_tracker: "portfolio",
+  portfolio: "portfolio",
+  kyc_upload: "kyc",
+  kyc_document_upload: "kyc",
+  kyc: "kyc",
+  risk_profile: "risk",
+  risk: "risk",
+  advisor_booking: "advisor",
+  book_advisor: "advisor",
+  customer_enquiry: "enquiry",
+  enquiry: "enquiry",
+  crop: "crop",
+  crop_health: "crop",
+  weather: "weather",
+  mandi: "mandi",
+  mandi_prices: "mandi",
+  satellite_intelligence: "satellite",
+  satellite: "satellite",
+  farmer_profile: "profile",
+  profile: "profile",
+  farm_records: "records",
+  records: "records",
+  ai_chat: "chat",
+  chat: "chat",
+  admin_dashboard: APP_DOMAIN === "agriculture" || APP_DOMAIN === "mutual_fund_advisor" ? "admin" : "admin_dashboard",
+  view_field: "crop",
+  save_update: "chat",
+  citizen_services: "citizen_services",
+  officer_dashboard: "officer_dashboard",
+  track_status: "application_tracker",
+  audit_status: "audit_status",
+  submit_request: "service_request"
 }};
 
 // TODO: Add API key billing layer before enabling paid runtime services.
@@ -1649,7 +2741,7 @@ function slugFromLabel(label) {{
 
 function cardMarkup(cards) {{
   return `<div class="screen-card-grid">${{(cards || []).map(([title, detail]) => `
-    <article class="screen-card"><strong>${{title}}</strong><span>${{detail}}</span></article>
+    <article class="screen-card" role="button" tabindex="0" data-screen="${{slugFromLabel(title)}}"><strong>${{title}}</strong><span>${{detail}}</span></article>
   `).join("")}}</div>`;
 }}
 
@@ -1660,7 +2752,9 @@ function formMarkup(screen) {{
     booking: "Submit Booking",
     enquiry: "Send Enquiry",
     order: "Send Order",
-    stock: "Save Stock"
+    stock: "Save Stock",
+    sip: "Estimate SIP",
+    risk: "Save Risk Profile"
   }};
   const action = actions[screen.formType] || "Submit";
   return `
@@ -1700,11 +2794,20 @@ function renderScreen(screenKey, shouldScroll = true) {{
 }}
 
 document.addEventListener("click", (event) => {{
-  const button = event.target.closest("button");
-  if (!button) return;
-  button.dataset.clicked = "true";
-  const screenKey = button.dataset.screen || slugFromLabel(button.textContent);
+  const target = event.target.closest("button, .screen-card, .package-card, .metric-grid article, .gallery-grid span, .feature-card, .screen-section");
+  if (!target) return;
+  target.dataset.clicked = "true";
+  const screenKey = target.dataset.screen || slugFromLabel(target.textContent);
   renderScreen(screenKey);
+}});
+
+document.addEventListener("keydown", (event) => {{
+  if (!["Enter", " "].includes(event.key)) return;
+  const target = event.target.closest(".screen-card, .package-card, .metric-grid article, .gallery-grid span, .feature-card, .screen-section");
+  if (!target) return;
+  event.preventDefault();
+  target.dataset.clicked = "true";
+  renderScreen(target.dataset.screen || slugFromLabel(target.textContent));
 }});
 
 document.addEventListener("submit", (event) => {{
@@ -1730,9 +2833,13 @@ window.generatedAppRuntime = {{
 def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
     normalized = normalize_product_plan(plan)
     app_id = f"{_slugify(normalized['app_name'])}-{uuid4().hex[:8]}"
+    visual_theme = select_visual_theme(normalized, app_id)
+    normalized["visual_theme"] = visual_theme
+    if visual_theme.get("image_guided_design_note"):
+        normalized["design_inspiration_note"] = visual_theme["image_guided_design_note"]
     backend_dir = BACKEND_GENERATED_APPS_DIR / app_id
     files = {
-        "index.html": _build_html(normalized).replace("{app_id}", app_id),
+        "index.html": _build_html(normalized, app_id),
         "style.css": _build_css(),
         "app.js": _build_js(app_id, normalized),
         "manifest.json": json.dumps(
@@ -1742,10 +2849,16 @@ def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
                 "app_type": normalized["app_type"],
                 "created_at": datetime.now(timezone.utc).isoformat(),
                 "preview_url": f"/generated-apps/{app_id}/index.html",
-                "source": "phase-30a-output-quality-engine",
+                "source": "phase-32a-visual-theme-generator",
+                "currency_code": normalized.get("currency_code"),
+                "currency_symbol": normalized.get("currency_symbol"),
+                "currency_locale": normalized.get("currency_locale"),
+                "country_hint": normalized.get("country_hint"),
                 "input_mode": "image-guided" if normalized.get("image_guided") else "text-only",
                 "image_guided": bool(normalized.get("image_guided")),
                 "reference_image": normalized.get("reference_image") if normalized.get("image_guided") else None,
+                "visual_theme": visual_theme,
+                "design_inspiration_note": normalized.get("design_inspiration_note"),
                 "plan": normalized,
             },
             indent=2,

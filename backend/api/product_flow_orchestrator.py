@@ -67,6 +67,9 @@ Important rules:
 - Avoid stale generic preview wording such as AI Product Builder, Active users, and Open tasks
   unless the user's requested product is actually a builder/admin SaaS tool.
 - Keep runtime API integrations backend-proxy-only and never place real API keys in generated frontend plans.
+- Include visualThemeFamily, layoutVariant, and a short designInspirationNote in the flow so generated apps avoid repetitive generic styling.
+- Agriculture/farmer ideas must take priority over clinic/healthcare; crop health, farm health, and soil health are agriculture signals, not clinic signals.
+- Classify clinic only for clear clinic terms such as clinic, doctor, patient, appointment, hospital, dental, treatment, prescription, queue, or OPD.
 - Return JSON only. No markdown. No code fences.
 
 Return:
@@ -106,12 +109,51 @@ def _strip_json_fence(text: str) -> str:
     return text
 
 
+def _client_currency_metadata(payload: dict) -> dict:
+    client_context = payload.get("client_context") or payload.get("clientContext") or {}
+    if not isinstance(client_context, dict):
+        client_context = {}
+    return {
+        "client_locale": _safe_text(
+            payload.get("client_locale")
+            or payload.get("clientLocale")
+            or client_context.get("client_locale")
+            or client_context.get("clientLocale")
+            or client_context.get("language")
+        ),
+        "client_timezone": _safe_text(
+            payload.get("client_timezone")
+            or payload.get("clientTimezone")
+            or client_context.get("client_timezone")
+            or client_context.get("clientTimezone")
+            or client_context.get("timeZone")
+        ),
+        "currency_hint": _safe_text(payload.get("currency_hint") or payload.get("currencyHint") or client_context.get("currencyHint")),
+    }
+
+
 def _fallback_flow(idea: str, user_role: str, user_goal: str) -> dict:
     lower_idea = idea.lower()
+    agriculture_terms = [
+        "farmer", "farm", "farming", "agriculture", "crop", "crop health", "mandi",
+        "soil", "weather", "satellite", "ndvi", "farm records", "farmer profile",
+        "agri", "kisan", "fpo", "buyer matching", "harvest", "irrigation",
+    ]
+    mutual_fund_terms = [
+        "mutual fund", "sip", "systematic investment plan", "investment advisor",
+        "wealth advisor", "portfolio tracker", "kyc", "risk profile", "fund comparison",
+        "asset management", "amc", "portfolio", "nav", "investment guidance",
+    ]
 
     sector = "general professional workflow"
     output_type = "AI assistant app + dashboard"
-    if any(word in lower_idea for word in ["tiffin", "restaurant", "menu", "grocery", "food"]):
+    if any(word in lower_idea for word in agriculture_terms):
+        sector = "agriculture and farmer dashboard"
+        output_type = "agriculture farm intelligence and farmer dashboard app"
+    elif any(word in lower_idea for word in mutual_fund_terms):
+        sector = "mutual fund broker and investment advisor"
+        output_type = "mutual fund broker and investment advisor customer service app"
+    elif any(word in lower_idea for word in ["tiffin", "restaurant", "menu", "grocery", "food"]):
         sector = "restaurant and home food business"
         output_type = "business operations assistant + dashboard + Instagram promo pack"
     elif any(word in lower_idea for word in ["car", "detailing", "washing", "vehicle", "auto"]):
@@ -123,7 +165,7 @@ def _fallback_flow(idea: str, user_role: str, user_goal: str) -> dict:
     elif any(word in lower_idea for word in ["wedding", "venue", "lawn", "haldi", "mehendi", "event"]):
         sector = "wedding and event venue"
         output_type = "event package, enquiry, and lead dashboard app"
-    elif any(word in lower_idea for word in ["clinic", "doctor", "patient", "appointment", "dental"]):
+    elif any(word in lower_idea for word in ["clinic", "doctor", "patient", "appointment", "hospital", "dental", "treatment", "prescription", "queue", "opd"]):
         sector = "clinic and appointment booking"
         output_type = "appointment booking and admin schedule app"
     elif any(word in lower_idea for word in ["school", "parent", "homework", "attendance", "fees"]):
@@ -230,7 +272,14 @@ def _fallback_flow(idea: str, user_role: str, user_goal: str) -> dict:
             "Chooses output based on real work use case",
             "Keeps quality checklist and safety gates visible",
             "Plans multi-output professional bundles"
-        ]
+        ],
+        "visualThemeFamily": "agriculture-green-dashboard" if sector == "agriculture and farmer dashboard" else "finance-trust-blue" if sector == "mutual fund broker and investment advisor" else "generic-modern-saas",
+        "layoutVariant": "hero-stat-stack" if sector == "agriculture and farmer dashboard" else "card-first-dashboard",
+        "designInspirationNote": (
+            "Use a green, earthy, farmer-friendly mobile dashboard with crop health, weather, mandi, satellite intelligence, profile, farm records, and AI chat cards."
+            if sector == "agriculture and farmer dashboard"
+            else "Use a sector-appropriate visual theme, palette, layout rhythm, and card style instead of a generic repeated app shell."
+        )
     }
 
 
@@ -255,7 +304,11 @@ async def orchestrate_product_flow(request: Request):
     mode = _safe_text(payload.get("mode"))
     if isinstance(message, str) and message.strip() and mode in {"local-product-plan", "app_creation"}:
         message = message.strip()
-        plan = create_product_plan(message, reference_image=normalize_reference_image_metadata(payload))
+        plan = create_product_plan(
+            message,
+            reference_image=normalize_reference_image_metadata(payload),
+            client_metadata=_client_currency_metadata(payload),
+        )
         return {
             "ok": True,
             "reply": "I created a structured product plan. Review it, then approve generation when you are ready.",
@@ -273,7 +326,11 @@ async def orchestrate_product_flow(request: Request):
         for key in ["classification", "requirements", "workflow", "outputSelection", "userRole", "userGoal"]
     )
     if not has_orchestration_context or mode in {"local-product-plan", "structured-product-plan", "app_creation"}:
-        plan = create_product_plan(idea, reference_image=normalize_reference_image_metadata(payload))
+        plan = create_product_plan(
+            idea,
+            reference_image=normalize_reference_image_metadata(payload),
+            client_metadata=_client_currency_metadata(payload),
+        )
         return {
             "ok": True,
             "reply": "I created a structured product plan. Review it, then approve generation when you are ready.",

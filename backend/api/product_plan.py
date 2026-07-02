@@ -5,6 +5,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from backend.product_flow import resolve_currency_profile
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 26D product plan generator"])
@@ -55,6 +56,12 @@ Important safety:
 - Do not claim database/auth/upload/OCR/voice/export is active yet.
 - If referenceImage metadata is provided, mark the plan as image-guided and use it only as layout/style guidance.
 - Do not claim image pixels were analyzed. Use metadata, user notes, and safe inference only.
+- Include visualThemeFamily, layoutVariant, and a short designInspirationNote when the sector or reference metadata suggests a visual direction.
+- Agriculture/farmer ideas must take priority over clinic/healthcare. Crop health, farm health, and soil health mean agriculture.
+- Classify clinic only when clear clinic terms are present: clinic, doctor, patient, appointment, hospital, dental, treatment, prescription, queue, or OPD.
+- Mutual fund, SIP, systematic investment plan, investment advisor, wealth advisor, portfolio tracker, KYC, risk profile, fund comparison, asset management, AMC, NAV, or investment guidance ideas must be classified as mutual fund broker / investment advisor apps before insurance.
+- Do not treat advisor alone, KYC alone, payment status, or commission status as insurance. Classify insurance only for clear insurance terms: insurance, policy, claim, premium, renewal, coverage, insurer, or policy holder.
+- Mutual fund and SIP plans must use finance-trust-blue or finance-trust-green style, rupee values for India/SIP defaults, estimated growth wording, risk profile, advisor guidance, portfolio summary, and SIP reminders. Never promise profit or guaranteed returns.
 - Do not create medical, legal, financial, or credit decisions as final decisions.
 - Keep human approval gates.
 - Make every result more polished, practical, professional, mobile-ready, and production-useful than a generic app builder result.
@@ -75,6 +82,29 @@ def _safe_text(value, fallback=""):
     if isinstance(value, str):
         return value.strip()
     return fallback
+
+
+def _client_currency_metadata(payload: dict) -> dict:
+    client_context = payload.get("client_context") or payload.get("clientContext") or {}
+    if not isinstance(client_context, dict):
+        client_context = {}
+    return {
+        "client_locale": _safe_text(
+            payload.get("client_locale")
+            or payload.get("clientLocale")
+            or client_context.get("client_locale")
+            or client_context.get("clientLocale")
+            or client_context.get("language")
+        ),
+        "client_timezone": _safe_text(
+            payload.get("client_timezone")
+            or payload.get("clientTimezone")
+            or client_context.get("client_timezone")
+            or client_context.get("clientTimezone")
+            or client_context.get("timeZone")
+        ),
+        "currency_hint": _safe_text(payload.get("currency_hint") or payload.get("currencyHint") or client_context.get("currencyHint")),
+    }
 
 
 def _normalize_reference_image(payload: dict) -> dict:
@@ -145,21 +175,61 @@ def _image_guidance_fields(reference_image: dict) -> dict:
             "Card, list, and form density selected for app-interface work",
             "Preview must be polished even without full vision automation",
         ],
+        "designInspirationNote": "Reference metadata guides layout rhythm, hierarchy, spacing, and mobile interface feel only.",
     }
 
 
 def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: dict | None = None) -> dict:
-    guessed_sector = sector or "general professional workflow"
-    guessed_output = output_type or "AI assistant app / workflow tool"
+    lower_idea = idea.lower()
+    agriculture_terms = [
+        "farmer", "farm", "farming", "agriculture", "crop", "crop health", "mandi",
+        "soil", "weather", "satellite", "ndvi", "farm records", "farmer profile",
+        "agri", "kisan", "fpo", "buyer matching", "harvest", "irrigation",
+    ]
+    mutual_fund_terms = [
+        "mutual fund", "sip", "systematic investment plan", "investment advisor",
+        "wealth advisor", "portfolio tracker", "kyc", "risk profile", "fund comparison",
+        "asset management", "amc", "portfolio", "nav", "investment guidance",
+    ]
+    is_agriculture = any(term in lower_idea for term in agriculture_terms)
+    is_mutual_fund = any(term in lower_idea for term in mutual_fund_terms)
+    guessed_sector = (
+        "agriculture and farmer dashboard"
+        if is_agriculture
+        else "mutual fund broker and investment advisor"
+        if is_mutual_fund
+        else sector or "general professional workflow"
+    )
+    guessed_output = (
+        "agriculture farm intelligence and farmer dashboard app"
+        if is_agriculture
+        else "mutual fund broker and investment advisor customer service app"
+        if is_mutual_fund
+        else output_type or "AI assistant app / workflow tool"
+    )
 
+    detected_domain = "agriculture" if is_agriculture else "mutual_fund_advisor" if is_mutual_fund else "generic"
+    currency_profile = resolve_currency_profile(idea, {}, detected_domain=detected_domain)
     plan = {
-        "productName": "IdeasForgeAI Work Assistant",
+        "productName": "Farmer Dashboard" if is_agriculture else "Mutual Fund Advisor" if is_mutual_fund else "IdeasForgeAI Work Assistant",
         "sector": guessed_sector,
         "outputType": guessed_output,
-        "userRole": "Professional user",
-        "targetUsers": ["Employees", "Business owners", "Students", "Creators", "Small teams"],
+        "userRole": "Farm operator" if is_agriculture else "Investment advisor" if is_mutual_fund else "Professional user",
+        "targetUsers": ["farmers", "FPO teams", "agri advisors", "farm admins"] if is_agriculture else ["investors", "SIP customers", "mutual fund advisors", "broker admins"] if is_mutual_fund else ["Employees", "Business owners", "Students", "Creators", "Small teams"],
         "problemSolved": idea,
         "coreWorkflow": [
+            "Farmer opens the dashboard",
+            "Review crop health, weather, mandi prices, and satellite intelligence",
+            "Update farmer profile and farm records",
+            "Use AI chat for soil and crop advisory",
+            "Review alerts and recommendations from the admin dashboard"
+        ] if is_agriculture else [
+            "Investor opens the mutual fund dashboard",
+            "Review mutual fund categories and compare funds",
+            "Estimate SIP growth without guaranteed return claims",
+            "Upload KYC documents and complete risk profile",
+            "Book advisor guidance and review SIP reminders"
+        ] if is_mutual_fund else [
             "User describes the daily work or goal",
             "System collects required inputs",
             "AI structures the workflow",
@@ -167,6 +237,27 @@ def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: di
             "Preview/code/export stays approval-gated for later phases"
         ],
         "requiredScreens": [
+            "Home Dashboard",
+            "Crop Health",
+            "Weather",
+            "Mandi Prices",
+            "Satellite Intelligence",
+            "Farmer Profile",
+            "Farm Records",
+            "AI Chat",
+            "Admin Dashboard",
+        ] if is_agriculture else [
+            "Home Dashboard",
+            "Mutual Fund Categories",
+            "Compare Funds",
+            "SIP Calculator",
+            "Portfolio Tracker",
+            "KYC Upload",
+            "Risk Profile",
+            "Advisor Booking",
+            "SIP Reminders",
+            "Admin Dashboard",
+        ] if is_mutual_fund else [
             "Chat intake screen",
             "Workflow summary screen",
             "Input/data mapping screen",
@@ -174,6 +265,16 @@ def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: di
             "Approval gate screen"
         ],
         "aiAssistantBehavior": [
+            "Explain crop health in simple farmer-friendly language",
+            "Summarize weather, mandi, satellite, soil, and crop advisory signals",
+            "Suggest alerts and recommendations for human review",
+            "Avoid medical clinic interpretation for crop, farm, or soil health"
+        ] if is_agriculture else [
+            "Use estimated growth wording without guaranteed returns",
+            "Explain risk profile and advisor guidance clearly",
+            "Summarize portfolio and SIP reminders",
+            "Do not create fake KYC approval or investment documents"
+        ] if is_mutual_fund else [
             "Understand the user role and sector",
             "Convert rough ideas into structured workflows",
             "Ask concise follow-up questions only when needed",
@@ -181,6 +282,22 @@ def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: di
             "Keep safety and approval gates visible"
         ],
         "dataInputs": [
+            "Farmer profile",
+            "Farm records",
+            "Crop health",
+            "Weather",
+            "Mandi prices",
+            "Satellite intelligence",
+            "Soil advisory status"
+        ] if is_agriculture else [
+            "Investor profile",
+            "Monthly SIP amount",
+            "Portfolio value",
+            "KYC documents",
+            "Risk profile",
+            "Fund category",
+            "Advisor booking request"
+        ] if is_mutual_fund else [
             "User idea",
             "Sector",
             "Role",
@@ -197,7 +314,9 @@ def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: di
             "No code generation in Phase 26D",
             "No preview generation in Phase 26D",
             "No database/auth/upload/OCR/voice processing",
-            "Human approval required before preview/code/export"
+            "Human approval required before preview/code/export",
+            "For mutual fund/SIP apps, show estimated growth only and never guaranteed returns or promised profit",
+            "For mutual fund/SIP apps, do not create fake investment documents or fake KYC approval"
         ],
         "approvalGates": {
             "beforeProductPlan": False,
@@ -217,7 +336,17 @@ def _fallback_plan(idea: str, sector: str, output_type: str, reference_image: di
             "Production-ready planning",
             "Mobile-ready screen structure",
             "Clear safety and approval gates"
-        ]
+        ],
+        "visualThemeFamily": "agriculture-green-dashboard" if is_agriculture else "finance-trust-blue" if is_mutual_fund else "generic-modern-saas",
+        "layoutVariant": "hero-stat-stack" if is_agriculture else "card-first-dashboard",
+        "designInspirationNote": (
+            "Use a green, earthy, farmer-friendly mobile dashboard with crop health cards, weather cards, mandi price cards, satellite intelligence, farmer profile, farm records, and AI chat CTA."
+            if is_agriculture
+            else "Use a professional, clean, trustworthy finance-oriented layout for mutual fund categories, fund comparison, SIP calculator, portfolio tracker, KYC upload, risk profile, advisor booking, SIP reminders, and admin dashboard."
+            if is_mutual_fund
+            else "Use a sector-appropriate visual theme, palette, layout rhythm, and card style instead of a generic repeated app shell."
+        ),
+        **currency_profile,
     }
     plan.update(_image_guidance_fields(reference_image or {}))
     if reference_image:
@@ -274,6 +403,8 @@ async def generate_product_plan(request: Request):
     sector = _safe_text(payload.get("sector"))
     output_type = _safe_text(payload.get("outputType"))
     reference_image = _normalize_reference_image(payload)
+    client_currency = _client_currency_metadata(payload)
+    currency_profile = resolve_currency_profile(idea, client_currency)
 
     if not is_openai_configured():
         return JSONResponse(
@@ -302,6 +433,8 @@ async def generate_product_plan(request: Request):
         "outputType": output_type or "infer best output type",
         "inputMode": "image-guided" if reference_image else "text-only",
         "referenceImage": reference_image,
+        "clientCurrencyMetadata": client_currency,
+        "currencyProfile": currency_profile,
         "requiredJsonShape": {
             "productName": "string",
             "sector": "string",
@@ -323,6 +456,13 @@ async def generate_product_plan(request: Request):
             },
             "futurePhasesNeeded": ["string"],
             "betterThanLovableQualityNotes": ["string"],
+            "visualThemeFamily": "finance-trust-blue | premium-automotive-dark | fitness-energy-bold | wedding-elegant-warm | education-soft-blue | healthcare-calm-teal | restaurant-warm-food | retail-inventory-grid | agriculture-green-dashboard | government-civic-clean | generic-modern-saas",
+            "layoutVariant": "hero-stat-stack | hero-feature-grid | split-action-dashboard | card-first-dashboard | gallery-first-showcase | timeline-tracker | admin-metrics-grid",
+            "designInspirationNote": "short string",
+            "currency_code": "string",
+            "currency_symbol": "string",
+            "currency_locale": "string",
+            "country_hint": "string",
             "imageGuided": "boolean when referenceImage is present",
             "visualReferenceSummary": "string when referenceImage is present",
             "interfaceDesignPriorities": ["string when referenceImage is present"]
@@ -368,6 +508,8 @@ async def generate_product_plan(request: Request):
 
     if reference_image and isinstance(plan, dict):
         plan.update(_image_guidance_fields(reference_image))
+    if isinstance(plan, dict):
+        plan.update(currency_profile)
 
     return {
         "ok": True,

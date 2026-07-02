@@ -5,6 +5,7 @@ from uuid import uuid4
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
+from backend.product_flow import resolve_currency_profile
 from backend.utils.safe_response import is_openai_configured, safety_flags, validation_error
 
 router = APIRouter(prefix="/api", tags=["Phase 26E preview generator"])
@@ -60,6 +61,9 @@ Important rules:
 - Keep database/auth/upload/OCR/voice disabled.
 - If referenceImage metadata is provided, mark the preview as image-guided and use it only as layout/style guidance.
 - Do not claim image pixels were analyzed. Use metadata, user notes, and safe inference only.
+- Include visualThemeFamily, layoutVariant, and a short designInspirationNote so generated previews avoid repetitive generic styling.
+- Agriculture/farmer ideas must take priority over clinic/healthcare. Crop health, farm health, and soil health mean agriculture.
+- Classify clinic only when clear clinic terms are present: clinic, doctor, patient, appointment, hospital, dental, treatment, prescription, queue, or OPD.
 - Return JSON only. No markdown. No code fences.
 
 Return a preview specification with:
@@ -82,6 +86,29 @@ def _safe_text(value, fallback=""):
     if isinstance(value, str):
         return value.strip()
     return fallback
+
+
+def _client_currency_metadata(payload: dict) -> dict:
+    client_context = payload.get("client_context") or payload.get("clientContext") or {}
+    if not isinstance(client_context, dict):
+        client_context = {}
+    return {
+        "client_locale": _safe_text(
+            payload.get("client_locale")
+            or payload.get("clientLocale")
+            or client_context.get("client_locale")
+            or client_context.get("clientLocale")
+            or client_context.get("language")
+        ),
+        "client_timezone": _safe_text(
+            payload.get("client_timezone")
+            or payload.get("clientTimezone")
+            or client_context.get("client_timezone")
+            or client_context.get("clientTimezone")
+            or client_context.get("timeZone")
+        ),
+        "currency_hint": _safe_text(payload.get("currency_hint") or payload.get("currencyHint") or client_context.get("currencyHint")),
+    }
 
 
 def _strip_json_fence(text: str) -> str:
@@ -173,6 +200,7 @@ def _image_guided_preview_fields(reference_image: dict) -> dict:
             "Keep card radius, contrast, and tap targets consistent",
             "State clearly that full vision automation is not enabled yet",
         ],
+        "designInspirationNote": "Reference metadata guides layout rhythm, hierarchy, spacing, and mobile interface feel only.",
     }
 
 
@@ -180,17 +208,41 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
     plan_name = ""
     if isinstance(product_plan, dict):
         plan_name = product_plan.get("productName", "")
+    product_plan_text = " ".join(str(value) for value in product_plan.values()) if isinstance(product_plan, dict) else ""
+    combined_text = f"{idea} {sector} {output_type} {plan_name} {product_plan_text}".lower()
+    agriculture_terms = [
+        "farmer", "farm", "farming", "agriculture", "crop", "crop health", "mandi",
+        "soil", "weather", "satellite", "ndvi", "farm records", "farmer profile",
+        "agri", "kisan", "fpo", "buyer matching", "harvest", "irrigation",
+    ]
+    mutual_fund_terms = [
+        "mutual fund", "sip", "systematic investment plan", "investment advisor",
+        "wealth advisor", "portfolio tracker", "kyc", "risk profile", "fund comparison",
+        "asset management", "amc", "portfolio", "nav", "investment guidance",
+    ]
+    is_agriculture = any(term in combined_text for term in agriculture_terms)
+    is_mutual_fund = any(term in combined_text for term in mutual_fund_terms)
 
     preview = {
-        "previewName": plan_name or "IdeasForgeAI Professional Preview",
-        "sector": sector or product_plan.get("sector", "general professional workflow") if isinstance(product_plan, dict) else sector or "general professional workflow",
-        "outputType": output_type or product_plan.get("outputType", "AI assistant app preview") if isinstance(product_plan, dict) else output_type or "AI assistant app preview",
+        "previewName": "Farmer Dashboard" if is_agriculture else "Mutual Fund Advisor" if is_mutual_fund else plan_name or "IdeasForgeAI Professional Preview",
+        "sector": "agriculture and farmer dashboard" if is_agriculture else "mutual fund broker and investment advisor" if is_mutual_fund else sector or product_plan.get("sector", "general professional workflow") if isinstance(product_plan, dict) else sector or "general professional workflow",
+        "outputType": "agriculture farm intelligence and farmer dashboard app" if is_agriculture else "mutual fund broker and investment advisor customer service app" if is_mutual_fund else output_type or product_plan.get("outputType", "AI assistant app preview") if isinstance(product_plan, dict) else output_type or "AI assistant app preview",
         "designDirection": {
-            "style": "premium, clean, mobile-first, professional",
-            "layout": "chat intake on top, workflow dashboard in center, approval controls at bottom",
-            "tone": "clear, useful, business-ready"
+            "style": "green, earthy, farm-friendly, mobile-first dashboard" if is_agriculture else "professional finance-trust-blue, clean, trustworthy, mobile-first" if is_mutual_fund else "premium, clean, mobile-first, professional",
+            "layout": "farmer dashboard cards for crop health, weather, mandi prices, satellite intelligence, profile, farm records, AI chat, and admin recommendations" if is_agriculture else "mutual fund categories, compare funds, SIP calculator, portfolio tracker, KYC upload, risk profile, advisor booking, SIP reminders, and admin dashboard cards" if is_mutual_fund else "chat intake on top, workflow dashboard in center, approval controls at bottom",
+            "tone": "simple, farmer-friendly, advisory-focused" if is_agriculture else "clean, trustworthy, finance-oriented, advisor-guidance focused" if is_mutual_fund else "clear, useful, business-ready"
         },
         "mobileExperience": [
+            "Simple farmer-friendly mobile dashboard",
+            "Crop health, weather, mandi, and satellite cards above the fold",
+            "Farmer profile, farm records, and AI chat as large tap targets",
+            "Alerts and recommendations visible without clutter"
+        ] if is_agriculture else [
+            "Mutual fund dashboard with SIP amount, portfolio value, advisory leads, and KYC pending",
+            "Fund categories, compare funds, SIP calculator, and portfolio tracker as large tap targets",
+            "KYC upload, risk profile, advisor booking, and SIP reminders visible without clutter",
+            "Use estimated growth and advisor guidance wording without guaranteed return claims"
+        ] if is_mutual_fund else [
             "Simple chat-style idea intake",
             "Compact product summary card",
             "Step-by-step workflow preview",
@@ -203,6 +255,27 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
             "Approval and revision controls"
         ],
         "screens": [
+            "Home Dashboard",
+            "Crop Health",
+            "Weather",
+            "Mandi Prices",
+            "Satellite Intelligence",
+            "Farmer Profile",
+            "Farm Records",
+            "AI Chat",
+            "Admin Dashboard",
+        ] if is_agriculture else [
+            "Home Dashboard",
+            "Mutual Fund Categories",
+            "Compare Funds",
+            "SIP Calculator",
+            "Portfolio Tracker",
+            "KYC Upload",
+            "Risk Profile",
+            "Advisor Booking",
+            "SIP Reminders",
+            "Admin Dashboard",
+        ] if is_mutual_fund else [
             "Welcome / idea intake screen",
             "Generated product plan screen",
             "Workflow preview screen",
@@ -210,6 +283,26 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
             "Approval gate screen"
         ],
         "sections": [
+            "Farmer Dashboard",
+            "Crop Health",
+            "Weather",
+            "Mandi Prices",
+            "Satellite Intelligence",
+            "Farmer Profile",
+            "Farm Records",
+            "AI Chat"
+        ] if is_agriculture else [
+            "Mutual Fund Dashboard",
+            "Mutual Fund Categories",
+            "Compare Funds",
+            "SIP Calculator",
+            "Portfolio Tracker",
+            "KYC Upload",
+            "Risk Profile",
+            "Advisor Booking",
+            "SIP Reminders",
+            "Admin Dashboard"
+        ] if is_mutual_fund else [
             "Hero summary",
             "Problem solved",
             "Target users",
@@ -218,6 +311,25 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
             "Safety and approval gates"
         ],
         "components": [
+            "Crop health cards",
+            "Weather cards",
+            "Mandi price cards",
+            "Satellite intelligence card",
+            "Farmer profile card",
+            "Farm records cards",
+            "AI chat CTA",
+            "Alerts and recommendations"
+        ] if is_agriculture else [
+            "Mutual fund category cards",
+            "Compare funds cards",
+            "SIP calculator form",
+            "Portfolio summary cards",
+            "KYC upload checklist",
+            "Risk profile form",
+            "Advisor booking form",
+            "SIP reminder cards",
+            "Broker admin dashboard"
+        ] if is_mutual_fund else [
             "Assistant chat bubble",
             "Product summary card",
             "Workflow step cards",
@@ -255,6 +367,17 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
         ],
         "contentTone": "professional, simple, helpful, non-technical",
         "visualPolishNotes": [
+            "Use green and earthy farm-friendly colors",
+            "Use simple farmer-friendly mobile dashboard spacing",
+            "Make crop health, weather, mandi, satellite, profile, records, and AI chat cards clickable",
+            "Avoid clinic or healthcare visual language"
+        ] if is_agriculture else [
+            "Use professional finance-trust-blue styling",
+            "Use rupee SIP examples such as SIP Amount ₹5,000/mo and Portfolio Value ₹4.6L",
+            "Use estimated growth, risk profile, advisor guidance, portfolio summary, and SIP reminder wording",
+            "Do not show guaranteed returns, fake KYC approval, fake documents, promised profit, or illegal financial advice",
+            "Make compare, funds, sip, portfolio, kyc, risk, advisor, reminders, enquiry, admin, and dashboard targets clickable"
+        ] if is_mutual_fund else [
             "Use clean spacing",
             "Use premium card shadows",
             "Use consistent typography",
@@ -281,7 +404,16 @@ def _fallback_preview(idea: str, product_plan: dict, sector: str, output_type: s
             "Mobile-first screen planning",
             "Approval-gated production safety",
             "Business-ready presentation"
-        ]
+        ],
+        "visualThemeFamily": "agriculture-green-dashboard" if is_agriculture else "finance-trust-blue" if is_mutual_fund else "generic-modern-saas",
+        "layoutVariant": "hero-stat-stack" if is_agriculture else "card-first-dashboard",
+        "designInspirationNote": (
+            "Use a green, earthy, farmer-friendly mobile dashboard with crop health cards, weather cards, mandi price cards, satellite intelligence, farmer profile, farm records, and AI chat CTA."
+            if is_agriculture
+            else "Use a professional, clean, trustworthy finance app layout for fund categories, comparison, SIP, portfolio, KYC, risk profile, advisor booking, reminders, and admin workflow."
+            if is_mutual_fund
+            else "Use a sector-appropriate visual theme, palette, layout rhythm, and card style instead of a generic repeated app shell."
+        )
     }
     preview.update(_image_guided_preview_fields(reference_image or {}))
     if reference_image:
@@ -335,6 +467,8 @@ async def generate_preview_plan(request: Request):
     output_type = _safe_text(payload.get("outputType"))
     product_plan = payload.get("productPlan") or payload.get("plan")
     reference_image = _normalize_reference_image(payload)
+    client_currency = _client_currency_metadata(payload)
+    currency_profile = resolve_currency_profile(f"{idea} {sector} {output_type}", client_currency)
 
     if product_plan is None and not idea:
         return JSONResponse(status_code=400, content=validation_error("productPlan or idea is required"))
@@ -381,6 +515,8 @@ async def generate_preview_plan(request: Request):
         "productPlan": product_plan or {},
         "inputMode": "image-guided" if reference_image else "text-only",
         "referenceImage": reference_image,
+        "clientCurrencyMetadata": client_currency,
+        "currencyProfile": currency_profile,
     }
 
     try:
@@ -428,6 +564,8 @@ async def generate_preview_plan(request: Request):
             merged_direction = dict(guided_fields.get("designDirection", {}))
             merged_direction.update(existing_direction)
             preview["designDirection"] = merged_direction
+    if isinstance(preview, dict):
+        preview.update(currency_profile)
 
     return {
         "ok": True,

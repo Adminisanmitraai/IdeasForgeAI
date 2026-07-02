@@ -7,6 +7,7 @@ const showChatButtons = document.querySelectorAll("[data-show-chat]");
 const chatForm = document.querySelector("[data-chat-form]");
 const chatInput = document.querySelector("[data-chat-input]");
 const chatStream = document.querySelector("[data-chat-stream]");
+const chatSubmitButton = chatForm?.querySelector(".send-button[type='submit']");
 const attachmentToggle = document.querySelector("[data-attachment-toggle]");
 const attachmentMenu = document.querySelector("[data-attachment-menu]");
 const referenceCameraInput = document.querySelector("[data-reference-camera-input]");
@@ -19,8 +20,25 @@ const previewMount = document.querySelector("[data-preview-mount]");
 
 let currentPlan = null;
 let currentPlanId = 0;
+let isPlanning = false;
 let isGenerating = false;
 let referenceImageMetadata = null;
+
+const thinkingStatuses = [
+  "Understanding your idea...",
+  "Preparing product plan...",
+  "Designing preview flow...",
+  "Finalizing response...",
+];
+
+const previewThinkingStatuses = [
+  "Preparing preview build...",
+  "Designing preview flow...",
+  "Loading generated preview...",
+  "Finalizing response...",
+];
+
+const MIN_THINKING_MS = 650;
 
 const previewLabels = {
   mobile: "Mobile canvas",
@@ -60,6 +78,16 @@ const getMessageTime = () =>
     minute: "2-digit",
   }).format(new Date());
 
+const getClientLocaleMetadata = () => {
+  const options = Intl.DateTimeFormat().resolvedOptions?.() || {};
+  const currencyHint = currentPlan?.currency_code || currentPlan?.currencyCode || undefined;
+  return {
+    client_locale: navigator.language || "",
+    client_timezone: options.timeZone || "",
+    currency_hint: currencyHint,
+  };
+};
+
 const scrollMessagesToBottom = () => {
   if (chatStream) {
     chatStream.scrollTop = chatStream.scrollHeight;
@@ -90,7 +118,82 @@ const appendMessage = (message, type, className = "") => {
   return bubble;
 };
 
-const appendThinkingMessage = () => appendMessage("Thinking through your product plan...", "assistant", "is-loading");
+const stopThinkingAnimation = (bubble) => {
+  if (bubble?.thinkingTimer) {
+    window.clearInterval(bubble.thinkingTimer);
+    bubble.thinkingTimer = null;
+  }
+};
+
+const removeThinkingMessage = (bubble) => {
+  stopThinkingAnimation(bubble);
+  bubble?.remove();
+};
+
+const replaceThinkingMessage = (bubble, message, className = "") => {
+  stopThinkingAnimation(bubble);
+
+  if (!bubble?.isConnected) {
+    return appendMessage(message, "assistant", className);
+  }
+
+  const text = document.createElement("p");
+  const meta = document.createElement("span");
+
+  bubble.className = `message assistant-message ${className}`.trim();
+  bubble.removeAttribute("aria-busy");
+  bubble.innerHTML = "";
+  text.textContent = message;
+  meta.textContent = getMessageTime();
+  bubble.append(text, meta);
+  scrollMessagesToBottom();
+  return bubble;
+};
+
+const waitForThinkingMinimum = (startedAt) => {
+  const elapsed = performance.now() - startedAt;
+  const remaining = Math.max(0, MIN_THINKING_MS - elapsed);
+  return new Promise((resolve) => window.setTimeout(resolve, remaining));
+};
+
+const appendThinkingMessage = (statuses = thinkingStatuses) => {
+  if (!chatStream) {
+    return null;
+  }
+
+  const bubble = document.createElement("article");
+  const row = document.createElement("div");
+  const loader = document.createElement("span");
+  const status = document.createElement("p");
+  const meta = document.createElement("span");
+  const labels = statuses.length ? statuses : thinkingStatuses;
+  let statusIndex = 0;
+
+  bubble.className = "message assistant-message thinking-message is-loading";
+  bubble.setAttribute("aria-busy", "true");
+  row.className = "thinking-row";
+  loader.className = "thinking-dots";
+  loader.setAttribute("aria-hidden", "true");
+  status.className = "thinking-status";
+  status.textContent = labels[statusIndex];
+  meta.textContent = getMessageTime();
+
+  for (let index = 0; index < 3; index += 1) {
+    loader.appendChild(document.createElement("i"));
+  }
+
+  bubble.thinkingTimer = window.setInterval(() => {
+    statusIndex = (statusIndex + 1) % labels.length;
+    status.textContent = labels[statusIndex];
+    scrollMessagesToBottom();
+  }, 1350);
+
+  row.append(loader, status);
+  bubble.append(row, meta);
+  chatStream.appendChild(bubble);
+  scrollMessagesToBottom();
+  return bubble;
+};
 
 const createList = (items) => {
   const list = document.createElement("ul");
@@ -356,17 +459,27 @@ const handleGenerate = async (button) => {
   button.disabled = true;
   button.textContent = "Generating...";
   setPreviewStatus("Generating");
+  const thinkingMessage = appendThinkingMessage(previewThinkingStatuses);
+  const thinkingStartedAt = performance.now();
 
   try {
-    const data = await postJSON("/api/generate-app", { plan: currentPlan });
+    const clientContext = getClientLocaleMetadata();
+    const data = await postJSON("/api/generate-app", {
+      plan: {
+        ...currentPlan,
+        client_context: clientContext,
+      },
+    });
+    await waitForThinkingMinimum(thinkingStartedAt);
     renderPreviewFrame(data.preview_url, currentPlan);
     setPreviewStatus(data.preview_url ? "Preview ready" : "Generated");
-    appendMessage("Generation complete. I opened the preview so you can review it.", "assistant");
+    replaceThinkingMessage(thinkingMessage, "Generation complete. I opened the preview so you can review it.");
     setPreviewOpen(true);
   } catch (error) {
+    await waitForThinkingMinimum(thinkingStartedAt);
     renderPreviewPlaceholder(currentPlan, "The preview generator did not return a live URL yet.");
     setPreviewStatus("Preview placeholder");
-    appendMessage("Generation could not complete. I kept your approved plan and prepared a clean placeholder preview.", "assistant");
+    replaceThinkingMessage(thinkingMessage, "I could not finish this request. Please try again. I kept your approved plan and prepared a clean placeholder preview.");
     setPreviewOpen(true);
   } finally {
     isGenerating = false;
@@ -492,10 +605,13 @@ chatForm?.addEventListener("submit", async (event) => {
 
   const message = chatInput.value.trim();
 
-  if (!message) {
+  if (!message || isPlanning) {
     return;
   }
 
+  isPlanning = true;
+  chatSubmitButton?.setAttribute("disabled", "true");
+  chatForm.setAttribute("aria-busy", "true");
   appendMessage(message, "user");
   chatInput.value = "";
   resizeChatInput();
@@ -509,15 +625,18 @@ chatForm?.addEventListener("submit", async (event) => {
   setPreviewStatus("Planning");
   const requestPlanId = currentPlanId;
   const thinkingMessage = appendThinkingMessage();
+  const thinkingStartedAt = performance.now();
 
   try {
     const data = await postJSON("/api/product-flow", {
       idea: message,
       message,
       mode: "app_creation",
+      client_context: getClientLocaleMetadata(),
       referenceImage: referenceImageMetadata || undefined,
     });
-    thinkingMessage?.remove();
+    await waitForThinkingMinimum(thinkingStartedAt);
+    removeThinkingMessage(thinkingMessage);
     if (requestPlanId !== currentPlanId) {
       return;
     }
@@ -525,9 +644,14 @@ chatForm?.addEventListener("submit", async (event) => {
     appendPlanMessage(data.reply, currentPlan, requestPlanId);
     setPreviewStatus("Plan ready");
   } catch (error) {
-    thinkingMessage?.remove();
-    appendMessage("Backend connection failed. I saved your idea locally and can retry.", "assistant");
+    await waitForThinkingMinimum(thinkingStartedAt);
+    replaceThinkingMessage(thinkingMessage, "I could not finish this request. Please try again.");
     setPreviewStatus("Waiting for idea");
+  } finally {
+    isPlanning = false;
+    chatSubmitButton?.removeAttribute("disabled");
+    chatForm.removeAttribute("aria-busy");
+    scrollMessagesToBottom();
   }
 });
 

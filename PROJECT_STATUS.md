@@ -1,5 +1,26 @@
 # IdeasForgeAI Project Status
 
+## Phase 32A-FIX-1 - Agriculture Detection Priority Fix
+
+Status: Completed locally, verification passed.
+
+- Added agriculture-first detection for farmer, farm, farming, agriculture, crop, crop health, mandi, soil, weather, satellite, NDVI, farm records, farmer profile, agri, kisan, FPO, buyer matching, harvest, and irrigation prompts.
+- Prevented clinic false positives from crop health, farm health, and soil health by requiring clear clinic terms such as clinic, doctor, patient, appointment, hospital, dental, treatment, prescription, queue, or OPD.
+- Updated agriculture planning and preview content to use Farmer Dashboard / agriculture-green-dashboard with crop health, weather, mandi prices, satellite intelligence, farmer profile, farm records, AI chat, alerts, and admin dashboard.
+- Added canonical clickable agriculture aliases for crop, weather, mandi, satellite, profile, records, chat, admin, and dashboard while preserving insurance and clinic routing.
+
+## Phase 32A - Visual Theme Generator
+
+Status: Completed locally, verification passed.
+
+- Added deterministic visual theme generation for generated apps using detected domain, app name/type, optional referenceImage metadata, and app_id hashing for stable per-app variation.
+- Added theme families for finance/trust blue, premium automotive dark, fitness energy bold, wedding elegant warm, education soft blue, healthcare calm teal, restaurant warm food, retail inventory grid, agriculture green dashboard, government civic clean, and generic modern SaaS.
+- Added controlled layout variants: hero-stat-stack, hero-feature-grid, split-action-dashboard, card-first-dashboard, gallery-first-showcase, timeline-tracker, and admin-metrics-grid.
+- Added first-class finance/insurance, agriculture, and government generated app presets with matching metrics, screen navigation, cards, forms, and theme-specific content.
+- Removed customer-visible generated preview sections for developer-only Data Model, API Ready, and Monetization details while keeping runtime proxy placeholders as internal metadata/comments only.
+- Improved generated app click behavior so hero CTAs, tabs, buttons, screen cards, package cards, metric cards, gallery tiles, feature cards, and screen sections route through local vanilla JS screen rendering; forms still show local success messages.
+- Image-guided generated plans keep the image-guided flag, safe reference metadata, visual reference summary, and design inspiration note without image bytes, OCR, pixel analysis, external dependencies, or frontend secrets.
+- Mobile-first CSS remains responsive with horizontal screen tabs, stable card dimensions, theme-aware spacing, and no Studio V4, Studio V3, deployment, freeze branch, tag, previous snapshot, secret, or KisanMitraAI changes.
 ## Phase 31A - High Quality Visual Interface Engine
 
 Status: Completed locally, verification passed.
@@ -12735,3 +12756,21 @@ Status: Completed locally, verification passed.
 - Updated generated wedding/event/lawn output to use Indian rupee package pricing and India-friendly labels including Haldi Theme, Mehendi Theme, Royal Wedding, Lawn Booking, Banquet Package, and Booking Lead.
 - Added generated app shell bottom safe spacing so the Studio fullscreen close control does not cover package buttons or important content.
 - Preserved generated clickable screen behavior, Phase 31A premium styling, Studio V4 UI isolation, and secrets safety.
+
+
+## Phase 32A-FIX-2 - Location-Based Currency Localization
+- Added backend currency resolution for prompt location, safe browser locale/timezone metadata, and agriculture industry fallback.
+- Product plans and manifests now include currency_code, currency_symbol, currency_locale, and country_hint.
+- Studio V4 sends only navigator.language and Intl timezone metadata; no GPS, exact location, private data, secrets, or exchange API keys are used.
+- Generated farmer/mandi previews use INR examples such as INR 4,200/q, INR 1,250 input cost, INR 3,800 diesel cost, INR 4.6L revenue, and INR 82,000 profit estimate.
+- Verified USA, UK, UAE/Dubai, Bangladesh, and India locale/country paths select their expected currency profiles while preserving clickable, mobile, and desktop preview behavior.
+
+## Phase 32A-FIX-3 - Mutual Fund Broker Domain Detection Fix
+
+Status: Completed locally, verification passed.
+
+- Added mutual fund / investment advisor domain detection for mutual fund, SIP, systematic investment plan, investment advisor, wealth advisor, portfolio tracker, KYC, risk profile, fund comparison, asset management, AMC, portfolio, NAV, and investment guidance prompts.
+- Mutual fund and SIP prompts now resolve to Mutual Fund Advisor / mutual_fund_advisor before insurance detection, while insurance remains limited to clear insurance terms such as insurance, policy, claim, premium, renewal, coverage, insurer, and policy holder.
+- Added mutual fund generated app content for fund categories, compare funds, SIP calculator, portfolio tracker, KYC upload, risk profile, advisor booking, SIP reminders, customer enquiry, and admin dashboard.
+- Mutual fund previews use finance-trust-blue styling, India/SIP rupee defaults such as SIP Amount ?5,000/mo and Portfolio Value ?4.6L, safety wording for estimated growth and advisor guidance, and clickable aliases for compare, funds, sip, portfolio, kyc, risk, advisor, reminders, enquiry, admin, and dashboard.
+- Verified mutual fund and SIP prompts classify as mutual_fund_advisor with ? values, while an insurance policy/claim/renewal prompt still classifies as finance_insurance.
