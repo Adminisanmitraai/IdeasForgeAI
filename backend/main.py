@@ -37,6 +37,7 @@ from backend.product_brain.workflow_engine import ProductBrainWorkflow
 from backend.product_flow import (
     BACKEND_GENERATED_APPS_DIR,
     create_product_plan,
+from backend.blueprint_ui_adapter import apply_blueprint_to_generated_plan
     generate_static_app,
     normalize_reference_image_metadata,
 )
@@ -95,6 +96,7 @@ def ideasforgeai_health():
 def _studio_v4_app_creation_plan(user_text: str, payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     reference_image = normalize_reference_image_metadata(payload or {})
     plan = create_product_plan(user_text, reference_image=reference_image)
+    plan = apply_blueprint_to_generated_plan(plan, user_text=user_text)
     plan["product_name"] = plan["app_name"]
     plan["category"] = plan["app_type"]
     return plan
