@@ -15,7 +15,7 @@ const referencePhotosInput = document.querySelector("[data-reference-photos-inpu
 const referenceFilesInput = document.querySelector("[data-reference-files-input]");
 const menuToggle = document.querySelector("[data-menu-toggle]");
 const menu = document.querySelector("[data-menu]");
-const fullscreenToggle = document.querySelector("[data-fullscreen-toggle]");
+const fullscreenToggles = document.querySelectorAll("[data-fullscreen-toggle]");
 const previewMount = document.querySelector("[data-preview-mount]");
 const workspace = document.querySelector(".workspace");
 
@@ -588,9 +588,11 @@ const setPreviewOpen = (isOpen) => {
   studioShell?.setAttribute("data-active-panel", isOpen ? "preview" : "chat");
   if (!isOpen) {
     studioShell?.classList.remove("is-preview-fullscreen");
-    fullscreenToggle?.setAttribute("aria-label", "Open fullscreen preview");
-    fullscreenToggle?.setAttribute("title", "Open fullscreen preview");
-    fullscreenToggle?.setAttribute("aria-pressed", "false");
+    fullscreenToggles.forEach((toggle) => {
+      toggle.setAttribute("aria-label", "Open fullscreen preview");
+      toggle.setAttribute("title", "Open fullscreen preview");
+      toggle.setAttribute("aria-pressed", "false");
+    });
   }
   closeAttachmentMenu();
   closeMenu();
@@ -723,12 +725,16 @@ showChatButtons.forEach((button) => {
   button.addEventListener("click", () => setPreviewOpen(false));
 });
 
-fullscreenToggle?.addEventListener("click", () => {
-  const isFullscreen = !studioShell?.classList.contains("is-preview-fullscreen");
-  studioShell?.classList.toggle("is-preview-fullscreen", isFullscreen);
-  fullscreenToggle.setAttribute("aria-label", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
-  fullscreenToggle.setAttribute("title", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
-  fullscreenToggle.setAttribute("aria-pressed", String(isFullscreen));
+fullscreenToggles.forEach((toggle) => {
+  toggle.addEventListener("click", () => {
+    const isFullscreen = !studioShell?.classList.contains("is-preview-fullscreen");
+    studioShell?.classList.toggle("is-preview-fullscreen", isFullscreen);
+    fullscreenToggles.forEach((item) => {
+      item.setAttribute("aria-label", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
+      item.setAttribute("title", isFullscreen ? "Close fullscreen preview" : "Open fullscreen preview");
+      item.setAttribute("aria-pressed", String(isFullscreen));
+    });
+  });
 });
 
 attachmentToggle?.addEventListener("click", (event) => {
