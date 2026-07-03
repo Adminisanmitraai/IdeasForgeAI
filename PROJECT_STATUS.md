@@ -1,4 +1,16 @@
 # IdeasForgeAI Project Status
+## Phase CA-06.3 - Active Module Panel Repair
+
+Status: Completed locally, validation pending manual browser check.
+
+- Replaced the unclear mobile scroll-to-hidden-section behavior on the Coding Agent page with a dedicated Active Module Panel directly below the module chips.
+- Demo Project now opens the Active Module Panel immediately with Project Reader Preview selected by default and clear buttons for Project Reader, Architecture Analyzer, and Code Diff Preview.
+- Local Project, GitHub Repository, Upload ZIP, and locked roadmap modules now open visible preview-only messaging inside the Active Module Panel instead of relying on card state alone.
+- Code Editor with Diff preview now renders its safe diff content, Copy Diff, Reject, Approve Later, and locked Apply Changes controls inside the visible Active Module Panel.
+- Polished the back button scroll state to reduce overlap on mobile while preserving back navigation and swipe-back behavior.
+- Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-06.3 repair; no backend edits, deployment settings, secrets, .env, external services, or KisanMitraAI files touched.
 
 ## Phase 34 - Sector UI Rendering Engine
 
