@@ -96,6 +96,60 @@ const DEMO_TASK_PLAN_TEXT = [
   "- Copy Plan",
   "- Start Code Changes - Coming in CA-06 with approval",
 ].join("\n");
+const DEMO_TEST_PLAN_TEXT = [
+  "Test Runner Preview",
+  "Preview validation steps before real test execution is enabled.",
+  "",
+  "Now Open: Test Runner Preview",
+  "Test Runner Preview is now open. Real command execution remains locked.",
+  "",
+  "JavaScript Syntax Checks",
+  "- node --check frontend/pages/coding-agent.js",
+  "- node --check frontend/pages/studio-v4.js",
+  "",
+  "Backend QA",
+  "- python backend/sector_qa_runner.py",
+  "",
+  "Manual UI Checks",
+  "- Mobile Safari layout",
+  "- Desktop browser layout",
+  "- Back/swipe navigation",
+  "- Demo Project workspace opening",
+  "- Task Planner approval gate",
+  "- Code Diff locked apply button",
+  "",
+  "Safety Checks",
+  "- No secrets exposed",
+  "- No backend file reading",
+  "- No Git writes",
+  "- No deployment action",
+  "- No KisanMitraAI files touched",
+  "",
+  "Summary:",
+  "5 checks previewed",
+  "5 planned checks passed in preview",
+  "Real execution locked until future approval",
+].join("\n");
+const DEMO_TEST_OUTPUT_TEXT = [
+  "PASS node --check frontend/pages/coding-agent.js",
+  "PASS node --check frontend/pages/studio-v4.js",
+  "PASS python backend/sector_qa_runner.py",
+  "PASS mobile preview smoke test",
+  "PASS safety boundary check",
+  "",
+  "Summary:",
+  "5 checks previewed",
+  "5 planned checks passed in preview",
+  "Real execution locked until future approval",
+].join("\n");
+const DEMO_TEST_FAILURE_TEXT = [
+  "FAIL mobile safe-area check",
+  "Reason:",
+  "Header may overlap content on small screens.",
+  "",
+  "Suggested action:",
+  "Send to Auto Fix Engine in CA-08.",
+].join("\n");
 
 const FILE_TREE = [
   "frontend/pages/studio-v4.html",
@@ -121,6 +175,7 @@ const MODULE_TITLES = {
   architecture: "Architecture Analyzer Preview",
   "task-planner": "Task Planner Preview",
   "code-diff": "Code Diff Preview",
+  "test-runner": "Test Runner Preview",
 };
 
 const MODULE_STATUS_MESSAGES = {
@@ -128,6 +183,7 @@ const MODULE_STATUS_MESSAGES = {
   architecture: "Architecture Analyzer Preview is now open.",
   "task-planner": "Task Planner Preview is now open.",
   "code-diff": "Code Diff Preview is now open.",
+  "test-runner": "Test Runner Preview is now open. Real command execution remains locked.",
 };
 
 const MODULE_SUBTITLES = {
@@ -135,6 +191,7 @@ const MODULE_SUBTITLES = {
   architecture: "Understand how frontend, backend, QA, and deployment layers connect.",
   "task-planner": "Convert a request into safe implementation steps before editing code.",
   "code-diff": "Preview proposed frontend changes before any approval-enabled phase.",
+  "test-runner": "Preview validation steps before real test execution is enabled.",
 };
 
 const state = {
@@ -147,6 +204,10 @@ const state = {
   planGenerated: false,
   planDecision: "pending",
   planCopyFeedback: "",
+  testRunPreviewed: false,
+  testFailurePreviewed: false,
+  testPlanDecision: "pending",
+  testPlanCopyFeedback: "",
   statusMessage: DEFAULT_STATUS_MESSAGE,
 };
 
@@ -449,6 +510,142 @@ const renderCodeDiffMarkup = () => `
   }
 `;
 
+const getTestPlanFeedback = () => {
+  if (state.testPlanCopyFeedback) {
+    return state.testPlanCopyFeedback;
+  }
+  if (state.testPlanDecision === "saved-later") {
+    return "Test plan saved for future approval. No commands were run.";
+  }
+  if (state.testPlanDecision === "rejected") {
+    return "Test plan rejected. No commands were run.";
+  }
+  if (state.testRunPreviewed) {
+    return "Preview run complete. Real command execution remains locked.";
+  }
+  return "Static demo only. No commands are executed from this screen.";
+};
+
+const renderTestRunnerMarkup = () => `
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Title</small>
+    <strong>Test Runner Preview</strong>
+    <p>Preview validation steps before real test execution is enabled.</p>
+    <p>Now Open: Test Runner Preview</p>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Status Banner</small>
+    <div class="test-runner-banner">
+      <strong>Test Runner Preview is now open. Real command execution remains locked.</strong>
+      <p>${escapeHtml(getTestPlanFeedback())}</p>
+    </div>
+  </section>
+  <section class="screen-detail-card">
+    <small>JavaScript Syntax Checks</small>
+    <strong>Planned checks</strong>
+    <ul class="test-suite-list">
+      <li><code>node --check frontend/pages/coding-agent.js</code></li>
+      <li><code>node --check frontend/pages/studio-v4.js</code></li>
+    </ul>
+  </section>
+  <section class="screen-detail-card">
+    <small>Backend QA</small>
+    <strong>Planned checks</strong>
+    <ul class="test-suite-list">
+      <li><code>python backend/sector_qa_runner.py</code></li>
+    </ul>
+  </section>
+  <section class="screen-detail-card">
+    <small>Manual UI Checks</small>
+    <strong>Preview checklist</strong>
+    <ul class="test-suite-list">
+      <li>Mobile Safari layout</li>
+      <li>Desktop browser layout</li>
+      <li>Back/swipe navigation</li>
+      <li>Demo Project workspace opening</li>
+      <li>Task Planner approval gate</li>
+      <li>Code Diff locked apply button</li>
+    </ul>
+  </section>
+  <section class="screen-detail-card">
+    <small>Safety Checks</small>
+    <strong>Boundary checklist</strong>
+    <ul class="test-suite-list">
+      <li>No secrets exposed</li>
+      <li>No backend file reading</li>
+      <li>No Git writes</li>
+      <li>No deployment action</li>
+      <li>No KisanMitraAI files touched</li>
+    </ul>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Test Result Cards</small>
+    <strong>Preview state types</strong>
+    <div class="test-runner-result-grid">
+      <article class="test-result-card">
+        <span class="status-chip status-chip--passed">Passed</span>
+        <p>Simulated pass results appear after Preview Test Run.</p>
+      </article>
+      <article class="test-result-card">
+        <span class="status-chip status-chip--review">Needs Review</span>
+        <p>Use the failure example to show a review-needed output without running anything.</p>
+      </article>
+      <article class="test-result-card">
+        <span class="status-chip status-chip--locked">Locked</span>
+        <p>Real command execution stays disabled until a future approval phase.</p>
+      </article>
+      <article class="test-result-card">
+        <span class="status-chip status-chip--manual">Manual</span>
+        <p>Manual browser checks remain listed for Safari, desktop, and navigation validation.</p>
+      </article>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Simulated Controls</small>
+    <strong>Preview-only actions</strong>
+    <div class="test-runner-actions">
+      <button class="diff-generate-button" type="button" data-ca-action="preview-test-run">Preview Test Run</button>
+      <button class="reader-action-button" type="button" data-ca-action="preview-failed-test">Preview Failed Test Example</button>
+    </div>
+  </section>
+  ${
+    state.testRunPreviewed
+      ? `
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Simulated Output</small>
+          <strong>Readable preview output only</strong>
+          <div class="test-runner-output">
+            <pre>${escapeHtml(DEMO_TEST_OUTPUT_TEXT)}</pre>
+          </div>
+        </section>
+      `
+      : ""
+  }
+  ${
+    state.testFailurePreviewed
+      ? `
+        <section class="screen-detail-card screen-detail-card--wide screen-detail-card--failure">
+          <small>Failure Preview</small>
+          <strong>Simulated failed test</strong>
+          <div class="test-runner-output">
+            <pre>${escapeHtml(DEMO_TEST_FAILURE_TEXT)}</pre>
+          </div>
+        </section>
+      `
+      : ""
+  }
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Approval Gate</small>
+    <strong>Review before any future real execution</strong>
+    <div class="test-runner-approval-actions">
+      <button class="reader-action-button" type="button" data-ca-action="copy-test-plan">Copy Test Plan</button>
+      <button class="reader-action-button" type="button" data-ca-action="mark-test-plan-later">Mark for Later</button>
+      <button class="reader-action-button" type="button" data-ca-action="reject-test-plan">Reject Test Plan</button>
+      <button class="reader-action-button is-disabled" type="button" disabled>Run Real Tests — Coming after project permission</button>
+    </div>
+  </section>
+`;
+
 const renderModuleBody = () => {
   if (!activeScreenBody) {
     return;
@@ -471,6 +668,11 @@ const renderModuleBody = () => {
 
   if (state.activeModule === "code-diff") {
     activeScreenBody.innerHTML = renderCodeDiffMarkup();
+    return;
+  }
+
+  if (state.activeModule === "test-runner") {
+    activeScreenBody.innerHTML = renderTestRunnerMarkup();
     return;
   }
 
@@ -518,11 +720,11 @@ const renderWorkspaceCards = () => {
   }
 
   if (workspaceStatusNodes.testRunner) {
-    workspaceStatusNodes.testRunner.textContent = demoConnected ? "Locked until CA-07" : "Locked";
+    workspaceStatusNodes.testRunner.textContent = demoConnected ? "Preview Unlocked" : "Locked";
   }
   if (workspaceCopyNodes.testRunner) {
     workspaceCopyNodes.testRunner.textContent = demoConnected
-      ? "Test controls remain locked in this preview flow until CA-07."
+      ? "Preview-only validation is available. Real command execution remains locked until a future approval phase."
       : "Manual, unit, and integration test controls are reserved for the next phase.";
   }
 
@@ -633,6 +835,10 @@ const openFallbackScreen = (connection) => {
   state.planGenerated = false;
   state.planDecision = "pending";
   state.planCopyFeedback = "";
+  state.testRunPreviewed = false;
+  state.testFailurePreviewed = false;
+  state.testPlanDecision = "pending";
+  state.testPlanCopyFeedback = "";
   setStatusMessage(CONNECTION_MESSAGES[connection]);
   renderScreenState();
   scrollStageIntoView();
@@ -648,6 +854,10 @@ const openDemoScreen = () => {
   state.planGenerated = false;
   state.planDecision = "pending";
   state.planCopyFeedback = "";
+  state.testRunPreviewed = false;
+  state.testFailurePreviewed = false;
+  state.testPlanDecision = "pending";
+  state.testPlanCopyFeedback = "";
   setStatusMessage("Demo Project Workspace opened. Project Reader Preview is now open.");
   renderScreenState();
   scrollStageIntoView();
@@ -667,6 +877,10 @@ const openDemoModule = (moduleName) => {
   if (moduleName !== "task-planner") {
     state.planCopyFeedback = "";
     state.planDecision = "pending";
+  }
+  if (moduleName !== "test-runner") {
+    state.testPlanCopyFeedback = "";
+    state.testPlanDecision = "pending";
   }
   setStatusMessage(MODULE_STATUS_MESSAGES[moduleName] || `Now Open: ${MODULE_TITLES[moduleName]}`);
   renderScreenState();
@@ -707,6 +921,34 @@ const copyDiff = async () => {
     state.copyFeedback = "Diff copied to clipboard. No changes were applied.";
   } catch (error) {
     state.copyFeedback = "Clipboard copy was unavailable. The diff remains preview-only.";
+  }
+  renderScreenState();
+};
+
+const previewTestRun = () => {
+  state.testRunPreviewed = true;
+  state.testPlanDecision = "pending";
+  state.testPlanCopyFeedback = "";
+  setStatusMessage("Preview Test Run complete. Real command execution remains locked.");
+  renderScreenState();
+};
+
+const previewFailedTest = () => {
+  state.testFailurePreviewed = true;
+  state.testPlanDecision = "pending";
+  state.testPlanCopyFeedback = "";
+  setStatusMessage("Preview Failed Test Example shown. No real auto-fix was run.");
+  renderScreenState();
+};
+
+const copyTestPlan = async () => {
+  try {
+    await navigator.clipboard.writeText(DEMO_TEST_PLAN_TEXT);
+    state.testPlanCopyFeedback = "Test plan copied.";
+    setStatusMessage("Test plan copied.");
+  } catch (error) {
+    state.testPlanCopyFeedback = "Clipboard copy was unavailable. Test Runner remains preview-only.";
+    setStatusMessage("Clipboard copy was unavailable. Test Runner remains preview-only.");
   }
   renderScreenState();
 };
@@ -772,17 +1014,29 @@ const handleAction = async (action) => {
     case "open-code-diff":
       openDemoModule("code-diff");
       break;
+    case "open-test-runner":
+      openDemoModule("test-runner");
+      break;
     case "generate-task-plan":
       generateTaskPlan();
       break;
     case "generate-diff":
       generateDiff();
       break;
+    case "preview-test-run":
+      previewTestRun();
+      break;
+    case "preview-failed-test":
+      previewFailedTest();
+      break;
     case "copy-plan":
       await copyTaskPlan();
       break;
     case "copy-diff":
       await copyDiff();
+      break;
+    case "copy-test-plan":
+      await copyTestPlan();
       break;
     case "reject-plan":
       state.planDecision = "rejected";
@@ -806,6 +1060,18 @@ const handleAction = async (action) => {
       state.diffDecision = "approved-later";
       state.copyFeedback = "";
       setStatusMessage("Code Diff Preview saved for later approval only.");
+      renderScreenState();
+      break;
+    case "mark-test-plan-later":
+      state.testPlanDecision = "saved-later";
+      state.testPlanCopyFeedback = "";
+      setStatusMessage("Test plan saved for future approval. No commands were run.");
+      renderScreenState();
+      break;
+    case "reject-test-plan":
+      state.testPlanDecision = "rejected";
+      state.testPlanCopyFeedback = "";
+      setStatusMessage("Test plan rejected. No commands were run.");
       renderScreenState();
       break;
     default:
