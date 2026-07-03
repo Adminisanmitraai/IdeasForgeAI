@@ -11,6 +11,18 @@ const heroStatus = document.querySelector("[data-workspace-hero-status]");
 const projectReaderPreview = document.querySelector("[data-project-reader-preview]");
 const projectReaderDetails = document.querySelector("[data-project-reader-details]");
 const projectReaderToggleButtons = document.querySelectorAll("[data-project-reader-toggle]");
+const architecturePreview = document.querySelector("[data-architecture-preview]");
+const architectureDetails = document.querySelector("[data-architecture-details]");
+const architectureToggleButtons = document.querySelectorAll("[data-architecture-toggle]");
+const architectureStatus = document.querySelector("[data-architecture-status]");
+const architectureLayers = document.querySelector("[data-architecture-layers]");
+const routeMapList = document.querySelector("[data-route-map-list]");
+const architectureFlow = document.querySelector("[data-architecture-flow]");
+const riskList = document.querySelector("[data-risk-list]");
+const nextPhasesList = document.querySelector("[data-next-phases-list]");
+const architectureSafetyList = document.querySelector("[data-architecture-safety-list]");
+const architectureModuleChip = document.querySelector("[data-module-chip-architecture]");
+const demoArchitectureModuleChip = document.querySelector("[data-demo-module-architecture]");
 const folderPreviewInput = document.querySelector("[data-folder-preview-input]");
 const folderPreviewLabel = document.querySelector("[data-folder-preview-label]");
 const folderPreviewStatus = document.querySelector("[data-folder-preview-status]");
@@ -28,12 +40,14 @@ const workspaceStatusNodes = {
   activeTasks: document.querySelector('[data-workspace-status="active-tasks"]'),
   testRunner: document.querySelector('[data-workspace-status="test-runner"]'),
   githubIntegration: document.querySelector('[data-workspace-status="github-integration"]'),
+  architectureAnalyzer: document.querySelector('[data-workspace-status="architecture-analyzer"]'),
 };
 const workspaceCopyNodes = {
   projectExplorer: document.querySelector('[data-workspace-copy="project-explorer"]'),
   activeTasks: document.querySelector('[data-workspace-copy="active-tasks"]'),
   testRunner: document.querySelector('[data-workspace-copy="test-runner"]'),
   githubIntegration: document.querySelector('[data-workspace-copy="github-integration"]'),
+  architectureAnalyzer: document.querySelector('[data-workspace-copy="architecture-analyzer"]'),
 };
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const STUDIO_V4_TARGET = "./studio-v4.html";
@@ -41,6 +55,8 @@ const SWIPE_THRESHOLD_PX = 52;
 const SWIPE_DIRECTION_RATIO = 1.15;
 const initialConnectButtonLabel = demoSelectButton?.textContent || "Select Demo Project";
 const initialFolderPreviewStatus = folderPreviewStatus?.textContent || "Client-side only";
+const initialArchitectureStatus =
+  architectureStatus?.textContent || "Locked until CA-04 / Preview available after Demo Project selection";
 const demoProjectReaderData = {
   projectName: "IdeasForgeAI Demo Project",
   modeBadge: "Demo preview",
@@ -98,6 +114,160 @@ const demoProjectReaderData = {
     "Approval required before future changes",
   ],
 };
+const demoArchitectureData = {
+  layers: [
+    {
+      label: "Frontend Layer",
+      title: "Studio and Coding Agent surfaces",
+      description: "Static client pages drive chat, preview, and coding workspace presentation.",
+      items: [
+        "studio-v4.html",
+        "studio-v4.css",
+        "studio-v4.js",
+        "coding-agent.html",
+        "coding-agent.css",
+        "coding-agent.js",
+      ],
+    },
+    {
+      label: "Backend Layer",
+      title: "Planning and routing services",
+      description: "FastAPI-oriented service files coordinate planning, sector logic, and API entry points.",
+      items: [
+        "main.py",
+        "product_flow.py",
+        "sector_blueprints.py",
+        "sector_qa_runner.py",
+        "api/sector_classifier.py",
+      ],
+    },
+    {
+      label: "Generated App Engine",
+      title: "Preview shaping pipeline",
+      description: "The demo path moves from product planning through premium rendering into generated previews.",
+      items: [
+        "product plan",
+        "image-first mockup",
+        "premium frontend renderer",
+        "generated app preview",
+      ],
+    },
+    {
+      label: "QA Layer",
+      title: "Validation before future release",
+      description: "Read-only QA coverage highlights where preview validation will happen in later phases.",
+      items: [
+        "sector_qa_runner.py",
+        "generated_app_qa.py",
+        "node --check validation",
+      ],
+    },
+    {
+      label: "Deployment Layer",
+      title: "Placeholder release targets",
+      description: "Deployment remains locked, but the preview clarifies intended static and API surfaces.",
+      items: [
+        "GitHub Pages static frontend",
+        "Render backend/API placeholder",
+        "deployment manager locked until CA-10",
+      ],
+    },
+  ],
+  routes: [
+    {
+      label: "Studio entry",
+      title: "/pages/studio-v4.html",
+      description: "IdeasForgeAI chat and generated preview workspace.",
+    },
+    {
+      label: "Coding workspace",
+      title: "/pages/coding-agent.html",
+      description: "Coding Agent workspace with read-only previews and locked future modules.",
+    },
+    {
+      label: "Generated previews",
+      title: "/generated-apps/...",
+      description: "Static generated app previews rendered from approved plans.",
+    },
+    {
+      label: "Planning API",
+      title: "/api/product-flow",
+      description: "Backend product planning endpoint used by the Studio workflow.",
+    },
+    {
+      label: "Health check",
+      title: "/health",
+      description: "Backend health endpoint for operational status.",
+    },
+  ],
+  flow: [
+    { label: "1", title: "User idea", description: "A user describes the product they want to generate." },
+    { label: "2", title: "Prompt planning", description: "The system shapes the request into a planning-ready prompt." },
+    { label: "3", title: "Sector detection", description: "Sector logic categorizes the request and picks blueprint rules." },
+    { label: "4", title: "Product plan", description: "A structured app plan defines features, screens, and data needs." },
+    { label: "5", title: "Image-first mockup", description: "A visual target is prepared before code rendering begins." },
+    { label: "6", title: "Premium renderer", description: "Frontend rendering composes the polished generated app shell." },
+    { label: "7", title: "Preview", description: "The generated experience is shown as a safe demo preview." },
+    { label: "8", title: "QA", description: "Validation checks confirm sector fit, layout quality, and readiness." },
+    { label: "9", title: "Future deploy", description: "Deployment stays locked until a later approval-based phase." },
+  ],
+  risks: [
+    {
+      label: "Static route mismatch",
+      title: "Pages and generated preview paths must stay aligned",
+      description: "Static page links, generated preview URLs, and API targets can drift if naming changes are not mirrored.",
+    },
+    {
+      label: "Mobile safe-area issues",
+      title: "Inset handling needs explicit QA",
+      description: "Mobile Safari spacing, swipe zones, and sticky controls need continued safe-area verification.",
+    },
+    {
+      label: "Currency localization",
+      title: "Locale-aware product output can diverge",
+      description: "Generated pricing and region assumptions need explicit locale handling across plan and preview layers.",
+    },
+    {
+      label: "Preview/fullscreen layout",
+      title: "Responsive state changes can regress",
+      description: "Preview frame, fullscreen transitions, and split-panel states can break without targeted checks.",
+    },
+    {
+      label: "Generated UI quality consistency",
+      title: "Render quality can vary by idea and sector",
+      description: "Visual polish and component consistency need ongoing renderer and QA refinement.",
+    },
+    {
+      label: "Deployment verification",
+      title: "Release validation remains deferred",
+      description: "Frontend and backend deployment checks are intentionally locked until CA-10.",
+    },
+  ],
+  phases: [
+    { phase: "CA-05", title: "Task Planner", description: "Turn architecture insight into explicit implementation tasks." },
+    { phase: "CA-06", title: "Code Editor with Diff", description: "Allow reviewed edits with diff visibility and approval flow." },
+    { phase: "CA-07", title: "Test Runner", description: "Run validation and QA actions from the Coding Agent workspace." },
+    { phase: "CA-08", title: "Auto Fix Engine", description: "Suggest and apply guided remediations for detected issues." },
+    { phase: "CA-09", title: "Git Manager", description: "Add safe Git review, commit, and repository coordination tools." },
+    { phase: "CA-10", title: "Deployment Manager", description: "Unlock deployment flows after approval and release safeguards." },
+    { phase: "CHAT-X", title: "Production AI Chat System", description: "Layer the production chat system after CA-10 is complete." },
+  ],
+  safety: [
+    {
+      label: "Architecture Analyzer is read-only in CA-04",
+      title: "Safety card",
+      description: "This preview explains structure only and does not unlock project mutation.",
+      items: [
+        "No file edits",
+        "No terminal commands",
+        "No Git writes",
+        "No deployment actions",
+        "No secrets access",
+        "Approval required before future changes",
+      ],
+    },
+  ],
+};
 const connectionState = {
   noProjectConnected: true,
   connectPanelOpen: false,
@@ -105,6 +275,7 @@ const connectionState = {
   browserPreviewSelected: false,
   projectConnectionPreviewReady: false,
   projectReaderExpanded: false,
+  architecturePreviewExpanded: false,
   currentReaderData: demoProjectReaderData,
 };
 
@@ -128,6 +299,19 @@ const setProjectReaderExpanded = (isExpanded) => {
   });
 };
 
+const setArchitectureExpanded = (isExpanded) => {
+  connectionState.architecturePreviewExpanded = isExpanded;
+  if (architectureDetails) {
+    architectureDetails.hidden = !isExpanded;
+  }
+  architectureToggleButtons.forEach((button) => {
+    button.setAttribute("aria-expanded", String(isExpanded));
+    if (button.matches(".reader-action-button")) {
+      button.textContent = isExpanded ? "Hide Preview" : "Open Preview";
+    }
+  });
+};
+
 const createSummaryItemMarkup = (item) =>
   `<div class="stack-summary-item"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p></div>`;
 
@@ -136,6 +320,28 @@ const createCountItemMarkup = (label, value, description) =>
 
 const createModuleMarkup = (item) =>
   `<div class="module-map__item"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p></div>`;
+
+const createArchitectureLayerMarkup = (item) =>
+  `<article class="architecture-layer-card"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p><ul>${item.items
+    .map((entry) => `<li>${entry}</li>`)
+    .join("")}</ul></article>`;
+
+const createRouteMarkup = (item) =>
+  `<article class="route-map-item"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p></article>`;
+
+const createFlowMarkup = (item) =>
+  `<article class="flow-step"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p></article>`;
+
+const createRiskMarkup = (item) =>
+  `<article class="risk-card"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p></article>`;
+
+const createPhaseMarkup = (item) =>
+  `<article class="next-phase-item"><div><small>${item.phase}</small><strong>${item.title}</strong><p>${item.description}</p></div><span class="next-phase-lock">Locked</span></article>`;
+
+const createSafetyMarkup = (item) =>
+  `<article class="safety-card-item"><small>${item.label}</small><strong>${item.title}</strong><p>${item.description}</p><ul>${item.items
+    .map((entry) => `<li>${entry}</li>`)
+    .join("")}</ul></article>`;
 
 const renderProjectReader = () => {
   const readerData = connectionState.currentReaderData || demoProjectReaderData;
@@ -174,6 +380,27 @@ const renderProjectReader = () => {
   }
   if (readerSafetyBoundariesList) {
     readerSafetyBoundariesList.innerHTML = readerData.safetyBoundaries.map((item) => `<span>${item}</span>`).join("");
+  }
+};
+
+const renderArchitecturePreview = () => {
+  if (architectureLayers) {
+    architectureLayers.innerHTML = demoArchitectureData.layers.map(createArchitectureLayerMarkup).join("");
+  }
+  if (routeMapList) {
+    routeMapList.innerHTML = demoArchitectureData.routes.map(createRouteMarkup).join("");
+  }
+  if (architectureFlow) {
+    architectureFlow.innerHTML = demoArchitectureData.flow.map(createFlowMarkup).join("");
+  }
+  if (riskList) {
+    riskList.innerHTML = demoArchitectureData.risks.map(createRiskMarkup).join("");
+  }
+  if (nextPhasesList) {
+    nextPhasesList.innerHTML = demoArchitectureData.phases.map(createPhaseMarkup).join("");
+  }
+  if (architectureSafetyList) {
+    architectureSafetyList.innerHTML = demoArchitectureData.safety.map(createSafetyMarkup).join("");
   }
 };
 
@@ -305,10 +532,13 @@ const buildBrowserPreviewData = (fileList) => {
 
 const renderConnectionState = () => {
   const hasReaderPreview = connectionState.demoProjectSelected || connectionState.browserPreviewSelected;
+  const hasArchitecturePreview = connectionState.demoProjectSelected;
 
   if (heroStatus) {
     heroStatus.textContent = hasReaderPreview
-      ? "Project Reader Preview ready"
+      ? hasArchitecturePreview
+        ? "Project Reader + Architecture Preview ready"
+        : "Project Reader Preview ready"
       : "Workspace placeholder ready";
   }
 
@@ -359,6 +589,17 @@ const renderConnectionState = () => {
       : "PR context, review threads, and CI visibility will connect here later.";
   }
 
+  if (workspaceStatusNodes.architectureAnalyzer) {
+    workspaceStatusNodes.architectureAnalyzer.textContent = hasArchitecturePreview
+      ? "Preview Unlocked"
+      : "Locked until CA-04";
+  }
+  if (workspaceCopyNodes.architectureAnalyzer) {
+    workspaceCopyNodes.architectureAnalyzer.textContent = hasArchitecturePreview
+      ? "Architecture layers, route map, QA flow, deployment placeholder, and risk areas are available in read-only mode."
+      : "Understand how frontend, backend, QA, and deployment pieces connect.";
+  }
+
   if (projectReaderPreview) {
     projectReaderPreview.hidden = !hasReaderPreview;
   }
@@ -366,6 +607,29 @@ const renderConnectionState = () => {
     renderProjectReader();
   } else {
     setProjectReaderExpanded(false);
+  }
+
+  if (architecturePreview) {
+    architecturePreview.hidden = !hasArchitecturePreview;
+  }
+  if (architectureStatus) {
+    architectureStatus.textContent = hasArchitecturePreview ? "Preview Unlocked" : initialArchitectureStatus;
+    architectureStatus.classList.toggle("workspace-status-badge--locked", !hasArchitecturePreview);
+  }
+  if (architectureModuleChip) {
+    architectureModuleChip.innerHTML = hasArchitecturePreview
+      ? "Architecture Analyzer <small>Preview Unlocked</small>"
+      : "Architecture Analyzer <small>CA-04</small>";
+  }
+  if (demoArchitectureModuleChip) {
+    demoArchitectureModuleChip.innerHTML = hasArchitecturePreview
+      ? "Architecture Analyzer <small>Unlocked</small>"
+      : "Architecture Analyzer <small>CA-04</small>";
+  }
+  if (hasArchitecturePreview) {
+    renderArchitecturePreview();
+  } else {
+    setArchitectureExpanded(false);
   }
 
   connectOptions.forEach((option) => {
@@ -424,6 +688,7 @@ const selectDemoProject = () => {
   connectionState.currentReaderData = demoProjectReaderData;
   renderConnectionState();
   setProjectReaderExpanded(true);
+  setArchitectureExpanded(true);
   setConnectModalOpen(false);
 };
 
@@ -564,6 +829,15 @@ projectReaderToggleButtons.forEach((button) => {
       return;
     }
     setProjectReaderExpanded(!connectionState.projectReaderExpanded);
+  });
+});
+
+architectureToggleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (architecturePreview?.hidden) {
+      return;
+    }
+    setArchitectureExpanded(!connectionState.architecturePreviewExpanded);
   });
 });
 

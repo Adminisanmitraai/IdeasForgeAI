@@ -12932,3 +12932,16 @@ Status: Completed locally, validation pending.
 - Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-03 preview work; no deployment settings, secrets, .env, Render config, backend runtime behavior, or KisanMitraAI files touched.
 
+
+## Phase CA-04 - Architecture Analyzer Preview
+
+Status: Completed locally, validation pending.
+
+- Added a frontend-only Architecture Analyzer Preview section to the Coding Agent workspace with a locked status badge, unlock-on-demo behavior, and expand/collapse preview controls.
+- Added a polished demo architecture map covering frontend files, backend files, generated app engine, QA layer, deployment placeholder, route/page map, flow diagram, risk areas, next phases, and CA-04 safety boundaries.
+- Kept the Architecture Analyzer locked for browser folder preview mode and unlocked it only after Demo Project selection, while preserving the CA-03 Project Reader Preview behavior.
+- Preserved read-only boundaries: no code editing, no terminal commands, no Git writes, no deployment actions, no secrets access, and no backend project-file reading.
+- Preserved Coding Agent back button and swipe-right navigation back to ./studio-v4.html; existing Studio V4 chat flow remains unchanged.
+- Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-04 preview work; no deployment settings, secrets, .env, Render config, backend runtime behavior, or KisanMitraAI files touched.
