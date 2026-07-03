@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ForgePilot Desktop Companion</title>
+    <style>
+      :root {
+        --bg: #f3efe7;
+        --panel: rgba(255, 251, 246, 0.95);
+        --panel-strong: #fffdfa;
+        --text: #171411;
+        --muted: #655d54;
+        --border: rgba(23, 20, 17, 0.12);
+        --blue: #1f63ff;
+        --blue-deep: #1749bc;
+        --green: #18754b;
+        --red: #bb3e30;
+        --shadow: 0 28px 72px rgba(41, 24, 10, 0.14);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(255, 255, 255, 0.86), transparent 28%),
+          linear-gradient(145deg, #eadfce 0%, #f4efe6 44%, #efe4d7 100%);
+      }
+
+      .shell {
+        width: min(1020px, calc(100% - 28px));
+        margin: 24px auto;
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-radius: 30px;
+        background: var(--panel);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: clamp(2rem, 4vw, 3.3rem);
+        letter-spacing: -0.04em;
+      }
+
+      .intro {
+        margin: 0 0 22px;
+        color: var(--muted);
+        line-height: 1.55;
+        max-width: 760px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+        gap: 14px;
+        margin-bottom: 18px;
+      }
+
+      .card {
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--panel-strong);
+      }
+
+      .label {
+        margin-bottom: 8px;
+        color: var(--muted);
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .value {
+        font-size: 1.1rem;
+        font-weight: 700;
+      }
+
+      .online { color: var(--green); }
+      .offline { color: var(--red); }
+
+      textarea {
+        width: 100%;
+        min-height: 120px;
+        margin-top: 10px;
+        padding: 16px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: #fffdfa;
+        color: var(--text);
+        font: inherit;
+        line-height: 1.55;
+        resize: vertical;
+      }
+
+      button {
+        margin-top: 14px;
+        min-height: 50px;
+        padding: 0 22px;
+        border: 0;
+        border-radius: 999px;
+        background: linear-gradient(135deg, var(--blue), var(--blue-deep));
+        color: #fff;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        box-shadow: 0 16px 34px rgba(31, 99, 255, 0.22);
+      }
+
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .panel {
+        margin-top: 18px;
+        padding: 18px;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: var(--panel-strong);
+      }
+
+      .panel strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+
+      .result,
+      .log {
+        white-space: pre-wrap;
+        line-height: 1.55;
+      }
+
+      .log {
+        min-height: 220px;
+        padding: 18px;
+        border-radius: 18px;
+        background: #1d1b18;
+        color: #f8efe2;
+        font-family: "Courier New", monospace;
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          width: calc(100% - 18px);
+          margin: 10px auto;
+          padding: 20px;
+          border-radius: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <h1>ForgePilot Desktop Companion</h1>
+      <p class="intro">
+        Safe bridge between browser/mobile and a trusted laptop in script-only mode. This phase supports one manual
+        test task only and keeps mouse, keyboard, and screen features disabled.
+      </p>
+
+      <section class="grid">
+        <article class="card">
+          <div class="label">Desktop Status</div>
+          <div class="value offline" id="desktop-status">Offline</div>
+        </article>
+        <article class="card">
+          <div class="label">Device Name</div>
+          <div class="value" id="device-name">Unavailable</div>
+        </article>
+        <article class="card">
+          <div class="label">Connection Mode</div>
+          <div class="value">Script Only</div>
+        </article>
+        <article class="card">
+          <div class="label">Mouse/Keyboard</div>
+          <div class="value">Disabled</div>
+        </article>
+        <article class="card">
+          <div class="label">Screen View</div>
+          <div class="value">Disabled</div>
+        </article>
+      </section>
+
+      <section class="panel">
+        <strong>Test Task</strong>
+        <textarea id="task-input">Create the IdeasForgeAI connection test file on Desktop.</textarea>
+        <button id="run-task-button" type="button">Run Test Task</button>
+      </section>
+
+      <section class="panel">
+        <strong>Result</strong>
+        <div class="result" id="result-box">Waiting for laptop agent connection.</div>
+      </section>
+
+      <section class="panel">
+        <strong>Activity Log</strong>
+        <div class="log" id="activity-log">Activity log ready.</div>
+      </section>
+    </main>
+
+    <script>
+      const statusEl = document.getElementById("desktop-status");
+      const deviceEl = document.getElementById("device-name");
+      const taskInputEl = document.getElementById("task-input");
+      const runButtonEl = document.getElementById("run-task-button");
+      const resultBoxEl = document.getElementById("result-box");
+      const activityLogEl = document.getElementById("activity-log");
+
+      const socketProtocol = location.protocol === "https:" ? "wss" : "ws";
+      const socket = new WebSocket(`${socketProtocol}://${location.host}`);
+
+      function appendLog(message) {
+        const stamp = new Date().toLocaleTimeString();
+        activityLogEl.textContent += `\n[${stamp}] ${message}`;
+        activityLogEl.scrollTop = activityLogEl.scrollHeight;
+      }
+
+      function updateStatus(online, deviceName) {
+        statusEl.textContent = online ? "Online" : "Offline";
+        statusEl.className = `value ${online ? "online" : "offline"}`;
+        deviceEl.textContent = deviceName || "Unavailable";
+        runButtonEl.disabled = !online;
+      }
+
+      socket.addEventListener("open", () => {
+        socket.send(JSON.stringify({ type: "REGISTER_BROWSER" }));
+        appendLog("Browser/mobile agent connected.");
+      });
+
+      socket.addEventListener("message", (event) => {
+        const payload = JSON.parse(event.data);
+
+        if (payload.type === "LAPTOP_STATUS") {
+          updateStatus(Boolean(payload.online), payload.deviceName);
+          appendLog(`Laptop Agent ${payload.online ? "online" : "offline"}${payload.deviceName ? ` (${payload.deviceName})` : ""}.`);
+          return;
+        }
+
+        if (payload.type === "TASK_RESULT") {
+          resultBoxEl.textContent =
+            `${payload.success ? "Success" : "Failed"}\n` +
+            `Device: ${payload.deviceName || "Unavailable"}\n` +
+            `Message: ${payload.message}\n` +
+            `Created file path: ${payload.createdFilePath || "Not created"}`;
+          appendLog(`Task result received: ${payload.message}`);
+          return;
+        }
+
+        if (payload.type === "INFO") {
+          appendLog(payload.message);
+          return;
+        }
+
+        if (payload.type === "ERROR") {
+          resultBoxEl.textContent = `Error\n${payload.message}`;
+          appendLog(`Error: ${payload.message}`);
+        }
+      });
+
+      socket.addEventListener("close", () => {
+        updateStatus(false, "Unavailable");
+        appendLog("Connection to server closed.");
+      });
+
+      socket.addEventListener("error", () => {
+        appendLog("WebSocket error encountered.");
+      });
+
+      runButtonEl.addEventListener("click", () => {
+        const task = taskInputEl.value.trim() || "Create the IdeasForgeAI connection test file on Desktop.";
+        socket.send(JSON.stringify({ type: "RUN_TEST_TASK", task }));
+        resultBoxEl.textContent = "Task sent to laptop agent. Waiting for result...";
+        appendLog(`Run Test Task clicked: ${task}`);
+      });
+
+      updateStatus(false, "Unavailable");
+    </script>
+  </body>
+</html>
