@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca062-connect-card-action-repair-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca063-active-module-panel-repair-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -472,6 +472,21 @@
           <small>CA-10</small>
         </button>
       </div>
+      <section class="active-module-panel" data-active-module-panel hidden aria-live="polite" aria-labelledby="active-module-title">
+        <div class="active-module-panel__header">
+          <div>
+            <span class="eyebrow">Now Open</span>
+            <div class="active-module-panel__title-row">
+              <h3 id="active-module-title" data-active-module-title>Active Preview</h3>
+              <span class="active-module-chip">Open</span>
+            </div>
+            <p data-active-module-copy>Select Demo Project to unlock safe preview modules.</p>
+          </div>
+          <span class="workspace-status-badge" data-active-module-badge>Preview only</span>
+        </div>
+        <div class="active-module-panel__actions" data-active-module-actions hidden></div>
+        <div class="active-module-panel__body" data-active-module-body></div>
+      </section>
       <p class="module-inline-message" data-module-inline-message aria-live="polite" hidden></p>
       <button class="bottom-cta" type="button" data-connect-project-trigger>Connect Project</button>
     </section>
@@ -499,7 +514,7 @@
         <button class="connect-option" type="button" data-connect-option="github">
           <strong>GitHub Repository</strong>
           <p>Connect a GitHub repository for reading code, planning changes, and creating pull requests.</p>
-          <span class="option-status">Coming in CA-04 / CA-09</span>
+          <span class="option-status">Real access coming later</span>
         </button>
         <button class="connect-option" type="button" data-connect-option="zip">
           <strong>Upload ZIP</strong>
@@ -565,6 +580,6 @@
 
   <div class="module-toast" data-module-toast role="status" aria-live="polite" hidden></div>
 
-  <script src="./coding-agent.js?v=ca062-connect-card-action-repair-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca063-active-module-panel-repair-20260703" defer></script>
 </body>
 </html>

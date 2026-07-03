@@ -1115,6 +1115,199 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   color: #d9f5ff;
 }
 
+.active-module-panel {
+  display: grid;
+  gap: 18px;
+  margin: 4px 0 22px;
+  padding: 22px;
+  border: 1px solid rgba(56, 189, 248, .28);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top left, rgba(56,189,248,.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(139,92,246,.18), transparent 28%),
+    rgba(9, 12, 20, .92);
+  box-shadow: 0 24px 58px rgba(0, 0, 0, .34), 0 0 0 1px rgba(56, 189, 248, .08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  scroll-margin-top: 150px;
+}
+
+.active-module-panel.is-visible {
+  animation: activeModuleGlow 480ms cubic-bezier(.22,.7,.22,1);
+}
+
+.active-module-panel__header,
+.active-module-panel__title-row,
+.active-module-panel__actions,
+.active-module-file-row,
+.active-module-callout,
+.active-module-note,
+.diff-preview-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.active-module-panel__header {
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.active-module-panel__title-row {
+  align-items: center;
+  margin: 12px 0 10px;
+}
+
+.active-module-panel__title-row h3 {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 38px);
+  line-height: 1.08;
+}
+
+.active-module-panel__header p,
+.active-module-panel__body p,
+.active-module-list,
+.active-module-file-list,
+.active-module-flow,
+.active-module-risk-list,
+.active-module-safety-list {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.active-module-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, .22);
+  background: rgba(56, 189, 248, .14);
+  color: #d9f5ff;
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: .02em;
+}
+
+.active-module-panel__actions {
+  align-items: center;
+}
+
+.active-module-panel__body {
+  display: grid;
+  gap: 14px;
+}
+
+.active-module-card-grid,
+.active-module-list-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.active-module-card,
+.active-module-section,
+.active-module-file-row,
+.active-module-callout,
+.active-module-note {
+  border: 1px solid rgba(216, 199, 255, .14);
+  border-radius: 22px;
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.active-module-card,
+.active-module-section,
+.active-module-note {
+  padding: 18px;
+}
+
+.active-module-card small,
+.active-module-section small,
+.active-module-note small {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--purple-soft);
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.active-module-card strong,
+.active-module-section strong,
+.active-module-file-row strong,
+.active-module-note strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 760;
+}
+
+.active-module-card p,
+.active-module-section p,
+.active-module-file-row p,
+.active-module-note p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.active-module-list,
+.active-module-file-list,
+.active-module-flow,
+.active-module-risk-list,
+.active-module-safety-list {
+  padding-left: 18px;
+}
+
+.active-module-list li + li,
+.active-module-file-list li + li,
+.active-module-flow li + li,
+.active-module-risk-list li + li,
+.active-module-safety-list li + li {
+  margin-top: 6px;
+}
+
+.active-module-file-row {
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+}
+
+.active-module-file-tag {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(216, 199, 255, .14);
+  background: rgba(255,255,255,.05);
+  color: var(--purple-soft);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.active-module-callout {
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px;
+}
+
+.active-module-callout p {
+  margin: 0;
+}
+
+.active-module-note {
+  border-color: rgba(245, 158, 11, .18);
+  background: rgba(245, 158, 11, .08);
+}
+
+.diff-preview-actions {
+  justify-content: flex-start;
+}
+
 .module-chip-button[data-module-lock] {
   border-color: rgba(245, 158, 11, .22);
 }
@@ -1494,6 +1687,16 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   transform: translateY(-1px);
 }
 
+body.is-compact-back-button .coding-agent-topbar {
+  top: calc(env(safe-area-inset-top) + 6px);
+}
+
+body.is-compact-back-button .topbar-back-button {
+  width: 40px;
+  height: 40px;
+  box-shadow: 0 10px 22px rgba(0,0,0,.24);
+}
+
 .coding-agent-shell.is-page-transitioning {
   animation: pageExit 220ms cubic-bezier(.22,.7,.22,1) forwards;
   pointer-events: none;
@@ -1528,6 +1731,19 @@ a:focus-visible {
   100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
+@keyframes activeModuleGlow {
+  0% {
+    transform: translate3d(0, 10px, 0);
+    opacity: .6;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .24), 0 0 0 0 rgba(56, 189, 248, .16);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    box-shadow: 0 24px 58px rgba(0, 0, 0, .34), 0 0 0 1px rgba(56, 189, 248, .08);
+  }
+}
+
 @media (max-width: 1024px) {
   .coding-agent-hero {
     grid-template-columns: 1fr;
@@ -1537,6 +1753,8 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 
+  .active-module-card-grid,
+  .active-module-list-grid,
   .project-reader-preview__cards,
   .architecture-mini-grid,
   .architecture-layer-grid,
@@ -1599,6 +1817,7 @@ a:focus-visible {
 
   .coding-agent-copy,
   .coding-agent-illustration,
+  .active-module-panel,
   .project-reader-preview,
   .architecture-analyzer-preview,
   .code-editor-preview,
@@ -1621,10 +1840,13 @@ a:focus-visible {
   .project-reader-preview,
   .architecture-analyzer-preview,
   .code-editor-preview,
+  .active-module-panel,
   .reader-detail-card {
     padding: 18px;
   }
 
+  .active-module-card-grid,
+  .active-module-list-grid,
   .project-reader-preview__cards,
   .project-reader-details,
   .architecture-mini-grid,
@@ -1691,9 +1913,17 @@ a:focus-visible {
     justify-content: space-between;
   }
 
+  .active-module-panel__header,
+  .active-module-callout,
+  .active-module-file-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .project-reader-preview,
   .architecture-analyzer-preview,
-  .code-editor-preview {
+  .code-editor-preview,
+  .active-module-panel {
     scroll-margin-top: 144px;
   }
 
