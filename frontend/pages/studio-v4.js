@@ -19,6 +19,7 @@ const fullscreenToggles = document.querySelectorAll("[data-fullscreen-toggle]");
 const previewMount = document.querySelector("[data-preview-mount]");
 const workspace = document.querySelector(".workspace");
 const mobilePreviewRail = document.querySelector(".mobile-preview-rail");
+const codingAgentButtons = document.querySelectorAll("[data-coding-agent-nav]");
 
 let currentPlan = null;
 let currentPlanId = 0;
@@ -122,6 +123,7 @@ const getApiBase = () => {
 };
 
 const API_BASE = getApiBase();
+const PAGE_TRANSITION_MS = 210;
 
 const getMessageTime = () =>
   new Intl.DateTimeFormat("en-US", {
@@ -754,6 +756,62 @@ const closeMenu = () => {
   menuToggle.setAttribute("aria-expanded", "false");
 };
 
+const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+const getCodingAgentTarget = () => {
+  if (window.location.protocol === "file:") {
+    return "./coding-agent.html";
+  }
+
+  if (window.location.pathname.includes("/frontend/pages/")) {
+    return "/coding-agent";
+  }
+
+  return "/coding-agent";
+};
+
+const navigateWithSwipeTransition = (targetUrl) => {
+  if (!targetUrl) {
+    return;
+  }
+
+  closeAttachmentMenu();
+  closeMenu();
+
+  if (document.startViewTransition && !prefersReducedMotion()) {
+    document.startViewTransition(() => {
+      window.location.assign(targetUrl);
+    });
+    return;
+  }
+
+  if (prefersReducedMotion()) {
+    window.location.assign(targetUrl);
+    return;
+  }
+
+  studioShell?.classList.add("is-page-transitioning");
+  window.setTimeout(() => {
+    window.location.assign(targetUrl);
+  }, PAGE_TRANSITION_MS);
+};
+
+const armCodingAgentRipple = (button, event) => {
+  if (!button) {
+    return;
+  }
+
+  const rect = button.getBoundingClientRect();
+  const x = `${((event.clientX - rect.left) / rect.width) * 100}%`;
+  const y = `${((event.clientY - rect.top) / rect.height) * 100}%`;
+  button.style.setProperty("--ripple-x", x);
+  button.style.setProperty("--ripple-y", y);
+  button.classList.remove("is-rippling");
+  void button.offsetWidth;
+  button.classList.add("is-rippling");
+  window.setTimeout(() => button.classList.remove("is-rippling"), 520);
+};
+
 const setPreviewFullscreen = (isFullscreen) => {
   studioShell?.classList.toggle("is-preview-fullscreen", isFullscreen);
   fullscreenToggles.forEach((toggle) => {
@@ -918,6 +976,28 @@ fullscreenToggles.forEach((toggle) => {
   toggle.addEventListener("click", () => {
     const isFullscreen = !studioShell?.classList.contains("is-preview-fullscreen");
     setPreviewFullscreen(isFullscreen);
+  });
+});
+
+codingAgentButtons.forEach((button) => {
+  button.addEventListener("pointerdown", (event) => {
+    if (event.pointerType === "mouse" && event.button !== 0) {
+      return;
+    }
+    button.classList.add("is-pressed");
+    armCodingAgentRipple(button, event);
+  });
+
+  button.addEventListener("pointerup", () => {
+    button.classList.remove("is-pressed");
+  });
+
+  button.addEventListener("pointerleave", () => {
+    button.classList.remove("is-pressed");
+  });
+
+  button.addEventListener("click", () => {
+    navigateWithSwipeTransition(getCodingAgentTarget());
   });
 });
 
