@@ -1,4 +1,30 @@
 ﻿# IdeasForgeAI Project Status
+## Phase CA-26 - Project Indexer + File Search
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Project Indexer + File Search preview for Coding Agent.
+- Indexes public repository tree metadata from CA-25 output.
+- Searches filenames, folders, extensions, and project areas deterministically.
+- Does not fetch file contents.
+- Does not clone repositories.
+- Does not read local filesystem.
+- Does not write files.
+- Does not run terminal or Git commands.
+- Does not deploy or rollback.
+- Does not expose frontend tokens or secrets.
+- Normal users remain preview/search-only.
+- Founder/Admin approval remains required for future protected apply/export/Git/deploy flows.
+
+Validation commands:
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-26
+
+NEXT AFTER: CA-27 - Real Architecture Analyzer
+
 ## Phase CA-25 - Real GitHub Public Repo Reader API
 
 Status: Completed locally, ForgeAudit validation requires cleanup.

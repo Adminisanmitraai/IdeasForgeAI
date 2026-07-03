@@ -1,5 +1,6 @@
 ﻿import json
 import os
+import re
 import subprocess
 from typing import Any, Dict, List, Literal, Optional
 
@@ -1888,6 +1889,38 @@ class GitHubPublicRepoReaderRequest(BaseModel):
     max_entries: int = Field(default=80)
 
 
+class ProjectIndexerTreeEntry(BaseModel):
+    path: str = Field(min_length=1, max_length=800)
+    type: str = Field(default="blob")
+    size: Optional[int] = None
+    read_mode: str = Field(default="public-tree-metadata-only")
+    content_fetched: bool = False
+
+
+class ProjectIndexerRepositoryMetadata(BaseModel):
+    owner: Optional[str] = None
+    repo: Optional[str] = None
+    full_name: Optional[str] = None
+    html_url: Optional[str] = None
+    default_branch: Optional[str] = None
+    selected_ref: Optional[str] = None
+    visibility: Optional[str] = None
+    private: bool = False
+    language: Optional[str] = None
+    topics: List[str] = Field(default_factory=list)
+
+
+class ProjectIndexerRequest(BaseModel):
+    project_id: str = Field(min_length=1, max_length=200)
+    repository_metadata: ProjectIndexerRepositoryMetadata
+    tree_entries: List[ProjectIndexerTreeEntry] = Field(default_factory=list, max_length=5000)
+
+
+class ProjectIndexerSearchRequest(ProjectIndexerRequest):
+    query: str = Field(min_length=1, max_length=200)
+    limit: int = Field(default=25, ge=1, le=100)
+
+
 def _ca25_parse_public_github_repo(repo_url: str) -> Dict[str, str]:
     import re as _re
 
@@ -2053,6 +2086,188 @@ def _ca25_fetch_public_repo_preview(request: GitHubPublicRepoReaderRequest) -> D
     }
 
 
+PROJECT_INDEXER_ALLOWED_AREAS = (
+    "frontend",
+    "backend",
+    "api",
+    "pages",
+    "scripts",
+    "docs",
+    "tests",
+    "config",
+)
+
+
+def _ca26_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "private_repo": False,
+        "clone": False,
+        "file_content_fetch": False,
+        "local_filesystem_read": False,
+        "file_write": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+def _ca26_normalize_text(value: str) -> str:
+    return re.sub(r"[^a-z0-9]+", " ", (value or "").strip().lower()).strip()
+
+
+def _ca26_infer_project_area(path_text: str) -> str:
+    normalized_parts = [part.lower() for part in path_text.replace("\\", "/").split("/") if part]
+    for area in PROJECT_INDEXER_ALLOWED_AREAS:
+        if area in normalized_parts:
+            return area
+
+    suffix_name = normalized_parts[-1] if normalized_parts else ""
+    if suffix_name in {"package.json", "requirements.txt", "dockerfile", ".env.example", "tsconfig.json"}:
+        return "config"
+    return "config"
+
+
+def _ca26_build_index(request: ProjectIndexerRequest) -> Dict[str, Any]:
+    indexed_entries: List[Dict[str, Any]] = []
+    folder_counter: Dict[str, int] = {}
+    extension_counter: Dict[str, int] = {}
+    area_counter: Dict[str, int] = {area: 0 for area in PROJECT_INDEXER_ALLOWED_AREAS}
+
+    for raw_entry in request.tree_entries:
+        path_value = raw_entry.path.strip().replace("\\", "/").strip("/")
+        if not path_value:
+            continue
+
+        file_name = path_value.rsplit("/", 1)[-1]
+        folder = path_value.rsplit("/", 1)[0] if "/" in path_value else ""
+        extension = ""
+        if raw_entry.type != "tree" and "." in file_name and not file_name.startswith("."):
+            extension = f".{file_name.rsplit('.', 1)[-1].lower()}"
+
+        area = _ca26_infer_project_area(path_value)
+        path_parts = [part for part in path_value.split("/") if part]
+        normalized_tokens = sorted(
+            {
+                token
+                for token in re.split(r"[^a-z0-9]+", "/".join(path_parts).lower())
+                if token
+            }
+        )
+
+        indexed_entry = {
+            "path": path_value,
+            "type": raw_entry.type,
+            "size": raw_entry.size,
+            "read_mode": raw_entry.read_mode,
+            "content_fetched": False,
+            "filename": file_name,
+            "folder": folder or "(root)",
+            "extension": extension,
+            "area": area,
+            "path_parts": path_parts,
+            "search_terms": normalized_tokens,
+        }
+        indexed_entries.append(indexed_entry)
+
+        folder_key = folder or "(root)"
+        folder_counter[folder_key] = folder_counter.get(folder_key, 0) + 1
+        extension_key = extension or "(none)"
+        extension_counter[extension_key] = extension_counter.get(extension_key, 0) + 1
+        area_counter[area] = area_counter.get(area, 0) + 1
+
+    dominant_area = max(area_counter.items(), key=lambda item: item[1])[0] if indexed_entries else "config"
+    return {
+        "project_id": request.project_id.strip(),
+        "repository_metadata": request.repository_metadata.model_dump(),
+        "entry_count": len(indexed_entries),
+        "indexed_entries": indexed_entries,
+        "folder_count": len(folder_counter),
+        "extension_count": len(extension_counter),
+        "areas": area_counter,
+        "top_folders": [
+            {"folder": name, "count": count}
+            for name, count in sorted(folder_counter.items(), key=lambda item: (-item[1], item[0]))[:12]
+        ],
+        "top_extensions": [
+            {"extension": name, "count": count}
+            for name, count in sorted(extension_counter.items(), key=lambda item: (-item[1], item[0]))[:12]
+        ],
+        "dominant_area": dominant_area,
+    }
+
+
+def _ca26_match_score(entry: Dict[str, Any], query: str) -> Dict[str, Any]:
+    query_normalized = _ca26_normalize_text(query)
+    filename_normalized = _ca26_normalize_text(entry["filename"])
+    folder_normalized = _ca26_normalize_text(entry["folder"])
+    extension_normalized = entry["extension"].lower()
+    area_normalized = entry["area"].lower()
+    path_normalized = _ca26_normalize_text(entry["path"])
+    reasons: List[str] = []
+    score = 0
+
+    if not query_normalized:
+        return {"score": 0, "reasons": reasons}
+
+    if filename_normalized == query_normalized:
+        score += 120
+        reasons.append("Exact filename match")
+    elif query_normalized in filename_normalized:
+        score += 85
+        reasons.append("Filename contains query")
+
+    if folder_normalized and query_normalized == folder_normalized:
+        score += 90
+        reasons.append("Exact folder match")
+    elif folder_normalized and query_normalized in folder_normalized:
+        score += 60
+        reasons.append("Folder contains query")
+
+    if extension_normalized and query_normalized in {extension_normalized, extension_normalized.lstrip(".")}:
+        score += 80
+        reasons.append("Extension match")
+
+    if query_normalized == area_normalized:
+        score += 95
+        reasons.append("Project area match")
+
+    query_tokens = [token for token in query_normalized.split() if token]
+    matched_tokens = [token for token in query_tokens if token in entry["search_terms"]]
+    if matched_tokens:
+        score += 18 * len(matched_tokens)
+        reasons.append("Matched search tokens: " + ", ".join(matched_tokens[:5]))
+
+    if query_normalized in path_normalized and "Filename contains query" not in reasons:
+        score += 24
+        reasons.append("Path contains query")
+
+    return {"score": score, "reasons": reasons}
+
+
+def _ca26_build_search_results(index_data: Dict[str, Any], query: str, limit: int) -> List[Dict[str, Any]]:
+    ranked_results: List[Dict[str, Any]] = []
+    for entry in index_data["indexed_entries"]:
+        match = _ca26_match_score(entry, query)
+        if match["score"] <= 0:
+            continue
+
+        ranked_results.append(
+            {
+                "score": match["score"],
+                "reason": "; ".join(match["reasons"]),
+                "path": entry["path"],
+                "type": entry["type"],
+                "extension": entry["extension"],
+                "area": entry["area"],
+            }
+        )
+
+    ranked_results.sort(key=lambda item: (-item["score"], item["path"]))
+    return ranked_results[:limit]
+
+
 @app.get("/api/coding-agent/github-public-reader/health")
 def coding_agent_github_public_reader_health():
     return {
@@ -2091,6 +2306,96 @@ def coding_agent_github_public_reader_preview(request: GitHubPublicRepoReaderReq
                 "secrets": False,
             },
         }
+
+
+@app.get("/api/coding-agent/project-indexer/health")
+def coding_agent_project_indexer_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-project-indexer",
+        "mode": "project-indexer",
+        "file_search": "deterministic-preview-only",
+        "recommended_next_phase": "CA-27",
+        **_ca26_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/project-indexer/index")
+def coding_agent_project_indexer_index(request: ProjectIndexerRequest):
+    project_index = _ca26_build_index(request)
+    return {
+        "ok": True,
+        "status": "project-indexer-ready",
+        "mode": "project-indexer",
+        "project_id": project_index["project_id"],
+        "repository_metadata": project_index["repository_metadata"],
+        "index_summary": {
+            "entry_count": project_index["entry_count"],
+            "folder_count": project_index["folder_count"],
+            "extension_count": project_index["extension_count"],
+            "areas": project_index["areas"],
+            "dominant_area": project_index["dominant_area"],
+        },
+        "top_folders": project_index["top_folders"],
+        "top_extensions": project_index["top_extensions"],
+        "indexed_entries": [
+            {
+                "path": entry["path"],
+                "type": entry["type"],
+                "extension": entry["extension"],
+                "area": entry["area"],
+                "read_mode": entry["read_mode"],
+                "content_fetched": False,
+            }
+            for entry in project_index["indexed_entries"]
+        ],
+        "summary": [
+            "ProjectIndexer built a deterministic metadata-only index from CA-25 public repository tree entries.",
+            "Search areas include frontend, backend, api, pages, scripts, docs, tests, and config.",
+            "No file contents were fetched and no local filesystem access was used.",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-27",
+            "title": "Real Architecture Analyzer",
+            "goal": "Analyze indexed project structure and surface deterministic architecture insights without editing code.",
+        },
+        "safety": _ca26_safety_flags(),
+        **_ca26_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/project-indexer/search")
+def coding_agent_project_indexer_search(request: ProjectIndexerSearchRequest):
+    project_index = _ca26_build_index(request)
+    results = _ca26_build_search_results(project_index, request.query, request.limit)
+    return {
+        "ok": True,
+        "status": "project-indexer-search-ready",
+        "mode": "project-indexer",
+        "feature": "file-search",
+        "project_id": project_index["project_id"],
+        "query": request.query.strip(),
+        "match_count": len(results),
+        "results": results,
+        "search_scope": {
+            "filename": True,
+            "folder": True,
+            "extension": True,
+            "project_area": True,
+        },
+        "summary": [
+            "File Search matched metadata only across filenames, folders, extensions, and project areas.",
+            "No file content fetch was performed during search.",
+            "No local filesystem read, clone, file write, terminal, Git, deployment, or secrets access occurred.",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-27",
+            "title": "Real Architecture Analyzer",
+            "goal": "Use indexed project structure to generate deterministic architecture analysis next.",
+        },
+        "safety": _ca26_safety_flags(),
+        **_ca26_safety_flags(),
+    }
 
 
 

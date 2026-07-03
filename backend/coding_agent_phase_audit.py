@@ -116,14 +116,22 @@ PHASE_REGISTRY: Dict[str, Dict[str, object]] = {
     "CA-26": {
         "title": "Project Indexer + File Search",
         "next": "CA-27",
-        "implemented": False,
+        "implemented": True,
         "required_endpoints": [
             ("GET", "/api/coding-agent/project-indexer/health"),
-            ("POST", "/api/coding-agent/project-indexer/build"),
+            ("POST", "/api/coding-agent/project-indexer/index"),
             ("POST", "/api/coding-agent/project-indexer/search"),
         ],
         "required_frontend_terms": ["Project Indexer", "File Search"],
-        "required_backend_terms": ["ProjectIndexer", "project-indexer", "file-search"],
+        "required_backend_terms": [
+            "ProjectIndexer",
+            "project-indexer",
+            "file-search",
+            '"file_content_fetch": False',
+            '"local_filesystem_read": False',
+            "recommended_next_phase",
+            "CA-27",
+        ],
     },
     "CA-27": {
         "title": "Real Architecture Analyzer",
