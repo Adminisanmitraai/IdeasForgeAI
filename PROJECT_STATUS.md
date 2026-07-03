@@ -12945,3 +12945,16 @@ Status: Completed locally, validation pending.
 - Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
 - Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-04 preview work; no deployment settings, secrets, .env, Render config, backend runtime behavior, or KisanMitraAI files touched.
+
+## Phase CA-06 - Code Editor with Diff Preview
+
+Status: Completed locally, validation pending.
+
+- Added a frontend-only Code Editor with Diff Preview section to the Coding Agent workspace with locked/unlocked status, a demo change request card, proposed files panel, unified diff viewer, approval gate, risk summary, validation plan placeholder, and CA-06 safety boundary messaging.
+- Added static-only diff preview behavior for the Demo Project flow: Generate Safe Diff Preview reveals proposed CSS and JS changes, Copy Diff copies demo diff text, Reject hides the diff as rejected, and Approve Later stores a future-approval state without applying any change.
+- Updated Coding Agent roadmap chips and demo preview module chips to reflect Project Reader Preview unlocked, Architecture Analyzer unlocked, Task Planner CA-05, Code Editor with Diff CA-06 Preview, Test Runner CA-07, Auto Fix Engine CA-08, Git Manager CA-09, and Deployment Manager CA-10.
+- Preserved preview-only boundaries: no real file editing from the app, no terminal execution from the app, no Git writes, no deployment actions, no secrets access, and no backend file reads for the CA-06 UI.
+- Preserved Coding Agent back button and swipe-right navigation back to ./studio-v4.html; existing Studio V4 chat flow remains unchanged.
+- Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-06 preview work; no deployment settings, secrets, .env, Render config, backend runtime behavior, or KisanMitraAI files touched.

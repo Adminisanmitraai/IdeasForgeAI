@@ -21,8 +21,21 @@ const architectureFlow = document.querySelector("[data-architecture-flow]");
 const riskList = document.querySelector("[data-risk-list]");
 const nextPhasesList = document.querySelector("[data-next-phases-list]");
 const architectureSafetyList = document.querySelector("[data-architecture-safety-list]");
+const codeEditorPreview = document.querySelector("[data-code-editor-preview]");
+const codeEditorStatus = document.querySelector("[data-code-editor-status]");
+const codeEditorResults = document.querySelector("[data-code-editor-results]");
+const generateSafeDiffButton = document.querySelector("[data-generate-safe-diff]");
+const approveLaterButton = document.querySelector("[data-approve-later]");
+const rejectDiffButton = document.querySelector("[data-reject-diff]");
+const copyDiffButton = document.querySelector("[data-copy-diff]");
+const diffApprovalState = document.querySelector("[data-diff-approval-state]");
+const diffFeedback = document.querySelector("[data-diff-feedback]");
 const architectureModuleChip = document.querySelector("[data-module-chip-architecture]");
+const projectReaderModuleChip = document.querySelector("[data-module-chip-project-reader]");
+const codeEditorModuleChip = document.querySelector("[data-module-chip-code-editor]");
 const demoArchitectureModuleChip = document.querySelector("[data-demo-module-architecture]");
+const demoTaskPlannerModuleChip = document.querySelector("[data-demo-module-task-planner]");
+const demoCodeEditorModuleChip = document.querySelector("[data-demo-module-code-editor]");
 const folderPreviewInput = document.querySelector("[data-folder-preview-input]");
 const folderPreviewLabel = document.querySelector("[data-folder-preview-label]");
 const folderPreviewStatus = document.querySelector("[data-folder-preview-status]");
@@ -41,6 +54,7 @@ const workspaceStatusNodes = {
   testRunner: document.querySelector('[data-workspace-status="test-runner"]'),
   githubIntegration: document.querySelector('[data-workspace-status="github-integration"]'),
   architectureAnalyzer: document.querySelector('[data-workspace-status="architecture-analyzer"]'),
+  codeEditor: document.querySelector('[data-workspace-status="code-editor"]'),
 };
 const workspaceCopyNodes = {
   projectExplorer: document.querySelector('[data-workspace-copy="project-explorer"]'),
@@ -48,6 +62,7 @@ const workspaceCopyNodes = {
   testRunner: document.querySelector('[data-workspace-copy="test-runner"]'),
   githubIntegration: document.querySelector('[data-workspace-copy="github-integration"]'),
   architectureAnalyzer: document.querySelector('[data-workspace-copy="architecture-analyzer"]'),
+  codeEditor: document.querySelector('[data-workspace-copy="code-editor"]'),
 };
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const STUDIO_V4_TARGET = "./studio-v4.html";
@@ -57,6 +72,21 @@ const initialConnectButtonLabel = demoSelectButton?.textContent || "Select Demo 
 const initialFolderPreviewStatus = folderPreviewStatus?.textContent || "Client-side only";
 const initialArchitectureStatus =
   architectureStatus?.textContent || "Locked until CA-04 / Preview available after Demo Project selection";
+const initialCodeEditorStatus =
+  codeEditorStatus?.textContent || "Preview Locked until Demo Project is selected";
+const DEMO_DIFF_TEXT = [
+  "--- frontend/pages/coding-agent.css",
+  "+++ frontend/pages/coding-agent.css",
+  "- position: fixed;",
+  "- top: 18px;",
+  "+ position: sticky;",
+  "+ top: calc(env(safe-area-inset-top) + 16px);",
+  "",
+  "--- frontend/pages/coding-agent.js",
+  "+++ frontend/pages/coding-agent.js",
+  '- closeButton.addEventListener("click", closePanel)',
+  '+ backButton.addEventListener("click", returnToStudioChat)',
+].join("\n");
 const demoProjectReaderData = {
   projectName: "IdeasForgeAI Demo Project",
   modeBadge: "Demo preview",
@@ -276,6 +306,9 @@ const connectionState = {
   projectConnectionPreviewReady: false,
   projectReaderExpanded: false,
   architecturePreviewExpanded: false,
+  diffPreviewGenerated: false,
+  diffPreviewRejected: false,
+  diffPreviewApproval: "pending",
   currentReaderData: demoProjectReaderData,
 };
 
@@ -401,6 +434,83 @@ const renderArchitecturePreview = () => {
   }
   if (architectureSafetyList) {
     architectureSafetyList.innerHTML = demoArchitectureData.safety.map(createSafetyMarkup).join("");
+  }
+};
+
+const renderDiffPreviewState = () => {
+  const isUnlocked = connectionState.demoProjectSelected;
+  const isVisible = isUnlocked;
+  const hasPreview = isUnlocked && connectionState.diffPreviewGenerated && !connectionState.diffPreviewRejected;
+
+  if (codeEditorPreview) {
+    codeEditorPreview.hidden = !isVisible;
+  }
+
+  if (codeEditorStatus) {
+    codeEditorStatus.textContent = isUnlocked ? "Preview Unlocked" : initialCodeEditorStatus;
+    codeEditorStatus.classList.toggle("workspace-status-badge--locked", !isUnlocked);
+  }
+
+  if (workspaceStatusNodes.codeEditor) {
+    workspaceStatusNodes.codeEditor.textContent = isUnlocked
+      ? "Preview Unlocked"
+      : "Preview Locked until Demo Project is selected";
+    workspaceStatusNodes.codeEditor.classList.toggle("workspace-status-badge--locked", !isUnlocked);
+  }
+
+  if (workspaceCopyNodes.codeEditor) {
+    workspaceCopyNodes.codeEditor.textContent = isUnlocked
+      ? "Review proposed code changes before anything is applied."
+      : "Review proposed code changes before anything is applied.";
+  }
+
+  if (codeEditorModuleChip) {
+    codeEditorModuleChip.innerHTML = isUnlocked
+      ? "Code Editor with Diff <small>CA-06 Preview</small>"
+      : "Code Editor with Diff <small>CA-06 Preview</small>";
+  }
+
+  if (demoTaskPlannerModuleChip) {
+    demoTaskPlannerModuleChip.innerHTML = "Task Planner <small>CA-05</small>";
+  }
+
+  if (demoCodeEditorModuleChip) {
+    demoCodeEditorModuleChip.innerHTML = isUnlocked
+      ? "Code Editor with Diff <small>Preview Unlocked</small>"
+      : "Code Editor with Diff <small>CA-06 Preview</small>";
+  }
+
+  if (codeEditorResults) {
+    codeEditorResults.hidden = !hasPreview;
+  }
+
+  if (diffApprovalState) {
+    if (!connectionState.diffPreviewGenerated) {
+      diffApprovalState.textContent = "Pending review";
+    } else if (connectionState.diffPreviewRejected) {
+      diffApprovalState.textContent = "Rejected";
+    } else if (connectionState.diffPreviewApproval === "approved-later") {
+      diffApprovalState.textContent = "Saved for later";
+    } else {
+      diffApprovalState.textContent = "Pending review";
+    }
+  }
+
+  if (diffFeedback) {
+    diffFeedback.classList.remove("is-success", "is-muted");
+    if (!connectionState.diffPreviewGenerated) {
+      diffFeedback.textContent = "Preview only. No changes are saved or applied.";
+      diffFeedback.classList.add("is-muted");
+    } else if (connectionState.diffPreviewRejected) {
+      diffFeedback.textContent = "Diff rejected. Preview hidden. No changes were applied.";
+      diffFeedback.classList.add("is-muted");
+    } else if (connectionState.diffPreviewApproval === "approved-later") {
+      diffFeedback.textContent = "Saved for future approval only. No changes were applied.";
+      diffFeedback.classList.add("is-success");
+    } else {
+      diffFeedback.textContent = "Preview generated. Review the diff before any future approval phase.";
+      diffFeedback.classList.add("is-muted");
+    }
   }
 };
 
@@ -621,6 +731,11 @@ const renderConnectionState = () => {
       ? "Architecture Analyzer <small>Preview Unlocked</small>"
       : "Architecture Analyzer <small>CA-04</small>";
   }
+  if (projectReaderModuleChip) {
+    projectReaderModuleChip.innerHTML = hasReaderPreview
+      ? "Project Reader Preview <small>Unlocked</small>"
+      : "Project Reader Preview <small>Locked</small>";
+  }
   if (demoArchitectureModuleChip) {
     demoArchitectureModuleChip.innerHTML = hasArchitecturePreview
       ? "Architecture Analyzer <small>Unlocked</small>"
@@ -631,6 +746,8 @@ const renderConnectionState = () => {
   } else {
     setArchitectureExpanded(false);
   }
+
+  renderDiffPreviewState();
 
   connectOptions.forEach((option) => {
     option.classList.toggle("is-selected", option.dataset.connectOption === "demo" && connectionState.demoProjectSelected);
@@ -685,6 +802,9 @@ const selectDemoProject = () => {
   connectionState.demoProjectSelected = true;
   connectionState.browserPreviewSelected = false;
   connectionState.projectConnectionPreviewReady = true;
+  connectionState.diffPreviewGenerated = false;
+  connectionState.diffPreviewRejected = false;
+  connectionState.diffPreviewApproval = "pending";
   connectionState.currentReaderData = demoProjectReaderData;
   renderConnectionState();
   setProjectReaderExpanded(true);
@@ -717,11 +837,67 @@ const handleFolderPreviewSelection = (event) => {
   connectionState.demoProjectSelected = false;
   connectionState.browserPreviewSelected = true;
   connectionState.projectConnectionPreviewReady = true;
+  connectionState.diffPreviewGenerated = false;
+  connectionState.diffPreviewRejected = false;
+  connectionState.diffPreviewApproval = "pending";
   connectionState.currentReaderData = buildBrowserPreviewData(files);
   renderConnectionState();
   setProjectReaderExpanded(true);
   folderPreviewStatus.textContent = "Preview loaded";
   event.target.value = "";
+};
+
+const generateSafeDiffPreview = () => {
+  if (!connectionState.demoProjectSelected) {
+    return;
+  }
+
+  connectionState.diffPreviewGenerated = true;
+  connectionState.diffPreviewRejected = false;
+  connectionState.diffPreviewApproval = "pending";
+  renderDiffPreviewState();
+};
+
+const approveDiffLater = () => {
+  if (!connectionState.diffPreviewGenerated || connectionState.diffPreviewRejected) {
+    return;
+  }
+
+  connectionState.diffPreviewApproval = "approved-later";
+  renderDiffPreviewState();
+};
+
+const rejectDiffPreview = () => {
+  if (!connectionState.diffPreviewGenerated) {
+    return;
+  }
+
+  connectionState.diffPreviewRejected = true;
+  connectionState.diffPreviewApproval = "rejected";
+  renderDiffPreviewState();
+};
+
+const copySafeDiffPreview = async () => {
+  if (!connectionState.diffPreviewGenerated || connectionState.diffPreviewRejected) {
+    return;
+  }
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(DEMO_DIFF_TEXT);
+      if (diffFeedback) {
+        diffFeedback.textContent = "Demo diff copied to clipboard. No changes were applied.";
+        diffFeedback.classList.remove("is-muted");
+        diffFeedback.classList.add("is-success");
+      }
+    }
+  } catch (error) {
+    if (diffFeedback) {
+      diffFeedback.textContent = "Clipboard copy was unavailable. The demo diff remains preview-only.";
+      diffFeedback.classList.remove("is-success");
+      diffFeedback.classList.add("is-muted");
+    }
+  }
 };
 
 const navigateWithTransition = (target) => {
@@ -839,6 +1015,13 @@ architectureToggleButtons.forEach((button) => {
     }
     setArchitectureExpanded(!connectionState.architecturePreviewExpanded);
   });
+});
+
+generateSafeDiffButton?.addEventListener("click", generateSafeDiffPreview);
+approveLaterButton?.addEventListener("click", approveDiffLater);
+rejectDiffButton?.addEventListener("click", rejectDiffPreview);
+copyDiffButton?.addEventListener("click", () => {
+  void copySafeDiffPreview();
 });
 
 folderPreviewInput?.addEventListener("change", handleFolderPreviewSelection);

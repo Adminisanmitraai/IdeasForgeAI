@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=5-architecture-analyzer-preview-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=6-code-editor-diff-preview-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -102,6 +102,13 @@
           <span class="workspace-status-badge" data-workspace-status="architecture-analyzer">Locked until CA-04</span>
         </div>
         <p data-workspace-copy="architecture-analyzer">Understand how frontend, backend, QA, and deployment pieces connect.</p>
+      </article>
+      <article class="workspace-card workspace-card--code-editor" data-workspace-card="code-editor">
+        <div class="workspace-card__header">
+          <strong>Code Editor with Diff Preview</strong>
+          <span class="workspace-status-badge workspace-status-badge--locked" data-workspace-status="code-editor">Preview Locked until Demo Project is selected</span>
+        </div>
+        <p data-workspace-copy="code-editor">Review proposed code changes before anything is applied.</p>
       </article>
     </section>
 
@@ -283,15 +290,153 @@
       </div>
     </section>
 
+    <section class="code-editor-preview" data-code-editor-preview hidden aria-labelledby="code-editor-title">
+      <div class="code-editor-preview__header">
+        <div>
+          <span class="eyebrow">Safe preview-only code review</span>
+          <h2 id="code-editor-title">Code Editor with Diff Preview</h2>
+          <p>Review proposed code changes before anything is applied.</p>
+        </div>
+        <div class="project-reader-preview__actions">
+          <span class="workspace-status-badge workspace-status-badge--locked" data-code-editor-status>Preview Locked until Demo Project is selected</span>
+        </div>
+      </div>
+
+      <div class="code-editor-request-card">
+        <div class="code-editor-request-card__copy">
+          <small>Example task</small>
+          <strong>Polish the Coding Agent back button spacing on mobile.</strong>
+          <p>This generates a static diff preview only. No backend calls, AI API requests, or file modifications happen in CA-06.</p>
+        </div>
+        <button class="diff-generate-button" type="button" data-generate-safe-diff>Generate Safe Diff Preview</button>
+      </div>
+
+      <div class="code-editor-preview__results" data-code-editor-results hidden>
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Proposed Files</strong>
+            <span class="workspace-status-badge">Static-safe preview</span>
+          </div>
+          <div class="proposed-files-list">
+            <div class="proposed-file-item">
+              <div>
+                <small>UI polish</small>
+                <strong>frontend/pages/coding-agent.css</strong>
+              </div>
+              <span class="proposed-file-tag">Mobile spacing</span>
+            </div>
+            <div class="proposed-file-item">
+              <div>
+                <small>Navigation safety</small>
+                <strong>frontend/pages/coding-agent.js</strong>
+              </div>
+              <span class="proposed-file-tag">Back handler</span>
+            </div>
+          </div>
+          <div class="pill-list">
+            <span>UI polish</span>
+            <span>Navigation safety</span>
+            <span>Mobile spacing</span>
+          </div>
+        </article>
+
+        <article class="reader-detail-card reader-detail-card--tree">
+          <div class="reader-detail-card__header">
+            <strong>Unified Diff Preview</strong>
+            <span class="workspace-status-badge">Before / After</span>
+          </div>
+          <div class="diff-viewer" data-horizontal-scroll>
+            <section class="diff-file-card">
+              <header class="diff-file-card__header">
+                <strong>frontend/pages/coding-agent.css</strong>
+                <span class="diff-file-label">UI polish</span>
+              </header>
+              <div class="diff-line diff-line--removed"><span class="diff-line__marker">-</span><code>position: fixed;</code></div>
+              <div class="diff-line diff-line--removed"><span class="diff-line__marker">-</span><code>top: 18px;</code></div>
+              <div class="diff-line diff-line--added"><span class="diff-line__marker">+</span><code>position: sticky;</code></div>
+              <div class="diff-line diff-line--added"><span class="diff-line__marker">+</span><code>top: calc(env(safe-area-inset-top) + 16px);</code></div>
+            </section>
+
+            <section class="diff-file-card">
+              <header class="diff-file-card__header">
+                <strong>frontend/pages/coding-agent.js</strong>
+                <span class="diff-file-label">Navigation safety</span>
+              </header>
+              <div class="diff-line diff-line--removed"><span class="diff-line__marker">-</span><code>closeButton.addEventListener("click", closePanel)</code></div>
+              <div class="diff-line diff-line--added"><span class="diff-line__marker">+</span><code>backButton.addEventListener("click", returnToStudioChat)</code></div>
+            </section>
+          </div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Approval Gate</strong>
+            <span class="workspace-status-badge" data-diff-approval-state>Pending review</span>
+          </div>
+          <div class="approval-gate-actions">
+            <button class="reader-action-button" type="button" data-approve-later>Approve Later</button>
+            <button class="reader-action-button" type="button" data-reject-diff>Reject</button>
+            <button class="reader-action-button" type="button" data-copy-diff>Copy Diff</button>
+            <button class="reader-action-button is-disabled" type="button" disabled>Apply Changes - Coming after real project permission</button>
+          </div>
+          <p class="approval-gate-note" data-diff-feedback>Preview only. No changes are saved or applied.</p>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Risk and Validation</strong>
+            <span class="workspace-status-badge">Low risk</span>
+          </div>
+          <div class="risk-validation-grid">
+            <div class="risk-validation-card">
+              <small>Risk Level</small>
+              <strong>Low - UI-only preview</strong>
+              <p>Static, frontend-only review content. No file system mutations, terminal execution, or Git activity are present.</p>
+            </div>
+            <div class="risk-validation-card">
+              <small>Validation Plan</small>
+              <div class="validation-plan-list">
+                <span>node --check frontend/pages/coding-agent.js</span>
+                <span>node --check frontend/pages/studio-v4.js</span>
+                <span>python backend/sector_qa_runner.py</span>
+                <span>Manual mobile Safari test</span>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Safety Boundary</strong>
+            <span class="workspace-status-badge">CA-06 preview-only</span>
+          </div>
+          <div class="safety-card-list">
+            <article class="safety-card-item">
+              <small>Preview-only boundary</small>
+              <strong>Code Editor is preview-only in CA-06.</strong>
+              <ul>
+                <li>No files are modified.</li>
+                <li>No terminal commands run.</li>
+                <li>No Git writes happen.</li>
+                <li>No deployment actions happen.</li>
+                <li>Approval and rollback will be required in future phases.</li>
+              </ul>
+            </article>
+          </div>
+        </article>
+      </div>
+    </section>
+
     <section class="future-modules">
       <div class="future-modules__header">
         <span class="eyebrow">Reserved placeholders</span>
         <h2>Future module map</h2>
       </div>
       <div class="future-modules__chips">
+        <span data-module-chip data-module-chip-project-reader>Project Reader Preview <small>Locked</small></span>
         <span data-module-chip data-module-chip-architecture>Architecture Analyzer <small>CA-04</small></span>
         <span data-module-chip>Task Planner <small>CA-05</small></span>
-        <span data-module-chip>Code Editor with Diff <small>CA-06</small></span>
+        <span data-module-chip data-module-chip-code-editor>Code Editor with Diff <small>CA-06 Preview</small></span>
         <span data-module-chip>Test Runner <small>CA-07</small></span>
         <span data-module-chip>Auto Fix Engine <small>CA-08</small></span>
         <span data-module-chip>Git Manager <small>CA-09</small></span>
@@ -358,13 +503,14 @@
         <div class="preview-module-list">
           <span>Project Reader Preview <small>Unlocked</small></span>
           <span data-demo-module-architecture>Architecture Analyzer <small>CA-04</small></span>
-          <span>Task Planner <small>CA-05</small></span>
-          <span>Code Editor with Diff <small>CA-06</small></span>
+          <span data-demo-module-task-planner>Task Planner <small>CA-05</small></span>
+          <span data-demo-module-code-editor>Code Editor with Diff <small>CA-06 Preview</small></span>
           <span>Test Runner <small>CA-07</small></span>
+          <span>Auto Fix Engine <small>CA-08</small></span>
           <span>Git Manager <small>CA-09</small></span>
           <span>Deployment Manager <small>CA-10</small></span>
         </div>
-        <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to unlock the safe read-only Project Reader Preview and Architecture Analyzer Preview. Real project access and write actions stay locked.</p>
+        <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to unlock the safe read-only Project Reader Preview, Architecture Analyzer Preview, and CA-06 diff preview shell. Real project access and write actions stay locked.</p>
         <button class="demo-select-button" type="button" data-demo-select>Select Demo Project</button>
       </section>
 
@@ -380,6 +526,6 @@
     </section>
   </div>
 
-  <script src="./coding-agent.js?v=5-architecture-analyzer-preview-20260703" defer></script>
+  <script src="./coding-agent.js?v=6-code-editor-diff-preview-20260703" defer></script>
 </body>
 </html>
