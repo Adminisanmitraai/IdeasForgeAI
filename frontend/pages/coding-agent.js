@@ -440,7 +440,7 @@ const FILE_TREE = [
 ];
 
 const CONNECTION_MESSAGES = {
-  local: "Local project access is coming later. CA-12 remains preview-only and does not read your computer.",
+  local: "Local project access is coming later. CA-20 remains preview-only and does not read your computer.",
   github: "GitHub repository connection is coming in CA-09. Current preview does not access GitHub.",
   zip: "ZIP upload analysis is coming later. Current preview does not upload files.",
 };
@@ -3945,7 +3945,7 @@ document.addEventListener("click", async (event) => {
     section.id = "ca20-connected-workspace-section";
     section.className = "ca20-connected-workspace-section";
     section.innerHTML = `
-      <div class="ca20-kicker">CA-20 Connected Project Workspace</div>
+      <div class="ca20-kicker">CA-20 — Connected Project Workspace</div>
       <h2>Connected Project Workspace</h2>
       <p>Open a single safe workspace view for project tree, active proposal, tests, Git preview, deployment status, and Founder/Admin permissions.</p>
       <button class="ca20-open-button" type="button" data-ca20-open-workspace>
