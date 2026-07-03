@@ -407,8 +407,8 @@ const DEMO_GIT_PLAN_TEXT = [
   "Preview only - PR not created",
 ].join("\n");
 const DEMO_DEPLOYMENT_PLAN_TEXT = [
-  "Deployment Manager Preview",
-  "Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.",
+  "Real Deployment Approval Flow",
+  "Prepare deployment approval, validation gates, production protection, and rollback planning before real deployment access is enabled.",
   "",
   "Deployment Plan:",
   "1. Validate frontend syntax",
@@ -454,7 +454,7 @@ const MODULE_TITLES = {
   "test-runner": "Real Test Runner Execution",
   "auto-fix": "Auto Fix Loop Foundation",
   "git-manager": "Git Manager Preview",
-  "deployment-manager": "Deployment Manager Preview",
+  "deployment-manager": "Real Deployment Approval Flow",
 };
 
 const MODULE_STATUS_MESSAGES = {
@@ -478,7 +478,7 @@ const MODULE_SUBTITLES = {
   "test-runner": "Run approved validation checks only after Founder/Admin and workspace permission.",
   "auto-fix": "Analyze failed checks and prepare safe repair plans before any code changes.",
   "git-manager": "Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.",
-  "deployment-manager": "Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.",
+  "deployment-manager": "Prepare deployment approval, validation gates, production protection, and rollback planning before real deployment access is enabled.",
 };
 
 const CODE_PERMISSION_CAPABILITIES = {
@@ -2474,14 +2474,14 @@ const renderDeploymentPreviewCards = () => {
 const renderDeploymentManagerMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Title</small>
-    <strong>Deployment Manager Preview</strong>
-    <p>Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.</p>
-    <p>Now Open: Deployment Manager Preview</p>
+    <strong>Real Deployment Approval Flow</strong>
+    <p>Prepare deployment approval, validation gates, production protection, and rollback planning before real deployment access is enabled.</p>
+    <p>Now Open: Real Deployment Approval Flow</p>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Status Banner</small>
     <div class="deployment-manager-banner">
-      <strong>Deployment Manager Preview is now open. No deployment actions will run.</strong>
+      <strong>Real Deployment Approval Flow is now open. No deployment actions will run.</strong>
       <p>${escapeHtml(getDeploymentPlanFeedback())}</p>
     </div>
   </section>
