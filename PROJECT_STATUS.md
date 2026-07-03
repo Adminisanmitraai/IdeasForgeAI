@@ -12958,3 +12958,15 @@ Status: Completed locally, validation pending.
 - Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
 - Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-06 preview work; no deployment settings, secrets, .env, Render config, backend runtime behavior, or KisanMitraAI files touched.
+
+## Phase CA-06.1 - Coding Agent Module Open / Scroll Repair
+
+Status: Completed locally, validation pending manual browser check.
+
+- Repaired Coding Agent module chip interactions so unlocked Project Reader Preview, Architecture Analyzer, and Code Editor with Diff explicitly open their detail panels and scroll to the correct section.
+- Added single-active-module state with stronger active styling, an `Open` chip label, mobile-safe scroll targets, and locked-module feedback for CA-05 through CA-10 placeholders.
+- Updated stale CA-phase labels so Local Project now says `Real access coming later` and CA-06 safety messaging now consistently states read-only preview, no terminal commands, no Git writes, and no deployment actions in CA-06.
+- Preserved preview-only behavior: no real file editing from the app, no terminal execution from the app, no Git writes, no deployment actions, no backend project-file reads, and no secrets access.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-06.1 repair; no deployment settings, secrets, `.env`, backend runtime behavior, or KisanMitraAI files touched.

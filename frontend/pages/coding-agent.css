@@ -17,6 +17,7 @@
 html, body { margin: 0; min-height: 100%; }
 body {
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(139,92,246,.24), transparent 28%),
     radial-gradient(circle at 85% 18%, rgba(56,189,248,.18), transparent 24%),
@@ -350,6 +351,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  scroll-margin-top: 104px;
 }
 
 .architecture-analyzer-preview {
@@ -366,6 +368,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  scroll-margin-top: 104px;
 }
 
 .code-editor-preview {
@@ -382,6 +385,14 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
+  scroll-margin-top: 104px;
+}
+
+.project-reader-preview.is-module-active,
+.architecture-analyzer-preview.is-module-active,
+.code-editor-preview.is-module-active {
+  border-color: rgba(56, 189, 248, .34);
+  box-shadow: 0 28px 64px rgba(6, 12, 24, .42), 0 0 0 1px rgba(56, 189, 248, .14);
 }
 
 .project-reader-preview__header,
@@ -1019,6 +1030,13 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   font-size: clamp(28px, 4vw, 40px);
 }
 
+.future-modules__copy {
+  margin: -4px 0 18px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .future-modules__chips {
   display: flex;
   flex-wrap: wrap;
@@ -1026,9 +1044,11 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   margin-bottom: 22px;
 }
 
-.future-modules__chips span {
+.module-chip-button {
   display: inline-flex;
-  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
   align-items: center;
   gap: 10px;
   padding: 0 14px;
@@ -1038,6 +1058,70 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   color: var(--text);
   font-size: 13px;
   font-weight: 680;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.module-chip-button span,
+.module-chip-button small {
+  pointer-events: none;
+}
+
+.module-chip-button[data-module-nav] {
+  cursor: pointer;
+}
+
+.module-chip-button[aria-pressed="true"] {
+  border-color: rgba(56, 189, 248, .34);
+  background: linear-gradient(135deg, rgba(56,189,248,.14), rgba(139,92,246,.14));
+  box-shadow: 0 18px 36px rgba(15, 23, 42, .3), 0 0 24px rgba(56, 189, 248, .18);
+}
+
+.module-chip-button[aria-pressed="true"] small {
+  color: #d9f5ff;
+}
+
+.module-chip-button[data-module-lock] {
+  border-color: rgba(245, 158, 11, .22);
+}
+
+.module-chip-button:hover,
+.module-chip-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 36px rgba(15, 23, 42, .28);
+}
+
+.module-inline-message {
+  min-height: 24px;
+  margin: -10px 0 18px;
+  color: #f5d38d;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.module-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 18px);
+  z-index: 60;
+  width: min(calc(100vw - 24px), 420px);
+  padding: 14px 16px;
+  border: 1px solid rgba(245, 158, 11, .24);
+  border-radius: 18px;
+  background: rgba(16, 12, 4, .92);
+  box-shadow: 0 24px 48px rgba(0, 0, 0, .34);
+  color: #fef3c7;
+  font-size: 13px;
+  font-weight: 640;
+  line-height: 1.5;
+  transform: translate3d(-50%, 16px, 0);
+  opacity: 0;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.module-toast.is-visible {
+  transform: translate3d(-50%, 0, 0);
+  opacity: 1;
 }
 
 .future-modules__chips small,
@@ -1282,6 +1366,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .hero-primary:hover,
 .bottom-cta:hover,
 .diff-generate-button:hover,
+.module-chip-button:hover,
 .reader-action-button:hover,
 .reader-mini-card:hover,
 .topbar-square-button:focus-visible,
@@ -1289,6 +1374,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .hero-primary:focus-visible,
 .bottom-cta:focus-visible,
 .diff-generate-button:focus-visible,
+.module-chip-button:focus-visible,
 .reader-action-button:focus-visible,
 .reader-mini-card:focus-visible {
   transform: translateY(-1px);
@@ -1397,7 +1483,9 @@ a:focus-visible {
   }
 
   .coding-agent-topbar {
-    position: relative;
+    position: sticky;
+    top: calc(env(safe-area-inset-top) + 10px);
+    z-index: 24;
     margin-bottom: 18px;
     padding: 14px;
     border-radius: 22px;
@@ -1517,6 +1605,17 @@ a:focus-visible {
 
   .code-editor-request-card {
     align-items: stretch;
+  }
+
+  .module-chip-button {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .project-reader-preview,
+  .architecture-analyzer-preview,
+  .code-editor-preview {
+    scroll-margin-top: 92px;
   }
 }
 
