@@ -35,11 +35,14 @@ const SWIPE_THRESHOLD_PX = 52;
 const SWIPE_DIRECTION_RATIO = 1.15;
 const DEFAULT_STATUS_MESSAGE = "Choose a connection option to open a clear preview screen.";
 const DEFAULT_CODE_REQUEST = "Fix the Task Planner button so it opens the Task Planner Preview screen.";
-const LOCKED_NORMAL_USER_MESSAGE = "This action is locked in Normal User Mode. Founder/Admin permission is required.";
+const LOCKED_NORMAL_USER_MESSAGE = "This action is locked in Normal User Mode. Founder/Admin verification and approved project workspace are required.";
 const COPY_BLOCKED_MESSAGE = "Copy is locked for normal users. Founder/Admin permission is required.";
 const CODE_PROPOSAL_PATH = "/api/coding-agent/code-proposal";
+const APPLY_DIFF_PATH = "/api/coding-agent/apply-diff";
 const CODE_PROPOSAL_FALLBACK_SOURCE = "Local Protected Fallback";
 const CODE_PROPOSAL_BACKEND_SOURCE = "Backend Protected API";
+const APPLY_DIFF_FALLBACK_SOURCE = "Local Apply Review Preview";
+const APPLY_DIFF_BACKEND_SOURCE = "Backend Apply Review API";
 
 const getApiBase = () => {
   const { protocol, hostname } = window.location;
@@ -153,6 +156,42 @@ const buildLocalProtectedProposal = () => ({
     no_deploy: true,
     no_secrets: true,
   },
+});
+
+const buildLocalApplyReviewFallback = () => ({
+  ok: true,
+  status: "fallback_preview_recorded",
+  mode: "safe-apply-preview",
+  message: "Apply review saved locally as preview. Backend apply endpoint unavailable. No files were changed.",
+  proposal_id: "demo-task-planner-fix",
+  affected_files: [
+    "frontend/pages/coding-agent.html",
+    "frontend/pages/coding-agent.js",
+    "frontend/pages/coding-agent.css",
+  ],
+  backup_plan: [
+    "Create pre-apply snapshot",
+    "Apply patch only to approved workspace",
+    "Run validation",
+    "Allow rollback if validation fails",
+  ],
+  validation_plan: [
+    "node --check frontend/pages/coding-agent.js",
+    "node --check frontend/pages/studio-v4.js",
+    "python backend/sector_qa_runner.py",
+    "Manual mobile Safari test",
+  ],
+  safety: {
+    real_file_write: false,
+    terminal: false,
+    git: false,
+    deploy: false,
+    secrets: false,
+  },
+  no_file_write: true,
+  no_terminal: true,
+  no_git: true,
+  no_deploy: true,
 });
 const DEMO_TASK_PLAN_TEXT = [
   "Task Planner Preview",
@@ -493,6 +532,9 @@ const state = {
   codeProposalDecision: "pending",
   codeProposalSource: "",
   codeProposalData: null,
+  applyReviewLoading: false,
+  applyReviewData: null,
+  applyReviewSource: "",
   codeRequest: DEFAULT_CODE_REQUEST,
   planGenerated: false,
   planDecision: "pending",
@@ -801,6 +843,32 @@ const getCodeProposalBadge = () => {
 
 const getCodeProposalData = () => state.codeProposalData || buildLocalProtectedProposal();
 
+const getApplyReviewAuditEntries = () => {
+  const baseEntries = [
+    "Code proposal generated - allowed",
+    "Apply review requested - recorded",
+    "Apply diff - blocked",
+    "Download patch - blocked",
+    "Commit - blocked",
+    "Deploy - blocked",
+    "Real file write - disabled",
+  ];
+
+  if (state.applyReviewData?.status === "locked") {
+    return [...baseEntries, "Founder/Admin verification required - pending"];
+  }
+
+  if (state.applyReviewData?.status === "approval_recorded") {
+    return [...baseEntries, "Founder/Admin apply request - preview recorded"];
+  }
+
+  if (state.applyReviewData?.status === "fallback_preview_recorded") {
+    return [...baseEntries, "Backend unavailable - local preview recorded"];
+  }
+
+  return baseEntries;
+};
+
 const renderPermissionList = (items) =>
   items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
 
@@ -999,6 +1067,8 @@ const renderDiffFileCards = (proposal) =>
 const renderCodeGenerationMarkup = (view = "generation") => {
   const proposal = getCodeProposalData();
   const proposalSource = state.codeProposalSource || CODE_PROPOSAL_BACKEND_SOURCE;
+  const applyReview = state.applyReviewData;
+  const applyReviewSource = state.applyReviewSource || APPLY_DIFF_BACKEND_SOURCE;
   const permissions = proposal.permissions || {};
   const safety = proposal.safety || {};
   const validationPlan = proposal.validation_plan || [];
@@ -1130,6 +1200,111 @@ const renderCodeGenerationMarkup = (view = "generation") => {
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Rollback - Locked</button>
           </div>
+        </section>
+        <section class="screen-detail-card">
+          <small>Permission Status</small>
+          <strong>Current Mode: Normal User Protected Mode</strong>
+          <ul class="screen-detail-list">
+            ${renderPermissionList([
+              "Apply Permission: Locked",
+              "Founder/Admin: Verification required",
+              "Workspace: Not connected for real file writing",
+              "No files were changed",
+            ])}
+          </ul>
+        </section>
+        <section class="screen-detail-card">
+          <small>Founder/Admin Apply Diff</small>
+          <strong>Status: Locked in Normal User Mode</strong>
+          <p>Generated diffs can only be applied by verified Founder/Admin after backend permission checks and project workspace permission.</p>
+          <ol class="screen-detail-list screen-detail-list--numbered">
+            <li>Review protected diff</li>
+            <li>Confirm affected files</li>
+            <li>Create backup/snapshot</li>
+            <li>Apply diff to approved workspace</li>
+            <li>Run validation</li>
+            <li>Roll back if needed</li>
+            <li>Commit/deploy only in later phases</li>
+          </ol>
+        </section>
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Apply Diff Actions</small>
+          <strong>Founder/Admin apply review workflow</strong>
+          <p class="approval-gate-note">Request Founder/Admin Apply Review records a safe preview request only. Production file writing stays disabled in CA-15.</p>
+          <div class="approval-gate-actions">
+            <button class="reader-action-button" type="button" data-ca-action="request-apply-review"${state.applyReviewLoading ? " disabled" : ""}>${state.applyReviewLoading ? "Requesting..." : "Request Founder/Admin Apply Review"}</button>
+            <button class="reader-action-button" type="button" data-ca-action="reject-code-proposal">Reject Proposal</button>
+            <button class="reader-action-button" type="button" data-ca-action="request-code-revision">Request Revision</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Diff Now - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply and Validate - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Download Patch - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit After Apply - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy After Apply - Locked</button>
+          </div>
+        </section>
+        ${
+          applyReview
+            ? `
+              <section class="screen-detail-card">
+                <small>Apply Review Source</small>
+                <strong>${escapeHtml(applyReviewSource)}</strong>
+                <p>Status: ${escapeHtml(applyReview.status || "preview-recorded")} | Mode: ${escapeHtml(applyReview.mode || "safe-apply-preview")}</p>
+              </section>
+              <section class="screen-detail-card">
+                <small>Backend Apply Status</small>
+                <strong>${escapeHtml(applyReview.message || "Apply review preview recorded.")}</strong>
+                <ul class="planner-risk-list">
+                  <li>No file write: ${(applyReview.no_file_write ?? applyReview.safety?.real_file_write === false) ? "true" : "false"}</li>
+                  <li>No terminal: ${(applyReview.no_terminal ?? applyReview.safety?.terminal === false) ? "true" : "false"}</li>
+                  <li>No Git: ${(applyReview.no_git ?? applyReview.safety?.git === false) ? "true" : "false"}</li>
+                  <li>No deploy: ${(applyReview.no_deploy ?? applyReview.safety?.deploy === false) ? "true" : "false"}</li>
+                </ul>
+              </section>
+              <section class="screen-detail-card">
+                <small>Affected Files</small>
+                <strong>Apply preview scope</strong>
+                <ul class="screen-detail-list">
+                  ${(applyReview.affected_files || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ul>
+              </section>
+              <section class="screen-detail-card screen-detail-card--wide">
+                <small>Backup Plan</small>
+                <strong>Pre-apply safety steps</strong>
+                <ol class="screen-detail-list screen-detail-list--numbered">
+                  ${(applyReview.backup_plan || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+                </ol>
+              </section>
+              <section class="screen-detail-card screen-detail-card--wide">
+                <small>Validation Plan</small>
+                <strong>Apply review validation preview</strong>
+                <div class="validation-plan-list">
+                  ${(applyReview.validation_plan || []).map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
+                </div>
+              </section>
+              <section class="screen-detail-card">
+                <small>Audit Entry</small>
+                <strong>Apply review audit preview</strong>
+                <ul class="screen-detail-list">
+                  ${renderPermissionList(getApplyReviewAuditEntries())}
+                </ul>
+              </section>
+            `
+            : ""
+        }
+        <section class="screen-detail-card">
+          <small>Future Founder/Admin Real Apply</small>
+          <strong>Status: Prepared in CA-15, real writing disabled</strong>
+          <ul class="screen-detail-list">
+            ${renderPermissionList([
+              "authenticated Founder/Admin session",
+              "backend permission check",
+              "connected project workspace",
+              "pre-apply backup",
+              "diff validation",
+              "safe rollback",
+              "audit log",
+            ])}
+          </ul>
         </section>
         ${renderPermissionAuditCard()}
         ${renderBackendEnforcementCard()}
@@ -1912,6 +2087,9 @@ const resetCodeProposalState = () => {
   state.codeProposalDecision = "pending";
   state.codeProposalSource = "";
   state.codeProposalData = null;
+  state.applyReviewLoading = false;
+  state.applyReviewData = null;
+  state.applyReviewSource = "";
 };
 
 const openConnectScreen = () => {
@@ -2034,6 +2212,20 @@ const getCodeProposalEndpointCandidates = () => {
   return [...new Set(candidates)];
 };
 
+const getApplyDiffEndpointCandidates = () => {
+  const candidates = [];
+  if (API_BASE) {
+    candidates.push(`${API_BASE}${APPLY_DIFF_PATH}`);
+  }
+
+  if (window.location.origin && window.location.origin !== "null") {
+    candidates.push(`${window.location.origin}${APPLY_DIFF_PATH}`);
+  }
+
+  candidates.push(APPLY_DIFF_PATH);
+  return [...new Set(candidates)];
+};
+
 const generateCodeProposal = async () => {
   state.codeProposalLoading = true;
   state.codeProposalGenerated = false;
@@ -2085,6 +2277,61 @@ const generateCodeProposal = async () => {
   } finally {
     state.codeProposalLoading = false;
     state.codeProposalGenerated = true;
+    renderScreenState();
+  }
+};
+
+const requestApplyReview = async () => {
+  state.applyReviewLoading = true;
+  state.applyReviewData = null;
+  state.applyReviewSource = "";
+  state.codeProposalDecision = "founder-review";
+  setStatusMessage("Requesting Founder/Admin apply review. No files will be changed.");
+  renderScreenState();
+
+  const payload = {
+    project_id: "ideasforgeai-demo",
+    proposal_id: "demo-task-planner-fix",
+    mode: "founder-admin-approval-preview",
+    requested_by_role: "user",
+    approval_intent: "apply-generated-diff",
+  };
+
+  try {
+    let applyReview = null;
+    for (const endpoint of getApplyDiffEndpointCandidates()) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const json = await response.json();
+        if (json && typeof json === "object") {
+          applyReview = json;
+          break;
+        }
+      } catch (error) {
+        console.warn("Apply diff API unavailable:", endpoint, error);
+      }
+    }
+
+    if (applyReview) {
+      state.applyReviewData = applyReview;
+      state.applyReviewSource = APPLY_DIFF_BACKEND_SOURCE;
+      setStatusMessage(applyReview.message || "Founder/Admin apply review recorded. No files were changed.");
+    } else {
+      state.applyReviewData = buildLocalApplyReviewFallback();
+      state.applyReviewSource = APPLY_DIFF_FALLBACK_SOURCE;
+      setStatusMessage("Apply review saved locally as preview. Backend apply endpoint unavailable. No files were changed.");
+    }
+  } finally {
+    state.applyReviewLoading = false;
     renderScreenState();
   }
 };
@@ -2277,6 +2524,9 @@ const handleAction = async (action) => {
       break;
     case "generate-code-proposal":
       await generateCodeProposal();
+      break;
+    case "request-apply-review":
+      await requestApplyReview();
       break;
     case "preview-test-run":
       previewTestRun();

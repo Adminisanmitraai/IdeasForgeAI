@@ -1,4 +1,16 @@
 # IdeasForgeAI Project Status
+## Phase CA-15 - Founder/Admin Apply Diff System
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added `POST /api/coding-agent/apply-diff` and `GET /api/coding-agent/apply-diff/health` in `backend/main.py`; the backend validates safe preview requests, keeps normal users locked, records Founder/Admin placeholder approval preview only, and never writes files or runs terminal, Git, deployment, or secret access actions.
+- Updated the Coding Agent Code Generation and Code Diff Preview screens to show the CA-15 Founder/Admin Apply Diff workflow after proposal generation, including locked normal-user controls, permission status, future real-apply requirements, backup plan, validation plan, and apply-review audit preview.
+- Added `Request Founder/Admin Apply Review` frontend behavior in `frontend/pages/coding-agent.js`; it posts to the backend apply-diff endpoint and falls back locally with `Apply review saved locally as preview. Backend apply endpoint unavailable. No files were changed.` when the backend is unavailable or sleeping.
+- Locked apply controls now remain blocked for normal users: `Apply Diff Now`, `Apply and Validate`, `Download Patch`, `Commit After Apply`, and `Deploy After Apply`.
+- Files changed: `backend/main.py`, `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `python -m py_compile backend/main.py`; `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: real file writing remains disabled; no raw code export unlock added; no terminal execution from the app; no Git actions; no deployment actions; no secrets exposure; and no KisanMitraAI or deployment settings touched.
+
 ## Phase CA-14 - Backend Code Proposal API
 
 Status: Completed locally, validation pending manual browser check.

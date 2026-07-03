@@ -281,6 +281,14 @@ class CodeProposalResponse(BaseModel):
     safety: CodeProposalSafety
 
 
+class ApplyDiffRequest(BaseModel):
+    project_id: str = Field(min_length=1, max_length=200)
+    proposal_id: str = Field(min_length=1, max_length=200)
+    mode: Literal["founder-admin-approval-preview"] = "founder-admin-approval-preview"
+    requested_by_role: Literal["user", "founder", "admin"] = "user"
+    approval_intent: Literal["apply-generated-diff"] = "apply-generated-diff"
+
+
 def build_coding_agent_code_proposal(request_text: str, project_id: str) -> CodeProposalResponse:
     normalized_request = request_text.strip() or "Fix the Task Planner button so it opens the Task Planner Preview screen."
     normalized_project_id = project_id.strip() or "ideasforgeai-demo"
@@ -407,6 +415,75 @@ def coding_agent_code_proposal(request: CodeProposalRequest):
         request_text=request.request,
         project_id=request.project_id,
     )
+
+
+@app.get("/api/coding-agent/apply-diff/health")
+def coding_agent_apply_diff_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-apply-diff",
+        "mode": "founder-admin-approval-preview",
+        "real_file_write": False,
+    }
+
+
+@app.post("/api/coding-agent/apply-diff")
+def coding_agent_apply_diff(request: ApplyDiffRequest):
+    normalized_project_id = request.project_id.strip() or "ideasforgeai-demo"
+    normalized_proposal_id = request.proposal_id.strip() or "demo-task-planner-fix"
+    affected_files = [
+        "frontend/pages/coding-agent.html",
+        "frontend/pages/coding-agent.js",
+        "frontend/pages/coding-agent.css",
+    ]
+    backup_plan = [
+        "Create pre-apply snapshot",
+        "Apply patch only to approved workspace",
+        "Run validation",
+        "Allow rollback if validation fails",
+    ]
+    validation_plan = [
+        "node --check frontend/pages/coding-agent.js",
+        "node --check frontend/pages/studio-v4.js",
+        "python backend/sector_qa_runner.py",
+        "Manual mobile Safari test",
+    ]
+
+    if request.requested_by_role == "user":
+        return {
+            "ok": False,
+            "status": "locked",
+            "reason": "Founder/Admin verification required",
+            "message": "Apply Diff is locked for the current role. No files were changed.",
+            "project_id": normalized_project_id,
+            "proposal_id": normalized_proposal_id,
+            "no_file_write": True,
+            "no_terminal": True,
+            "no_git": True,
+            "no_deploy": True,
+            "affected_files": affected_files,
+            "backup_plan": backup_plan,
+            "validation_plan": validation_plan,
+        }
+
+    return {
+        "ok": True,
+        "status": "approval_recorded",
+        "mode": "safe-apply-preview",
+        "message": "Founder/Admin apply request recorded. Real file writing remains disabled until a connected project workspace is available.",
+        "project_id": normalized_project_id,
+        "proposal_id": normalized_proposal_id,
+        "affected_files": affected_files,
+        "backup_plan": backup_plan,
+        "validation_plan": validation_plan,
+        "safety": {
+            "real_file_write": False,
+            "terminal": False,
+            "git": False,
+            "deploy": False,
+            "secrets": False,
+        },
+    }
 
 
 @app.post("/api/generate")
