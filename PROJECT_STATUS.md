@@ -1,4 +1,15 @@
 # IdeasForgeAI Project Status
+## Phase CA-14 - Backend Code Proposal API
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added `POST /api/coding-agent/code-proposal` and `GET /api/coding-agent/code-proposal/health` in `backend/main.py`; the backend returns protected proposal metadata only with no file writing, terminal execution, Git, deployment, or secrets access.
+- Updated the Coding Agent Code Generation screen to try the backend protected proposal API first and fall back to a deterministic local protected preview if the backend is unavailable or sleeping.
+- Added Proposal Source rendering in the existing protected preview UI, including affected files, generated summary, protected code preview, protected unified diff, risk summary, validation plan, permission status, safety flags, Founder/Admin controls locked, and normal-user protection messaging.
+- Locked actions remain protected for normal users: copy raw code, edit code, apply generated code, export patch, commit, push, deploy, and rollback.
+- Files changed: `backend/main.py`, `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `python -m py_compile backend/main.py`; `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: no real file editing from the app, no raw copy/export unlock, no terminal execution from the app, no Git actions, no deployment actions, no secrets exposure, and no KisanMitraAI or deployment settings touched.
 ## Phase CA-05.1 - Task Planner Open Screen Repair
 
 Status: Completed locally, validation pending manual browser check.
@@ -13128,3 +13139,4 @@ Status: Completed locally, validation pending manual browser check.
 - Backend touched: no.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-13 preview work; no real file editing from the app, no raw code export/apply/Git/deploy behavior, no terminal execution from the app, no backend edits, no secrets exposed, no `.env` access, and no KisanMitraAI or deployment configuration files touched.
+

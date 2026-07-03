@@ -37,102 +37,123 @@ const DEFAULT_STATUS_MESSAGE = "Choose a connection option to open a clear previ
 const DEFAULT_CODE_REQUEST = "Fix the Task Planner button so it opens the Task Planner Preview screen.";
 const LOCKED_NORMAL_USER_MESSAGE = "This action is locked in Normal User Mode. Founder/Admin permission is required.";
 const COPY_BLOCKED_MESSAGE = "Copy is locked for normal users. Founder/Admin permission is required.";
-const DEMO_PROTECTED_CODE_FILES = [
-  {
-    path: "frontend/pages/coding-agent.html",
-    code: [
-      '<button class="module-chip-button" type="button" data-ca-action="open-task-planner">',
-      "  Task Planner",
-      "</button>",
-      "",
-      '<button class="module-tab-button" type="button" data-ca-action="open-task-planner" data-module-tab="task-planner">',
-      "  Task Planner",
-      "</button>",
-    ].join("\n"),
-  },
-  {
-    path: "frontend/pages/coding-agent.js",
-    code: [
+const CODE_PROPOSAL_PATH = "/api/coding-agent/code-proposal";
+const CODE_PROPOSAL_FALLBACK_SOURCE = "Local Protected Fallback";
+const CODE_PROPOSAL_BACKEND_SOURCE = "Backend Protected API";
+
+const getApiBase = () => {
+  const { protocol, hostname } = window.location;
+  const isLocalHost = hostname === "localhost" || hostname === "127.0.0.1";
+  const isLanHost = /^192\.168\./.test(hostname) || /^10\./.test(hostname) || /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname);
+  const isLiveHost = hostname === "ideasforgeai.com" || hostname === "www.ideasforgeai.com";
+
+  if (isLocalHost) {
+    return "http://127.0.0.1:8000";
+  }
+
+  if (protocol === "http:" && isLanHost) {
+    return `http://${hostname}:8000`;
+  }
+
+  if (protocol === "https:" && isLiveHost) {
+    return "https://ideasforgeai-api.onrender.com";
+  }
+
+  return "";
+};
+
+const API_BASE = getApiBase();
+
+const buildLocalProtectedProposal = () => ({
+  ok: true,
+  mode: "protected-preview",
+  project_id: "ideasforgeai-demo",
+  request: state.codeRequest || DEFAULT_CODE_REQUEST,
+  affected_files: [
+    "frontend/pages/coding-agent.html",
+    "frontend/pages/coding-agent.js",
+    "frontend/pages/coding-agent.css",
+  ],
+  generated_summary: [
+    "Add data action for Task Planner",
+    "Route open-task-planner in event delegation",
+    "Render Task Planner panel",
+    "Update active module state",
+    "Update status banner",
+  ],
+  protected_code_preview: {
+    label: "Protected Code Preview",
+    language: "javascript",
+    content: [
+      '// frontend/pages/coding-agent.js',
       'if (action === "open-task-planner") {',
       '  openDemoModule("task-planner");',
       '  setStatusMessage("Task Planner Preview is now open.");',
       "}",
-    ].join("\n"),
-  },
-  {
-    path: "frontend/pages/coding-agent.css",
-    code: [
+      "",
+      "// frontend/pages/coding-agent.html",
+      '<button class="module-chip-button" type="button" data-ca-action="open-task-planner">',
+      "  Task Planner <small>Preview Unlocked</small>",
+      "</button>",
+      "",
+      "/* frontend/pages/coding-agent.css */",
       ".ca-code-preview-protected {",
       "  user-select: none;",
+      "  -webkit-user-select: none;",
       "  overflow: auto;",
       "}",
     ].join("\n"),
   },
-];
-const DEMO_CODE_SUMMARY_ITEMS = [
-  "Add data action for Task Planner",
-  "Route open-task-planner in event delegation",
-  "Render Task Planner panel",
-  "Update active module state",
-  "Update status banner",
-];
-const DEMO_DIFF_FILES = [
-  {
-    path: "frontend/pages/coding-agent.html",
-    lines: [
-      {
-        type: "removed",
-        code: '<button class="ca-module-pill">Task Planner</button>',
-      },
-      {
-        type: "added",
-        code: '<button class="ca-module-pill" data-ca-action="open-task-planner">Task Planner</button>',
-      },
+  unified_diff: [
+    {
+      file: "frontend/pages/coding-agent.html",
+      diff: '- <button class="module-chip-button" type="button">Task Planner</button>\n+ <button class="module-chip-button" type="button" data-ca-action="open-task-planner">Task Planner <small>Preview Unlocked</small></button>',
+    },
+    {
+      file: "frontend/pages/coding-agent.js",
+      diff: '+ if (action === "open-task-planner") {\n+   openDemoModule("task-planner");\n+   setStatusMessage("Task Planner Preview is now open.");\n+ }',
+    },
+    {
+      file: "frontend/pages/coding-agent.css",
+      diff: "+ .ca-code-preview-protected {\n+   user-select: none;\n+   -webkit-user-select: none;\n+   overflow: auto;\n+ }",
+    },
+  ],
+  risk: {
+    level: "Low",
+    summary: "Frontend interaction fix preview only",
+    reasons: [
+      "Affects frontend Coding Agent files only",
+      "No backend changes",
+      "No secrets touched",
+      "No deployment settings changed",
+      "Requires validation before apply",
     ],
   },
-  {
-    path: "frontend/pages/coding-agent.js",
-    lines: [
-      {
-        type: "added",
-        code: 'if (action === "open-task-planner") {',
-      },
-      {
-        type: "added",
-        code: '  openModule("task-planner");',
-      },
-      {
-        type: "added",
-        code: '  updateStatus("Task Planner Preview is now open.");',
-      },
-      {
-        type: "added",
-        code: "}",
-      },
-    ],
+  validation_plan: [
+    "node --check frontend/pages/coding-agent.js",
+    "node --check frontend/pages/studio-v4.js",
+    "python backend/sector_qa_runner.py",
+    "Manual mobile Safari test",
+    "Manual desktop browser test",
+  ],
+  permissions: {
+    normal_user: "view-only",
+    copy: false,
+    edit: false,
+    apply: false,
+    export: false,
+    git: false,
+    deploy: false,
+    founder_admin_required: true,
   },
-  {
-    path: "frontend/pages/coding-agent.css",
-    lines: [
-      {
-        type: "added",
-        code: ".ca-code-preview-protected {",
-      },
-      {
-        type: "added",
-        code: "  user-select: none;",
-      },
-      {
-        type: "added",
-        code: "  overflow: auto;",
-      },
-      {
-        type: "added",
-        code: "}",
-      },
-    ],
+  safety: {
+    no_file_write: true,
+    no_terminal: true,
+    no_git: true,
+    no_deploy: true,
+    no_secrets: true,
   },
-];
+});
 const DEMO_TASK_PLAN_TEXT = [
   "Task Planner Preview",
   "Convert a request into safe implementation steps before editing code.",
@@ -468,7 +489,10 @@ const state = {
   activeModule: null,
   permissionRole: "user",
   codeProposalGenerated: false,
+  codeProposalLoading: false,
   codeProposalDecision: "pending",
+  codeProposalSource: "",
+  codeProposalData: null,
   codeRequest: DEFAULT_CODE_REQUEST,
   planGenerated: false,
   planDecision: "pending",
@@ -735,8 +759,11 @@ const renderTaskPlannerMarkup = () => `
 `;
 
 const getCodeProposalFeedback = () => {
+  if (state.codeProposalLoading) {
+    return "Generating protected proposal through the backend preview flow. No code will be applied.";
+  }
   if (!state.codeProposalGenerated) {
-    return "Deterministic local demo only. No files are written and no code is applied.";
+    return "Backend protected API will be tried first. If unavailable, a deterministic local protected fallback is shown. No files are written and no code is applied.";
   }
   if (state.codeProposalDecision === "revision-requested") {
     return "Revision requested. No code was applied.";
@@ -747,10 +774,16 @@ const getCodeProposalFeedback = () => {
   if (state.codeProposalDecision === "founder-review") {
     return "Founder/Admin review requested. No code was copied, edited, applied, exported, committed, pushed, or deployed.";
   }
-  return "Protected code proposal generated. Founder/Admin approval is required before any future code permission step.";
+  if (state.codeProposalSource === CODE_PROPOSAL_FALLBACK_SOURCE) {
+    return "Local protected preview shown because backend proposal API was unavailable.";
+  }
+  return "Backend protected code proposal generated. No code was applied.";
 };
 
 const getCodeProposalBadge = () => {
+  if (state.codeProposalLoading) {
+    return "Generating";
+  }
   if (!state.codeProposalGenerated) {
     return "Awaiting proposal";
   }
@@ -765,6 +798,8 @@ const getCodeProposalBadge = () => {
   }
   return "Preview ready";
 };
+
+const getCodeProposalData = () => state.codeProposalData || buildLocalProtectedProposal();
 
 const renderPermissionList = (items) =>
   items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
@@ -915,50 +950,61 @@ const renderBackendEnforcementCard = () => `
   </section>
 `;
 
-const renderProtectedCodePreviewCards = () =>
-  DEMO_PROTECTED_CODE_FILES.map(
-    (file) => `
-      <article class="protected-preview-card">
-        <div class="protected-preview-card__header">
-          <span class="diff-file-label">Protected file</span>
-          <strong>${escapeHtml(file.path)}</strong>
-        </div>
-        <div class="protected-meta-row">
-          <span class="ca-code-preview-overlay-label">Protected Preview</span>
-          <span class="access-mode-chip">View-only</span>
-          <span class="protected-preview-chip">Normal User Mode</span>
-        </div>
-        <div class="ca-code-preview-protected" aria-readonly="true" tabindex="-1" data-protected-preview>
-          <span class="ca-code-preview-watermark" aria-hidden="true">IdeasForgeAI Protected Preview</span>
-          <pre>${escapeHtml(file.code)}</pre>
-        </div>
-      </article>
-    `
-  ).join("");
+const renderProtectedCodePreviewCards = (proposal) => `
+  <article class="protected-preview-card">
+    <div class="protected-preview-card__header">
+      <span class="diff-file-label">${escapeHtml(proposal.protected_code_preview.label || "Protected Code Preview")}</span>
+      <strong>${escapeHtml(proposal.protected_code_preview.language || "javascript")}</strong>
+    </div>
+    <div class="protected-meta-row">
+      <span class="ca-code-preview-overlay-label">Protected Preview</span>
+      <span class="access-mode-chip">View-only</span>
+      <span class="protected-preview-chip">Normal User Mode</span>
+    </div>
+    <div class="ca-code-preview-protected" aria-readonly="true" tabindex="-1" data-protected-preview>
+      <span class="ca-code-preview-watermark" aria-hidden="true">IdeasForgeAI Protected Preview</span>
+      <pre>${escapeHtml(proposal.protected_code_preview.content || "")}</pre>
+    </div>
+  </article>
+`;
 
-const renderDiffFileCards = () =>
-  DEMO_DIFF_FILES.map(
-    (file) => `
+const renderDiffFileCards = (proposal) =>
+  (proposal.unified_diff || []).map((file) => {
+    const lines = String(file.diff || "")
+      .split("\n")
+      .filter((line) => line)
+      .map((line) => {
+        const type = line.startsWith("+") ? "added" : line.startsWith("-") ? "removed" : "context";
+        const marker = type === "added" ? "+" : type === "removed" ? "-" : " ";
+        return `
+          <div class="diff-line diff-line--${type}">
+            <span class="diff-line__marker">${marker}</span>
+            <code>${escapeHtml(line)}</code>
+          </div>
+        `;
+      })
+      .join("");
+
+    return `
       <article class="diff-file-card">
         <div class="diff-file-card__header">
           <span class="diff-file-label">File</span>
-          <strong>${escapeHtml(file.path)}</strong>
+          <strong>${escapeHtml(file.file)}</strong>
         </div>
-        ${file.lines
-          .map(
-            (line) => `
-              <div class="diff-line diff-line--${line.type}">
-                <span class="diff-line__marker">${line.type === "added" ? "+" : "-"}</span>
-                <code>${escapeHtml(line.code)}</code>
-              </div>
-            `
-          )
-          .join("")}
+        ${lines}
       </article>
-    `
-  ).join("");
+    `;
+  }).join("");
 
-const renderCodeGenerationMarkup = (view = "generation") => `
+const renderCodeGenerationMarkup = (view = "generation") => {
+  const proposal = getCodeProposalData();
+  const proposalSource = state.codeProposalSource || CODE_PROPOSAL_BACKEND_SOURCE;
+  const permissions = proposal.permissions || {};
+  const safety = proposal.safety || {};
+  const validationPlan = proposal.validation_plan || [];
+  const risk = proposal.risk || { level: "Low", summary: "Protected preview only", reasons: [] };
+
+  return `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>${view === "code-diff" ? "Real Code Generation with Diff Approval" : "Title"}</small>
     <strong>Real Code Generation</strong>
@@ -978,7 +1024,7 @@ const renderCodeGenerationMarkup = (view = "generation") => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Request Input</small>
     <strong>Describe the code change</strong>
-    <p>Deterministic local demo generation only. No OpenAI call, frontend API key, file write, terminal command, or Git action occurs here.</p>
+    <p>Frontend uses a backend protected proposal API first and falls back to a deterministic local protected preview if the backend is unavailable.</p>
     <div class="code-generation-request">
       <textarea
         class="code-generation-textarea"
@@ -986,26 +1032,29 @@ const renderCodeGenerationMarkup = (view = "generation") => `
         rows="4"
         placeholder="Describe the code change you want IdeasForgeAI to generate..."
       >${escapeHtml(state.codeRequest)}</textarea>
-      <button class="diff-generate-button" type="button" data-ca-action="generate-code-proposal">Generate Code Proposal</button>
+      <button class="diff-generate-button" type="button" data-ca-action="generate-code-proposal"${state.codeProposalLoading ? " disabled" : ""}>${state.codeProposalLoading ? "Generating..." : "Generate Code Proposal"}</button>
     </div>
   </section>
   ${
     state.codeProposalGenerated
       ? `
         <section class="screen-detail-card">
+          <small>Proposal Source</small>
+          <strong>${escapeHtml(proposalSource)}</strong>
+          <p>Mode: ${escapeHtml(proposal.mode || "protected-preview")} | Project: ${escapeHtml(proposal.project_id || "ideasforgeai-demo")}</p>
+        </section>
+        <section class="screen-detail-card">
           <small>Affected Files</small>
-          <strong>Frontend-only proposal scope</strong>
+          <strong>Protected proposal scope</strong>
           <ul class="screen-detail-list">
-            <li>frontend/pages/coding-agent.html</li>
-            <li>frontend/pages/coding-agent.js</li>
-            <li>frontend/pages/coding-agent.css</li>
+            ${(proposal.affected_files || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
           </ul>
         </section>
         <section class="screen-detail-card">
           <small>Generated Summary</small>
           <strong>${escapeHtml(getCodeProposalBadge())}</strong>
           <ul class="screen-detail-list">
-            ${DEMO_CODE_SUMMARY_ITEMS.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+            ${(proposal.generated_summary || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
           </ul>
         </section>
         ${renderPermissionStatusCard()}
@@ -1019,7 +1068,7 @@ const renderCodeGenerationMarkup = (view = "generation") => `
             <span class="protected-preview-chip">Normal User Mode</span>
           </div>
           <div class="protected-preview-grid">
-            ${renderProtectedCodePreviewCards()}
+            ${renderProtectedCodePreviewCards(proposal)}
           </div>
         </section>
         <section class="screen-detail-card screen-detail-card--wide">
@@ -1027,7 +1076,7 @@ const renderCodeGenerationMarkup = (view = "generation") => `
           <strong>Review-only diff preview</strong>
           <p>Diff is visible for review only. Applying or exporting this patch requires Founder/Admin approval.</p>
           <div class="diff-viewer" data-protected-preview>
-            ${renderDiffFileCards()}
+            ${renderDiffFileCards(proposal)}
           </div>
         </section>
         ${renderNormalUserAccessCard()}
@@ -1035,13 +1084,33 @@ const renderCodeGenerationMarkup = (view = "generation") => `
         ${renderFounderAdminControlsCard()}
         <section class="screen-detail-card">
           <small>Risk Summary</small>
-          <strong>Low - frontend interaction fix preview</strong>
+          <strong>${escapeHtml(`${risk.level || "Low"} - ${risk.summary || "Protected preview only"}`)}</strong>
           <ul class="planner-risk-list">
-            <li>Affects frontend Coding Agent files only</li>
-            <li>No backend changes</li>
-            <li>No secrets touched</li>
-            <li>No deployment settings changed</li>
-            <li>Requires validation before apply</li>
+            ${(risk.reasons || []).map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ul>
+        </section>
+        <section class="screen-detail-card">
+          <small>Permission Status</small>
+          <strong>Normal user: ${escapeHtml(permissions.normal_user || "view-only")}</strong>
+          <ul class="planner-risk-list">
+            <li>Copy: ${permissions.copy ? "Allowed" : "Locked"}</li>
+            <li>Edit: ${permissions.edit ? "Allowed" : "Locked"}</li>
+            <li>Apply: ${permissions.apply ? "Allowed" : "Locked"}</li>
+            <li>Export: ${permissions.export ? "Allowed" : "Locked"}</li>
+            <li>Git: ${permissions.git ? "Allowed" : "Locked"}</li>
+            <li>Deploy: ${permissions.deploy ? "Allowed" : "Locked"}</li>
+            <li>Founder/Admin required: ${permissions.founder_admin_required ? "Yes" : "No"}</li>
+          </ul>
+        </section>
+        <section class="screen-detail-card">
+          <small>Safety Flags</small>
+          <strong>Protected preview guardrails</strong>
+          <ul class="planner-risk-list">
+            <li>No file write: ${safety.no_file_write ? "true" : "false"}</li>
+            <li>No terminal: ${safety.no_terminal ? "true" : "false"}</li>
+            <li>No Git: ${safety.no_git ? "true" : "false"}</li>
+            <li>No deploy: ${safety.no_deploy ? "true" : "false"}</li>
+            <li>No secrets: ${safety.no_secrets ? "true" : "false"}</li>
           </ul>
         </section>
         <section class="screen-detail-card screen-detail-card--wide">
@@ -1075,17 +1144,14 @@ const renderCodeGenerationMarkup = (view = "generation") => `
           <small>Validation Plan</small>
           <strong>Required before any future apply phase</strong>
           <div class="validation-plan-list">
-            <span>node --check frontend/pages/coding-agent.js</span>
-            <span>node --check frontend/pages/studio-v4.js</span>
-            <span>python backend/sector_qa_runner.py</span>
-            <span>Manual mobile Safari test</span>
-            <span>Manual desktop browser test</span>
+            ${validationPlan.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}
           </div>
         </section>
       `
       : ""
   }
 `;
+};
 
 const renderCodeDiffMarkup = () => renderCodeGenerationMarkup("code-diff");
 
@@ -1840,6 +1906,14 @@ const renderScreenState = () => {
   renderActiveScreen();
 };
 
+const resetCodeProposalState = () => {
+  state.codeProposalGenerated = false;
+  state.codeProposalLoading = false;
+  state.codeProposalDecision = "pending";
+  state.codeProposalSource = "";
+  state.codeProposalData = null;
+};
+
 const openConnectScreen = () => {
   state.screen = "connect";
   setStatusMessage("Connect Project screen is open.");
@@ -1851,8 +1925,7 @@ const openFallbackScreen = (connection) => {
   state.screen = "active";
   state.selectedConnection = connection;
   state.activeModule = null;
-  state.codeProposalGenerated = false;
-  state.codeProposalDecision = "pending";
+  resetCodeProposalState();
   state.codeRequest = DEFAULT_CODE_REQUEST;
   state.planGenerated = false;
   state.planDecision = "pending";
@@ -1880,8 +1953,7 @@ const openDemoScreen = () => {
   state.screen = "active";
   state.selectedConnection = "demo";
   state.activeModule = "project-reader";
-  state.codeProposalGenerated = false;
-  state.codeProposalDecision = "pending";
+  resetCodeProposalState();
   state.codeRequest = DEFAULT_CODE_REQUEST;
   state.planGenerated = false;
   state.planDecision = "pending";
@@ -1948,11 +2020,73 @@ const generateTaskPlan = () => {
   renderScreenState();
 };
 
-const generateCodeProposal = () => {
-  state.codeProposalGenerated = true;
+const getCodeProposalEndpointCandidates = () => {
+  const candidates = [];
+  if (API_BASE) {
+    candidates.push(`${API_BASE}${CODE_PROPOSAL_PATH}`);
+  }
+
+  if (window.location.origin && window.location.origin !== "null") {
+    candidates.push(`${window.location.origin}${CODE_PROPOSAL_PATH}`);
+  }
+
+  candidates.push(CODE_PROPOSAL_PATH);
+  return [...new Set(candidates)];
+};
+
+const generateCodeProposal = async () => {
+  state.codeProposalLoading = true;
+  state.codeProposalGenerated = false;
   state.codeProposalDecision = "pending";
-  setStatusMessage("Protected code proposal generated. No code was applied.");
+  state.codeProposalSource = "";
+  state.codeProposalData = null;
+  setStatusMessage("Generating protected code proposal. No code will be applied.");
   renderScreenState();
+
+  const payload = {
+    request: state.codeRequest || DEFAULT_CODE_REQUEST,
+    project_id: "ideasforgeai-demo",
+    mode: "protected-preview",
+  };
+
+  try {
+    let proposal = null;
+    for (const endpoint of getCodeProposalEndpointCandidates()) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const json = await response.json();
+        if (json?.ok) {
+          proposal = json;
+          break;
+        }
+      } catch (error) {
+        console.warn("Protected proposal API unavailable:", endpoint, error);
+      }
+    }
+
+    if (proposal) {
+      state.codeProposalData = proposal;
+      state.codeProposalSource = CODE_PROPOSAL_BACKEND_SOURCE;
+      setStatusMessage("Backend protected code proposal generated. No code was applied.");
+    } else {
+      state.codeProposalData = buildLocalProtectedProposal();
+      state.codeProposalSource = CODE_PROPOSAL_FALLBACK_SOURCE;
+      setStatusMessage("Local protected preview shown because backend proposal API was unavailable.");
+    }
+  } finally {
+    state.codeProposalLoading = false;
+    state.codeProposalGenerated = true;
+    renderScreenState();
+  }
 };
 
 const copyTaskPlan = async () => {
@@ -2142,7 +2276,7 @@ const handleAction = async (action) => {
       generateTaskPlan();
       break;
     case "generate-code-proposal":
-      generateCodeProposal();
+      await generateCodeProposal();
       break;
     case "preview-test-run":
       previewTestRun();
