@@ -12896,3 +12896,15 @@ Status: Completed locally, validation passed.
 - Smoke test for `Create an app for a private tutors` confirmed the rendered HTML includes `Private Tutor App`, `Upcoming Classes`, `Quick Actions`, `Add New Student`, `Create Class`, `Send Message`, `Add Notice`, `Fees Pending`, and `?38k`, with no `Farmer Dashboard`, `crop`, `mandi`, or `$38k fees` leakage in the generated HTML.
 - Files changed: `backend/product_flow.py`, `backend/generated_app_qa.py`, `backend/sector_qa_runner.py`, `backend/sector_test_cases.py`, `PROJECT_STATUS.md`.
 - Safety notes: no deployment settings, Render settings, GitHub workflow settings, API keys, secrets, `.env`, or KisanMitraAI files touched.
+
+## Phase CA-02 - Connect Project Placeholder Flow
+
+Status: Completed locally, frontend-only validation pending manual browser check.
+
+- Added a premium frontend-only Connect Project modal to the Coding Agent workspace with Local Project, GitHub Repository, Upload ZIP, and Demo Project options.
+- Added safe CA-02 connection state handling for noProjectConnected, connectPanelOpen, demoProjectSelected, and projectConnectionPreviewReady without backend project access.
+- Added Demo Project preview selection that updates Project Explorer, Active Tasks, Test Runner, and GitHub Integration cards plus a connected chip in the hero area.
+- Added locked placeholder labels for Project Reader, Architecture Analyzer, Task Planner, Code Editor, Test Runner, Auto Fix Engine, GitHub Manager, Deployment Manager, Logs, and Project Memory.
+- Added a clear safety notice covering no file edits, no terminal execution, no GitHub writes, and no deployment actions in CA-02.
+- Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Safety notes: no backend project connection, no file reading flow, no GitHub writes, no deployment actions, no secrets access, no .env changes, no Render settings, and no KisanMitraAI files touched.
