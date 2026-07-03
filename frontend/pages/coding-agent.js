@@ -440,8 +440,8 @@ const FILE_TREE = [
 ];
 
 const CONNECTION_MESSAGES = {
-  local: "Real local project access is coming in CA-21. CA-20 uses a safe demo workspace only and does not read your computer.",
-  github: "GitHub repository connection is coming in CA-21. Current preview does not access GitHub.",
+  local: "Real local project access is read-only preview. CA-20 uses a safe demo workspace only and does not read your computer.",
+  github: "GitHub repository connection is read-only preview. Current preview does not access GitHub.",
   zip: "ZIP upload analysis is coming later. Current preview does not upload files.",
 };
 
@@ -3736,7 +3736,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-21 - Local/GitHub Read-Only Connector */
+/* Phase CA-22 - Read-Only Project Reader Engine */
 (() => {
   if (window.__ideasforgeCa20ConnectedWorkspaceLoaded) {
     return;
@@ -3945,7 +3945,7 @@ document.addEventListener("click", async (event) => {
     section.id = "ca20-connected-workspace-section";
     section.className = "ca20-connected-workspace-section";
     section.innerHTML = `
-      <div class="ca20-kicker">CA-20 — Connected Project Workspace</div>
+      <div class="ca20-kicker">CA-21 — Local/GitHub Read-Only Connector</div>
       <h2>Connected Project Workspace</h2>
       <p>Open a single safe workspace view for project tree, active proposal, tests, Git preview, deployment status, and Founder/Admin permissions.</p>
       <button class="ca20-open-button" type="button" data-ca20-open-workspace>

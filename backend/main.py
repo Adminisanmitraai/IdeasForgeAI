@@ -1104,6 +1104,149 @@ def coding_agent_workspace_preview(request: ConnectedWorkspacePreviewRequest):
 
 
 
+
+
+# Phase CA-21 - Local/GitHub Read-Only Connector.
+# Read-only connector foundation. No local filesystem read, no private token,
+# no file writes, no Git commands, no deployment, and no secrets access.
+class ReadOnlyConnectorPreviewRequest(BaseModel):
+    connector_type: str = Field(default="github")
+    repository_url: str = Field(default="https://github.com/Adminisanmitraai/IdeasForgeAI")
+    project_label: str = Field(default="IdeasForgeAI Demo Project")
+    mode: str = Field(default="read-only-connector-preview")
+
+
+def _normalize_connector_type(value: str) -> str:
+    connector = (value or "github").strip().lower()
+    return connector if connector in {"local", "github", "demo"} else "github"
+
+
+def _sanitize_repository_url(value: str) -> str:
+    repo = (value or "").strip()
+    if not repo:
+        return "https://github.com/Adminisanmitraai/IdeasForgeAI"
+    if repo.startswith("https://github.com/") or repo.startswith("http://github.com/"):
+        return repo.replace("http://github.com/", "https://github.com/")
+    return "unsupported-url"
+
+
+def _build_read_only_connector_preview(request: ReadOnlyConnectorPreviewRequest) -> Dict[str, Any]:
+    connector = _normalize_connector_type(request.connector_type)
+    repo_url = _sanitize_repository_url(request.repository_url)
+
+    if connector == "local":
+        title = "Local Read-Only Connector"
+        connection_status = "Local folder read remains locked until secure local bridge is enabled."
+        available_now = False
+        read_scope = [
+            "Local project selection UI",
+            "Permission explanation",
+            "Future local bridge handshake",
+            "Read-only project manifest preview",
+        ]
+    elif connector == "demo":
+        title = "Demo Read-Only Connector"
+        connection_status = "Demo workspace is available as safe read-only preview."
+        available_now = True
+        read_scope = [
+            "Demo project tree",
+            "Demo active proposal",
+            "Demo validation summary",
+            "Demo Git/deployment status preview",
+        ]
+    else:
+        title = "GitHub Read-Only Connector"
+        connection_status = "Public GitHub repository preview can be prepared without storing tokens."
+        available_now = repo_url != "unsupported-url"
+        read_scope = [
+            "Repository URL validation",
+            "Public repo metadata preview",
+            "Read-only project structure plan",
+            "Branch/read-only scope planning",
+        ]
+
+    return {
+        "ok": True,
+        "status": "read-only-connector-ready",
+        "mode": "read-only-connector-preview",
+        "connector": {
+            "type": connector,
+            "title": title,
+            "project_label": request.project_label or "IdeasForgeAI Demo Project",
+            "repository_url": repo_url,
+            "connection_status": connection_status,
+            "available_now": available_now,
+            "real_local_read": False,
+            "private_repo_access": False,
+            "write_access": False,
+        },
+        "read_scope": read_scope,
+        "planned_workspace_manifest": [
+            {"name": "Project root", "kind": "folder", "access": "read-only-preview"},
+            {"name": "frontend/pages", "kind": "folder", "access": "read-only-preview"},
+            {"name": "frontend/pages/coding-agent.html", "kind": "file", "access": "read-only-preview"},
+            {"name": "frontend/pages/coding-agent.js", "kind": "file", "access": "read-only-preview"},
+            {"name": "frontend/pages/coding-agent.css", "kind": "file", "access": "read-only-preview"},
+            {"name": "backend/main.py", "kind": "file", "access": "read-only-preview"},
+            {"name": "PROJECT_STATUS.md", "kind": "file", "access": "read-only-preview"},
+        ],
+        "permission_steps": [
+            "User chooses Local, GitHub, or Demo connector",
+            "System explains exact read-only scope",
+            "Founder/Admin approval is required for any real private project access",
+            "No file writes are allowed in CA-21",
+            "No tokens are accepted in frontend",
+            "No Git command is executed",
+            "Connected workspace opens in read-only mode only",
+        ],
+        "locked_actions": [
+            "Edit files",
+            "Apply patch",
+            "Run terminal commands",
+            "Create branch",
+            "Commit changes",
+            "Push branch",
+            "Create pull request",
+            "Deploy",
+            "Rollback",
+            "Read secrets",
+        ],
+        "safety": {
+            "local_filesystem_read": False,
+            "github_private_token": False,
+            "frontend_token": False,
+            "file_write": False,
+            "terminal": False,
+            "git_commands": False,
+            "deployment": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/connectors/health")
+def coding_agent_connectors_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-read-only-connectors",
+        "mode": "read-only-connector-preview",
+        "local_filesystem_read": False,
+        "github_private_token": False,
+        "frontend_token": False,
+        "file_write": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+@app.post("/api/coding-agent/connectors/read-only-preview")
+def coding_agent_read_only_connector_preview(request: ReadOnlyConnectorPreviewRequest):
+    return _build_read_only_connector_preview(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}
