@@ -3733,3 +3733,293 @@ document.addEventListener("click", async (event) => {
     await requestDeploymentApproval();
   }
 });
+
+
+
+/* Phase CA-21 - Local/GitHub Read-Only Connector */
+(() => {
+  if (window.__ideasforgeCa20ConnectedWorkspaceLoaded) {
+    return;
+  }
+  window.__ideasforgeCa20ConnectedWorkspaceLoaded = true;
+
+  const WORKSPACE_PREVIEW_PATH_CA20 = "/api/coding-agent/workspace/preview";
+  const WORKSPACE_BACKEND_SOURCE_CA20 = "Backend Connected Workspace API";
+  const WORKSPACE_FALLBACK_SOURCE_CA20 = "Local Connected Workspace Preview";
+
+  const ca20Escape = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const ca20ApiCandidates = (path) => {
+    const endpoints = [];
+    try {
+      if (typeof API_BASE !== "undefined" && API_BASE) {
+        endpoints.push(`${API_BASE}${path}`);
+      }
+    } catch (error) {}
+    endpoints.push(path);
+    return endpoints;
+  };
+
+  const ca20FallbackWorkspace = () => ({
+    ok: true,
+    status: "workspace-preview-ready",
+    mode: "local-connected-workspace-preview",
+    project_id: "ideasforgeai-demo",
+    workspace: {
+      name: "IdeasForgeAI Demo Project",
+      connection_type: "demo",
+      connection_status: "Local demo workspace connected",
+      real_local_access: false,
+      real_github_access: false,
+      write_access: false,
+    },
+    project_tree: [
+      { type: "folder", path: "frontend/pages" },
+      { type: "file", path: "frontend/pages/coding-agent.html", status: "preview-readable" },
+      { type: "file", path: "frontend/pages/coding-agent.js", status: "preview-readable" },
+      { type: "file", path: "frontend/pages/coding-agent.css", status: "preview-readable" },
+      { type: "folder", path: "backend" },
+      { type: "file", path: "backend/main.py", status: "preview-readable" },
+      { type: "file", path: "PROJECT_STATUS.md", status: "preview-readable" },
+    ],
+    active_modules: [
+      "Project Reader",
+      "Architecture Analyzer",
+      "Task Planner",
+      "Code Generation",
+      "Protected Code Preview",
+      "Code Diff Preview",
+      "Test Runner",
+      "Auto Fix Engine",
+      "Git Manager",
+      "Deployment Manager",
+      "Founder/Admin Permissions",
+    ],
+    active_proposal: {
+      title: "Demo Task Planner button repair",
+      status: "Protected proposal ready",
+      approval: "Founder/Admin required before apply",
+    },
+    test_status: {
+      mode: "allowlisted validation preview",
+      last_result: "Preview checks available",
+      real_execution: false,
+    },
+    git_status: {
+      mode: "GitHub workflow preview",
+      branch: "planned-only",
+      commit: "locked",
+      push: "locked",
+      pull_request: "locked",
+    },
+    deployment_status: {
+      mode: "deployment approval preview",
+      preview: "planned-only",
+      production: "locked",
+      rollback: "locked",
+    },
+    permissions: {
+      normal_user: "preview-only",
+      founder_admin: "approval required",
+      real_workspace_required: true,
+    },
+    safety: {
+      real_local_folder_access: false,
+      github_token: false,
+      file_write: false,
+      terminal: false,
+      git_commands: false,
+      deployment: false,
+      secrets: false,
+    },
+  });
+
+  const ca20FetchWorkspace = async () => {
+    const payload = {
+      project_id: "ideasforgeai-demo",
+      connection_type: "demo",
+      mode: "connected-workspace-preview",
+    };
+
+    for (const endpoint of ca20ApiCandidates(WORKSPACE_PREVIEW_PATH_CA20)) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.ok) {
+            return { data, source: WORKSPACE_BACKEND_SOURCE_CA20 };
+          }
+        }
+      } catch (error) {}
+    }
+
+    return { data: ca20FallbackWorkspace(), source: WORKSPACE_FALLBACK_SOURCE_CA20 };
+  };
+
+  const ca20List = (items = []) => items.map((item) => `<li>${ca20Escape(item)}</li>`).join("");
+
+  const ca20Tree = (items = []) => items.map((item) => `
+    <li>
+      <span>${item.type === "folder" ? "▸" : "•"}</span>
+      <strong>${ca20Escape(item.path)}</strong>
+      ${item.status ? `<em>${ca20Escape(item.status)}</em>` : ""}
+    </li>
+  `).join("");
+
+  const ca20RenderWorkspace = (data, source) => `
+    <section class="ca20-connected-workspace-panel is-open" id="ca20-connected-workspace-panel">
+      <div class="ca20-kicker">Now Open: Connected Project Workspace</div>
+      <h2>Connected Project Workspace</h2>
+      <p class="ca20-lead">A safe demo workspace is connected so Project Reader, proposals, tests, Git preview, and deployment approval can appear in one place.</p>
+
+      <div class="ca20-source-card">
+        <small>Workspace Source</small>
+        <strong>${ca20Escape(source)}</strong>
+        <p>Status: ${ca20Escape(data.status)} | Mode: ${ca20Escape(data.mode)}</p>
+      </div>
+
+      <div class="ca20-grid">
+        <article>
+          <small>Project</small>
+          <strong>${ca20Escape(data.workspace?.name)}</strong>
+          <p>${ca20Escape(data.workspace?.connection_status)}</p>
+        </article>
+        <article>
+          <small>Active Proposal</small>
+          <strong>${ca20Escape(data.active_proposal?.title)}</strong>
+          <p>${ca20Escape(data.active_proposal?.status)} — ${ca20Escape(data.active_proposal?.approval)}</p>
+        </article>
+        <article>
+          <small>Tests</small>
+          <strong>${ca20Escape(data.test_status?.mode)}</strong>
+          <p>${ca20Escape(data.test_status?.last_result)}</p>
+        </article>
+        <article>
+          <small>Git / Deployment</small>
+          <strong>${ca20Escape(data.git_status?.mode)}</strong>
+          <p>Deploy: ${ca20Escape(data.deployment_status?.production)} | Rollback: ${ca20Escape(data.deployment_status?.rollback)}</p>
+        </article>
+      </div>
+
+      <div class="ca20-wide-card">
+        <small>Project Tree Preview</small>
+        <ul class="ca20-project-tree">${ca20Tree(data.project_tree)}</ul>
+      </div>
+
+      <div class="ca20-wide-card">
+        <small>Active Modules</small>
+        <ul class="ca20-pill-list">${ca20List(data.active_modules)}</ul>
+      </div>
+
+      <div class="ca20-wide-card">
+        <small>Safety Boundary</small>
+        <strong>No real project access yet.</strong>
+        <ul class="ca20-safety-list">
+          <li>Real local folder access: ${data.safety?.real_local_folder_access ? "enabled" : "blocked"}</li>
+          <li>GitHub token: ${data.safety?.github_token ? "present" : "blocked"}</li>
+          <li>File writes: ${data.safety?.file_write ? "enabled" : "blocked"}</li>
+          <li>Terminal: ${data.safety?.terminal ? "enabled" : "blocked"}</li>
+          <li>Git commands: ${data.safety?.git_commands ? "enabled" : "blocked"}</li>
+          <li>Deployment: ${data.safety?.deployment ? "enabled" : "blocked"}</li>
+          <li>Secrets access: ${data.safety?.secrets ? "enabled" : "blocked"}</li>
+        </ul>
+      </div>
+    </section>
+  `;
+
+  const ca20EnsureLauncher = () => {
+    if (document.getElementById("ca20-connected-workspace-section")) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.id = "ca20-connected-workspace-section";
+    section.className = "ca20-connected-workspace-section";
+    section.innerHTML = `
+      <div class="ca20-kicker">CA-20 Connected Project Workspace</div>
+      <h2>Connected Project Workspace</h2>
+      <p>Open a single safe workspace view for project tree, active proposal, tests, Git preview, deployment status, and Founder/Admin permissions.</p>
+      <button class="ca20-open-button" type="button" data-ca20-open-workspace>
+        Open Connected Workspace
+      </button>
+      <div id="ca20-connected-workspace-output"></div>
+    `;
+
+    const container =
+      document.querySelector("main") ||
+      document.querySelector(".coding-agent-page") ||
+      document.querySelector(".coding-agent-shell") ||
+      document.body;
+
+    container.appendChild(section);
+  };
+
+  const ca20OpenWorkspace = async () => {
+    ca20EnsureLauncher();
+
+    const output = document.getElementById("ca20-connected-workspace-output");
+    if (!output) {
+      return;
+    }
+
+    output.innerHTML = `
+      <div class="ca20-source-card">
+        <small>Status Banner</small>
+        <strong>Opening Connected Project Workspace.</strong>
+        <p>No real folder access, GitHub token, file write, terminal, Git, deployment, or secrets access will be used.</p>
+      </div>
+    `;
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Connected Project Workspace is opening. No real project access is used.");
+      }
+    } catch (error) {}
+
+    const { data, source } = await ca20FetchWorkspace();
+    output.innerHTML = ca20RenderWorkspace(data, source);
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Connected Project Workspace is now open. Demo workspace only; real access remains locked.");
+      }
+    } catch (error) {}
+
+    document.getElementById("ca20-connected-workspace-panel")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  document.addEventListener("click", async (event) => {
+    const launcher = event.target.closest("[data-ca20-open-workspace]");
+    if (launcher) {
+      event.preventDefault();
+      await ca20OpenWorkspace();
+      return;
+    }
+
+    const targetText = event.target?.textContent || "";
+    const moduleButton = event.target.closest("button, a, .reader-action-button, .ca-module-pill, .module-pill");
+    if (moduleButton && targetText.includes("Connected Project Workspace")) {
+      event.preventDefault();
+      await ca20OpenWorkspace();
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ca20EnsureLauncher);
+  } else {
+    ca20EnsureLauncher();
+  }
+})();
+
