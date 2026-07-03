@@ -362,7 +362,7 @@ const FILE_TREE = [
 ];
 
 const CONNECTION_MESSAGES = {
-  local: "Local project access is coming later. CA-11 remains preview-only and does not read your computer.",
+  local: "Local project access is coming later. CA-12 remains preview-only and does not read your computer.",
   github: "GitHub repository connection is coming in CA-09. Current preview does not access GitHub.",
   zip: "ZIP upload analysis is coming later. Current preview does not upload files.",
 };
@@ -403,10 +403,68 @@ const MODULE_SUBTITLES = {
   "deployment-manager": "Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.",
 };
 
+const CODE_PERMISSION_CAPABILITIES = {
+  canPreviewCode: true,
+  canCopyCode: false,
+  canEditCode: false,
+  canApplyDiff: false,
+  canExportPatch: false,
+  canCommit: false,
+  canPush: false,
+  canDeploy: false,
+  canRollback: false,
+};
+
+const CODE_PERMISSION_ROLES = {
+  viewer: {
+    key: "viewer",
+    label: "Viewer",
+    accessLabel: "Protected User Mode",
+    verified: false,
+    capabilities: { ...CODE_PERMISSION_CAPABILITIES },
+  },
+  user: {
+    key: "user",
+    label: "User",
+    accessLabel: "Protected User Mode",
+    verified: false,
+    capabilities: { ...CODE_PERMISSION_CAPABILITIES },
+  },
+  founder: {
+    key: "founder",
+    label: "Founder",
+    accessLabel: "Founder/Admin Verification Required",
+    verified: false,
+    capabilities: { ...CODE_PERMISSION_CAPABILITIES },
+    futureCapabilities: [
+      "Copy protected code after backend verification",
+      "Edit protected code after backend verification",
+      "Apply diffs after backend verification",
+      "Export patches after backend verification",
+      "Run Git and deployment actions after backend verification",
+    ],
+  },
+  admin: {
+    key: "admin",
+    label: "Admin",
+    accessLabel: "Founder/Admin Verification Required",
+    verified: false,
+    capabilities: { ...CODE_PERMISSION_CAPABILITIES },
+    futureCapabilities: [
+      "Copy protected code after backend verification",
+      "Edit protected code after backend verification",
+      "Apply diffs after backend verification",
+      "Export patches after backend verification",
+      "Run Git and deployment actions after backend verification",
+    ],
+  },
+};
+
 const state = {
   screen: "connect",
   selectedConnection: null,
   activeModule: null,
+  permissionRole: "user",
   codeProposalGenerated: false,
   codeProposalDecision: "pending",
   codeRequest: DEFAULT_CODE_REQUEST,
@@ -459,6 +517,8 @@ const escapeHtml = (value) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
+const getCurrentPermissionProfile = () => CODE_PERMISSION_ROLES[state.permissionRole] || CODE_PERMISSION_ROLES.user;
+
 const renderProjectReaderMarkup = () => `
   <section class="screen-detail-card">
     <small>Title</small>
@@ -485,7 +545,7 @@ const renderProjectReaderMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Safety</small>
     <strong>Read-only preview only</strong>
-    <p>No file edits, terminal commands from the app, Git writes, deployment actions, or secrets access are available in CA-11.</p>
+    <p>No file edits, terminal commands from the app, Git writes, deployment actions, or secrets access are available in CA-12.</p>
   </section>
 `;
 
@@ -672,7 +732,7 @@ const getCodeProposalFeedback = () => {
     return "Code proposal rejected. No code was applied.";
   }
   if (state.codeProposalDecision === "founder-review") {
-    return "Proposal saved for Founder/Admin review. No code was applied.";
+    return "Founder/Admin review requested. No code was copied, edited, applied, exported, committed, pushed, or deployed.";
   }
   return "Protected code proposal generated. Founder/Admin approval is required before any future code permission step.";
 };
@@ -692,6 +752,110 @@ const getCodeProposalBadge = () => {
   }
   return "Preview ready";
 };
+
+const renderPermissionList = (items) =>
+  items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
+
+const renderPermissionStatusCard = () => {
+  const profile = getCurrentPermissionProfile();
+  return `
+    <section class="screen-detail-card">
+      <small>Permission Status</small>
+      <strong>Current Access: ${escapeHtml(profile.accessLabel)}</strong>
+      <p>Role: ${escapeHtml(profile.label)}. Founder/Admin verification is required before protected code actions can be unlocked.</p>
+      <div class="permission-card-grid">
+        <div class="permission-subcard">
+          <span class="diff-file-label">Allowed</span>
+          <ul class="screen-detail-list">
+            ${renderPermissionList([
+              "View protected code proposal",
+              "Request revision",
+              "Reject proposal",
+              "Send for Founder/Admin review",
+            ])}
+          </ul>
+        </div>
+        <div class="permission-subcard permission-subcard--locked">
+          <span class="diff-file-label">Locked</span>
+          <ul class="screen-detail-list">
+            ${renderPermissionList([
+              "Copy raw code",
+              "Edit code",
+              "Apply generated code",
+              "Export patch",
+              "Commit",
+              "Push",
+              "Deploy",
+            ])}
+          </ul>
+        </div>
+      </div>
+      <p class="permission-footnote">Browser no-copy styling is not absolute security, but product action controls remain protected in CA-12.</p>
+    </section>
+  `;
+};
+
+const renderVerificationPlaceholderCard = () => `
+  <section class="screen-detail-card">
+    <small>Founder/Admin Verification</small>
+    <strong>Status: Not connected in CA-12</strong>
+    <p>Real Founder/Admin access will be enforced through backend authentication and server-side permission checks in a future phase.</p>
+    <button class="reader-action-button" type="button" data-ca-action="request-founder-review">Request Founder/Admin Review</button>
+  </section>
+`;
+
+const renderFounderAdminControlsCard = () => `
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Founder/Admin Controls</small>
+    <strong>Status: Locked until verified</strong>
+    <div class="locked-control-grid">
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Code - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Edit Code - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Diff - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Export Patch - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Push - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Rollback - Locked</button>
+    </div>
+    <p class="approval-gate-note">Only Founder/Admin can unlock these actions after backend permission verification.</p>
+  </section>
+`;
+
+const renderPermissionAuditCard = () => `
+  <section class="screen-detail-card">
+    <small>Permission Audit Preview</small>
+    <strong>Status: Preview only</strong>
+    <ul class="screen-detail-list">
+      ${renderPermissionList([
+        "Code proposal generated - allowed",
+        "Raw code copy - blocked",
+        "Apply generated code - blocked",
+        "Export patch - blocked",
+        "Git action - blocked",
+        "Deployment action - blocked",
+      ])}
+    </ul>
+    <p>Server-side audit will be added later.</p>
+  </section>
+`;
+
+const renderBackendEnforcementCard = () => `
+  <section class="screen-detail-card">
+    <small>Backend Enforcement Required</small>
+    <strong>Future CA phase</strong>
+    <ul class="screen-detail-list">
+      ${renderPermissionList([
+        "authenticated Founder/Admin identity",
+        "server-side permission checks",
+        "protected code retrieval",
+        "apply/export/Git/deploy authorization",
+        "audit logs",
+        "rollback records",
+      ])}
+    </ul>
+  </section>
+`;
 
 const renderProtectedCodePreviewCards = () =>
   DEMO_PROTECTED_CODE_FILES.map(
@@ -781,10 +945,12 @@ const renderCodeGenerationMarkup = (view = "generation") => `
             ${DEMO_CODE_SUMMARY_ITEMS.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
           </ul>
         </section>
+        ${renderPermissionStatusCard()}
+        ${renderVerificationPlaceholderCard()}
         <section class="screen-detail-card screen-detail-card--wide">
           <small>Protected Code Preview</small>
           <strong>Protected read-only preview</strong>
-          <p>Normal users can review protected code previews only. Founder/Admin approval is required to copy, edit, apply, export, commit, push, or deploy.</p>
+          <p>Normal users can review protected code previews only. Copy, edit, apply, export, commit, push, deploy, and rollback actions stay locked until backend verification exists.</p>
           <div class="protected-preview-grid">
             ${renderProtectedCodePreviewCards()}
           </div>
@@ -797,18 +963,7 @@ const renderCodeGenerationMarkup = (view = "generation") => `
             ${renderDiffFileCards()}
           </div>
         </section>
-        <section class="screen-detail-card">
-          <small>Founder/Admin Controls</small>
-          <strong>Locked controls</strong>
-          <div class="locked-control-grid">
-            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Code - Locked until CA-12</button>
-            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Edit Code - Locked until CA-12</button>
-            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Diff - Locked until CA-12</button>
-            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Export Files - Locked until CA-12</button>
-            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit - Locked</button>
-            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy - Locked</button>
-          </div>
-        </section>
+        ${renderFounderAdminControlsCard()}
         <section class="screen-detail-card">
           <small>Risk Summary</small>
           <strong>Low - frontend interaction fix preview</strong>
@@ -827,12 +982,18 @@ const renderCodeGenerationMarkup = (view = "generation") => `
           <div class="approval-gate-actions">
             <button class="reader-action-button" type="button" data-ca-action="request-code-revision">Request Revision</button>
             <button class="reader-action-button" type="button" data-ca-action="reject-code-proposal">Reject Proposal</button>
-            <button class="reader-action-button" type="button" data-ca-action="approve-founder-review">Approve for Founder Review</button>
+            <button class="reader-action-button" type="button" data-ca-action="request-founder-review">Request Founder/Admin Review</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Generated Code - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Raw Code - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Edit Code - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Export Patch - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Push - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy - Locked</button>
           </div>
         </section>
+        ${renderPermissionAuditCard()}
+        ${renderBackendEnforcementCard()}
         <section class="screen-detail-card screen-detail-card--wide">
           <small>Validation Plan</small>
           <strong>Required before any future apply phase</strong>
@@ -1499,7 +1660,7 @@ const renderWorkspaceCards = () => {
   }
   if (workspaceCopyNodes.activeTasks) {
     workspaceCopyNodes.activeTasks.textContent = demoConnected
-      ? "No active tasks. CA-11 unlocks protected preview modules only, with no execution or edit actions."
+      ? "No active tasks. CA-12 unlocks protected preview modules only, with no execution or edit actions."
       : "Queued builds, patch jobs, and execution history will surface in this panel.";
   }
 
@@ -1962,8 +2123,9 @@ const handleAction = async (action) => {
       renderScreenState();
       break;
     case "approve-founder-review":
+    case "request-founder-review":
       state.codeProposalDecision = "founder-review";
-      setStatusMessage("Proposal saved for Founder/Admin review. No code was applied.");
+      setStatusMessage("Founder/Admin review requested. No code was copied, edited, applied, exported, committed, pushed, or deployed.");
       renderScreenState();
       break;
     case "mark-test-plan-later":
@@ -2027,7 +2189,7 @@ const handleAction = async (action) => {
       renderScreenState();
       break;
     case "locked-founder-action":
-      setStatusMessage("This action is locked until Founder/Admin permission system is enabled in CA-12.");
+      setStatusMessage("This action is locked for your current role. Founder/Admin verification is required.");
       renderScreenState();
       break;
     default:

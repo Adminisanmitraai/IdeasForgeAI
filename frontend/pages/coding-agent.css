@@ -746,7 +746,8 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .protected-preview-card,
 .protected-preview-card__header,
 .locked-control-grid,
-.protected-preview-grid {
+.protected-preview-grid,
+.permission-card-grid {
   display: grid;
   gap: 12px;
 }
@@ -843,6 +844,34 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 
 .locked-control-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.permission-card-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.permission-subcard {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(216, 199, 255, .14);
+  border-radius: 20px;
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.permission-subcard--locked {
+  border-color: rgba(245, 158, 11, .2);
+  background:
+    linear-gradient(135deg, rgba(120,53,15,.14), rgba(56,189,248,.06)),
+    rgba(255,255,255,.04);
+}
+
+.permission-footnote {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
 }
 
 .locked-control-grid .reader-action-button {
@@ -1891,7 +1920,8 @@ a:focus-visible {
   .file-type-grid,
   .code-editor-preview__results,
   .risk-validation-grid,
-  .locked-control-grid {
+  .locked-control-grid,
+  .permission-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -1991,7 +2021,8 @@ a:focus-visible {
   .architecture-flow,
   .safety-card-list,
   .risk-validation-grid,
-  .locked-control-grid {
+  .locked-control-grid,
+  .permission-card-grid {
     grid-template-columns: 1fr;
   }
 
