@@ -1947,6 +1947,47 @@ class ArchitectureAnalyzerRequest(BaseModel):
     search_results: List[ArchitectureAnalyzerSearchResult] = Field(default_factory=list, max_length=500)
 
 
+class TaskPlannerLayerEntry(BaseModel):
+    name: str = Field(min_length=1, max_length=100)
+    description: Optional[str] = None
+    entry_count: Optional[int] = None
+    sample_paths: List[str] = Field(default_factory=list)
+
+
+class TaskPlannerEntrypoints(BaseModel):
+    frontend: List[str] = Field(default_factory=list)
+    backend: List[str] = Field(default_factory=list)
+    api: List[str] = Field(default_factory=list)
+
+
+class TaskPlannerRiskFlag(BaseModel):
+    flag: str = Field(min_length=1, max_length=120)
+    reason: str = Field(min_length=1, max_length=500)
+    evidence: List[str] = Field(default_factory=list)
+
+
+class TaskPlannerArchitectureInput(BaseModel):
+    detected_stack: List[str] = Field(default_factory=list)
+    architecture_layers: List[TaskPlannerLayerEntry] = Field(default_factory=list)
+    entrypoints: TaskPlannerEntrypoints = Field(default_factory=TaskPlannerEntrypoints)
+    frontend_structure: Dict[str, Any] = Field(default_factory=dict)
+    backend_structure: Dict[str, Any] = Field(default_factory=dict)
+    api_surface_guess: List[str] = Field(default_factory=list)
+    data_config_files: List[str] = Field(default_factory=list)
+    test_quality_files: List[str] = Field(default_factory=list)
+    docs_and_prompts: Dict[str, Any] = Field(default_factory=dict)
+    risk_flags: List[TaskPlannerRiskFlag] = Field(default_factory=list)
+
+
+class TaskPlannerRequest(BaseModel):
+    project_id: str = Field(min_length=1, max_length=200)
+    user_request: str = Field(min_length=1, max_length=500)
+    repository_metadata: ProjectIndexerRepositoryMetadata
+    architecture: TaskPlannerArchitectureInput
+    indexed_entries: List[ArchitectureAnalyzerIndexedEntry] = Field(default_factory=list, max_length=5000)
+    search_results: List[ArchitectureAnalyzerSearchResult] = Field(default_factory=list, max_length=500)
+
+
 def _ca25_parse_public_github_repo(repo_url: str) -> Dict[str, str]:
     import re as _re
 
@@ -2518,6 +2559,186 @@ def _ca27_build_architecture_analysis(request: ArchitectureAnalyzerRequest) -> D
     }
 
 
+def _ca28_collect_candidate_files(request: TaskPlannerRequest) -> List[str]:
+    candidates: List[str] = []
+    for path in request.architecture.entrypoints.frontend[:3]:
+        candidates.append(path)
+    for path in request.architecture.entrypoints.backend[:3]:
+        candidates.append(path)
+    for result in request.search_results[:6]:
+        candidates.append(result.path)
+    for entry in request.indexed_entries[:8]:
+        if entry.area in {"frontend", "backend", "api", "pages", "scripts", "tests", "config"}:
+            candidates.append(entry.path)
+    return _ca27_unique_preserve(candidates)[:12]
+
+
+def _ca28_priority_focus(request: TaskPlannerRequest) -> List[str]:
+    focus: List[str] = []
+    stack = {item.lower() for item in request.architecture.detected_stack}
+    if any("frontend" in item for item in stack):
+        focus.append("Review frontend entrypoints and visible UI flow first.")
+    if any("python backend" in item for item in stack):
+        focus.append("Review backend entrypoints, API routes, and validation boundaries.")
+    if request.architecture.api_surface_guess:
+        focus.append("Check API surface guesses before planning code changes.")
+    if request.architecture.risk_flags:
+        focus.append("Address architecture risk flags before proposing implementation work.")
+    if request.architecture.test_quality_files:
+        focus.append("Keep existing test-quality files in the validation loop.")
+    else:
+        focus.append("Plan explicit validation because metadata suggests limited test coverage.")
+    return focus[:5]
+
+
+def _ca28_request_summary(user_request: str) -> str:
+    normalized = " ".join((user_request or "").strip().split())
+    if len(normalized) <= 140:
+        return normalized
+    return f"{normalized[:137]}..."
+
+
+def _ca28_interpreted_goal(request: TaskPlannerRequest) -> str:
+    stack = request.architecture.detected_stack
+    stack_hint = stack[0] if stack else "project structure"
+    return (
+        f"Plan a safe implementation path for '{request.user_request.strip()}' using {stack_hint} metadata, "
+        "without reading file contents or generating raw code changes."
+    )
+
+
+def _ca28_affected_areas(request: TaskPlannerRequest) -> List[str]:
+    areas = [entry.area for entry in request.indexed_entries if entry.area]
+    for result in request.search_results:
+        if result.area:
+            areas.append(result.area)
+    layer_area_map = {
+        "frontend": "frontend",
+        "backend": "backend",
+        "api": "api",
+        "scripts": "scripts",
+        "docs-prompts": "docs",
+        "config": "config",
+    }
+    for layer in request.architecture.architecture_layers:
+        mapped = layer_area_map.get(layer.name)
+        if mapped:
+            areas.append(mapped)
+    return _ca27_unique_preserve(areas)[:8]
+
+
+def _ca28_risk_level(request: TaskPlannerRequest) -> str:
+    risk_count = len(request.architecture.risk_flags)
+    if risk_count >= 3:
+        return "High"
+    if risk_count >= 1:
+        return "Medium"
+    return "Low"
+
+
+def _ca28_risk_reasons(request: TaskPlannerRequest) -> List[str]:
+    if request.architecture.risk_flags:
+        return [risk.reason for risk in request.architecture.risk_flags][:6]
+    return [
+        "Planning is metadata-only and no protected code, file-write, terminal, Git, or deployment actions are enabled.",
+    ]
+
+
+def _ca28_build_task_plan(request: TaskPlannerRequest) -> Dict[str, Any]:
+    candidate_files = _ca28_collect_candidate_files(request)
+    layer_names = [layer.name for layer in request.architecture.architecture_layers]
+    risk_labels = [risk.flag for risk in request.architecture.risk_flags]
+    focus_points = _ca28_priority_focus(request)
+    request_summary = _ca28_request_summary(request.user_request)
+    interpreted_goal = _ca28_interpreted_goal(request)
+    affected_areas = _ca28_affected_areas(request)
+    risk_level = _ca28_risk_level(request)
+    risk_reasons = _ca28_risk_reasons(request)
+
+    implementation_steps = [
+        {
+            "step": 1,
+            "title": "Confirm project context and target goal",
+            "description": "Use repository metadata, detected stack, and the requested goal to scope the work deterministically.",
+            "evidence": [request.repository_metadata.full_name or request.project_id, request_summary],
+        },
+        {
+            "step": 2,
+            "title": "Review architecture layers and entrypoints",
+            "description": "Inspect metadata-only architecture layers and entrypoints before choosing affected areas.",
+            "evidence": layer_names[:6] + request.architecture.entrypoints.frontend[:2] + request.architecture.entrypoints.backend[:2],
+        },
+        {
+            "step": 3,
+            "title": "Select candidate files and project areas",
+            "description": "Narrow the planned change scope to candidate files from indexed entries and search results only.",
+            "evidence": candidate_files[:8],
+        },
+        {
+            "step": 4,
+            "title": "Define implementation and validation sequence",
+            "description": "Map planned change order, review risks, and choose deterministic validation commands before any protected edit/apply flow.",
+            "evidence": [
+                "python -m py_compile backend/main.py",
+                "node --check frontend/pages/coding-agent.js",
+                "node --check frontend/pages/studio-v4.js",
+                "python backend/sector_qa_runner.py",
+            ],
+        },
+    ]
+
+    validation_plan = [
+        "python -m py_compile backend/main.py",
+        "node --check frontend/pages/coding-agent.js",
+        "node --check frontend/pages/studio-v4.js",
+        "python backend/sector_qa_runner.py",
+    ]
+
+    return {
+        "ok": True,
+        "status": "task-planner-ready",
+        "mode": "task-planner",
+        "feature": "RealTaskPlanner",
+        "project_id": request.project_id.strip(),
+        "request_summary": request_summary,
+        "interpreted_goal": interpreted_goal,
+        "affected_areas": affected_areas,
+        "likely_files": candidate_files,
+        "implementation_steps": implementation_steps,
+        "validation_plan": validation_plan,
+        "risk_level": risk_level,
+        "risk_reasons": risk_reasons,
+        "approval_gate": {
+            "normal_user": "preview-only",
+            "founder_admin_required": True,
+            "protected_apply_flow_unlocked": False,
+        },
+        "blocked_actions": [
+            "Read file contents",
+            "Generate raw code changes",
+            "Apply diffs",
+            "Run tests",
+            "Write files",
+            "Run terminal commands",
+            "Run Git commands",
+            "Deploy or rollback",
+        ],
+        "planning_summary": {
+            "detected_stack": request.architecture.detected_stack,
+            "architecture_layers": layer_names,
+            "candidate_files": candidate_files,
+            "risk_flags": risk_labels,
+            "focus_points": focus_points,
+        },
+        "recommended_next_phase": {
+            "phase": "CA-29",
+            "title": "Real Code Proposal from Selected Files",
+        },
+        "safety": _ca26_safety_flags(),
+        **_ca26_safety_flags(),
+    }
+
+
 @app.get("/api/coding-agent/github-public-reader/health")
 def coding_agent_github_public_reader_health():
     return {
@@ -2663,6 +2884,23 @@ def coding_agent_architecture_analyzer_health():
 @app.post("/api/coding-agent/architecture-analyzer/analyze")
 def coding_agent_architecture_analyzer_analyze(request: ArchitectureAnalyzerRequest):
     return _ca27_build_architecture_analysis(request)
+
+
+@app.get("/api/coding-agent/task-planner/health")
+def coding_agent_task_planner_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-task-planner",
+        "mode": "task-planner",
+        "planning": "deterministic-project-context-only",
+        "recommended_next_phase": "CA-29",
+        **_ca26_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/task-planner/plan")
+def coding_agent_task_planner_plan(request: TaskPlannerRequest):
+    return _ca28_build_task_plan(request)
 
 
 
