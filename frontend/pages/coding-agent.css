@@ -3659,4 +3659,253 @@ button.ca22-open-button,
   }
 }
 
+/* Phase CA-23 - Read-Only File Viewer Preview */
+.ca23-file-viewer-section {
+  width: min(calc(100% - 28px), 1120px);
+  margin: 32px auto;
+  color: #fff;
+}
+
+.ca23-shell-card,
+.ca23-viewer-panel {
+  border: 1px solid rgba(56, 189, 248, .34);
+  border-radius: 34px;
+  padding: clamp(26px, 6vw, 46px);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, .18), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(139, 92, 246, .20), transparent 36%),
+    linear-gradient(135deg, rgba(15, 23, 42, .96), rgba(8, 10, 22, .98));
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .36);
+}
+
+.ca23-viewer-panel {
+  margin-top: 24px;
+  scroll-margin-top: 190px;
+}
+
+.ca23-kicker {
+  display: inline-flex;
+  border: 1px solid rgba(196, 181, 253, .34);
+  border-radius: 999px;
+  padding: 10px 16px;
+  color: #d8b4fe;
+  background: rgba(255,255,255,.045);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.ca23-shell-card h2,
+.ca23-viewer-panel h2 {
+  margin: 18px 0 14px;
+  color: #fff;
+  font-size: clamp(38px, 8vw, 66px);
+  line-height: .98;
+  letter-spacing: -.055em;
+}
+
+.ca23-shell-card p,
+.ca23-viewer-panel p {
+  max-width: 940px;
+  color: rgba(255,255,255,.72);
+  font-size: clamp(18px, 4vw, 23px);
+  line-height: 1.55;
+}
+
+button.ca23-open-button,
+.ca23-open-button {
+  appearance: none;
+  -webkit-appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: min(100%, 560px);
+  min-height: 64px;
+  margin-top: 22px;
+  border: 0;
+  border-radius: 999px;
+  padding: 18px 24px;
+  color: #fff;
+  background: linear-gradient(135deg, #8b5cf6, #38bdf8);
+  font-size: clamp(18px, 4vw, 22px);
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 18px 50px rgba(56, 189, 248, .24);
+}
+
+.ca23-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.ca23-card,
+.ca23-status-grid article {
+  border: 1px solid rgba(196, 181, 253, .20);
+  border-radius: 24px;
+  padding: 20px;
+  background: rgba(3, 7, 18, .50);
+  margin-top: 16px;
+}
+
+.ca23-card small,
+.ca23-status-grid small {
+  display: block;
+  color: #d8b4fe;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .14em;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.ca23-card strong,
+.ca23-status-grid strong {
+  display: block;
+  color: #fff;
+  font-size: 21px;
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.ca23-file-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.ca23-file-button {
+  appearance: none;
+  -webkit-appearance: none;
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 18px;
+  padding: 14px 16px;
+  color: rgba(255,255,255,.9);
+  background: rgba(15, 23, 42, .62);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ca23-file-button.is-active {
+  border-color: rgba(56, 189, 248, .50);
+  background: rgba(14, 116, 144, .20);
+}
+
+.ca23-file-button span {
+  font-weight: 900;
+  word-break: break-word;
+}
+
+.ca23-file-button small {
+  margin: 0;
+  color: #bae6fd;
+  letter-spacing: .03em;
+  text-transform: none;
+}
+
+.ca23-code-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.ca23-code-toolbar span {
+  border: 1px solid rgba(56,189,248,.28);
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #bae6fd;
+  background: rgba(14,116,144,.18);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+
+.ca23-code-window {
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 22px;
+  padding: 14px 0;
+  background: rgba(2, 6, 23, .86);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.ca23-code-line {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: 10px;
+  padding: 7px 14px;
+  color: rgba(226,232,240,.92);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ca23-code-line span {
+  color: rgba(148,163,184,.75);
+  text-align: right;
+}
+
+.ca23-code-line code {
+  white-space: pre;
+  color: rgba(226,232,240,.96);
+}
+
+.ca23-card ul,
+.ca23-card ol {
+  display: grid;
+  gap: 10px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ca23-card li {
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  padding: 12px 14px;
+  color: rgba(255,255,255,.82);
+  background: rgba(15,23,42,.58);
+}
+
+.ca23-safety-card {
+  border-color: rgba(34, 211, 238, .30);
+}
+
+@media (max-width: 640px) {
+  .ca23-file-viewer-section {
+    width: calc(100% - 28px);
+    margin: 26px auto;
+  }
+
+  .ca23-shell-card,
+  .ca23-viewer-panel {
+    border-radius: 30px;
+    padding: 26px 20px;
+  }
+
+  .ca23-status-grid {
+    grid-template-columns: 1fr;
+  }
+
+  button.ca23-open-button,
+  .ca23-open-button {
+    width: 100%;
+  }
+
+  .ca23-code-line {
+    grid-template-columns: 38px minmax(0, 1fr);
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+}
+
 
