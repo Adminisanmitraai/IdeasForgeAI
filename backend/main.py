@@ -1,11 +1,11 @@
 import json
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from backend.agents.deployment_readiness_agent import DeploymentReadinessAgent
 from backend.agents.git_versioning_agent import GitVersioningAgent
@@ -220,6 +220,193 @@ class DesignSystemRequest(BaseModel):
 class RoadmapRequest(BaseModel):
     app_name: Optional[str] = "KisanMitraLite"
     app_slug: Optional[str] = "kisanmitralite"
+
+
+class CodeProposalRequest(BaseModel):
+    request: str = Field(min_length=1, max_length=4000)
+    project_id: str = Field(min_length=1, max_length=200)
+    mode: Literal["protected-preview"] = "protected-preview"
+
+
+class CodeProposalDiffEntry(BaseModel):
+    file: str
+    diff: str
+
+
+class CodeProposalPreview(BaseModel):
+    label: str
+    language: str
+    content: str
+
+
+class CodeProposalRisk(BaseModel):
+    level: str
+    summary: str
+    reasons: List[str]
+
+
+class CodeProposalPermissions(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
+    normal_user: str
+    copy_allowed: bool = Field(alias="copy")
+    edit: bool
+    apply: bool
+    export: bool
+    git: bool
+    deploy: bool
+    founder_admin_required: bool
+
+
+class CodeProposalSafety(BaseModel):
+    no_file_write: bool
+    no_terminal: bool
+    no_git: bool
+    no_deploy: bool
+    no_secrets: bool
+
+
+class CodeProposalResponse(BaseModel):
+    ok: bool
+    mode: str
+    project_id: str
+    request: str
+    affected_files: List[str]
+    generated_summary: List[str]
+    protected_code_preview: CodeProposalPreview
+    unified_diff: List[CodeProposalDiffEntry]
+    risk: CodeProposalRisk
+    validation_plan: List[str]
+    permissions: CodeProposalPermissions
+    safety: CodeProposalSafety
+
+
+def build_coding_agent_code_proposal(request_text: str, project_id: str) -> CodeProposalResponse:
+    normalized_request = request_text.strip() or "Fix the Task Planner button so it opens the Task Planner Preview screen."
+    normalized_project_id = project_id.strip() or "ideasforgeai-demo"
+    affected_files = [
+        "frontend/pages/coding-agent.html",
+        "frontend/pages/coding-agent.js",
+        "frontend/pages/coding-agent.css",
+    ]
+    generated_summary = [
+        "Add data action for Task Planner",
+        "Route open-task-planner in event delegation",
+        "Render Task Planner panel",
+        "Update active module state",
+        "Update status banner",
+    ]
+    protected_content = "\n\n".join(
+        [
+            "\n".join(
+                [
+                    '// frontend/pages/coding-agent.js',
+                    'if (action === "open-task-planner") {',
+                    '  openDemoModule("task-planner");',
+                    '  setStatusMessage("Task Planner Preview is now open.");',
+                    "}",
+                ]
+            ),
+            "\n".join(
+                [
+                    "// frontend/pages/coding-agent.html",
+                    '<button class="module-chip-button" type="button" data-ca-action="open-task-planner">',
+                    "  Task Planner <small>Preview Unlocked</small>",
+                    "</button>",
+                ]
+            ),
+            "\n".join(
+                [
+                    "/* frontend/pages/coding-agent.css */",
+                    ".ca-code-preview-protected {",
+                    "  user-select: none;",
+                    "  -webkit-user-select: none;",
+                    "  overflow: auto;",
+                    "}",
+                ]
+            ),
+        ]
+    )
+    unified_diff = [
+        CodeProposalDiffEntry(
+            file="frontend/pages/coding-agent.html",
+            diff='- <button class="module-chip-button" type="button">Task Planner</button>\n+ <button class="module-chip-button" type="button" data-ca-action="open-task-planner">Task Planner <small>Preview Unlocked</small></button>',
+        ),
+        CodeProposalDiffEntry(
+            file="frontend/pages/coding-agent.js",
+            diff='+ if (action === "open-task-planner") {\n+   openDemoModule("task-planner");\n+   setStatusMessage("Task Planner Preview is now open.");\n+ }',
+        ),
+        CodeProposalDiffEntry(
+            file="frontend/pages/coding-agent.css",
+            diff="+ .ca-code-preview-protected {\n+   user-select: none;\n+   -webkit-user-select: none;\n+   overflow: auto;\n+ }",
+        ),
+    ]
+    return CodeProposalResponse(
+        ok=True,
+        mode="protected-preview",
+        project_id=normalized_project_id,
+        request=normalized_request,
+        affected_files=affected_files,
+        generated_summary=generated_summary,
+        protected_code_preview=CodeProposalPreview(
+            label="Protected Code Preview",
+            language="javascript",
+            content=protected_content,
+        ),
+        unified_diff=unified_diff,
+        risk=CodeProposalRisk(
+            level="Low",
+            summary="Frontend interaction fix preview only",
+            reasons=[
+                "Affects frontend Coding Agent files only",
+                "No backend changes",
+                "No secrets touched",
+                "No deployment settings changed",
+                "Requires validation before apply",
+            ],
+        ),
+        validation_plan=[
+            "node --check frontend/pages/coding-agent.js",
+            "node --check frontend/pages/studio-v4.js",
+            "python backend/sector_qa_runner.py",
+            "Manual mobile Safari test",
+            "Manual desktop browser test",
+        ],
+        permissions=CodeProposalPermissions(
+            normal_user="view-only",
+            copy_allowed=False,
+            edit=False,
+            apply=False,
+            export=False,
+            git=False,
+            deploy=False,
+            founder_admin_required=True,
+        ),
+        safety=CodeProposalSafety(
+            no_file_write=True,
+            no_terminal=True,
+            no_git=True,
+            no_deploy=True,
+            no_secrets=True,
+        ),
+    )
+
+
+@app.get("/api/coding-agent/code-proposal/health")
+def coding_agent_code_proposal_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-code-proposal",
+        "mode": "protected-preview",
+    }
+
+
+@app.post("/api/coding-agent/code-proposal", response_model=CodeProposalResponse)
+def coding_agent_code_proposal(request: CodeProposalRequest):
+    return build_coding_agent_code_proposal(
+        request_text=request.request,
+        project_id=request.project_id,
+    )
 
 
 @app.post("/api/generate")
