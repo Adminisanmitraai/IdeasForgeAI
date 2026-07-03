@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=1-coding-agent-placeholder-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=2-connect-project-flow-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -20,7 +20,7 @@
         <button class="topbar-square-button" type="button" aria-label="Back to Studio" data-nav-target="./studio-v4.html">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6"></path></svg>
         </button>
-        <button class="topbar-pill-button" type="button">Connect Project</button>
+        <button class="topbar-pill-button" type="button" data-connect-project-trigger>Connect Project</button>
       </div>
     </header>
 
@@ -30,8 +30,9 @@
         <h1>Coding Agent</h1>
         <p>Build, modify, test and improve software projects with AI.</p>
         <div class="hero-actions">
-          <button class="hero-primary" type="button">Connect Project</button>
-          <span class="hero-status">Workspace placeholder ready</span>
+          <button class="hero-primary" type="button" data-connect-project-trigger>Connect Project</button>
+          <span class="hero-status" data-workspace-hero-status>Workspace placeholder ready</span>
+          <span class="connected-chip" data-connected-chip hidden>Demo Project Connected</span>
         </div>
       </div>
 
@@ -67,21 +68,33 @@
     </section>
 
     <section class="coding-agent-grid" aria-label="Coding Agent modules">
-      <article class="workspace-card">
-        <strong>Project Explorer</strong>
-        <p>Repository tree, recent files, and connected workspace roots will appear here.</p>
+      <article class="workspace-card" data-workspace-card="project-explorer">
+        <div class="workspace-card__header">
+          <strong>Project Explorer</strong>
+          <span class="workspace-status-badge" data-workspace-status="project-explorer">No project connected</span>
+        </div>
+        <p data-workspace-copy="project-explorer">Repository tree, recent files, and connected workspace roots will appear here.</p>
       </article>
-      <article class="workspace-card">
-        <strong>Active Tasks</strong>
-        <p>Queued builds, patch jobs, and execution history will surface in this panel.</p>
+      <article class="workspace-card" data-workspace-card="active-tasks">
+        <div class="workspace-card__header">
+          <strong>Active Tasks</strong>
+          <span class="workspace-status-badge" data-workspace-status="active-tasks">Waiting</span>
+        </div>
+        <p data-workspace-copy="active-tasks">Queued builds, patch jobs, and execution history will surface in this panel.</p>
       </article>
-      <article class="workspace-card">
-        <strong>Test Runner</strong>
-        <p>Manual, unit, and integration test controls are reserved for the next phase.</p>
+      <article class="workspace-card" data-workspace-card="test-runner">
+        <div class="workspace-card__header">
+          <strong>Test Runner</strong>
+          <span class="workspace-status-badge" data-workspace-status="test-runner">Locked</span>
+        </div>
+        <p data-workspace-copy="test-runner">Manual, unit, and integration test controls are reserved for the next phase.</p>
       </article>
-      <article class="workspace-card">
-        <strong>GitHub Integration</strong>
-        <p>PR context, review threads, and CI visibility will connect here later.</p>
+      <article class="workspace-card" data-workspace-card="github-integration">
+        <div class="workspace-card__header">
+          <strong>GitHub Integration</strong>
+          <span class="workspace-status-badge" data-workspace-status="github-integration">Locked</span>
+        </div>
+        <p data-workspace-copy="github-integration">PR context, review threads, and CI visibility will connect here later.</p>
       </article>
     </section>
 
@@ -91,20 +104,100 @@
         <h2>Future module map</h2>
       </div>
       <div class="future-modules__chips">
-        <span>Project Reader</span>
-        <span>Architecture Analyzer</span>
-        <span>Task Planner</span>
-        <span>Code Editor</span>
-        <span>Test Runner</span>
-        <span>Auto Fix Engine</span>
-        <span>GitHub Manager</span>
-        <span>Deployment Manager</span>
-        <span>Logs</span>
-        <span>Project Memory</span>
+        <span data-module-chip>Project Reader <small>Locked</small></span>
+        <span data-module-chip>Architecture Analyzer <small>Locked</small></span>
+        <span data-module-chip>Task Planner <small>Locked</small></span>
+        <span data-module-chip>Code Editor <small>Locked</small></span>
+        <span data-module-chip>Test Runner <small>Locked</small></span>
+        <span data-module-chip>Auto Fix Engine <small>Locked</small></span>
+        <span data-module-chip>GitHub Manager <small>Locked</small></span>
+        <span data-module-chip>Deployment Manager <small>Locked</small></span>
+        <span data-module-chip>Logs <small>Locked</small></span>
+        <span data-module-chip>Project Memory <small>Locked</small></span>
       </div>
-      <button class="bottom-cta" type="button">Connect Project</button>
+      <button class="bottom-cta" type="button" data-connect-project-trigger>Connect Project</button>
     </section>
   </main>
-  <script src="./coding-agent.js?v=1-coding-agent-placeholder-20260703" defer></script>
+
+  <div class="connect-project-modal" data-connect-project-modal hidden>
+    <div class="connect-project-backdrop" data-connect-project-close></div>
+    <section class="connect-project-panel" role="dialog" aria-modal="true" aria-labelledby="connect-project-title">
+      <button class="connect-project-close" type="button" aria-label="Close Connect Project panel" data-connect-project-close>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      </button>
+
+      <div class="connect-project-heading">
+        <span class="eyebrow">Safe preview flow</span>
+        <h2 id="connect-project-title">Connect Project</h2>
+        <p>Choose how IdeasForgeAI Coding Agent will inspect your project in a future phase.</p>
+      </div>
+
+      <div class="connect-options" aria-label="Project connection options">
+        <button class="connect-option" type="button" data-connect-option="local">
+          <strong>Local Project</strong>
+          <p>Connect a local project folder from your computer.</p>
+          <span class="option-status">Coming in CA-03</span>
+        </button>
+        <button class="connect-option" type="button" data-connect-option="github">
+          <strong>GitHub Repository</strong>
+          <p>Connect a GitHub repository for reading code, planning changes, and creating pull requests.</p>
+          <span class="option-status">Coming in CA-04 / CA-09</span>
+        </button>
+        <button class="connect-option" type="button" data-connect-option="zip">
+          <strong>Upload ZIP</strong>
+          <p>Upload a project ZIP for safe analysis.</p>
+          <span class="option-status">Coming later</span>
+        </button>
+        <button class="connect-option connect-option--demo" type="button" data-connect-option="demo" aria-describedby="demo-project-preview-note">
+          <strong>Demo Project</strong>
+          <p>Explore the Coding Agent workflow using a safe sample project.</p>
+          <span class="option-status">Available as preview only</span>
+        </button>
+      </div>
+
+      <section class="demo-project-preview" data-demo-preview aria-live="polite">
+        <div class="demo-project-preview__header">
+          <div>
+            <span class="eyebrow">Preview-only connection</span>
+            <h3>Project Overview Preview</h3>
+          </div>
+          <span class="project-overview-badge">Unlocked</span>
+        </div>
+        <div class="demo-summary-card">
+          <div class="demo-summary-card__meta">
+            <span>Project</span>
+            <strong>IdeasForgeAI Demo Project</strong>
+          </div>
+          <div class="demo-summary-card__meta">
+            <span>Stack</span>
+            <strong>Frontend, Backend, QA, Deployment</strong>
+          </div>
+        </div>
+        <div class="preview-module-list">
+          <span>Project Overview Preview <small>Unlocked</small></span>
+          <span>Project Reader <small>Locked / Coming Soon</small></span>
+          <span>Architecture Analyzer <small>Locked / Coming Soon</small></span>
+          <span>Task Planner <small>Locked / Coming Soon</small></span>
+          <span>Test Runner <small>Locked / Coming Soon</small></span>
+          <span>GitHub Manager <small>Locked / Coming Soon</small></span>
+          <span>Deployment Manager <small>Locked / Coming Soon</small></span>
+        </div>
+        <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to preview the safe connection state. Real project access is not enabled in CA-02.</p>
+        <button class="demo-select-button" type="button" data-demo-select>Select Demo Project</button>
+      </section>
+
+      <section class="safety-notice" aria-label="Safety notice">
+        <strong>Coding Agent will not read, edit, commit, push, deploy, or access secrets without your approval.</strong>
+        <ul>
+          <li>No file edits in CA-02</li>
+          <li>No terminal execution in CA-02</li>
+          <li>No GitHub writes in CA-02</li>
+          <li>No deployment actions in CA-02</li>
+        </ul>
+      </section>
+    </section>
+  </div>
+
+  <script src="./coding-agent.js?v=2-connect-project-flow-20260703" defer></script>
 </body>
 </html>
