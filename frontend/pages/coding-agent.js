@@ -40,11 +40,15 @@ const COPY_BLOCKED_MESSAGE = "Copy is locked for normal users. Founder/Admin per
 const CODE_PROPOSAL_PATH = "/api/coding-agent/code-proposal";
 const APPLY_DIFF_PATH = "/api/coding-agent/apply-diff";
 const RUN_TESTS_PATH = "/api/coding-agent/run-tests";
+const AUTO_FIX_ANALYZE_PATH = "/api/coding-agent/auto-fix/analyze";
+const AUTO_FIX_PLAN_PATH = "/api/coding-agent/auto-fix/plan";
 const CODE_PROPOSAL_FALLBACK_SOURCE = "Local Protected Fallback";
 const CODE_PROPOSAL_BACKEND_SOURCE = "Backend Protected API";
 const APPLY_DIFF_FALLBACK_SOURCE = "Local Apply Review Preview";
 const APPLY_DIFF_BACKEND_SOURCE = "Backend Apply Review API";
 const TEST_RUNNER_BACKEND_SOURCE = "Backend Allowlisted Runner";
+const AUTO_FIX_BACKEND_SOURCE = "Backend Auto Fix Preview API";
+const AUTO_FIX_FALLBACK_SOURCE = "Local Auto Fix Preview";
 const TEST_RUNNER_LOCKED_SOURCE = "Locked preview mode";
 const TEST_RUNNER_FALLBACK_SOURCE = "Local fallback preview";
 const APPROVED_TEST_IDS = [
@@ -453,7 +457,7 @@ const MODULE_STATUS_MESSAGES = {
   "code-generation": "Code proposal workspace is open. Generated code remains protected until Founder/Admin approval.",
   "code-diff": "Code Diff Preview is now open.",
   "test-runner": "Real Test Runner Execution is now open. Real execution is locked unless backend validation mode is enabled.",
-  "auto-fix": "Auto Fix Engine Preview is now open. No code changes will be applied.",
+  "auto-fix": "Auto Fix Loop Foundation is now open. No code changes will be applied.",
   "git-manager": "Git Manager Preview is now open. No Git commands will run.",
   "deployment-manager": "Deployment Manager Preview is now open. No deployment actions will run.",
 };
@@ -601,6 +605,11 @@ const state = {
   autoFixPlanGenerated: false,
   autoFixDecision: "pending",
   autoFixCopyFeedback: "",
+  autoFixLoading: false,
+  autoFixSource: "",
+  autoFixAnalysisData: null,
+  autoFixPlanData: null,
+  autoFixLoopStep: "idle",
   gitPlanDecision: "pending",
   gitPlanCopyFeedback: "",
   deploymentPlanGenerated: false,
@@ -1575,6 +1584,197 @@ const renderTestRunnerMarkup = () => `
     </div>
   </section>
 `;
+
+
+const getAutoFixEndpointCandidates = (path) => {
+  const endpoints = [];
+  if (API_BASE) {
+    endpoints.push(`${API_BASE}${path}`);
+  }
+  endpoints.push(path);
+  return endpoints;
+};
+
+const buildLocalAutoFixAnalysis = () => ({
+  ok: true,
+  status: "analysis-ready",
+  mode: "local-auto-fix-preview",
+  project_id: "ideasforgeai-demo",
+  proposal_id: "demo-task-planner-fix",
+  failed_check: {
+    id: "mobile-safe-area-layout",
+    label: "Mobile safe-area layout check",
+    summary: "Sticky header/status banner may overlap module content on mobile Safari.",
+    severity: "Medium",
+  },
+  root_cause: {
+    title: "Sticky overlap on mobile Safari",
+    summary: "The sticky header and status banner can sit above module content without enough scroll margin and safe-area spacing.",
+    evidence: [
+      "Mobile Safari bars reduce visible height",
+      "Sticky UI remains above scrolling content",
+      "Module cards need safer scroll offset",
+    ],
+  },
+  affected_files: [
+    "frontend/pages/coding-agent.css",
+    "frontend/pages/coding-agent.js",
+  ],
+  suggested_fix: {
+    title: "Safer scroll offsets",
+    summary: "Add safer scroll padding and scroll-margin-top to module panels.",
+  },
+  loop_steps: [
+    "Analyze failed validation",
+    "Generate safe fix plan",
+    "Show protected diff",
+    "Request Founder/Admin review",
+    "Apply only in a future approved workspace",
+    "Run allowlisted validation again",
+  ],
+  safety: {
+    real_file_write: false,
+    terminal: false,
+    git: false,
+    deploy: false,
+    secrets: false,
+  },
+});
+
+const buildLocalAutoFixPlan = () => ({
+  ...buildLocalAutoFixAnalysis(),
+  status: "fix-plan-ready",
+  fix_steps: [
+    "Add scroll-margin-top to module detail panels",
+    "Increase mobile safe-area padding around sticky banners",
+    "Keep status banner visible without covering active module title",
+    "Re-run approved validation checks after Founder/Admin approval",
+  ],
+  protected_diff: [
+    {
+      file: "frontend/pages/coding-agent.css",
+      diff: "+ .workspace-message-card { scroll-margin-top: 168px; }\n+ .screen-detail-card { scroll-margin-top: 156px; }",
+    },
+    {
+      file: "frontend/pages/coding-agent.js",
+      diff: "+ setStatusMessage('Safe fix plan generated. Static diff preview is ready and Apply Auto Fix remains locked.');",
+    },
+  ],
+  validation_plan: [
+    "node --check frontend/pages/coding-agent.js",
+    "node --check frontend/pages/studio-v4.js",
+    "python backend/sector_qa_runner.py",
+    "Manual mobile Safari scroll test",
+  ],
+  approval_gate: {
+    required: true,
+    role: "Founder/Admin",
+    message: "Apply Auto Fix remains locked until verified Founder/Admin approval and connected workspace permission exist.",
+  },
+  retry_plan: [
+    "Run allowlisted validation",
+    "If validation fails, return to Auto Fix analysis",
+    "Generate another protected plan",
+    "Do not apply without Founder/Admin approval",
+  ],
+});
+
+const postAutoFixPreview = async (path, payload) => {
+  for (const endpoint of getAutoFixEndpointCandidates(path)) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      // Keep frontend safe with local fallback.
+    }
+  }
+  return null;
+};
+
+const renderAutoFixList = (items = []) => items
+  .map((item) => `<li>${escapeHtml(String(item))}</li>`)
+  .join("");
+
+const renderAutoFixAnalysisCards = () => {
+  const analysis = state.autoFixAnalysisData;
+  if (!analysis) {
+    return "";
+  }
+  const evidence = analysis.root_cause?.evidence || [];
+  const loopSteps = analysis.loop_steps || [];
+  return `
+    <section class="screen-detail-card screen-detail-card--wide auto-fix-ca17-card">
+      <small>Failure Analysis Source</small>
+      <strong>${escapeHtml(state.autoFixSource || AUTO_FIX_FALLBACK_SOURCE)}</strong>
+      <p>Status: ${escapeHtml(analysis.status || "analysis-ready")} | Mode: ${escapeHtml(analysis.mode || "auto-fix-loop-preview")}</p>
+    </section>
+    <section class="screen-detail-card">
+      <small>Root Cause</small>
+      <strong>${escapeHtml(analysis.root_cause?.title || "Root cause identified")}</strong>
+      <p>${escapeHtml(analysis.root_cause?.summary || "")}</p>
+    </section>
+    <section class="screen-detail-card">
+      <small>Evidence</small>
+      <strong>Signals reviewed</strong>
+      <ul class="screen-detail-list">${renderAutoFixList(evidence)}</ul>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Auto Fix Loop</small>
+      <strong>Preview-only retry loop</strong>
+      <ol class="screen-detail-list">${renderAutoFixList(loopSteps)}</ol>
+    </section>
+  `;
+};
+
+const renderAutoFixPlanCards = () => {
+  const plan = state.autoFixPlanData;
+  if (!plan) {
+    return "";
+  }
+  const diffItems = plan.protected_diff || [];
+  return `
+    <section class="screen-detail-card screen-detail-card--wide auto-fix-ca17-card">
+      <small>Safe Fix Plan</small>
+      <strong>${escapeHtml(plan.suggested_fix?.title || "Safe repair plan ready")}</strong>
+      <p>${escapeHtml(plan.suggested_fix?.summary || "Apply Auto Fix remains locked.")}</p>
+      <ul class="screen-detail-list">${renderAutoFixList(plan.fix_steps || [])}</ul>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Protected Diff Preview</small>
+      <strong>Review only — no code applied</strong>
+      <div class="auto-fix-protected-diff">
+        ${diffItems.map((entry) => `
+          <article>
+            <span>${escapeHtml(entry.file || "file")}</span>
+            <pre>${escapeHtml(entry.diff || "")}</pre>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+    <section class="screen-detail-card">
+      <small>Validation Plan</small>
+      <strong>Run after approval</strong>
+      <ul class="screen-detail-list">${renderAutoFixList(plan.validation_plan || [])}</ul>
+    </section>
+    <section class="screen-detail-card">
+      <small>Approval Gate</small>
+      <strong>${escapeHtml(plan.approval_gate?.role || "Founder/Admin")} required</strong>
+      <p>${escapeHtml(plan.approval_gate?.message || "Apply Auto Fix remains locked.")}</p>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Retry Plan</small>
+      <strong>Controlled auto-fix loop</strong>
+      <ul class="screen-detail-list">${renderAutoFixList(plan.retry_plan || [])}</ul>
+    </section>
+  `;
+};
+
 
 const getAutoFixFeedback = () => {
   if (state.autoFixCopyFeedback) {
@@ -2582,22 +2782,75 @@ const copyTestPlan = async () => {
   renderScreenState();
 };
 
-const analyzeFailedCheck = () => {
-  state.autoFixAnalyzed = true;
+const analyzeFailedCheck = async () => {
+  state.autoFixLoading = true;
+  state.autoFixAnalyzed = false;
   state.autoFixDecision = "pending";
-  state.autoFixCopyFeedback = "";
-  setStatusMessage("Failed check analyzed. Root cause, suggested fix, affected files, and risk level are now visible.");
+  state.autoFixSource = "";
+  state.autoFixAnalysisData = null;
+  state.autoFixLoopStep = "analysis";
+  setStatusMessage("Analyzing failed check. No code will be changed.");
+  renderScreenState();
+
+  const payload = {
+    project_id: "ideasforgeai-demo",
+    proposal_id: "demo-task-planner-fix",
+    failed_check_id: "mobile-safe-area-layout",
+    mode: "auto-fix-loop-preview",
+  };
+
+  const analysis = await postAutoFixPreview(AUTO_FIX_ANALYZE_PATH, payload);
+  if (analysis?.ok) {
+    state.autoFixAnalysisData = analysis;
+    state.autoFixSource = AUTO_FIX_BACKEND_SOURCE;
+    setStatusMessage("Failure analysis ready from backend Auto Fix preview API. No code was changed.");
+  } else {
+    state.autoFixAnalysisData = buildLocalAutoFixAnalysis();
+    state.autoFixSource = AUTO_FIX_FALLBACK_SOURCE;
+    setStatusMessage("Backend Auto Fix API unavailable. Local failure analysis preview shown. No code was changed.");
+  }
+
+  state.autoFixAnalyzed = true;
+  state.autoFixLoading = false;
   renderScreenState();
 };
 
-const generateSafeFixPlan = () => {
-  state.autoFixAnalyzed = true;
-  state.autoFixPlanGenerated = true;
+const generateSafeFixPlan = async () => {
+  state.autoFixLoading = true;
+  state.autoFixPlanGenerated = false;
   state.autoFixDecision = "pending";
   state.autoFixCopyFeedback = "";
-  setStatusMessage("Safe fix plan generated. Static diff preview is ready and Apply Auto Fix remains locked.");
+  state.autoFixLoopStep = "plan";
+  if (!state.autoFixAnalysisData) {
+    state.autoFixAnalysisData = buildLocalAutoFixAnalysis();
+    state.autoFixAnalyzed = true;
+  }
+  setStatusMessage("Generating safe Auto Fix plan. Apply Auto Fix remains locked.");
+  renderScreenState();
+
+  const payload = {
+    project_id: "ideasforgeai-demo",
+    proposal_id: "demo-task-planner-fix",
+    failed_check_id: "mobile-safe-area-layout",
+    mode: "auto-fix-loop-preview",
+  };
+
+  const plan = await postAutoFixPreview(AUTO_FIX_PLAN_PATH, payload);
+  if (plan?.ok) {
+    state.autoFixPlanData = plan;
+    state.autoFixSource = AUTO_FIX_BACKEND_SOURCE;
+    setStatusMessage("Safe fix plan generated by backend Auto Fix preview API. Apply Auto Fix remains locked.");
+  } else {
+    state.autoFixPlanData = buildLocalAutoFixPlan();
+    state.autoFixSource = AUTO_FIX_FALLBACK_SOURCE;
+    setStatusMessage("Safe local fix plan generated. Backend Auto Fix API unavailable. Apply Auto Fix remains locked.");
+  }
+
+  state.autoFixPlanGenerated = true;
+  state.autoFixLoading = false;
   renderScreenState();
 };
+
 
 const copyFixPlan = async () => {
   try {
