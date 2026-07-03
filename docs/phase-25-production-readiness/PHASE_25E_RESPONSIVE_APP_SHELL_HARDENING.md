@@ -1,4 +1,4 @@
-# Phase 25E - Responsive App Shell Hardening
+﻿# Phase 25E - Responsive App Shell Hardening
 
 Status: Completed, not frozen
 
@@ -73,7 +73,7 @@ Confirmed:
 - No Supabase/auth/database/secrets added.
 - No upload/OCR/image analysis/pixel reading/canvas analysis added.
 - No deployment changes made.
-- No KisanMitraAI files touched.
+- No IdeasForgeAI files touched.
 
 ## Validation
 
@@ -89,7 +89,7 @@ Required validation:
   - `api_key`
   - `secret`
   - `token`
-  - `KisanMitra`
+  - `IdeasForgeAI`
 - Open local route:
   - `http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25e-responsive`
 - Check widths:
@@ -108,4 +108,5 @@ Confirmed:
 - Mobile stacked layout added.
 - Current visual design preserved.
 - No backend/provider/database/auth/secrets/deployment added.
-- KisanMitraAI not touched.
+- IdeasForgeAI not touched.
+

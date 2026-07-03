@@ -1,4 +1,4 @@
-# Phase 13B - Multi-File Contract + Manifest Upgrade
+﻿# Phase 13B - Multi-File Contract + Manifest Upgrade
 
 Status: Completed, not frozen.
 
@@ -6,7 +6,7 @@ Status: Completed, not frozen.
 
 Phase 13B upgrades the Phase 12 single/limited generation contract into a Phase 13 controlled multi-file generation contract for future app outputs.
 
-This phase is schema/contract work only. It does not write files, create folders, create generated apps, generate HTML/CSS/JS, call providers, deploy, add Supabase/auth/database writes/secrets, or touch KisanMitraAI production.
+This phase is schema/contract work only. It does not write files, create folders, create generated apps, generate HTML/CSS/JS, call providers, deploy, add Supabase/auth/database writes/secrets, or touch IdeasForgeAI production.
 
 ## Backend Schema Module
 
@@ -105,7 +105,7 @@ Blocked targets include:
 - Deployment config files
 - `.env` or secrets files
 - Database/auth/Supabase files
-- KisanMitraAI folders
+- IdeasForgeAI folders
 - Any path outside `D:/APPS/IdeasForgeAI`
 - `generated-apps/ideasforgeai-preview-v1` unless explicitly approved in a later phase
 - Phase 12 sandbox folders

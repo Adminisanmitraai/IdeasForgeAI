@@ -13183,3 +13183,4 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `backend/main.py`, `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `python -m py_compile backend/main.py`; `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: no external legacy project files touched; no deployment settings touched; no `.env` or secret values added; backend execution remains allowlisted only.
+

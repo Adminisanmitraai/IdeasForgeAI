@@ -66,7 +66,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -223,7 +223,7 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         "refresh_token",
         "deploy.yml",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_blockers = [
@@ -232,7 +232,7 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_blockers = [
@@ -252,7 +252,7 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         "secret",
         "token",
         "deploy",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     for marker in html_blockers:
@@ -267,8 +267,8 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         if marker in app_lower:
             errors.append(f"blocked marker found in source app.js: {marker}")
 
-    if "kisanmitra" in visible_lower:
-        errors.append("KisanMitra marker found in app-visible source")
+    if "IdeasForgeAI" in visible_lower:
+        errors.append("IdeasForgeAI marker found in app-visible source")
 
     if "ifai-phase17d-selected-section-patch" not in index_lower:
         errors.append("Phase 17D patch marker missing from source index.html")
@@ -366,7 +366,7 @@ def create_phase19e_controlled_candidate_folder(payload: dict[str, Any] | None =
         "auth_allowed": False,
         "real_generated_app_modified": False,
         "ideasforgeai_preview_v1_touched": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
     candidate_report = f"""# Phase 19E Candidate Report
@@ -400,7 +400,7 @@ No deployment was performed.
 No provider calls were made.
 No database writes were made.
 No secrets were used.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 Next: Phase 19F - Main Preview Candidate Route.
 """
@@ -440,3 +440,4 @@ Next: Phase 19F - Main Preview Candidate Route.
         "next_required_phase": "Phase 19F - Main Preview Candidate Route",
         **_locked_flags(),
     }
+

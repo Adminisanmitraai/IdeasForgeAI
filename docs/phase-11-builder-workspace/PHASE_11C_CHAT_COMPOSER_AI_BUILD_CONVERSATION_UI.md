@@ -1,4 +1,4 @@
-# Phase 11C - Chat Composer + AI Build Conversation UI
+﻿# Phase 11C - Chat Composer + AI Build Conversation UI
 
 Status: Completed, not frozen.
 
@@ -51,3 +51,4 @@ The Phase 11C composer is disabled and preview-only. It does not send messages, 
 ## Next step
 
 Phase 11C Freeze Review, then Phase 11D only after explicit approval.
+

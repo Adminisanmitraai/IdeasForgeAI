@@ -32,7 +32,7 @@ Confirmed:
 - Deployment remained locked.
 - Provider calls remained locked.
 - Supabase/auth/database/secrets remained locked.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 ## Approved Phase 17 Sandbox Target
 
@@ -61,10 +61,11 @@ Database writes remain locked.
 Secrets remain locked.
 Supabase and auth remain locked.
 generated-apps/ideasforgeai-preview-v1 remains untouched.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 ## Next Recommended Phase
 
 Phase 18 — Section Patch Approval + Promote Sandbox Copy Planning.
 
 Phase 18 should plan how an approved sandbox copy can later be promoted safely, with rollback, validation, and human approval gates.
+

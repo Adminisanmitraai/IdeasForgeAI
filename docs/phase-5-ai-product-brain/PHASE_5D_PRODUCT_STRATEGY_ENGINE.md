@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5D — Product Strategy Engine Specification
+## Phase 5D â€” Product Strategy Engine Specification
 
 ### Version 1.0
 
@@ -123,7 +123,7 @@ Example user groups:
 
 If the target user is unclear, the engine should ask one clear question:
 
-“Who is the primary user?”
+â€œWho is the primary user?â€
 
 ---
 
@@ -143,11 +143,11 @@ The problem should not be generic.
 
 Weak problem:
 
-“Users need an app.”
+â€œUsers need an app.â€
 
 Strong problem:
 
-“Non-technical founders struggle to turn rough ideas into clear product plans, screen maps, and build-ready specifications.”
+â€œNon-technical founders struggle to turn rough ideas into clear product plans, screen maps, and build-ready specifications.â€
 
 ---
 
@@ -165,11 +165,11 @@ It should answer:
 
 Value promise format:
 
-“This product helps [target user] achieve [result] by [method].”
+â€œThis product helps [target user] achieve [result] by [method].â€
 
 Example:
 
-“This product helps founders convert rough ideas into approved product blueprints by using an AI product team workflow before design or code starts.”
+â€œThis product helps founders convert rough ideas into approved product blueprints by using an AI product team workflow before design or code starts.â€
 
 ---
 
@@ -350,7 +350,7 @@ Only list questions that truly matter.
 
 User idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 ## Product Strategy
 
@@ -398,3 +398,4 @@ The Product Strategy Engine is successful when:
 * The system stays aligned with:
 
 **Less UI. More Intelligence.**
+

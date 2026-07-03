@@ -1,4 +1,4 @@
-# Phase 11D - Right Live Preview / Generated Output Panel
+﻿# Phase 11D - Right Live Preview / Generated Output Panel
 
 Status: Completed, not frozen.
 
@@ -44,3 +44,4 @@ The preview panel is static Studio UI only.
 ## Next Step
 
 Phase 11D Freeze Review, then Phase 11E only after explicit approval.
+

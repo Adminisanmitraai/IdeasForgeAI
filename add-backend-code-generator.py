@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
 

@@ -56,7 +56,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -175,7 +175,7 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         "refresh_token",
         "deploy.yml",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     html_runtime_safety_ok = not any(marker in index_lower for marker in html_runtime_blockers)
@@ -187,7 +187,7 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_safety_ok = not any(marker in css_lower for marker in css_blockers)
@@ -210,7 +210,7 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         "secret",
         "token",
         "deploy",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_js_safety_ok = not any(marker in app_js_lower for marker in app_js_blockers)
@@ -235,7 +235,7 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         and promotion_manifest.get("auth_allowed") is False
         and promotion_manifest.get("real_generated_app_modified") is False
         and promotion_manifest.get("ideasforgeai_preview_v1_touched") is False
-        and promotion_manifest.get("kisanmitra_production_touched") is False
+        and promotion_manifest.get("IdeasForgeAI_production_touched") is False
     )
     score_categories["promotion_manifest_score"] = _score(promotion_manifest_ok)
 
@@ -287,7 +287,7 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         promotion_manifest
         and promotion_manifest.get("real_generated_app_modified") is False
         and promotion_manifest.get("ideasforgeai_preview_v1_touched") is False
-        and promotion_manifest.get("kisanmitra_production_touched") is False
+        and promotion_manifest.get("IdeasForgeAI_production_touched") is False
     )
     score_categories["no_real_app_modification_score"] = _score(no_real_app_modification_ok)
 
@@ -297,8 +297,8 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         if (PROMOTED_TARGET / name).exists()
     ).lower()
 
-    kisanmitra_separation_ok = "kisanmitra" not in app_visible_combined
-    score_categories["kisanmitra_separation_score"] = _score(kisanmitra_separation_ok)
+    IdeasForgeAI_separation_ok = "IdeasForgeAI" not in app_visible_combined
+    score_categories["IdeasForgeAI_separation_score"] = _score(IdeasForgeAI_separation_ok)
 
     for name, value in score_categories.items():
         if value < 100:
@@ -322,3 +322,4 @@ def get_phase18g_promoted_output_validation_score(payload: dict[str, Any] | None
         "next_required_phase": "Phase 18H - Phase 18 Freeze Review",
         **_locked_flags(),
     }
+

@@ -1,10 +1,10 @@
-# IdeasForgeAI Backend File-Level Inventory
+﻿# IdeasForgeAI Backend File-Level Inventory
 
 Audit date: 2026-06-25
 
 Scope: backend source, backend architecture docs, Product Brain modules, agent system modules, core orchestration, API routes, generated app backend source folders, generated app local data files, and backend-facing deployment/ops references.
 
-Out of scope: implementation changes, refactoring, dependency installation, deployment, production KisanMitraAI changes, secrets, pycache files, virtual environments, and Phase 6 feature work.
+Out of scope: implementation changes, refactoring, dependency installation, deployment, production IdeasForgeAI changes, secrets, pycache files, virtual environments, and Phase 6 feature work.
 
 ## 1. Executive Summary
 
@@ -41,8 +41,8 @@ backend/
   product_brain/
 generated-apps/
   ideasforgeai/backend/
-  kisanmitralite/backend/
-  kisanmitralite/backend/data/
+  IdeasForgeAIProduct/backend/
+  IdeasForgeAIProduct/backend/data/
   leadflowai/backend/
   persistcrm1/backend/
   persistcrm1/backend/data/
@@ -60,7 +60,7 @@ __pycache__/
 .venv/
 node_modules/
 frontend build artifacts
-production KisanMitraAI folders
+production IdeasForgeAI folders
 ```
 
 ## 3. Backend File Inventory
@@ -106,9 +106,9 @@ Agent files:
 | `backend/agents/orchestrator_agent.py` | Creates default builder pipeline | Keep, centralize phase flags |
 | `backend/agents/deployment_readiness_agent.py` | Dry-run deployment readiness | Keep |
 | `backend/agents/git_versioning_agent.py` | Git readiness dry-run | Keep |
-| `backend/agents/kisanmitra_landing_template_agent.py` | Product-specific generated template support | Keep isolated |
-| `backend/agents/kisanmitra_lite_template.py` | KisanMitraLite generated app template | Keep isolated |
-| `backend/agents/kisanmitra_production_sync_agent.py` | Dry-run production sync agent | Keep disabled/dry-run only |
+| `backend/agents/IdeasForgeAI_landing_template_agent.py` | Product-specific generated template support | Keep isolated |
+| `backend/agents/ideasforgeai_product_template_template.py` | IdeasForgeAIProduct generated app template | Keep isolated |
+| `backend/agents/IdeasForgeAI_production_sync_agent.py` | Dry-run production sync agent | Keep disabled/dry-run only |
 | `backend/agents/__init__.py` | Agents package marker | Keep |
 
 Product Brain files:
@@ -132,7 +132,7 @@ Generated app backend files inspected:
 | Generated app | Backend files inspected | Notes |
 | --- | ---: | --- |
 | `ideasforgeai` | 0 | Backend folder exists, no source observed |
-| `kisanmitralite` | 11 | FastAPI backend plus JSON data files |
+| `IdeasForgeAIProduct` | 11 | FastAPI backend plus JSON data files |
 | `leadflowai` | 2 | FastAPI backend and requirements |
 | `persistcrm1` | 4 | FastAPI backend, requirements, run script, JSON data |
 | `runtimecrm` | 2 | FastAPI backend and requirements |
@@ -165,7 +165,7 @@ Generated app route groups:
 
 | Generated app | Route count | Route families |
 | --- | ---: | --- |
-| `kisanmitralite` | 28 | Health, stats, weather, account summary, CRUD for farmers, FPOs, buyers, farms, crops, mandi deals |
+| `IdeasForgeAIProduct` | 28 | Health, stats, weather, account summary, CRUD for farmers, FPOs, buyers, farms, crops, mandi deals |
 | `leadflowai` | 6 | Health, leads, pipeline, followups, stats |
 | `persistcrm1` | 8 | Health, lead CRUD, pipeline, followups, stats |
 | `runtimecrm` | 6 | Health, leads, pipeline, followups, stats |
@@ -215,7 +215,7 @@ Existing implemented or placeholder agents:
 | Generated App Export | Export generated app folder | Partial |
 | Deployment Readiness | Dry-run readiness | Partial |
 | Git Versioning | Dry-run git readiness | Partial |
-| Product-specific KisanMitra agents | Generated product support | Isolated, keep guarded |
+| Product-specific IdeasForgeAI agents | Generated product support | Isolated, keep guarded |
 
 Expected product-team roles not yet represented as first-class backend agents:
 
@@ -371,7 +371,7 @@ Current generation engine is practical for local demos. It is not yet governed b
 | Git | Dry-run readiness | No commit/push action required for audit |
 | Deployment | Dry-run readiness | No deploy action in audit |
 | Generated apps | Active local outputs | Backends exist under `generated-apps/` |
-| KisanMitraLite | Active generated app | Isolated local generated app backend |
+| IdeasForgeAIProduct | Active generated app | Isolated local generated app backend |
 
 Missing or deferred:
 
@@ -471,7 +471,7 @@ Ops recommendation: keep all publish/deploy flows dry-run until authentication, 
 | P1 | Pipeline is synchronous and in-memory | Weak long-running reliability |
 | P1 | No typed artifact registry | Hard to evolve phases safely |
 | P1 | AI provider logic is not a router | Limits future providers |
-| P1 | Product-specific KisanMitra agents remain in generic backend | Needs isolation policy |
+| P1 | Product-specific IdeasForgeAI agents remain in generic backend | Needs isolation policy |
 | P1 | No centralized approval gate | Publish/generation boundaries can drift |
 | P2 | Generated app backends repeat route patterns | Duplication |
 | P2 | JSON persistence is useful locally but not scalable | Migration required later |
@@ -489,7 +489,7 @@ Keep:
 | Pixel converter placeholder | Required for Phase 4 continuity |
 | Generated app folder model | Useful local artifact boundary |
 | Dry-run readiness agents | Good safety posture |
-| KisanMitraLite generated app backend | Existing working generated app |
+| IdeasForgeAIProduct generated app backend | Existing working generated app |
 
 Defer:
 
@@ -505,7 +505,7 @@ Remove or isolate:
 
 | Item | Recommendation |
 | --- | --- |
-| Product-specific KisanMitra production sync logic inside generic builder surface | Keep dry-run, isolate behind explicit internal/admin flag |
+| Product-specific IdeasForgeAI production sync logic inside generic builder surface | Keep dry-run, isolate behind explicit internal/admin flag |
 | Repeated generated backend scaffolds | Keep outputs, but move common generator patterns into reusable templates later |
 | Any production-domain labels in generic IdeasForgeAI UI/backend docs | Remove or replace with generic readiness wording |
 
@@ -621,7 +621,8 @@ This appendix is complete if:
 | Recommended next sprint was included | Met |
 | No feature implementation was performed | Met |
 | No deployment was performed | Met |
-| No production KisanMitraAI files were touched | Met |
+| No production IdeasForgeAI files were touched | Met |
 | No secrets were exposed | Met |
 
 Earlier backend audit update recommendation: yes. Any previous high-level backend audit should be updated to reference this appendix because it provides file-level counts, route totals, Product Brain module inventory, generated backend route inventory, and a more specific next sprint.
+

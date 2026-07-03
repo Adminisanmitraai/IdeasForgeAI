@@ -145,3 +145,4 @@ def apply_blueprint_to_generated_plan(
         enriched["blueprint_ui"]["source_prompt_hint"] = user_text[:240]
 
     return enriched
+

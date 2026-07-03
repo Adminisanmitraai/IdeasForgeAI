@@ -25,8 +25,8 @@ BLOCKED_MARKERS = {
         "http://",
         "https://",
         "<iframe",
-        "KisanMitraAI",
-        "kisanmitra",
+        "IdeasForgeAI",
+        "IdeasForgeAI",
     ],
     "styles.css": [
         "http://",
@@ -48,8 +48,8 @@ BLOCKED_MARKERS = {
         "database",
         "apiKey",
         "deploy",
-        "KisanMitraAI",
-        "kisanmitra",
+        "IdeasForgeAI",
+        "IdeasForgeAI",
     ],
 }
 
@@ -144,7 +144,7 @@ def get_phase14d_embed_gate_status() -> dict:
             "root files",
             "deployment config",
             "env/secrets",
-            "KisanMitraAI paths",
+            "IdeasForgeAI paths",
         ],
         "same_origin_only": True,
         "read_only_preview_route_required": True,
@@ -152,3 +152,4 @@ def get_phase14d_embed_gate_status() -> dict:
         "next_required_phase": "Phase 14E - Preview Runner Validation + Freeze Review",
         **_locked_flags(),
     }
+

@@ -43,7 +43,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "backend_generation_unlocked": False,
         "generation_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -94,7 +94,7 @@ def get_phase23c_apple_like_visual_qa_score(payload: dict[str, Any] | None = Non
         "token=",
         "render.yaml",
         "deploy(",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     score_categories = {
@@ -163,3 +163,4 @@ def get_phase23c_apple_like_visual_qa_score(payload: dict[str, Any] | None = Non
         "next_required_phase": "Phase 23D - Final Visual Freeze Review",
         **_locked_flags(),
     }
+

@@ -1,4 +1,4 @@
-from backend.agents.backend_api_agent import BackendAPIAgent
+﻿from backend.agents.backend_api_agent import BackendAPIAgent
 from backend.agents.backend_code_generator_agent import BackendCodeGeneratorAgent
 from backend.agents.database_persistence_agent import DatabasePersistenceAgent
 from backend.agents.deployment_readiness_agent import DeploymentReadinessAgent
@@ -6,8 +6,8 @@ from backend.agents.frontend_api_connector_agent import FrontendAPIConnectorAgen
 from backend.agents.git_versioning_agent import GitVersioningAgent
 from backend.agents.generated_app_export_agent import GeneratedAppExportAgent
 from backend.agents.html_builder_agent import HTMLBuilderAgent
-from backend.agents.kisanmitra_landing_template_agent import KisanMitraLandingTemplateAgent
-from backend.agents.kisanmitra_production_sync_agent import KisanMitraProductionSyncAgent
+from backend.agents.IdeasForgeAI_landing_template_agent import IdeasForgeAILandingTemplateAgent
+from backend.agents.IdeasForgeAI_production_sync_agent import IdeasForgeAIProductionSyncAgent
 from backend.agents.lead_crud_agent import LeadCRUDAgent
 from backend.agents.idea_intake_agent import IdeaIntakeAgent
 from backend.agents.mobile_packager_agent import MobilePackagerAgent
@@ -40,10 +40,11 @@ def create_default_builder_pipeline() -> BuilderPipeline:
     )
 
 
-def create_kisanmitra_production_roadmap_agents():
+def create_IdeasForgeAI_production_roadmap_agents():
     return [
-        KisanMitraLandingTemplateAgent(),
-        KisanMitraProductionSyncAgent(),
+        IdeasForgeAILandingTemplateAgent(),
+        IdeasForgeAIProductionSyncAgent(),
         GitVersioningAgent(),
         DeploymentReadinessAgent(),
     ]
+

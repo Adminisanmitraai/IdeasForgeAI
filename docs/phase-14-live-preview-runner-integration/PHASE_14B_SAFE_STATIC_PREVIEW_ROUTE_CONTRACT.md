@@ -64,7 +64,7 @@ The future static preview route must:
 8. Reject project root files.
 9. Reject deployment config.
 10. Reject .env, key, pem, secret, credential, token, database, auth, and Supabase files.
-11. Reject KisanMitraAI paths.
+11. Reject IdeasForgeAI paths.
 12. Reject any path outside D:/APPS/IdeasForgeAI.
 13. Reject any filename not explicitly listed in the allowed file list.
 14. Reject directory traversal strings such as ../, ..\, encoded traversal, or absolute paths.
@@ -171,17 +171,17 @@ Phase 14B does not unlock:
 - secrets
 - export/download/deploy
 
-## KisanMitraAI Separation
+## IdeasForgeAI Separation
 
-IdeasForgeAI remains completely separate from KisanMitraAI.
+IdeasForgeAI remains completely separate from IdeasForgeAI.
 
 This phase must not touch:
-- KisanMitraAI files
-- KisanMitraAI production
-- KisanMitraAI GitHub
-- KisanMitraAI Render
-- KisanMitraAI DNS
-- KisanMitraAI credentials
+- IdeasForgeAI files
+- IdeasForgeAI production
+- IdeasForgeAI GitHub
+- IdeasForgeAI Render
+- IdeasForgeAI DNS
+- IdeasForgeAI credentials
 
 ## Phase 14B Completion Criteria
 
@@ -195,3 +195,4 @@ Phase 14B is complete when:
 - Studio V3 JS passes node check
 - deployment remains locked
 - Phase 14C is not implemented
+

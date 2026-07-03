@@ -1,4 +1,4 @@
-# Phase 25C - Workspace and Project State Planning
+﻿# Phase 25C - Workspace and Project State Planning
 
 Status: Completed, not frozen
 
@@ -254,7 +254,7 @@ Phase 25C safety rules:
 - No image analysis.
 - No pixel reading.
 - No canvas analysis.
-- No KisanMitraAI files, services, domains, credentials, or status files.
+- No IdeasForgeAI files, services, domains, credentials, or status files.
 
 ## 10. Recommended Next Phase
 
@@ -279,4 +279,5 @@ Confirmed:
 - No frontend behavior changes.
 - No backend API changes.
 - No backend generation/provider/database/auth/secrets/deployment added.
-- KisanMitraAI not touched.
+- IdeasForgeAI not touched.
+

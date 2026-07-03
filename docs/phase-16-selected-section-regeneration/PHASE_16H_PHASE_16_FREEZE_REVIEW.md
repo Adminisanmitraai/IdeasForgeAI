@@ -51,10 +51,11 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 ## Next Recommended Phase
 
 Phase 17 — Apply Approved Section Patch to Sandbox Copy.
 
 Phase 17 should still avoid production writes and should apply a section patch only to a controlled copy, not to the real generated app.
+

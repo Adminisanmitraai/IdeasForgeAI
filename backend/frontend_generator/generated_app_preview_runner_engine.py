@@ -1,4 +1,4 @@
-
+﻿
 """Phase 9G generated app preview runner engine.
 
 Local preview runner only.
@@ -74,3 +74,4 @@ def build_generated_app_preview_runner_response(payload: Dict[str, Any] | None =
             "deployment_status": "locked",
         },
     }
+

@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from textwrap import dedent
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
@@ -331,7 +331,7 @@ async function loadCRMData() {
     }
 
     if (cards[1]) {
-      cards[1].querySelector("small").textContent = "₹" + stats.pipeline_value + " pipeline";
+      cards[1].querySelector("small").textContent = "â‚¹" + stats.pipeline_value + " pipeline";
     }
 
     if (cards[2]) {

@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5B — Product Brain Output Templates
+## Phase 5B â€” Product Brain Output Templates
 
 ### Version 1.0
 
 ## Purpose
 
-This document defines the standard output templates for IdeasForgeAI Phase 5 — AI Product Brain.
+This document defines the standard output templates for IdeasForgeAI Phase 5 â€” AI Product Brain.
 
 These templates control how IdeasForgeAI responds when a user gives a rough idea, asks for improvement, requests strategy, asks for planning, or wants to move toward design/build phases.
 
@@ -24,7 +24,7 @@ Use this template when the user gives a product idea or wants to shape a product
 
 ## 1. Understanding
 
-Summarize the user’s idea in simple language.
+Summarize the userâ€™s idea in simple language.
 
 Format:
 
@@ -66,9 +66,9 @@ Do not ask long forms.
 
 Recommended maximum:
 
-* Fast Mode: 1–3 questions
-* Guided Mode: 3–5 questions
-* Expert Mode: 5–8 questions
+* Fast Mode: 1â€“3 questions
+* Guided Mode: 3â€“5 questions
+* Expert Mode: 5â€“8 questions
 
 ## 4. Smart Assumptions
 
@@ -301,7 +301,7 @@ Show detected intent.
 
 ## Missing Information
 
-Ask 3–5 useful questions.
+Ask 3â€“5 useful questions.
 
 ## Smart Assumptions
 
@@ -458,7 +458,7 @@ Define:
 
 ## Future Phase
 
-Route to Phase 6 — Design System Engine.
+Route to Phase 6 â€” Design System Engine.
 
 ## Approval Needed
 
@@ -530,7 +530,7 @@ Mention:
 
 * No secrets
 * No unrelated project changes
-* No KisanMitraAI production changes
+* No IdeasForgeAI production changes
 * No UI redesign unless approved
 * No deployment unless approved
 
@@ -622,3 +622,4 @@ These templates are successful when:
 * The mantra remains visible in behavior:
 
 **Less UI. More Intelligence.**
+

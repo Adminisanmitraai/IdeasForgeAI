@@ -1,4 +1,4 @@
-# Phase 25I - Mobile Premium Composer Polish
+﻿# Phase 25I - Mobile Premium Composer Polish
 
 Status: Completed, not frozen.
 
@@ -63,7 +63,7 @@ Real file upload, microphone capture, backend chat, provider calls, database per
 - No real backend generation unlock.
 - No OCR, upload processing, image analysis, pixel reading, or canvas analysis.
 - No deployment changes.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
 
 ## Validation
 
@@ -76,3 +76,4 @@ Required validation:
   - `http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25i-premium-composer`
 - LAN route:
   - `http://192.168.1.7:8100/frontend/pages/studio-v3.html?v=phase25i-premium-composer`
+

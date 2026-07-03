@@ -162,7 +162,7 @@ def get_phase17f_patched_copy_validation_score(payload: dict[str, Any] | None = 
         "refresh_token",
         "deploy.yml",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     html_runtime_safety_ok = not any(marker in index_lower for marker in html_runtime_blockers)
@@ -174,7 +174,7 @@ def get_phase17f_patched_copy_validation_score(payload: dict[str, Any] | None = 
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_safety_ok = not any(marker in css_lower for marker in css_blockers)
@@ -197,7 +197,7 @@ def get_phase17f_patched_copy_validation_score(payload: dict[str, Any] | None = 
         "secret",
         "token",
         "deploy",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_js_safety_ok = not any(marker in app_js_lower for marker in app_js_blockers)
@@ -258,8 +258,8 @@ def get_phase17f_patched_copy_validation_score(payload: dict[str, Any] | None = 
         if (PHASE17_TARGET / name).exists()
     ).lower()
 
-    kisanmitra_separation_ok = "kisanmitra" not in app_visible_combined
-    score_categories["kisanmitra_separation_score"] = _score(kisanmitra_separation_ok)
+    IdeasForgeAI_separation_ok = "IdeasForgeAI" not in app_visible_combined
+    score_categories["IdeasForgeAI_separation_score"] = _score(IdeasForgeAI_separation_ok)
 
     for name, value in score_categories.items():
         if value < 100:
@@ -283,4 +283,5 @@ def get_phase17f_patched_copy_validation_score(payload: dict[str, Any] | None = 
         "next_required_phase": "Phase 17G - Phase 17 Freeze Review",
         **_locked_flags(),
     }
+
 

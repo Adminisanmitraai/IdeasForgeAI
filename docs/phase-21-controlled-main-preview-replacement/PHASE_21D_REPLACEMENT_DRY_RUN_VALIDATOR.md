@@ -16,7 +16,7 @@ No production deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Approved Replacement Source
 
@@ -62,7 +62,7 @@ The dry-run checks:
 - Phase 20 validation report exists
 - protected target has current files to snapshot later
 - replacement would be limited to generated-apps/ideasforgeai-preview-v1/
-- replacement would not touch backend/frontend/deployment/provider/database/secrets/KisanMitraAI paths
+- replacement would not touch backend/frontend/deployment/provider/database/secrets/IdeasForgeAI paths
 
 ## Phase 21D Safety Confirmation
 
@@ -77,5 +77,6 @@ No deployment was performed.
 No provider calls were made.
 No database writes were made.
 No Supabase/auth/secrets were added.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 21E was not implemented.
+

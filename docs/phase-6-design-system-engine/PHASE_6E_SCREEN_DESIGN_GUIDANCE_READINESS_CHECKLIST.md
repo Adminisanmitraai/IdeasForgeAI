@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6E — Screen Design Guidance & Readiness Checklist
+## Phase 6E â€” Screen Design Guidance & Readiness Checklist
 
 ### Version 1.0
 
@@ -154,7 +154,7 @@ Calm, intelligent, founder-friendly.
 
 ## Empty State
 
-“Tell me your product idea, and I will shape it like a product team.”
+â€œTell me your product idea, and I will shape it like a product team.â€
 
 ## Do Not Do
 
@@ -199,7 +199,7 @@ Cards stack vertically.
 
 ## Empty State
 
-“Submit a product idea to generate product strategy, requirements, blueprint, and planning.”
+â€œSubmit a product idea to generate product strategy, requirements, blueprint, and planning.â€
 
 ## Do Not Do
 
@@ -240,7 +240,7 @@ Simple, guided, non-blocking.
 
 ## Default First Question
 
-“Who is the primary user?”
+â€œWho is the primary user?â€
 
 ## Do Not Do
 
@@ -442,11 +442,11 @@ Stop premature generation and require human approval.
 
 ## Required Message
 
-“Approve Product Blueprint v1.0 before moving to Phase 6 Design System Engine.”
+â€œApprove Product Blueprint v1.0 before moving to Phase 6 Design System Engine.â€
 
 For Phase 6:
 
-“Approve Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.”
+â€œApprove Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.â€
 
 ## Required Actions
 
@@ -516,7 +516,7 @@ A product is ready for Design System approval when:
 
 # 16. Ready for Phase 7 Checklist
 
-Ready for Phase 7 — Pixel-Matched Converter when:
+Ready for Phase 7 â€” Pixel-Matched Converter when:
 
 * Design System v1.0 is approved
 * Reference image or visual target is available
@@ -529,7 +529,7 @@ Ready for Phase 7 — Pixel-Matched Converter when:
 
 # 17. Ready for Phase 8 Checklist
 
-Ready for Phase 8 — Frontend Generator when:
+Ready for Phase 8 â€” Frontend Generator when:
 
 * Product Blueprint v1.0 is approved
 * Design System v1.0 is approved
@@ -571,3 +571,4 @@ Phase 6E is successful when:
 * The product stays aligned with:
 
 **Less UI. More Intelligence.**
+

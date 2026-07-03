@@ -1,4 +1,4 @@
-# Phase 11F - Professional Sidebar + Chat + Preview Polish
+﻿# Phase 11F - Professional Sidebar + Chat + Preview Polish
 
 Status: Completed, not frozen.
 
@@ -29,3 +29,4 @@ Phase 11F does not add backend generation, deployment, provider calls, Supabase,
 ## Next Step
 
 Phase 11F Freeze Review, then Phase 11G only after explicit approval.
+

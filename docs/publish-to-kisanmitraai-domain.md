@@ -1,4 +1,4 @@
-# Custom Domain Readiness
+﻿# Custom Domain Readiness
 
 ## Purpose
 
@@ -10,7 +10,7 @@ This document describes the future approval-gated path for publishing approved a
 2. Review the local premium homepage.
 3. Run public SaaS readiness checks.
 4. Manually approve file copy.
-5. Copy approved files into `D:\APPS\KisanMitraAI_GITHUB_CLEAN`.
+5. Copy approved files into `D:\APPS\IdeasForgeAI_GITHUB_CLEAN`.
 6. Run Git readiness checks.
 7. Commit only approved files.
 8. Push to GitHub after approval.
@@ -24,3 +24,4 @@ This document describes the future approval-gated path for publishing approved a
 - Do not commit or push automatically.
 - Do not expose secrets in frontend files.
 - Keep rollback instructions and previous deployment revision available.
+

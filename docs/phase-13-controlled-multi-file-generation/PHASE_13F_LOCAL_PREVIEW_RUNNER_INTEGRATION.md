@@ -1,4 +1,4 @@
-# Phase 13F - Local Preview Runner Integration
+﻿# Phase 13F - Local Preview Runner Integration
 
 Status: Completed, not frozen.
 
@@ -28,7 +28,7 @@ The preview runner:
 - Does not write to Phase 12 sandbox folders.
 - Does not write to the Phase 13D sandbox folder.
 - Does not write to the Phase 13E sandbox folder.
-- Does not serve backend, frontend, docs, root production files, env/secrets, deployment config, database/auth/Supabase files, or KisanMitraAI paths.
+- Does not serve backend, frontend, docs, root production files, env/secrets, deployment config, database/auth/Supabase files, or IdeasForgeAI paths.
 - Rejects preview targets outside the Phase 13E sandbox folder.
 - Keeps general real generation, backend generation, deployment, provider calls, Supabase, authentication, database writes, and secrets locked.
 

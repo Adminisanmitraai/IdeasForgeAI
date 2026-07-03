@@ -1,4 +1,4 @@
-# Phase 7C - Upload UI and Local Metadata Placeholder
+﻿# Phase 7C - Upload UI and Local Metadata Placeholder
 
 Status: Placeholder UI and local metadata only.
 
@@ -103,3 +103,4 @@ Confirmed boundaries:
 ## Next Phase
 
 Phase 7D - Layout detection placeholder, only after explicit approval.
+

@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any, Dict
@@ -291,3 +291,4 @@ def sector_ui_class_names(profile: Dict[str, Any]) -> str:
         profile.get("trust_note_style", ""),
     ]
     return " ".join(part for part in parts if part)
+

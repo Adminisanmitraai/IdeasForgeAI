@@ -58,7 +58,7 @@ function addProgress(text, state = "info") {
   const row = document.createElement("p");
   row.className = "progress-line " + state;
   row.textContent = text;
-  if (progressMessages.querySelector("p")?.textContent === "Ready to generate KisanMitraLite.") {
+  if (progressMessages.querySelector("p")?.textContent === "Ready to generate IdeasForgeAIProduct.") {
     progressMessages.innerHTML = "";
   }
   progressMessages.appendChild(row);
@@ -137,8 +137,8 @@ async function runRoadmapAction(path, button) {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        app_name: appNameInput.value.trim() || "KisanMitraLite",
-        app_slug: "kisanmitralite",
+        app_name: appNameInput.value.trim() || "IdeasForgeAIProduct",
+        app_slug: "IdeasForgeAIProduct",
       }),
     });
     if (!response.ok) throw new Error(path + " failed with HTTP " + response.status);
@@ -164,7 +164,7 @@ async function convertPixelPage() {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify({
-        app_name: appNameInput.value.trim() || "KisanMitraLite",
+        app_name: appNameInput.value.trim() || "IdeasForgeAIProduct",
         image_name: pixelScreenshot?.name || null,
         image_provided: Boolean(pixelScreenshot),
       }),
@@ -221,7 +221,7 @@ async function askAI(message) {
 }
 
 async function generateApp() {
-  const app_name = appNameInput.value.trim() || "KisanMitraLite";
+  const app_name = appNameInput.value.trim() || "IdeasForgeAIProduct";
   const idea = ideaText.value.trim() || KISAN_IDEA;
 
   generatedStatus.textContent = "Generating...";
@@ -318,7 +318,7 @@ async function loadProjects() {
 generateBtn.onclick = generateApp;
 
 kisanBtn.onclick = () => {
-  appNameInput.value = "KisanMitraLite";
+  appNameInput.value = "IdeasForgeAIProduct";
   ideaText.value = KISAN_IDEA;
   generateApp();
 };
@@ -394,7 +394,7 @@ if (pasteImageBtn) {
 if (convertPageBtn) convertPageBtn.onclick = convertPixelPage;
 if (previewConvertedBtn) {
   previewConvertedBtn.onclick = () => {
-    const slug = slugify(appNameInput.value.trim() || "KisanMitraLite");
+    const slug = slugify(appNameInput.value.trim() || "IdeasForgeAIProduct");
     const url = `${API_BASE}/generated-apps/${slug}/frontend/converted-page.html`;
     setPreview(url);
     addProgress("Opened future converted page preview target.", "run");
@@ -403,9 +403,9 @@ if (previewConvertedBtn) {
 if (generatePremiumHomeBtn) generatePremiumHomeBtn.onclick = () => runRoadmapAction("/api/kisan-premium-home", generatePremiumHomeBtn);
 if (openPremiumHomeBtn) {
   openPremiumHomeBtn.onclick = () => {
-    const url = `${API_BASE}/generated-apps/kisanmitralite/frontend/home.html`;
+    const url = `${API_BASE}/generated-apps/IdeasForgeAIProduct/frontend/home.html`;
     setPreview(url + "?v=" + Date.now());
-    addProgress("Opened premium KisanMitraAI home preview.", "ok");
+    addProgress("Opened premium IdeasForgeAI home preview.", "ok");
   };
 }
 if (dryRunProductionSyncBtn) dryRunProductionSyncBtn.onclick = () => runRoadmapAction("/api/production-sync-dry-run", dryRunProductionSyncBtn);
@@ -418,8 +418,9 @@ if (openProductionDomainBtn) {
 }
 
 window.addEventListener("load", async () => {
-  addMessage("ai", "Welcome. Generate KisanMitraLite and I will show agent steps, live preview, and generated app files here.");
+  addMessage("ai", "Welcome. Generate IdeasForgeAIProduct and I will show agent steps, live preview, and generated app files here.");
   await checkBackend();
   await loadProjects();
 });
+
 

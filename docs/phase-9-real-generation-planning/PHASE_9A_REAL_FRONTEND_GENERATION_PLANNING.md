@@ -1,4 +1,4 @@
-
+﻿
 # Phase 9A - Real Frontend Generation Planning & Safety Unlock Architecture
 
 Status: Completed as planning-only.
@@ -43,7 +43,7 @@ Phase 9A does not:
 - Add database writes
 - Call providers
 - Add secrets
-- Touch KisanMitraAI production
+- Touch IdeasForgeAI production
 
 ## Required source dependencies before generation
 
@@ -132,3 +132,4 @@ Before any future file write:
 ## Next step
 
 Phase 9B - Generation Target Folder Contract, only after Phase 9A freeze review.
+

@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5K — Freeze & Approval Checklist
+## Phase 5K â€” Freeze & Approval Checklist
 
 ### Version 1.0
 
 ## Purpose
 
-This document defines when Phase 5 — AI Product Brain is ready to freeze.
+This document defines when Phase 5 â€” AI Product Brain is ready to freeze.
 
 Phase 5 should only be frozen when IdeasForgeAI can reliably understand a rough product idea, ask smart questions, generate structured product intelligence, update memory safely, and require human approval before moving to Phase 6.
 
@@ -74,7 +74,7 @@ Studio V3 must not show:
 
 * Raw Product Brain provider failure text
 * Old public launch domain text
-* KisanMitraAI production text
+* IdeasForgeAI production text
 * Raw errors
 * Secret values
 * Deployment actions without approval
@@ -144,7 +144,7 @@ The question engine must:
 
 Default first question should usually be:
 
-“Who is the primary user?”
+â€œWho is the primary user?â€
 
 ---
 
@@ -154,7 +154,7 @@ Phase 5 must clearly require approval before Phase 6.
 
 Required approval message:
 
-“Approve Product Blueprint v1.0 before moving to Phase 6 Design System Engine.”
+â€œApprove Product Blueprint v1.0 before moving to Phase 6 Design System Engine.â€
 
 The system must not treat silence as approval.
 
@@ -180,7 +180,7 @@ Phase 5 must not:
 * Generate final frontend
 * Export PWA/mobile
 * Deploy publicly
-* Touch KisanMitraAI production
+* Touch IdeasForgeAI production
 * Modify unrelated projects
 * Skip human approval
 
@@ -211,7 +211,7 @@ It must not show broken error states.
 
 Use this standard test idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 Expected result:
 
@@ -221,7 +221,7 @@ Expected result:
 * Main problem: users have rough ideas but cannot convert them into clear product plans
 * MVP: idea input, intent detection, smart questions, strategy, requirements, blueprint, planning, approval
 * Differentiator: behaves like an AI product team before building
-* Recommended next phase: Phase 6 — Design System Engine after blueprint approval
+* Recommended next phase: Phase 6 â€” Design System Engine after blueprint approval
 
 ---
 
@@ -268,7 +268,7 @@ Phase 5 can be frozen if:
 * Approval checkpoint appears
 * No secrets are exposed
 * No production deployment happens
-* No KisanMitraAI production files are touched
+* No IdeasForgeAI production files are touched
 * No frozen Studio V3 redesign happened
 
 ---
@@ -277,7 +277,7 @@ Phase 5 can be frozen if:
 
 When all checks pass, record:
 
-“Phase 5 — AI Product Brain is frozen. IdeasForgeAI can now move to Phase 6 — Design System Engine after user approval.”
+â€œPhase 5 â€” AI Product Brain is frozen. IdeasForgeAI can now move to Phase 6 â€” Design System Engine after user approval.â€
 
 ---
 
@@ -303,8 +303,9 @@ Phase 5 is successful when IdeasForgeAI thinks before building.
 
 The user should feel:
 
-“I explained my idea normally, and IdeasForgeAI shaped it like a real product team.”
+â€œI explained my idea normally, and IdeasForgeAI shaped it like a real product team.â€
 
 Final rule:
 
 **Freeze the brain only when it is useful, safe, structured, and approval-driven.**
+

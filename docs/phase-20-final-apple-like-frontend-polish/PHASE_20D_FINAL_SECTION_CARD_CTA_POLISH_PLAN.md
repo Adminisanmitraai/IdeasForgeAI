@@ -108,7 +108,7 @@ Safety cards:
 - No database writes without approval
 - Secrets stay locked
 - Rollback-ready previews
-- KisanMitraAI separation preserved
+- IdeasForgeAI separation preserved
 
 Tone:
 - Keep safety language short and confident.
@@ -181,5 +181,6 @@ No deployment was added.
 No backend generation was unlocked.
 No provider calls were added.
 No Supabase/auth/database/secrets were added.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 20E was not implemented.
+

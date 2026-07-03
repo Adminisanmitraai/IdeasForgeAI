@@ -1,4 +1,4 @@
-import json
+﻿import json
 
 
 PAGES = [
@@ -693,7 +693,7 @@ def supabase_schema() -> str:
 def supabase_plan() -> str:
     return """# Supabase Plan
 
-KisanMitraLite currently uses local JSON persistence. Supabase is planned as the next storage layer without exposing service-role keys to the frontend.
+IdeasForgeAIProduct currently uses local JSON persistence. Supabase is planned as the next storage layer without exposing service-role keys to the frontend.
 
 Planned tables:
 - farmers
@@ -716,3 +716,4 @@ Frontend rule:
 - The frontend may use only SUPABASE_URL and SUPABASE_ANON_KEY when public client access is added.
 - SUPABASE_SERVICE_ROLE_KEY must stay server-side only.
 """
+

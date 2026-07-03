@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6C — Component System & Screen Rules
+## Phase 6C â€” Component System & Screen Rules
 
 ### Version 1.0
 
 ## Purpose
 
-This document defines the component system and screen rules for IdeasForgeAI Phase 6 — Design System Engine.
+This document defines the component system and screen rules for IdeasForgeAI Phase 6 â€” Design System Engine.
 
 The goal is to make future generated screens consistent, clean, mobile-first, and approval-driven.
 
@@ -145,11 +145,11 @@ Allows the user to describe ideas naturally.
 
 ## Good Placeholder
 
-“Ask IdeasForgeAI to build...”
+â€œAsk IdeasForgeAI to build...â€
 
 ## Better Future Placeholder
 
-“Describe your product idea...”
+â€œDescribe your product idea...â€
 
 ---
 
@@ -179,7 +179,7 @@ Asks one smart question at a time.
 
 ## Default First Question
 
-“Who is the primary user?”
+â€œWho is the primary user?â€
 
 ---
 
@@ -353,7 +353,7 @@ Stops premature generation.
 
 ## Required Message
 
-“Approve Product Blueprint v1.0 before moving to Phase 6 Design System Engine.”
+â€œApprove Product Blueprint v1.0 before moving to Phase 6 Design System Engine.â€
 
 ## Possible Actions
 
@@ -458,11 +458,11 @@ Empty states should guide, not confuse.
 
 Good empty state:
 
-“Describe your product idea to generate strategy, requirements, blueprint, and planning.”
+â€œDescribe your product idea to generate strategy, requirements, blueprint, and planning.â€
 
 Bad empty state:
 
-“No data.”
+â€œNo data.â€
 
 Every empty state should explain the next action.
 
@@ -482,9 +482,9 @@ Avoid:
 
 Use:
 
-* “Product Brain is running in local intelligence mode.”
-* “I can continue with safe local output.”
-* “This step needs approval before generation.”
+* â€œProduct Brain is running in local intelligence mode.â€
+* â€œI can continue with safe local output.â€
+* â€œThis step needs approval before generation.â€
 
 ---
 
@@ -502,7 +502,7 @@ Do not:
 * Show secrets
 * Show raw JSON by default
 * Show internal booleans
-* Use KisanMitraAI production references
+* Use IdeasForgeAI production references
 
 ---
 
@@ -520,3 +520,4 @@ Phase 6C is successful when:
 * The product stays aligned with:
 
 **Less UI. More Intelligence.**
+

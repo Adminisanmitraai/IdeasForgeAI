@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+﻿from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -50,3 +50,4 @@ class PixelConverterContractResponse(BaseModel):
     approval_gate: Dict[str, object]
     future_phase_handoff: Dict[str, object]
     safety_limits: List[str]
+

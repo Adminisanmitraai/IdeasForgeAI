@@ -1,4 +1,4 @@
-# Phase 11B - Left Sidebar + Center Chat Layout
+﻿# Phase 11B - Left Sidebar + Center Chat Layout
 
 Status: Completed, not frozen.
 
@@ -37,3 +37,4 @@ Phase 11B creates the first visible Builder Workspace preview inside Studio V3.
 ## Next step
 
 Phase 11B Freeze Review, then Phase 11C - Chat Composer + AI Build Conversation UI.
+

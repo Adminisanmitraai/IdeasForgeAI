@@ -1,4 +1,4 @@
-# Phase 25I - Mobile Light Chat Interface Alignment
+﻿# Phase 25I - Mobile Light Chat Interface Alignment
 
 Status: Completed, not frozen.
 
@@ -52,10 +52,11 @@ The existing local processing flow remains local-only after the reply. No backen
 - No API keys or secrets were added to the frontend.
 - No Supabase, auth, database, or deployment configuration was added.
 - Real backend generation remains locked.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
 
 ## Validation
 
 - `node --check frontend/pages/studio-v3.js`
 - `python -m compileall backend`
 - Target search completed for unsafe terms in `frontend/pages/studio-v3.*`
+

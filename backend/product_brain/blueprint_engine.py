@@ -1,4 +1,4 @@
-from typing import Dict
+﻿from typing import Dict
 
 
 class BlueprintEngine:
@@ -89,3 +89,4 @@ class BlueprintEngine:
 
     def _table_name(self, label: str) -> str:
         return label.strip().lower().replace(" ", "_").replace("-", "_")
+

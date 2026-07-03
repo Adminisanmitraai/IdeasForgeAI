@@ -1,4 +1,4 @@
-
+﻿
 """Phase 8F Studio-only Design System Enforcement Preview engine.
 
 This module returns safe Design System enforcement preview metadata only.
@@ -138,3 +138,4 @@ def build_design_system_enforcement_preview_response(payload: Dict[str, Any] | N
             "production_generation_status": "locked",
         },
     }
+

@@ -1,4 +1,4 @@
-
+﻿
 """Phase 9C single-page file write dry-run engine.
 
 Dry-run metadata only.
@@ -108,7 +108,7 @@ def build_file_write_dry_run_response(payload: Dict[str, Any] | None = None) -> 
             "docs/",
             "root production files",
             "existing generated app folders unless explicitly approved",
-            "KisanMitraAI folders",
+            "IdeasForgeAI folders",
             "any folder outside D:/APPS/IdeasForgeAI",
         ],
         "dry_run_checks": [
@@ -133,3 +133,4 @@ def build_file_write_dry_run_response(payload: Dict[str, Any] | None = None) -> 
             "production_generation_status": "locked",
         },
     }
+

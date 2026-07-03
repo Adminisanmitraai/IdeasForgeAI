@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import json
 import re
@@ -202,3 +202,4 @@ def assert_generated_app_output(
         messages = "; ".join(failure["message"] for failure in report["failures"])
         raise AssertionError(messages)
     return report
+

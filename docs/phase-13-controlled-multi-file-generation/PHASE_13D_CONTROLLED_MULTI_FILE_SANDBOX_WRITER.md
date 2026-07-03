@@ -1,4 +1,4 @@
-# Phase 13D - Controlled Multi-File Sandbox Writer
+﻿# Phase 13D - Controlled Multi-File Sandbox Writer
 
 Status: Completed, not frozen.
 
@@ -10,7 +10,7 @@ The writer may create and write only this folder:
 
 `D:/APPS/IdeasForgeAI/generated-apps/_phase13d_multi_file_write_sandbox/`
 
-It must not write to `generated-apps/ideasforgeai-preview-v1`, Phase 12 sandbox folders, backend files, frontend files, docs, root production files, deployment config, secrets/env files, KisanMitraAI paths, or any path outside `D:/APPS/IdeasForgeAI`.
+It must not write to `generated-apps/ideasforgeai-preview-v1`, Phase 12 sandbox folders, backend files, frontend files, docs, root production files, deployment config, secrets/env files, IdeasForgeAI paths, or any path outside `D:/APPS/IdeasForgeAI`.
 
 ## Approved Files and Write Order
 
@@ -49,7 +49,7 @@ Payload fields containing arbitrary generated content, deployment requests, prov
 The written sandbox files contain static proof content only.
 
 - `index.html` uses local `styles.css` and local `app.js` only.
-- `index.html` contains no external URL, no iframe, and no KisanMitraAI visible reference.
+- `index.html` contains no external URL, no iframe, and no IdeasForgeAI visible reference.
 - `styles.css` contains no `http`, `https`, or `@import`.
 - `app.js` is a local static proof script only and contains no network calls, imports, localStorage usage, provider references, Supabase references, auth references, or database calls.
 

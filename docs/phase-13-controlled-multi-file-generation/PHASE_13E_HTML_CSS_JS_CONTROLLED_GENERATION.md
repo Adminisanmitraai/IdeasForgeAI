@@ -1,4 +1,4 @@
-# Phase 13E - HTML/CSS/JS Controlled Generation
+﻿# Phase 13E - HTML/CSS/JS Controlled Generation
 
 Status: Completed, not frozen.
 
@@ -10,7 +10,7 @@ The generator may create and write only this folder:
 
 `D:/APPS/IdeasForgeAI/generated-apps/_phase13e_controlled_html_css_js_generation/`
 
-It must not write to `generated-apps/ideasforgeai-preview-v1`, Phase 12 sandbox folders, the Phase 13D sandbox folder, backend files, frontend files, docs, root production files, deployment config, secrets/env files, KisanMitraAI paths, or any path outside `D:/APPS/IdeasForgeAI`.
+It must not write to `generated-apps/ideasforgeai-preview-v1`, Phase 12 sandbox folders, the Phase 13D sandbox folder, backend files, frontend files, docs, root production files, deployment config, secrets/env files, IdeasForgeAI paths, or any path outside `D:/APPS/IdeasForgeAI`.
 
 ## Approved Files and Write Order
 
@@ -72,7 +72,7 @@ The generated files follow these limits:
 - No API keys or tracking scripts.
 - No deployment scripts.
 - No database/auth/Supabase logic.
-- No KisanMitraAI reference.
+- No IdeasForgeAI reference.
 
 ## Endpoint
 

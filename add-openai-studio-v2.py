@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from textwrap import dedent
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
@@ -174,7 +174,7 @@ When the user asks for an app, break it into:
 
 Do not expose secrets.
 Do not ask for the OpenAI API key in chat.
-For KisanMitraLite, focus on farmers, FPOs, buyers, farms, crops, mandi deals, weather, accounts, and dashboards.
+For IdeasForgeAIProduct, focus on farmers, FPOs, buyers, farms, crops, mandi deals, weather, accounts, and dashboards.
 """
 
     user_context = f"""
@@ -258,7 +258,7 @@ write_file("frontend/pages/studio-v2.html", r'''
       <div class="app-inputs">
         <label>
           App Name
-          <input id="appName" value="KisanMitraLite" />
+          <input id="appName" value="IdeasForgeAIProduct" />
         </label>
 
         <label>
@@ -268,7 +268,7 @@ write_file("frontend/pages/studio-v2.html", r'''
 
         <div class="button-row">
           <button id="generateBtn">Generate App</button>
-          <button id="kisanBtn" class="secondary">KisanMitraLite</button>
+          <button id="kisanBtn" class="secondary">IdeasForgeAIProduct</button>
         </div>
       </div>
 
@@ -286,7 +286,7 @@ write_file("frontend/pages/studio-v2.html", r'''
       <header class="workspace-top">
         <div>
           <p class="eyebrow">Live Builder Workspace</p>
-          <h2 id="workspaceTitle">KisanMitraLite Development</h2>
+          <h2 id="workspaceTitle">IdeasForgeAIProduct Development</h2>
         </div>
 
         <div class="top-actions">
@@ -697,7 +697,7 @@ async function generateApp() {
     (data.results || []).forEach((item) => {
       const row = document.createElement("div");
       row.className = "agent-row";
-      row.innerHTML = `<strong>${item.agent_name}</strong><small>${item.status} — ${item.summary}</small>`;
+      row.innerHTML = `<strong>${item.agent_name}</strong><small>${item.status} â€” ${item.summary}</small>`;
       agentRows.appendChild(row);
     });
 
@@ -750,7 +750,7 @@ async function loadProjects() {
 generateBtn.onclick = generateApp;
 
 kisanBtn.onclick = () => {
-  appNameInput.value = "KisanMitraLite";
+  appNameInput.value = "IdeasForgeAIProduct";
   ideaText.value = "Create an agriculture management platform with farmer dashboard, FPO dashboard, buyer dashboard, farm records, crop records, mandi deals, weather insights and account records.";
   generateApp();
 };
@@ -775,10 +775,10 @@ openPreviewBtn.onclick = () => {
 refreshProjectsBtn.onclick = loadProjects;
 
 window.addEventListener("load", async () => {
-  addMessage("ai", "Welcome. I am your IdeasForgeAI builder assistant. Generate KisanMitraLite and I will show development steps here.");
+  addMessage("ai", "Welcome. I am your IdeasForgeAI builder assistant. Generate IdeasForgeAIProduct and I will show development steps here.");
   await checkBackend();
   await loadProjects();
-  askAI("Check if OpenAI is configured and suggest the first KisanMitraLite build steps.");
+  askAI("Check if OpenAI is configured and suggest the first IdeasForgeAIProduct build steps.");
 });
 ''')
 

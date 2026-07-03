@@ -1,4 +1,4 @@
-# IdeasForgeAI Design Constitution v1.0
+﻿# IdeasForgeAI Design Constitution v1.0
 
 Mission:
 IdeasForgeAI exists to transform ideas into complete digital products through the simplest and most delightful AI experience possible.
@@ -73,3 +73,4 @@ Principles:
 Final Promise:
 When someone finishes building with IdeasForgeAI, they should think:
 "I didn't just build software. I built a complete product with an AI team."
+

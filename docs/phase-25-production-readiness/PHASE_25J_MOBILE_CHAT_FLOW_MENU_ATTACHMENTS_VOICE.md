@@ -1,4 +1,4 @@
-# Phase 25J - Mobile Chat Flow, Menu Drawer, Attachments, and Voice
+﻿# Phase 25J - Mobile Chat Flow, Menu Drawer, Attachments, and Voice
 
 Status: Completed, not frozen.
 
@@ -45,7 +45,7 @@ No transcription, upload, backend call, or provider call is performed.
 - No database, auth, or Supabase integration.
 - No deployment configuration changes.
 - Desktop builder remains preserved.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
 
 ## Validation
 
@@ -54,3 +54,4 @@ No transcription, upload, backend call, or provider call is performed.
 - Unsafe/backend term search completed for `frontend/pages/studio-v3.*`
 - Confirmed attachments are local input/chip behavior only.
 - Confirmed `MediaRecorder` is used only for local user-initiated voice recording.
+

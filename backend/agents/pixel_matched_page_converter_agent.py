@@ -1,4 +1,4 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
@@ -12,7 +12,7 @@ class PixelMatchedPageConverterAgent(BaseAgent):
             context.get("app_slug")
             or context.get("project_slug")
             or context.get("app_name")
-            or "kisanmitralite"
+            or "IdeasForgeAIProduct"
         )
         has_image = bool(context.get("image_provided"))
         image_name = context.get("image_name") or ""
@@ -62,3 +62,4 @@ class PixelMatchedPageConverterAgent(BaseAgent):
             summary="Safe placeholder conversion prepared. Real image analysis is not enabled yet.",
             data=data,
         )
+

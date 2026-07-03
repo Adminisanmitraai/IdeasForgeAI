@@ -1,4 +1,4 @@
-"""Phase 12E rollback + backup system for the Phase 12D proof file only.
+﻿"""Phase 12E rollback + backup system for the Phase 12D proof file only.
 
 Backup/rollback sandbox only.
 No real frontend generation.
@@ -119,8 +119,8 @@ def _blocked_path_reason(path_value: str) -> Optional[str]:
         return "deployment config files are blocked."
     if file_name in SECRET_FILE_NAMES or file_name.startswith(".env"):
         return "secrets/env files are blocked."
-    if "kisanmitra" in lower_path:
-        return "KisanMitraAI paths are blocked."
+    if "IdeasForgeAI" in lower_path:
+        return "IdeasForgeAI paths are blocked."
     return None
 
 

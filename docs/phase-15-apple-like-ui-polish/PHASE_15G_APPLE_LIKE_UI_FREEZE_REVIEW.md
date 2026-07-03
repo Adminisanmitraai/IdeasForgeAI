@@ -63,7 +63,7 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 ## Validation
 
@@ -83,3 +83,4 @@ Phase 16 should begin the real product-builder interaction layer:
 - preserve surrounding layout
 - validate output
 - keep generation approval-gated
+

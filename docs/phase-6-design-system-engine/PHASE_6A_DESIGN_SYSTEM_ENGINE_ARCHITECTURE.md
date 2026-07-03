@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6A — Design System Engine Architecture
+## Phase 6A â€” Design System Engine Architecture
 
 ### Version 1.0
 
@@ -26,7 +26,7 @@ Phase 6 sits between:
 
 ## Previous Phase
 
-Phase 5 — AI Product Brain
+Phase 5 â€” AI Product Brain
 
 Phase 5 creates:
 
@@ -40,7 +40,7 @@ Phase 5 creates:
 
 ## Current Phase
 
-Phase 6 — Design System Engine
+Phase 6 â€” Design System Engine
 
 Phase 6 creates:
 
@@ -56,8 +56,8 @@ Phase 6 creates:
 
 ## Future Phase
 
-Phase 7 — Pixel-Matched Converter
-Phase 8 — Frontend Generator
+Phase 7 â€” Pixel-Matched Converter
+Phase 8 â€” Frontend Generator
 
 Phase 6 prepares the design rules that future visual conversion and frontend generation will follow.
 
@@ -627,7 +627,7 @@ Phase 6 should not move to Phase 7 or Phase 8 without approval.
 
 Approval message:
 
-“Approve Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.”
+â€œApprove Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.â€
 
 ---
 
@@ -646,3 +646,4 @@ Phase 6A is successful when:
 * The product stays aligned with:
 
 **Less UI. More Intelligence.**
+

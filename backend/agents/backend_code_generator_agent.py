@@ -1,6 +1,6 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
-from backend.agents import kisanmitra_lite_template
+from backend.agents import ideasforgeai_product_template_template
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
 
@@ -16,19 +16,19 @@ class BackendCodeGeneratorAgent(BaseAgent):
         template_id = template_data.get("template_id", "startup_landing")
         template_name = template_data.get("template_name", "Startup Landing Page")
 
-        if template_id == "kisanmitra_lite":
+        if template_id == "ideasforgeai_product_template":
             return self.success(
-                summary="Generated KisanMitraLite backend APIs with local JSON persistence.",
+                summary="Generated IdeasForgeAIProduct backend APIs with local JSON persistence.",
                 data={
                     "files": {
-                        "main.py": kisanmitra_lite_template.backend_code(project_name, template_name),
+                        "main.py": ideasforgeai_product_template_template.backend_code(project_name, template_name),
                         "requirements.txt": self._requirements(),
-                        ".env.example": kisanmitra_lite_template.env_example(project_name),
+                        ".env.example": ideasforgeai_product_template_template.env_example(project_name),
                         "README.md": self._readme(project_name, template_name),
-                        "supabase_schema.sql": kisanmitra_lite_template.supabase_schema(),
+                        "supabase_schema.sql": ideasforgeai_product_template_template.supabase_schema(),
                     },
                     "docs_files": {
-                        "supabase-plan.md": kisanmitra_lite_template.supabase_plan(),
+                        "supabase-plan.md": ideasforgeai_product_template_template.supabase_plan(),
                     },
                 },
             )
@@ -258,3 +258,4 @@ class BackendCodeGeneratorAgent(BaseAgent):
         ]
 
         return "\n".join(lines)
+

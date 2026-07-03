@@ -43,7 +43,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -131,7 +131,7 @@ def get_phase20g_final_polished_output_validation_score(payload: dict[str, Any] 
         "provider_calls_allowed=true",
         "database_writes_allowed=true",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_blockers = [
@@ -140,7 +140,7 @@ def get_phase20g_final_polished_output_validation_score(payload: dict[str, Any] 
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_blockers = [
@@ -160,7 +160,7 @@ def get_phase20g_final_polished_output_validation_score(payload: dict[str, Any] 
         "secret=",
         "token=",
         "deploy(",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     visual_keywords = [
@@ -218,7 +218,7 @@ def get_phase20g_final_polished_output_validation_score(payload: dict[str, Any] 
             and manifest.get("secrets_allowed") is False
             and manifest.get("real_generated_app_modified") is False
             and manifest.get("ideasforgeai_preview_v1_touched") is False
-            and manifest.get("kisanmitra_production_touched") is False
+            and manifest.get("IdeasForgeAI_production_touched") is False
         ),
         "phase20_polish_report_score": _score(
             "status: success" in polish_report
@@ -236,7 +236,7 @@ def get_phase20g_final_polished_output_validation_score(payload: dict[str, Any] 
             and "deployment unlocked: false" in validation_report
             and "provider calls allowed: false" in validation_report
         ),
-        "kisanmitra_separation_score": _score("kisanmitra" not in (index_lower + css_lower + app_lower)),
+        "IdeasForgeAI_separation_score": _score("IdeasForgeAI" not in (index_lower + css_lower + app_lower)),
     }
 
     for name, value in score_categories.items():
@@ -261,3 +261,4 @@ def get_phase20g_final_polished_output_validation_score(payload: dict[str, Any] 
         "next_required_phase": "Phase 20H - Final Frontend Freeze Review",
         **_locked_flags(),
     }
+

@@ -1,4 +1,4 @@
-
+﻿
 # Phase 8G - Studio Preview + Approval Gate
 
 Status: Completed as Studio-only preview.
@@ -68,3 +68,4 @@ It does not generate production HTML, CSS, React, or generated app files.
 ## Next step
 
 Phase 8G Freeze Review, then Phase 8H - Frontend Generator Freeze Review.
+

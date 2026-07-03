@@ -1,4 +1,4 @@
-# Phase 7G - Pixel Match Score Preview Placeholder
+﻿# Phase 7G - Pixel Match Score Preview Placeholder
 
 Status: Completed as placeholder only.
 
@@ -92,3 +92,4 @@ Phase 7G does not:
 - Studio V3 visual polish remains visual-only.
 - Phase 7H / Phase 7 Final Freeze Review remains the next approval-gated step.
 - Phase 8 remains locked.
+

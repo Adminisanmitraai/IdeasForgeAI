@@ -1,4 +1,4 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
 from backend.design_system_engine.component_rule_engine import ComponentRuleEngine
 from backend.design_system_engine.design_readiness_engine import DesignReadinessEngine
@@ -82,3 +82,4 @@ class DesignSystemEngine:
             },
             "next_step": "Review Design System v1.0, revise if needed, then approve before any future conversion or frontend generation.",
         }
+

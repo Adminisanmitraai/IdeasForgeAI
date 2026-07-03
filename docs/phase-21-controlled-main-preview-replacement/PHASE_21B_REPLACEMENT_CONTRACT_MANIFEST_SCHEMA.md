@@ -16,7 +16,7 @@ No production deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Approved Replacement Source
 
@@ -94,7 +94,7 @@ Future replacement must require:
 - supabase_allowed
 - auth_allowed
 - secrets_allowed
-- kisanmitra_production_touched
+- IdeasForgeAI_production_touched
 
 ## Rollback Manifest Required Fields
 
@@ -127,7 +127,7 @@ Phase 21 must not modify:
 - provider configuration
 - database configuration
 - Supabase/auth configuration
-- KisanMitraAI paths
+- IdeasForgeAI paths
 
 ## Phase 21B Safety Confirmation
 
@@ -142,5 +142,6 @@ No deployment was performed.
 No provider calls were made.
 No database writes were made.
 No Supabase/auth/secrets were added.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 21C was not implemented.
+

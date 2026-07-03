@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6B — Design Tokens & Visual Rules
+## Phase 6B â€” Design Tokens & Visual Rules
 
 ### Version 1.0
 
 ## Purpose
 
-This document defines the design token and visual rule system for IdeasForgeAI Phase 6 — Design System Engine.
+This document defines the design token and visual rule system for IdeasForgeAI Phase 6 â€” Design System Engine.
 
 Design tokens are the reusable visual decisions that keep the product consistent across screens, modes, generated pages, and future frontend output.
 
@@ -18,7 +18,7 @@ Core mantra:
 
 # 1. Design Token Role
 
-Design tokens define the product’s visual foundation.
+Design tokens define the productâ€™s visual foundation.
 
 They control:
 
@@ -782,3 +782,4 @@ Phase 6B is successful when:
 * The product stays aligned with:
 
 **Less UI. More Intelligence.**
+

@@ -65,7 +65,7 @@ Promotion must never directly modify:
 - root project files
 - secrets/env files
 - deployment config
-- KisanMitraAI files
+- IdeasForgeAI files
 
 ## Required Approval Conditions
 
@@ -107,5 +107,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 18B was not implemented.
+

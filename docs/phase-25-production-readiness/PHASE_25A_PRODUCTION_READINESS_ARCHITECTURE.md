@@ -1,4 +1,4 @@
-# Phase 25A - Production Readiness Architecture
+﻿# Phase 25A - Production Readiness Architecture
 
 Status: Completed, not frozen
 
@@ -486,4 +486,5 @@ Confirmed:
 - No provider calls.
 - No Supabase/auth/database/secrets.
 - No deployment changes.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
+

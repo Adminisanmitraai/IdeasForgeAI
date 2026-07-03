@@ -38,8 +38,8 @@ BLOCKED_MARKERS = [
     "token",
     "deployment",
     "deploy",
-    "KisanMitraAI",
-    "kisanmitra",
+    "IdeasForgeAI",
+    "IdeasForgeAI",
 ]
 
 
@@ -158,7 +158,7 @@ def get_phase16g_section_preview_validation_score(payload: dict[str, Any] | None
         and "<iframe" not in preview_lower
         and "http://" not in preview_lower
         and "https://" not in preview_lower
-        and "kisanmitra" not in preview_lower
+        and "IdeasForgeAI" not in preview_lower
     )
     score_categories["preview_html_safety_score"] = _score(preview_html_ok)
 
@@ -226,8 +226,8 @@ def get_phase16g_section_preview_validation_score(payload: dict[str, Any] | None
     )
     score_categories["safety_flags_score"] = _score(safety_flags_ok)
 
-    kisanmitra_separation_ok = "kisanmitra" not in combined_lower
-    score_categories["kisanmitra_separation_score"] = _score(kisanmitra_separation_ok)
+    IdeasForgeAI_separation_ok = "IdeasForgeAI" not in combined_lower
+    score_categories["IdeasForgeAI_separation_score"] = _score(IdeasForgeAI_separation_ok)
 
     for name, value in score_categories.items():
         if value < 100:
@@ -256,3 +256,4 @@ def get_phase16g_section_preview_validation_score(payload: dict[str, Any] | None
         "next_required_phase": "Phase 16H - Phase 16 Freeze Review",
         **_locked_flags(),
     }
+

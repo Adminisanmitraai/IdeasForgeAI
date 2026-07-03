@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any, Dict, List
 
@@ -31,4 +31,5 @@ def quality_notes_for_generated_app(plan: Dict[str, Any]) -> Dict[str, Any]:
         ],
         "qa_rule_ids": list(QA_RULE_IDS),
     }
+
 

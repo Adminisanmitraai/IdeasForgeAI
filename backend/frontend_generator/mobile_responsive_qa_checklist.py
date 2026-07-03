@@ -41,7 +41,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "backend_generation_unlocked": False,
         "generation_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -110,7 +110,7 @@ def get_phase22d_mobile_responsive_qa_checklist(payload: dict[str, Any] | None =
         "api_key",
         "secret=",
         "token=",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     content_safety_checks = {
@@ -161,3 +161,4 @@ def get_phase22d_mobile_responsive_qa_checklist(payload: dict[str, Any] | None =
         "next_required_phase": "Phase 22E - Runtime Console + Safety QA",
         **_locked_flags(),
     }
+

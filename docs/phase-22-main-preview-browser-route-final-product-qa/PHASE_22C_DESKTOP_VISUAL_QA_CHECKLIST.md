@@ -17,7 +17,7 @@ No deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Desktop QA Target
 
@@ -50,7 +50,7 @@ Desktop visual requirements:
 - no raw sandbox/debug wording above the fold
 - no deployment wording suggesting launch
 - no provider/database/secrets behavior
-- no KisanMitraAI content
+- no IdeasForgeAI content
 
 ## Phase 22C Safety Confirmation
 
@@ -61,5 +61,6 @@ No deployment is performed.
 No provider calls are made.
 No database writes are made.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 Phase 22D is not implemented.
+

@@ -1,4 +1,4 @@
-# Phase 13A - Controlled Multi-File Real Generation Planning
+﻿# Phase 13A - Controlled Multi-File Real Generation Planning
 
 Status: Completed, not frozen.
 
@@ -6,7 +6,7 @@ Status: Completed, not frozen.
 
 Phase 13 plans the next controlled step from the Phase 12G static HTML/CSS sandbox proof toward controlled multi-file frontend generation.
 
-Phase 13A is planning and architecture only. It does not generate app files, modify Phase 12 sandbox files, unlock production generation, unlock backend generation, deploy, call providers, add Supabase/auth/database writes/secrets, or touch KisanMitraAI production.
+Phase 13A is planning and architecture only. It does not generate app files, modify Phase 12 sandbox files, unlock production generation, unlock backend generation, deploy, call providers, add Supabase/auth/database writes/secrets, or touch IdeasForgeAI production.
 
 ## 2. What Phase 12 Proved
 
@@ -41,7 +41,7 @@ Future target folders must:
 - Not reuse `generated-apps/ideasforgeai-preview-v1/`.
 - Not overwrite any existing generated app.
 - Not contain path traversal.
-- Not point to KisanMitraAI production or any external project.
+- Not point to IdeasForgeAI production or any external project.
 - Be created only after explicit approval.
 
 ## 6. Future Allowed Files
@@ -70,7 +70,7 @@ Blocked targets include:
 - Deployment config files.
 - `.env`, secret, token, key, credential, or connection string files.
 - Supabase, auth, database, or migration files.
-- KisanMitraAI paths.
+- IdeasForgeAI paths.
 - Any path outside `D:/APPS/IdeasForgeAI`.
 
 ## 8. Multi-File Write Order
@@ -178,9 +178,9 @@ Phase 13 must not add Supabase clients, auth flows, schema files, migrations, RL
 
 Phase 13 generated outputs must not contain API keys, private keys, tokens, passwords, connection strings, JWT secrets, Supabase service role keys, provider credentials, or `.env` files.
 
-## 19. No KisanMitraAI-Touch Rule
+## 19. No IdeasForgeAI-Touch Rule
 
-IdeasForgeAI remains separate from KisanMitraAI. Phase 13 must not read from, write to, deploy, sync, reference production paths, or modify KisanMitraAI production.
+IdeasForgeAI remains separate from IdeasForgeAI. Phase 13 must not read from, write to, deploy, sync, reference production paths, or modify IdeasForgeAI production.
 
 ## 20. Future Preview Runner Requirements
 
@@ -247,7 +247,7 @@ Before any Phase 13 controlled write:
 - Deployment remains locked.
 - Provider calls remain locked.
 - Supabase/auth/database/secrets remain locked.
-- KisanMitraAI production remains untouched.
+- IdeasForgeAI production remains untouched.
 
 ## Recommended Phase 13 Sequence
 

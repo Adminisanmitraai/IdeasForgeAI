@@ -77,7 +77,7 @@ Blocked:
 - project root files
 - deployment config
 - env/secrets files
-- KisanMitraAI folders
+- IdeasForgeAI folders
 - any path outside D:/APPS/IdeasForgeAI
 
 ## 8. Safe Preview Serving Rules
@@ -91,7 +91,7 @@ Preview serving must:
 - never expose root files
 - never expose secrets
 - never expose deployment config
-- never expose KisanMitraAI files
+- never expose IdeasForgeAI files
 - never allow arbitrary path input
 - never write files
 - never delete files
@@ -211,17 +211,17 @@ The preview runner must not connect to:
 - credentials
 - sessions
 
-## 20. No KisanMitraAI-Touch Rule
+## 20. No IdeasForgeAI-Touch Rule
 
-IdeasForgeAI remains completely separate from KisanMitraAI.
+IdeasForgeAI remains completely separate from IdeasForgeAI.
 
 Phase 14 must not touch:
-- KisanMitraAI files
-- KisanMitraAI GitHub
-- KisanMitraAI Render
-- KisanMitraAI DNS
-- KisanMitraAI credentials
-- KisanMitraAI production
+- IdeasForgeAI files
+- IdeasForgeAI GitHub
+- IdeasForgeAI Render
+- IdeasForgeAI DNS
+- IdeasForgeAI credentials
+- IdeasForgeAI production
 
 ## 21. Future Studio V3 Right-Panel Preview Behavior
 
@@ -266,7 +266,7 @@ Before any rendered preview is shown:
 - No external URLs.
 - No iframe.
 - No provider/database/auth/secrets markers.
-- KisanMitraAI reference must be absent.
+- IdeasForgeAI reference must be absent.
 
 ## 24. Future Phase 14B Plan
 
@@ -315,7 +315,7 @@ Before Phase 14 can be frozen:
 - No deployment is added.
 - No provider calls are added.
 - No Supabase/auth/database is added.
-- No KisanMitraAI files are touched.
+- No IdeasForgeAI files are touched.
 - Studio V3 remains stable.
 - Phase 11 workspace remains frozen.
 - generated-apps/ideasforgeai-preview-v1 remains untouched.
@@ -333,5 +333,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 14B was not implemented.
+

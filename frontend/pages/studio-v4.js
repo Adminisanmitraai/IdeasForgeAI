@@ -1348,3 +1348,4 @@ window.addEventListener("resize", syncMobilePreviewRail);
 
 studioShell?.setAttribute("data-active-panel", studioShell.classList.contains("is-preview-open") ? "preview" : "chat");
 syncMobilePreviewRail();
+

@@ -101,7 +101,7 @@ def _validate_source() -> tuple[list[str], list[str]]:
 
     # Phase 17C copies documentation files too, and those documents may contain
     # safe negative safety statements such as "No deployment", "No secrets",
-    # "Supabase locked", or "KisanMitraAI not touched".
+    # "Supabase locked", or "IdeasForgeAI not touched".
     #
     # Therefore, strict product-contamination scanning is applied only to
     # app-visible/runtime files, not README/validation documentation.
@@ -121,7 +121,7 @@ def _validate_source() -> tuple[list[str], list[str]]:
     app_visible_lower = app_visible_combined.lower()
 
     blocked_app_visible_markers = [
-        "kisanmitra",
+        "IdeasForgeAI",
         "supabase.createclient",
         "supabaseurl",
         "supabase_service_role",
@@ -296,4 +296,5 @@ Secrets remain locked.
         "next_required_phase": "Phase 17D - Apply Approved Section Patch to Copied HTML Only",
         **_locked_flags(),
     }
+
 

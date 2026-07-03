@@ -1,4 +1,4 @@
-# Phase 12C - Real Generation Dry-Run Validator
+﻿# Phase 12C - Real Generation Dry-Run Validator
 
 Status: Completed, not frozen.
 
@@ -20,7 +20,7 @@ Phase 12C does not:
 - Deploy
 - Call providers
 - Add Supabase, authentication, database writes, or secrets
-- Touch KisanMitraAI production
+- Touch IdeasForgeAI production
 - Modify `generated-apps/ideasforgeai-preview-v1/`
 - Implement Phase 12D
 
@@ -45,7 +45,7 @@ The validator checks:
 - `target_folder`
 - Target folder is inside `D:/APPS/IdeasForgeAI/generated-apps/`
 - Target folder does not reuse `generated-apps/ideasforgeai-preview-v1/`
-- Target folder does not point to KisanMitraAI
+- Target folder does not point to IdeasForgeAI
 - Target folder does not escape `D:/APPS/IdeasForgeAI`
 - `allowed_files`
 - `blocked_files`
@@ -69,7 +69,7 @@ The validator rejects planned writes targeting:
 - Root production files
 - Deployment config files
 - Secrets/env files
-- KisanMitraAI paths
+- IdeasForgeAI paths
 - Any path outside `D:/APPS/IdeasForgeAI`
 - Any path outside the allowed IdeasForgeAI `generated-apps` sandbox
 
@@ -122,3 +122,4 @@ Even when validation passes, the safety flags remain locked:
 ## Next Step
 
 Phase 12C Freeze Review, then Phase 12D only after explicit approval.
+

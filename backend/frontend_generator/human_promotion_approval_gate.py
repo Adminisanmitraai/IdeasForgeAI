@@ -41,7 +41,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -125,3 +125,4 @@ def validate_phase18c_human_promotion_approval_gate(payload: dict[str, Any] | No
         "next_required_phase": "Phase 18D - Promotion Dry-Run Validator",
         **locked,
     }
+

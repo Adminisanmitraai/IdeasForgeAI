@@ -66,7 +66,7 @@ Phase 17 must never directly modify:
 - root project files
 - secrets/env files
 - deployment config
-- KisanMitraAI files
+- IdeasForgeAI files
 
 ## Required Future Files
 
@@ -114,7 +114,7 @@ Future patch application must:
 - avoid iframe
 - avoid provider/database/auth/secrets
 - avoid deployment logic
-- avoid KisanMitraAI reference
+- avoid IdeasForgeAI reference
 - write only to the Phase 17 sandbox copy
 - create rollback manifest before patch
 
@@ -131,5 +131,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 17B was not implemented.
+

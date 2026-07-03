@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
 
@@ -90,7 +90,7 @@ class TemplateUIRendererAgent(BaseAgent):
         <article class="stat-card">
           <span>Deals Won</span>
           <strong>42</strong>
-          <small>₹8.4L pipeline</small>
+          <small>â‚¹8.4L pipeline</small>
         </article>
         <article class="stat-card">
           <span>Follow-ups</span>
@@ -118,12 +118,12 @@ class TemplateUIRendererAgent(BaseAgent):
             <div class="lead-card">
               <strong>GreenField Traders</strong>
               <span>Website enquiry</span>
-              <small>Potential: ₹45,000</small>
+              <small>Potential: â‚¹45,000</small>
             </div>
             <div class="lead-card">
               <strong>Nova Retail</strong>
               <span>Phone lead</span>
-              <small>Potential: ₹28,000</small>
+              <small>Potential: â‚¹28,000</small>
             </div>
           </article>
 
@@ -132,12 +132,12 @@ class TemplateUIRendererAgent(BaseAgent):
             <div class="lead-card hot">
               <strong>Bright Foods</strong>
               <span>Demo requested</span>
-              <small>Potential: ₹1.2L</small>
+              <small>Potential: â‚¹1.2L</small>
             </div>
             <div class="lead-card">
               <strong>Urban Supply Co.</strong>
               <span>Needs pricing</span>
-              <small>Potential: ₹74,000</small>
+              <small>Potential: â‚¹74,000</small>
             </div>
           </article>
 
@@ -146,7 +146,7 @@ class TemplateUIRendererAgent(BaseAgent):
             <div class="lead-card">
               <strong>Northstar Agency</strong>
               <span>Proposal sent</span>
-              <small>Potential: ₹96,000</small>
+              <small>Potential: â‚¹96,000</small>
             </div>
           </article>
 
@@ -155,7 +155,7 @@ class TemplateUIRendererAgent(BaseAgent):
             <div class="lead-card won">
               <strong>Prime Services</strong>
               <span>Payment confirmed</span>
-              <small>Closed: ₹63,000</small>
+              <small>Closed: â‚¹63,000</small>
             </div>
           </article>
         </div>
@@ -169,7 +169,7 @@ class TemplateUIRendererAgent(BaseAgent):
           <div class="profile-meta">
             <span>Owner: Riya</span>
             <span>Stage: Qualified</span>
-            <span>Value: ₹1.2L</span>
+            <span>Value: â‚¹1.2L</span>
           </div>
         </div>
 
@@ -254,14 +254,14 @@ class TemplateUIRendererAgent(BaseAgent):
 
     <section class="shop-layout">
       <div class="product-grid">
-        <article class="product-card"><h3>Premium Product</h3><p>₹1,299</p><button>Add to cart</button></article>
-        <article class="product-card"><h3>Starter Pack</h3><p>₹699</p><button>Add to cart</button></article>
-        <article class="product-card"><h3>Business Bundle</h3><p>₹2,499</p><button>Add to cart</button></article>
+        <article class="product-card"><h3>Premium Product</h3><p>â‚¹1,299</p><button>Add to cart</button></article>
+        <article class="product-card"><h3>Starter Pack</h3><p>â‚¹699</p><button>Add to cart</button></article>
+        <article class="product-card"><h3>Business Bundle</h3><p>â‚¹2,499</p><button>Add to cart</button></article>
       </div>
       <aside class="cart-card">
         <h2>Cart Summary</h2>
         <p>3 items selected</p>
-        <strong>Total: ₹4,497</strong>
+        <strong>Total: â‚¹4,497</strong>
         <button>Proceed</button>
       </aside>
     </section>

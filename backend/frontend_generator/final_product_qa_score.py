@@ -39,7 +39,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "backend_generation_unlocked": False,
         "generation_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 def _read_text(path: Path) -> str:
@@ -128,7 +128,7 @@ def get_phase22f_final_product_qa_score(payload: dict[str, Any] | None = None) -
             and manifest.get("provider_calls_allowed") is False
             and manifest.get("database_writes_allowed") is False
             and manifest.get("secrets_allowed") is False
-            and manifest.get("kisanmitra_production_touched") is False
+            and manifest.get("IdeasForgeAI_production_touched") is False
         ),
         "phase21_replacement_manifest_score": _score(
             bool(replacement_manifest)
@@ -139,9 +139,9 @@ def get_phase22f_final_product_qa_score(payload: dict[str, Any] | None = None) -
             and replacement_manifest.get("provider_calls_allowed") is False
             and replacement_manifest.get("database_writes_allowed") is False
             and replacement_manifest.get("secrets_allowed") is False
-            and replacement_manifest.get("kisanmitra_production_touched") is False
+            and replacement_manifest.get("IdeasForgeAI_production_touched") is False
         ),
-        "kisanmitra_separation_score": _score("kisanmitra" not in combined),
+        "IdeasForgeAI_separation_score": _score("IdeasForgeAI" not in combined),
     }
 
     for name, value in score_categories.items():
@@ -166,3 +166,4 @@ def get_phase22f_final_product_qa_score(payload: dict[str, Any] | None = None) -
         "next_required_phase": "Phase 22G - Phase 22 Freeze Review",
         **_locked_flags(),
     }
+

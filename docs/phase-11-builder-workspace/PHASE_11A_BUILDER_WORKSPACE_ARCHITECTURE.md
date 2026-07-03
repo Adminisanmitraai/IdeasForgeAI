@@ -1,4 +1,4 @@
-# Phase 11A - Builder Workspace Architecture
+﻿# Phase 11A - Builder Workspace Architecture
 
 Generated at: 2026-06-26T22:02:18
 
@@ -17,7 +17,7 @@ Phase 11A is architecture-only.
 - Phase 10 generated app polish track is frozen.
 - Generated preview remains isolated to generated-apps/ideasforgeai-preview-v1/.
 - Deployment remains locked.
-- KisanMitraAI production must not be touched.
+- IdeasForgeAI production must not be touched.
 
 Phase 10 ready check: True
 
@@ -128,7 +128,7 @@ Future phases may add isolated docs in:
 - deployment config
 - Supabase/auth/database config
 - secrets
-- KisanMitraAI folders or production files
+- IdeasForgeAI folders or production files
 
 ## Safety locks
 
@@ -147,3 +147,4 @@ Future phases may add isolated docs in:
 ## Next step
 
 Phase 11A Freeze Review, then Phase 11B - Left Sidebar + Center Chat Layout.
+

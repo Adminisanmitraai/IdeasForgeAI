@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
@@ -6,11 +6,11 @@ from backend.core.models import AgentResult
 from backend.core.project_paths import GENERATED_APPS_DIR
 
 
-class KisanMitraLandingTemplateAgent(BaseAgent):
-    name = "KisanMitraLandingTemplateAgent"
+class IdeasForgeAILandingTemplateAgent(BaseAgent):
+    name = "IdeasForgeAILandingTemplateAgent"
 
     def run(self, context: Dict[str, Any]) -> AgentResult:
-        app_slug = context.get("app_slug") or "kisanmitralite"
+        app_slug = context.get("app_slug") or "IdeasForgeAIProduct"
         frontend_dir = GENERATED_APPS_DIR / app_slug / "frontend"
         frontend_dir.mkdir(parents=True, exist_ok=True)
 
@@ -23,7 +23,7 @@ class KisanMitraLandingTemplateAgent(BaseAgent):
         js_path.write_text(self.home_js(), encoding="utf-8")
 
         return self.success(
-            summary="Generated premium KisanMitraAI homepage locally.",
+            summary="Generated premium IdeasForgeAI homepage locally.",
             data={
                 "mode": "local_generated_output",
                 "html_file": str(html_path),
@@ -46,14 +46,14 @@ class KisanMitraLandingTemplateAgent(BaseAgent):
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>KisanMitraAI - Precision Farming</title>
+  <title>IdeasForgeAI - Precision Farming</title>
   <link rel="stylesheet" href="./home.css" />
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="./home.html" aria-label="KisanMitraAI home">
+    <a class="brand" href="./home.html" aria-label="IdeasForgeAI home">
       <span class="brand-mark">KM</span>
-      <span><strong>KisanMitraAI</strong><small>AI for farms and markets</small></span>
+      <span><strong>IdeasForgeAI</strong><small>AI for farms and markets</small></span>
     </a>
     <button id="menuBtn" class="menu-btn" type="button">Menu</button>
     <nav id="siteNav" class="site-nav" aria-label="Primary navigation">
@@ -79,7 +79,7 @@ class KisanMitraLandingTemplateAgent(BaseAgent):
       <div class="hero-copy">
         <p class="eyebrow">Smart agriculture intelligence</p>
         <h1>Precision Farming. Stronger Market Connection.</h1>
-        <p class="hero-text">KisanMitraAI helps farmers, FPOs and buyers with AI-powered crop guidance, trusted market linkage, local-language support and smart farm intelligence.</p>
+        <p class="hero-text">IdeasForgeAI helps farmers, FPOs and buyers with AI-powered crop guidance, trusted market linkage, local-language support and smart farm intelligence.</p>
         <div class="hero-actions">
           <a class="primary-btn" href="./farmers.html">I'm a Farmer</a>
           <a class="secondary-btn" href="./buyers.html">I'm a Buyer</a>
@@ -87,7 +87,7 @@ class KisanMitraLandingTemplateAgent(BaseAgent):
         </div>
       </div>
 
-      <div class="hero-visual" aria-label="KisanMitraAI intelligence cards">
+      <div class="hero-visual" aria-label="IdeasForgeAI intelligence cards">
         <article class="floating-card crop-card">
           <span>AI Crop Insight</span>
           <strong>Tomato flowering risk reduced</strong>
@@ -115,7 +115,7 @@ class KisanMitraLandingTemplateAgent(BaseAgent):
   </main>
 
   <footer id="contact" class="site-footer">
-    <span>KisanMitraAI local preview</span>
+    <span>IdeasForgeAI local preview</span>
     <a href="./index.html">Open live dashboard</a>
   </footer>
 
@@ -402,3 +402,4 @@ if (menuBtn && siteNav) {
   });
 }
 """
+

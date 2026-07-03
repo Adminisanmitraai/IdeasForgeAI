@@ -1,4 +1,4 @@
-# IdeasForgeAI Product Expansion Standard
+﻿# IdeasForgeAI Product Expansion Standard
 
 IdeasForgeAI must become a universal AI builder for work, business, study, content creation, and daily life.
 
@@ -41,3 +41,4 @@ The platform must not only generate simple apps. It must understand sector, role
 ## Product Rule
 
 IdeasForgeAI should help users create useful professional outputs without needing to learn AI, coding, automation, design, or document formatting.
+

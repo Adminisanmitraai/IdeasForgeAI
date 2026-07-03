@@ -37,7 +37,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -102,7 +102,7 @@ def get_phase20d_final_section_card_cta_polish_plan() -> dict[str, Any]:
                 "No database writes without approval",
                 "Secrets stay locked",
                 "Rollback-ready previews",
-                "KisanMitraAI separation preserved",
+                "IdeasForgeAI separation preserved",
             ],
             "tone": "short, confident, founder-friendly",
         },
@@ -133,3 +133,4 @@ def get_phase20d_final_section_card_cta_polish_plan() -> dict[str, Any]:
         "next_required_phase": "Phase 20E - Controlled Final Polish Sandbox Creation",
         **_locked_flags(),
     }
+

@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class ConversationEngine:
@@ -40,3 +40,4 @@ class ConversationEngine:
             {"role": "Brand Designer", "message": "I'm creating a modern visual identity."},
             {"role": "QA Engineer", "message": "I'm preparing quality checks."},
         ]
+

@@ -1,4 +1,4 @@
-from typing import Dict
+﻿from typing import Dict
 
 
 class AITeamEngine:
@@ -15,3 +15,4 @@ class AITeamEngine:
             "QA / Risk Reviewer": "The main risk is jumping to code too early. Blueprint approval is required before Phase 6.",
             "Business Strategy Advisor": "The strongest value is product-team thinking before building, making the output more trustworthy than normal generators.",
         }
+

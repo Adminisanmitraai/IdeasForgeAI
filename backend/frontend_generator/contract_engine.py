@@ -1,4 +1,4 @@
-from backend.frontend_generator.schemas import (
+﻿from backend.frontend_generator.schemas import (
     FrontendGeneratorContractRequest,
     FrontendGeneratorContractResponse,
     FrontendGeneratorRequestShape,
@@ -154,3 +154,4 @@ class FrontendGeneratorContractEngine:
                 "Phase 8 generation remains locked.",
             ],
         )
+

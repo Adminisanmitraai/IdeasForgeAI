@@ -1,4 +1,4 @@
-"""Phase 13E controlled HTML/CSS/JS sandbox generation.
+﻿"""Phase 13E controlled HTML/CSS/JS sandbox generation.
 
 Writes only the approved Phase 13E static sandbox files.
 No general real generation unlock.
@@ -164,8 +164,8 @@ def _validate_payload(payload: Dict[str, Any]) -> List[str]:
         errors.append("Phase 12 sandbox folders are blocked.")
     if PHASE_13D_SANDBOX_NAME in lower_target:
         errors.append("Phase 13D sandbox folder is blocked.")
-    if "kisanmitra" in lower_target:
-        errors.append("KisanMitraAI paths are blocked.")
+    if "IdeasForgeAI" in lower_target:
+        errors.append("IdeasForgeAI paths are blocked.")
     if target_path != TARGET_FOLDER:
         errors.append("Only the Phase 13E approved sandbox folder can be written.")
 
@@ -193,8 +193,8 @@ def _validate_static_content(file_map: Dict[str, str]) -> List[str]:
         errors.append("index.html must not include iframe tags.")
     if "http://" in index_html or "https://" in index_html or "//" in index_html:
         errors.append("index.html must not include external URLs.")
-    if "kisanmitra" in index_html:
-        errors.append("index.html must not reference KisanMitraAI.")
+    if "IdeasForgeAI" in index_html:
+        errors.append("index.html must not reference IdeasForgeAI.")
     if "<script" in index_html and "src=\"app.js\"" not in index_html:
         errors.append("index.html may only load the local app.js script.")
 
@@ -221,8 +221,8 @@ def _validate_static_content(file_map: Dict[str, str]) -> List[str]:
     for marker in blocked_js_markers:
         if marker in app_js:
             errors.append(f"app.js contains blocked marker: {marker}")
-    if "kisanmitra" in app_js:
-        errors.append("app.js must not reference KisanMitraAI.")
+    if "IdeasForgeAI" in app_js:
+        errors.append("app.js must not reference IdeasForgeAI.")
 
     return errors
 
@@ -257,7 +257,7 @@ def _build_file_contents(payload: Dict[str, Any]) -> Dict[str, str]:
             "supabase_allowed": False,
             "auth_allowed": False,
             "secrets_allowed": False,
-            "kisanmitra_connection_allowed": False,
+            "IdeasForgeAI_connection_allowed": False,
         },
         "next_required_phase": "Phase 13F",
     }

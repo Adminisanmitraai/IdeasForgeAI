@@ -38,7 +38,7 @@ Confirmed:
 - Provider calls remain locked.
 - Database writes remain locked.
 - Supabase/auth/secrets remain locked.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 ## Design Note
 
@@ -59,3 +59,4 @@ That patch should reduce green wash and shift the frontend toward:
 Phase 23 — Apple-Like White/Graphite Visual Refinement Patch.
 
 Deployment remains locked.
+

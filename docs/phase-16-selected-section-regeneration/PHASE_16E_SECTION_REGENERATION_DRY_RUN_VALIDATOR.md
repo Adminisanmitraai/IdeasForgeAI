@@ -36,7 +36,7 @@ The validator checks:
 - deployment/provider/database/secrets/Supabase/auth flags are false
 - target remains inside approved sandbox reference only
 - no generated-apps/ideasforgeai-preview-v1 target
-- no backend/frontend/docs/root/deployment/secrets/KisanMitraAI target
+- no backend/frontend/docs/root/deployment/secrets/IdeasForgeAI target
 
 ## Phase 16E Safety Confirmation
 
@@ -52,5 +52,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 16F was not implemented.
+

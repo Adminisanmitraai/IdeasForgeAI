@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from typing import Any, Dict, List
 
 from backend.core.base_agent import BaseAgent
@@ -6,16 +6,16 @@ from backend.core.models import AgentResult
 from backend.core.project_paths import GENERATED_APPS_DIR
 
 
-class KisanMitraProductionSyncAgent(BaseAgent):
-    name = "KisanMitraProductionSyncAgent"
+class IdeasForgeAIProductionSyncAgent(BaseAgent):
+    name = "IdeasForgeAIProductionSyncAgent"
 
     production_targets = [
-        Path("D:/APPS/KisanMitraAI"),
-        Path("D:/APPS/KisanMitraAI_GITHUB_CLEAN"),
+        Path("D:/APPS/IdeasForgeAI"),
+        Path("D:/APPS/IdeasForgeAI_GITHUB_CLEAN"),
     ]
 
     def run(self, context: Dict[str, Any]) -> AgentResult:
-        app_slug = context.get("app_slug") or "kisanmitralite"
+        app_slug = context.get("app_slug") or "IdeasForgeAIProduct"
         source_dir = GENERATED_APPS_DIR / app_slug / "frontend"
         source_files = [
             source_dir / "home.html",
@@ -67,3 +67,4 @@ class KisanMitraProductionSyncAgent(BaseAgent):
                 "production_write_performed": False,
             },
         )
+

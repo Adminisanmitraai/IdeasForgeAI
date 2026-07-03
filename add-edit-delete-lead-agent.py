@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from textwrap import dedent
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
@@ -72,7 +72,7 @@ async function loadCRMData() {
     }
 
     if (cards[1]) {
-      cards[1].querySelector("small").textContent = "₹" + stats.pipeline_value + " pipeline";
+      cards[1].querySelector("small").textContent = "â‚¹" + stats.pipeline_value + " pipeline";
     }
 
     if (cards[2]) {
@@ -264,7 +264,7 @@ async function renderLeadManager() {
         <strong>${lead.name || ""}</strong>
         <span>${lead.company || ""}</span>
         <span style="text-transform:capitalize;color:#93c5fd;">${lead.stage || "new"}</span>
-        <span>₹${lead.value || 0}</span>
+        <span>â‚¹${lead.value || 0}</span>
         <small>${lead.next_follow_up || "No follow-up"}</small>
         <span style="display:flex;gap:8px;">
           <button data-action="edit" style="padding:9px 12px;border-radius:999px;border:0;background:white;color:#020617;font-weight:900;">Edit</button>

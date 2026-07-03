@@ -1,4 +1,4 @@
-# Phase 12G - First Controlled HTML/CSS Generation
+﻿# Phase 12G - First Controlled HTML/CSS Generation
 
 Status: Completed, not frozen.
 
@@ -62,7 +62,7 @@ The generated page is static and safe:
 - No deployment scripts
 - No iframe
 - No database/auth/Supabase logic
-- No KisanMitraAI connection
+- No IdeasForgeAI connection
 
 ## Safety Locks
 

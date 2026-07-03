@@ -1,6 +1,6 @@
-# Supabase Plan
+﻿# Supabase Plan
 
-IdeasForgeAI currently keeps generated app data in local JSON files. KisanMitraLite is prepared for a later Supabase migration without requiring Supabase during local testing.
+IdeasForgeAI currently keeps generated app data in local JSON files. IdeasForgeAIProduct is prepared for a later Supabase migration without requiring Supabase during local testing.
 
 Planned tables:
 - farmers
@@ -22,3 +22,4 @@ Environment variables:
 Frontend rule:
 - Never place `SUPABASE_SERVICE_ROLE_KEY` in frontend files.
 - Public frontend code may use only `SUPABASE_URL` and `SUPABASE_ANON_KEY` after Row Level Security is configured.
+

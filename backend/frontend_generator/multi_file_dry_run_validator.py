@@ -1,4 +1,4 @@
-"""Phase 13C multi-file dry-run validator.
+﻿"""Phase 13C multi-file dry-run validator.
 
 Validation metadata only.
 No file writes.
@@ -189,8 +189,8 @@ def _path_is_blocked(relative_path: str, source_phase: str) -> Optional[str]:
         return "secrets/env files are blocked."
     if any(marker in parts or marker == file_name for marker in DATABASE_AUTH_SUPABASE_MARKERS):
         return "database/auth/Supabase files are blocked."
-    if "kisanmitra" in lower_path:
-        return "KisanMitraAI paths are blocked."
+    if "IdeasForgeAI" in lower_path:
+        return "IdeasForgeAI paths are blocked."
     return None
 
 
@@ -226,8 +226,8 @@ def _validate_target_folder(payload: Dict[str, Any], errors: List[str], warnings
         errors.append("target_folder must not touch generated-apps/ideasforgeai-preview-v1.")
     if any(name.lower() in lower_target for name in PHASE_12_SANDBOX_NAMES):
         errors.append("target_folder must not use Phase 12 sandbox folders.")
-    if "kisanmitra" in lower_target:
-        errors.append("target_folder must not contain KisanMitraAI paths.")
+    if "IdeasForgeAI" in lower_target:
+        errors.append("target_folder must not contain IdeasForgeAI paths.")
     if "_phase13" not in target_path.name.lower():
         warnings.append("target_folder is inside generated-apps but does not use a Phase 13 sandbox-style name.")
     return checked_target_folder

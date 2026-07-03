@@ -1,4 +1,4 @@
-
+﻿
 # Phase 9G - Generated App Preview Runner
 
 Status: Completed, not frozen.
@@ -34,7 +34,7 @@ http://127.0.0.1:8100/api/frontend-generator/generated-app-preview-runner/index.
 - No auth.
 - No database writes.
 - No secrets.
-- No KisanMitraAI production changes.
+- No IdeasForgeAI production changes.
 
 ## Safety locks
 
@@ -53,3 +53,4 @@ http://127.0.0.1:8100/api/frontend-generator/generated-app-preview-runner/index.
 ## Next step
 
 Phase 9G Freeze Review, then Phase 9H - Real Frontend Generation Freeze Review.
+

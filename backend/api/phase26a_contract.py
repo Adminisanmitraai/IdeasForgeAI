@@ -1,4 +1,4 @@
-from uuid import uuid4
+﻿from uuid import uuid4
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -191,3 +191,4 @@ def _suggestions_for_step(step_index: int) -> list[str]:
         4: ["Refine users", "Refine features"],
     }
     return suggestions_by_step.get(step_index, ["Clarify workflow", "Refine product scope"])
+

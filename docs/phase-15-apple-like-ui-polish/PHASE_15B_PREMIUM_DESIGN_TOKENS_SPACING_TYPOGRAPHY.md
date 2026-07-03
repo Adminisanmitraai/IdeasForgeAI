@@ -38,9 +38,10 @@ Not allowed:
 
 ## Safety Confirmation
 
-IdeasForgeAI remains separate from KisanMitraAI.
+IdeasForgeAI remains separate from IdeasForgeAI.
 generated-apps/ideasforgeai-preview-v1 remains untouched.
 General real generation remains locked.
 Backend generation remains locked.
 Deployment remains locked.
 Phase 15C was not implemented.
+

@@ -46,8 +46,8 @@ BLOCKED_TARGET_MARKERS = [
     "supabase",
     "auth",
     "database",
-    "KisanMitraAI",
-    "kisanmitra",
+    "IdeasForgeAI",
+    "IdeasForgeAI",
 ]
 
 
@@ -182,3 +182,4 @@ def validate_phase16e_section_regeneration_dry_run(payload: dict | None = None) 
         "next_required_phase": "Phase 16F - Controlled Section Patch Sandbox",
         **_locked_flags(),
     }
+

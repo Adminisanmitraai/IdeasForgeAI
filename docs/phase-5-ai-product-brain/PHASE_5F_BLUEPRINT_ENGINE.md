@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5F — Blueprint Engine Specification
+## Phase 5F â€” Blueprint Engine Specification
 
 ### Version 1.0
 
@@ -357,7 +357,7 @@ The AI should not:
 * Generate production code without request
 * Expose secrets
 * Touch unrelated projects
-* Touch KisanMitraAI production
+* Touch IdeasForgeAI production
 * Skip approval gates
 * Push deployment too early
 
@@ -528,7 +528,7 @@ State what must be approved.
 
 User idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 ## Product Identity
 
@@ -599,3 +599,4 @@ The Blueprint Engine is successful when:
 * The product remains aligned with:
 
 **Less UI. More Intelligence.**
+

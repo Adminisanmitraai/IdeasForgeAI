@@ -1,6 +1,6 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
-from backend.agents import kisanmitra_lite_template
+from backend.agents import ideasforgeai_product_template_template
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
 
@@ -18,8 +18,8 @@ class HTMLBuilderAgent(BaseAgent):
         page_body = render_data.get("page_body", "")
         page_css = render_data.get("page_css", "")
 
-        if template_id == "kisanmitra_lite":
-            files = kisanmitra_lite_template.frontend_files(project_name)
+        if template_id == "ideasforgeai_product_template":
+            files = ideasforgeai_product_template_template.frontend_files(project_name)
             starter_html = files.pop("index.html")
             return self.success(
                 summary=f"Built multi-page HTML/CSS using {template_name} renderer.",
@@ -29,7 +29,7 @@ class HTMLBuilderAgent(BaseAgent):
                     "template_id": template_id,
                     "template_name": template_name,
                     "starter_html": starter_html,
-                    "starter_css": kisanmitra_lite_template.styles_css(),
+                    "starter_css": ideasforgeai_product_template_template.styles_css(),
                     "extra_frontend_files": files,
                 },
             )
@@ -63,3 +63,4 @@ class HTMLBuilderAgent(BaseAgent):
                 "starter_css": page_css,
             },
         )
+

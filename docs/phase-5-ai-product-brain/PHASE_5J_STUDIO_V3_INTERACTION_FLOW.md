@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5J — Studio V3 Interaction Flow Specification
+## Phase 5J â€” Studio V3 Interaction Flow Specification
 
 ### Version 1.0
 
@@ -53,17 +53,17 @@ The experience should not feel technical too early.
 
 # 3. Main Flow
 
-## Step 1 — User Enters Idea
+## Step 1 â€” User Enters Idea
 
 User types a natural-language product idea in Create Mode.
 
 Example:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
-## Step 2 — Intent Engine Runs
+## Step 2 â€” Intent Engine Runs
 
-The system detects the user’s intent.
+The system detects the userâ€™s intent.
 
 Possible output:
 
@@ -78,23 +78,23 @@ Possible output:
 * approval_request
 * unknown
 
-## Step 3 — Product Brain Creates First Understanding
+## Step 3 â€” Product Brain Creates First Understanding
 
 The system should show a short understanding summary.
 
 It should not jump to code.
 
-## Step 4 — Dynamic Question Engine Starts
+## Step 4 â€” Dynamic Question Engine Starts
 
 The system asks one question at a time.
 
 Default first question:
 
-“Who is the primary user?”
+â€œWho is the primary user?â€
 
 But the system should still generate draft strategy, requirements, blueprint, and planning using safe assumptions.
 
-## Step 5 — Preview Cards Populate
+## Step 5 â€” Preview Cards Populate
 
 Preview Mode should populate:
 
@@ -108,7 +108,7 @@ Preview Mode should populate:
 
 Cards should not remain empty after a valid idea is submitted.
 
-## Step 6 — User Answers or Skips
+## Step 6 â€” User Answers or Skips
 
 User can:
 
@@ -119,7 +119,7 @@ User can:
 
 Skipped questions should be remembered as unresolved, not treated as failure.
 
-## Step 7 — Product Memory Updates
+## Step 7 â€” Product Memory Updates
 
 Product memory should update with:
 
@@ -133,11 +133,11 @@ Product memory should update with:
 * Planning
 * Approval status
 
-## Step 8 — Approval Checkpoint Appears
+## Step 8 â€” Approval Checkpoint Appears
 
 The system should clearly show:
 
-“Approve Product Blueprint v1.0 before moving to Phase 6 Design System Engine.”
+â€œApprove Product Blueprint v1.0 before moving to Phase 6 Design System Engine.â€
 
 No future build phase should start without approval.
 
@@ -352,7 +352,7 @@ Approval options:
 
 Default approval message:
 
-“Approval needed: Freeze Product Blueprint v1.0 before moving to Phase 6 Design System Engine.”
+â€œApproval needed: Freeze Product Blueprint v1.0 before moving to Phase 6 Design System Engine.â€
 
 Silence is not approval.
 
@@ -369,7 +369,7 @@ Do not:
 * Add authentication
 * Export app/PWA
 * Deploy publicly
-* Touch KisanMitraAI production
+* Touch IdeasForgeAI production
 * Expose secrets
 * Redesign frozen UI
 
@@ -391,3 +391,4 @@ Phase 5J is successful when:
 * The experience stays aligned with:
 
 **Less UI. More Intelligence.**
+

@@ -1,4 +1,4 @@
-# IdeasForgeAI Travel Dev With GitHub Codespaces
+﻿# IdeasForgeAI Travel Dev With GitHub Codespaces
 
 Use this workflow when you want to work on IdeasForgeAI from an iPhone browser without laptop PowerShell or a local server.
 
@@ -46,3 +46,4 @@ git push origin main
 - Local laptop testing still uses `http://127.0.0.1:8000`.
 - Production still uses `https://ideasforgeai-api.onrender.com`.
 - No frontend API keys or backend secrets are needed for this travel setup.
+

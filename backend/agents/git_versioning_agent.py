@@ -1,4 +1,4 @@
-import subprocess
+﻿import subprocess
 from pathlib import Path
 from typing import Any, Dict, List
 
@@ -28,8 +28,8 @@ class GitVersioningAgent(BaseAgent):
                 "git_status": git_status,
                 "git_branch": git_branch,
                 "git_diff_stat": git_diff_stat,
-                "suggested_branch": "feature/kisanmitraai-premium-home",
-                "suggested_commit_message": "Add premium KisanMitraAI homepage and live app workflow",
+                "suggested_branch": "feature/IdeasForgeAI-premium-home",
+                "suggested_commit_message": "Add premium IdeasForgeAI homepage and live app workflow",
                 "risky_files": risky_files,
                 "warnings": [
                     "Do not commit .env files, keys, tokens, __pycache__, .pyc, or generated secrets.",
@@ -70,3 +70,4 @@ class GitVersioningAgent(BaseAgent):
                 risky.append("Risky file scan truncated at 80 entries.")
                 break
         return risky
+

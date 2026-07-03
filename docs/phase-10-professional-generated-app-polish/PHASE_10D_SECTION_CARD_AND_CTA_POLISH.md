@@ -1,4 +1,4 @@
-# Phase 10D - Section, Card, and CTA Polish
+﻿# Phase 10D - Section, Card, and CTA Polish
 
 Status: Completed, not frozen.
 
@@ -33,8 +33,9 @@ Phase 10D polishes the generated preview sections below the hero.
 - No auth
 - No database writes
 - No secrets
-- No KisanMitraAI changes
+- No IdeasForgeAI changes
 
 ## Next step
 
 Phase 10D Freeze Review, then Phase 10E - Responsive Mobile/Desktop Polish.
+

@@ -105,7 +105,7 @@ Blocked:
 - provider_config
 - root_config
 - environment_config
-- KisanMitraAI
+- IdeasForgeAI
 
 ## Safety Rules
 
@@ -119,7 +119,7 @@ Section registry must:
 - never target root production files
 - never target secrets/env files
 - never target deployment files
-- never target KisanMitraAI folders
+- never target IdeasForgeAI folders
 - never accept arbitrary absolute paths
 - always require validation
 - always require approval
@@ -142,5 +142,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 16C was not implemented.
+

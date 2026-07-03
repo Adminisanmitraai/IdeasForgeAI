@@ -64,7 +64,7 @@ BLOCKED_HTML_MARKERS = [
     "token",
     "deploy.yml",
     "render.yaml",
-    "kisanmitra",
+    "IdeasForgeAI",
 ]
 
 
@@ -265,7 +265,7 @@ def _validate_patched_html(value: str) -> list[str]:
         "refresh_token",
         "deploy.yml",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     for marker in blocked_runtime_markers:
@@ -438,3 +438,4 @@ generated-apps/ideasforgeai-preview-v1 touched: false
         "next_required_phase": "Phase 17E - Patched Copy Preview Route",
         **_locked_flags(),
     }
+

@@ -54,7 +54,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -146,3 +146,4 @@ def serve_phase20f_final_polished_preview(file_name: str):
         media_type=ALLOWED_PREVIEW_FILES[clean_name],
         headers=headers,
     )
+

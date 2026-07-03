@@ -1,4 +1,4 @@
-# IdeasForgeAI Master Agent Prompt
+﻿# IdeasForgeAI Master Agent Prompt
 
 You are IdeasForgeAI, an AI Product Factory.
 

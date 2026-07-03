@@ -1,4 +1,4 @@
-# Phase 12A - Controlled Real Generation Unlock Planning
+﻿# Phase 12A - Controlled Real Generation Unlock Planning
 
 Status: Completed, not frozen.
 
@@ -6,7 +6,7 @@ Status: Completed, not frozen.
 
 Phase 12 defines how IdeasForgeAI will safely move from preview-only Studio UI into controlled real frontend generation in later approved phases.
 
-Phase 12A is planning only. It does not write generated app files, unlock production generation, call providers, deploy, or modify KisanMitraAI production.
+Phase 12A is planning only. It does not write generated app files, unlock production generation, call providers, deploy, or modify IdeasForgeAI production.
 
 ## 2. Current Locked State
 
@@ -48,7 +48,7 @@ Rules:
 - Folder must not reuse or overwrite `generated-apps/ideasforgeai-preview-v1/`.
 - Folder must not point outside `generated-apps/`.
 - Folder must not contain path traversal such as `..`.
-- Folder must not be a production KisanMitraAI path.
+- Folder must not be a production IdeasForgeAI path.
 
 ## 6. Allowed Future Generated File List
 
@@ -68,7 +68,7 @@ Any additional file requires a later approved contract update.
 Blocked locations include:
 
 - `generated-apps/ideasforgeai-preview-v1/`
-- KisanMitraAI production folders
+- IdeasForgeAI production folders
 - `frontend/pages/`
 - `backend/`
 - `.env` files
@@ -190,7 +190,7 @@ Security limits:
 - No database writes.
 - No authentication setup.
 - No Supabase configuration.
-- No KisanMitraAI production references or writes.
+- No IdeasForgeAI production references or writes.
 
 ## 16. No Provider-Call Rule
 
@@ -237,11 +237,11 @@ Generated files must not contain:
 - Supabase service role keys
 - Provider credentials
 
-## 20. No KisanMitraAI-Touch Rule
+## 20. No IdeasForgeAI-Touch Rule
 
-IdeasForgeAI remains separate from KisanMitraAI.
+IdeasForgeAI remains separate from IdeasForgeAI.
 
-Phase 12 must not read from, write to, deploy, sync, or modify KisanMitraAI production folders.
+Phase 12 must not read from, write to, deploy, sync, or modify IdeasForgeAI production folders.
 
 ## 21. Future Phase 12B Plan
 
@@ -284,7 +284,7 @@ Before real generation unlock:
 - Provider calls locked.
 - Supabase/auth/database locked.
 - Secrets scan passed.
-- KisanMitraAI production untouched.
+- IdeasForgeAI production untouched.
 
 ## Recommended Future Phase 12 Sequence
 
@@ -296,3 +296,4 @@ Before real generation unlock:
 - Phase 12F - Human Approval Unlock Gate
 - Phase 12G - First Controlled HTML/CSS Generation
 - Phase 12H - Phase 12 Freeze Review
+

@@ -1,4 +1,4 @@
-from typing import Dict
+﻿from typing import Dict
 
 
 class ProductStrategyEngine:
@@ -70,3 +70,4 @@ class ProductStrategyEngine:
         if industry == "restaurant":
             return ["Customers", "Restaurant Staff", "Managers"]
         return ["Founders", "Operators", "Customers"]
+

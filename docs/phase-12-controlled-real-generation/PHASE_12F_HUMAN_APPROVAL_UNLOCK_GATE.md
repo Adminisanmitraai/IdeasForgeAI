@@ -1,4 +1,4 @@
-# Phase 12F - Human Approval Unlock Gate
+﻿# Phase 12F - Human Approval Unlock Gate
 
 Status: Completed, not frozen.
 
@@ -22,7 +22,7 @@ Phase 12F does not:
 - Deploy
 - Call providers
 - Add Supabase, authentication, database writes, or secrets
-- Touch KisanMitraAI production
+- Touch IdeasForgeAI production
 - Implement Phase 12G
 
 ## Backend Module
@@ -67,7 +67,7 @@ The gate rejects:
 - `secrets_allowed=true`
 - Supabase unlock
 - Auth unlock
-- KisanMitraAI paths
+- IdeasForgeAI paths
 - Paths outside `D:/APPS/IdeasForgeAI`
 - Generated output fields such as HTML, CSS, JS, React, generated files, provider prompts, deployment requests, database writes, auth config, or secrets
 

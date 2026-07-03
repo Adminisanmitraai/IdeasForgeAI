@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+﻿from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 from backend.product_brain.blueprint_engine import BlueprintEngine
@@ -144,3 +144,4 @@ class ProductBrainWorkflow:
             "next_question": "What is the most important action users should complete first?",
             "controls": ["Continue", "Edit Answer", "Skip", "Save Draft"],
         }
+

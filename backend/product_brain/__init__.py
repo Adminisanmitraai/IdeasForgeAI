@@ -1,2 +1,3 @@
-"""Local placeholder Product Brain package for IdeasForgeAI."""
+﻿"""Local placeholder Product Brain package for IdeasForgeAI."""
+
 

@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5C — Dynamic Question Engine Specification
+## Phase 5C â€” Dynamic Question Engine Specification
 
 ### Version 1.0
 
@@ -114,7 +114,7 @@ Best for:
 
 The engine should ask questions in this order:
 
-## Priority 1 — Product Purpose
+## Priority 1 â€” Product Purpose
 
 Question examples:
 
@@ -125,7 +125,7 @@ Why it matters:
 
 Without purpose, the product cannot be shaped.
 
-## Priority 2 — Target User
+## Priority 2 â€” Target User
 
 Question examples:
 
@@ -136,7 +136,7 @@ Why it matters:
 
 User type controls UX, features, data, roles, and pricing.
 
-## Priority 3 — Main Workflow
+## Priority 3 â€” Main Workflow
 
 Question examples:
 
@@ -148,7 +148,7 @@ Why it matters:
 
 Workflow controls screen map and feature map.
 
-## Priority 4 — AI Role
+## Priority 4 â€” AI Role
 
 Question examples:
 
@@ -160,7 +160,7 @@ Why it matters:
 
 AI behavior defines the intelligence layer.
 
-## Priority 5 — Human Approval
+## Priority 5 â€” Human Approval
 
 Question examples:
 
@@ -171,7 +171,7 @@ Why it matters:
 
 IdeasForgeAI must stay safe by default.
 
-## Priority 6 — Data Needs
+## Priority 6 â€” Data Needs
 
 Question examples:
 
@@ -183,7 +183,7 @@ Why it matters:
 
 Data affects backend, database, privacy, and Supabase Safe Mode later.
 
-## Priority 7 — User Roles
+## Priority 7 â€” User Roles
 
 Question examples:
 
@@ -194,7 +194,7 @@ Why it matters:
 
 Roles affect authentication and permissions in later phases.
 
-## Priority 8 — Business Direction
+## Priority 8 â€” Business Direction
 
 Question examples:
 
@@ -205,7 +205,7 @@ Why it matters:
 
 Business model affects launch strategy and product structure.
 
-## Priority 9 — Design Direction
+## Priority 9 â€” Design Direction
 
 Question examples:
 
@@ -216,7 +216,7 @@ Why it matters:
 
 Design belongs to Phase 6, but Phase 5 should capture direction.
 
-## Priority 10 — Build Constraints
+## Priority 10 â€” Build Constraints
 
 Question examples:
 
@@ -284,7 +284,7 @@ Used when the idea is unclear.
 
 Example:
 
-“What is the main result the user should get from this product?”
+â€œWhat is the main result the user should get from this product?â€
 
 ## Choice Question
 
@@ -292,7 +292,7 @@ Used when the user may not know how to explain.
 
 Example:
 
-“Is this product mainly for personal use, client work, internal team use, or public SaaS?”
+â€œIs this product mainly for personal use, client work, internal team use, or public SaaS?â€
 
 ## Confirmation Question
 
@@ -300,7 +300,7 @@ Used when the AI can infer but needs approval.
 
 Example:
 
-“I will assume this should be mobile-first and approval-based. Is that correct?”
+â€œI will assume this should be mobile-first and approval-based. Is that correct?â€
 
 ## Expansion Question
 
@@ -308,7 +308,7 @@ Used after the base idea is clear.
 
 Example:
 
-“Should this product later support paid users or team accounts?”
+â€œShould this product later support paid users or team accounts?â€
 
 ## Risk Question
 
@@ -316,7 +316,7 @@ Used when something may affect safety or architecture.
 
 Example:
 
-“Will this product store sensitive user data?”
+â€œWill this product store sensitive user data?â€
 
 ---
 
@@ -344,7 +344,7 @@ The AI should remember skipped questions as unresolved, not failed.
 
 User idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 ## Understanding
 
@@ -481,18 +481,18 @@ The question engine should sound:
 
 Avoid:
 
-* “Please fill this form”
-* “You must answer all fields”
-* “Insufficient data”
-* “Cannot proceed”
-* “Technical configuration required”
+* â€œPlease fill this formâ€
+* â€œYou must answer all fieldsâ€
+* â€œInsufficient dataâ€
+* â€œCannot proceedâ€
+* â€œTechnical configuration requiredâ€
 
 Prefer:
 
-* “I can move forward with safe assumptions.”
-* “This answer will help shape the product direction.”
-* “We can refine this later.”
-* “I’ll keep this simple.”
+* â€œI can move forward with safe assumptions.â€
+* â€œThis answer will help shape the product direction.â€
+* â€œWe can refine this later.â€
+* â€œIâ€™ll keep this simple.â€
 
 ---
 
@@ -514,3 +514,4 @@ Phase 5C is successful when:
 Final rule:
 
 **Questions should reduce confusion, not create friction.**
+

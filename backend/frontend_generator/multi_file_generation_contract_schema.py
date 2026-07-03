@@ -1,4 +1,4 @@
-"""Phase 13B multi-file generation contract + manifest schema.
+﻿"""Phase 13B multi-file generation contract + manifest schema.
 
 Static schema metadata only.
 No file writes.
@@ -88,7 +88,7 @@ BLOCKED_FILES_AND_LOCATIONS = [
     "deployment config files",
     ".env or secrets files",
     "database/auth/Supabase files",
-    "KisanMitraAI folders",
+    "IdeasForgeAI folders",
     "any path outside D:/APPS/IdeasForgeAI",
     "generated-apps/ideasforgeai-preview-v1 unless explicitly approved in a later phase",
     "Phase 12 sandbox folders",
@@ -108,7 +108,7 @@ VALIDATION_RULES = [
     "database_writes_allowed must be false",
     "secrets_allowed must be false",
     "Supabase/auth unlock must be false",
-    "KisanMitraAI paths must be rejected",
+    "IdeasForgeAI paths must be rejected",
 ]
 
 SAFETY_FLAGS = {
@@ -206,7 +206,7 @@ def build_phase13b_multi_file_contract_response(payload: Optional[Dict[str, Any]
             "No provider calls.",
             "No deployment.",
             "No Supabase, auth, database writes, or secrets.",
-            "No KisanMitraAI production changes.",
+            "No IdeasForgeAI production changes.",
             "Phase 13C is not implemented.",
         ],
     }

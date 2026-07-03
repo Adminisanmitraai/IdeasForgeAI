@@ -1,4 +1,4 @@
-from typing import Dict
+﻿from typing import Dict
 
 
 class RequirementsEngine:
@@ -73,3 +73,4 @@ class RequirementsEngine:
             "readiness_status": "ready_for_blueprint",
             "modules": modules,
         }
+

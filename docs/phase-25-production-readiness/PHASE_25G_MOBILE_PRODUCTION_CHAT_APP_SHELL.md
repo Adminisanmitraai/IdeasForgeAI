@@ -1,4 +1,4 @@
-# Phase 25G - Mobile Production Chat App Shell
+﻿# Phase 25G - Mobile Production Chat App Shell
 
 Status: Completed, not frozen.
 
@@ -92,7 +92,7 @@ Real chat, backend generation, provider calls, auth, database, storage, billing,
 - No real backend generation unlock.
 - No upload, OCR, image analysis, pixel reading, or canvas analysis.
 - No deployment changes.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
 
 ## Validation
 
@@ -105,3 +105,4 @@ Required validation:
   - `http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25g-mobile-production-chat`
 - LAN route:
   - `http://192.168.1.7:8100/frontend/pages/studio-v3.html?v=phase25g-mobile-production-chat`
+

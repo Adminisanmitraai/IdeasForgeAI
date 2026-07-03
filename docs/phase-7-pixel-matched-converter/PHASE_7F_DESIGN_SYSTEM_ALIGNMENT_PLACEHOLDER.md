@@ -1,4 +1,4 @@
-# Phase 7F - Pixel-Matched Design System Alignment Placeholder
+﻿# Phase 7F - Pixel-Matched Design System Alignment Placeholder
 
 Status: Completed as placeholder only.
 
@@ -88,3 +88,4 @@ Phase 7F does not:
 - Studio V3 visual polish remains visual-only.
 - Historical note: Phase 7G was the next approval-gated step during Phase 7F completion.
 - Phase 8 remains locked.
+

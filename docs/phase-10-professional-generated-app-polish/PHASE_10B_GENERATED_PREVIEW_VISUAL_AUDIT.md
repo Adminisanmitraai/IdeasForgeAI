@@ -1,4 +1,4 @@
-# Phase 10B - Generated Preview Visual Audit
+﻿# Phase 10B - Generated Preview Visual Audit
 
 Generated at: 2026-06-26T20:45:59
 
@@ -91,8 +91,9 @@ Phase 10C should focus on:
 - No auth was added.
 - No database writes were added.
 - No secrets were added.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 ## Next step
 
 Phase 10B Freeze Review, then Phase 10C - Premium Hero and Navigation Polish.
+

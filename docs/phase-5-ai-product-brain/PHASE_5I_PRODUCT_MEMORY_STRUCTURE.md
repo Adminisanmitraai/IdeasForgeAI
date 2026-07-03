@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5I — Product Memory Structure
+## Phase 5I â€” Product Memory Structure
 
 ### Version 1.0
 
@@ -109,7 +109,7 @@ Stores the main identity and status of the product.
 
 * product_name: IdeasForgeAI
 * product_category: AI Product Factory
-* current_phase: Phase 5 — AI Product Brain
+* current_phase: Phase 5 â€” AI Product Brain
 * current_status: draft
 * owner_intent: Build a product factory that turns rough ideas into approved product plans and future build outputs
 
@@ -363,7 +363,7 @@ Safety Record must flag:
 
 * Secret exposure risk
 * Production deployment risk
-* KisanMitraAI separation risk
+* IdeasForgeAI separation risk
 * Database write risk
 * Auth and role risk
 * Public launch risk
@@ -454,7 +454,7 @@ Do not store:
 
 * Product name: IdeasForgeAI
 * Category: AI Product Factory
-* Current phase: Phase 5 — AI Product Brain
+* Current phase: Phase 5 â€” AI Product Brain
 * Status: draft
 
 ## Idea Record
@@ -547,3 +547,4 @@ Product Memory is successful when:
 * It stays aligned with:
 
 **Less UI. More Intelligence.**
+

@@ -1,4 +1,4 @@
-"""Phase 12C real generation dry-run validator.
+﻿"""Phase 12C real generation dry-run validator.
 
 Validation metadata only.
 No folder creation.
@@ -37,7 +37,7 @@ REQUIRED_BLOCKED_MARKERS = [
     "root production files",
     "deployment config",
     "secrets/env files",
-    "KisanMitraAI folders",
+    "IdeasForgeAI folders",
     "any folder outside D:/APPS/IdeasForgeAI",
 ]
 DEPLOYMENT_CONFIG_FILES = {
@@ -165,8 +165,8 @@ def _validate_project_name(payload: Dict[str, Any], errors: List[str]) -> None:
     if not project_name:
         errors.append("project_name is required.")
         return
-    if "kisanmitra" in project_name.lower():
-        errors.append("project_name must not target KisanMitraAI or KisanMitra production.")
+    if "IdeasForgeAI" in project_name.lower():
+        errors.append("project_name must not target IdeasForgeAI or IdeasForgeAI production.")
     if not PROJECT_NAME_PATTERN.match(project_name):
         errors.append("project_name has an invalid format.")
 
@@ -186,8 +186,8 @@ def _validate_target_folder(payload: Dict[str, Any], errors: List[str], warnings
         return ""
     if _contains_path_traversal(raw_target):
         errors.append("target_folder must not contain path traversal.")
-    if "kisanmitra" in raw_target.lower():
-        errors.append("target_folder must not contain KisanMitraAI paths.")
+    if "IdeasForgeAI" in raw_target.lower():
+        errors.append("target_folder must not contain IdeasForgeAI paths.")
     if target_path is None:
         errors.append("target_folder could not be normalized as a Windows path.")
         return checked_target_folder
@@ -226,8 +226,8 @@ def _path_is_blocked(relative_path: str, source_phase: str) -> Optional[str]:
         return "deployment config files are blocked."
     if file_name in SECRET_FILE_NAMES or file_name.startswith(".env"):
         return "secrets/env files are blocked."
-    if "kisanmitra" in lower_path:
-        return "KisanMitraAI paths are blocked."
+    if "IdeasForgeAI" in lower_path:
+        return "IdeasForgeAI paths are blocked."
     return None
 
 
@@ -400,4 +400,5 @@ def build_real_generation_dry_run_validator_response(payload: Optional[Dict[str,
             "deployment_remains_locked": True,
         },
     }
+
 

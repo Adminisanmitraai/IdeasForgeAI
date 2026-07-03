@@ -82,7 +82,7 @@ Selected section regeneration must:
 - never touch root production files
 - never touch secrets/env files
 - never touch deployment files
-- never touch KisanMitraAI
+- never touch IdeasForgeAI
 - never call providers without future approval
 - never deploy
 - always require validation
@@ -110,5 +110,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 16B was not implemented.
+

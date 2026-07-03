@@ -107,8 +107,9 @@ def get_phase17b_sandbox_copy_rollback_manifest_contract() -> dict[str, Any]:
             "root production files",
             "deployment config",
             "env/secrets files",
-            "KisanMitraAI paths",
+            "IdeasForgeAI paths",
         ],
         "next_required_phase": "Phase 17C - Create Read-Only Source Copy Sandbox",
         **_locked_flags(),
     }
+

@@ -1,4 +1,4 @@
-from typing import Dict
+﻿from typing import Dict
 
 from backend.pixel_converter.schemas import (
     PixelConverterContractRequest,
@@ -451,3 +451,4 @@ class PixelConverterContractEngine:
                 "No Phase 8 unlock.",
             ],
         )
+

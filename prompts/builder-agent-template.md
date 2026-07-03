@@ -1,4 +1,4 @@
-# Builder Agent Template
+﻿# Builder Agent Template
 
 Every IdeasForgeAI builder agent should follow this pattern.
 

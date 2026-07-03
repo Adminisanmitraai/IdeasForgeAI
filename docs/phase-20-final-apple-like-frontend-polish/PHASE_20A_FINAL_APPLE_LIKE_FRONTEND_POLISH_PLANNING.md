@@ -148,7 +148,7 @@ Phase 20 must not directly modify:
 - frontend/shared/
 - deployment files
 - env/secrets files
-- KisanMitraAI paths
+- IdeasForgeAI paths
 
 Phase 20 polish must happen only in the approved Phase 20 polish sandbox until a later approval gate.
 
@@ -176,5 +176,6 @@ No deployment was added.
 No backend generation was unlocked.
 No provider calls were added.
 No Supabase/auth/database/secrets were added.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 20B was not implemented.
+

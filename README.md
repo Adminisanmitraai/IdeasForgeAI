@@ -1,4 +1,4 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
 IdeasForgeAI is an AI Product Factory.
 

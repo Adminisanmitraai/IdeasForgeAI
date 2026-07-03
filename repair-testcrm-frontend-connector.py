@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 FRONTEND = Path(r"D:\APPS\IdeasForgeAI\generated-apps\testcrm\frontend")
 index_path = FRONTEND / "index.html"
@@ -58,7 +58,7 @@ async function loadCRMData() {
     }
 
     if (statCards[1]) {
-      statCards[1].querySelector("small").textContent = "₹" + stats.pipeline_value + " pipeline";
+      statCards[1].querySelector("small").textContent = "â‚¹" + stats.pipeline_value + " pipeline";
     }
 
     if (statCards[2]) {
@@ -92,7 +92,7 @@ async function loadCRMData() {
         card.innerHTML = `
           <strong>${lead.company}</strong>
           <span>${lead.name}</span>
-          <small>Value: ₹${lead.value}</small>
+          <small>Value: â‚¹${lead.value}</small>
         `;
         column.appendChild(card);
       });

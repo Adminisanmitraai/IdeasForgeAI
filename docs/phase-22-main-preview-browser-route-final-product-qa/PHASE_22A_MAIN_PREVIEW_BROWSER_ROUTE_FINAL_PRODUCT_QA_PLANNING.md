@@ -15,7 +15,7 @@ No deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Current Source of Truth
 
@@ -44,7 +44,7 @@ The goal is to confirm:
 - no database calls
 - no deployment behavior
 - no secrets
-- KisanMitraAI remains untouched
+- IdeasForgeAI remains untouched
 
 ## Future Phase 22 Sequence
 
@@ -68,7 +68,7 @@ Phase 22 must not modify:
 - database configuration
 - Supabase/auth configuration
 - secrets
-- KisanMitraAI paths
+- IdeasForgeAI paths
 
 Phase 22 can add only:
 - documentation
@@ -87,5 +87,6 @@ No deployment was performed.
 No provider calls were made.
 No database writes were made.
 No Supabase/auth/secrets were added.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 22B was not implemented.
+

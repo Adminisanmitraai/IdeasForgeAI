@@ -1,4 +1,4 @@
-import html
+﻿import html
 import hashlib
 import json
 import re
@@ -44,14 +44,14 @@ AGRICULTURE_KEYWORDS = [
 ]
 
 CURRENCY_PROFILES: Dict[str, Dict[str, str]] = {
-    "INR": {"currency_code": "INR", "currency_symbol": "₹", "currency_locale": "en-IN", "country_hint": "India"},
+    "INR": {"currency_code": "INR", "currency_symbol": "â‚¹", "currency_locale": "en-IN", "country_hint": "India"},
     "USD": {"currency_code": "USD", "currency_symbol": "$", "currency_locale": "en-US", "country_hint": "United States"},
-    "GBP": {"currency_code": "GBP", "currency_symbol": "£", "currency_locale": "en-GB", "country_hint": "United Kingdom"},
-    "EUR": {"currency_code": "EUR", "currency_symbol": "€", "currency_locale": "de-DE", "country_hint": "Europe"},
+    "GBP": {"currency_code": "GBP", "currency_symbol": "Â£", "currency_locale": "en-GB", "country_hint": "United Kingdom"},
+    "EUR": {"currency_code": "EUR", "currency_symbol": "â‚¬", "currency_locale": "de-DE", "country_hint": "Europe"},
     "AED": {"currency_code": "AED", "currency_symbol": "AED", "currency_locale": "en-AE", "country_hint": "United Arab Emirates"},
     "SAR": {"currency_code": "SAR", "currency_symbol": "SAR", "currency_locale": "ar-SA", "country_hint": "Saudi Arabia"},
-    "BDT": {"currency_code": "BDT", "currency_symbol": "৳", "currency_locale": "bn-BD", "country_hint": "Bangladesh"},
-    "JPY": {"currency_code": "JPY", "currency_symbol": "¥", "currency_locale": "ja-JP", "country_hint": "Japan"},
+    "BDT": {"currency_code": "BDT", "currency_symbol": "à§³", "currency_locale": "bn-BD", "country_hint": "Bangladesh"},
+    "JPY": {"currency_code": "JPY", "currency_symbol": "Â¥", "currency_locale": "ja-JP", "country_hint": "Japan"},
 }
 
 LOCATION_CURRENCY_RULES = [
@@ -1777,7 +1777,7 @@ def _render_app_visual(domain: str, profile: Dict[str, Any] | None = None, plan:
             </div>
             <div class="hero-visual-mini-grid">
               <article class="hero-visual-mini-card"><span>Students</span><strong>142 Total</strong></article>
-              <article class="hero-visual-mini-card"><span>Fees Pending</span><strong>₹38k</strong></article>
+              <article class="hero-visual-mini-card"><span>Fees Pending</span><strong>â‚¹38k</strong></article>
             </div>
             <div class="hero-visual-list">
               <div><span>Homework Due</span><strong>8 Pending</strong></div>
@@ -1817,7 +1817,7 @@ def _render_app_visual(domain: str, profile: Dict[str, Any] | None = None, plan:
             </div>
             <div class="hero-visual-mini-grid">
               <article class="hero-visual-mini-card"><span>Crop Health</span><strong>86% Stable</strong></article>
-              <article class="hero-visual-mini-card"><span>Mandi Price</span><strong>₹4,200/q</strong></article>
+              <article class="hero-visual-mini-card"><span>Mandi Price</span><strong>â‚¹4,200/q</strong></article>
             </div>
             <div class="hero-visual-list">
               <div><span>Weather</span><strong>Low Risk</strong></div>
@@ -1835,7 +1835,7 @@ def _render_app_visual(domain: str, profile: Dict[str, Any] | None = None, plan:
         "school": ("Parent view", "Class 5A", "92%", ["Homework", "Fees", "Notice"]),
         "retail": ("Stock desk", "Backpack", "12 left", ["Low stock", "Sales", "PO sent"]),
         "finance_insurance": ("Policy desk", "Claim timeline", "12 open", ["Quote", "Renewal", "Advisor"]),
-        "mutual_fund_advisor": ("SIP desk", "Portfolio summary", "₹4.6L", ["Compare", "Risk", "KYC"]),
+        "mutual_fund_advisor": ("SIP desk", "Portfolio summary", "â‚¹4.6L", ["Compare", "Risk", "KYC"]),
         "agriculture": ("Farm view", "Crop health", "86%", ["Weather", "Mandi", "Advisory"]),
         "government": ("Civic desk", "Service status", "96%", ["Citizen", "Officer", "Audit"]),
     }.get(domain, ("Workspace", "Live preview", "82%", ["Intake", "Review", "Dashboard"]))
@@ -3702,3 +3702,4 @@ def generate_static_app(plan: Dict[str, Any]) -> Dict[str, Any]:
         "files": [str(backend_dir / name) for name in files],
         "plan": normalized,
     }
+

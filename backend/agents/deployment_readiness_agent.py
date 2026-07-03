@@ -1,4 +1,4 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
@@ -10,8 +10,8 @@ class DeploymentReadinessAgent(BaseAgent):
     def run(self, context: Dict[str, Any]) -> AgentResult:
         checklist = [
             {"item": "Frontend ready", "status": "dry_run_check", "note": "Local preview exists before any public release copy."},
-            {"item": "Backend ready", "status": "dry_run_check", "note": "IdeasForgeAI and KisanMitraLite health endpoints should pass."},
-            {"item": "Database ready", "status": "pending", "note": "KisanMitraLite still uses local JSON persistence."},
+            {"item": "Backend ready", "status": "dry_run_check", "note": "IdeasForgeAI and IdeasForgeAIProduct health endpoints should pass."},
+            {"item": "Database ready", "status": "pending", "note": "IdeasForgeAIProduct still uses local JSON persistence."},
             {"item": "Environment variables ready", "status": "manual_review", "note": "Review secrets outside frontend files."},
             {"item": "GitHub ready", "status": "manual_review", "note": "Commit and push only approved files."},
             {"item": "Render ready", "status": "manual_review", "note": "Deployment is not automated in this phase."},
@@ -35,3 +35,4 @@ class DeploymentReadinessAgent(BaseAgent):
                 ],
             },
         )
+

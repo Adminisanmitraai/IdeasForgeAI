@@ -1,4 +1,4 @@
-from copy import deepcopy
+﻿from copy import deepcopy
 from typing import Any, Dict, Optional
 
 
@@ -60,7 +60,7 @@ BLOCKED_FILES_AND_LOCATIONS = [
     "root production files",
     "deployment config",
     "secrets/env files",
-    "KisanMitraAI folders",
+    "IdeasForgeAI folders",
     "any folder outside D:/APPS/IdeasForgeAI",
     "generated-apps existing folders unless explicitly approved",
 ]
@@ -169,6 +169,7 @@ def build_generation_file_contract_response(payload: Optional[Dict[str, Any]] = 
             "No provider calls.",
             "No deployment.",
             "No Supabase, auth, database writes, or secrets.",
-            "No KisanMitraAI production changes.",
+            "No IdeasForgeAI production changes.",
         ],
     }
+

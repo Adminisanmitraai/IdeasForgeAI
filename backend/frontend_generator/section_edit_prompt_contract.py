@@ -65,7 +65,7 @@ BLOCKED_PROMPT_SCOPE = [
     "external scripts",
     "external URLs",
     "generated-apps/ideasforgeai-preview-v1 changes",
-    "KisanMitraAI changes",
+    "IdeasForgeAI changes",
 ]
 
 
@@ -100,10 +100,11 @@ def get_phase16d_section_edit_prompt_contract() -> dict:
             "no API calls",
             "no provider/database/auth/secrets",
             "no deployment logic",
-            "no KisanMitraAI reference",
+            "no IdeasForgeAI reference",
             "validation before write",
             "rollback before write",
         ],
         "next_required_phase": "Phase 16E - Section Regeneration Dry-Run Validator",
         **_locked_flags(),
     }
+

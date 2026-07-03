@@ -37,7 +37,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -113,3 +113,4 @@ def get_phase20b_final_apple_like_design_system_rules() -> dict[str, Any]:
         "next_required_phase": "Phase 20C - Final Header + Hero Polish Plan",
         **_locked_flags(),
     }
+

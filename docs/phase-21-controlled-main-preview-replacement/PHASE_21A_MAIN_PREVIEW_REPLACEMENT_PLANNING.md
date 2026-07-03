@@ -16,7 +16,7 @@ No production deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Current Frozen Source
 
@@ -76,7 +76,7 @@ Phase 21 must never modify:
 - provider configuration
 - database configuration
 - Supabase/auth configuration
-- KisanMitraAI paths
+- IdeasForgeAI paths
 
 Phase 21 may only modify:
 
@@ -113,5 +113,6 @@ No deployment was performed.
 No provider calls were made.
 No database writes were made.
 No Supabase/auth/secrets were added.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 21B was not implemented.
+

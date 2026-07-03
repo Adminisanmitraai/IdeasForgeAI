@@ -1,4 +1,4 @@
-# Pixel-Matched Page Converter Agent
+﻿# Pixel-Matched Page Converter Agent
 
 ## Purpose
 
@@ -18,7 +18,7 @@ This phase implements a safe placeholder flow only.
 - The backend returns placeholder layout, component, palette, typography, file path, and responsive notes.
 - No external APIs are called.
 - No real image analysis is performed yet.
-- Existing app generation and KisanMitraLite live connection remain unchanged.
+- Existing app generation and IdeasForgeAIProduct live connection remain unchanged.
 
 If no image is provided, the agent returns a placeholder status asking the user to upload or paste a screenshot.
 
@@ -47,3 +47,4 @@ A later phase can add real image processing to:
 Never put secrets in frontend files.
 
 Do not expose OpenAI API keys, Supabase service role keys, private keys, tokens, or credentials in generated HTML, CSS, JavaScript, or app configuration files.
+

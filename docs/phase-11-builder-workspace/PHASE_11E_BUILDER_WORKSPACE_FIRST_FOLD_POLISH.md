@@ -1,4 +1,4 @@
-# Phase 11E - Builder Workspace First-Fold Polish
+﻿# Phase 11E - Builder Workspace First-Fold Polish
 
 Status: Completed, not frozen.
 
@@ -37,3 +37,4 @@ Phase 11E does not add backend generation, deployment, provider calls, Supabase,
 ## Next Step
 
 Phase 11E Freeze Review, then Phase 11F only after explicit approval.
+

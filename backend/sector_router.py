@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import re
 from typing import Any, Dict, Iterable, List
@@ -124,4 +124,5 @@ def validate_sector_routing_examples() -> Dict[str, str]:
         "government citizen grievance app with officer dashboard and audit": "government_civic",
     }
     return {prompt: route_sector(prompt)["sector_id"] for prompt in examples}
+
 

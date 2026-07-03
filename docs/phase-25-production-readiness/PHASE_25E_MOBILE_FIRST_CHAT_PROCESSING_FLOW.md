@@ -1,4 +1,4 @@
-# Phase 25E - Mobile-First Chat + Processing Flow
+﻿# Phase 25E - Mobile-First Chat + Processing Flow
 
 Status: Completed, not frozen
 
@@ -86,7 +86,7 @@ Confirmed:
 - No Supabase/auth/database/secrets added.
 - No upload/OCR/image analysis/pixel reading/canvas analysis added.
 - No deployment changes made.
-- No KisanMitraAI files touched.
+- No IdeasForgeAI files touched.
 
 ## Validation
 
@@ -102,7 +102,7 @@ Required validation:
   - `api_key`
   - `secret`
   - `token`
-  - `KisanMitra`
+  - `IdeasForgeAI`
 - Open local route:
   - `http://127.0.0.1:8100/frontend/pages/studio-v3.html?v=phase25e-mobile-flow`
 - Test desktop/tablet/mobile widths:
@@ -120,4 +120,5 @@ Confirmed:
 - Preview-ready local-only behavior added.
 - Existing desktop builder preserved.
 - No real generation/backend/provider/database/auth/secrets/deployment added.
-- KisanMitraAI not touched.
+- IdeasForgeAI not touched.
+

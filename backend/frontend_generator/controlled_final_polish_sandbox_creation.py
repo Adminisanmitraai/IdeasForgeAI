@@ -50,7 +50,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -922,7 +922,7 @@ def create_phase20e_controlled_final_polish_sandbox(payload: dict[str, Any] | No
         "secrets_allowed": False,
         "real_generated_app_modified": False,
         "ideasforgeai_preview_v1_touched": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
     readme = """# IdeasForgeAI Phase 20E Final Apple-Like Polish Sandbox
@@ -973,7 +973,7 @@ Safety:
 - database writes allowed: false
 - Supabase allowed: false
 - auth allowed: false
-- KisanMitraAI production touched: false
+- IdeasForgeAI production touched: false
 
 Next: Phase 20F - Final Polished Preview Route.
 """
@@ -1015,3 +1015,4 @@ Next: Phase 20F - Final Polished Preview Route.
         "next_required_phase": "Phase 20F - Final Polished Preview Route",
         **_locked_flags(),
     }
+

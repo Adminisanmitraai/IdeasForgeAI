@@ -1,4 +1,4 @@
-# Phase 23B Apple-Like Builder Layout Patch
+﻿# Phase 23B Apple-Like Builder Layout Patch
 
 Status: Completed, not frozen
 
@@ -11,7 +11,7 @@ Scope:
 - No Supabase, auth, database, secrets, or persistence wiring.
 - No backend generation unlocks.
 - No deployment file changes.
-- No KisanMitraAI production changes.
+- No IdeasForgeAI production changes.
 
 Changed files:
 - `generated-apps/ideasforgeai-preview-v1/index.html`
@@ -45,9 +45,10 @@ Safety confirmation:
 - Supabase/auth/database/secrets were not added.
 - Backend generation was not unlocked.
 - Deployment files were not changed.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
 
 Validation notes:
 - `node --check generated-apps/ideasforgeai-preview-v1/app.js` should pass because the preview JS is local-only DOM behavior.
 - `python -m compileall backend` should pass for the current backend folder state.
 - Browser route `/api/frontend-generator/phase22b-main-preview/index.html` must be verified against a backend route when that backend exists in the workspace; no backend route file was modified by this patch.
+

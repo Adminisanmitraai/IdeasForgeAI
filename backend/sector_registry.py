@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any, Dict, List
@@ -249,4 +249,5 @@ def get_sector_entry(sector_id: str) -> SectorEntry:
 
 def list_sector_ids() -> List[str]:
     return list(SECTOR_REGISTRY.keys())
+
 

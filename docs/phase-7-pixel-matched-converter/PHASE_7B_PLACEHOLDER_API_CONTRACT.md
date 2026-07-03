@@ -1,4 +1,4 @@
-# Phase 7B - Pixel-Matched Converter Placeholder API Contract
+﻿# Phase 7B - Pixel-Matched Converter Placeholder API Contract
 
 Status: Placeholder API contract only.
 
@@ -214,3 +214,4 @@ Phase 7B keeps these locked:
 - Phase 8
 
 Phase 5, Phase 6, and Phase 7A remain frozen.
+

@@ -63,7 +63,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "backend_generation_unlocked": False,
         "generation_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -155,3 +155,4 @@ def serve_phase22b_main_preview(file_name: str):
         media_type=ALLOWED_PREVIEW_FILES[clean_name],
         headers=headers,
     )
+

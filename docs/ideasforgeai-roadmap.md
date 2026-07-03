@@ -1,11 +1,11 @@
-# IdeasForgeAI Roadmap
+﻿# IdeasForgeAI Roadmap
 
 ## Completed Local Capabilities
 
 - Studio V2 builder workspace.
-- KisanMitraLite generated app with live local JSON backend.
+- IdeasForgeAIProduct generated app with live local JSON backend.
 - Pixel-Matched Page Converter placeholder flow.
-- Premium KisanMitraAI landing page local generator.
+- Premium IdeasForgeAI landing page local generator.
 - Production sync dry-run report.
 - Git/GitHub readiness dry-run report.
 - Deployment readiness dry-run checklist.
@@ -24,3 +24,4 @@
 IdeasForgeAI should never place OpenAI API keys, Supabase service role keys, GitHub tokens, Render keys, or private keys into frontend files.
 
 Production actions must remain explicit and approval-gated.
+

@@ -1,4 +1,4 @@
-# Phase 8B - Safe Frontend Generator Contract
+﻿# Phase 8B - Safe Frontend Generator Contract
 
 Status: Completed as contract only.
 
@@ -202,3 +202,4 @@ Phase 8B can be frozen after review confirms:
 - All safety locks remain false except `approval_required=true`.
 - Phase 8C is listed only as the next approval-gated step.
 - No generated output or generated app files exist.
+

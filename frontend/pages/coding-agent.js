@@ -1,4 +1,4 @@
-const shell = document.querySelector(".coding-agent-shell");
+﻿const shell = document.querySelector(".coding-agent-shell");
 const workspaceStage = document.querySelector("[data-workspace-stage]");
 const actionStatusMessage = document.querySelector("[data-action-status-message]");
 const heroStatus = document.querySelector("[data-workspace-hero-status]");
@@ -401,7 +401,7 @@ const DEMO_GIT_PLAN_TEXT = [
   "- Mobile Safari test",
   "- Desktop browser test",
   "- No secrets touched",
-  "- No KisanMitraAI files touched",
+  "- No IdeasForgeAI files touched",
   "",
   "Status:",
   "Preview only - PR not created",
@@ -1761,7 +1761,7 @@ const renderAutoFixPlanCards = () => {
     </section>
     <section class="screen-detail-card screen-detail-card--wide">
       <small>Protected Diff Preview</small>
-      <strong>Review only — no code applied</strong>
+      <strong>Review only â€” no code applied</strong>
       <div class="auto-fix-protected-diff">
         ${diffItems.map((entry) => `
           <article>
@@ -2032,14 +2032,14 @@ const buildLocalGitHubPreview = () => ({
     message: "Real GitHub actions require backend authentication, secure token storage, connected repository permission, and Founder/Admin approval.",
   },
   audit_preview: [
-    "GitHub workflow preview opened — allowed",
-    "Repository token access — blocked",
-    "Branch creation — blocked",
-    "Commit — blocked",
-    "Push — blocked",
-    "Pull request creation — blocked",
-    "Merge — blocked",
-    "Rollback — blocked",
+    "GitHub workflow preview opened â€” allowed",
+    "Repository token access â€” blocked",
+    "Branch creation â€” blocked",
+    "Commit â€” blocked",
+    "Push â€” blocked",
+    "Pull request creation â€” blocked",
+    "Merge â€” blocked",
+    "Rollback â€” blocked",
   ],
   safety: {
     github_api_calls: false,
@@ -2298,14 +2298,14 @@ const buildLocalDeploymentPreview = (status = "deployment-preview-ready") => ({
     message: "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
   },
   audit_preview: [
-    "Deployment flow preview opened — allowed",
-    "Deployment approval requested — recorded",
-    "Render API call — blocked",
-    "GitHub deploy action — blocked",
-    "Production promotion — blocked",
-    "Rollback — blocked",
-    "DNS change — blocked",
-    "Secrets access — blocked",
+    "Deployment flow preview opened â€” allowed",
+    "Deployment approval requested â€” recorded",
+    "Render API call â€” blocked",
+    "GitHub deploy action â€” blocked",
+    "Production promotion â€” blocked",
+    "Rollback â€” blocked",
+    "DNS change â€” blocked",
+    "Secrets access â€” blocked",
   ],
   safety: {
     render_api_calls: false,
@@ -2517,7 +2517,7 @@ const renderDeploymentManagerMarkup = () => `
       <li>Confirm mobile Safari test</li>
       <li>Confirm desktop browser test</li>
       <li>Confirm no secrets exposed</li>
-      <li>Confirm no KisanMitraAI files touched</li>
+      <li>Confirm no IdeasForgeAI files touched</li>
       <li>Confirm founder/admin approval</li>
     </ul>
   </section>
@@ -3869,7 +3869,7 @@ document.addEventListener("click", async (event) => {
 
   const ca20Tree = (items = []) => items.map((item) => `
     <li>
-      <span>${item.type === "folder" ? "▸" : "•"}</span>
+      <span>${item.type === "folder" ? "â–¸" : "â€¢"}</span>
       <strong>${ca20Escape(item.path)}</strong>
       ${item.status ? `<em>${ca20Escape(item.status)}</em>` : ""}
     </li>
@@ -3896,7 +3896,7 @@ document.addEventListener("click", async (event) => {
         <article>
           <small>Active Proposal</small>
           <strong>${ca20Escape(data.active_proposal?.title)}</strong>
-          <p>${ca20Escape(data.active_proposal?.status)} — ${ca20Escape(data.active_proposal?.approval)}</p>
+          <p>${ca20Escape(data.active_proposal?.status)} â€” ${ca20Escape(data.active_proposal?.approval)}</p>
         </article>
         <article>
           <small>Tests</small>
@@ -3945,7 +3945,7 @@ document.addEventListener("click", async (event) => {
     section.id = "ca20-connected-workspace-section";
     section.className = "ca20-connected-workspace-section";
     section.innerHTML = `
-      <div class="ca20-kicker">CA-21 — Local/GitHub Read-Only Connector</div>
+      <div class="ca20-kicker">CA-21 â€” Local/GitHub Read-Only Connector</div>
       <h2>Connected Project Workspace</h2>
       <p>Open a single safe workspace view for project tree, active proposal, tests, Git preview, deployment status, and Founder/Admin permissions.</p>
       <button class="ca20-open-button" type="button" data-ca20-open-workspace>
@@ -4150,7 +4150,7 @@ document.addEventListener("click", async (event) => {
 
   const ca21Manifest = (items = []) => items.map((item) => `
     <li>
-      <span>${item.kind === "folder" ? "▸" : "•"}</span>
+      <span>${item.kind === "folder" ? "â–¸" : "â€¢"}</span>
       <strong>${ca21Escape(item.name)}</strong>
       <em>${ca21Escape(item.access)}</em>
     </li>
@@ -4226,7 +4226,7 @@ document.addEventListener("click", async (event) => {
     section.className = "ca21-readonly-connector-section";
     section.innerHTML = `
       <div class="ca21-shell-card">
-        <div class="ca21-kicker">CA-21 — Local/GitHub Read-Only Connector</div>
+        <div class="ca21-kicker">CA-21 â€” Local/GitHub Read-Only Connector</div>
         <h2>Read-Only Connector</h2>
         <p>Prepare safe local and GitHub connector workflows without editing files, running Git, deploying, or exposing secrets.</p>
 
@@ -4449,7 +4449,7 @@ document.addEventListener("click", async (event) => {
       <small>${ca22Escape(file.type)}</small>
       <strong>${ca22Escape(file.path)}</strong>
       <p>${ca22Escape(file.purpose)}</p>
-      <em>${ca22Escape(file.read_mode)} · ${ca22Escape(file.risk)}</em>
+      <em>${ca22Escape(file.read_mode)} Â· ${ca22Escape(file.risk)}</em>
     </article>
   `).join("");
 
@@ -4513,7 +4513,7 @@ document.addEventListener("click", async (event) => {
 
       <section class="ca22-card">
         <small>Next Phase</small>
-        <strong>${ca22Escape(data.recommended_next_phase?.phase)} — ${ca22Escape(data.recommended_next_phase?.title)}</strong>
+        <strong>${ca22Escape(data.recommended_next_phase?.phase)} â€” ${ca22Escape(data.recommended_next_phase?.title)}</strong>
         <p>${ca22Escape(data.recommended_next_phase?.goal)}</p>
       </section>
 
@@ -4535,7 +4535,7 @@ document.addEventListener("click", async (event) => {
     section.className = "ca22-project-reader-section";
     section.innerHTML = `
       <div class="ca22-shell-card">
-        <div class="ca22-kicker">CA-22 — Read-Only Project Reader Engine</div>
+        <div class="ca22-kicker">CA-22 â€” Read-Only Project Reader Engine</div>
         <h2>Project Reader Engine</h2>
         <p>Analyze the connected workspace manifest and produce a safe project map, architecture summary, module map, and next-step guidance.</p>
         <button class="ca22-open-button" type="button" data-ca22-open-reader>
@@ -4808,7 +4808,7 @@ document.addEventListener("click", async (event) => {
   const ca23FileButtons = (files = [], selected = "") => files.map((file) => `
     <button type="button" class="ca23-file-button ${file.path === selected ? "is-active" : ""}" data-ca23-file="${ca23Escape(file.path)}">
       <span>${ca23Escape(file.path)}</span>
-      <small>${ca23Escape(file.language)} · ${ca23Escape(file.access)}</small>
+      <small>${ca23Escape(file.language)} Â· ${ca23Escape(file.access)}</small>
     </button>
   `).join("");
 
@@ -4848,7 +4848,7 @@ document.addEventListener("click", async (event) => {
 
       <section class="ca23-card ca23-protected-viewer">
         <small>Protected Code Preview</small>
-        <strong>${ca23Escape(data.content_preview?.file_path)} · ${ca23Escape(data.content_preview?.language)}</strong>
+        <strong>${ca23Escape(data.content_preview?.file_path)} Â· ${ca23Escape(data.content_preview?.language)}</strong>
         <p>${ca23Escape(data.content_preview?.notice)}</p>
         <div class="ca23-code-toolbar">
           <span>No copy</span>
@@ -4875,7 +4875,7 @@ document.addEventListener("click", async (event) => {
 
       <section class="ca23-card">
         <small>Next Phase</small>
-        <strong>${ca23Escape(data.recommended_next_phase?.phase)} — ${ca23Escape(data.recommended_next_phase?.title)}</strong>
+        <strong>${ca23Escape(data.recommended_next_phase?.phase)} â€” ${ca23Escape(data.recommended_next_phase?.title)}</strong>
         <p>${ca23Escape(data.recommended_next_phase?.goal)}</p>
       </section>
     </section>
@@ -4891,7 +4891,7 @@ document.addEventListener("click", async (event) => {
     section.className = "ca23-file-viewer-section";
     section.innerHTML = `
       <div class="ca23-shell-card">
-        <div class="ca23-kicker">CA-23 — Read-Only File Viewer Preview</div>
+        <div class="ca23-kicker">CA-23 â€” Read-Only File Viewer Preview</div>
         <h2>File Viewer Preview</h2>
         <p>Open selected files from the reader manifest in a protected, read-only viewer. Normal users can view only; founder/admin controls come later.</p>
         <button class="ca23-open-button" type="button" data-ca23-open-viewer>
@@ -5221,7 +5221,7 @@ document.addEventListener("click", async (event) => {
   const ca24FileButtons = (files = [], selected = "", role = "normal_user") => files.map((file) => `
     <button type="button" class="ca24-file-button ${file.path === selected ? "is-active" : ""}" data-ca24-file="${ca24Escape(file.path)}" data-ca24-role="${ca24Escape(role)}">
       <span>${ca24Escape(file.path)}</span>
-      <small>${ca24Escape(file.language)} · ${ca24Escape(file.access)} · ${ca24Escape(file.sensitivity)}</small>
+      <small>${ca24Escape(file.language)} Â· ${ca24Escape(file.access)} Â· ${ca24Escape(file.sensitivity)}</small>
     </button>
   `).join("");
 
@@ -5273,7 +5273,7 @@ document.addEventListener("click", async (event) => {
 
         <section class="ca24-card ca24-protected-viewer" data-ca24-protected-viewer>
           <small>Protected Code Preview</small>
-          <strong>${ca24Escape(data.content_preview?.file_path)} · ${ca24Escape(data.content_preview?.language)}</strong>
+          <strong>${ca24Escape(data.content_preview?.file_path)} Â· ${ca24Escape(data.content_preview?.language)}</strong>
           <p>${ca24Escape(data.content_preview?.notice)}</p>
           <div class="ca24-code-toolbar">
             <span>No copy</span>
@@ -5314,7 +5314,7 @@ document.addEventListener("click", async (event) => {
 
         <section class="ca24-card">
           <small>Next Phase</small>
-          <strong>${ca24Escape(data.recommended_next_phase?.phase)} — ${ca24Escape(data.recommended_next_phase?.title)}</strong>
+          <strong>${ca24Escape(data.recommended_next_phase?.phase)} â€” ${ca24Escape(data.recommended_next_phase?.title)}</strong>
           <p>${ca24Escape(data.recommended_next_phase?.goal)}</p>
         </section>
       </section>
@@ -5331,7 +5331,7 @@ document.addEventListener("click", async (event) => {
     section.className = "ca24-protected-viewer-section";
     section.innerHTML = `
       <div class="ca24-shell-card">
-        <div class="ca24-kicker">CA-24 — Protected Code Viewer for Normal Users</div>
+        <div class="ca24-kicker">CA-24 â€” Protected Code Viewer for Normal Users</div>
         <h2>Protected Code Viewer</h2>
         <p>Strengthen the read-only file viewer so normal users can preview code without app-level copy, edit, apply, export, download, terminal, Git, deployment, or secrets controls.</p>
         <button class="ca24-open-button" type="button" data-ca24-open-viewer data-ca24-role="normal_user">
@@ -5597,7 +5597,7 @@ document.addEventListener("click", async (event) => {
   const ca25TreeRows = (entries = []) => entries.map((entry) => `
     <article class="ca25-tree-row">
       <strong>${ca25Escape(entry.path)}</strong>
-      <small>${ca25Escape(entry.type)} · ${ca25Escape(entry.read_mode)} · content fetched: ${ca25Escape(entry.content_fetched)}</small>
+      <small>${ca25Escape(entry.type)} Â· ${ca25Escape(entry.read_mode)} Â· content fetched: ${ca25Escape(entry.content_fetched)}</small>
     </article>
   `).join("");
 
@@ -5640,7 +5640,7 @@ document.addEventListener("click", async (event) => {
 
       <section class="ca25-card">
         <small>Public File Tree Metadata</small>
-        <strong>${ca25Escape(data.tree?.entry_count_returned)} entries returned · content fetched: ${ca25Escape(data.tree?.content_fetched)}</strong>
+        <strong>${ca25Escape(data.tree?.entry_count_returned)} entries returned Â· content fetched: ${ca25Escape(data.tree?.content_fetched)}</strong>
         <div class="ca25-tree-list">${ca25TreeRows(data.tree?.entries || [])}</div>
       </section>
 
@@ -5658,7 +5658,7 @@ document.addEventListener("click", async (event) => {
 
       <section class="ca25-card">
         <small>Next Phase</small>
-        <strong>${ca25Escape(data.recommended_next_phase?.phase)} — ${ca25Escape(data.recommended_next_phase?.title)}</strong>
+        <strong>${ca25Escape(data.recommended_next_phase?.phase)} â€” ${ca25Escape(data.recommended_next_phase?.title)}</strong>
         <p>${ca25Escape(data.recommended_next_phase?.goal)}</p>
       </section>
     </section>
@@ -5674,7 +5674,7 @@ document.addEventListener("click", async (event) => {
     section.className = "ca25-github-reader-section";
     section.innerHTML = `
       <div class="ca25-shell-card">
-        <div class="ca25-kicker">CA-25 — Real GitHub Public Repo Reader API</div>
+        <div class="ca25-kicker">CA-25 â€” Real GitHub Public Repo Reader API</div>
         <h2>Public GitHub Repo Reader</h2>
         <p>Read public GitHub repository metadata and public file-tree metadata through a backend-only API. Private repos and frontend tokens remain blocked.</p>
 
@@ -5755,4 +5755,5 @@ document.addEventListener("click", async (event) => {
     ca25EnsureSection();
   }
 })();
+
 

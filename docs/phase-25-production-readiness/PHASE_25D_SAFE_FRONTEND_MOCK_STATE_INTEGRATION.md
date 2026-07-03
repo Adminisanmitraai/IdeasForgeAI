@@ -1,4 +1,4 @@
-# Phase 25D - Safe Frontend Mock State Integration
+﻿# Phase 25D - Safe Frontend Mock State Integration
 
 Status: Completed, not frozen
 
@@ -110,7 +110,7 @@ Required validation:
   - `api_key`
   - `secret`
   - `token`
-  - `KisanMitra`
+  - `IdeasForgeAI`
 - Open local Studio V3 route or local file.
 
 ## Acceptance Confirmation
@@ -123,4 +123,5 @@ Confirmed:
 - No `fetch` or `XMLHttpRequest`.
 - No persistence.
 - No backend generation/provider/database/auth/Supabase/secrets/deployment added.
-- KisanMitraAI not touched.
+- IdeasForgeAI not touched.
+

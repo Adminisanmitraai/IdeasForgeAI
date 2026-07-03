@@ -42,7 +42,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "backend_generation_unlocked": False,
         "generation_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -109,7 +109,7 @@ def get_phase22e_runtime_console_safety_qa(payload: dict[str, Any] | None = None
         "no_database_logic": "database" not in app_lower,
         "no_secret_markers": all(marker not in combined for marker in ["secret=", "token=", "api_key", "apikey", "service_role"]),
         "no_deployment_logic": all(marker not in combined for marker in ["deploy(", "deployment_unlocked=true", "render.yaml"]),
-        "no_kisanmitra_reference": "kisanmitra" not in combined,
+        "no_IdeasForgeAI_reference": "IdeasForgeAI" not in combined,
     }
 
     safe_runtime_markers = {
@@ -150,3 +150,4 @@ def get_phase22e_runtime_console_safety_qa(payload: dict[str, Any] | None = None
         "next_required_phase": "Phase 22F - Final Product QA Score",
         **_locked_flags(),
     }
+

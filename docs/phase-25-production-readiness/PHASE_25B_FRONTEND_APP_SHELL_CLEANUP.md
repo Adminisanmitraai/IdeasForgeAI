@@ -1,4 +1,4 @@
-# Phase 25B - Frontend App Shell Cleanup
+﻿# Phase 25B - Frontend App Shell Cleanup
 
 Status: Completed, not frozen
 
@@ -66,7 +66,7 @@ JavaScript cleanup:
 Required validation:
 - `node --check frontend/pages/studio-v3.js`
 - `python -m compileall backend`
-- Select-String live frontend files for KisanMitra terms
+- Select-String live frontend files for IdeasForgeAI terms
 - `git diff -- frontend/pages/studio-v3.html frontend/pages/studio-v3.css frontend/pages/studio-v3.js PROJECT_STATUS.md`
 
 ## Acceptance Confirmation
@@ -79,4 +79,5 @@ Confirmed:
 - No Supabase/auth/database/secrets added.
 - No deployment automation added.
 - No upload/OCR/image analysis/pixel reading/canvas analysis added.
-- No KisanMitraAI references added.
+- No IdeasForgeAI references added.
+

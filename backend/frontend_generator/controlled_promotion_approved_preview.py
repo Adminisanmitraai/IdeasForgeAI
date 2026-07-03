@@ -68,7 +68,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -221,7 +221,7 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         "refresh_token",
         "deploy.yml",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_blockers = [
@@ -230,7 +230,7 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_blockers = [
@@ -250,7 +250,7 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         "secret",
         "token",
         "deploy",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     for marker in html_blockers:
@@ -265,8 +265,8 @@ def _validate_source_files() -> tuple[list[str], list[str], list[str]]:
         if marker in app_lower:
             errors.append(f"blocked marker found in source app.js: {marker}")
 
-    if "kisanmitra" in visible_lower:
-        errors.append("KisanMitra marker found in app-visible source")
+    if "IdeasForgeAI" in visible_lower:
+        errors.append("IdeasForgeAI marker found in app-visible source")
 
     if "ifai-phase17d-selected-section-patch" not in index_lower:
         errors.append("Phase 17D patch marker missing from source index.html")
@@ -355,7 +355,7 @@ def promote_phase18e_controlled_approved_preview(payload: dict[str, Any] | None 
         "auth_allowed": False,
         "real_generated_app_modified": False,
         "ideasforgeai_preview_v1_touched": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
     promotion_report = f"""# Phase 18E Promotion Report
@@ -387,7 +387,7 @@ No deployment was performed.
 No provider calls were made.
 No database writes were made.
 No secrets were used.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 Next: Phase 18F - Promoted Preview Route.
 """
@@ -427,3 +427,4 @@ Next: Phase 18F - Promoted Preview Route.
         "next_required_phase": "Phase 18F - Promoted Preview Route",
         **_locked_flags(),
     }
+

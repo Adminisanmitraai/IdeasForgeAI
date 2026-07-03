@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+﻿from abc import ABC, abstractmethod
 from typing import Any, Dict
 
 
@@ -14,7 +14,7 @@ class PlaceholderVisualDesignProvider(VisualDesignProvider):
     name = "placeholder_visual_design_provider"
 
     def generate(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        project_name = context.get("app_name") or "KisanMitraLite"
+        project_name = context.get("app_name") or "IdeasForgeAIProduct"
         idea = context.get("idea") or "Agriculture management platform"
         slug = context.get("app_slug") or project_name.lower().replace(" ", "-")
 
@@ -69,3 +69,4 @@ class PlaceholderVisualDesignProvider(VisualDesignProvider):
             },
             "future_hooks": ["OpenAI image models", "Other image providers"],
         }
+

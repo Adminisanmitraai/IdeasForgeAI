@@ -78,3 +78,4 @@ def disabled_capability_report() -> dict:
         "approvalGateEnabled": True,
         "codeGenerationEnabled": False,
     }
+

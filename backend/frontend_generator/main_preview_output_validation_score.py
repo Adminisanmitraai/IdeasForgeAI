@@ -58,7 +58,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "backend_generation_unlocked": False,
         "generation_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -151,7 +151,7 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
         "provider_calls_allowed=true",
         "database_writes_allowed=true",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_blockers = [
@@ -160,7 +160,7 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_blockers = [
@@ -180,7 +180,7 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
         "secret=",
         "token=",
         "deploy(",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     visual_keywords = [
@@ -237,7 +237,7 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
             and manifest.get("auth_allowed") is False
             and manifest.get("secrets_allowed") is False
             and manifest.get("ideasforgeai_preview_v1_touched") is False
-            and manifest.get("kisanmitra_production_touched") is False
+            and manifest.get("IdeasForgeAI_production_touched") is False
         ),
         "phase21_replacement_manifest_score": _score(
             bool(replacement_manifest)
@@ -257,7 +257,7 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
             and replacement_manifest.get("supabase_allowed") is False
             and replacement_manifest.get("auth_allowed") is False
             and replacement_manifest.get("secrets_allowed") is False
-            and replacement_manifest.get("kisanmitra_production_touched") is False
+            and replacement_manifest.get("IdeasForgeAI_production_touched") is False
         ),
         "phase21_rollback_manifest_score": _score(
             bool(rollback_manifest)
@@ -291,7 +291,7 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
             and (ROLLBACK_SNAPSHOT / "phase21-rollback-snapshot-report.md").exists()
         ),
         "phase20_source_protected_score": _score(PHASE20_SOURCE.exists()),
-        "kisanmitra_separation_score": _score("kisanmitra" not in (index_lower + css_lower + app_lower)),
+        "IdeasForgeAI_separation_score": _score("IdeasForgeAI" not in (index_lower + css_lower + app_lower)),
     }
 
     for name, value in score_categories.items():
@@ -318,3 +318,4 @@ def get_phase21g_main_preview_output_validation_score(payload: dict[str, Any] | 
         "next_required_phase": "Phase 21H - Main Preview Freeze Review",
         **_locked_flags(),
     }
+

@@ -1,4 +1,4 @@
-# Phase 8A - Frontend Generator Architecture
+﻿# Phase 8A - Frontend Generator Architecture
 
 Status: Completed as architecture only.
 
@@ -42,7 +42,7 @@ Phase 8A does not:
 - Add deployment.
 - Add Supabase, authentication, database writes, provider calls, or secrets.
 - Unlock production frontend generation.
-- Touch KisanMitraAI production.
+- Touch IdeasForgeAI production.
 
 ## 4. Inputs From Product Brain
 
@@ -340,3 +340,4 @@ Phase 8A is ready to freeze when:
 ## Final Phase 8A Statement
 
 Phase 8A is architecture only. It prepares the future Frontend Generator without generating code, writing app files, unlocking Phase 8 generation, or changing production behavior.
+

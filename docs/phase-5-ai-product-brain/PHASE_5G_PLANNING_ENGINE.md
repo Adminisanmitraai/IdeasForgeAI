@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5G — Planning Engine Specification
+## Phase 5G â€” Planning Engine Specification
 
 ### Version 1.0
 
@@ -39,16 +39,16 @@ It should help IdeasForgeAI move forward safely, step by step.
 
 The Planning Engine must respect the IdeasForgeAI roadmap:
 
-1. Phase 5 — AI Product Brain
-2. Phase 6 — Design System Engine
-3. Phase 7 — Pixel-Matched Converter
-4. Phase 8 — Frontend Generator
-5. Phase 9 — Backend Generator
-6. Phase 10 — Authentication + Roles
-7. Phase 11 — Supabase Safe Mode
-8. Phase 12 — Export / PWA / Mobile readiness
-9. Phase 13 — Deployment Readiness
-10. Phase 14 — Public SaaS Launch
+1. Phase 5 â€” AI Product Brain
+2. Phase 6 â€” Design System Engine
+3. Phase 7 â€” Pixel-Matched Converter
+4. Phase 8 â€” Frontend Generator
+5. Phase 9 â€” Backend Generator
+6. Phase 10 â€” Authentication + Roles
+7. Phase 11 â€” Supabase Safe Mode
+8. Phase 12 â€” Export / PWA / Mobile readiness
+9. Phase 13 â€” Deployment Readiness
+10. Phase 14 â€” Public SaaS Launch
 
 The engine should not skip phases unless the user explicitly asks and the risk is explained.
 
@@ -131,7 +131,7 @@ Codex can work on:
 
 Codex must not:
 
-* Touch KisanMitraAI production
+* Touch IdeasForgeAI production
 * Expose secrets
 * Deploy publicly without approval
 * Redesign frozen Studio V3
@@ -165,9 +165,9 @@ Approval must be explicit.
 
 Examples:
 
-* “Approve Product Blueprint v1.0 before moving to Phase 6.”
-* “Approve Design Direction before starting frontend generation.”
-* “Approve Data Map before database planning.”
+* â€œApprove Product Blueprint v1.0 before moving to Phase 6.â€
+* â€œApprove Design Direction before starting frontend generation.â€
+* â€œApprove Data Map before database planning.â€
 
 ---
 
@@ -175,7 +175,7 @@ Examples:
 
 The Planning Engine should check readiness by phase.
 
-## Phase 6 — Design System Engine
+## Phase 6 â€” Design System Engine
 
 Ready when:
 
@@ -185,7 +185,7 @@ Ready when:
 * Design direction is roughly known
 * Design Constitution is available
 
-## Phase 7 — Pixel-Matched Converter
+## Phase 7 â€” Pixel-Matched Converter
 
 Ready when:
 
@@ -194,7 +194,7 @@ Ready when:
 * Text replacement rules are clear
 * Layout preservation rules are clear
 
-## Phase 8 — Frontend Generator
+## Phase 8 â€” Frontend Generator
 
 Ready when:
 
@@ -203,7 +203,7 @@ Ready when:
 * Component behavior is clear
 * Mobile-first rules are clear
 
-## Phase 9 — Backend Generator
+## Phase 9 â€” Backend Generator
 
 Ready when:
 
@@ -212,7 +212,7 @@ Ready when:
 * AI behavior is clear
 * Backend safety rules are clear
 
-## Phase 10 — Authentication + Roles
+## Phase 10 â€” Authentication + Roles
 
 Ready when:
 
@@ -221,7 +221,7 @@ Ready when:
 * Login/signup flow is approved
 * Admin boundary is clear
 
-## Phase 11 — Supabase Safe Mode
+## Phase 11 â€” Supabase Safe Mode
 
 Ready when:
 
@@ -230,7 +230,7 @@ Ready when:
 * RLS/safety rules are planned
 * No secrets are exposed
 
-## Phase 12 — Export / PWA / Mobile Readiness
+## Phase 12 â€” Export / PWA / Mobile Readiness
 
 Ready when:
 
@@ -239,7 +239,7 @@ Ready when:
 * PWA assets are planned
 * Mobile experience is tested
 
-## Phase 13 — Deployment Readiness
+## Phase 13 â€” Deployment Readiness
 
 Ready when:
 
@@ -248,7 +248,7 @@ Ready when:
 * Domain plan is approved
 * Rollback plan is ready
 
-## Phase 14 — Public SaaS Launch
+## Phase 14 â€” Public SaaS Launch
 
 Ready when:
 
@@ -381,17 +381,17 @@ What confirms the next phase is ready.
 
 User idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 ## Planning
 
 ### Current Phase
 
-Phase 5 — AI Product Brain.
+Phase 5 â€” AI Product Brain.
 
 ### Recommended Next Phase
 
-Phase 6 — Design System Engine.
+Phase 6 â€” Design System Engine.
 
 ### Immediate Next Step
 
@@ -430,7 +430,7 @@ Approve the Phase 5 Product Blueprint before moving to Phase 6.
 * Do not generate backend.
 * Do not create database schema.
 * Do not deploy.
-* Do not touch KisanMitraAI production.
+* Do not touch IdeasForgeAI production.
 
 ### Success Criteria
 
@@ -452,3 +452,4 @@ The Planning Engine is successful when:
 * Product work stays aligned with:
 
 **Less UI. More Intelligence.**
+

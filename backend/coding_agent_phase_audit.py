@@ -8,7 +8,6 @@ import subprocess
 import sys
 import textwrap
 import time
-import py_compile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional, Sequence, Tuple
@@ -849,14 +848,20 @@ def check_python_compile(report: AuditReport) -> None:
         )
         return
     try:
-        py_compile.compile(str(target), doraise=True)
-        report.pass_("backend/main.py compiles", "backend/main.py", "Python syntax must compile.", "py_compile passed.")
-    except py_compile.PyCompileError as exc:
+        source = target.read_text(encoding="utf-8-sig")
+        compile(source, str(target), "exec")
+        report.pass_(
+            "backend/main.py compiles",
+            "backend/main.py",
+            "Python syntax must compile.",
+            "In-memory Python compile passed.",
+        )
+    except SyntaxError as exc:
         report.fail(
             "backend/main.py compiles",
             "backend/main.py",
             "Python syntax must compile.",
-            str(exc),
+            f"{exc.__class__.__name__}: {exc}",
             "Fix the Python syntax error, then rerun `python -m py_compile backend/main.py`.",
         )
 
@@ -1122,4 +1127,5 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 

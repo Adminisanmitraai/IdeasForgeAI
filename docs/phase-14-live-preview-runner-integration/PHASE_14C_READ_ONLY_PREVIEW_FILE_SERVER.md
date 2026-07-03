@@ -51,7 +51,7 @@ The route must:
 - reject root project files
 - reject deployment config
 - reject env/secrets files
-- reject KisanMitraAI paths
+- reject IdeasForgeAI paths
 - reject directory traversal
 - reject arbitrary paths
 - reject unknown files
@@ -83,5 +83,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 14D was not implemented.
+

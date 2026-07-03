@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any, Dict, List
 
@@ -248,3 +248,4 @@ def build_image_first_mockup(plan: Dict[str, Any]) -> Dict[str, Any]:
         "visual_prompt_summary": " | ".join(prompt_segments[:5]),
         "provider_state": "placeholder_ready_no_external_provider_configured",
     }
+

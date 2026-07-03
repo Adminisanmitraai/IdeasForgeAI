@@ -1,4 +1,4 @@
-
+﻿
 """Phase 9F multi-page file generation plan engine.
 
 Plan metadata only.
@@ -96,3 +96,4 @@ def build_multi_page_file_plan_response(payload: Dict[str, Any] | None = None) -
             "production_generation_status": "locked",
         },
     }
+

@@ -593,3 +593,4 @@ def _agent_error(session_id: str, code: str, message: str) -> dict:
         },
         "safety": _phase26d_safety(),
     }
+

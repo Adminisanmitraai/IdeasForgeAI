@@ -1,4 +1,4 @@
-# Phase 13C - Multi-File Dry-Run Validator
+﻿# Phase 13C - Multi-File Dry-Run Validator
 
 Status: Completed, not frozen.
 
@@ -6,7 +6,7 @@ Status: Completed, not frozen.
 
 Phase 13C adds a validation-only dry-run validator for future controlled multi-file generation before any Phase 13 generated app files can be written.
 
-This phase does not write files, create folders, create generated apps, generate HTML/CSS/JS, call providers, deploy, add Supabase/auth/database writes/secrets, or touch KisanMitraAI production.
+This phase does not write files, create folders, create generated apps, generate HTML/CSS/JS, call providers, deploy, add Supabase/auth/database writes/secrets, or touch IdeasForgeAI production.
 
 ## Backend Validator Module
 
@@ -29,7 +29,7 @@ The dry-run validator checks:
 - Target folder is inside an approved future Phase 13 generated-apps sandbox
 - `generated-apps/ideasforgeai-preview-v1` is rejected
 - Phase 12 sandbox folders are rejected
-- `backend/`, `frontend/pages/`, `frontend/shared/`, unsafe `docs/`, root production files, deployment files, secrets/env files, database/auth/Supabase files, KisanMitraAI paths, and paths outside `D:/APPS/IdeasForgeAI` are rejected
+- `backend/`, `frontend/pages/`, `frontend/shared/`, unsafe `docs/`, root production files, deployment files, secrets/env files, database/auth/Supabase files, IdeasForgeAI paths, and paths outside `D:/APPS/IdeasForgeAI` are rejected
 - Allowed files exactly match the Phase 13B contract
 - Blocked file list is present
 - File entries match the Phase 13B schema

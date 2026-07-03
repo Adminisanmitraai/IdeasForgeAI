@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
 
@@ -511,51 +511,51 @@ h1 {{
     def _cards_for_template(self, template_id: str):
         data = {
             "ai_chat_tool": [
-                {"icon": "💬", "title": "AI Workspace", "text": "Prompt, chat, and response area for users."},
-                {"icon": "🧠", "title": "Agent Memory", "text": "Structure for history and context."},
-                {"icon": "⚡", "title": "Quick Actions", "text": "Reusable prompt actions and commands."},
+                {"icon": "ðŸ’¬", "title": "AI Workspace", "text": "Prompt, chat, and response area for users."},
+                {"icon": "ðŸ§ ", "title": "Agent Memory", "text": "Structure for history and context."},
+                {"icon": "âš¡", "title": "Quick Actions", "text": "Reusable prompt actions and commands."},
             ],
             "saas_dashboard": [
-                {"icon": "📊", "title": "Metrics", "text": "Track core product performance."},
-                {"icon": "📈", "title": "Reports", "text": "Summarize activity and insights."},
-                {"icon": "🔔", "title": "Alerts", "text": "Show important updates and tasks."},
+                {"icon": "ðŸ“Š", "title": "Metrics", "text": "Track core product performance."},
+                {"icon": "ðŸ“ˆ", "title": "Reports", "text": "Summarize activity and insights."},
+                {"icon": "ðŸ””", "title": "Alerts", "text": "Show important updates and tasks."},
             ],
             "admin_panel": [
-                {"icon": "🗂️", "title": "Records", "text": "Manage operational data."},
-                {"icon": "👥", "title": "Users", "text": "Control users and permissions."},
-                {"icon": "🛠️", "title": "Admin Tools", "text": "Central actions for management."},
+                {"icon": "ðŸ—‚ï¸", "title": "Records", "text": "Manage operational data."},
+                {"icon": "ðŸ‘¥", "title": "Users", "text": "Control users and permissions."},
+                {"icon": "ðŸ› ï¸", "title": "Admin Tools", "text": "Central actions for management."},
             ],
             "marketplace_app": [
-                {"icon": "🛒", "title": "Listings", "text": "Show products, services, or offers."},
-                {"icon": "🔎", "title": "Search", "text": "Help users find the right option."},
-                {"icon": "🤝", "title": "Deals", "text": "Connect buyers and sellers."},
+                {"icon": "ðŸ›’", "title": "Listings", "text": "Show products, services, or offers."},
+                {"icon": "ðŸ”Ž", "title": "Search", "text": "Help users find the right option."},
+                {"icon": "ðŸ¤", "title": "Deals", "text": "Connect buyers and sellers."},
             ],
             "booking_app": [
-                {"icon": "📅", "title": "Calendar", "text": "Choose dates and time slots."},
-                {"icon": "✅", "title": "Confirmation", "text": "Confirm booking details."},
-                {"icon": "🔔", "title": "Reminders", "text": "Notify users before schedules."},
+                {"icon": "ðŸ“…", "title": "Calendar", "text": "Choose dates and time slots."},
+                {"icon": "âœ…", "title": "Confirmation", "text": "Confirm booking details."},
+                {"icon": "ðŸ””", "title": "Reminders", "text": "Notify users before schedules."},
             ],
             "crm_tool": [
-                {"icon": "🧲", "title": "Leads", "text": "Capture and manage new leads."},
-                {"icon": "📌", "title": "Pipeline", "text": "Track sales stages visually."},
-                {"icon": "☎️", "title": "Follow-ups", "text": "Keep customer communication moving."},
+                {"icon": "ðŸ§²", "title": "Leads", "text": "Capture and manage new leads."},
+                {"icon": "ðŸ“Œ", "title": "Pipeline", "text": "Track sales stages visually."},
+                {"icon": "â˜Žï¸", "title": "Follow-ups", "text": "Keep customer communication moving."},
             ],
             "finance_tracker": [
-                {"icon": "💰", "title": "Balance", "text": "Track money coming in and out."},
-                {"icon": "🧾", "title": "Transactions", "text": "List payments, expenses, and invoices."},
-                {"icon": "📉", "title": "Reports", "text": "Understand financial performance."},
+                {"icon": "ðŸ’°", "title": "Balance", "text": "Track money coming in and out."},
+                {"icon": "ðŸ§¾", "title": "Transactions", "text": "List payments, expenses, and invoices."},
+                {"icon": "ðŸ“‰", "title": "Reports", "text": "Understand financial performance."},
             ],
             "ecommerce_tool": [
-                {"icon": "🛍️", "title": "Products", "text": "Display product catalog."},
-                {"icon": "🧺", "title": "Cart", "text": "Add items and prepare checkout."},
-                {"icon": "🚚", "title": "Orders", "text": "Track order status and delivery."},
+                {"icon": "ðŸ›ï¸", "title": "Products", "text": "Display product catalog."},
+                {"icon": "ðŸ§º", "title": "Cart", "text": "Add items and prepare checkout."},
+                {"icon": "ðŸšš", "title": "Orders", "text": "Track order status and delivery."},
             ],
         }
 
         return data.get(template_id, [
-            {"icon": "🚀", "title": "Launch Faster", "text": "Turn ideas into usable product structure."},
-            {"icon": "🎨", "title": "UI First", "text": "Create responsive app screens quickly."},
-            {"icon": "🧩", "title": "Modular Build", "text": "Backend, mobile, and deployment ready."},
+            {"icon": "ðŸš€", "title": "Launch Faster", "text": "Turn ideas into usable product structure."},
+            {"icon": "ðŸŽ¨", "title": "UI First", "text": "Create responsive app screens quickly."},
+            {"icon": "ðŸ§©", "title": "Modular Build", "text": "Backend, mobile, and deployment ready."},
         ])
 
     def _preview_for_template(self, template_id: str) -> str:

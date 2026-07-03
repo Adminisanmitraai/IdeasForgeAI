@@ -63,7 +63,7 @@ No database writes were added.
 No Supabase/auth/secrets were added.
 No generated-apps/ideasforgeai-preview-v1 files were touched.
 No Phase 19 candidate files were modified after the Phase 20 sandbox was created.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 Production replacement remains locked.
 General real generation remains locked.
@@ -75,3 +75,4 @@ Deployment remains locked.
 Phase 21 — Controlled Main Preview Replacement Approval Track.
 
 Phase 21 should be approval-gated and must not replace generated-apps/ideasforgeai-preview-v1 until explicit human approval.
+

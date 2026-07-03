@@ -14,7 +14,7 @@ No deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## QA Target
 
@@ -46,7 +46,7 @@ Required:
 - no database writes
 - no Supabase/auth/secrets
 - no deployment behavior
-- no KisanMitraAI references
+- no IdeasForgeAI references
 
 ## Safety
 
@@ -54,3 +54,4 @@ Phase 23C is visual QA-score only.
 
 No files are changed.
 Deployment remains locked.
+

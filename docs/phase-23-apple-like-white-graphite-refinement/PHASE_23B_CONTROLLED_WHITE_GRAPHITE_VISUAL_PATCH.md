@@ -27,7 +27,7 @@ No deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Result
 
@@ -42,3 +42,4 @@ The final frontend should still keep all sections:
 - Footer
 
 But visually it should feel cleaner, brighter, more Apple-like, and less green.
+

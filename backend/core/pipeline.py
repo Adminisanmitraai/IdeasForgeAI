@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+﻿from typing import Any, Dict, List
 
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult, PipelineResult

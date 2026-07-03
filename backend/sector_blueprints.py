@@ -1,5 +1,5 @@
-"""
-IdeasForgeAI Phase 33A — Sector Blueprint Pack
+﻿"""
+IdeasForgeAI Phase 33A â€” Sector Blueprint Pack
 
 Purpose:
 - Provide sector-specific generation guidance for supported IdeasForgeAI sectors.
@@ -521,3 +521,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

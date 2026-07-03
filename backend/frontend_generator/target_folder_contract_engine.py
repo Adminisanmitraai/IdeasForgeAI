@@ -1,4 +1,4 @@
-
+﻿
 """Phase 9B generation target folder contract engine.
 
 Contract metadata only.
@@ -81,7 +81,7 @@ def build_target_folder_contract_response(payload: Dict[str, Any] | None = None)
             "docs/",
             "root production files",
             "existing generated app folders unless explicitly approved",
-            "KisanMitraAI folders",
+            "IdeasForgeAI folders",
             "any folder outside D:/APPS/IdeasForgeAI",
         ],
         "required_before_folder_creation": [
@@ -100,3 +100,4 @@ def build_target_folder_contract_response(payload: Dict[str, Any] | None = None)
             "production_generation_status": "locked",
         },
     }
+

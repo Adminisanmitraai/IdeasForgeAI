@@ -1,4 +1,4 @@
-const generateBtn = document.getElementById("generateBtn");
+﻿const generateBtn = document.getElementById("generateBtn");
 const appNameInput = document.getElementById("appName");
 const ideaText = document.getElementById("ideaText");
 const statusBadge = document.getElementById("statusBadge");

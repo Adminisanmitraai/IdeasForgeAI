@@ -1,4 +1,4 @@
-# Phase 10C - Premium Hero and Navigation Polish
+﻿# Phase 10C - Premium Hero and Navigation Polish
 
 Status: Completed, not frozen.
 
@@ -32,8 +32,9 @@ Phase 10C applies the first professional visual polish pass to the generated Ide
 - No auth
 - No database writes
 - No secrets
-- No KisanMitraAI changes
+- No IdeasForgeAI changes
 
 ## Next step
 
 Phase 10C Freeze Review, then Phase 10D - Section, Card, and CTA Polish.
+

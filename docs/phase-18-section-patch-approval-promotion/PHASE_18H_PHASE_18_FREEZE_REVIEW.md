@@ -34,7 +34,7 @@ Confirmed:
 - Database writes remained locked.
 - Secrets remained locked.
 - Supabase and auth remained locked.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 ## Approved Phase 18 Promotion Target
 
@@ -66,10 +66,11 @@ Database writes remain locked.
 Secrets remain locked.
 Supabase and auth remain locked.
 generated-apps/ideasforgeai-preview-v1 remains untouched.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 
 ## Next Recommended Phase
 
 Phase 19 — Controlled Promote to Main Preview Candidate Planning.
 
 Phase 19 should plan how a validated promoted preview can become a main preview candidate while still avoiding production deployment and keeping rollback gates.
+

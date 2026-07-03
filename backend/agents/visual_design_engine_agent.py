@@ -1,4 +1,4 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
@@ -18,3 +18,4 @@ class VisualDesignEngineAgent(BaseAgent):
             summary="Visual design workspace prepared in placeholder mode. Frontend generation is waiting for design approval.",
             data=design,
         )
+

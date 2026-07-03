@@ -27,7 +27,7 @@ The embed gate must confirm:
 - Phase 13E sandbox folder exists
 - required files exist
 - no extra files exist
-- index.html has no external URL, iframe, or KisanMitraAI reference
+- index.html has no external URL, iframe, or IdeasForgeAI reference
 - styles.css has no http, https, or @import
 - app.js has no fetch, XMLHttpRequest, import, external URL, storage, provider, Supabase, auth, database, API key, or deploy markers
 - read-only preview route is same-origin
@@ -58,8 +58,9 @@ Phase 14D does not:
 - unlock deployment
 - call providers
 - add Supabase/auth/database/secrets
-- touch KisanMitraAI production
+- touch IdeasForgeAI production
 
 ## Next Phase
 
 Phase 14E — Preview Runner Validation + Freeze Review.
+

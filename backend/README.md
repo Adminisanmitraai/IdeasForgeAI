@@ -1,4 +1,4 @@
-# IdeasForgeAI Backend
+﻿# IdeasForgeAI Backend
 
 Phase 26B adds backend-only OpenAI chat for the existing FastAPI API.
 
@@ -63,3 +63,4 @@ This phase enables backend chat only. The API reports these capabilities as disa
 - Deployment
 
 No database, auth, billing, upload processing, OCR, image analysis, voice transcription, frontend connector, preview generation, or code generation is added in Phase 26B.
+

@@ -71,7 +71,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -281,7 +281,7 @@ def controlled_phase21f_main_preview_replacement(payload: dict[str, Any] | None 
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
     rollback_manifest_copy = {
@@ -331,7 +331,7 @@ Confirmed:
 - Provider calls were not made.
 - Database writes were not made.
 - Supabase/auth/secrets were not used.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 Next:
 Phase 21G - Main Preview Output Validation Score.
@@ -352,7 +352,7 @@ Safety:
 - Supabase allowed: false
 - auth allowed: false
 - secrets allowed: false
-- KisanMitraAI production touched: false
+- IdeasForgeAI production touched: false
 
 Next: Phase 21G - Main Preview Output Validation Score.
 """
@@ -403,3 +403,4 @@ Next: Phase 21G - Main Preview Output Validation Score.
         "next_required_phase": "Phase 21G - Main Preview Output Validation Score",
         **_locked_flags(),
     }
+

@@ -82,7 +82,7 @@ The prompt must not request:
 - external scripts
 - external URLs
 - generated-apps/ideasforgeai-preview-v1 changes
-- KisanMitraAI changes
+- IdeasForgeAI changes
 
 ## Required Prompt Output Contract
 
@@ -113,7 +113,7 @@ When patching becomes allowed in later phases, output must be constrained to:
 - no API calls
 - no provider/database/auth/secrets
 - no deployment logic
-- no KisanMitraAI reference
+- no IdeasForgeAI reference
 - validation before write
 - rollback before write
 
@@ -130,5 +130,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 16E was not implemented.
+

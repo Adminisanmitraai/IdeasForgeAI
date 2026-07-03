@@ -1,4 +1,4 @@
-"""Phase 12G controlled HTML/CSS generation sandbox.
+﻿"""Phase 12G controlled HTML/CSS generation sandbox.
 
 First controlled static HTML/CSS write test only.
 No provider calls.
@@ -236,8 +236,8 @@ def _validate_payload(payload: Dict[str, Any]) -> List[str]:
     path_values = [str(payload.get(key) or "") for key in ("target_folder", "file_path", "generated_app_path") if payload.get(key)]
     for value in path_values:
         lowered = value.lower().replace("\\", "/")
-        if "kisanmitra" in lowered:
-            errors.append("KisanMitraAI paths are rejected.")
+        if "IdeasForgeAI" in lowered:
+            errors.append("IdeasForgeAI paths are rejected.")
         if "ideasforgeai-preview-v1" in lowered:
             errors.append("generated-apps/ideasforgeai-preview-v1 must not be touched.")
         if lowered and lowered != str(TARGET_FOLDER).lower().replace("\\", "/"):
@@ -273,7 +273,7 @@ def _build_manifest(generated_at: str, human_approval_id: str) -> Dict[str, Any]
             "iframe_allowed": False,
             "api_keys_allowed": False,
             "tracking_scripts_allowed": False,
-            "kisanmitra_connection_allowed": False,
+            "IdeasForgeAI_connection_allowed": False,
         },
     }
 
@@ -301,7 +301,7 @@ def _build_validation_report(generated_at: str) -> str:
             "- Database writes allowed: false",
             "- Secrets allowed: false",
             "- Supabase/auth added: false",
-            "- KisanMitraAI production touched: false",
+            "- IdeasForgeAI production touched: false",
             "",
             "## Content Checks",
             "- Static HTML/CSS only.",

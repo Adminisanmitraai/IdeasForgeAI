@@ -1,13 +1,13 @@
-# KisanMitraAI Production Sync
+﻿# IdeasForgeAI Production Sync
 
 ## Purpose
 
-`KisanMitraProductionSyncAgent` prepares a dry-run report for moving approved generated files into the real KisanMitraAI production projects.
+`IdeasForgeAIProductionSyncAgent` prepares a dry-run report for moving approved generated files into the real IdeasForgeAI production projects.
 
 Potential production targets:
 
-- `D:\APPS\KisanMitraAI`
-- `D:\APPS\KisanMitraAI_GITHUB_CLEAN`
+- `D:\APPS\IdeasForgeAI`
+- `D:\APPS\IdeasForgeAI_GITHUB_CLEAN`
 
 ## Current Dry-Run Mode
 
@@ -28,3 +28,4 @@ It does not copy files.
 Any future production copy must be manually approved before it happens.
 
 Review generated HTML, CSS, and JavaScript before copying. Never copy `.env`, keys, tokens, service role keys, or private credentials.
+

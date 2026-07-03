@@ -1,4 +1,4 @@
-from backend.frontend_generator.schemas import StaticPreviewRequest, StaticPreviewResponse
+﻿from backend.frontend_generator.schemas import StaticPreviewRequest, StaticPreviewResponse
 
 
 class StaticPreviewEngine:
@@ -84,3 +84,4 @@ class StaticPreviewEngine:
                 "Production frontend generation remains locked.",
             ],
         )
+

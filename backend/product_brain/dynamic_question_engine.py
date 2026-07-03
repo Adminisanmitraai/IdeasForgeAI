@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class DynamicQuestionEngine:
@@ -83,3 +83,4 @@ class DynamicQuestionEngine:
             "product_type": context.get("intent", {}).get("business_type", "Digital Product"),
             "source_idea": idea,
         }
+

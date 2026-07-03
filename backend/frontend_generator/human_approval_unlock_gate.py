@@ -1,4 +1,4 @@
-"""Phase 12F human approval unlock gate.
+﻿"""Phase 12F human approval unlock gate.
 
 Approval metadata only.
 No real frontend generation.
@@ -94,7 +94,7 @@ def _path_text_values(payload: Dict[str, Any]) -> List[str]:
         "backup_folder",
         "generated_app_path",
         "deployment_path",
-        "kisanmitra_path",
+        "IdeasForgeAI_path",
     ]
     return [str(payload.get(key) or "") for key in path_like_keys if payload.get(key)]
 
@@ -157,8 +157,8 @@ def _validate_payload(payload: Dict[str, Any]) -> tuple[List[str], List[str]]:
 
     for value in _path_text_values(payload):
         lower_value = value.lower().replace("\\", "/")
-        if "kisanmitra" in lower_value:
-            errors.append("KisanMitraAI paths are rejected.")
+        if "IdeasForgeAI" in lower_value:
+            errors.append("IdeasForgeAI paths are rejected.")
         if _is_outside_ideasforgeai(value):
             errors.append("Paths outside D:/APPS/IdeasForgeAI are rejected.")
         if "ideasforgeai-preview-v1" in lower_value:

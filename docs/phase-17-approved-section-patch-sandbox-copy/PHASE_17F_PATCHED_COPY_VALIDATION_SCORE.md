@@ -48,7 +48,7 @@ D:/APPS/IdeasForgeAI/generated-apps/_phase17_controlled_section_patch_applied_co
 - phase17_report_score
 - patch_application_report_score
 - no_real_app_modification_score
-- kisanmitra_separation_score
+- IdeasForgeAI_separation_score
 - overall_score
 
 ## Safety Confirmation
@@ -64,5 +64,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 17G was not implemented.
+

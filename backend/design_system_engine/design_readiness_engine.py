@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class DesignReadinessEngine:
@@ -21,12 +21,12 @@ class DesignReadinessEngine:
 
         ready_for_approval = "Partial - Product Blueprint and Strategy are still needed"
         if has_blueprint and has_strategy and has_screen_map:
-            ready_for_approval = "Yes — draft ready for review"
+            ready_for_approval = "Yes â€” draft ready for review"
 
         return {
             "ready_for_phase_6_review": ready_for_approval,
-            "ready_for_phase_7_pixel_matched_converter": "No — Design System v1.0 is not approved yet",
-            "ready_for_phase_8_frontend_generator": "No — Design System v1.0 is not approved yet",
+            "ready_for_phase_7_pixel_matched_converter": "No â€” Design System v1.0 is not approved yet",
+            "ready_for_phase_8_frontend_generator": "No â€” Design System v1.0 is not approved yet",
             "missing_before_approval": missing,
             "design_risk": [
                 "Blueprint approval may still be draft-only",
@@ -34,3 +34,4 @@ class DesignReadinessEngine:
                 "Phase 7 and Phase 8 remain locked until explicit approval",
             ],
         }
+

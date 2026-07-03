@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+﻿from datetime import datetime, timezone
 from typing import Dict
 from uuid import uuid4
 
@@ -131,3 +131,4 @@ class ProjectMemoryEngine:
         if category == "restaurant":
             return "Restaurant Platform"
         return (idea or "New Product").strip().title()[:48]
+

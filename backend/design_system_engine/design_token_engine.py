@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class DesignTokenEngine:
@@ -50,3 +50,4 @@ class DesignTokenEngine:
             "Do not show raw JSON, booleans, stack traces, or technical failure text",
             "Do not turn the product into a form builder or dense admin dashboard",
         ]
+

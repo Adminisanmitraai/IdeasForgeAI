@@ -49,7 +49,7 @@ BLOCKED_TARGET_MARKERS = [
     "supabase",
     "auth",
     "database",
-    "kisanmitra",
+    "IdeasForgeAI",
 ]
 
 
@@ -76,7 +76,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -146,7 +146,7 @@ def _validate_source_safety(errors: list[str]) -> None:
         "provider_calls_allowed=true",
         "database_writes_allowed=true",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_blockers = [
@@ -155,7 +155,7 @@ def _validate_source_safety(errors: list[str]) -> None:
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_blockers = [
@@ -175,7 +175,7 @@ def _validate_source_safety(errors: list[str]) -> None:
         "secret=",
         "token=",
         "deploy(",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     for marker in html_blockers:
@@ -203,7 +203,7 @@ def _validate_source_safety(errors: list[str]) -> None:
         and manifest.get("secrets_allowed") is False
         and manifest.get("real_generated_app_modified") is False
         and manifest.get("ideasforgeai_preview_v1_touched") is False
-        and manifest.get("kisanmitra_production_touched") is False
+        and manifest.get("IdeasForgeAI_production_touched") is False
     )
 
     if not manifest_ok:
@@ -327,3 +327,4 @@ def validate_phase21d_replacement_dry_run(payload: dict[str, Any] | None = None)
         "next_required_phase": "Phase 21E - Rollback Snapshot + Safety Manifest",
         **locked,
     }
+

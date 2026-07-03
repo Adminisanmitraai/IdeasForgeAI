@@ -1,4 +1,4 @@
-
+﻿
 # Phase 9B - Generation Target Folder Contract
 
 Status: Completed as contract-only.
@@ -42,7 +42,7 @@ Phase 9B does not:
 - Add database writes
 - Call providers
 - Add secrets
-- Touch KisanMitraAI production
+- Touch IdeasForgeAI production
 
 ## Allowed future file types after later approval
 
@@ -68,7 +68,7 @@ Future generation must never write to:
 - docs/
 - root production files
 - existing generated app folders unless explicitly approved
-- KisanMitraAI folders
+- IdeasForgeAI folders
 - any folder outside D:\APPS\IdeasForgeAI
 
 ## Safety locks
@@ -92,3 +92,4 @@ Future generation must never write to:
 ## Next step
 
 Phase 9B Freeze Review, then Phase 9C - Single Page File Write Dry Run.
+

@@ -37,7 +37,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -104,3 +104,4 @@ def get_phase20c_final_header_hero_polish_plan() -> dict[str, Any]:
         "next_required_phase": "Phase 20D - Final Section/Card/CTA Polish Plan",
         **_locked_flags(),
     }
+

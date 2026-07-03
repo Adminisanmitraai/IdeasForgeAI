@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const BACKEND_CHAT_API_URL = "https://ideasforgeai-api.onrender.com/api/chat";
 
   const IDEASFORGEAI_MOCK_STATE = {
@@ -950,3 +950,4 @@
     initializeStudioShell();
   }
 })();
+

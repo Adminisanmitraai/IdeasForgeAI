@@ -1,4 +1,4 @@
-# Phase 13G - Generated Output Validation Score
+﻿# Phase 13G - Generated Output Validation Score
 
 Status: Completed, not frozen.
 
@@ -35,7 +35,7 @@ Extra files or missing files lower/block the validation result.
 - `no_external_dependency_score`
 - `no_provider_call_score`
 - `no_database_auth_secret_score`
-- `kisanmitra_separation_score`
+- `IdeasForgeAI_separation_score`
 - `preview_runner_compatibility_score`
 - `overall_score`
 
@@ -43,7 +43,7 @@ Extra files or missing files lower/block the validation result.
 
 Phase 13G confirms:
 
-- `index.html` has no external script, iframe, external URL, or KisanMitraAI reference.
+- `index.html` has no external script, iframe, external URL, or IdeasForgeAI reference.
 - `styles.css` has no `http`, `https`, or `@import`.
 - `app.js` has no `fetch`, `XMLHttpRequest`, `import`, `http`, `https`, localStorage, sessionStorage, provider references, Supabase references, auth references, database references, API key markers, or deployment markers.
 - `manifest.json` is valid JSON.

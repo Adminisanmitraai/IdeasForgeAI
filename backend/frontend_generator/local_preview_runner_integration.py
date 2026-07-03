@@ -1,4 +1,4 @@
-"""Phase 13F local preview runner integration.
+﻿"""Phase 13F local preview runner integration.
 
 Metadata-only preview runner for the existing Phase 13E sandbox output.
 No file writes.
@@ -48,7 +48,7 @@ BLOCKED_FOLDERS_AND_FILES = {
     "database",
     "auth",
     "supabase",
-    "kisanmitra",
+    "IdeasForgeAI",
 }
 
 LOCKED_FLAGS = {

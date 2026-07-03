@@ -40,8 +40,8 @@ BLOCKED_MARKERS = [
     "supabase",
     "auth",
     "database",
-    "KisanMitraAI",
-    "kisanmitra",
+    "IdeasForgeAI",
+    "IdeasForgeAI",
 ]
 
 
@@ -99,7 +99,7 @@ def get_phase14c_preview_status() -> dict:
             "project root files",
             "deployment config",
             "env/secrets files",
-            "KisanMitraAI paths",
+            "IdeasForgeAI paths",
         ],
         "same_origin_only": True,
         "read_only": True,
@@ -178,4 +178,5 @@ def serve_phase14_static_preview_file(file_name: str):
             "X-IdeasForgeAI-Generation-Unlocked": "false",
         },
     )
+
 

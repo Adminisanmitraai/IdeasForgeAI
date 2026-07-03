@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any, Dict, List
 
@@ -102,4 +102,5 @@ def product_plan_from_sector(sector_result: Dict[str, Any], idea: str, reference
         "forbidden_outputs": template["forbidden_outputs"],
         "next_action": "approve_generate",
     }
+
 

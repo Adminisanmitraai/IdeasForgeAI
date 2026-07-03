@@ -1,4 +1,4 @@
-# Phase 9D - Single Page Real HTML/CSS Preview File Generation
+﻿# Phase 9D - Single Page Real HTML/CSS Preview File Generation
 
 Status: Completed, not frozen.
 
@@ -25,8 +25,9 @@ generated-apps/ideasforgeai-preview-v1/
 - No auth
 - No database writes
 - No secrets
-- No KisanMitraAI production changes
+- No IdeasForgeAI production changes
 
 ## Next step
 
 Phase 9D Freeze Review.
+

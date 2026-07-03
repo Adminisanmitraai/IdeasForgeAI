@@ -1,4 +1,4 @@
-# Phase 25F - Mobile-Only Chat First Experience
+﻿# Phase 25F - Mobile-Only Chat First Experience
 
 Status: Completed, not frozen.
 
@@ -95,7 +95,7 @@ Clicking View preview:
 - No real backend generation unlock.
 - No upload, OCR, image analysis, pixel reading, or canvas analysis.
 - No deployment or deployment config changes.
-- KisanMitraAI was not touched.
+- IdeasForgeAI was not touched.
 
 ## Validation
 
@@ -110,3 +110,4 @@ Required validation for this phase:
 ## Result
 
 Phase 25F makes the mobile Studio V3 experience chat-first while preserving the desktop builder exactly for production-readiness continuity.
+

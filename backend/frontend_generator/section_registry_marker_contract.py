@@ -92,7 +92,7 @@ def get_phase16b_section_registry_marker_contract() -> dict:
             "provider_config",
             "root_config",
             "environment_config",
-            "KisanMitraAI",
+            "IdeasForgeAI",
         ],
         "marker_contract": MARKER_CONTRACT,
         "blocked_targets": [
@@ -104,9 +104,10 @@ def get_phase16b_section_registry_marker_contract() -> dict:
             "root production files",
             "deployment config",
             "env/secrets files",
-            "KisanMitraAI paths",
+            "IdeasForgeAI paths",
             "any path outside D:/APPS/IdeasForgeAI",
         ],
         "next_required_phase": "Phase 16C - Section Selection UI Planning",
         **_locked_flags(),
     }
+

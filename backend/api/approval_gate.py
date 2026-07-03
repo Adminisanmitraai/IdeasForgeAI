@@ -210,3 +210,4 @@ def approval_gate_status():
         ],
         "safety": _phase26f_safety(),
     }
+

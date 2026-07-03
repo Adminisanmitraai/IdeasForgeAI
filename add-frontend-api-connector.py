@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 ROOT = Path(r"D:\APPS\IdeasForgeAI")
 
@@ -49,10 +49,10 @@ const API_BASE = window.IDEASFORGE_API_BASE || localStorage.getItem("IDEASFORGE_
 
 function formatMoney(value) {
   if (value >= 100000) {
-    return "₹" + (value / 100000).toFixed(1) + "L";
+    return "â‚¹" + (value / 100000).toFixed(1) + "L";
   }
 
-  return "₹" + value.toLocaleString("en-IN");
+  return "â‚¹" + value.toLocaleString("en-IN");
 }
 
 async function getJson(path) {

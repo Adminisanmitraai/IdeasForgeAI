@@ -1,4 +1,4 @@
-"""Phase 13G generated output validation score.
+﻿"""Phase 13G generated output validation score.
 
 Read-only scoring for the existing Phase 13E sandbox output.
 No file writes.
@@ -117,7 +117,7 @@ def _build_score(payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         "no_external_script": not bool(re.search(r"<script[^>]+src=[\"'](?:https?:)?//", index_html, re.IGNORECASE)),
         "no_iframe": "<iframe" not in lower_html,
         "no_external_url": "http://" not in lower_html and "https://" not in lower_html,
-        "no_kisanmitra_reference": "kisanmitra" not in lower_html,
+        "no_IdeasForgeAI_reference": "IdeasForgeAI" not in lower_html,
     }
     css_checks = {
         "no_http": "http" not in lower_css,
@@ -191,10 +191,10 @@ def _build_score(payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         "manifest_database_false": bool(manifest_json and manifest_json.get("safety_flags", {}).get("database_writes_allowed") is False),
         "manifest_secrets_false": bool(manifest_json and manifest_json.get("safety_flags", {}).get("secrets_allowed") is False),
     }
-    kisanmitra_checks = {
-        "no_kisanmitra_visible_or_runtime_reference": "kisanmitra" not in "\n".join([index_html, styles_css, app_js]).lower(),
-        "manifest_connection_locked": bool(manifest_json and manifest_json.get("safety_flags", {}).get("kisanmitra_connection_allowed") is False),
-        "target_folder_is_ideasforgeai_only": "kisanmitra" not in TARGET_FOLDER_TEXT.lower(),
+    IdeasForgeAI_checks = {
+        "no_IdeasForgeAI_visible_or_runtime_reference": "IdeasForgeAI" not in "\n".join([index_html, styles_css, app_js]).lower(),
+        "manifest_connection_locked": bool(manifest_json and manifest_json.get("safety_flags", {}).get("IdeasForgeAI_connection_allowed") is False),
+        "target_folder_is_ideasforgeai_only": "IdeasForgeAI" not in TARGET_FOLDER_TEXT.lower(),
     }
     preview_runner_checks = {
         "entry_file_exists": "index.html" in files_checked,
@@ -226,7 +226,7 @@ def _build_score(payload: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         "no_external_dependency_score": _score_from_checks(no_external_dependency_checks),
         "no_provider_call_score": _score_from_checks(no_provider_call_checks),
         "no_database_auth_secret_score": _score_from_checks(no_database_auth_secret_checks),
-        "kisanmitra_separation_score": _score_from_checks(kisanmitra_checks),
+        "IdeasForgeAI_separation_score": _score_from_checks(IdeasForgeAI_checks),
         "preview_runner_compatibility_score": _score_from_checks(preview_runner_checks),
     }
     overall_score = round(sum(score_categories.values()) / len(score_categories)) if score_categories else 0

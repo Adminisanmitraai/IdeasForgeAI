@@ -1,4 +1,4 @@
-# Phase 12H - Phase 12 Freeze Review
+﻿# Phase 12H - Phase 12 Freeze Review
 
 Status: Completed. Phase 12 Controlled Real Generation Unlock track is frozen.
 
@@ -28,11 +28,11 @@ This review is documentation only. It does not add features, write generated app
 12. Deployment was not unlocked: confirmed.
 13. Provider calls were not added: confirmed.
 14. Supabase, authentication, database writes, and secrets were not added: confirmed.
-15. KisanMitraAI production files were not touched: confirmed.
+15. IdeasForgeAI production files were not touched: confirmed.
 16. Studio V3 passes node check: confirmed.
 17. Backend passes Python compile: confirmed.
 18. `generated-apps` git diff has no unwanted tracked diffs: confirmed.
-19. Phase 12G generated HTML has no script tag, iframe, external provider call, or visible KisanMitraAI reference: confirmed.
+19. Phase 12G generated HTML has no script tag, iframe, external provider call, or visible IdeasForgeAI reference: confirmed.
 20. Phase 12G generated CSS has no `http`, `https`, or `@import`: confirmed.
 
 ## Phase 12 Sandbox Inventory
@@ -60,7 +60,7 @@ Existing non-Phase-12 generated app folders predate this freeze review and were 
 - Deployment remains locked.
 - Provider calls remain locked.
 - Supabase, authentication, database writes, and secrets remain locked.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 ## Next Recommended Phase
 

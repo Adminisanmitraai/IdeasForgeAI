@@ -1,4 +1,4 @@
-# Phase 12D - Single-File Write Sandbox
+﻿# Phase 12D - Single-File Write Sandbox
 
 Status: Completed, not frozen.
 
@@ -21,7 +21,7 @@ Phase 12D does not:
 - Deploy
 - Call providers
 - Add Supabase, authentication, database writes, or secrets
-- Touch KisanMitraAI production
+- Touch IdeasForgeAI production
 - Implement Phase 12E
 
 ## Approved Sandbox
@@ -51,7 +51,7 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 ```
 
 ## Backend Sandbox Module
@@ -82,7 +82,7 @@ The sandbox rejects:
 - Root project file writes
 - Deployment config writes
 - Secrets/env file writes
-- KisanMitraAI paths
+- IdeasForgeAI paths
 - Any path outside `D:/APPS/IdeasForgeAI`
 - `generated-apps/ideasforgeai-preview-v1/`
 

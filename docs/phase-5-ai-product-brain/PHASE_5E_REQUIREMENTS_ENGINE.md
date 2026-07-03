@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5E — Requirements Engine Specification
+## Phase 5E â€” Requirements Engine Specification
 
 ### Version 1.0
 
@@ -83,7 +83,7 @@ Functional requirements define what the product must do.
 Examples:
 
 * User can enter a product idea in natural language.
-* System can detect the user’s intent.
+* System can detect the userâ€™s intent.
 * System can ask smart follow-up questions.
 * System can generate product strategy.
 * System can generate requirements.
@@ -190,7 +190,7 @@ IdeasForgeAI must protect:
 * User secrets
 * API keys
 * Production systems
-* KisanMitraAI production
+* IdeasForgeAI production
 * Frozen Studio V3 UI
 * Human approval gates
 * Deployment safety
@@ -264,39 +264,39 @@ The Requirements Engine should capture future needs without building them now.
 
 Future phase mapping:
 
-## Phase 6 — Design System Engine
+## Phase 6 â€” Design System Engine
 
 Needs approved product blueprint and design direction.
 
-## Phase 7 — Pixel-Matched Converter
+## Phase 7 â€” Pixel-Matched Converter
 
 Needs uploaded reference image or approved visual target.
 
-## Phase 8 — Frontend Generator
+## Phase 8 â€” Frontend Generator
 
 Needs approved screen map and design system.
 
-## Phase 9 — Backend Generator
+## Phase 9 â€” Backend Generator
 
 Needs approved data flow and backend logic plan.
 
-## Phase 10 — Authentication + Roles
+## Phase 10 â€” Authentication + Roles
 
 Needs approved user roles and permission model.
 
-## Phase 11 — Supabase Safe Mode
+## Phase 11 â€” Supabase Safe Mode
 
 Needs approved data requirements and safety rules.
 
-## Phase 12 — Export / PWA / Mobile Readiness
+## Phase 12 â€” Export / PWA / Mobile Readiness
 
 Needs approved frontend and app structure.
 
-## Phase 13 — Deployment Readiness
+## Phase 13 â€” Deployment Readiness
 
 Needs approved production checklist.
 
-## Phase 14 — Public SaaS Launch
+## Phase 14 â€” Public SaaS Launch
 
 Needs approved launch, pricing, onboarding, and safety plan.
 
@@ -325,11 +325,11 @@ Bad requirements are:
 
 Example weak requirement:
 
-“Build AI.”
+â€œBuild AI.â€
 
 Example strong requirement:
 
-“The system should analyze the user’s rough product idea and generate a structured product strategy before any design or code is created.”
+â€œThe system should analyze the userâ€™s rough product idea and generate a structured product strategy before any design or code is created.â€
 
 ---
 
@@ -416,7 +416,7 @@ Use only when:
 
 User idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 ## Functional Requirements
 
@@ -460,7 +460,7 @@ User idea:
 * No production changes.
 * No deployment without approval.
 * No database generation in Phase 5.
-* No KisanMitraAI production touch.
+* No IdeasForgeAI production touch.
 
 ## Approval Requirements
 
@@ -484,3 +484,4 @@ The Requirements Engine is successful when:
 * The product remains aligned with:
 
 **Less UI. More Intelligence.**
+

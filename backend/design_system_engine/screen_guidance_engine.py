@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class ScreenGuidanceEngine:
@@ -45,3 +45,4 @@ class ScreenGuidanceEngine:
                 "approval_state": "Silence is not approval.",
             },
         ]
+

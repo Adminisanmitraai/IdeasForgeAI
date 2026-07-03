@@ -42,7 +42,7 @@ D:/APPS/IdeasForgeAI/generated-apps/_phase16f_controlled_section_patch_sandbox/
 - no_external_dependency_score
 - no_real_app_modification_score
 - safety_flags_score
-- kisanmitra_separation_score
+- IdeasForgeAI_separation_score
 - overall_score
 
 ## Safety Confirmation
@@ -59,5 +59,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 16H was not implemented.
+

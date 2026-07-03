@@ -65,7 +65,7 @@ Phase 19 must not directly modify:
 - docs/ except Phase 19 docs
 - deployment config
 - env/secrets files
-- KisanMitraAI files
+- IdeasForgeAI files
 
 ## Required Future Approval Conditions
 
@@ -112,5 +112,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 19B was not implemented.
+

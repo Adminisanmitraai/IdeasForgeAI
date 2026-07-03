@@ -1,4 +1,4 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
@@ -29,3 +29,4 @@ class LeadCRUDAgent(BaseAgent):
             summary="No CRM lead CRUD actions needed for this template.",
             data={"features": []},
         )
+

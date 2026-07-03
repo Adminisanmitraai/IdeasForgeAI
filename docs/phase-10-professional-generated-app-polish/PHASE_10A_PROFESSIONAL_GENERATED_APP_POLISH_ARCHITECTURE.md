@@ -52,7 +52,7 @@ Future polish phases must not modify:
 - frontend/pages/studio-v3.html unless the phase requires Studio visibility
 - frontend/pages/studio-v3.css unless the phase requires Studio visibility
 - frontend/pages/studio-v3.js unless the phase requires Studio visibility
-- KisanMitraAI folders
+- IdeasForgeAI folders
 - deployment config
 - secrets
 - Supabase/auth/database config
@@ -95,3 +95,4 @@ Phase 10 Final Freeze Review.
 ## Next step
 
 Phase 10A Freeze Review, then Phase 10B - Generated Preview Visual Audit.
+

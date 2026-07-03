@@ -1,4 +1,4 @@
-from typing import Any, Dict
+﻿from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
@@ -19,10 +19,10 @@ class TemplateSelectionAgent(BaseAgent):
         )
 
     def _select_template(self, idea: str) -> Dict[str, Any]:
-        if any(word in idea for word in ["kisanmitra", "agriculture", "farmer", "fpo", "mandi", "crop", "farm records"]):
+        if any(word in idea for word in ["IdeasForgeAI", "agriculture", "farmer", "fpo", "mandi", "crop", "farm records"]):
             return {
-                "template_id": "kisanmitra_lite",
-                "template_name": "KisanMitraLite Agriculture Platform",
+                "template_id": "ideasforgeai_product_template",
+                "template_name": "IdeasForgeAIProduct Agriculture Platform",
                 "pages": [
                     "dashboard",
                     "farmers",
@@ -101,3 +101,4 @@ class TemplateSelectionAgent(BaseAgent):
             "pages": ["landing", "features", "how_it_works", "contact"],
             "features": ["Hero section", "Feature cards", "Call to action", "Product summary"],
         }
+

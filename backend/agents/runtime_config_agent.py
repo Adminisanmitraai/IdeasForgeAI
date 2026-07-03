@@ -1,4 +1,4 @@
-import re
+﻿import re
 from typing import Any, Dict
 
 from backend.core.base_agent import BaseAgent
@@ -79,3 +79,4 @@ Start-Sleep -Seconds 3
 $Url = "http://127.0.0.1:{preview_port}/generated-apps/{project_slug}/frontend/index.html?v=" + (Get-Date -Format "yyyyMMddHHmmss")
 Start-Process $Url
 '''
+

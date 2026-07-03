@@ -53,7 +53,7 @@ A future promotion manifest must include:
 - auth_allowed=false
 - real_generated_app_modified=false
 - ideasforgeai_preview_v1_touched=false
-- kisanmitra_production_touched=false
+- IdeasForgeAI_production_touched=false
 
 ## Approved Promoted Files
 
@@ -90,7 +90,7 @@ Future promotion must require:
 - no database write
 - no secrets
 - no Supabase/auth unlock
-- no KisanMitraAI touch
+- no IdeasForgeAI touch
 
 ## Blocked Targets
 
@@ -107,7 +107,7 @@ Promotion must never write to:
 - root production files
 - deployment config
 - env/secrets files
-- KisanMitraAI paths
+- IdeasForgeAI paths
 
 ## Future Phase 18C
 
@@ -128,5 +128,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 18C was not implemented.
+

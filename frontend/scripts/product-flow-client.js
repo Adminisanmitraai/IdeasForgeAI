@@ -264,3 +264,4 @@
     setTimeout(autoBindButtons, 1200);
   });
 })();
+

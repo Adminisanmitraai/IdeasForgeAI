@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class ComponentRuleEngine:
@@ -54,3 +54,4 @@ class ComponentRuleEngine:
             "Approval card",
             "Design Direction Preview",
         ]
+

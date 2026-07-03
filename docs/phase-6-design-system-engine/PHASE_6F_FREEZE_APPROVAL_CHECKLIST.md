@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6F — Design System Engine Freeze & Approval Checklist
+## Phase 6F â€” Design System Engine Freeze & Approval Checklist
 
 ### Version 1.0
 
 ## Purpose
 
-This document defines when Phase 6 — Design System Engine is ready to freeze.
+This document defines when Phase 6 â€” Design System Engine is ready to freeze.
 
 Phase 6 should only be frozen when IdeasForgeAI can convert an approved product blueprint into a clear, reviewable, mobile-first design system direction without generating frontend code too early.
 
@@ -145,7 +145,7 @@ Phase 6 must not:
 
 Phase 6 must show this approval boundary:
 
-“Approve Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.”
+â€œApprove Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.â€
 
 Approval options:
 
@@ -161,7 +161,7 @@ Silence is not approval.
 
 # 7. Ready for Phase 7 Checklist
 
-Phase 7 — Pixel-Matched Converter is ready only when:
+Phase 7 â€” Pixel-Matched Converter is ready only when:
 
 * Design System v1.0 is approved
 * Reference image or visual target is available
@@ -174,7 +174,7 @@ Phase 7 — Pixel-Matched Converter is ready only when:
 
 # 8. Ready for Phase 8 Checklist
 
-Phase 8 — Frontend Generator is ready only when:
+Phase 8 â€” Frontend Generator is ready only when:
 
 * Product Blueprint v1.0 is approved
 * Design System v1.0 is approved
@@ -191,7 +191,7 @@ Phase 8 — Frontend Generator is ready only when:
 Phase 6 must not:
 
 * Expose secrets
-* Touch KisanMitraAI production
+* Touch IdeasForgeAI production
 * Deploy
 * Add Supabase
 * Add authentication
@@ -223,7 +223,7 @@ Phase 6 can freeze if:
 
 When all checks pass, record:
 
-“Phase 6 — Design System Engine is frozen. IdeasForgeAI can now move to Phase 7 Pixel-Matched Converter or Phase 8 Frontend Generator after user approval.”
+â€œPhase 6 â€” Design System Engine is frozen. IdeasForgeAI can now move to Phase 7 Pixel-Matched Converter or Phase 8 Frontend Generator after user approval.â€
 
 ---
 
@@ -249,8 +249,9 @@ Phase 6 is successful when IdeasForgeAI can define a clear design system before 
 
 The user should feel:
 
-“My product now has a design direction, not just a vague idea.”
+â€œMy product now has a design direction, not just a vague idea.â€
 
 Final rule:
 
 **Design before code. Visual before technical. Less UI. More Intelligence.**
+

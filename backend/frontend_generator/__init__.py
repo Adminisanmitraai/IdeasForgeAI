@@ -1,4 +1,4 @@
-from backend.frontend_generator.contract_engine import FrontendGeneratorContractEngine
+﻿from backend.frontend_generator.contract_engine import FrontendGeneratorContractEngine
 from backend.frontend_generator.schemas import (
     FrontendGeneratorContractRequest,
     FrontendGeneratorContractResponse,
@@ -37,3 +37,4 @@ from backend.frontend_generator.file_write_dry_run_engine import build_file_writ
 from backend.frontend_generator.multi_page_file_plan_engine import build_multi_page_file_plan_response
 
 from backend.frontend_generator.generated_app_preview_runner_engine import build_generated_app_preview_runner_response
+

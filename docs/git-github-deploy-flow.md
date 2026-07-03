@@ -1,8 +1,8 @@
-# Git, GitHub, And Deploy Flow
+﻿# Git, GitHub, And Deploy Flow
 
 ## Purpose
 
-`GitVersioningAgent` prepares a safe Git/GitHub dry-run report for reviewed KisanMitraAI changes.
+`GitVersioningAgent` prepares a safe Git/GitHub dry-run report for reviewed IdeasForgeAI changes.
 
 ## Current Dry-Run Checks
 
@@ -16,11 +16,11 @@ The agent checks:
 
 Suggested branch:
 
-- `feature/kisanmitraai-premium-home`
+- `feature/IdeasForgeAI-premium-home`
 
 Suggested commit message:
 
-- `Add premium KisanMitraAI homepage and live app workflow`
+- `Add premium IdeasForgeAI homepage and live app workflow`
 
 ## Manual Git Flow
 
@@ -32,3 +32,4 @@ Suggested commit message:
 6. Push only after final approval.
 
 No commit or push is performed automatically.
+

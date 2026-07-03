@@ -52,7 +52,7 @@ BLOCKED_TARGET_MARKERS = [
     "supabase",
     "auth",
     "database",
-    "kisanmitra",
+    "IdeasForgeAI",
 ]
 
 
@@ -79,7 +79,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -208,3 +208,4 @@ def validate_phase19d_candidate_promotion_dry_run(payload: dict[str, Any] | None
         "next_required_phase": "Phase 19E - Controlled Candidate Folder Creation",
         **_locked_flags(),
     }
+

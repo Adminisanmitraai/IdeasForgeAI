@@ -1,4 +1,4 @@
-# Phase 7A - Pixel-Matched Converter Architecture Specification
+﻿# Phase 7A - Pixel-Matched Converter Architecture Specification
 
 Status: Architecture specification only.
 
@@ -403,4 +403,5 @@ Phase 7A completion means:
 - Backend generation remains locked.
 - Deployment remains locked.
 - Supabase, authentication, and database writes remain absent.
-- KisanMitraAI production remains untouched.
+- IdeasForgeAI production remains untouched.
+

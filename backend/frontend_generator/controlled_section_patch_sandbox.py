@@ -60,8 +60,8 @@ BLOCKED_MARKERS = [
     "supabase",
     "auth",
     "database",
-    "KisanMitraAI",
-    "kisanmitra",
+    "IdeasForgeAI",
+    "IdeasForgeAI",
     "fetch(",
     "XMLHttpRequest",
     "<iframe",
@@ -407,3 +407,4 @@ It does not call providers.
         "next_required_phase": "Phase 16G - Section Preview + Validation Score",
         **_locked_flags(),
     }
+

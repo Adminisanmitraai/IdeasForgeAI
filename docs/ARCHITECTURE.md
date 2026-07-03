@@ -1,4 +1,4 @@
-# IdeasForgeAI Architecture
+﻿# IdeasForgeAI Architecture
 
 IdeasForgeAI has three main layers.
 

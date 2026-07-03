@@ -1,4 +1,4 @@
-# Backend Architecture Audit v2 - World-Class AI Company Builder Readiness
+﻿# Backend Architecture Audit v2 - World-Class AI Company Builder Readiness
 
 Audit date: 2026-06-26
 
@@ -10,7 +10,7 @@ Scope:
 - `backend/core/`
 - `backend/product_brain/`
 - `backend/design_system_engine/`
-- `generated-apps/kisanmitralite/backend/`
+- `generated-apps/IdeasForgeAIProduct/backend/`
 - `docs/backend-audit/`
 - `PROJECT_STATUS.md`
 
@@ -56,7 +56,7 @@ Agents:
 - Pixel-Matched Page Converter placeholder.
 - Visual Design Engine placeholder.
 - Generated app export.
-- Git readiness, deployment readiness, KisanMitraLite template and dry-run production sync.
+- Git readiness, deployment readiness, IdeasForgeAIProduct template and dry-run production sync.
 
 Product Brain:
 
@@ -69,7 +69,7 @@ Design System Engine:
 - Design token, component rule, screen guidance, readiness, orchestration modules.
 - Explicitly keeps `frontend_generation_allowed` and `pixel_matched_conversion_allowed` false.
 
-Generated KisanMitraLite backend:
+Generated IdeasForgeAIProduct backend:
 
 - FastAPI app with local JSON persistence.
 - Health, stats, summaries, and CRUD endpoints for farmers, FPOs, buyers, farms, crops, and mandi deals.
@@ -94,7 +94,7 @@ Working local features:
 - Pixel-Matched placeholder output.
 - Generated app export pipeline.
 - Local app listing.
-- KisanMitraLite generated backend with JSON persistence.
+- IdeasForgeAIProduct generated backend with JSON persistence.
 - Deployment and git readiness dry-run agents.
 - OpenAI assistant wrapper with missing-key fallback.
 
@@ -144,7 +144,7 @@ Highest technical debt:
 - Provider errors can return raw exception text.
 - No central phase gate service.
 - No central policy engine for "what is allowed now".
-- KisanMitra-specific agents live inside the main agent set and need stronger isolation as product-specific adapters.
+- IdeasForgeAI-specific agents live inside the main agent set and need stronger isolation as product-specific adapters.
 - Generated app `.venv` exists under generated app output, increasing repo/project noise.
 
 ## 7. Security Issues
@@ -162,7 +162,7 @@ Security gaps found:
 - No prompt injection defense for future provider calls.
 - No policy around sensitive data in logs.
 - CORS allows all origins.
-- Generated KisanMitraLite backend allows unauthenticated CRUD over local JSON.
+- Generated IdeasForgeAIProduct backend allows unauthenticated CRUD over local JSON.
 - Provider wrapper can return raw exception text.
 
 Security posture:
@@ -390,7 +390,7 @@ Refactoring priorities:
 3. Artifact boundary: write generated files only after artifact review and approval.
 4. Policy centralization: phase gates, approval states, and locked features in one service.
 5. Provider decoupling: move OpenAI wrapper behind provider interface and router.
-6. Product-specific isolation: keep KisanMitraLite support as a generated app adapter, not central product logic.
+6. Product-specific isolation: keep IdeasForgeAIProduct support as a generated app adapter, not central product logic.
 7. Generated app hygiene: exclude `.venv` and runtime artifacts from project inventory flows.
 
 ## 22. Cost Optimization Opportunities
@@ -495,3 +495,4 @@ Confirmed:
 - Frontend generation remains locked.
 - No provider calls were added.
 - No Supabase, authentication, database writes, deployment, or secrets were added.
+

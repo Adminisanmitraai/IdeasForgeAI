@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from typing import Any, Dict
 
@@ -38,3 +38,4 @@ def build_premium_ui_image_concept(plan: Dict[str, Any]) -> Dict[str, Any]:
         "approval_options": mockup.get("approval_actions", []),
         "prompt_summary": mockup.get("visual_prompt_summary", ""),
     }
+

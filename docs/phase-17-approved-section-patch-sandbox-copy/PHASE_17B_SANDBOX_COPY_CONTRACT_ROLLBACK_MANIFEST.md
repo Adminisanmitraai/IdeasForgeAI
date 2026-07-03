@@ -95,7 +95,7 @@ Phase 17B must not:
 - deploy
 - call providers
 - add Supabase/auth/database/secrets
-- touch KisanMitraAI
+- touch IdeasForgeAI
 
 ## Future Phase 17C
 
@@ -114,5 +114,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 Phase 17C was not implemented.
+

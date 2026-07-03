@@ -1,4 +1,4 @@
-# Phase 8C - Single Page Static Preview Generator
+﻿# Phase 8C - Single Page Static Preview Generator
 
 Status: Completed as Studio-only static preview.
 
@@ -110,7 +110,7 @@ Phase 8C does not:
 - Modify Product Brain logic.
 - Modify Design System Engine logic.
 - Modify Pixel Converter behavior.
-- Touch KisanMitraAI production.
+- Touch IdeasForgeAI production.
 
 ## 8. Approval Boundary
 
@@ -147,3 +147,4 @@ Phase 8C is valid only if:
 - Blocked fields remain blocked.
 - Production frontend generation remains locked.
 - Phase 8D is not implemented.
+

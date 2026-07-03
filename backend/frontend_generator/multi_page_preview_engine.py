@@ -1,4 +1,4 @@
-
+﻿
 """Phase 8D Studio-only multi-page app structure preview engine.
 
 This module returns safe preview metadata only.
@@ -207,3 +207,4 @@ def build_multi_page_preview_response(payload: Dict[str, Any] | None = None) -> 
             "production_generation_status": "locked",
         },
     }
+

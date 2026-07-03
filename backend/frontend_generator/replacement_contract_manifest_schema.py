@@ -61,7 +61,7 @@ REQUIRED_REPLACEMENT_MANIFEST_FIELDS = [
     "supabase_allowed",
     "auth_allowed",
     "secrets_allowed",
-    "kisanmitra_production_touched",
+    "IdeasForgeAI_production_touched",
 ]
 
 REQUIRED_ROLLBACK_MANIFEST_FIELDS = [
@@ -103,7 +103,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -137,8 +137,9 @@ def get_phase21b_replacement_contract_manifest_schema() -> dict[str, Any]:
             "provider configuration",
             "database configuration",
             "Supabase/auth configuration",
-            "KisanMitraAI paths",
+            "IdeasForgeAI paths",
         ],
         "next_required_phase": "Phase 21C - Human Replacement Approval Gate",
         **_locked_flags(),
     }
+

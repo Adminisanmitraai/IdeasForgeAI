@@ -1,4 +1,4 @@
-# Phase 7D - Pixel-Matched Layout Detection Placeholder
+﻿# Phase 7D - Pixel-Matched Layout Detection Placeholder
 
 Status: Frozen placeholder review record.
 
@@ -58,3 +58,4 @@ Phase 7D does not:
 - Studio V3 visual polish was visual-only.
 - Historical note: Phase 7E was the next approval-gated step during Phase 7D freeze review.
 - Phase 8 remains locked.
+

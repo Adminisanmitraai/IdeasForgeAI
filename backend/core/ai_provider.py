@@ -1,4 +1,4 @@
-import os
+﻿import os
 from typing import Dict, List
 
 
@@ -45,3 +45,4 @@ class OpenAIProvider:
                 "model": self.model,
                 "message": str(exc),
             }
+

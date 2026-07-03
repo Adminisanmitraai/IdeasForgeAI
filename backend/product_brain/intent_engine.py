@@ -1,4 +1,4 @@
-from typing import Dict, List
+﻿from typing import Dict, List
 
 
 class IntentEngine:
@@ -87,3 +87,4 @@ class IntentEngine:
             "general_product": "Digital Product",
         }
         return labels.get(product_category, product_category.replace("_", " ").title())
+

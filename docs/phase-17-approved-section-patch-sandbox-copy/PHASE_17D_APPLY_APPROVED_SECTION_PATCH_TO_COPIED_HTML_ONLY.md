@@ -29,7 +29,7 @@ Not allowed:
 - deploy
 - call providers
 - add Supabase/auth/database/secrets
-- touch KisanMitraAI
+- touch IdeasForgeAI
 
 ## Safety Confirmation
 
@@ -43,5 +43,6 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 Phase 17E is not implemented.
+

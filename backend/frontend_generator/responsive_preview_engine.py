@@ -1,4 +1,4 @@
-
+﻿
 """Phase 8E Studio-only responsive mobile/desktop preview engine.
 
 This module returns safe responsive preview metadata only.
@@ -109,3 +109,4 @@ def build_responsive_preview_response(payload: Dict[str, Any] | None = None) -> 
             "production_generation_status": "locked",
         },
     }
+

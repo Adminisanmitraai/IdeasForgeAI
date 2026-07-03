@@ -17,7 +17,7 @@ No deployment is performed.
 No provider calls are added.
 No database writes are added.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 
 ## Runtime QA Target
 
@@ -44,7 +44,7 @@ Required:
 - no secrets/tokens/api keys
 - no deployment calls
 - no Render/deployment config
-- no KisanMitraAI references
+- no IdeasForgeAI references
 - browser console should have no uncaught errors
 
 ## Manual Browser Console Check
@@ -66,5 +66,6 @@ No deployment is performed.
 No provider calls are made.
 No database writes are made.
 No Supabase/auth/secrets are added.
-KisanMitraAI production is not touched.
+IdeasForgeAI production is not touched.
 Phase 22F is not implemented.
+

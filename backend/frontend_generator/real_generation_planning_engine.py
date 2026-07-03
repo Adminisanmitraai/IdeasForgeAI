@@ -1,4 +1,4 @@
-
+﻿
 """Phase 9A real frontend generation planning engine.
 
 Planning metadata only.
@@ -96,3 +96,4 @@ def build_real_generation_planning_response(payload: Dict[str, Any] | None = Non
             "production_generation_status": "locked",
         },
     }
+

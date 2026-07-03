@@ -62,7 +62,7 @@ def _locked_flags() -> dict[str, Any]:
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -241,7 +241,7 @@ def create_phase21e_rollback_snapshot_safety_manifest(payload: dict[str, Any] | 
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
     safety_manifest = {
@@ -275,7 +275,7 @@ def create_phase21e_rollback_snapshot_safety_manifest(payload: dict[str, Any] | 
         "supabase_allowed": False,
         "auth_allowed": False,
         "secrets_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
     report = f"""# Phase 21E Rollback Snapshot Report
@@ -306,7 +306,7 @@ Confirmed:
 - No provider calls were made.
 - No database writes were made.
 - No secrets were used.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 Next:
 Phase 21F - Controlled Main Preview Replacement.
@@ -346,3 +346,4 @@ Phase 21F - Controlled Main Preview Replacement.
         "next_required_phase": "Phase 21F - Controlled Main Preview Replacement",
         **_locked_flags(),
     }
+

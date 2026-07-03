@@ -40,7 +40,7 @@ Phase 14 proved:
 - No deployment was added.
 - No provider calls were added.
 - No Supabase/auth/database/secrets were added.
-- KisanMitraAI production was not touched.
+- IdeasForgeAI production was not touched.
 
 ## Safety Summary
 
@@ -53,3 +53,4 @@ Supabase/auth/database/secrets remain locked.
 ## Next Recommended Phase
 
 Phase 15 — Project / Page / Asset Management.
+

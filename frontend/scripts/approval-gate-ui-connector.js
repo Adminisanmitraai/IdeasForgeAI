@@ -290,3 +290,4 @@
     setTimeout(bindButtons, 1200);
   });
 })();
+

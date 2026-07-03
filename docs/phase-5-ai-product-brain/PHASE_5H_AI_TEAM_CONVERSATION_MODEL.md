@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5H — AI Team Conversation Model
+## Phase 5H â€” AI Team Conversation Model
 
 ### Version 1.0
 
@@ -249,7 +249,7 @@ Focus:
 
 User idea:
 
-“I want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.”
+â€œI want to create an AI app where a person writes a rough app idea and the system turns it into a product blueprint, screen plan, design direction, and future build plan.â€
 
 ## AI Team View
 
@@ -313,3 +313,4 @@ The AI Team Conversation Model is successful when:
 * The system remains aligned with:
 
 **Less UI. More Intelligence.**
+

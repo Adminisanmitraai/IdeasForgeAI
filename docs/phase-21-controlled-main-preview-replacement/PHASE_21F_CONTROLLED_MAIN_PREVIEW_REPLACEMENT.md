@@ -39,7 +39,7 @@ Not allowed:
 - database writes
 - Supabase/auth/secrets
 - backend generation unlock
-- KisanMitraAI changes
+- IdeasForgeAI changes
 - backend/frontend source changes during replacement action
 
 ## Result
@@ -48,3 +48,4 @@ After this phase, the polished Phase 20 frontend becomes the local main preview.
 
 Deployment remains locked.
 Production deployment remains locked.
+

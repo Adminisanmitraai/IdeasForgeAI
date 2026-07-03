@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 5 — AI Product Brain Master Index
+## Phase 5 â€” AI Product Brain Master Index
 
 ### Version 1.0
 
 ## Purpose
 
-This folder contains the complete ChatGPT-side architecture specification for IdeasForgeAI Phase 5 — AI Product Brain.
+This folder contains the complete ChatGPT-side architecture specification for IdeasForgeAI Phase 5 â€” AI Product Brain.
 
 Phase 5 turns IdeasForgeAI from a simple app builder into an AI Product Factory Brain.
 
@@ -18,7 +18,7 @@ Core mantra:
 
 # Phase 5 Document Set
 
-## 5A — Master Prompt
+## 5A â€” Master Prompt
 
 File:
 
@@ -44,7 +44,7 @@ Controls:
 
 ---
 
-## 5B — Output Templates
+## 5B â€” Output Templates
 
 File:
 
@@ -69,7 +69,7 @@ Main output sections:
 
 ---
 
-## 5C — Dynamic Question Engine
+## 5C â€” Dynamic Question Engine
 
 File:
 
@@ -86,11 +86,11 @@ Rules:
 * Use safe assumptions
 * Track skipped questions
 * Ask only what matters
-* Default first question is usually: “Who is the primary user?”
+* Default first question is usually: â€œWho is the primary user?â€
 
 ---
 
-## 5D — Product Strategy Engine
+## 5D â€” Product Strategy Engine
 
 File:
 
@@ -115,7 +115,7 @@ Outputs:
 
 ---
 
-## 5E — Requirements Engine
+## 5E â€” Requirements Engine
 
 File:
 
@@ -137,7 +137,7 @@ Requirement groups:
 
 ---
 
-## 5F — Blueprint Engine
+## 5F â€” Blueprint Engine
 
 File:
 
@@ -164,7 +164,7 @@ Blueprint includes:
 
 ---
 
-## 5G — Planning Engine
+## 5G â€” Planning Engine
 
 File:
 
@@ -188,7 +188,7 @@ Planning includes:
 
 ---
 
-## 5H — AI Team Conversation Model
+## 5H â€” AI Team Conversation Model
 
 File:
 
@@ -211,7 +211,7 @@ The AI team should think deeply but speak simply.
 
 ---
 
-## 5I — Product Memory Structure
+## 5I â€” Product Memory Structure
 
 File:
 
@@ -239,7 +239,7 @@ No Supabase or real database writes in Phase 5.
 
 ---
 
-## 5J — Studio V3 Interaction Flow
+## 5J â€” Studio V3 Interaction Flow
 
 File:
 
@@ -263,7 +263,7 @@ Preview cards should populate after idea submission.
 
 ---
 
-## 5K — Freeze & Approval Checklist
+## 5K â€” Freeze & Approval Checklist
 
 File:
 
@@ -283,7 +283,7 @@ Phase 5 can freeze only when:
 * Approval checkpoint appears
 * No secrets are exposed
 * No deployment happens
-* No KisanMitraAI production files are touched
+* No IdeasForgeAI production files are touched
 * Studio V3 is not redesigned
 
 ---
@@ -306,7 +306,7 @@ Phase 5 is successful when IdeasForgeAI can take a rough idea and produce:
 
 The system should feel like:
 
-“A product team thinking before building.”
+â€œA product team thinking before building.â€
 
 ---
 
@@ -314,7 +314,7 @@ The system should feel like:
 
 Use this only after all checks pass:
 
-**Phase 5 — AI Product Brain is frozen. IdeasForgeAI can now move to Phase 6 — Design System Engine after user approval.**
+**Phase 5 â€” AI Product Brain is frozen. IdeasForgeAI can now move to Phase 6 â€” Design System Engine after user approval.**
 
 ---
 
@@ -322,7 +322,7 @@ Use this only after all checks pass:
 
 After Phase 5 is frozen, move to:
 
-**Phase 6 — Design System Engine**
+**Phase 6 â€” Design System Engine**
 
 Phase 6 should define:
 
@@ -344,3 +344,4 @@ Do not start Phase 6 until Phase 5 is approved or explicitly continued by the us
 IdeasForgeAI must always follow:
 
 **Less UI. More Intelligence.**
+

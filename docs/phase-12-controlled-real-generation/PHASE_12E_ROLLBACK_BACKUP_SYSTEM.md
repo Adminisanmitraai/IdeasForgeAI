@@ -1,4 +1,4 @@
-# Phase 12E - Rollback + Backup System
+﻿# Phase 12E - Rollback + Backup System
 
 Status: Completed, not frozen.
 
@@ -19,7 +19,7 @@ Phase 12E does not:
 - Backup or rollback project root files
 - Touch deployment config
 - Touch secrets/env files
-- Touch KisanMitraAI paths
+- Touch IdeasForgeAI paths
 - Generate HTML, CSS, or JavaScript
 - Unlock general generated-app writes
 - Unlock backend generation
@@ -93,7 +93,7 @@ The system rejects:
 - Project root files
 - Deployment config files
 - Secrets/env files
-- KisanMitraAI paths
+- IdeasForgeAI paths
 - Any path outside `D:/APPS/IdeasForgeAI`
 
 ## Next Step

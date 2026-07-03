@@ -1,4 +1,4 @@
-
+﻿
 """Phase 8G Studio-only Preview + Approval Gate engine.
 
 This module returns safe approval gate preview metadata only.
@@ -120,3 +120,4 @@ def build_approval_gate_preview_response(payload: Dict[str, Any] | None = None) 
             "production_generation_status": "locked",
         },
     }
+

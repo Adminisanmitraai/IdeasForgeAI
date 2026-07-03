@@ -1,4 +1,4 @@
-# Phase 12B - Generation File Contract + Manifest Schema
+﻿# Phase 12B - Generation File Contract + Manifest Schema
 
 Status: Completed, not frozen.
 
@@ -20,7 +20,7 @@ Phase 12B does not:
 - Deploy
 - Call providers
 - Add Supabase, authentication, database writes, or secrets
-- Touch KisanMitraAI production
+- Touch IdeasForgeAI production
 - Modify `generated-apps/ideasforgeai-preview-v1/`
 - Implement Phase 12C
 
@@ -102,7 +102,7 @@ Blocked:
 - Root production files
 - Deployment config
 - Secrets/env files
-- KisanMitraAI folders
+- IdeasForgeAI folders
 - Any folder outside `D:/APPS/IdeasForgeAI`
 - Generated-apps existing folders unless explicitly approved
 
@@ -175,3 +175,4 @@ Phase 12C - Real Generation Dry-Run Validator is not implemented.
 ## Next Step
 
 Phase 12B Freeze Review, then Phase 12C only after explicit approval.
+

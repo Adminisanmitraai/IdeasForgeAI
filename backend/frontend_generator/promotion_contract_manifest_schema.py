@@ -43,7 +43,7 @@ REQUIRED_PROMOTION_MANIFEST_FIELDS = [
     "auth_allowed",
     "real_generated_app_modified",
     "ideasforgeai_preview_v1_touched",
-    "kisanmitra_production_touched",
+    "IdeasForgeAI_production_touched",
 ]
 
 APPROVED_PROMOTED_FILES = [
@@ -76,7 +76,7 @@ REQUIRED_PROMOTION_GATES = [
     "no database write",
     "no secrets",
     "no Supabase/auth unlock",
-    "no KisanMitraAI touch",
+    "no IdeasForgeAI touch",
 ]
 
 BLOCKED_TARGETS = [
@@ -91,7 +91,7 @@ BLOCKED_TARGETS = [
     "root production files",
     "deployment config",
     "env/secrets files",
-    "KisanMitraAI paths",
+    "IdeasForgeAI paths",
 ]
 
 
@@ -116,7 +116,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -133,3 +133,4 @@ def get_phase18b_promotion_contract_manifest_schema() -> dict[str, Any]:
         "next_required_phase": "Phase 18C - Human Promotion Approval Gate",
         **_locked_flags(),
     }
+

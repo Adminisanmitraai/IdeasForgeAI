@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from copy import deepcopy
 from typing import Any, Dict, List
@@ -93,7 +93,7 @@ SECTOR_TEST_CASES: List[SectorTestCase] = [
             "Homework Due",
             "Parent Messages",
             "Fees Pending",
-            "₹38k",
+            "â‚¹38k",
         ],
         "forbidden_rendered_terms": [
             "Farmer Dashboard",
@@ -333,3 +333,4 @@ SECTOR_TEST_CASES: List[SectorTestCase] = [
 
 def get_sector_test_cases() -> List[SectorTestCase]:
     return deepcopy(SECTOR_TEST_CASES)
+

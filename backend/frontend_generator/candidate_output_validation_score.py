@@ -54,7 +54,7 @@ def _locked_flags() -> dict[str, Any]:
         "secrets_allowed": False,
         "supabase_allowed": False,
         "auth_allowed": False,
-        "kisanmitra_production_touched": False,
+        "IdeasForgeAI_production_touched": False,
     }
 
 
@@ -146,7 +146,7 @@ def get_phase19g_candidate_output_validation_score(payload: dict[str, Any] | Non
         "provider_calls_allowed=true",
         "database_writes_allowed=true",
         "render.yaml",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     css_blockers = [
@@ -155,7 +155,7 @@ def get_phase19g_candidate_output_validation_score(payload: dict[str, Any] | Non
         "@import",
         "expression(",
         "javascript:",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     app_blockers = [
@@ -175,7 +175,7 @@ def get_phase19g_candidate_output_validation_score(payload: dict[str, Any] | Non
         "secret",
         "token",
         "deploy",
-        "kisanmitra",
+        "IdeasForgeAI",
     ]
 
     score_categories = {
@@ -196,7 +196,7 @@ def get_phase19g_candidate_output_validation_score(payload: dict[str, Any] | Non
             and candidate_manifest.get("secrets_allowed") is False
             and candidate_manifest.get("real_generated_app_modified") is False
             and candidate_manifest.get("ideasforgeai_preview_v1_touched") is False
-            and candidate_manifest.get("kisanmitra_production_touched") is False
+            and candidate_manifest.get("IdeasForgeAI_production_touched") is False
         ),
         "promotion_manifest_score": _score(
             bool(promotion_manifest)
@@ -229,7 +229,7 @@ def get_phase19g_candidate_output_validation_score(payload: dict[str, Any] | Non
             and "no production replacement was performed" in phase19_validation_report
             and "no deployment was performed" in phase19_validation_report
         ),
-        "kisanmitra_separation_score": _score("kisanmitra" not in (index_lower + css_lower + app_lower)),
+        "IdeasForgeAI_separation_score": _score("IdeasForgeAI" not in (index_lower + css_lower + app_lower)),
     }
 
     for name, value in score_categories.items():
@@ -254,3 +254,4 @@ def get_phase19g_candidate_output_validation_score(payload: dict[str, Any] | Non
         "next_required_phase": "Phase 19H - Phase 19 Freeze Review",
         **_locked_flags(),
     }
+

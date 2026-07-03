@@ -1,6 +1,6 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6D — Design Output Templates & Approval Flow
+## Phase 6D â€” Design Output Templates & Approval Flow
 
 ### Version 1.0
 
@@ -111,11 +111,11 @@ This product should feel like:
 
 Example:
 
-“Clean founder-friendly AI product studio that feels calm, intelligent, and approval-driven.”
+â€œClean founder-friendly AI product studio that feels calm, intelligent, and approval-driven.â€
 
 For IdeasForgeAI:
 
-“Clean founder-friendly AI product studio.”
+â€œClean founder-friendly AI product studio.â€
 
 ---
 
@@ -384,7 +384,7 @@ Phase 6 must require explicit approval.
 
 Approval message:
 
-“Approve Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.”
+â€œApprove Design System v1.0 before moving to Pixel-Matched Conversion or Frontend Generation.â€
 
 Approval options:
 
@@ -419,7 +419,7 @@ Examples:
 
 If user says:
 
-“Make it more premium.”
+â€œMake it more premium.â€
 
 Update:
 
@@ -431,7 +431,7 @@ Update:
 
 If user says:
 
-“Make it simpler.”
+â€œMake it simpler.â€
 
 Update:
 
@@ -442,7 +442,7 @@ Update:
 
 If user says:
 
-“Make it mobile-first.”
+â€œMake it mobile-first.â€
 
 Update:
 
@@ -460,7 +460,7 @@ Do not restart the entire design system unless needed.
 
 When user approves and freezes Phase 6, record:
 
-“Design System v1.0 is frozen. IdeasForgeAI can now move to Phase 7 Pixel-Matched Converter or Phase 8 Frontend Generator after approval.”
+â€œDesign System v1.0 is frozen. IdeasForgeAI can now move to Phase 7 Pixel-Matched Converter or Phase 8 Frontend Generator after approval.â€
 
 Freeze should lock:
 
@@ -486,7 +486,7 @@ Phase 6 output must not:
 * Add authentication
 * Connect Supabase
 * Deploy publicly
-* Touch KisanMitraAI production
+* Touch IdeasForgeAI production
 * Redesign frozen Studio V3
 * Add heavy dashboards
 * Show raw JSON to the user
@@ -546,3 +546,4 @@ Phase 6D is successful when:
 * The product stays aligned with:
 
 **Less UI. More Intelligence.**
+

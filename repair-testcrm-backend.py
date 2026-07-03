@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 
 BACKEND = Path(r"D:\APPS\IdeasForgeAI\generated-apps\testcrm\backend")
 BACKEND.mkdir(parents=True, exist_ok=True)

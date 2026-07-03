@@ -1,4 +1,4 @@
-from typing import Dict
+﻿from typing import Dict
 
 
 class PlanningEngine:
@@ -40,3 +40,4 @@ class PlanningEngine:
             "success_criteria": "Phase 6 is ready only when Product Blueprint v1.0 and screen direction are explicitly approved.",
             "codex_prompt": "Not needed until blueprint approval",
         }
+

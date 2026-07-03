@@ -1,12 +1,12 @@
-# IdeasForgeAI
+﻿# IdeasForgeAI
 
-## Phase 6 — Design System Engine Master Index
+## Phase 6 â€” Design System Engine Master Index
 
 ### Version 1.0
 
 ## Purpose
 
-This folder contains the ChatGPT-side architecture specification for IdeasForgeAI Phase 6 — Design System Engine.
+This folder contains the ChatGPT-side architecture specification for IdeasForgeAI Phase 6 â€” Design System Engine.
 
 Phase 6 turns an approved product blueprint into a clear design direction before frontend generation begins.
 
@@ -18,7 +18,7 @@ Core mantra:
 
 # Phase 6 Document Set
 
-## 6A — Design System Engine Architecture
+## 6A â€” Design System Engine Architecture
 
 File:
 
@@ -46,7 +46,7 @@ Covers:
 
 ---
 
-## 6B — Design Tokens & Visual Rules
+## 6B â€” Design Tokens & Visual Rules
 
 File:
 
@@ -73,7 +73,7 @@ Covers:
 
 ---
 
-## 6C — Component System & Screen Rules
+## 6C â€” Component System & Screen Rules
 
 File:
 
@@ -100,7 +100,7 @@ Covers:
 
 ---
 
-## 6D — Design Output Templates & Approval Flow
+## 6D â€” Design Output Templates & Approval Flow
 
 File:
 
@@ -127,7 +127,7 @@ Covers:
 
 ---
 
-## 6E — Screen Design Guidance & Readiness Checklist
+## 6E â€” Screen Design Guidance & Readiness Checklist
 
 File:
 
@@ -155,7 +155,7 @@ Covers:
 
 ---
 
-## 6F — Freeze & Approval Checklist
+## 6F â€” Freeze & Approval Checklist
 
 File:
 
@@ -198,7 +198,7 @@ Phase 6 is successful when IdeasForgeAI can take an approved product blueprint a
 
 The user should feel:
 
-“My product now has a clear design direction before code begins.”
+â€œMy product now has a clear design direction before code begins.â€
 
 ---
 
@@ -216,11 +216,11 @@ Do not move to Phase 7 or Phase 8 without explicit approval.
 
 After Phase 6 is approved, IdeasForgeAI can move to either:
 
-## Phase 7 — Pixel-Matched Converter
+## Phase 7 â€” Pixel-Matched Converter
 
 Use this when the user provides a reference image and wants a screen converted with high visual accuracy.
 
-## Phase 8 — Frontend Generator
+## Phase 8 â€” Frontend Generator
 
 Use this when the approved design system and screen map are ready for frontend generation.
 
@@ -234,3 +234,4 @@ Human approval before generation.
 Safe by default.
 
 **Less UI. More Intelligence.**
+

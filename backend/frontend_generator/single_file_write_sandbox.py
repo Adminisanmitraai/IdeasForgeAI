@@ -1,4 +1,4 @@
-"""Phase 12D single-file write sandbox.
+﻿"""Phase 12D single-file write sandbox.
 
 Approval-gated sandbox write only.
 Exactly one approved proof file path is allowed.
@@ -26,7 +26,7 @@ Backend generation remains locked.
 Deployment remains locked.
 Provider calls remain locked.
 Supabase/auth/database/secrets remain locked.
-KisanMitraAI production was not touched.
+IdeasForgeAI production was not touched.
 """
 
 BLOCKED_PAYLOAD_FIELDS = {
@@ -118,8 +118,8 @@ def _blocked_path_reason(path_value: str) -> Optional[str]:
         return "deployment config writes are blocked."
     if file_name in SECRET_FILE_NAMES or file_name.startswith(".env"):
         return "secrets/env file writes are blocked."
-    if "kisanmitra" in lower_path:
-        return "KisanMitraAI paths are blocked."
+    if "IdeasForgeAI" in lower_path:
+        return "IdeasForgeAI paths are blocked."
     return None
 
 
@@ -160,8 +160,8 @@ def _validate_payload(payload: Dict[str, Any]) -> List[str]:
         errors.append("file_path must stay inside D:/APPS/IdeasForgeAI.")
     if "ideasforgeai-preview-v1" in checked_path.lower() or "ideasforgeai-preview-v1" in checked_folder.lower():
         errors.append("generated-apps/ideasforgeai-preview-v1 must not be touched.")
-    if "kisanmitra" in checked_path.lower() or "kisanmitra" in checked_folder.lower():
-        errors.append("KisanMitraAI paths are blocked.")
+    if "IdeasForgeAI" in checked_path.lower() or "IdeasForgeAI" in checked_folder.lower():
+        errors.append("IdeasForgeAI paths are blocked.")
 
     return errors
 

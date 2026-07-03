@@ -1,7 +1,7 @@
-import json
+﻿import json
 from typing import Any, Dict
 
-from backend.agents import kisanmitra_lite_template
+from backend.agents import ideasforgeai_product_template_template
 from backend.core.base_agent import BaseAgent
 from backend.core.models import AgentResult
 
@@ -13,9 +13,9 @@ class DatabasePersistenceAgent(BaseAgent):
         template_data = context.get("template_selection_agent", {})
         template_id = template_data.get("template_id", "startup_landing")
 
-        if template_id == "kisanmitra_lite":
-            files = kisanmitra_lite_template.data_files()
-            summary = "Generated local JSON persistence for KisanMitraLite records."
+        if template_id == "ideasforgeai_product_template":
+            files = ideasforgeai_product_template_template.data_files()
+            summary = "Generated local JSON persistence for IdeasForgeAIProduct records."
         elif template_id == "crm_tool":
             files = {
                 "data/leads.json": json.dumps(self._default_leads(), indent=2)
@@ -70,3 +70,4 @@ class DatabasePersistenceAgent(BaseAgent):
                 "next_follow_up": None,
             },
         ]
+
