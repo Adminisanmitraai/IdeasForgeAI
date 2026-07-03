@@ -2421,6 +2421,7 @@ a:focus-visible {
 .deployment-health-grid,
 .test-runner-output,
 .test-runner-result-grid,
+.test-runner-result-list,
 .test-runner-approval-actions,
 .test-suite-list,
 .test-runner-actions {
@@ -2686,6 +2687,42 @@ a:focus-visible {
   overflow-wrap: anywhere;
 }
 
+.test-runner-result-list {
+  grid-template-columns: 1fr;
+}
+
+.test-result-item {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid rgba(216, 199, 255, .14);
+  border-radius: 20px;
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.test-result-item__header,
+.test-result-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.test-result-item__header p,
+.test-result-item p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.test-result-item__meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .auto-fix-banner,
 .auto-fix-issue-card,
 .auto-fix-protection-note {
@@ -2810,6 +2847,12 @@ a:focus-visible {
   border: 1px solid rgba(56, 189, 248, .24);
   background: rgba(12, 74, 110, .32);
   color: #d9f5ff;
+}
+
+.status-chip--failed {
+  border: 1px solid rgba(248, 113, 113, .24);
+  background: rgba(127, 29, 29, .32);
+  color: #fecaca;
 }
 
 .screen-detail-card--failure {

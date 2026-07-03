@@ -39,10 +39,19 @@ const LOCKED_NORMAL_USER_MESSAGE = "This action is locked in Normal User Mode. F
 const COPY_BLOCKED_MESSAGE = "Copy is locked for normal users. Founder/Admin permission is required.";
 const CODE_PROPOSAL_PATH = "/api/coding-agent/code-proposal";
 const APPLY_DIFF_PATH = "/api/coding-agent/apply-diff";
+const RUN_TESTS_PATH = "/api/coding-agent/run-tests";
 const CODE_PROPOSAL_FALLBACK_SOURCE = "Local Protected Fallback";
 const CODE_PROPOSAL_BACKEND_SOURCE = "Backend Protected API";
 const APPLY_DIFF_FALLBACK_SOURCE = "Local Apply Review Preview";
 const APPLY_DIFF_BACKEND_SOURCE = "Backend Apply Review API";
+const TEST_RUNNER_BACKEND_SOURCE = "Backend Allowlisted Runner";
+const TEST_RUNNER_LOCKED_SOURCE = "Locked preview mode";
+const TEST_RUNNER_FALLBACK_SOURCE = "Local fallback preview";
+const APPROVED_TEST_IDS = [
+  "coding-agent-js-check",
+  "studio-v4-js-check",
+  "sector-qa",
+];
 
 const getApiBase = () => {
   const { protocol, hostname } = window.location;
@@ -243,17 +252,15 @@ const DEMO_TASK_PLAN_TEXT = [
   "- Start Code Changes - Coming in CA-06 with approval",
 ].join("\n");
 const DEMO_TEST_PLAN_TEXT = [
-  "Test Runner Preview",
-  "Preview validation steps before real test execution is enabled.",
+  "Real Test Runner Execution",
+  "Run approved validation checks only after Founder/Admin and workspace permission.",
   "",
-  "Now Open: Test Runner Preview",
-  "Test Runner Preview is now open. Real command execution remains locked.",
+  "Now Open: Real Test Runner Execution",
+  "Test Runner is ready. Real execution is locked unless backend validation mode is enabled.",
   "",
-  "JavaScript Syntax Checks",
+  "Approved Validation Checks",
   "- node --check frontend/pages/coding-agent.js",
   "- node --check frontend/pages/studio-v4.js",
-  "",
-  "Backend QA",
   "- python backend/sector_qa_runner.py",
   "",
   "Manual UI Checks",
@@ -265,27 +272,25 @@ const DEMO_TEST_PLAN_TEXT = [
   "- Code Diff locked apply button",
   "",
   "Safety Checks",
-  "- No secrets exposed",
-  "- No backend file reading",
-  "- No Git writes",
-  "- No deployment action",
-  "- No KisanMitraAI files touched",
+  "- Allowlisted commands only",
+  "- No arbitrary terminal access",
+  "- No Git actions",
+  "- No deployment actions",
+  "- No secrets access",
   "",
   "Summary:",
-  "5 checks previewed",
-  "5 planned checks passed in preview",
-  "Real execution locked until future approval",
+  "3 approved checks previewed",
+  "3 planned checks passed in preview",
+  "Real execution locked unless backend validation mode is enabled",
 ].join("\n");
 const DEMO_TEST_OUTPUT_TEXT = [
   "PASS node --check frontend/pages/coding-agent.js",
   "PASS node --check frontend/pages/studio-v4.js",
   "PASS python backend/sector_qa_runner.py",
-  "PASS mobile preview smoke test",
-  "PASS safety boundary check",
   "",
   "Summary:",
-  "5 checks previewed",
-  "5 planned checks passed in preview",
+  "3 approved checks previewed",
+  "3 planned checks passed in preview",
   "Real execution locked until future approval",
 ].join("\n");
 const DEMO_TEST_FAILURE_TEXT = [
@@ -435,7 +440,7 @@ const MODULE_TITLES = {
   "task-planner": "Task Planner Preview",
   "code-generation": "Real Code Generation",
   "code-diff": "Code Diff Preview",
-  "test-runner": "Test Runner Preview",
+  "test-runner": "Real Test Runner Execution",
   "auto-fix": "Auto Fix Engine Preview",
   "git-manager": "Git Manager Preview",
   "deployment-manager": "Deployment Manager Preview",
@@ -447,7 +452,7 @@ const MODULE_STATUS_MESSAGES = {
   "task-planner": "Task Planner Preview is now open.",
   "code-generation": "Code proposal workspace is open. Generated code remains protected until Founder/Admin approval.",
   "code-diff": "Code Diff Preview is now open.",
-  "test-runner": "Test Runner Preview is now open. Real command execution remains locked.",
+  "test-runner": "Real Test Runner Execution is now open. Real execution is locked unless backend validation mode is enabled.",
   "auto-fix": "Auto Fix Engine Preview is now open. No code changes will be applied.",
   "git-manager": "Git Manager Preview is now open. No Git commands will run.",
   "deployment-manager": "Deployment Manager Preview is now open. No deployment actions will run.",
@@ -459,7 +464,7 @@ const MODULE_SUBTITLES = {
   "task-planner": "Convert a request into safe implementation steps before editing code.",
   "code-generation": "Generate protected code proposals and review diffs before approval.",
   "code-diff": "Real Code Generation with Diff Approval is available for protected review.",
-  "test-runner": "Preview validation steps before real test execution is enabled.",
+  "test-runner": "Run approved validation checks only after Founder/Admin and workspace permission.",
   "auto-fix": "Analyze failed checks and prepare safe repair plans before any code changes.",
   "git-manager": "Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.",
   "deployment-manager": "Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.",
@@ -522,6 +527,52 @@ const CODE_PERMISSION_ROLES = {
   },
 };
 
+const buildPreviewTestRunnerData = (executionMode, message) => ({
+  ok: true,
+  status: "preview",
+  real_execution: false,
+  message,
+  execution_mode: executionMode,
+  results: [
+    {
+      id: "coding-agent-js-check",
+      label: "Coding Agent JS syntax",
+      command_label: "node --check frontend/pages/coding-agent.js",
+      status: "passed",
+      exit_code: 0,
+      output: "PASS node --check frontend/pages/coding-agent.js",
+    },
+    {
+      id: "studio-v4-js-check",
+      label: "Studio V4 JS syntax",
+      command_label: "node --check frontend/pages/studio-v4.js",
+      status: "passed",
+      exit_code: 0,
+      output: "PASS node --check frontend/pages/studio-v4.js",
+    },
+    {
+      id: "sector-qa",
+      label: "Sector QA runner",
+      command_label: "python backend/sector_qa_runner.py",
+      status: "passed",
+      exit_code: 0,
+      output: "PASS python backend/sector_qa_runner.py",
+    },
+  ],
+  summary: {
+    total: 3,
+    passed: 3,
+    failed: 0,
+  },
+  safety: {
+    allowlisted_only: true,
+    no_shell: true,
+    no_git: true,
+    no_deploy: true,
+    no_secrets: true,
+  },
+});
+
 const state = {
   screen: "connect",
   selectedConnection: null,
@@ -541,6 +592,9 @@ const state = {
   planCopyFeedback: "",
   testRunPreviewed: false,
   testFailurePreviewed: false,
+  testRunnerLoading: false,
+  testRunnerData: null,
+  testRunnerSource: "",
   testPlanDecision: "pending",
   testPlanCopyFeedback: "",
   autoFixAnalyzed: false,
@@ -1340,39 +1394,112 @@ const getTestPlanFeedback = () => {
   if (state.testPlanDecision === "rejected") {
     return "Test plan rejected. No commands were run.";
   }
-  if (state.testRunPreviewed) {
-    return "Preview run complete. Real command execution remains locked.";
+  if (state.testRunnerLoading) {
+    return "Approved validation request in progress. Only allowlisted backend checks can run.";
   }
-  return "Static demo only. No commands are executed from this screen.";
+  if (state.testRunnerData?.message) {
+    return state.testRunnerData.message;
+  }
+  if (state.testRunPreviewed) {
+    return "Preview Test Run complete. No commands were run.";
+  }
+  return "Test Runner is ready. Real execution is locked unless backend validation mode is enabled.";
+};
+
+const renderTestRunnerSummaryCards = (data) => {
+  const summary = data?.summary || { total: 0, passed: 0, failed: 0 };
+  const executionMode = data?.execution_mode || "Locked preview mode";
+  return `
+    <div class="test-runner-result-grid">
+      <article class="test-result-card">
+        <small>Total checks</small>
+        <strong>${escapeHtml(String(summary.total ?? 0))}</strong>
+        <p>Approved allowlisted validations in this run.</p>
+      </article>
+      <article class="test-result-card">
+        <small>Passed</small>
+        <strong>${escapeHtml(String(summary.passed ?? 0))}</strong>
+        <p>Checks that completed with exit code 0.</p>
+      </article>
+      <article class="test-result-card">
+        <small>Failed</small>
+        <strong>${escapeHtml(String(summary.failed ?? 0))}</strong>
+        <p>Checks that returned non-zero or timed out.</p>
+      </article>
+      <article class="test-result-card">
+        <small>Execution mode</small>
+        <strong>${escapeHtml(executionMode)}</strong>
+        <p>${escapeHtml(state.testRunnerSource || TEST_RUNNER_LOCKED_SOURCE)}</p>
+      </article>
+    </div>
+  `;
+};
+
+const renderTestRunnerResultItems = (data) => {
+  const results = data?.results || [];
+  if (!results.length) {
+    return `
+      <article class="test-result-item">
+        <div class="test-result-item__header">
+          <strong>No test results yet</strong>
+          <span class="status-chip status-chip--locked">Waiting</span>
+        </div>
+        <p>Run Approved Validation or Preview Test Run to populate this panel.</p>
+      </article>
+    `;
+  }
+
+  return results.map((result) => `
+    <article class="test-result-item">
+      <div class="test-result-item__header">
+        <div>
+          <strong>${escapeHtml(result.label || result.id || "Approved validation")}</strong>
+          <p>${escapeHtml(result.command_label || "Allowlisted command")}</p>
+        </div>
+        <span class="status-chip ${result.status === "passed" ? "status-chip--passed" : "status-chip--failed"}">${escapeHtml(result.status || "unknown")}</span>
+      </div>
+      <div class="test-result-item__meta">
+        <span>ID: ${escapeHtml(result.id || "n/a")}</span>
+        <span>Exit code: ${escapeHtml(String(result.exit_code ?? "n/a"))}</span>
+      </div>
+      <div class="test-runner-output">
+        <pre>${escapeHtml(result.output || "")}</pre>
+      </div>
+    </article>
+  `).join("");
 };
 
 const renderTestRunnerMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Title</small>
-    <strong>Test Runner Preview</strong>
-    <p>Preview validation steps before real test execution is enabled.</p>
-    <p>Now Open: Test Runner Preview</p>
+    <strong>Real Test Runner Execution</strong>
+    <p>Run approved validation checks only after Founder/Admin and workspace permission.</p>
+    <p>Now Open: Real Test Runner Execution</p>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Status Banner</small>
     <div class="test-runner-banner">
-      <strong>Test Runner Preview is now open. Real command execution remains locked.</strong>
+      <strong>Test Runner is ready. Real execution is locked unless backend validation mode is enabled.</strong>
       <p>${escapeHtml(getTestPlanFeedback())}</p>
     </div>
   </section>
   <section class="screen-detail-card">
-    <small>JavaScript Syntax Checks</small>
-    <strong>Planned checks</strong>
+    <small>Approved validation</small>
+    <strong>Allowlisted checks only</strong>
     <ul class="test-suite-list">
       <li><code>node --check frontend/pages/coding-agent.js</code></li>
       <li><code>node --check frontend/pages/studio-v4.js</code></li>
+      <li><code>python backend/sector_qa_runner.py</code></li>
     </ul>
   </section>
   <section class="screen-detail-card">
-    <small>Backend QA</small>
-    <strong>Planned checks</strong>
+    <small>Execution safety</small>
+    <strong>Founder/Admin and backend lock required</strong>
     <ul class="test-suite-list">
-      <li><code>python backend/sector_qa_runner.py</code></li>
+      <li>Run Real Tests requires Founder/Admin verification and approved workspace.</li>
+      <li>No arbitrary command input.</li>
+      <li>No terminal window or editable command line.</li>
+      <li>No Git, deploy, or secrets access.</li>
     </ul>
   </section>
   <section class="screen-detail-card">
@@ -1388,54 +1515,37 @@ const renderTestRunnerMarkup = () => `
     </ul>
   </section>
   <section class="screen-detail-card">
-    <small>Safety Checks</small>
-    <strong>Boundary checklist</strong>
+    <small>Fallback behavior</small>
+    <strong>Safe preview on lock or outage</strong>
     <ul class="test-suite-list">
-      <li>No secrets exposed</li>
-      <li>No backend file reading</li>
-      <li>No Git writes</li>
-      <li>No deployment action</li>
-      <li>No KisanMitraAI files touched</li>
+      <li>Locked backend returns preview results instead of real execution.</li>
+      <li>Unavailable backend falls back to local preview mode.</li>
+      <li>Preview Test Run still works without backend access.</li>
+      <li>Preview Failed Test Example still shows a safe simulated failure.</li>
     </ul>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Test Result Cards</small>
-    <strong>Preview state types</strong>
-    <div class="test-runner-result-grid">
-      <article class="test-result-card">
-        <span class="status-chip status-chip--passed">Passed</span>
-        <p>Simulated pass results appear after Preview Test Run.</p>
-      </article>
-      <article class="test-result-card">
-        <span class="status-chip status-chip--review">Needs Review</span>
-        <p>Use the failure example to show a review-needed output without running anything.</p>
-      </article>
-      <article class="test-result-card">
-        <span class="status-chip status-chip--locked">Locked</span>
-        <p>Real command execution stays disabled until a future approval phase.</p>
-      </article>
-      <article class="test-result-card">
-        <span class="status-chip status-chip--manual">Manual</span>
-        <p>Manual browser checks remain listed for Safari, desktop, and navigation validation.</p>
-      </article>
-    </div>
+    <strong>Total checks, pass/fail counts, and execution mode</strong>
+    ${renderTestRunnerSummaryCards(state.testRunnerData)}
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
-    <small>Simulated Controls</small>
-    <strong>Preview-only actions</strong>
+    <small>Validation controls</small>
+    <strong>Approved backend execution or safe preview</strong>
     <div class="test-runner-actions">
-      <button class="diff-generate-button" type="button" data-ca-action="preview-test-run">Preview Test Run</button>
+      <button class="diff-generate-button" type="button" data-ca-action="run-approved-validation"${state.testRunnerLoading ? " disabled" : ""}>${state.testRunnerLoading ? "Running..." : "Run Approved Validation"}</button>
+      <button class="reader-action-button" type="button" data-ca-action="preview-test-run">Preview Test Run</button>
       <button class="reader-action-button" type="button" data-ca-action="preview-failed-test">Preview Failed Test Example</button>
     </div>
   </section>
   ${
-    state.testRunPreviewed
+    state.testRunnerData
       ? `
         <section class="screen-detail-card screen-detail-card--wide">
-          <small>Simulated Output</small>
-          <strong>Readable preview output only</strong>
-          <div class="test-runner-output">
-            <pre>${escapeHtml(DEMO_TEST_OUTPUT_TEXT)}</pre>
+          <small>Validation results</small>
+          <strong>Result cards with output snippets</strong>
+          <div class="test-runner-result-list">
+            ${renderTestRunnerResultItems(state.testRunnerData)}
           </div>
         </section>
       `
@@ -1461,7 +1571,7 @@ const renderTestRunnerMarkup = () => `
       <button class="reader-action-button" type="button" data-ca-action="copy-test-plan">Copy Test Plan</button>
       <button class="reader-action-button" type="button" data-ca-action="mark-test-plan-later">Mark for Later</button>
       <button class="reader-action-button" type="button" data-ca-action="reject-test-plan">Reject Test Plan</button>
-      <button class="reader-action-button is-disabled" type="button" disabled>Run Real Tests — Coming after project permission</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Run Real Tests requires Founder/Admin verification and approved workspace.</button>
     </div>
   </section>
 `;
@@ -1983,12 +2093,12 @@ const renderWorkspaceCards = () => {
   }
 
   if (workspaceStatusNodes.testRunner) {
-    workspaceStatusNodes.testRunner.textContent = demoConnected ? "Preview Unlocked" : "Locked";
+    workspaceStatusNodes.testRunner.textContent = demoConnected ? "Ready with lock" : "Locked";
   }
   if (workspaceCopyNodes.testRunner) {
     workspaceCopyNodes.testRunner.textContent = demoConnected
-      ? "Preview-only validation is available. Real command execution remains locked until a future approval phase."
-      : "Manual, unit, and integration test controls are reserved for the next phase.";
+      ? "Approved validation preview is available. Real execution stays locked unless the backend allowlist mode is enabled."
+      : "Approved validation is reserved for Founder/Admin verification and approved workspace permission.";
   }
 
   if (workspaceStatusNodes.githubIntegration) {
@@ -2110,6 +2220,9 @@ const openFallbackScreen = (connection) => {
   state.planCopyFeedback = "";
   state.testRunPreviewed = false;
   state.testFailurePreviewed = false;
+  state.testRunnerLoading = false;
+  state.testRunnerData = null;
+  state.testRunnerSource = "";
   state.testPlanDecision = "pending";
   state.testPlanCopyFeedback = "";
   state.autoFixAnalyzed = false;
@@ -2138,6 +2251,9 @@ const openDemoScreen = () => {
   state.planCopyFeedback = "";
   state.testRunPreviewed = false;
   state.testFailurePreviewed = false;
+  state.testRunnerLoading = false;
+  state.testRunnerData = null;
+  state.testRunnerSource = "";
   state.testPlanDecision = "pending";
   state.testPlanCopyFeedback = "";
   state.autoFixAnalyzed = false;
@@ -2172,6 +2288,7 @@ const openDemoModule = (moduleName) => {
   if (moduleName !== "test-runner") {
     state.testPlanCopyFeedback = "";
     state.testPlanDecision = "pending";
+    state.testRunnerLoading = false;
   }
   if (moduleName !== "auto-fix") {
     state.autoFixCopyFeedback = "";
@@ -2223,6 +2340,20 @@ const getApplyDiffEndpointCandidates = () => {
   }
 
   candidates.push(APPLY_DIFF_PATH);
+  return [...new Set(candidates)];
+};
+
+const getRunTestsEndpointCandidates = () => {
+  const candidates = [];
+  if (API_BASE) {
+    candidates.push(`${API_BASE}${RUN_TESTS_PATH}`);
+  }
+
+  if (window.location.origin && window.location.origin !== "null") {
+    candidates.push(`${window.location.origin}${RUN_TESTS_PATH}`);
+  }
+
+  candidates.push(RUN_TESTS_PATH);
   return [...new Set(candidates)];
 };
 
@@ -2336,6 +2467,75 @@ const requestApplyReview = async () => {
   }
 };
 
+const runApprovedValidation = async () => {
+  state.testRunnerLoading = true;
+  state.testRunPreviewed = false;
+  state.testFailurePreviewed = false;
+  state.testRunnerData = null;
+  state.testRunnerSource = "";
+  state.testPlanDecision = "pending";
+  state.testPlanCopyFeedback = "";
+  setStatusMessage("Running approved validation through the backend allowlist. No arbitrary commands can run.");
+  renderScreenState();
+
+  const payload = {
+    project_id: "ideasforgeai-demo",
+    mode: "founder-admin-validation-preview",
+    requested_tests: APPROVED_TEST_IDS,
+  };
+
+  try {
+    let runResult = null;
+    for (const endpoint of getRunTestsEndpointCandidates()) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const json = await response.json();
+        if (json && typeof json === "object") {
+          runResult = json;
+          break;
+        }
+      } catch (error) {
+        console.warn("Run tests API unavailable:", endpoint, error);
+      }
+    }
+
+    if (runResult?.real_execution) {
+      state.testRunnerData = {
+        ...runResult,
+        execution_mode: "Real backend allowlisted execution",
+      };
+      state.testRunnerSource = TEST_RUNNER_BACKEND_SOURCE;
+      setStatusMessage("Approved validation completed using backend allowlisted execution.");
+    } else if (runResult?.status === "locked") {
+      state.testRunnerData = buildPreviewTestRunnerData(
+        "Locked preview mode",
+        "Real test execution is locked. Preview results are shown instead."
+      );
+      state.testRunnerSource = TEST_RUNNER_LOCKED_SOURCE;
+      setStatusMessage("Real test execution is locked. Preview results are shown instead.");
+    } else {
+      state.testRunnerData = buildPreviewTestRunnerData(
+        "Local fallback preview",
+        "Backend test runner unavailable. Preview results shown. No commands were run."
+      );
+      state.testRunnerSource = TEST_RUNNER_FALLBACK_SOURCE;
+      setStatusMessage("Backend test runner unavailable. Preview results shown. No commands were run.");
+    }
+  } finally {
+    state.testRunnerLoading = false;
+    renderScreenState();
+  }
+};
+
 const copyTaskPlan = async () => {
   try {
     await navigator.clipboard.writeText(DEMO_TASK_PLAN_TEXT);
@@ -2350,9 +2550,15 @@ const copyTaskPlan = async () => {
 
 const previewTestRun = () => {
   state.testRunPreviewed = true;
+  state.testRunnerLoading = false;
+  state.testRunnerData = buildPreviewTestRunnerData(
+    "Local fallback preview",
+    "Preview Test Run complete. No commands were run."
+  );
+  state.testRunnerSource = TEST_RUNNER_FALLBACK_SOURCE;
   state.testPlanDecision = "pending";
   state.testPlanCopyFeedback = "";
-  setStatusMessage("Preview Test Run complete. Real command execution remains locked.");
+  setStatusMessage("Preview Test Run complete. No commands were run.");
   renderScreenState();
 };
 
@@ -2509,6 +2715,9 @@ const handleAction = async (action) => {
       break;
     case "open-test-runner":
       openDemoModule("test-runner");
+      break;
+    case "run-approved-validation":
+      await runApprovedValidation();
       break;
     case "open-auto-fix":
       openDemoModule("auto-fix");

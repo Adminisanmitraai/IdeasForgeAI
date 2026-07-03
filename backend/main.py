@@ -1,4 +1,6 @@
 import json
+import os
+import subprocess
 from typing import Any, Dict, List, Literal, Optional
 
 from fastapi import FastAPI, Request
@@ -289,6 +291,94 @@ class ApplyDiffRequest(BaseModel):
     approval_intent: Literal["apply-generated-diff"] = "apply-generated-diff"
 
 
+class RunTestsRequest(BaseModel):
+    project_id: str = Field(min_length=1, max_length=200)
+    mode: Literal["founder-admin-validation-preview"] = "founder-admin-validation-preview"
+    requested_tests: List[
+        Literal[
+            "coding-agent-js-check",
+            "studio-v4-js-check",
+            "sector-qa",
+        ]
+    ] = Field(min_length=1)
+
+
+TEST_RUNNER_TIMEOUT_SECONDS = 45
+TEST_RUNNER_OUTPUT_LIMIT = 6000
+TEST_RUNNER_ALLOWLIST = {
+    "coding-agent-js-check": {
+        "label": "Coding Agent JS syntax",
+        "command": ["node", "--check", "frontend/pages/coding-agent.js"],
+    },
+    "studio-v4-js-check": {
+        "label": "Studio V4 JS syntax",
+        "command": ["node", "--check", "frontend/pages/studio-v4.js"],
+    },
+    "sector-qa": {
+        "label": "Sector QA runner",
+        "command": ["python", "backend/sector_qa_runner.py"],
+    },
+}
+
+
+def _is_test_runner_enabled() -> bool:
+    return os.getenv("IDEASFORGE_TEST_RUNNER_ENABLED", "").strip().lower() == "true"
+
+
+def _build_locked_test_runner_response() -> Dict[str, Any]:
+    return {
+        "ok": False,
+        "status": "locked",
+        "message": "Real test execution is locked until Founder/Admin verification and approved workspace are enabled.",
+        "real_execution": False,
+        "results": [],
+    }
+
+
+def _truncate_command_output(output: str) -> str:
+    text = (output or "").strip()
+    if len(text) <= TEST_RUNNER_OUTPUT_LIMIT:
+        return text
+    return f"{text[:TEST_RUNNER_OUTPUT_LIMIT]}...[truncated]"
+
+
+def _run_allowlisted_test(test_id: str) -> Dict[str, Any]:
+    test_config = TEST_RUNNER_ALLOWLIST[test_id]
+    command = list(test_config["command"])
+    completed = None
+    output = ""
+    exit_code = -1
+    status = "failed"
+
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=str(PROJECT_ROOT),
+            shell=False,
+            capture_output=True,
+            text=True,
+            timeout=TEST_RUNNER_TIMEOUT_SECONDS,
+        )
+        exit_code = completed.returncode
+        output = f"{completed.stdout or ''}{completed.stderr or ''}"
+        status = "passed" if completed.returncode == 0 else "failed"
+    except subprocess.TimeoutExpired as error:
+        output = f"Execution timed out after {TEST_RUNNER_TIMEOUT_SECONDS} seconds.\n{error.stdout or ''}{error.stderr or ''}"
+        status = "failed"
+    except Exception as error:
+        output = f"Execution failed to start: {error}"
+        status = "failed"
+
+    return {
+        "id": test_id,
+        "label": test_config["label"],
+        "command_label": " ".join(command),
+        "status": status,
+        "exit_code": exit_code,
+        "output": _truncate_command_output(output),
+    }
+
+
 def build_coding_agent_code_proposal(request_text: str, project_id: str) -> CodeProposalResponse:
     normalized_request = request_text.strip() or "Fix the Task Planner button so it opens the Task Planner Preview screen."
     normalized_project_id = project_id.strip() or "ideasforgeai-demo"
@@ -482,6 +572,46 @@ def coding_agent_apply_diff(request: ApplyDiffRequest):
             "git": False,
             "deploy": False,
             "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/run-tests/health")
+def coding_agent_run_tests_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-run-tests",
+        "mode": "allowlisted-validation",
+        "enabled": _is_test_runner_enabled(),
+    }
+
+
+@app.post("/api/coding-agent/run-tests")
+def coding_agent_run_tests(request: RunTestsRequest):
+    if not _is_test_runner_enabled():
+        return _build_locked_test_runner_response()
+
+    requested_ids = list(dict.fromkeys(request.requested_tests))
+    results = [_run_allowlisted_test(test_id) for test_id in requested_ids]
+    passed = sum(1 for result in results if result["status"] == "passed")
+    failed = len(results) - passed
+
+    return {
+        "ok": True,
+        "status": "completed",
+        "real_execution": True,
+        "results": results,
+        "summary": {
+            "total": len(results),
+            "passed": passed,
+            "failed": failed,
+        },
+        "safety": {
+            "allowlisted_only": True,
+            "no_shell": True,
+            "no_git": True,
+            "no_deploy": True,
+            "no_secrets": True,
         },
     }
 

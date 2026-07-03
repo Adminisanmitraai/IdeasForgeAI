@@ -13152,3 +13152,15 @@ Status: Completed locally, validation pending manual browser check.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-13 preview work; no real file editing from the app, no raw code export/apply/Git/deploy behavior, no terminal execution from the app, no backend edits, no secrets exposed, no `.env` access, and no KisanMitraAI or deployment configuration files touched.
 
+## Phase CA-16 - Real Test Runner Execution
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added `POST /api/coding-agent/run-tests` and `GET /api/coding-agent/run-tests/health` in `backend/main.py`; the backend accepts only the allowlisted test IDs `coding-agent-js-check`, `studio-v4-js-check`, and `sector-qa`, maps them to fixed commands, runs them with `shell=False`, enforces per-command timeout/output limits, and returns structured results.
+- Production execution remains locked by default unless `IDEASFORGE_TEST_RUNNER_ENABLED=true`; when disabled, the backend returns the locked response and runs nothing.
+- Updated the Coding Agent Test Runner module to the CA-16 `Real Test Runner Execution` flow with `Run Approved Validation`, `Preview Test Run`, and `Preview Failed Test Example`.
+- Frontend now calls the backend run-tests endpoint when available, shows actual allowlisted results when real execution is enabled, shows locked preview results when execution is disabled, and falls back to local preview output when the backend is unavailable.
+- No arbitrary commands, terminal UI, editable command input, Git actions, deployment actions, or secrets access were added.
+- Files changed: `backend/main.py`, `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `python -m py_compile backend/main.py`; `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: no KisanMitraAI files touched; no deployment settings touched; no `.env` or secret values added; backend execution remains allowlisted only.
