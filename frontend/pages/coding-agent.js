@@ -306,7 +306,7 @@ const DEMO_TEST_FAILURE_TEXT = [
   "Send to Auto Fix Engine in CA-08.",
 ].join("\n");
 const DEMO_AUTO_FIX_PLAN_TEXT = [
-  "Auto Fix Engine Preview",
+  "Auto Fix Loop Foundation",
   "Analyze failed checks and prepare safe repair plans before any code changes.",
   "",
   "Failed Check:",
@@ -445,7 +445,7 @@ const MODULE_TITLES = {
   "code-generation": "Real Code Generation",
   "code-diff": "Code Diff Preview",
   "test-runner": "Real Test Runner Execution",
-  "auto-fix": "Auto Fix Engine Preview",
+  "auto-fix": "Auto Fix Loop Foundation",
   "git-manager": "Git Manager Preview",
   "deployment-manager": "Deployment Manager Preview",
 };
@@ -1792,20 +1792,20 @@ const getAutoFixFeedback = () => {
   if (state.autoFixAnalyzed) {
     return "Failure analyzed. Static repair guidance is ready for review.";
   }
-  return "Static demo only. No files are edited, no commands run, and no backend auto-fix is called.";
+  return "Backend Auto Fix preview API is used when available. If unavailable, a safe local preview is shown. No files are edited and no commands run.";
 };
 
 const renderAutoFixMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Title</small>
-    <strong>Auto Fix Engine Preview</strong>
+    <strong>Auto Fix Loop Foundation</strong>
     <p>Analyze failed checks and prepare safe repair plans before any code changes.</p>
-    <p>Now Open: Auto Fix Engine Preview</p>
+    <p>Now Open: Auto Fix Loop Foundation</p>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Status Banner</small>
     <div class="auto-fix-banner">
-      <strong>Auto Fix Engine Preview is now open. No code changes will be applied.</strong>
+      <strong>Auto Fix Loop Foundation is now open. No code changes will be applied.</strong>
       <p>${escapeHtml(getAutoFixFeedback())}</p>
     </div>
   </section>
