@@ -42,6 +42,7 @@ const APPLY_DIFF_PATH = "/api/coding-agent/apply-diff";
 const RUN_TESTS_PATH = "/api/coding-agent/run-tests";
 const AUTO_FIX_ANALYZE_PATH = "/api/coding-agent/auto-fix/analyze";
 const AUTO_FIX_PLAN_PATH = "/api/coding-agent/auto-fix/plan";
+const GITHUB_PREVIEW_PATH = "/api/coding-agent/github/preview";
 const CODE_PROPOSAL_FALLBACK_SOURCE = "Local Protected Fallback";
 const CODE_PROPOSAL_BACKEND_SOURCE = "Backend Protected API";
 const APPLY_DIFF_FALLBACK_SOURCE = "Local Apply Review Preview";
@@ -49,6 +50,8 @@ const APPLY_DIFF_BACKEND_SOURCE = "Backend Apply Review API";
 const TEST_RUNNER_BACKEND_SOURCE = "Backend Allowlisted Runner";
 const AUTO_FIX_BACKEND_SOURCE = "Backend Auto Fix Preview API";
 const AUTO_FIX_FALLBACK_SOURCE = "Local Auto Fix Preview";
+const GITHUB_BACKEND_SOURCE = "Backend GitHub Preview API";
+const GITHUB_FALLBACK_SOURCE = "Local GitHub Preview";
 const TEST_RUNNER_LOCKED_SOURCE = "Locked preview mode";
 const TEST_RUNNER_FALLBACK_SOURCE = "Local fallback preview";
 const APPROVED_TEST_IDS = [
@@ -458,7 +461,7 @@ const MODULE_STATUS_MESSAGES = {
   "code-diff": "Code Diff Preview is now open.",
   "test-runner": "Real Test Runner Execution is now open. Real execution is locked unless backend validation mode is enabled.",
   "auto-fix": "Auto Fix Loop Foundation is now open. No code changes will be applied.",
-  "git-manager": "Git Manager Preview is now open. No Git commands will run.",
+  "git-manager": "GitHub Integration Foundation is now open. No GitHub commands will run.",
   "deployment-manager": "Deployment Manager Preview is now open. No deployment actions will run.",
 };
 
@@ -610,6 +613,9 @@ const state = {
   autoFixAnalysisData: null,
   autoFixPlanData: null,
   autoFixLoopStep: "idle",
+  githubPreviewLoading: false,
+  githubPreviewSource: "",
+  githubPreviewData: null,
   gitPlanDecision: "pending",
   gitPlanCopyFeedback: "",
   deploymentPlanGenerated: false,
@@ -1958,98 +1964,262 @@ const getDeploymentPlanFeedback = () => {
   return "Deployment plan ready for review. All deploy, health, rollback, and promotion actions remain locked.";
 };
 
+
+const getGitHubEndpointCandidates = (path) => {
+  const endpoints = [];
+  if (API_BASE) {
+    endpoints.push(`${API_BASE}${path}`);
+  }
+  endpoints.push(path);
+  return endpoints;
+};
+
+const buildLocalGitHubPreview = () => ({
+  ok: true,
+  status: "github-preview-ready",
+  mode: "local-github-integration-preview",
+  project_id: "ideasforgeai-demo",
+  repository: {
+    name: "IdeasForgeAI",
+    url_preview: "https://github.com/Adminisanmitraai/IdeasForgeAI",
+    connection_status: "Local preview only",
+    real_connection: false,
+  },
+  workflow: {
+    title: "Founder/Admin GitHub workflow preview",
+    steps: [
+      "Review generated proposal and protected diff",
+      "Request Founder/Admin Git review",
+      "Create branch only after verified backend permission",
+      "Commit only approved changes",
+      "Push branch only after validation passes",
+      "Create pull request for review",
+      "Merge only after Founder/Admin approval",
+      "Keep rollback plan available",
+    ],
+  },
+  branch_plan: {
+    suggested_branch: "work/ideasforgeai-approved-change",
+    base_branch: "main",
+    status: "planned-only",
+  },
+  pull_request_plan: {
+    title: "Apply approved IdeasForgeAI Coding Agent change",
+    body_sections: ["Summary", "Affected files", "Validation results", "Safety checks", "Rollback plan"],
+    status: "planned-only",
+  },
+  locked_actions: [
+    "Connect GitHub account",
+    "Read private repository",
+    "Create branch",
+    "Commit changes",
+    "Push branch",
+    "Create pull request",
+    "Merge pull request",
+    "Rollback",
+  ],
+  approval_gate: {
+    required: true,
+    role: "Founder/Admin",
+    message: "Real GitHub actions require backend authentication, secure token storage, connected repository permission, and Founder/Admin approval.",
+  },
+  audit_preview: [
+    "GitHub workflow preview opened — allowed",
+    "Repository token access — blocked",
+    "Branch creation — blocked",
+    "Commit — blocked",
+    "Push — blocked",
+    "Pull request creation — blocked",
+    "Merge — blocked",
+    "Rollback — blocked",
+  ],
+  safety: {
+    github_api_calls: false,
+    token_in_frontend: false,
+    token_in_response: false,
+    git_commands: false,
+    file_write: false,
+    deploy: false,
+    secrets: false,
+  },
+});
+
+const postGitHubPreview = async () => {
+  const payload = {
+    project_id: "ideasforgeai-demo",
+    repository_url: "https://github.com/Adminisanmitraai/IdeasForgeAI",
+    mode: "github-integration-preview",
+  };
+
+  for (const endpoint of getGitHubEndpointCandidates(GITHUB_PREVIEW_PATH)) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      // Keep frontend safe with local fallback.
+    }
+  }
+
+  return null;
+};
+
+const renderGitHubList = (items = []) => items
+  .map((item) => `<li>${escapeHtml(String(item))}</li>`)
+  .join("");
+
+const openGitHubPreview = async () => {
+  state.githubPreviewLoading = true;
+  state.githubPreviewSource = "";
+  state.githubPreviewData = null;
+  setStatusMessage("Opening GitHub Integration Foundation. No GitHub commands will run.");
+  renderScreenState();
+
+  const preview = await postGitHubPreview();
+
+  if (preview?.ok) {
+    state.githubPreviewData = preview;
+    state.githubPreviewSource = GITHUB_BACKEND_SOURCE;
+    setStatusMessage("GitHub Integration Foundation is now open. No GitHub commands will run.");
+  } else {
+    state.githubPreviewData = buildLocalGitHubPreview();
+    state.githubPreviewSource = GITHUB_FALLBACK_SOURCE;
+    setStatusMessage("GitHub backend preview unavailable. Local GitHub workflow preview shown. No GitHub commands will run.");
+  }
+
+  state.githubPreviewLoading = false;
+  renderScreenState();
+};
+
+const renderGitHubPreviewCards = () => {
+  const data = state.githubPreviewData;
+  if (!data) {
+    return "";
+  }
+
+  return `
+    <section class="screen-detail-card screen-detail-card--wide github-ca18-card">
+      <small>Proposal Source</small>
+      <strong>${escapeHtml(state.githubPreviewSource || GITHUB_FALLBACK_SOURCE)}</strong>
+      <p>Status: ${escapeHtml(data.status || "github-preview-ready")} | Mode: ${escapeHtml(data.mode || "github-integration-preview")}</p>
+    </section>
+    <section class="screen-detail-card">
+      <small>Repository Preview</small>
+      <strong>${escapeHtml(data.repository?.name || "IdeasForgeAI")}</strong>
+      <p>${escapeHtml(data.repository?.url_preview || "Repository reference protected")}</p>
+      <p>Connection: ${escapeHtml(data.repository?.connection_status || "Preview only")}</p>
+    </section>
+    <section class="screen-detail-card">
+      <small>Branch Plan</small>
+      <strong>${escapeHtml(data.branch_plan?.suggested_branch || "work/ideasforgeai-approved-change")}</strong>
+      <p>Base branch: ${escapeHtml(data.branch_plan?.base_branch || "main")} | Status: ${escapeHtml(data.branch_plan?.status || "planned-only")}</p>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Workflow Preview</small>
+      <strong>${escapeHtml(data.workflow?.title || "Founder/Admin GitHub workflow preview")}</strong>
+      <ol class="screen-detail-list">${renderGitHubList(data.workflow?.steps || [])}</ol>
+    </section>
+    <section class="screen-detail-card">
+      <small>Pull Request Plan</small>
+      <strong>${escapeHtml(data.pull_request_plan?.title || "Approved change PR")}</strong>
+      <ul class="screen-detail-list">${renderGitHubList(data.pull_request_plan?.body_sections || [])}</ul>
+    </section>
+    <section class="screen-detail-card">
+      <small>Locked GitHub Actions</small>
+      <strong>Founder/Admin required</strong>
+      <ul class="screen-detail-list">${renderGitHubList(data.locked_actions || [])}</ul>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Approval Gate</small>
+      <strong>${escapeHtml(data.approval_gate?.role || "Founder/Admin")} verification required</strong>
+      <p>${escapeHtml(data.approval_gate?.message || "Real GitHub actions remain locked.")}</p>
+    </section>
+    <section class="screen-detail-card">
+      <small>Audit Preview</small>
+      <strong>Preview-only audit trail</strong>
+      <ul class="screen-detail-list">${renderGitHubList(data.audit_preview || [])}</ul>
+    </section>
+    <section class="screen-detail-card">
+      <small>Safety Flags</small>
+      <strong>No real GitHub action</strong>
+      <ul class="screen-detail-list">
+        <li>GitHub API calls: ${data.safety?.github_api_calls ? "enabled" : "blocked"}</li>
+        <li>Token in frontend: ${data.safety?.token_in_frontend ? "present" : "blocked"}</li>
+        <li>Git commands: ${data.safety?.git_commands ? "enabled" : "blocked"}</li>
+        <li>File writes: ${data.safety?.file_write ? "enabled" : "blocked"}</li>
+        <li>Deployment: ${data.safety?.deploy ? "enabled" : "blocked"}</li>
+        <li>Secrets access: ${data.safety?.secrets ? "enabled" : "blocked"}</li>
+      </ul>
+    </section>
+  `;
+};
+
+
 const renderGitManagerMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Title</small>
-    <strong>Git Manager Preview</strong>
-    <p>Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.</p>
-    <p>Now Open: Git Manager Preview</p>
+    <strong>GitHub Integration Foundation</strong>
+    <p>Prepare secure repository, branch, commit, pull request, merge, and rollback workflows before real GitHub access is enabled.</p>
+    <p>Now Open: GitHub Integration Foundation</p>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Status Banner</small>
-    <div class="git-manager-banner">
-      <strong>Git Manager Preview is now open. No Git commands will run.</strong>
-      <p>${escapeHtml(getGitPlanFeedback())}</p>
-    </div>
-  </section>
-  <section class="screen-detail-card">
-    <small>Workflow Preview</small>
-    <strong>Safe Git planning stages</strong>
-    <ol class="git-manager-workflow-list">
-      <li>Review proposed changes</li>
-      <li>Create safe working branch</li>
-      <li>Prepare commit message</li>
-      <li>Generate pull request summary</li>
-      <li>Wait for founder/admin approval</li>
-      <li>Push only after permission</li>
-      <li>Merge only after validation</li>
-      <li>Keep rollback plan ready</li>
-    </ol>
-  </section>
-  <section class="screen-detail-card">
-    <small>Suggested Branch</small>
-    <div class="git-manager-branch-card">
-      <strong>work/coding-agent-mobile-polish</strong>
-      <p>Branch Type: Feature / UI Repair</p>
-      <p>Status: Preview only - not created</p>
+    <div class="auto-fix-banner">
+      <strong>GitHub Integration Foundation is now open. No GitHub commands will run.</strong>
+      <p>Preview-only workflow. Tokens stay server-side in future phases. No GitHub API calls are made in CA-18.</p>
     </div>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
-    <small>Commit Preview</small>
-    <div class="git-manager-commit-card">
-      <strong>Improve Coding Agent mobile workspace and protected preview controls</strong>
-      <ul class="screen-detail-list">
-        <li>Add safe Git workflow preview</li>
-        <li>Keep push and merge actions locked</li>
-        <li>Show founder/admin approval gate</li>
-        <li>Preserve preview-only safety boundaries</li>
-      </ul>
-      <p>Status: Preview only - not committed</p>
+    <small>Connection Preview</small>
+    <strong>IdeasForgeAI repository workflow</strong>
+    <div class="github-preview-grid">
+      <div>
+        <small>Repository</small>
+        <p>IdeasForgeAI</p>
+      </div>
+      <div>
+        <small>Status</small>
+        <p>Preview only</p>
+      </div>
+      <div>
+        <small>Token Handling</small>
+        <p>No frontend token. No token is requested in CA-18.</p>
+      </div>
+      <div>
+        <small>Real Actions</small>
+        <p>Branch, commit, push, PR, merge, rollback, and deploy remain locked.</p>
+      </div>
     </div>
   </section>
   <section class="screen-detail-card screen-detail-card--wide">
-    <small>Pull Request Preview</small>
-    <div class="git-manager-pr-card">
-      <strong>Improve Coding Agent mobile workspace workflow</strong>
-      <p>This preview prepares a safe Git workflow for Coding Agent changes. Real Git actions remain locked until founder/admin approval.</p>
-      <ul class="git-manager-checklist">
-        <li>JavaScript syntax checks</li>
-        <li>Sector QA</li>
-        <li>Mobile Safari test</li>
-        <li>Desktop browser test</li>
-        <li>No secrets touched</li>
-        <li>No KisanMitraAI files touched</li>
-      </ul>
-      <p>Status: Preview only - PR not created</p>
+    <small>Actions</small>
+    <strong>GitHub workflow preview controls</strong>
+    <div class="auto-fix-action-grid">
+      <button class="diff-generate-button" type="button" data-ca-action="preview-github-workflow"${state.githubPreviewLoading ? " disabled" : ""}>${state.githubPreviewLoading ? "Opening." : "Preview GitHub Workflow"}</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Connect GitHub - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Create Branch - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Create Pull Request - Locked</button>
     </div>
   </section>
-  <section class="screen-detail-card screen-detail-card--wide">
-    <small>Preview Actions</small>
-    <strong>Review-only controls</strong>
-    <div class="git-manager-action-grid">
-      <button class="reader-action-button" type="button" data-ca-action="copy-git-plan">Copy Git Plan</button>
-      <button class="reader-action-button" type="button" data-ca-action="reject-git-plan">Reject Git Plan</button>
-      <button class="reader-action-button" type="button" data-ca-action="approve-git-plan-later">Approve Later</button>
-    </div>
-  </section>
-  <section class="screen-detail-card screen-detail-card--wide">
-    <small>Locked Git Actions</small>
-    <strong>Founder/Admin approval required</strong>
-    <div class="git-manager-lock-grid">
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Create Branch - Locked</button>
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Commit Changes - Locked</button>
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Push Branch - Locked</button>
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Create Pull Request - Locked</button>
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Merge - Locked</button>
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Rollback - Locked</button>
-    </div>
-  </section>
+  ${renderGitHubPreviewCards()}
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Founder/Admin Protection</small>
-    <div class="git-manager-protection-note">
-      <strong>Normal users can preview the Git workflow only.</strong>
-      <p>Only Founder/Admin can approve commit, push, PR, merge, rollback, export, or deployment actions.</p>
-    </div>
+    <strong>Real GitHub access will require backend authentication and secure token storage.</strong>
+    <ul class="screen-detail-list">
+      <li>No GitHub token in frontend</li>
+      <li>No GitHub API call in CA-18</li>
+      <li>No Git command execution</li>
+      <li>No branch creation</li>
+      <li>No commit or push</li>
+      <li>No pull request creation</li>
+      <li>No merge or rollback</li>
+      <li>No deployment action</li>
+    </ul>
   </section>
 `;
 
@@ -3289,3 +3459,13 @@ renderScreenState();
 setStatusMessage(DEFAULT_STATUS_MESSAGE);
 updateBackButtonState();
 window.addEventListener("scroll", updateBackButtonState, { passive: true });
+
+
+document.addEventListener("click", async (event) => {
+  const trigger = event.target.closest('[data-ca-action="preview-github-workflow"]');
+  if (!trigger) {
+    return;
+  }
+  event.preventDefault();
+  await openGitHubPreview();
+});
