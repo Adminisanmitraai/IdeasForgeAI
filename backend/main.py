@@ -994,6 +994,116 @@ def coding_agent_deployment_request_approval(request: DeploymentApprovalPreviewR
 
 
 
+
+
+# Phase CA-20 - Connected Project Workspace.
+# Preview-only connected workspace. No real local folder access, no GitHub token,
+# no file writes, no terminal execution, no Git actions, no deployment, and no secrets access.
+class ConnectedWorkspacePreviewRequest(BaseModel):
+    project_id: str = Field(default="ideasforgeai-demo")
+    connection_type: str = Field(default="demo")
+    mode: str = Field(default="connected-workspace-preview")
+
+
+def _build_connected_workspace_preview(request: ConnectedWorkspacePreviewRequest) -> Dict[str, Any]:
+    return {
+        "ok": True,
+        "status": "workspace-preview-ready",
+        "mode": "connected-workspace-preview",
+        "project_id": request.project_id or "ideasforgeai-demo",
+        "workspace": {
+            "name": "IdeasForgeAI Demo Project",
+            "connection_type": request.connection_type or "demo",
+            "connection_status": "Demo workspace connected",
+            "real_local_access": False,
+            "real_github_access": False,
+            "write_access": False,
+        },
+        "project_tree": [
+            {"type": "folder", "path": "frontend/pages"},
+            {"type": "file", "path": "frontend/pages/coding-agent.html", "status": "preview-readable"},
+            {"type": "file", "path": "frontend/pages/coding-agent.js", "status": "preview-readable"},
+            {"type": "file", "path": "frontend/pages/coding-agent.css", "status": "preview-readable"},
+            {"type": "folder", "path": "backend"},
+            {"type": "file", "path": "backend/main.py", "status": "preview-readable"},
+            {"type": "file", "path": "backend/sector_qa_runner.py", "status": "preview-readable"},
+            {"type": "file", "path": "PROJECT_STATUS.md", "status": "preview-readable"},
+        ],
+        "active_modules": [
+            "Project Reader",
+            "Architecture Analyzer",
+            "Task Planner",
+            "Code Generation",
+            "Protected Code Preview",
+            "Code Diff Preview",
+            "Test Runner",
+            "Auto Fix Engine",
+            "Git Manager",
+            "Deployment Manager",
+            "Founder/Admin Permissions",
+        ],
+        "active_proposal": {
+            "title": "Demo Task Planner button repair",
+            "status": "Protected proposal ready",
+            "approval": "Founder/Admin required before apply",
+        },
+        "test_status": {
+            "mode": "allowlisted validation preview",
+            "last_result": "Preview checks available",
+            "real_execution": False,
+        },
+        "git_status": {
+            "mode": "GitHub workflow preview",
+            "branch": "planned-only",
+            "commit": "locked",
+            "push": "locked",
+            "pull_request": "locked",
+        },
+        "deployment_status": {
+            "mode": "deployment approval preview",
+            "preview": "planned-only",
+            "production": "locked",
+            "rollback": "locked",
+        },
+        "permissions": {
+            "normal_user": "preview-only",
+            "founder_admin": "approval required",
+            "real_workspace_required": True,
+        },
+        "safety": {
+            "real_local_folder_access": False,
+            "github_token": False,
+            "file_write": False,
+            "terminal": False,
+            "git_commands": False,
+            "deployment": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/workspace/health")
+def coding_agent_workspace_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-connected-workspace",
+        "mode": "connected-workspace-preview",
+        "real_local_folder_access": False,
+        "github_token": False,
+        "file_write": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+@app.post("/api/coding-agent/workspace/preview")
+def coding_agent_workspace_preview(request: ConnectedWorkspacePreviewRequest):
+    return _build_connected_workspace_preview(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}
