@@ -1623,6 +1623,261 @@ def coding_agent_file_viewer_preview(request: ReadOnlyFileViewerRequest):
 
 
 
+
+
+# Phase CA-24 - Protected Code Viewer for Normal Users.
+# Protected viewer preview. Normal users receive app-level no-copy/no-edit/no-apply
+# protected previews only. This does not read local files, fetch private GitHub,
+# write files, run commands, use Git, deploy, or expose secrets.
+class ProtectedCodeViewerRequest(BaseModel):
+    file_path: str = Field(default="frontend/pages/coding-agent.js")
+    viewer_role: str = Field(default="normal_user")
+    protection_mode: str = Field(default="normal-user-protected-preview")
+
+
+def _build_ca24_protected_catalog() -> Dict[str, Dict[str, Any]]:
+    return {
+        "frontend/pages/coding-agent.html": {
+            "language": "html",
+            "purpose": "Coding Agent page shell and visible workspace structure.",
+            "sensitivity": "low",
+            "lines": [
+                "<main class=\"coding-agent-shell\">",
+                "  <section class=\"coding-agent-hero\">",
+                "    <h1>Coding Agent</h1>",
+                "    <p>Build, modify, test and improve software projects with AI.</p>",
+                "  </section>",
+                "</main>",
+            ],
+        },
+        "frontend/pages/coding-agent.js": {
+            "language": "javascript",
+            "purpose": "Coding Agent module routing, protected preview controls, and status banner behavior.",
+            "sensitivity": "medium",
+            "lines": [
+                "function setStatusMessage(message) {",
+                "  const status = document.querySelector('[data-status-banner]');",
+                "  if (!status) return;",
+                "  status.textContent = message;",
+                "}",
+                "",
+                "document.addEventListener('click', (event) => {",
+                "  const action = event.target.closest('[data-ca-action]');",
+                "  if (!action) return;",
+                "  // Preview-only routing stays protected for normal users.",
+                "});",
+            ],
+        },
+        "frontend/pages/coding-agent.css": {
+            "language": "css",
+            "purpose": "Mobile-first protected viewer and Coding Agent visual styling.",
+            "sensitivity": "low",
+            "lines": [
+                ".coding-agent-shell {",
+                "  min-height: 100vh;",
+                "  background: #05070f;",
+                "  color: #ffffff;",
+                "}",
+                "",
+                ".protected-code-viewer {",
+                "  user-select: none;",
+                "}",
+            ],
+        },
+        "backend/main.py": {
+            "language": "python",
+            "purpose": "Backend-only protected APIs for previews, permissions, connectors, and future apply gates.",
+            "sensitivity": "high",
+            "lines": [
+                "from fastapi import FastAPI",
+                "from pydantic import BaseModel, Field",
+                "",
+                "app = FastAPI()",
+                "",
+                "@app.get('/health')",
+                "def health():",
+                "    return {'ok': True}",
+            ],
+        },
+        "PROJECT_STATUS.md": {
+            "language": "markdown",
+            "purpose": "Phase status and implementation history.",
+            "sensitivity": "low",
+            "lines": [
+                "# IdeasForgeAI Project Status",
+                "",
+                "## Coding Agent",
+                "- CA-24 Protected Code Viewer for Normal Users",
+            ],
+        },
+    }
+
+
+def _mask_ca24_line(line: str, role: str) -> str:
+    if role == "founder_admin_preview":
+        return line
+    stripped = line.strip()
+    if not stripped:
+        return ""
+    if any(token in stripped.lower() for token in ["key", "token", "secret", "password", "credential"]):
+        return "[protected-sensitive-line]"
+    if len(line) > 96:
+        return line[:96] + " …"
+    return line
+
+
+def _build_protected_code_viewer_preview(request: ProtectedCodeViewerRequest) -> Dict[str, Any]:
+    catalog = _build_ca24_protected_catalog()
+    requested_path = (request.file_path or "frontend/pages/coding-agent.js").strip()
+    selected_path = requested_path if requested_path in catalog else "frontend/pages/coding-agent.js"
+    selected = catalog[selected_path]
+
+    requested_role = (request.viewer_role or "normal_user").strip().lower()
+    role = "founder_admin_preview" if requested_role in {"founder", "admin", "founder_admin", "founder_admin_preview"} else "normal_user"
+
+    normal_user = role == "normal_user"
+
+    protected_lines = [
+        {
+            "line": index + 1,
+            "content": _mask_ca24_line(value, role),
+            "locked": normal_user,
+        }
+        for index, value in enumerate(selected["lines"])
+    ]
+
+    return {
+        "ok": True,
+        "status": "protected-code-viewer-ready",
+        "mode": "protected-code-viewer-preview",
+        "viewer": {
+            "role": role,
+            "selected_file": selected_path,
+            "language": selected["language"],
+            "purpose": selected["purpose"],
+            "sensitivity": selected["sensitivity"],
+            "display_mode": "normal-user-protected-preview" if normal_user else "founder-admin-review-preview",
+            "source": "safe-demo-catalog",
+            "real_local_file_read": False,
+            "private_github_fetch": False,
+            "write_access": False,
+            "copy_action": False,
+            "edit_action": False,
+            "apply_action": False,
+            "export_action": False,
+            "download_action": False,
+        },
+        "available_files": [
+            {
+                "path": path,
+                "language": data["language"],
+                "purpose": data["purpose"],
+                "sensitivity": data["sensitivity"],
+                "access": "protected-view-only",
+            }
+            for path, data in catalog.items()
+        ],
+        "content_preview": {
+            "file_path": selected_path,
+            "language": selected["language"],
+            "line_count": len(protected_lines),
+            "lines": protected_lines,
+            "notice": "Protected preview only. No copy/edit/apply/export controls are available for normal users.",
+            "watermark": "IdeasForgeAI Protected Preview",
+        },
+        "normal_user_permissions": {
+            "can_view": True,
+            "can_copy": False,
+            "can_edit": False,
+            "can_apply": False,
+            "can_export": False,
+            "can_download": False,
+            "can_run_tests": False,
+            "can_use_git": False,
+            "can_deploy": False,
+            "can_view_secrets": False,
+        },
+        "founder_admin_permissions_preview": {
+            "can_review": True,
+            "can_copy_after_auth": "future-backend-auth-required",
+            "can_apply_after_auth": "future-backend-auth-required",
+            "can_export_after_auth": "future-backend-auth-required",
+            "can_deploy_after_auth": "future-backend-auth-required",
+        },
+        "protection_layers": [
+            "No copy button",
+            "No edit button",
+            "No apply button",
+            "No export button",
+            "No download button",
+            "Selection disabled in protected viewer UI",
+            "Context menu blocked inside protected viewer UI",
+            "Keyboard copy blocked inside protected viewer UI",
+            "Sensitive keyword lines are masked in normal-user mode",
+            "Founder/Admin mode is visually separated and still requires backend permission in future phases",
+        ],
+        "locked_actions": [
+            "Real local file read",
+            "Private GitHub file fetch",
+            "Copy from app controls",
+            "Direct edit",
+            "Apply diff",
+            "Export code",
+            "Download code",
+            "Terminal execution",
+            "Git commands",
+            "Deployment",
+            "Secrets access",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-25",
+            "title": "Real GitHub Public Repo Reader API",
+            "goal": "Read public GitHub repository metadata and file tree through backend-only safe APIs, without frontend tokens or private repo access.",
+        },
+        "safety": {
+            "local_filesystem_read": False,
+            "private_github_fetch": False,
+            "frontend_token": False,
+            "file_write": False,
+            "copy_button": False,
+            "edit_button": False,
+            "apply_button": False,
+            "export_button": False,
+            "download_button": False,
+            "terminal": False,
+            "git_commands": False,
+            "deployment": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/protected-code-viewer/health")
+def coding_agent_protected_code_viewer_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-protected-code-viewer",
+        "mode": "protected-code-viewer-preview",
+        "normal_user_copy": False,
+        "normal_user_edit": False,
+        "normal_user_apply": False,
+        "normal_user_export": False,
+        "real_local_file_read": False,
+        "private_github_fetch": False,
+        "file_write": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+@app.post("/api/coding-agent/protected-code-viewer/preview")
+def coding_agent_protected_code_viewer_preview(request: ProtectedCodeViewerRequest):
+    return _build_protected_code_viewer_preview(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}

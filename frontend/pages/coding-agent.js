@@ -3736,7 +3736,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-24 - Protected Code Viewer for Normal Users */
+/* Phase CA-25 - Real GitHub Public Repo Reader API */
 (() => {
   if (window.__ideasforgeCa20ConnectedWorkspaceLoaded) {
     return;
@@ -4025,7 +4025,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-24 - Protected Code Viewer for Normal Users */
+/* Phase CA-25 - Real GitHub Public Repo Reader API */
 (() => {
   if (window.__ideasforgeCa21ReadOnlyConnectorLoaded) {
     return;
@@ -4983,6 +4983,485 @@ document.addEventListener("click", async (event) => {
     document.addEventListener("DOMContentLoaded", ca23EnsureSection);
   } else {
     ca23EnsureSection();
+  }
+})();
+
+
+
+/* Phase CA-24 - Protected Code Viewer for Normal Users */
+(() => {
+  if (window.__ideasforgeCa24ProtectedViewerLoaded) {
+    return;
+  }
+  window.__ideasforgeCa24ProtectedViewerLoaded = true;
+
+  const PROTECTED_VIEWER_PATH_CA24 = "/api/coding-agent/protected-code-viewer/preview";
+  const PROTECTED_VIEWER_BACKEND_SOURCE_CA24 = "Backend Protected Code Viewer API";
+  const PROTECTED_VIEWER_FALLBACK_SOURCE_CA24 = "Local Protected Viewer Preview";
+
+  const ca24Escape = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const ca24ApiCandidates = (path) => {
+    const endpoints = [];
+    try {
+      if (typeof API_BASE !== "undefined" && API_BASE) {
+        endpoints.push(`${API_BASE}${path}`);
+      }
+    } catch (error) {}
+    endpoints.push(path);
+    return endpoints;
+  };
+
+  const ca24Fallback = (filePath = "frontend/pages/coding-agent.js", role = "normal_user") => {
+    const catalog = {
+      "frontend/pages/coding-agent.html": {
+        language: "html",
+        purpose: "Coding Agent page shell and visible workspace structure.",
+        sensitivity: "low",
+        lines: [
+          "<main class=\"coding-agent-shell\">",
+          "  <section class=\"coding-agent-hero\">",
+          "    <h1>Coding Agent</h1>",
+          "  </section>",
+          "</main>",
+        ],
+      },
+      "frontend/pages/coding-agent.js": {
+        language: "javascript",
+        purpose: "Coding Agent module routing, protected preview controls, and status banner behavior.",
+        sensitivity: "medium",
+        lines: [
+          "function setStatusMessage(message) {",
+          "  const status = document.querySelector('[data-status-banner]');",
+          "  if (!status) return;",
+          "  status.textContent = message;",
+          "}",
+          "",
+          "// Preview-only routing stays protected for normal users.",
+        ],
+      },
+      "frontend/pages/coding-agent.css": {
+        language: "css",
+        purpose: "Mobile-first protected viewer and Coding Agent visual styling.",
+        sensitivity: "low",
+        lines: [
+          ".protected-code-viewer {",
+          "  user-select: none;",
+          "  -webkit-user-select: none;",
+          "}",
+        ],
+      },
+      "backend/main.py": {
+        language: "python",
+        purpose: "Backend-only protected APIs for previews, permissions, connectors, and future apply gates.",
+        sensitivity: "high",
+        lines: [
+          "from fastapi import FastAPI",
+          "from pydantic import BaseModel, Field",
+          "app = FastAPI()",
+        ],
+      },
+      "PROJECT_STATUS.md": {
+        language: "markdown",
+        purpose: "Phase status and implementation history.",
+        sensitivity: "low",
+        lines: [
+          "# IdeasForgeAI Project Status",
+          "- CA-24 Protected Code Viewer for Normal Users",
+        ],
+      },
+    };
+
+    const selected = catalog[filePath] ? filePath : "frontend/pages/coding-agent.js";
+    const file = catalog[selected];
+    const isFounder = role === "founder_admin_preview";
+
+    return {
+      ok: true,
+      status: "protected-code-viewer-ready",
+      mode: "local-protected-code-viewer-preview",
+      viewer: {
+        role: isFounder ? "founder_admin_preview" : "normal_user",
+        selected_file: selected,
+        language: file.language,
+        purpose: file.purpose,
+        sensitivity: file.sensitivity,
+        display_mode: isFounder ? "founder-admin-review-preview" : "normal-user-protected-preview",
+        source: "safe-demo-catalog",
+        real_local_file_read: false,
+        private_github_fetch: false,
+        write_access: false,
+        copy_action: false,
+        edit_action: false,
+        apply_action: false,
+        export_action: false,
+        download_action: false,
+      },
+      available_files: Object.entries(catalog).map(([path, item]) => ({
+        path,
+        language: item.language,
+        purpose: item.purpose,
+        sensitivity: item.sensitivity,
+        access: "protected-view-only",
+      })),
+      content_preview: {
+        file_path: selected,
+        language: file.language,
+        line_count: file.lines.length,
+        lines: file.lines.map((content, index) => ({ line: index + 1, content, locked: !isFounder })),
+        notice: "Protected preview only. No copy/edit/apply/export controls are available for normal users.",
+        watermark: "IdeasForgeAI Protected Preview",
+      },
+      normal_user_permissions: {
+        can_view: true,
+        can_copy: false,
+        can_edit: false,
+        can_apply: false,
+        can_export: false,
+        can_download: false,
+        can_run_tests: false,
+        can_use_git: false,
+        can_deploy: false,
+        can_view_secrets: false,
+      },
+      founder_admin_permissions_preview: {
+        can_review: true,
+        can_copy_after_auth: "future-backend-auth-required",
+        can_apply_after_auth: "future-backend-auth-required",
+        can_export_after_auth: "future-backend-auth-required",
+        can_deploy_after_auth: "future-backend-auth-required",
+      },
+      protection_layers: [
+        "No copy button",
+        "No edit button",
+        "No apply button",
+        "No export button",
+        "No download button",
+        "Selection disabled in protected viewer UI",
+        "Context menu blocked inside protected viewer UI",
+        "Keyboard copy blocked inside protected viewer UI",
+        "Founder/Admin mode is visually separated and still requires backend permission in future phases",
+      ],
+      locked_actions: [
+        "Real local file read",
+        "Private GitHub file fetch",
+        "Copy from app controls",
+        "Direct edit",
+        "Apply diff",
+        "Export code",
+        "Download code",
+        "Terminal execution",
+        "Git commands",
+        "Deployment",
+        "Secrets access",
+      ],
+      recommended_next_phase: {
+        phase: "CA-25",
+        title: "Real GitHub Public Repo Reader API",
+        goal: "Read public GitHub repository metadata and file tree through backend-only safe APIs.",
+      },
+      safety: {
+        local_filesystem_read: false,
+        private_github_fetch: false,
+        frontend_token: false,
+        file_write: false,
+        copy_button: false,
+        edit_button: false,
+        apply_button: false,
+        export_button: false,
+        download_button: false,
+        terminal: false,
+        git_commands: false,
+        deployment: false,
+        secrets: false,
+      },
+    };
+  };
+
+  const ca24FetchViewer = async (filePath, role = "normal_user") => {
+    const payload = {
+      file_path: filePath || "frontend/pages/coding-agent.js",
+      viewer_role: role,
+      protection_mode: role === "founder_admin_preview" ? "founder-admin-review-preview" : "normal-user-protected-preview",
+    };
+
+    for (const endpoint of ca24ApiCandidates(PROTECTED_VIEWER_PATH_CA24)) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.ok) {
+            return { data, source: PROTECTED_VIEWER_BACKEND_SOURCE_CA24 };
+          }
+        }
+      } catch (error) {}
+    }
+
+    return { data: ca24Fallback(filePath, role), source: PROTECTED_VIEWER_FALLBACK_SOURCE_CA24 };
+  };
+
+  const ca24List = (items = []) => items.map((item) => `<li>${ca24Escape(item)}</li>`).join("");
+
+  const ca24Permissions = (permissions = {}) => Object.entries(permissions).map(([key, value]) => `
+    <li>
+      <span>${ca24Escape(key.replaceAll("_", " "))}</span>
+      <strong>${ca24Escape(value)}</strong>
+    </li>
+  `).join("");
+
+  const ca24FileButtons = (files = [], selected = "", role = "normal_user") => files.map((file) => `
+    <button type="button" class="ca24-file-button ${file.path === selected ? "is-active" : ""}" data-ca24-file="${ca24Escape(file.path)}" data-ca24-role="${ca24Escape(role)}">
+      <span>${ca24Escape(file.path)}</span>
+      <small>${ca24Escape(file.language)} · ${ca24Escape(file.access)} · ${ca24Escape(file.sensitivity)}</small>
+    </button>
+  `).join("");
+
+  const ca24CodeLines = (lines = []) => lines.map((line) => `
+    <div class="ca24-code-line ${line.locked ? "is-locked" : ""}">
+      <span>${ca24Escape(line.line)}</span>
+      <code>${ca24Escape(line.content)}</code>
+    </div>
+  `).join("");
+
+  const ca24RenderViewer = (data, source) => {
+    const role = data.viewer?.role || "normal_user";
+    const isFounder = role === "founder_admin_preview";
+    return `
+      <section class="ca24-viewer-panel" id="ca24-viewer-panel" data-ca24-protected-root>
+        <div class="ca24-kicker">Now Open: Protected Code Viewer</div>
+        <h2>${isFounder ? "Founder/Admin Review Preview" : "Normal User Protected Viewer"}</h2>
+        <p>${isFounder ? "Founder/Admin review mode is separated but still requires future backend authentication before copy, apply, export, or deploy." : "Normal users can view protected previews only. Copy, edit, apply, export, download, terminal, Git, deployment, and secrets access remain locked."}</p>
+
+        <div class="ca24-status-grid">
+          <article>
+            <small>Viewer Source</small>
+            <strong>${ca24Escape(source)}</strong>
+            <p>Status: ${ca24Escape(data.status)}</p>
+          </article>
+          <article>
+            <small>Role</small>
+            <strong>${ca24Escape(data.viewer?.display_mode)}</strong>
+            <p>Selected: ${ca24Escape(data.viewer?.selected_file)}</p>
+          </article>
+        </div>
+
+        <section class="ca24-card">
+          <small>Role Switch Preview</small>
+          <strong>Separate normal-user and founder/admin views</strong>
+          <div class="ca24-role-grid">
+            <button type="button" class="${!isFounder ? "is-active" : ""}" data-ca24-open-viewer data-ca24-role="normal_user">Normal User Protected View</button>
+            <button type="button" class="${isFounder ? "is-active" : ""}" data-ca24-open-viewer data-ca24-role="founder_admin_preview">Founder/Admin Review Preview</button>
+          </div>
+        </section>
+
+        <section class="ca24-card">
+          <small>File List</small>
+          <strong>Protected view-only files</strong>
+          <div class="ca24-file-list">
+            ${ca24FileButtons(data.available_files || [], data.viewer?.selected_file, role)}
+          </div>
+        </section>
+
+        <section class="ca24-card ca24-protected-viewer" data-ca24-protected-viewer>
+          <small>Protected Code Preview</small>
+          <strong>${ca24Escape(data.content_preview?.file_path)} · ${ca24Escape(data.content_preview?.language)}</strong>
+          <p>${ca24Escape(data.content_preview?.notice)}</p>
+          <div class="ca24-code-toolbar">
+            <span>No copy</span>
+            <span>No edit</span>
+            <span>No apply</span>
+            <span>No export</span>
+            <span>No secrets</span>
+          </div>
+          <div class="ca24-code-window" aria-label="Protected code preview">
+            <div class="ca24-watermark">${ca24Escape(data.content_preview?.watermark || "IdeasForgeAI Protected Preview")}</div>
+            ${ca24CodeLines(data.content_preview?.lines || [])}
+          </div>
+        </section>
+
+        <section class="ca24-card">
+          <small>Normal User Permissions</small>
+          <strong>What normal users can and cannot do</strong>
+          <ul class="ca24-permission-list">${ca24Permissions(data.normal_user_permissions || {})}</ul>
+        </section>
+
+        <section class="ca24-card">
+          <small>Founder/Admin Permissions Preview</small>
+          <strong>Future gated controls</strong>
+          <ul class="ca24-permission-list">${ca24Permissions(data.founder_admin_permissions_preview || {})}</ul>
+        </section>
+
+        <section class="ca24-card">
+          <small>Protection Layers</small>
+          <strong>App-level protection added in CA-24</strong>
+          <ul>${ca24List(data.protection_layers || [])}</ul>
+        </section>
+
+        <section class="ca24-card ca24-safety-card">
+          <small>Locked Actions</small>
+          <strong>Not allowed in CA-24</strong>
+          <ul>${ca24List(data.locked_actions || [])}</ul>
+        </section>
+
+        <section class="ca24-card">
+          <small>Next Phase</small>
+          <strong>${ca24Escape(data.recommended_next_phase?.phase)} — ${ca24Escape(data.recommended_next_phase?.title)}</strong>
+          <p>${ca24Escape(data.recommended_next_phase?.goal)}</p>
+        </section>
+      </section>
+    `;
+  };
+
+  const ca24EnsureSection = () => {
+    if (document.getElementById("ca24-protected-viewer-section")) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.id = "ca24-protected-viewer-section";
+    section.className = "ca24-protected-viewer-section";
+    section.innerHTML = `
+      <div class="ca24-shell-card">
+        <div class="ca24-kicker">CA-24 — Protected Code Viewer for Normal Users</div>
+        <h2>Protected Code Viewer</h2>
+        <p>Strengthen the read-only file viewer so normal users can preview code without app-level copy, edit, apply, export, download, terminal, Git, deployment, or secrets controls.</p>
+        <button class="ca24-open-button" type="button" data-ca24-open-viewer data-ca24-role="normal_user">
+          Open Protected Viewer
+        </button>
+      </div>
+      <div id="ca24-protected-viewer-output"></div>
+    `;
+
+    const ca23 = document.getElementById("ca23-file-viewer-section");
+    const ca22 = document.getElementById("ca22-project-reader-section");
+    const ca21 = document.getElementById("ca21-readonly-connector-section");
+    const anchor = ca23 || ca22 || ca21;
+    if (anchor?.parentNode) {
+      anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    } else {
+      const container = document.querySelector("main") || document.querySelector(".coding-agent-page") || document.body;
+      container.appendChild(section);
+    }
+  };
+
+  const ca24OpenViewer = async (filePath = "frontend/pages/coding-agent.js", role = "normal_user") => {
+    ca24EnsureSection();
+
+    const output = document.getElementById("ca24-protected-viewer-output");
+    if (!output) return;
+
+    output.innerHTML = `
+      <section class="ca24-card">
+        <small>Status Banner</small>
+        <strong>Opening protected code viewer.</strong>
+        <p>No copy/edit/apply/export/download/terminal/Git/deployment/secrets controls will be enabled.</p>
+      </section>
+    `;
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Protected Code Viewer is opening. Normal-user copy, edit, apply, export, Git, deploy, and secrets access remain locked.");
+      }
+    } catch (error) {}
+
+    const { data, source } = await ca24FetchViewer(filePath, role);
+    output.innerHTML = ca24RenderViewer(data, source);
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Protected Code Viewer is now open. Normal users can preview only; Founder/Admin controls remain gated.");
+      }
+    } catch (error) {}
+
+    document.getElementById("ca24-viewer-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  document.addEventListener("click", async (event) => {
+    const open = event.target.closest("[data-ca24-open-viewer]");
+    if (open) {
+      event.preventDefault();
+      await ca24OpenViewer("frontend/pages/coding-agent.js", open.getAttribute("data-ca24-role") || "normal_user");
+      return;
+    }
+
+    const fileButton = event.target.closest("[data-ca24-file]");
+    if (fileButton) {
+      event.preventDefault();
+      await ca24OpenViewer(
+        fileButton.getAttribute("data-ca24-file"),
+        fileButton.getAttribute("data-ca24-role") || "normal_user"
+      );
+      return;
+    }
+
+    const target = event.target.closest("button, a, .ca-module-pill, .module-pill");
+    const text = target?.textContent || "";
+    if (target && (text.includes("Protected Code Viewer") || text.includes("Protected Code Preview"))) {
+      setTimeout(() => ca24OpenViewer(), 80);
+    }
+  });
+
+  const ca24BlockedEvent = (event, message) => {
+    const protectedRoot = event.target?.closest?.("[data-ca24-protected-root], [data-ca24-protected-viewer], .ca24-code-window");
+    if (!protectedRoot) return;
+    event.preventDefault();
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage(message);
+      }
+    } catch (error) {}
+  };
+
+  document.addEventListener("copy", (event) => {
+    ca24BlockedEvent(event, "Copy is disabled in the CA-24 protected viewer for normal users.");
+  });
+
+  document.addEventListener("cut", (event) => {
+    ca24BlockedEvent(event, "Cut is disabled in the CA-24 protected viewer.");
+  });
+
+  document.addEventListener("contextmenu", (event) => {
+    ca24BlockedEvent(event, "Context menu is disabled inside the CA-24 protected viewer.");
+  });
+
+  document.addEventListener("dragstart", (event) => {
+    ca24BlockedEvent(event, "Drag/export is disabled inside the CA-24 protected viewer.");
+  });
+
+  document.addEventListener("selectstart", (event) => {
+    const protectedRoot = event.target?.closest?.("[data-ca24-protected-root], [data-ca24-protected-viewer], .ca24-code-window");
+    if (protectedRoot) {
+      event.preventDefault();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const protectedRoot = event.target?.closest?.("[data-ca24-protected-root], [data-ca24-protected-viewer], .ca24-code-window");
+    if (!protectedRoot) return;
+    const key = String(event.key || "").toLowerCase();
+    if ((event.ctrlKey || event.metaKey) && ["a", "c", "x", "s", "p"].includes(key)) {
+      event.preventDefault();
+      try {
+        if (typeof setStatusMessage === "function") {
+          setStatusMessage("Keyboard copy/save/print shortcuts are disabled inside the CA-24 protected viewer.");
+        }
+      } catch (error) {}
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ca24EnsureSection);
+  } else {
+    ca24EnsureSection();
   }
 })();
 
