@@ -150,6 +150,52 @@ const DEMO_TEST_FAILURE_TEXT = [
   "Suggested action:",
   "Send to Auto Fix Engine in CA-08.",
 ].join("\n");
+const DEMO_AUTO_FIX_PLAN_TEXT = [
+  "Auto Fix Engine Preview",
+  "Analyze failed checks and prepare safe repair plans before any code changes.",
+  "",
+  "Failed Check:",
+  "Mobile safe-area layout check",
+  "",
+  "Issue:",
+  "Sticky header/status banner may overlap content while scrolling on small mobile screens.",
+  "",
+  "Root Cause:",
+  "The sticky header and status banner can sit over module content on mobile Safari.",
+  "",
+  "Suggested Fix:",
+  "Add safer scroll padding, reduce sticky overlap, and apply scroll-margin-top to module panels.",
+  "",
+  "Affected Files:",
+  "- frontend/pages/coding-agent.css",
+  "- frontend/pages/coding-agent.js",
+  "",
+  "Risk Level:",
+  "Low - frontend UI layout fix only",
+  "",
+  "Auto Fix Plan:",
+  "1. Add mobile scroll padding to the Coding Agent page container.",
+  "2. Add scroll-margin-top to active module panels.",
+  "3. Reduce overlap from sticky status banner.",
+  "4. Keep top navigation usable.",
+  "5. Validate with node syntax checks.",
+  "6. Run sector QA.",
+  "7. Manually test mobile Safari scrolling.",
+  "",
+  "Static Diff Preview:",
+  "- .ca-active-panel { scroll-margin-top: 24px; }",
+  "+ .ca-active-panel { scroll-margin-top: 160px; }",
+  "- .ca-status-banner { position: sticky; top: 0; }",
+  "+ .ca-status-banner { position: sticky; top: calc(env(safe-area-inset-top) + 96px); }",
+  "- target.scrollIntoView({ behavior: \"smooth\" });",
+  "+ target.scrollIntoView({ behavior: \"smooth\", block: \"start\" });",
+  "",
+  "Approval Gate:",
+  "- Copy Fix Plan",
+  "- Reject Fix",
+  "- Approve Fix Later",
+  "- Apply Auto Fix - Locked",
+].join("\n");
 
 const FILE_TREE = [
   "frontend/pages/studio-v4.html",
@@ -176,6 +222,7 @@ const MODULE_TITLES = {
   "task-planner": "Task Planner Preview",
   "code-diff": "Code Diff Preview",
   "test-runner": "Test Runner Preview",
+  "auto-fix": "Auto Fix Engine Preview",
 };
 
 const MODULE_STATUS_MESSAGES = {
@@ -184,6 +231,7 @@ const MODULE_STATUS_MESSAGES = {
   "task-planner": "Task Planner Preview is now open.",
   "code-diff": "Code Diff Preview is now open.",
   "test-runner": "Test Runner Preview is now open. Real command execution remains locked.",
+  "auto-fix": "Auto Fix Engine Preview is now open. No code changes will be applied.",
 };
 
 const MODULE_SUBTITLES = {
@@ -192,6 +240,7 @@ const MODULE_SUBTITLES = {
   "task-planner": "Convert a request into safe implementation steps before editing code.",
   "code-diff": "Preview proposed frontend changes before any approval-enabled phase.",
   "test-runner": "Preview validation steps before real test execution is enabled.",
+  "auto-fix": "Analyze failed checks and prepare safe repair plans before any code changes.",
 };
 
 const state = {
@@ -208,6 +257,10 @@ const state = {
   testFailurePreviewed: false,
   testPlanDecision: "pending",
   testPlanCopyFeedback: "",
+  autoFixAnalyzed: false,
+  autoFixPlanGenerated: false,
+  autoFixDecision: "pending",
+  autoFixCopyFeedback: "",
   statusMessage: DEFAULT_STATUS_MESSAGE,
 };
 
@@ -646,6 +699,159 @@ const renderTestRunnerMarkup = () => `
   </section>
 `;
 
+const getAutoFixFeedback = () => {
+  if (state.autoFixCopyFeedback) {
+    return state.autoFixCopyFeedback;
+  }
+  if (state.autoFixDecision === "rejected") {
+    return "Fix rejected. No changes were made.";
+  }
+  if (state.autoFixDecision === "approved-later") {
+    return "Fix plan saved for future approval. No code changes were made.";
+  }
+  if (state.autoFixPlanGenerated) {
+    return "Safe fix plan prepared. Apply Auto Fix remains locked.";
+  }
+  if (state.autoFixAnalyzed) {
+    return "Failure analyzed. Static repair guidance is ready for review.";
+  }
+  return "Static demo only. No files are edited, no commands run, and no backend auto-fix is called.";
+};
+
+const renderAutoFixMarkup = () => `
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Title</small>
+    <strong>Auto Fix Engine Preview</strong>
+    <p>Analyze failed checks and prepare safe repair plans before any code changes.</p>
+    <p>Now Open: Auto Fix Engine Preview</p>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Status Banner</small>
+    <div class="auto-fix-banner">
+      <strong>Auto Fix Engine Preview is now open. No code changes will be applied.</strong>
+      <p>${escapeHtml(getAutoFixFeedback())}</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Failed Check</small>
+    <div class="auto-fix-issue-card">
+      <strong>Mobile safe-area layout check</strong>
+      <div class="auto-fix-grid">
+        <div>
+          <small>Issue</small>
+          <p>Sticky header/status banner may overlap content while scrolling on small mobile screens.</p>
+        </div>
+        <div>
+          <small>Reason</small>
+          <p>The header and status banner use fixed/sticky positioning without enough scroll offset and spacing.</p>
+        </div>
+        <div class="screen-detail-card screen-detail-card--wide">
+          <small>Affected Area</small>
+          <p>Coding Agent mobile workspace</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Actions</small>
+    <strong>Preview-only analysis controls</strong>
+    <div class="auto-fix-action-grid">
+      <button class="diff-generate-button" type="button" data-ca-action="analyze-failed-check">Analyze Failed Check</button>
+      <button class="reader-action-button" type="button" data-ca-action="generate-safe-fix-plan">Generate Safe Fix Plan</button>
+    </div>
+  </section>
+  ${
+    state.autoFixAnalyzed
+      ? `
+        <section class="screen-detail-card">
+          <small>Root Cause</small>
+          <strong>Sticky overlap on mobile Safari</strong>
+          <p>The sticky header and status banner can sit over module content on mobile Safari.</p>
+        </section>
+        <section class="screen-detail-card">
+          <small>Suggested Fix</small>
+          <strong>Safer scroll offsets</strong>
+          <p>Add safer scroll padding, reduce sticky overlap, and apply scroll-margin-top to module panels.</p>
+        </section>
+        <section class="screen-detail-card">
+          <small>Affected Files</small>
+          <strong>Frontend-only scope</strong>
+          <ul class="screen-detail-list">
+            <li>frontend/pages/coding-agent.css</li>
+            <li>frontend/pages/coding-agent.js</li>
+          </ul>
+        </section>
+        <section class="screen-detail-card">
+          <small>Risk Level</small>
+          <strong>Low - frontend UI layout fix only</strong>
+          <p>No backend changes, Git writes, deployment actions, or secrets access are involved.</p>
+        </section>
+      `
+      : ""
+  }
+  ${
+    state.autoFixPlanGenerated
+      ? `
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Auto Fix Plan</small>
+          <strong>Safe repair outline</strong>
+          <ol class="auto-fix-plan-list">
+            <li>Add mobile scroll padding to the Coding Agent page container.</li>
+            <li>Add scroll-margin-top to active module panels.</li>
+            <li>Reduce overlap from sticky status banner.</li>
+            <li>Keep top navigation usable.</li>
+            <li>Validate with node syntax checks.</li>
+            <li>Run sector QA.</li>
+            <li>Manually test mobile Safari scrolling.</li>
+          </ol>
+        </section>
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Static Diff Preview</small>
+          <strong>Preview text only</strong>
+          <div class="auto-fix-diff-grid">
+            <article class="auto-fix-diff-card">
+              <small>File</small>
+              <strong>frontend/pages/coding-agent.css</strong>
+              <pre class="screen-file-tree">${escapeHtml([
+                "- .ca-active-panel { scroll-margin-top: 24px; }",
+                "+ .ca-active-panel { scroll-margin-top: 160px; }",
+                "",
+                "- .ca-status-banner { position: sticky; top: 0; }",
+                "+ .ca-status-banner { position: sticky; top: calc(env(safe-area-inset-top) + 96px); }",
+              ].join("\n"))}</pre>
+            </article>
+            <article class="auto-fix-diff-card">
+              <small>File</small>
+              <strong>frontend/pages/coding-agent.js</strong>
+              <pre class="screen-file-tree">${escapeHtml([
+                "- target.scrollIntoView({ behavior: \"smooth\" });",
+                "+ target.scrollIntoView({ behavior: \"smooth\", block: \"start\" });",
+              ].join("\n"))}</pre>
+            </article>
+          </div>
+        </section>
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Approval Gate</small>
+          <strong>Review only</strong>
+          <div class="planner-approval-actions">
+            <button class="reader-action-button" type="button" data-ca-action="copy-fix-plan">Copy Fix Plan</button>
+            <button class="reader-action-button" type="button" data-ca-action="reject-fix">Reject Fix</button>
+            <button class="reader-action-button" type="button" data-ca-action="approve-fix-later">Approve Fix Later</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="apply-auto-fix">Apply Auto Fix - Locked</button>
+          </div>
+        </section>
+      `
+      : ""
+  }
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Protection Note</small>
+    <div class="auto-fix-protection-note">
+      <strong>Normal users can preview fix suggestions only.</strong>
+      <p>Founder/Admin approval is required before applying fixes to a real project, exporting changes, committing code, or deploying anything.</p>
+    </div>
+  </section>
+`;
+
 const renderModuleBody = () => {
   if (!activeScreenBody) {
     return;
@@ -673,6 +879,11 @@ const renderModuleBody = () => {
 
   if (state.activeModule === "test-runner") {
     activeScreenBody.innerHTML = renderTestRunnerMarkup();
+    return;
+  }
+
+  if (state.activeModule === "auto-fix") {
+    activeScreenBody.innerHTML = renderAutoFixMarkup();
     return;
   }
 
@@ -839,6 +1050,10 @@ const openFallbackScreen = (connection) => {
   state.testFailurePreviewed = false;
   state.testPlanDecision = "pending";
   state.testPlanCopyFeedback = "";
+  state.autoFixAnalyzed = false;
+  state.autoFixPlanGenerated = false;
+  state.autoFixDecision = "pending";
+  state.autoFixCopyFeedback = "";
   setStatusMessage(CONNECTION_MESSAGES[connection]);
   renderScreenState();
   scrollStageIntoView();
@@ -858,6 +1073,10 @@ const openDemoScreen = () => {
   state.testFailurePreviewed = false;
   state.testPlanDecision = "pending";
   state.testPlanCopyFeedback = "";
+  state.autoFixAnalyzed = false;
+  state.autoFixPlanGenerated = false;
+  state.autoFixDecision = "pending";
+  state.autoFixCopyFeedback = "";
   setStatusMessage("Demo Project Workspace opened. Project Reader Preview is now open.");
   renderScreenState();
   scrollStageIntoView();
@@ -881,6 +1100,10 @@ const openDemoModule = (moduleName) => {
   if (moduleName !== "test-runner") {
     state.testPlanCopyFeedback = "";
     state.testPlanDecision = "pending";
+  }
+  if (moduleName !== "auto-fix") {
+    state.autoFixCopyFeedback = "";
+    state.autoFixDecision = "pending";
   }
   setStatusMessage(MODULE_STATUS_MESSAGES[moduleName] || `Now Open: ${MODULE_TITLES[moduleName]}`);
   renderScreenState();
@@ -953,6 +1176,35 @@ const copyTestPlan = async () => {
   renderScreenState();
 };
 
+const analyzeFailedCheck = () => {
+  state.autoFixAnalyzed = true;
+  state.autoFixDecision = "pending";
+  state.autoFixCopyFeedback = "";
+  setStatusMessage("Failed check analyzed. Root cause, suggested fix, affected files, and risk level are now visible.");
+  renderScreenState();
+};
+
+const generateSafeFixPlan = () => {
+  state.autoFixAnalyzed = true;
+  state.autoFixPlanGenerated = true;
+  state.autoFixDecision = "pending";
+  state.autoFixCopyFeedback = "";
+  setStatusMessage("Safe fix plan generated. Static diff preview is ready and Apply Auto Fix remains locked.");
+  renderScreenState();
+};
+
+const copyFixPlan = async () => {
+  try {
+    await navigator.clipboard.writeText(DEMO_AUTO_FIX_PLAN_TEXT);
+    state.autoFixCopyFeedback = "Fix plan copied.";
+    setStatusMessage("Fix plan copied.");
+  } catch (error) {
+    state.autoFixCopyFeedback = "Clipboard copy was unavailable. The fix plan remains preview-only.";
+    setStatusMessage("Clipboard copy was unavailable. The fix plan remains preview-only.");
+  }
+  renderScreenState();
+};
+
 const updateBackButtonState = () => {
   const shouldCompact = window.scrollY > 36;
   document.body.classList.toggle("is-compact-back-button", shouldCompact);
@@ -1017,6 +1269,9 @@ const handleAction = async (action) => {
     case "open-test-runner":
       openDemoModule("test-runner");
       break;
+    case "open-auto-fix":
+      openDemoModule("auto-fix");
+      break;
     case "generate-task-plan":
       generateTaskPlan();
       break;
@@ -1029,6 +1284,12 @@ const handleAction = async (action) => {
     case "preview-failed-test":
       previewFailedTest();
       break;
+    case "analyze-failed-check":
+      analyzeFailedCheck();
+      break;
+    case "generate-safe-fix-plan":
+      generateSafeFixPlan();
+      break;
     case "copy-plan":
       await copyTaskPlan();
       break;
@@ -1037,6 +1298,9 @@ const handleAction = async (action) => {
       break;
     case "copy-test-plan":
       await copyTestPlan();
+      break;
+    case "copy-fix-plan":
+      await copyFixPlan();
       break;
     case "reject-plan":
       state.planDecision = "rejected";
@@ -1072,6 +1336,22 @@ const handleAction = async (action) => {
       state.testPlanDecision = "rejected";
       state.testPlanCopyFeedback = "";
       setStatusMessage("Test plan rejected. No commands were run.");
+      renderScreenState();
+      break;
+    case "reject-fix":
+      state.autoFixDecision = "rejected";
+      state.autoFixCopyFeedback = "";
+      setStatusMessage("Fix rejected. No changes were made.");
+      renderScreenState();
+      break;
+    case "approve-fix-later":
+      state.autoFixDecision = "approved-later";
+      state.autoFixCopyFeedback = "";
+      setStatusMessage("Fix plan saved for future approval. No code changes were made.");
+      renderScreenState();
+      break;
+    case "apply-auto-fix":
+      setStatusMessage("Apply Auto Fix is locked until real project permission and founder approval.");
       renderScreenState();
       break;
     default:
