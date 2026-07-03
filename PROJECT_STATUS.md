@@ -13059,3 +13059,17 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-08 preview; no real auto-fix, no real editing, no terminal execution from the app, no Git writes, no deployment actions, no backend changes, no secrets access, and no KisanMitraAI files touched.
+## Phase CA-09 - Git Manager Preview
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only Git Manager Preview module to the Demo Project Workspace and placed it after Auto Fix Engine in the module tab order.
+- Added the exact CA-09 screen copy for Git Manager Preview, the subtitle about preparing branches, commits, pull requests, and rollback plans, Now Open: Git Manager Preview, and the locked status banner that states no Git commands will run.
+- Added static preview cards for the suggested branch, commit message/body, pull request summary, validation checklist, and founder/admin protection note.
+- Added preview-only Copy Git Plan, Reject Git Plan, and Approve Later actions plus locked Create Branch, Commit Changes, Push Branch, Create Pull Request, Merge, and Rollback controls that only show the approval-gate message.
+- Updated the visible roadmap chips and safety notice to show Git Manager - Preview Unlocked, Deployment Manager - CA-10, and the CA-09 Git safety boundaries.
+- Files changed: rontend/pages/coding-agent.html, rontend/pages/coding-agent.css, rontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: 
+ode --check frontend/pages/coding-agent.js; 
+ode --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-09 preview; no real Git commands, no backend edits, no deployment settings, no secrets access, no .env access, and no KisanMitraAI files touched.

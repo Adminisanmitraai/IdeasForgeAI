@@ -2142,6 +2142,10 @@ a:focus-visible {
 .auto-fix-action-grid,
 .auto-fix-plan-list,
 .auto-fix-diff-grid,
+.git-manager-workflow-list,
+.git-manager-checklist,
+.git-manager-action-grid,
+.git-manager-lock-grid,
 .test-runner-output,
 .test-runner-result-grid,
 .test-runner-approval-actions,
@@ -2204,6 +2208,75 @@ a:focus-visible {
 
 .planner-approval-actions .reader-action-button {
   width: 100%;
+}
+
+.git-manager-banner,
+.git-manager-branch-card,
+.git-manager-commit-card,
+.git-manager-pr-card,
+.git-manager-protection-note,
+.git-manager-lock-card {
+  padding: 18px;
+  border-radius: 22px;
+}
+
+.git-manager-banner {
+  border: 1px solid rgba(56, 189, 248, .2);
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.1), rgba(139,92,246,.14)),
+    rgba(255,255,255,.04);
+}
+
+.git-manager-banner strong,
+.git-manager-protection-note strong,
+.git-manager-lock-card strong {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.git-manager-banner p,
+.git-manager-protection-note p,
+.git-manager-lock-card p {
+  margin: 0;
+}
+
+.git-manager-branch-card,
+.git-manager-commit-card,
+.git-manager-pr-card,
+.git-manager-lock-card {
+  border: 1px solid rgba(216, 199, 255, .14);
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.git-manager-workflow-list,
+.git-manager-checklist {
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.git-manager-workflow-list li + li,
+.git-manager-checklist li + li {
+  margin-top: 6px;
+}
+
+.git-manager-action-grid,
+.git-manager-lock-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.git-manager-lock-grid .reader-action-button,
+.git-manager-action-grid .reader-action-button {
+  width: 100%;
+}
+
+.git-manager-protection-note {
+  border: 1px solid rgba(245, 158, 11, .18);
+  background:
+    linear-gradient(135deg, rgba(120,53,15,.18), rgba(56,189,248,.08)),
+    rgba(255,255,255,.04);
 }
 
 .test-runner-banner {
@@ -2408,7 +2481,9 @@ a:focus-visible {
   }
 
   .auto-fix-grid,
-  .auto-fix-diff-grid {
+  .auto-fix-diff-grid,
+  .git-manager-action-grid,
+  .git-manager-lock-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -2448,6 +2523,8 @@ a:focus-visible {
   }
 
   .auto-fix-action-grid,
+  .git-manager-action-grid,
+  .git-manager-lock-grid,
   .test-runner-actions,
   .test-runner-approval-actions,
   .test-runner-result-grid {
