@@ -13007,3 +13007,15 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-06.4 repair; no backend edits, deployment settings, secrets, `.env`, external services, or KisanMitraAI files touched.
+## Phase CA-05 - Task Planner Preview
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only Task Planner Preview to the Coding Agent Demo Project Workspace using the same real Active Module screen pattern as the existing Project Reader, Architecture Analyzer, and Code Diff Preview modules.
+- Added the Task Planner tab in the Demo Project toolbar order between Architecture Analyzer and Code Diff Preview, with status banner and Now Open copy updates when the module is selected.
+- Added a static Generate Safe Task Plan flow with plan summary, numbered phases, affected file preview, risk level, validation checklist, and a locked Start Code Changes approval gate.
+- Added Copy Plan, Reject Plan, and Approve Plan Later preview-only actions with visible no-write feedback and clipboard-only copy behavior.
+- Updated the visible module roadmap chips and safety card labels to reflect Task Planner Preview Unlocked plus the current CA-07 through CA-10 locked roadmap modules.
+- Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-05 preview; no backend edits, deployment settings, secrets, .env access, terminal execution from the app, Git writes, external services, or KisanMitraAI files touched.
