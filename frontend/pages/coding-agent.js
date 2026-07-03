@@ -196,6 +196,54 @@ const DEMO_AUTO_FIX_PLAN_TEXT = [
   "- Approve Fix Later",
   "- Apply Auto Fix - Locked",
 ].join("\n");
+const DEMO_GIT_PLAN_TEXT = [
+  "Git Manager Preview",
+  "Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.",
+  "",
+  "Now Open: Git Manager Preview",
+  "Git Manager Preview is now open. No Git commands will run.",
+  "",
+  "Workflow Preview:",
+  "1. Review proposed changes",
+  "2. Create safe working branch",
+  "3. Prepare commit message",
+  "4. Generate pull request summary",
+  "5. Wait for founder/admin approval",
+  "6. Push only after permission",
+  "7. Merge only after validation",
+  "8. Keep rollback plan ready",
+  "",
+  "Suggested Branch:",
+  "work/coding-agent-mobile-polish",
+  "Branch Type: Feature / UI Repair",
+  "Status: Preview only - not created",
+  "",
+  "Commit Message:",
+  "Improve Coding Agent mobile workspace and protected preview controls",
+  "",
+  "Commit Body:",
+  "- Add safe Git workflow preview",
+  "- Keep push and merge actions locked",
+  "- Show founder/admin approval gate",
+  "- Preserve preview-only safety boundaries",
+  "",
+  "PR Title:",
+  "Improve Coding Agent mobile workspace workflow",
+  "",
+  "PR Summary:",
+  "This preview prepares a safe Git workflow for Coding Agent changes. Real Git actions remain locked until founder/admin approval.",
+  "",
+  "Checklist:",
+  "- JavaScript syntax checks",
+  "- Sector QA",
+  "- Mobile Safari test",
+  "- Desktop browser test",
+  "- No secrets touched",
+  "- No KisanMitraAI files touched",
+  "",
+  "Status:",
+  "Preview only - PR not created",
+].join("\n");
 
 const FILE_TREE = [
   "frontend/pages/studio-v4.html",
@@ -223,6 +271,7 @@ const MODULE_TITLES = {
   "code-diff": "Code Diff Preview",
   "test-runner": "Test Runner Preview",
   "auto-fix": "Auto Fix Engine Preview",
+  "git-manager": "Git Manager Preview",
 };
 
 const MODULE_STATUS_MESSAGES = {
@@ -232,6 +281,7 @@ const MODULE_STATUS_MESSAGES = {
   "code-diff": "Code Diff Preview is now open.",
   "test-runner": "Test Runner Preview is now open. Real command execution remains locked.",
   "auto-fix": "Auto Fix Engine Preview is now open. No code changes will be applied.",
+  "git-manager": "Git Manager Preview is now open. No Git commands will run.",
 };
 
 const MODULE_SUBTITLES = {
@@ -241,6 +291,7 @@ const MODULE_SUBTITLES = {
   "code-diff": "Preview proposed frontend changes before any approval-enabled phase.",
   "test-runner": "Preview validation steps before real test execution is enabled.",
   "auto-fix": "Analyze failed checks and prepare safe repair plans before any code changes.",
+  "git-manager": "Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.",
 };
 
 const state = {
@@ -261,6 +312,8 @@ const state = {
   autoFixPlanGenerated: false,
   autoFixDecision: "pending",
   autoFixCopyFeedback: "",
+  gitPlanDecision: "pending",
+  gitPlanCopyFeedback: "",
   statusMessage: DEFAULT_STATUS_MESSAGE,
 };
 
@@ -852,6 +905,114 @@ const renderAutoFixMarkup = () => `
   </section>
 `;
 
+const getGitPlanFeedback = () => {
+  if (state.gitPlanCopyFeedback) {
+    return state.gitPlanCopyFeedback;
+  }
+  if (state.gitPlanDecision === "rejected") {
+    return "Git plan rejected. No Git actions were run.";
+  }
+  if (state.gitPlanDecision === "approved-later") {
+    return "Git plan saved for future founder/admin approval. No Git actions were run.";
+  }
+  return "Preview only. No branches, commits, pull requests, pushes, merges, rollbacks, exports, or deployments can run from this screen.";
+};
+
+const renderGitManagerMarkup = () => `
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Title</small>
+    <strong>Git Manager Preview</strong>
+    <p>Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.</p>
+    <p>Now Open: Git Manager Preview</p>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Status Banner</small>
+    <div class="git-manager-banner">
+      <strong>Git Manager Preview is now open. No Git commands will run.</strong>
+      <p>${escapeHtml(getGitPlanFeedback())}</p>
+    </div>
+  </section>
+  <section class="screen-detail-card">
+    <small>Workflow Preview</small>
+    <strong>Safe Git planning stages</strong>
+    <ol class="git-manager-workflow-list">
+      <li>Review proposed changes</li>
+      <li>Create safe working branch</li>
+      <li>Prepare commit message</li>
+      <li>Generate pull request summary</li>
+      <li>Wait for founder/admin approval</li>
+      <li>Push only after permission</li>
+      <li>Merge only after validation</li>
+      <li>Keep rollback plan ready</li>
+    </ol>
+  </section>
+  <section class="screen-detail-card">
+    <small>Suggested Branch</small>
+    <div class="git-manager-branch-card">
+      <strong>work/coding-agent-mobile-polish</strong>
+      <p>Branch Type: Feature / UI Repair</p>
+      <p>Status: Preview only - not created</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Commit Preview</small>
+    <div class="git-manager-commit-card">
+      <strong>Improve Coding Agent mobile workspace and protected preview controls</strong>
+      <ul class="screen-detail-list">
+        <li>Add safe Git workflow preview</li>
+        <li>Keep push and merge actions locked</li>
+        <li>Show founder/admin approval gate</li>
+        <li>Preserve preview-only safety boundaries</li>
+      </ul>
+      <p>Status: Preview only - not committed</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Pull Request Preview</small>
+    <div class="git-manager-pr-card">
+      <strong>Improve Coding Agent mobile workspace workflow</strong>
+      <p>This preview prepares a safe Git workflow for Coding Agent changes. Real Git actions remain locked until founder/admin approval.</p>
+      <ul class="git-manager-checklist">
+        <li>JavaScript syntax checks</li>
+        <li>Sector QA</li>
+        <li>Mobile Safari test</li>
+        <li>Desktop browser test</li>
+        <li>No secrets touched</li>
+        <li>No KisanMitraAI files touched</li>
+      </ul>
+      <p>Status: Preview only - PR not created</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Preview Actions</small>
+    <strong>Review-only controls</strong>
+    <div class="git-manager-action-grid">
+      <button class="reader-action-button" type="button" data-ca-action="copy-git-plan">Copy Git Plan</button>
+      <button class="reader-action-button" type="button" data-ca-action="reject-git-plan">Reject Git Plan</button>
+      <button class="reader-action-button" type="button" data-ca-action="approve-git-plan-later">Approve Later</button>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Locked Git Actions</small>
+    <strong>Founder/Admin approval required</strong>
+    <div class="git-manager-lock-grid">
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Create Branch - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Commit Changes - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Push Branch - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Create Pull Request - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Merge - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-git-action">Rollback - Locked</button>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Founder/Admin Protection</small>
+    <div class="git-manager-protection-note">
+      <strong>Normal users can preview the Git workflow only.</strong>
+      <p>Only Founder/Admin can approve commit, push, PR, merge, rollback, export, or deployment actions.</p>
+    </div>
+  </section>
+`;
+
 const renderModuleBody = () => {
   if (!activeScreenBody) {
     return;
@@ -884,6 +1045,11 @@ const renderModuleBody = () => {
 
   if (state.activeModule === "auto-fix") {
     activeScreenBody.innerHTML = renderAutoFixMarkup();
+    return;
+  }
+
+  if (state.activeModule === "git-manager") {
+    activeScreenBody.innerHTML = renderGitManagerMarkup();
     return;
   }
 
@@ -940,11 +1106,11 @@ const renderWorkspaceCards = () => {
   }
 
   if (workspaceStatusNodes.githubIntegration) {
-    workspaceStatusNodes.githubIntegration.textContent = demoConnected ? "Locked until CA-09" : "Locked";
+    workspaceStatusNodes.githubIntegration.textContent = demoConnected ? "Preview Unlocked" : "Locked";
   }
   if (workspaceCopyNodes.githubIntegration) {
     workspaceCopyNodes.githubIntegration.textContent = demoConnected
-      ? "GitHub planning, pull request context, and write actions stay locked until CA-09."
+      ? "Git Manager preview is open for branch, commit, PR, push, merge, and rollback planning. Real Git actions stay locked."
       : "PR context, review threads, and CI visibility will connect here later.";
   }
 
@@ -1054,6 +1220,8 @@ const openFallbackScreen = (connection) => {
   state.autoFixPlanGenerated = false;
   state.autoFixDecision = "pending";
   state.autoFixCopyFeedback = "";
+  state.gitPlanDecision = "pending";
+  state.gitPlanCopyFeedback = "";
   setStatusMessage(CONNECTION_MESSAGES[connection]);
   renderScreenState();
   scrollStageIntoView();
@@ -1077,6 +1245,8 @@ const openDemoScreen = () => {
   state.autoFixPlanGenerated = false;
   state.autoFixDecision = "pending";
   state.autoFixCopyFeedback = "";
+  state.gitPlanDecision = "pending";
+  state.gitPlanCopyFeedback = "";
   setStatusMessage("Demo Project Workspace opened. Project Reader Preview is now open.");
   renderScreenState();
   scrollStageIntoView();
@@ -1104,6 +1274,10 @@ const openDemoModule = (moduleName) => {
   if (moduleName !== "auto-fix") {
     state.autoFixCopyFeedback = "";
     state.autoFixDecision = "pending";
+  }
+  if (moduleName !== "git-manager") {
+    state.gitPlanCopyFeedback = "";
+    state.gitPlanDecision = "pending";
   }
   setStatusMessage(MODULE_STATUS_MESSAGES[moduleName] || `Now Open: ${MODULE_TITLES[moduleName]}`);
   renderScreenState();
@@ -1205,6 +1379,18 @@ const copyFixPlan = async () => {
   renderScreenState();
 };
 
+const copyGitPlan = async () => {
+  try {
+    await navigator.clipboard.writeText(DEMO_GIT_PLAN_TEXT);
+    state.gitPlanCopyFeedback = "Git plan copied.";
+    setStatusMessage("Git plan copied.");
+  } catch (error) {
+    state.gitPlanCopyFeedback = "Clipboard copy was unavailable. Git Manager remains preview-only.";
+    setStatusMessage("Clipboard copy was unavailable. Git Manager remains preview-only.");
+  }
+  renderScreenState();
+};
+
 const updateBackButtonState = () => {
   const shouldCompact = window.scrollY > 36;
   document.body.classList.toggle("is-compact-back-button", shouldCompact);
@@ -1272,6 +1458,9 @@ const handleAction = async (action) => {
     case "open-auto-fix":
       openDemoModule("auto-fix");
       break;
+    case "open-git-manager":
+      openDemoModule("git-manager");
+      break;
     case "generate-task-plan":
       generateTaskPlan();
       break;
@@ -1301,6 +1490,9 @@ const handleAction = async (action) => {
       break;
     case "copy-fix-plan":
       await copyFixPlan();
+      break;
+    case "copy-git-plan":
+      await copyGitPlan();
       break;
     case "reject-plan":
       state.planDecision = "rejected";
@@ -1350,8 +1542,24 @@ const handleAction = async (action) => {
       setStatusMessage("Fix plan saved for future approval. No code changes were made.");
       renderScreenState();
       break;
+    case "reject-git-plan":
+      state.gitPlanDecision = "rejected";
+      state.gitPlanCopyFeedback = "";
+      setStatusMessage("Git plan rejected. No Git actions were run.");
+      renderScreenState();
+      break;
+    case "approve-git-plan-later":
+      state.gitPlanDecision = "approved-later";
+      state.gitPlanCopyFeedback = "";
+      setStatusMessage("Git plan saved for future founder/admin approval. No Git actions were run.");
+      renderScreenState();
+      break;
     case "apply-auto-fix":
       setStatusMessage("Apply Auto Fix is locked until real project permission and founder approval.");
+      renderScreenState();
+      break;
+    case "locked-git-action":
+      setStatusMessage("This Git action is locked until real project permission and founder/admin approval.");
       renderScreenState();
       break;
     default:
