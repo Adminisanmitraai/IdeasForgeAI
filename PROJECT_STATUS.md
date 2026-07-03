@@ -13101,3 +13101,17 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-11 preview; no real file editing from the app, no terminal commands from the app, no Git commands from the app, no deployment actions, no backend edits, no API keys or secrets exposed, no `.env` access, and no KisanMitraAI files touched.
+
+## Phase CA-12 - Founder/Admin Code Permission System
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only permission foundation inside `frontend/pages/coding-agent.js` with fixed roles `viewer`, `user`, `founder`, and `admin`, default role `user`, preview capability enabled, and all protected code, Git, export, and deploy capabilities kept locked until future backend verification exists.
+- Added CA-12 permission UI inside the Real Code Generation screen: `Permission Status`, `Founder/Admin Verification`, `Founder/Admin Controls`, `Permission Audit Preview`, and `Backend Enforcement Required`, while preserving the existing protected code preview and unified diff flow from CA-11.
+- Normal user mode now stays in `Protected User Mode`, keeps code preview read-only with watermark and `user-select: none`, allows review, revision, reject, and founder-review actions only, and routes all locked protected actions to the CA-12 role-gated message instead of exposing any real write, copy, export, Git, or deployment behavior.
+- Added the safe `Request Founder/Admin Review` placeholder action that only posts the required non-destructive status message and does not add any password field, secret field, hardcoded founder identity, fake unlock button, public role toggle, query-param unlock, or localStorage-based bypass.
+- Updated the visible roadmap chips and labels so `Founder/Admin Permissions` shows `Preview Unlocked` in current modules and `CA-13 - Protected Code Preview for Normal Users` is listed as the next phase after CA-12.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Backend touched: no.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: no real file editing from the app, no raw code copy or export for normal users, no terminal commands from the app, no Git commands from the app, no deployment actions, no backend edits, no secrets exposed, no `.env` access, and no KisanMitraAI or deployment configuration files touched.
