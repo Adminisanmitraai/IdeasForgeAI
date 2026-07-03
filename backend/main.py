@@ -1878,6 +1878,224 @@ def coding_agent_protected_code_viewer_preview(request: ProtectedCodeViewerReque
 
 
 
+
+
+# Phase CA-25 - Real GitHub Public Repo Reader API.
+# Backend-only public GitHub metadata/tree reader.
+# No frontend token, no private repo access, no clone, no file write, no terminal,
+# no Git commands, no deployment, and no secrets access.
+class GitHubPublicRepoReaderRequest(BaseModel):
+    repo_url: str = Field(default="https://github.com/Adminisanmitraai/IdeasForgeAI")
+    ref: str = Field(default="")
+    max_entries: int = Field(default=80)
+
+
+def _ca25_parse_public_github_repo(repo_url: str) -> Dict[str, str]:
+    import re as _re
+
+    value = (repo_url or "").strip()
+    value = value.replace("git@github.com:", "https://github.com/")
+    value = value.removesuffix(".git").strip("/")
+
+    patterns = [
+        r"^https?://github\.com/([^/\s]+)/([^/\s#?]+)",
+        r"^github\.com/([^/\s]+)/([^/\s#?]+)",
+        r"^([^/\s]+)/([^/\s]+)$",
+    ]
+
+    for pattern in patterns:
+        match = _re.match(pattern, value)
+        if match:
+            owner = match.group(1).strip()
+            repo = match.group(2).strip().removesuffix(".git")
+            if owner and repo:
+                return {"owner": owner, "repo": repo}
+
+    raise ValueError("Only public GitHub repository URLs like https://github.com/owner/repo are supported.")
+
+
+def _ca25_github_get_json(url: str) -> Dict[str, Any]:
+    import json as _json
+    import urllib.request as _request
+    import urllib.error as _error
+
+    request = _request.Request(
+        url,
+        headers={
+            "Accept": "application/vnd.github+json",
+            "User-Agent": "IdeasForgeAI-Coding-Agent-CA25",
+            "X-GitHub-Api-Version": "2022-11-28",
+        },
+        method="GET",
+    )
+
+    try:
+        with _request.urlopen(request, timeout=12) as response:
+            raw = response.read().decode("utf-8")
+            return _json.loads(raw)
+    except _error.HTTPError as exc:
+        if exc.code == 404:
+            raise ValueError("Repository not found or not public.")
+        if exc.code == 403:
+            raise ValueError("GitHub public API rate limit or access restriction reached. Try again later.")
+        raise ValueError(f"GitHub API error: HTTP {exc.code}")
+    except Exception as exc:
+        raise ValueError(f"GitHub read failed: {str(exc)}")
+
+
+def _ca25_fetch_public_repo_preview(request: GitHubPublicRepoReaderRequest) -> Dict[str, Any]:
+    parsed = _ca25_parse_public_github_repo(request.repo_url)
+    owner = parsed["owner"]
+    repo = parsed["repo"]
+
+    repo_api = f"https://api.github.com/repos/{owner}/{repo}"
+    repo_meta = _ca25_github_get_json(repo_api)
+
+    if bool(repo_meta.get("private")):
+        raise ValueError("Private repositories are blocked in CA-25. Use public repositories only.")
+
+    default_branch = repo_meta.get("default_branch") or "main"
+    selected_ref = (request.ref or default_branch).strip() or default_branch
+    max_entries = max(10, min(int(request.max_entries or 80), 200))
+
+    branch_api = f"https://api.github.com/repos/{owner}/{repo}/branches/{selected_ref}"
+    try:
+        branch_meta = _ca25_github_get_json(branch_api)
+        tree_sha = branch_meta.get("commit", {}).get("commit", {}).get("tree", {}).get("sha")
+    except Exception:
+        branch_meta = {}
+        tree_sha = None
+
+    tree_entries = []
+    tree_truncated = False
+
+    if tree_sha:
+        tree_api = f"https://api.github.com/repos/{owner}/{repo}/git/trees/{tree_sha}?recursive=1"
+        tree_meta = _ca25_github_get_json(tree_api)
+        tree_truncated = bool(tree_meta.get("truncated"))
+        for item in tree_meta.get("tree", [])[:max_entries]:
+            path = item.get("path", "")
+            kind = item.get("type", "")
+            size = item.get("size", None)
+            if not path:
+                continue
+            tree_entries.append({
+                "path": path,
+                "type": kind,
+                "size": size,
+                "read_mode": "public-tree-metadata-only",
+                "content_fetched": False,
+            })
+
+    language = repo_meta.get("language") or "Unknown"
+    topics = repo_meta.get("topics") or []
+
+    return {
+        "ok": True,
+        "status": "public-github-repo-reader-ready",
+        "mode": "backend-public-github-read-only",
+        "repository": {
+            "owner": owner,
+            "repo": repo,
+            "full_name": repo_meta.get("full_name"),
+            "html_url": repo_meta.get("html_url"),
+            "description": repo_meta.get("description") or "",
+            "default_branch": default_branch,
+            "selected_ref": selected_ref,
+            "visibility": repo_meta.get("visibility", "public"),
+            "private": bool(repo_meta.get("private")),
+            "language": language,
+            "topics": topics[:12],
+            "stars": repo_meta.get("stargazers_count", 0),
+            "forks": repo_meta.get("forks_count", 0),
+            "open_issues": repo_meta.get("open_issues_count", 0),
+            "updated_at": repo_meta.get("updated_at"),
+        },
+        "tree": {
+            "entries": tree_entries,
+            "entry_count_returned": len(tree_entries),
+            "max_entries": max_entries,
+            "truncated_by_github": tree_truncated,
+            "content_fetched": False,
+        },
+        "reader_summary": [
+            "Public repository metadata was read through the backend only.",
+            "The file tree was read as metadata only; file contents were not fetched in CA-25.",
+            "No private repository, token, clone, terminal, Git command, write, deploy, rollback, or secret access was used.",
+            "This output can feed Project Reader, Architecture Analyzer, Project Indexer, and future protected file viewer phases.",
+        ],
+        "locked_actions": [
+            "Private GitHub repository access",
+            "Frontend GitHub token usage",
+            "Repository clone",
+            "File content fetch",
+            "File write",
+            "Diff apply",
+            "Terminal execution",
+            "Git commit/push/PR",
+            "Deployment",
+            "Secrets access",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-26",
+            "title": "Project Indexer + File Search",
+            "goal": "Index public repo tree metadata and allow safe search/filtering across filenames, folders, and project structure.",
+        },
+        "safety": {
+            "frontend_token": False,
+            "private_repo": False,
+            "clone": False,
+            "file_content_fetch": False,
+            "file_write": False,
+            "terminal": False,
+            "git_commands": False,
+            "deployment": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/github-public-reader/health")
+def coding_agent_github_public_reader_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-github-public-reader",
+        "mode": "backend-public-github-read-only",
+        "frontend_token": False,
+        "private_repo": False,
+        "clone": False,
+        "file_write": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+@app.post("/api/coding-agent/github-public-reader/preview")
+def coding_agent_github_public_reader_preview(request: GitHubPublicRepoReaderRequest):
+    try:
+        return _ca25_fetch_public_repo_preview(request)
+    except Exception as exc:
+        return {
+            "ok": False,
+            "status": "public-github-repo-reader-error",
+            "error": str(exc),
+            "mode": "backend-public-github-read-only",
+            "safety": {
+                "frontend_token": False,
+                "private_repo": False,
+                "clone": False,
+                "file_write": False,
+                "terminal": False,
+                "git_commands": False,
+                "deployment": False,
+                "secrets": False,
+            },
+        }
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}

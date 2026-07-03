@@ -3736,7 +3736,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-25 - Real GitHub Public Repo Reader API */
+/* Phase CA-26 - Project Indexer + File Search */
 (() => {
   if (window.__ideasforgeCa20ConnectedWorkspaceLoaded) {
     return;
@@ -4025,7 +4025,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-25 - Real GitHub Public Repo Reader API */
+/* Phase CA-26 - Project Indexer + File Search */
 (() => {
   if (window.__ideasforgeCa21ReadOnlyConnectorLoaded) {
     return;
@@ -5462,6 +5462,297 @@ document.addEventListener("click", async (event) => {
     document.addEventListener("DOMContentLoaded", ca24EnsureSection);
   } else {
     ca24EnsureSection();
+  }
+})();
+
+
+
+/* Phase CA-25 - Real GitHub Public Repo Reader API */
+(() => {
+  if (window.__ideasforgeCa25GitHubReaderLoaded) {
+    return;
+  }
+  window.__ideasforgeCa25GitHubReaderLoaded = true;
+
+  const GITHUB_READER_PATH_CA25 = "/api/coding-agent/github-public-reader/preview";
+  const GITHUB_READER_BACKEND_SOURCE_CA25 = "Backend Public GitHub Reader API";
+  const GITHUB_READER_FALLBACK_SOURCE_CA25 = "Local Public GitHub Reader Preview";
+
+  const ca25Escape = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const ca25ApiCandidates = (path) => {
+    const endpoints = [];
+    try {
+      if (typeof API_BASE !== "undefined" && API_BASE) {
+        endpoints.push(`${API_BASE}${path}`);
+      }
+    } catch (error) {}
+    endpoints.push(path);
+    return endpoints;
+  };
+
+  const ca25Fallback = (repoUrl = "https://github.com/Adminisanmitraai/IdeasForgeAI") => ({
+    ok: true,
+    status: "public-github-repo-reader-ready",
+    mode: "local-public-github-reader-preview",
+    repository: {
+      owner: "Adminisanmitraai",
+      repo: "IdeasForgeAI",
+      full_name: "Adminisanmitraai/IdeasForgeAI",
+      html_url: repoUrl,
+      description: "IdeasForgeAI coding agent public reader preview.",
+      default_branch: "main",
+      selected_ref: "main",
+      visibility: "public-preview",
+      private: false,
+      language: "JavaScript / Python",
+      topics: ["ai", "coding-agent", "preview"],
+      stars: 0,
+      forks: 0,
+      open_issues: 0,
+      updated_at: "preview",
+    },
+    tree: {
+      entries: [
+        { path: "frontend/pages/coding-agent.html", type: "blob", size: null, read_mode: "public-tree-metadata-only", content_fetched: false },
+        { path: "frontend/pages/coding-agent.js", type: "blob", size: null, read_mode: "public-tree-metadata-only", content_fetched: false },
+        { path: "frontend/pages/coding-agent.css", type: "blob", size: null, read_mode: "public-tree-metadata-only", content_fetched: false },
+        { path: "backend/main.py", type: "blob", size: null, read_mode: "public-tree-metadata-only", content_fetched: false },
+        { path: "backend/sector_qa_runner.py", type: "blob", size: null, read_mode: "public-tree-metadata-only", content_fetched: false },
+        { path: "PROJECT_STATUS.md", type: "blob", size: null, read_mode: "public-tree-metadata-only", content_fetched: false },
+      ],
+      entry_count_returned: 6,
+      max_entries: 80,
+      truncated_by_github: false,
+      content_fetched: false,
+    },
+    reader_summary: [
+      "Backend public GitHub reader is unavailable, so a local safe preview is shown.",
+      "No frontend token, private repo, clone, file write, terminal, Git, deployment, or secrets access is used.",
+      "CA-25 real backend endpoint will read public GitHub metadata and tree only when backend is live.",
+    ],
+    locked_actions: [
+      "Private GitHub repository access",
+      "Frontend GitHub token usage",
+      "Repository clone",
+      "File content fetch",
+      "File write",
+      "Diff apply",
+      "Terminal execution",
+      "Git commit/push/PR",
+      "Deployment",
+      "Secrets access",
+    ],
+    recommended_next_phase: {
+      phase: "CA-26",
+      title: "Project Indexer + File Search",
+      goal: "Index public repo tree metadata and allow safe search/filtering across filenames, folders, and project structure.",
+    },
+    safety: {
+      frontend_token: false,
+      private_repo: false,
+      clone: false,
+      file_content_fetch: false,
+      file_write: false,
+      terminal: false,
+      git_commands: false,
+      deployment: false,
+      secrets: false,
+    },
+  });
+
+  const ca25FetchReader = async (repoUrl, ref = "") => {
+    const payload = {
+      repo_url: repoUrl || "https://github.com/Adminisanmitraai/IdeasForgeAI",
+      ref,
+      max_entries: 90,
+    };
+
+    for (const endpoint of ca25ApiCandidates(GITHUB_READER_PATH_CA25)) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.ok) {
+            return { data, source: GITHUB_READER_BACKEND_SOURCE_CA25 };
+          }
+        }
+      } catch (error) {}
+    }
+
+    return { data: ca25Fallback(repoUrl), source: GITHUB_READER_FALLBACK_SOURCE_CA25 };
+  };
+
+  const ca25List = (items = []) => items.map((item) => `<li>${ca25Escape(item)}</li>`).join("");
+
+  const ca25TreeRows = (entries = []) => entries.map((entry) => `
+    <article class="ca25-tree-row">
+      <strong>${ca25Escape(entry.path)}</strong>
+      <small>${ca25Escape(entry.type)} · ${ca25Escape(entry.read_mode)} · content fetched: ${ca25Escape(entry.content_fetched)}</small>
+    </article>
+  `).join("");
+
+  const ca25Topics = (topics = []) => topics.length
+    ? topics.map((topic) => `<span>${ca25Escape(topic)}</span>`).join("")
+    : "<span>No topics</span>";
+
+  const ca25RenderReader = (data, source) => `
+    <section class="ca25-reader-panel" id="ca25-reader-panel">
+      <div class="ca25-kicker">Now Open: Public GitHub Repo Reader</div>
+      <h2>Real GitHub Public Repo Reader</h2>
+      <p>Public repository metadata and file-tree metadata are read through the backend only. No frontend token, no private repo, no clone, no file writes, no Git commands, and no deployment actions.</p>
+
+      <div class="ca25-status-grid">
+        <article>
+          <small>Reader Source</small>
+          <strong>${ca25Escape(source)}</strong>
+          <p>Status: ${ca25Escape(data.status)}</p>
+        </article>
+        <article>
+          <small>Repository</small>
+          <strong>${ca25Escape(data.repository?.full_name)}</strong>
+          <p>${ca25Escape(data.repository?.description || "No description")}</p>
+        </article>
+      </div>
+
+      <section class="ca25-card">
+        <small>Repository Metadata</small>
+        <strong>${ca25Escape(data.repository?.full_name)}</strong>
+        <div class="ca25-meta-grid">
+          <span>Branch: <b>${ca25Escape(data.repository?.selected_ref)}</b></span>
+          <span>Language: <b>${ca25Escape(data.repository?.language)}</b></span>
+          <span>Stars: <b>${ca25Escape(data.repository?.stars)}</b></span>
+          <span>Forks: <b>${ca25Escape(data.repository?.forks)}</b></span>
+          <span>Open issues: <b>${ca25Escape(data.repository?.open_issues)}</b></span>
+          <span>Private: <b>${ca25Escape(data.repository?.private)}</b></span>
+        </div>
+        <div class="ca25-topic-row">${ca25Topics(data.repository?.topics || [])}</div>
+      </section>
+
+      <section class="ca25-card">
+        <small>Public File Tree Metadata</small>
+        <strong>${ca25Escape(data.tree?.entry_count_returned)} entries returned · content fetched: ${ca25Escape(data.tree?.content_fetched)}</strong>
+        <div class="ca25-tree-list">${ca25TreeRows(data.tree?.entries || [])}</div>
+      </section>
+
+      <section class="ca25-card">
+        <small>Reader Summary</small>
+        <strong>Safe backend-only read</strong>
+        <ul>${ca25List(data.reader_summary || [])}</ul>
+      </section>
+
+      <section class="ca25-card ca25-safety-card">
+        <small>Locked Actions</small>
+        <strong>Not allowed in CA-25</strong>
+        <ul>${ca25List(data.locked_actions || [])}</ul>
+      </section>
+
+      <section class="ca25-card">
+        <small>Next Phase</small>
+        <strong>${ca25Escape(data.recommended_next_phase?.phase)} — ${ca25Escape(data.recommended_next_phase?.title)}</strong>
+        <p>${ca25Escape(data.recommended_next_phase?.goal)}</p>
+      </section>
+    </section>
+  `;
+
+  const ca25EnsureSection = () => {
+    if (document.getElementById("ca25-github-reader-section")) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.id = "ca25-github-reader-section";
+    section.className = "ca25-github-reader-section";
+    section.innerHTML = `
+      <div class="ca25-shell-card">
+        <div class="ca25-kicker">CA-25 — Real GitHub Public Repo Reader API</div>
+        <h2>Public GitHub Repo Reader</h2>
+        <p>Read public GitHub repository metadata and public file-tree metadata through a backend-only API. Private repos and frontend tokens remain blocked.</p>
+
+        <label class="ca25-input-label" for="ca25-repo-url">Public GitHub Repository URL</label>
+        <input id="ca25-repo-url" class="ca25-repo-input" value="https://github.com/Adminisanmitraai/IdeasForgeAI" inputmode="url" autocomplete="off" />
+
+        <button class="ca25-open-button" type="button" data-ca25-open-reader>
+          Read Public Repository
+        </button>
+      </div>
+      <div id="ca25-github-reader-output"></div>
+    `;
+
+    const ca24 = document.getElementById("ca24-protected-viewer-section");
+    const ca23 = document.getElementById("ca23-file-viewer-section");
+    const ca22 = document.getElementById("ca22-project-reader-section");
+    const anchor = ca24 || ca23 || ca22;
+    if (anchor?.parentNode) {
+      anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    } else {
+      const container = document.querySelector("main") || document.querySelector(".coding-agent-page") || document.body;
+      container.appendChild(section);
+    }
+  };
+
+  const ca25OpenReader = async () => {
+    ca25EnsureSection();
+
+    const input = document.getElementById("ca25-repo-url");
+    const repoUrl = input?.value || "https://github.com/Adminisanmitraai/IdeasForgeAI";
+    const output = document.getElementById("ca25-github-reader-output");
+    if (!output) return;
+
+    output.innerHTML = `
+      <section class="ca25-card">
+        <small>Status Banner</small>
+        <strong>Reading public GitHub repository metadata through backend.</strong>
+        <p>No frontend token, private repo, clone, file content fetch, file write, terminal, Git command, deployment, or secrets access is used.</p>
+      </section>
+    `;
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Public GitHub Reader is running through backend only. Private repos, tokens, clone, write, Git, deploy, and secrets remain locked.");
+      }
+    } catch (error) {}
+
+    const { data, source } = await ca25FetchReader(repoUrl);
+    output.innerHTML = ca25RenderReader(data, source);
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Public GitHub Repo Reader is now open. Public tree metadata only; file contents and private repos remain locked.");
+      }
+    } catch (error) {}
+
+    document.getElementById("ca25-reader-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  document.addEventListener("click", async (event) => {
+    const open = event.target.closest("[data-ca25-open-reader]");
+    if (open) {
+      event.preventDefault();
+      await ca25OpenReader();
+      return;
+    }
+
+    const target = event.target.closest("button, a, .ca-module-pill, .module-pill");
+    const text = target?.textContent || "";
+    if (target && (text.includes("GitHub Public Repo Reader") || text.includes("GitHub Repository"))) {
+      setTimeout(() => ca25OpenReader(), 80);
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ca25EnsureSection);
+  } else {
+    ca25EnsureSection();
   }
 })();
 
