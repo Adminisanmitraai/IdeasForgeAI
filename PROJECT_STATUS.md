@@ -13088,3 +13088,16 @@ Status: Completed locally, validation pending manual browser check.
 ode --check frontend/pages/coding-agent.js; 
 ode --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-10 preview; no real deployment, no Git commands, no terminal commands from the app, no backend edits, no API calls, no secrets access, no .env access, and no KisanMitraAI files touched.
+
+## Phase CA-11 - Real Code Generation with Diff Approval
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only `Code Generation` module to the Demo Project Workspace and kept `Code Diff Preview` available as a paired protected review screen for the same CA-11 proposal flow.
+- Replaced the older safe diff-only preview with a deterministic local demo `Real Code Generation` screen that shows the required title, subtitle, `Now Open: Real Code Generation` chip, protected workspace status banner, request textarea, and `Generate Code Proposal` action.
+- Added a protected read-only code preview for `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.js`, and `frontend/pages/coding-agent.css` with visible protection messaging, read-only styling, watermark labeling, and no normal-user copy, edit, apply, or export controls.
+- Added a unified diff viewer, founder/admin locked controls, approval gate actions, low-risk frontend-only summary, and the exact validation plan required for the CA-11 preview flow.
+- Updated the Demo Project module order, roadmap chips, safety notice, and next-phase labels so `Code Generation` and `Code Diff Preview` both show `Preview Unlocked`, with `CA-12 - Founder/Admin Code Permission System` and `CA-13 - Protected Code Preview for Normal Users` listed next.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-11 preview; no real file editing from the app, no terminal commands from the app, no Git commands from the app, no deployment actions, no backend edits, no API keys or secrets exposed, no `.env` access, and no KisanMitraAI files touched.
