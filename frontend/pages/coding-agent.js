@@ -244,6 +244,25 @@ const DEMO_GIT_PLAN_TEXT = [
   "Status:",
   "Preview only - PR not created",
 ].join("\n");
+const DEMO_DEPLOYMENT_PLAN_TEXT = [
+  "Deployment Manager Preview",
+  "Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.",
+  "",
+  "Deployment Plan:",
+  "1. Validate frontend syntax",
+  "2. Validate Studio V4 still works",
+  "3. Validate Coding Agent modules open",
+  "4. Validate backend health endpoint",
+  "5. Push approved branch to main",
+  "6. Wait for GitHub Pages update",
+  "7. Watch Render backend deploy if backend changed",
+  "8. Test production URLs",
+  "9. Confirm mobile layout",
+  "10. Keep rollback checkpoint ready",
+  "",
+  "Status:",
+  "Preview only - no deployment triggered",
+].join("\n");
 
 const FILE_TREE = [
   "frontend/pages/studio-v4.html",
@@ -272,6 +291,7 @@ const MODULE_TITLES = {
   "test-runner": "Test Runner Preview",
   "auto-fix": "Auto Fix Engine Preview",
   "git-manager": "Git Manager Preview",
+  "deployment-manager": "Deployment Manager Preview",
 };
 
 const MODULE_STATUS_MESSAGES = {
@@ -282,6 +302,7 @@ const MODULE_STATUS_MESSAGES = {
   "test-runner": "Test Runner Preview is now open. Real command execution remains locked.",
   "auto-fix": "Auto Fix Engine Preview is now open. No code changes will be applied.",
   "git-manager": "Git Manager Preview is now open. No Git commands will run.",
+  "deployment-manager": "Deployment Manager Preview is now open. No deployment actions will run.",
 };
 
 const MODULE_SUBTITLES = {
@@ -292,6 +313,7 @@ const MODULE_SUBTITLES = {
   "test-runner": "Preview validation steps before real test execution is enabled.",
   "auto-fix": "Analyze failed checks and prepare safe repair plans before any code changes.",
   "git-manager": "Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.",
+  "deployment-manager": "Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.",
 };
 
 const state = {
@@ -314,6 +336,10 @@ const state = {
   autoFixCopyFeedback: "",
   gitPlanDecision: "pending",
   gitPlanCopyFeedback: "",
+  deploymentPlanGenerated: false,
+  deploymentHealthPreviewed: false,
+  deploymentPlanDecision: "pending",
+  deploymentPlanCopyFeedback: "",
   statusMessage: DEFAULT_STATUS_MESSAGE,
 };
 
@@ -918,6 +944,22 @@ const getGitPlanFeedback = () => {
   return "Preview only. No branches, commits, pull requests, pushes, merges, rollbacks, exports, or deployments can run from this screen.";
 };
 
+const getDeploymentPlanFeedback = () => {
+  if (!state.deploymentPlanGenerated) {
+    return "Generate Deployment Plan to preview the staged workflow. No deployment action will run.";
+  }
+  if (state.deploymentPlanCopyFeedback) {
+    return state.deploymentPlanCopyFeedback;
+  }
+  if (state.deploymentPlanDecision === "rejected") {
+    return "Deployment plan rejected. No deployment actions were run.";
+  }
+  if (state.deploymentPlanDecision === "approved-later") {
+    return "Deployment plan saved for future founder/admin approval. No deployment actions were run.";
+  }
+  return "Deployment plan ready for review. All deploy, health, rollback, and promotion actions remain locked.";
+};
+
 const renderGitManagerMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Title</small>
@@ -1013,6 +1055,152 @@ const renderGitManagerMarkup = () => `
   </section>
 `;
 
+const renderDeploymentManagerMarkup = () => `
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Title</small>
+    <strong>Deployment Manager Preview</strong>
+    <p>Prepare deployment checks, health validation, and rollback plans before real deployment is enabled.</p>
+    <p>Now Open: Deployment Manager Preview</p>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Status Banner</small>
+    <div class="deployment-manager-banner">
+      <strong>Deployment Manager Preview is now open. No deployment actions will run.</strong>
+      <p>${escapeHtml(getDeploymentPlanFeedback())}</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Deployment Targets</small>
+    <strong>Preview-only deployment surfaces</strong>
+    <div class="deployment-target-grid">
+      <div class="deployment-target-card">
+        <strong>Frontend</strong>
+        <p>GitHub Pages / static hosting</p>
+        <span class="deployment-target-url">https://ideasforgeai.com/pages/coding-agent.html</span>
+      </div>
+      <div class="deployment-target-card">
+        <strong>Backend</strong>
+        <p>Render Web Service</p>
+        <span class="deployment-target-url">https://ideasforgeai-api.onrender.com/health</span>
+      </div>
+      <div class="deployment-target-card">
+        <strong>Generated Apps</strong>
+        <p>Static generated preview pages</p>
+        <span class="deployment-target-route">generated-apps/</span>
+      </div>
+    </div>
+    <p>Status: Preview only - no deployment triggered</p>
+  </section>
+  <section class="screen-detail-card">
+    <small>Pre-deploy Checks</small>
+    <strong>Deployment checklist</strong>
+    <ul class="deployment-manager-checklist">
+      <li>Confirm Git branch is ready</li>
+      <li>Confirm JavaScript syntax validation</li>
+      <li>Confirm sector QA validation</li>
+      <li>Confirm mobile Safari test</li>
+      <li>Confirm desktop browser test</li>
+      <li>Confirm no secrets exposed</li>
+      <li>Confirm no KisanMitraAI files touched</li>
+      <li>Confirm founder/admin approval</li>
+    </ul>
+  </section>
+  <section class="screen-detail-card">
+    <small>Simulated Plan</small>
+    <strong>Prepare deployment workflow</strong>
+    <button class="diff-generate-button" type="button" data-ca-action="generate-deployment-plan">Generate Deployment Plan</button>
+    ${
+      state.deploymentPlanGenerated
+        ? `
+          <ol class="deployment-manager-plan-list">
+            <li>Validate frontend syntax</li>
+            <li>Validate Studio V4 still works</li>
+            <li>Validate Coding Agent modules open</li>
+            <li>Validate backend health endpoint</li>
+            <li>Push approved branch to main</li>
+            <li>Wait for GitHub Pages update</li>
+            <li>Watch Render backend deploy if backend changed</li>
+            <li>Test production URLs</li>
+            <li>Confirm mobile layout</li>
+            <li>Keep rollback checkpoint ready</li>
+          </ol>
+          <p>Status: Preview only - no deployment triggered</p>
+        `
+        : `<p>Generate the static deployment plan preview. No real deployment should happen.</p>`
+    }
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Health Preview</small>
+    <strong>Simulated production health checks</strong>
+    <button class="diff-generate-button" type="button" data-ca-action="preview-deployment-health">Preview Health Check</button>
+    ${
+      state.deploymentHealthPreviewed
+        ? `
+          <div class="deployment-health-grid">
+            <div class="deployment-health-card">
+              <strong>Frontend</strong>
+              <p>PASS coding-agent.html reachable</p>
+              <p>PASS studio-v4.html reachable</p>
+              <p>PASS mobile layout smoke check</p>
+            </div>
+            <div class="deployment-health-card">
+              <strong>Backend</strong>
+              <p>PASS /health reachable</p>
+              <p>PASS API service known</p>
+              <p>NOTE Render free instance may spin down with inactivity</p>
+            </div>
+            <div class="deployment-health-card">
+              <strong>Deployment</strong>
+              <p>Preview only - no real deploy triggered</p>
+            </div>
+          </div>
+        `
+        : `<p>Static simulated output only. No production request or API call is sent.</p>`
+    }
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Rollback Plan</small>
+    <div class="deployment-rollback-card">
+      <strong>Rollback Plan</strong>
+      <ul class="screen-detail-list">
+        <li>Keep previous successful Git commit available</li>
+        <li>Revert frontend static files if visual issue appears</li>
+        <li>Redeploy previous commit if backend issue appears</li>
+        <li>Verify /health after rollback</li>
+        <li>Confirm mobile UI after rollback</li>
+      </ul>
+      <p>Status: Preview only - rollback not executed</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Preview Actions</small>
+    <strong>Review-only controls</strong>
+    <div class="deployment-manager-actions">
+      <button class="reader-action-button" type="button" data-ca-action="copy-deployment-plan">Copy Deployment Plan</button>
+      <button class="reader-action-button" type="button" data-ca-action="reject-deployment-plan">Reject Deployment Plan</button>
+      <button class="reader-action-button" type="button" data-ca-action="approve-deployment-later">Approve Later</button>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Locked Deployment Actions</small>
+    <strong>Founder/Admin approval required</strong>
+    <div class="deployment-manager-lock-grid">
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-deployment-action">Deploy Frontend - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-deployment-action">Deploy Backend - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-deployment-action">Run Production Health Check - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-deployment-action">Rollback Deployment - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-deployment-action">Promote to Production - Locked</button>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Founder/Admin Protection</small>
+    <div class="deployment-protection-note">
+      <strong>Normal users can preview deployment workflow only.</strong>
+      <p>Only Founder/Admin can approve deployment, rollback, production promotion, Git actions, export, or secret-sensitive operations.</p>
+    </div>
+  </section>
+`;
+
 const renderModuleBody = () => {
   if (!activeScreenBody) {
     return;
@@ -1050,6 +1238,11 @@ const renderModuleBody = () => {
 
   if (state.activeModule === "git-manager") {
     activeScreenBody.innerHTML = renderGitManagerMarkup();
+    return;
+  }
+
+  if (state.activeModule === "deployment-manager") {
+    activeScreenBody.innerHTML = renderDeploymentManagerMarkup();
     return;
   }
 
@@ -1222,6 +1415,10 @@ const openFallbackScreen = (connection) => {
   state.autoFixCopyFeedback = "";
   state.gitPlanDecision = "pending";
   state.gitPlanCopyFeedback = "";
+  state.deploymentPlanGenerated = false;
+  state.deploymentHealthPreviewed = false;
+  state.deploymentPlanDecision = "pending";
+  state.deploymentPlanCopyFeedback = "";
   setStatusMessage(CONNECTION_MESSAGES[connection]);
   renderScreenState();
   scrollStageIntoView();
@@ -1247,6 +1444,10 @@ const openDemoScreen = () => {
   state.autoFixCopyFeedback = "";
   state.gitPlanDecision = "pending";
   state.gitPlanCopyFeedback = "";
+  state.deploymentPlanGenerated = false;
+  state.deploymentHealthPreviewed = false;
+  state.deploymentPlanDecision = "pending";
+  state.deploymentPlanCopyFeedback = "";
   setStatusMessage("Demo Project Workspace opened. Project Reader Preview is now open.");
   renderScreenState();
   scrollStageIntoView();
@@ -1278,6 +1479,10 @@ const openDemoModule = (moduleName) => {
   if (moduleName !== "git-manager") {
     state.gitPlanCopyFeedback = "";
     state.gitPlanDecision = "pending";
+  }
+  if (moduleName !== "deployment-manager") {
+    state.deploymentPlanCopyFeedback = "";
+    state.deploymentPlanDecision = "pending";
   }
   setStatusMessage(MODULE_STATUS_MESSAGES[moduleName] || `Now Open: ${MODULE_TITLES[moduleName]}`);
   renderScreenState();
@@ -1391,6 +1596,32 @@ const copyGitPlan = async () => {
   renderScreenState();
 };
 
+const generateDeploymentPlan = () => {
+  state.deploymentPlanGenerated = true;
+  state.deploymentPlanDecision = "pending";
+  state.deploymentPlanCopyFeedback = "";
+  setStatusMessage("Deployment plan ready for review. No deployment actions were run.");
+  renderScreenState();
+};
+
+const previewDeploymentHealth = () => {
+  state.deploymentHealthPreviewed = true;
+  setStatusMessage("Deployment health preview shown. No real deploy was triggered.");
+  renderScreenState();
+};
+
+const copyDeploymentPlan = async () => {
+  try {
+    await navigator.clipboard.writeText(DEMO_DEPLOYMENT_PLAN_TEXT);
+    state.deploymentPlanCopyFeedback = "Deployment plan copied.";
+    setStatusMessage("Deployment plan copied.");
+  } catch (error) {
+    state.deploymentPlanCopyFeedback = "Clipboard copy was unavailable. Deployment Manager remains preview-only.";
+    setStatusMessage("Clipboard copy was unavailable. Deployment Manager remains preview-only.");
+  }
+  renderScreenState();
+};
+
 const updateBackButtonState = () => {
   const shouldCompact = window.scrollY > 36;
   document.body.classList.toggle("is-compact-back-button", shouldCompact);
@@ -1461,6 +1692,9 @@ const handleAction = async (action) => {
     case "open-git-manager":
       openDemoModule("git-manager");
       break;
+    case "open-deployment-manager":
+      openDemoModule("deployment-manager");
+      break;
     case "generate-task-plan":
       generateTaskPlan();
       break;
@@ -1493,6 +1727,15 @@ const handleAction = async (action) => {
       break;
     case "copy-git-plan":
       await copyGitPlan();
+      break;
+    case "generate-deployment-plan":
+      generateDeploymentPlan();
+      break;
+    case "preview-deployment-health":
+      previewDeploymentHealth();
+      break;
+    case "copy-deployment-plan":
+      await copyDeploymentPlan();
       break;
     case "reject-plan":
       state.planDecision = "rejected";
@@ -1554,12 +1797,28 @@ const handleAction = async (action) => {
       setStatusMessage("Git plan saved for future founder/admin approval. No Git actions were run.");
       renderScreenState();
       break;
+    case "reject-deployment-plan":
+      state.deploymentPlanDecision = "rejected";
+      state.deploymentPlanCopyFeedback = "";
+      setStatusMessage("Deployment plan rejected. No deployment actions were run.");
+      renderScreenState();
+      break;
+    case "approve-deployment-later":
+      state.deploymentPlanDecision = "approved-later";
+      state.deploymentPlanCopyFeedback = "";
+      setStatusMessage("Deployment plan saved for future founder/admin approval. No deployment actions were run.");
+      renderScreenState();
+      break;
     case "apply-auto-fix":
       setStatusMessage("Apply Auto Fix is locked until real project permission and founder approval.");
       renderScreenState();
       break;
     case "locked-git-action":
       setStatusMessage("This Git action is locked until real project permission and founder/admin approval.");
+      renderScreenState();
+      break;
+    case "locked-deployment-action":
+      setStatusMessage("This deployment action is locked until real project permission and founder/admin approval.");
       renderScreenState();
       break;
     default:

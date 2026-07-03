@@ -13073,3 +13073,18 @@ Status: Completed locally, validation pending manual browser check.
 ode --check frontend/pages/coding-agent.js; 
 ode --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-09 preview; no real Git commands, no backend edits, no deployment settings, no secrets access, no .env access, and no KisanMitraAI files touched.
+
+## Phase CA-10 - Deployment Manager Preview
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only Deployment Manager Preview module to the Demo Project Workspace and placed it after Git Manager in the module tab order.
+- Added the exact CA-10 Deployment Manager title, subtitle, Now Open status, and preview-only status banner stating that no deployment actions will run.
+- Added preview-only deployment target cards for frontend static hosting, backend Render health URL, and generated app preview routes without triggering any real deployment behavior.
+- Added a static Generate Deployment Plan flow, Preview Health Check flow, rollback plan preview, copy/reject/approve-later actions, and fully locked deployment action buttons with founder/admin gate messaging.
+- Updated the visible module roadmap and safety notice to show Deployment Manager - Preview Unlocked, CA-11 through CA-13 next-phase labels, and CA-10 deployment safety boundaries.
+- Files changed: rontend/pages/coding-agent.html, rontend/pages/coding-agent.css, rontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: 
+ode --check frontend/pages/coding-agent.js; 
+ode --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-10 preview; no real deployment, no Git commands, no terminal commands from the app, no backend edits, no API calls, no secrets access, no .env access, and no KisanMitraAI files touched.

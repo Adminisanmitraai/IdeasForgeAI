@@ -35,7 +35,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .coding-agent-shell {
   width: min(1200px, calc(100vw - 32px));
   margin: 0 auto;
-  padding: 22px 0 calc(36px + env(safe-area-inset-bottom));
+  padding: 22px 0 calc(54px + env(safe-area-inset-bottom));
   transform: translate3d(var(--coding-agent-swipe-offset, 0px), 0, 0);
   transition: transform 180ms ease;
 }
@@ -276,7 +276,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 
 .action-status-banner {
   position: sticky;
-  top: var(--ca-banner-offset);
+  top: calc(var(--ca-banner-offset) - 8px);
   z-index: 18;
   display: grid;
   gap: 8px;
@@ -1081,6 +1081,16 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   margin-bottom: 22px;
 }
 
+.future-modules__next {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid rgba(216, 199, 255, .14);
+  border-radius: 22px;
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+}
+
 .module-chip-button {
   display: inline-flex;
   align-items: center;
@@ -1777,7 +1787,7 @@ a:focus-visible {
   .coding-agent-shell {
     width: min(100vw, calc(100vw - 20px));
     padding-top: 12px;
-    padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    padding-bottom: calc(40px + env(safe-area-inset-bottom));
   }
 
   .coding-agent-topbar {
@@ -2146,6 +2156,12 @@ a:focus-visible {
 .git-manager-checklist,
 .git-manager-action-grid,
 .git-manager-lock-grid,
+.deployment-manager-checklist,
+.deployment-manager-plan-list,
+.deployment-manager-actions,
+.deployment-manager-lock-grid,
+.deployment-target-grid,
+.deployment-health-grid,
 .test-runner-output,
 .test-runner-result-grid,
 .test-runner-approval-actions,
@@ -2215,12 +2231,18 @@ a:focus-visible {
 .git-manager-commit-card,
 .git-manager-pr-card,
 .git-manager-protection-note,
-.git-manager-lock-card {
+.git-manager-lock-card,
+.deployment-manager-banner,
+.deployment-target-card,
+.deployment-health-card,
+.deployment-rollback-card,
+.deployment-protection-note {
   padding: 18px;
   border-radius: 22px;
 }
 
-.git-manager-banner {
+.git-manager-banner,
+.deployment-manager-banner {
   border: 1px solid rgba(56, 189, 248, .2);
   background:
     linear-gradient(135deg, rgba(56,189,248,.1), rgba(139,92,246,.14)),
@@ -2229,21 +2251,28 @@ a:focus-visible {
 
 .git-manager-banner strong,
 .git-manager-protection-note strong,
-.git-manager-lock-card strong {
+.git-manager-lock-card strong,
+.deployment-manager-banner strong,
+.deployment-protection-note strong {
   display: block;
   margin-bottom: 8px;
 }
 
 .git-manager-banner p,
 .git-manager-protection-note p,
-.git-manager-lock-card p {
+.git-manager-lock-card p,
+.deployment-manager-banner p,
+.deployment-protection-note p {
   margin: 0;
 }
 
 .git-manager-branch-card,
 .git-manager-commit-card,
 .git-manager-pr-card,
-.git-manager-lock-card {
+.git-manager-lock-card,
+.deployment-target-card,
+.deployment-health-card,
+.deployment-rollback-card {
   border: 1px solid rgba(216, 199, 255, .14);
   background: rgba(255,255,255,.04);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
@@ -2272,11 +2301,73 @@ a:focus-visible {
   width: 100%;
 }
 
-.git-manager-protection-note {
+.git-manager-protection-note,
+.deployment-protection-note {
   border: 1px solid rgba(245, 158, 11, .18);
   background:
     linear-gradient(135deg, rgba(120,53,15,.18), rgba(56,189,248,.08)),
     rgba(255,255,255,.04);
+}
+
+.deployment-target-grid,
+.deployment-health-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.deployment-manager-checklist,
+.deployment-manager-plan-list {
+  margin: 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.deployment-manager-checklist li + li,
+.deployment-manager-plan-list li + li {
+  margin-top: 6px;
+}
+
+.deployment-target-card {
+  display: grid;
+  gap: 8px;
+}
+
+.deployment-target-card strong,
+.deployment-health-card strong,
+.deployment-rollback-card strong {
+  font-size: 16px;
+}
+
+.deployment-target-card p,
+.deployment-health-card p,
+.deployment-rollback-card p {
+  margin: 0;
+}
+
+.deployment-target-route,
+.deployment-target-url {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid rgba(216, 199, 255, .14);
+  border-radius: 999px;
+  background: rgba(8, 11, 18, .46);
+  color: #d9f5ff;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.deployment-manager-actions,
+.deployment-manager-lock-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.deployment-manager-actions .reader-action-button,
+.deployment-manager-lock-grid .reader-action-button {
+  width: 100%;
 }
 
 .test-runner-banner {
@@ -2483,7 +2574,11 @@ a:focus-visible {
   .auto-fix-grid,
   .auto-fix-diff-grid,
   .git-manager-action-grid,
-  .git-manager-lock-grid {
+  .git-manager-lock-grid,
+  .deployment-target-grid,
+  .deployment-health-grid,
+  .deployment-manager-actions,
+  .deployment-manager-lock-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -2525,6 +2620,8 @@ a:focus-visible {
   .auto-fix-action-grid,
   .git-manager-action-grid,
   .git-manager-lock-grid,
+  .deployment-manager-actions,
+  .deployment-manager-lock-grid,
   .test-runner-actions,
   .test-runner-approval-actions,
   .test-runner-result-grid {
