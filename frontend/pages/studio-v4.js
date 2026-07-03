@@ -759,15 +759,7 @@ const closeMenu = () => {
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 const getCodingAgentTarget = () => {
-  if (window.location.protocol === "file:") {
-    return "./coding-agent.html";
-  }
-
-  if (window.location.pathname.includes("/frontend/pages/")) {
-    return "/coding-agent";
-  }
-
-  return "/coding-agent";
+  return "./coding-agent.html";
 };
 
 const navigateWithSwipeTransition = (targetUrl) => {
