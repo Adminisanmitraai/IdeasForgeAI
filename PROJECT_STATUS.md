@@ -13044,3 +13044,18 @@ Status: Completed locally, validation pending manual browser check.
 ode --check frontend/pages/coding-agent.js; 
 ode --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-07 preview; no real command execution from the app, no backend edits, no deployment settings, no secrets access, no .env access, no Git writes, no backend file reading, and no KisanMitraAI files touched.
+
+## Phase CA-08 - Auto Fix Engine Preview
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only Auto Fix Engine Preview module to the Demo Project Workspace and placed it after Test Runner in the module tab order.
+- Added the exact CA-08 screen copy for `Auto Fix Engine Preview`, the subtitle about analyzing failed checks before code changes, `Now Open: Auto Fix Engine Preview`, and a locked status banner that states no code changes will be applied.
+- Added a simulated failed check card for the mobile safe-area layout issue plus preview-only `Analyze Failed Check` and `Generate Safe Fix Plan` actions.
+- Added static root cause, suggested fix, affected files, risk level, numbered safe fix plan, and static diff preview content for `frontend/pages/coding-agent.css` and `frontend/pages/coding-agent.js`.
+- Added preview-only approval gate actions for `Copy Fix Plan`, `Reject Fix`, `Approve Fix Later`, and a locked `Apply Auto Fix` control that shows the founder/project-permission protection message.
+- Updated the visible roadmap chips and safety notice to show Auto Fix Engine as `Preview Unlocked`, plus the CA-08 safety boundaries and founder/admin protection note.
+- Applied frontend-only mobile polish for safer sticky offsets, stronger scroll-margin spacing, bottom safe-area padding, and no-horizontal-overflow preservation in the Coding Agent workspace.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-08 preview; no real auto-fix, no real editing, no terminal execution from the app, no Git writes, no deployment actions, no backend changes, no secrets access, and no KisanMitraAI files touched.
