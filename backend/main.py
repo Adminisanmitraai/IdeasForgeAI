@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 import subprocess
 from typing import Any, Dict, List, Literal, Optional
@@ -11,8 +11,6 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from backend.agents.deployment_readiness_agent import DeploymentReadinessAgent
 from backend.agents.git_versioning_agent import GitVersioningAgent
-from backend.agents.kisanmitra_landing_template_agent import KisanMitraLandingTemplateAgent
-from backend.agents.kisanmitra_production_sync_agent import KisanMitraProductionSyncAgent
 from backend.agents.orchestrator_agent import create_default_builder_pipeline
 from backend.agents.pixel_matched_page_converter_agent import PixelMatchedPageConverterAgent
 from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
@@ -188,15 +186,15 @@ class StudioChatRequest(BaseModel):
 
 
 class PixelConvertRequest(BaseModel):
-    app_name: Optional[str] = "kisanmitralite"
+    app_name: Optional[str] = "IdeasForgeAI Product"
     image_name: Optional[str] = None
     image_provided: bool = False
 
 
 class VisualDesignRequest(BaseModel):
     idea: Optional[str] = None
-    app_name: Optional[str] = "KisanMitraLite"
-    app_slug: Optional[str] = "kisanmitralite"
+    app_name: Optional[str] = "IdeasForgeAI Product"
+    app_slug: Optional[str] = "IdeasForgeAI Product"
 
 
 class ProductBrainStartRequest(BaseModel):
@@ -220,8 +218,8 @@ class DesignSystemRequest(BaseModel):
 
 
 class RoadmapRequest(BaseModel):
-    app_name: Optional[str] = "KisanMitraLite"
-    app_slug: Optional[str] = "kisanmitralite"
+    app_name: Optional[str] = "IdeasForgeAI Product"
+    app_slug: Optional[str] = "IdeasForgeAI Product"
 
 
 class CodeProposalRequest(BaseModel):
@@ -819,14 +817,14 @@ def _build_github_integration_preview(request: GitHubIntegrationPreviewRequest) 
             "message": "Real GitHub actions require backend authentication, secure token storage, connected repository permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "GitHub workflow preview opened — allowed",
-            "Repository token access — blocked",
-            "Branch creation — blocked",
-            "Commit — blocked",
-            "Push — blocked",
-            "Pull request creation — blocked",
-            "Merge — blocked",
-            "Rollback — blocked",
+            "GitHub workflow preview opened â€” allowed",
+            "Repository token access â€” blocked",
+            "Branch creation â€” blocked",
+            "Commit â€” blocked",
+            "Push â€” blocked",
+            "Pull request creation â€” blocked",
+            "Merge â€” blocked",
+            "Rollback â€” blocked",
         ],
         "safety": {
             "github_api_calls": False,
@@ -943,14 +941,14 @@ def _build_deployment_approval_preview(request: DeploymentApprovalPreviewRequest
             "message": "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "Deployment flow preview opened — allowed",
-            "Deployment approval requested — recorded",
-            "Render API call — blocked",
-            "GitHub deploy action — blocked",
-            "Production promotion — blocked",
-            "Rollback — blocked",
-            "DNS change — blocked",
-            "Secrets access — blocked",
+            "Deployment flow preview opened â€” allowed",
+            "Deployment approval requested â€” recorded",
+            "Render API call â€” blocked",
+            "GitHub deploy action â€” blocked",
+            "Production promotion â€” blocked",
+            "Rollback â€” blocked",
+            "DNS change â€” blocked",
+            "Secrets access â€” blocked",
         ],
         "safety": {
             "render_api_calls": False,
@@ -1722,7 +1720,7 @@ def _mask_ca24_line(line: str, role: str) -> str:
     if any(token in stripped.lower() for token in ["key", "token", "secret", "password", "credential"]):
         return "[protected-sensitive-line]"
     if len(line) > 96:
-        return line[:96] + " …"
+        return line[:96] + " â€¦"
     return line
 
 
@@ -2146,12 +2144,12 @@ def generate_app(request: GenerateAppRequest):
 
 @app.post("/api/pixel-convert")
 def pixel_convert(request: PixelConvertRequest):
-    app_slug = (request.app_name or "kisanmitralite").strip().lower().replace(" ", "-")
+    app_slug = (request.app_name or "IdeasForgeAI Product").strip().lower().replace(" ", "-")
     agent = PixelMatchedPageConverterAgent()
     result = agent.run(
         {
-            "app_name": request.app_name or "KisanMitraLite",
-            "app_slug": app_slug or "kisanmitralite",
+            "app_name": request.app_name or "IdeasForgeAI Product",
+            "app_slug": app_slug or "IdeasForgeAI Product",
             "image_name": request.image_name,
             "image_provided": request.image_provided,
         }
@@ -2192,8 +2190,8 @@ def visual_design(request: VisualDesignRequest):
     result = agent.run(
         {
             "idea": request.idea,
-            "app_name": request.app_name or "KisanMitraLite",
-            "app_slug": request.app_slug or "kisanmitralite",
+            "app_name": request.app_name or "IdeasForgeAI Product",
+            "app_slug": request.app_slug or "IdeasForgeAI Product",
         }
     )
     return result.model_dump()
@@ -2236,31 +2234,17 @@ def design_system(request: DesignSystemRequest):
     )
 
 
-@app.post("/api/kisan-premium-home")
-def generate_kisan_premium_home(request: RoadmapRequest):
-    agent = KisanMitraLandingTemplateAgent()
-    result = agent.run({"app_name": request.app_name, "app_slug": request.app_slug or "kisanmitralite"})
-    return result.model_dump()
-
-
-@app.post("/api/production-sync-dry-run")
-def production_sync_dry_run(request: RoadmapRequest):
-    agent = KisanMitraProductionSyncAgent()
-    result = agent.run({"app_name": request.app_name, "app_slug": request.app_slug or "kisanmitralite"})
-    return result.model_dump()
-
-
 @app.post("/api/git-readiness")
 def git_readiness(request: RoadmapRequest):
     agent = GitVersioningAgent()
-    result = agent.run({"app_name": request.app_name, "app_slug": request.app_slug or "kisanmitralite"})
+    result = agent.run({"app_name": request.app_name, "app_slug": request.app_slug or "IdeasForgeAI Product"})
     return result.model_dump()
 
 
 @app.post("/api/deployment-readiness")
 def deployment_readiness(request: RoadmapRequest):
     agent = DeploymentReadinessAgent()
-    result = agent.run({"app_name": request.app_name, "app_slug": request.app_slug or "kisanmitralite"})
+    result = agent.run({"app_name": request.app_name, "app_slug": request.app_slug or "IdeasForgeAI Product"})
     return result.model_dump()
 
 
@@ -2283,7 +2267,7 @@ When the user asks for an app, break it into:
 
 Do not expose secrets.
 Do not ask for the OpenAI API key in chat.
-For KisanMitraLite, focus on farmers, FPOs, buyers, farms, crops, mandi deals, weather, accounts, and dashboards.
+For IdeasForgeAI Product, focus on farmers, FPOs, buyers, farms, crops, mandi deals, weather, accounts, and dashboards.
 """
 
     user_context = f"""
@@ -3399,3 +3383,5 @@ async def phase23c_apple_like_visual_qa_score(request: Request):
     except Exception:
         payload = {}
     return get_phase23c_apple_like_visual_qa_score(payload)
+
+
