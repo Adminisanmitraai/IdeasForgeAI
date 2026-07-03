@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca061-module-open-scroll-repair-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca062-connect-card-action-repair-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -65,6 +65,11 @@
           <path d="M128 332 78 282" fill="none" stroke="rgba(56,189,248,.64)" stroke-width="6" stroke-linecap="round"></path>
         </svg>
       </div>
+    </section>
+
+    <section class="action-status-banner" data-action-status-banner aria-live="polite">
+      <strong>Status Banner</strong>
+      <p data-action-status-message>Choose Demo Project to unlock safe preview modules.</p>
     </section>
 
     <section class="coding-agent-grid" aria-label="Coding Agent modules">
@@ -507,6 +512,7 @@
           <span class="option-status">Available as preview only</span>
         </button>
       </div>
+      <p class="connect-option-feedback" data-connect-option-feedback aria-live="polite" hidden></p>
 
       <section class="demo-project-preview" data-demo-preview aria-live="polite">
         <div class="demo-project-preview__header">
@@ -536,6 +542,11 @@
           <span>Git Manager <small>CA-09</small></span>
           <span>Deployment Manager <small>CA-10</small></span>
         </div>
+        <div class="demo-preview-actions">
+          <button class="reader-action-button" type="button" data-demo-open-module="project-reader">Open Project Reader</button>
+          <button class="reader-action-button" type="button" data-demo-open-module="architecture-analyzer">Open Architecture Analyzer</button>
+          <button class="reader-action-button" type="button" data-demo-open-module="code-editor">Open Code Diff Preview</button>
+        </div>
         <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to unlock the safe read-only Project Reader Preview, Architecture Analyzer Preview, and CA-06 diff preview shell. Real project access and write actions stay locked.</p>
         <button class="demo-select-button" type="button" data-demo-select>Select Demo Project</button>
       </section>
@@ -554,6 +565,6 @@
 
   <div class="module-toast" data-module-toast role="status" aria-live="polite" hidden></div>
 
-  <script src="./coding-agent.js?v=ca061-module-open-scroll-repair-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca062-connect-card-action-repair-20260703" defer></script>
 </body>
 </html>

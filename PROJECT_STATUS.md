@@ -12970,3 +12970,15 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-06.1 repair; no deployment settings, secrets, `.env`, backend runtime behavior, or KisanMitraAI files touched.
+
+## Phase CA-06.2 - Connect Project Card Action Repair
+
+Status: Completed locally, validation pending manual browser check.
+
+- Repaired Connect Project card actions so Local Project, GitHub Repository, and Upload ZIP now produce immediate visible preview-only messaging instead of only a selected border state.
+- Added a sticky mobile-visible status banner plus inline connect feedback, stronger active card/chip styling, and exact locked-module phase feedback for Task Planner CA-05, Test Runner CA-07, Auto Fix Engine CA-08, Git Manager CA-09, and Deployment Manager CA-10.
+- Updated Demo Project selection so the card itself unlocks Project Reader Preview, Architecture Analyzer Preview, and Code Editor with Diff Preview, shows the connected chip, adds fallback open buttons, and scrolls to the unlocked module area with offset-safe positioning.
+- Preserved preview-only boundaries: no real file editing from the app, no terminal execution from the app, no Git writes, no deployment actions, no backend project-file reads, and no secrets access.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-06.2 repair; no deployment settings, secrets, `.env`, backend runtime behavior, or KisanMitraAI files touched.

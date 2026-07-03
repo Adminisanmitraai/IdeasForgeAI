@@ -8,6 +8,8 @@ const connectOptions = document.querySelectorAll("[data-connect-option]");
 const demoSelectButton = document.querySelector("[data-demo-select]");
 const connectedChip = document.querySelector("[data-connected-chip]");
 const heroStatus = document.querySelector("[data-workspace-hero-status]");
+const actionStatusBanner = document.querySelector("[data-action-status-banner]");
+const actionStatusMessage = document.querySelector("[data-action-status-message]");
 const projectReaderPreview = document.querySelector("[data-project-reader-preview]");
 const projectReaderDetails = document.querySelector("[data-project-reader-details]");
 const projectReaderToggleButtons = document.querySelectorAll("[data-project-reader-toggle]");
@@ -36,9 +38,11 @@ const codeEditorModuleChip = document.querySelector("[data-module-chip-code-edit
 const moduleChipButtons = document.querySelectorAll("[data-module-chip]");
 const moduleInlineMessage = document.querySelector("[data-module-inline-message]");
 const moduleToast = document.querySelector("[data-module-toast]");
+const connectOptionFeedback = document.querySelector("[data-connect-option-feedback]");
 const demoArchitectureModuleChip = document.querySelector("[data-demo-module-architecture]");
 const demoTaskPlannerModuleChip = document.querySelector("[data-demo-module-task-planner]");
 const demoCodeEditorModuleChip = document.querySelector("[data-demo-module-code-editor]");
+const demoOpenModuleButtons = document.querySelectorAll("[data-demo-open-module]");
 const folderPreviewInput = document.querySelector("[data-folder-preview-input]");
 const folderPreviewLabel = document.querySelector("[data-folder-preview-label]");
 const folderPreviewStatus = document.querySelector("[data-folder-preview-status]");
@@ -90,6 +94,25 @@ const DEMO_DIFF_TEXT = [
   '- closeButton.addEventListener("click", closePanel)',
   '+ backButton.addEventListener("click", returnToStudioChat)',
 ].join("\n");
+const DEFAULT_STATUS_BANNER_MESSAGE = "Choose Demo Project to unlock safe preview modules.";
+const CONNECT_OPTION_MESSAGES = {
+  local: "Local project access is coming later. CA-06 is preview-only and does not read your computer.",
+  github: "GitHub repository connection is coming in CA-09. Current preview does not access GitHub.",
+  zip: "ZIP upload analysis is coming later. Current preview does not upload files.",
+  demo: "Demo Project selected. Project Reader, Architecture Analyzer, and Code Diff Preview are unlocked.",
+};
+const MODULE_OPEN_MESSAGES = {
+  "project-reader": "Opened Project Reader Preview",
+  "architecture-analyzer": "Opened Architecture Analyzer Preview",
+  "code-editor": "Opened Code Editor with Diff Preview",
+};
+const LOCKED_MODULE_MESSAGES = {
+  "CA-05": "Task Planner is coming in CA-05.",
+  "CA-07": "Test Runner is coming in CA-07.",
+  "CA-08": "Auto Fix Engine is coming in CA-08.",
+  "CA-09": "Git Manager is coming in CA-09.",
+  "CA-10": "Deployment Manager is coming in CA-10.",
+};
 const demoProjectReaderData = {
   projectName: "IdeasForgeAI Demo Project",
   modeBadge: "Demo preview",
@@ -314,6 +337,7 @@ const connectionState = {
   diffPreviewApproval: "pending",
   activeModule: null,
   currentReaderData: demoProjectReaderData,
+  statusBannerMessage: DEFAULT_STATUS_BANNER_MESSAGE,
 };
 
 const isLikelyMobilePreview = () =>
@@ -324,6 +348,21 @@ const supportsFolderPreview = () =>
   ("webkitdirectory" in folderPreviewInput || "directory" in folderPreviewInput);
 
 let moduleToastTimeoutId = 0;
+
+const setStatusBannerMessage = (message) => {
+  connectionState.statusBannerMessage = message || DEFAULT_STATUS_BANNER_MESSAGE;
+  if (actionStatusMessage) {
+    actionStatusMessage.textContent = connectionState.statusBannerMessage;
+  }
+};
+
+const setConnectOptionFeedback = (message) => {
+  if (!connectOptionFeedback) {
+    return;
+  }
+  connectOptionFeedback.hidden = !message;
+  connectOptionFeedback.textContent = message || "";
+};
 
 const setModuleChipText = (chip, label, status) => {
   if (!chip) {
@@ -350,11 +389,12 @@ const clearModuleFeedback = () => {
 };
 
 const showLockedModuleFeedback = (phaseCode) => {
-  const message = `Coming in ${phaseCode}. This module is locked for now.`;
+  const message = LOCKED_MODULE_MESSAGES[phaseCode] || `Coming in ${phaseCode}. This module is locked for now.`;
   if (moduleInlineMessage) {
     moduleInlineMessage.hidden = false;
     moduleInlineMessage.textContent = message;
   }
+  setStatusBannerMessage(message);
   if (moduleToast) {
     moduleToast.hidden = false;
     moduleToast.textContent = message;
@@ -398,7 +438,17 @@ const scrollModuleIntoView = (section) => {
   if (!section) {
     return;
   }
-  section.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
+  const stickyOffset = Math.max(
+    112,
+    (document.querySelector(".coding-agent-topbar")?.getBoundingClientRect().height || 0) +
+      (actionStatusBanner?.getBoundingClientRect().height || 0) +
+      36
+  );
+  const targetTop = window.scrollY + section.getBoundingClientRect().top - stickyOffset;
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: getScrollBehavior(),
+  });
 };
 
 const setProjectReaderExpanded = (isExpanded) => {
@@ -437,6 +487,7 @@ const openModulePanel = (moduleName) => {
     setArchitectureExpanded(false);
     setActiveModule(moduleName);
     clearModuleFeedback();
+    setStatusBannerMessage(MODULE_OPEN_MESSAGES[moduleName]);
     scrollModuleIntoView(projectReaderPreview);
     return;
   }
@@ -450,6 +501,7 @@ const openModulePanel = (moduleName) => {
     setArchitectureExpanded(true);
     setActiveModule(moduleName);
     clearModuleFeedback();
+    setStatusBannerMessage(MODULE_OPEN_MESSAGES[moduleName]);
     scrollModuleIntoView(architecturePreview);
     return;
   }
@@ -463,6 +515,7 @@ const openModulePanel = (moduleName) => {
     setArchitectureExpanded(false);
     setActiveModule(moduleName);
     clearModuleFeedback();
+    setStatusBannerMessage(MODULE_OPEN_MESSAGES[moduleName]);
     scrollModuleIntoView(codeEditorPreview);
   }
 };
@@ -921,21 +974,21 @@ const handleConnectOptionSelection = (optionName) => {
     option.classList.toggle("is-selected", option.dataset.connectOption === optionName);
   });
 
+  if (optionName === "local" || optionName === "github" || optionName === "zip") {
+    setConnectOptionFeedback(CONNECT_OPTION_MESSAGES[optionName]);
+    setStatusBannerMessage(CONNECT_OPTION_MESSAGES[optionName]);
+    return;
+  }
+
   if (optionName !== "demo") {
     return;
   }
 
-  connectionState.demoProjectSelected = false;
-  connectionState.browserPreviewSelected = false;
-  connectionState.noProjectConnected = true;
-  connectionState.projectConnectionPreviewReady = true;
-  connectionState.activeModule = null;
-  connectionState.currentReaderData = demoProjectReaderData;
-  clearModuleFeedback();
-  renderConnectionState();
+  selectDemoProject();
 };
 
 const selectDemoProject = () => {
+  setConnectOptionFeedback("");
   connectionState.noProjectConnected = false;
   connectionState.demoProjectSelected = true;
   connectionState.browserPreviewSelected = false;
@@ -946,6 +999,7 @@ const selectDemoProject = () => {
   connectionState.activeModule = "project-reader";
   connectionState.currentReaderData = demoProjectReaderData;
   clearModuleFeedback();
+  setStatusBannerMessage(CONNECT_OPTION_MESSAGES.demo);
   renderConnectionState();
   setProjectReaderExpanded(true);
   setArchitectureExpanded(false);
@@ -984,6 +1038,8 @@ const handleFolderPreviewSelection = (event) => {
   connectionState.activeModule = "project-reader";
   connectionState.currentReaderData = buildBrowserPreviewData(files);
   clearModuleFeedback();
+  setConnectOptionFeedback("");
+  setStatusBannerMessage("Opened Project Reader Preview");
   renderConnectionState();
   setProjectReaderExpanded(true);
   setArchitectureExpanded(false);
@@ -1000,6 +1056,7 @@ const generateSafeDiffPreview = () => {
   connectionState.diffPreviewGenerated = true;
   connectionState.diffPreviewRejected = false;
   connectionState.diffPreviewApproval = "pending";
+  setStatusBannerMessage("Opened Code Editor with Diff Preview");
   renderDiffPreviewState();
   setActiveModule("code-editor");
   window.setTimeout(() => {
@@ -1148,6 +1205,16 @@ demoSelectButton?.addEventListener("click", () => {
   selectDemoProject();
 });
 
+demoOpenModuleButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!connectionState.demoProjectSelected) {
+      selectDemoProject();
+    }
+    openModulePanel(button.dataset.demoOpenModule);
+    renderConnectionState();
+  });
+});
+
 projectReaderToggleButtons.forEach((button) => {
   button.addEventListener("click", () => {
     if (projectReaderPreview?.hidden) {
@@ -1158,6 +1225,7 @@ projectReaderToggleButtons.forEach((button) => {
       setArchitectureExpanded(false);
       setActiveModule("project-reader");
       clearModuleFeedback();
+      setStatusBannerMessage(MODULE_OPEN_MESSAGES["project-reader"]);
       scrollModuleIntoView(projectReaderPreview);
       renderConnectionState();
       return;
@@ -1177,6 +1245,7 @@ architectureToggleButtons.forEach((button) => {
       setProjectReaderExpanded(false);
       setActiveModule("architecture-analyzer");
       clearModuleFeedback();
+      setStatusBannerMessage(MODULE_OPEN_MESSAGES["architecture-analyzer"]);
       scrollModuleIntoView(architecturePreview);
       renderConnectionState();
       return;
