@@ -717,3 +717,4 @@ Frontend rule:
 - SUPABASE_SERVICE_ROLE_KEY must stay server-side only.
 """
 
+
