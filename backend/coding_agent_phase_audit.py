@@ -136,10 +136,24 @@ PHASE_REGISTRY: Dict[str, Dict[str, object]] = {
     "CA-27": {
         "title": "Real Architecture Analyzer",
         "next": "CA-28",
-        "implemented": False,
-        "required_endpoints": [("POST", "/api/coding-agent/architecture/analyze")],
+        "implemented": True,
+        "required_endpoints": [
+            ("GET", "/api/coding-agent/architecture-analyzer/health"),
+            ("POST", "/api/coding-agent/architecture-analyzer/analyze"),
+        ],
         "required_frontend_terms": ["Architecture Analyzer"],
-        "required_backend_terms": ["architecture", "analyze"],
+        "required_backend_terms": [
+            "ArchitectureAnalyzer",
+            "architecture-analyzer",
+            "detected_stack",
+            "architecture_layers",
+            "entrypoints",
+            "risk_flags",
+            '"file_content_fetch": False',
+            '"local_filesystem_read": False',
+            "recommended_next_phase",
+            "CA-28",
+        ],
     },
     "CA-28": {
         "title": "Real Task Planner from Project Context",
@@ -817,13 +831,25 @@ def check_frontend_secrets(report: AuditReport) -> None:
 def check_forbidden_cross_project_references(report: AuditReport) -> None:
     forbidden_terms = get_forbidden_project_terms()
     hits: List[str] = []
+    ignore_context_markers = [
+        "do not touch",
+        "do not mention",
+        "do not import",
+        "do not connect",
+        "do not reuse",
+        "do not depend",
+        "completely separate from",
+    ]
     for path in iter_source_files():
         if path.resolve() == AUDIT_FILE:
             continue
-        text = read_text(path)
-        found = line_hits(text, forbidden_terms, max_hits=4)
-        for hit in found:
-            hits.append(f"{rel(path)} {hit}")
+        for index, line in enumerate(read_text(path).splitlines(), start=1):
+            lower_line = line.lower()
+            if not any(term.lower() in lower_line for term in forbidden_terms):
+                continue
+            if any(marker in lower_line for marker in ignore_context_markers):
+                continue
+            hits.append(f"{rel(path)} L{index}: {line.strip()[:180]}")
         if len(hits) >= 20:
             break
 

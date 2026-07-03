@@ -1921,6 +1921,32 @@ class ProjectIndexerSearchRequest(ProjectIndexerRequest):
     limit: int = Field(default=25, ge=1, le=100)
 
 
+class ArchitectureAnalyzerIndexedEntry(BaseModel):
+    path: str = Field(min_length=1, max_length=800)
+    type: str = Field(default="blob")
+    extension: str = Field(default="")
+    area: str = Field(default="config")
+    folder: str = Field(default="(root)")
+    score: Optional[float] = None
+    reason: Optional[str] = None
+
+
+class ArchitectureAnalyzerSearchResult(BaseModel):
+    path: str = Field(min_length=1, max_length=800)
+    type: str = Field(default="blob")
+    extension: str = Field(default="")
+    area: str = Field(default="config")
+    score: Optional[float] = None
+    reason: Optional[str] = None
+
+
+class ArchitectureAnalyzerRequest(BaseModel):
+    project_id: str = Field(min_length=1, max_length=200)
+    repository_metadata: ProjectIndexerRepositoryMetadata
+    indexed_entries: List[ArchitectureAnalyzerIndexedEntry] = Field(default_factory=list, max_length=5000)
+    search_results: List[ArchitectureAnalyzerSearchResult] = Field(default_factory=list, max_length=500)
+
+
 def _ca25_parse_public_github_repo(repo_url: str) -> Dict[str, str]:
     import re as _re
 
@@ -2268,6 +2294,230 @@ def _ca26_build_search_results(index_data: Dict[str, Any], query: str, limit: in
     return ranked_results[:limit]
 
 
+def _ca27_unique_preserve(items: List[str]) -> List[str]:
+    seen = set()
+    ordered: List[str] = []
+    for item in items:
+        if not item or item in seen:
+            continue
+        seen.add(item)
+        ordered.append(item)
+    return ordered
+
+
+def _ca27_matches_name(path_value: str, names: set[str]) -> bool:
+    normalized_parts = [part.lower() for part in path_value.replace("\\", "/").split("/") if part]
+    if not normalized_parts:
+        return False
+    file_name = normalized_parts[-1]
+    if file_name in names:
+        return True
+    return any(part in names for part in normalized_parts[:-1])
+
+
+def _ca27_build_architecture_analysis(request: ArchitectureAnalyzerRequest) -> Dict[str, Any]:
+    entries = [entry.model_dump() for entry in request.indexed_entries]
+    paths = [str(entry.get("path", "")).replace("\\", "/") for entry in entries if entry.get("path")]
+    lower_paths = [path.lower() for path in paths]
+    path_set = set(lower_paths)
+    extensions = {str(entry.get("extension") or "").lower() for entry in entries}
+    areas = {str(entry.get("area") or "config").lower() for entry in entries}
+
+    has_python_backend = any(path.endswith(".py") for path in lower_paths) or "backend" in areas
+    has_static_frontend = any(path.endswith((".html", ".css", ".js")) for path in lower_paths) or "frontend" in areas or "pages" in areas
+    has_javascript_frontend = any(path.endswith(".js") for path in lower_paths)
+    has_docs_prompts = "docs" in areas or any(path.startswith("docs/") or path.startswith("prompts/") for path in lower_paths)
+    has_api_layer = any("/api/" in path or path.startswith("backend/api/") or path.startswith("api/") for path in lower_paths) or "api" in areas
+    config_file_names = {
+        "package.json",
+        "requirements.txt",
+        "pyproject.toml",
+        "render.yaml",
+        ".env.example",
+        "vite.config.js",
+        "vite.config.ts",
+        "tsconfig.json",
+    }
+    has_config_layer = any(_ca27_matches_name(path, config_file_names) for path in lower_paths) or "config" in areas
+
+    detected_stack: List[str] = []
+    if has_python_backend:
+        detected_stack.append("Python backend")
+    if has_static_frontend:
+        detected_stack.append("Static frontend")
+    if has_javascript_frontend:
+        detected_stack.append("JavaScript frontend")
+    if has_docs_prompts:
+        detected_stack.append("Docs/prompts layer")
+    if has_api_layer:
+        detected_stack.append("API layer")
+    if has_config_layer:
+        detected_stack.append("Config layer")
+
+    def area_paths(area_name: str) -> List[str]:
+        return [path for path, entry in zip(paths, entries) if str(entry.get("area") or "").lower() == area_name]
+
+    frontend_paths = [path for path in paths if str(path).lower().endswith((".html", ".css", ".js")) or "/frontend/" in str(path).lower() or str(path).lower().startswith("frontend/")]
+    backend_paths = [path for path in paths if str(path).lower().endswith(".py") or str(path).lower().startswith("backend/")]
+    api_paths = [path for path in paths if "/api/" in str(path).lower() or str(path).lower().startswith("backend/api/") or str(path).lower().startswith("api/")]
+    scripts_paths = area_paths("scripts")
+    docs_paths = [path for path in paths if str(path).lower().startswith("docs/") or str(path).lower().startswith("prompts/")]
+    config_paths = [path for path in paths if _ca27_matches_name(path, config_file_names) or str(path).lower().startswith("config/")]
+    test_paths = [path for path in paths if "/test" in str(path).lower() or "/tests" in str(path).lower() or str(path).lower().startswith("tests/") or str(path).lower().endswith("_test.py") or str(path).lower().endswith("test.py")]
+
+    architecture_layers = []
+    if frontend_paths:
+        architecture_layers.append(
+            {
+                "name": "frontend",
+                "description": "Frontend presentation layer inferred from HTML, CSS, and JavaScript metadata.",
+                "entry_count": len(frontend_paths),
+                "sample_paths": frontend_paths[:6],
+            }
+        )
+    if backend_paths:
+        architecture_layers.append(
+            {
+                "name": "backend",
+                "description": "Backend application layer inferred from Python files and backend folders.",
+                "entry_count": len(backend_paths),
+                "sample_paths": backend_paths[:6],
+            }
+        )
+    if api_paths:
+        architecture_layers.append(
+            {
+                "name": "api",
+                "description": "API layer inferred from api folder metadata and route-related paths.",
+                "entry_count": len(api_paths),
+                "sample_paths": api_paths[:6],
+            }
+        )
+    if scripts_paths:
+        architecture_layers.append(
+            {
+                "name": "scripts",
+                "description": "Support scripts inferred from script-area metadata.",
+                "entry_count": len(scripts_paths),
+                "sample_paths": scripts_paths[:6],
+            }
+        )
+    if docs_paths:
+        architecture_layers.append(
+            {
+                "name": "docs-prompts",
+                "description": "Documentation and prompt layer inferred from docs and prompts folders.",
+                "entry_count": len(docs_paths),
+                "sample_paths": docs_paths[:6],
+            }
+        )
+    if config_paths:
+        architecture_layers.append(
+            {
+                "name": "config",
+                "description": "Configuration layer inferred from package, requirements, environment example, and build config files.",
+                "entry_count": len(config_paths),
+                "sample_paths": config_paths[:6],
+            }
+        )
+
+    frontend_entrypoints = [path for path in frontend_paths if path.lower().endswith(("index.html", "studio-v4.html", "coding-agent.html", "app.js", "main.js"))]
+    backend_entrypoints = [path for path in backend_paths if path.lower().endswith(("main.py", "app.py"))]
+    api_entrypoints = [path for path in api_paths if path.lower().endswith(("__init__.py", "health.py", "main.py"))]
+
+    search_result_paths = _ca27_unique_preserve([result.path for result in request.search_results if result.path])
+    api_surface_guess = _ca27_unique_preserve(
+        [path for path in api_paths if any(token in path.lower() for token in ("api/", "/api/", "router", "health"))]
+    )[:12]
+
+    data_config_files = _ca27_unique_preserve(config_paths)[:20]
+    test_quality_files = _ca27_unique_preserve(test_paths)[:20]
+    docs_and_prompts = {
+        "docs": [path for path in docs_paths if path.lower().startswith("docs/")][:12],
+        "prompts": [path for path in docs_paths if path.lower().startswith("prompts/")][:12],
+        "search_context_paths": search_result_paths[:12],
+    }
+
+    risk_flags: List[Dict[str, Any]] = []
+    if not test_paths:
+        risk_flags.append(
+            {
+                "flag": "missing tests",
+                "reason": "No metadata paths suggested tests or test folders.",
+                "evidence": [],
+            }
+        )
+    if not config_paths:
+        risk_flags.append(
+            {
+                "flag": "missing config",
+                "reason": "No configuration metadata files were detected.",
+                "evidence": [],
+            }
+        )
+    if not any(path.lower().endswith("package.json") for path in lower_paths):
+        risk_flags.append(
+            {
+                "flag": "no package manifest detected",
+                "reason": "No package.json metadata path was present.",
+                "evidence": [],
+            }
+        )
+    if not backend_entrypoints:
+        risk_flags.append(
+            {
+                "flag": "no backend entrypoint detected",
+                "reason": "No backend metadata path matched main.py or app.py.",
+                "evidence": backend_paths[:3],
+            }
+        )
+    if not frontend_entrypoints:
+        risk_flags.append(
+            {
+                "flag": "no frontend entrypoint detected",
+                "reason": "No frontend metadata path matched index.html, studio-v4.html, coding-agent.html, app.js, or main.js.",
+                "evidence": frontend_paths[:3],
+            }
+        )
+
+    return {
+        "ok": True,
+        "status": "architecture-analyzer-ready",
+        "mode": "architecture-analyzer",
+        "feature": "ArchitectureAnalyzer",
+        "project_id": request.project_id.strip(),
+        "repository_metadata": request.repository_metadata.model_dump(),
+        "detected_stack": detected_stack,
+        "architecture_layers": architecture_layers,
+        "entrypoints": {
+            "frontend": frontend_entrypoints[:8],
+            "backend": backend_entrypoints[:8],
+            "api": api_entrypoints[:8],
+        },
+        "frontend_structure": {
+            "files": frontend_paths[:20],
+            "areas_detected": sorted({"frontend", "pages"} & areas),
+            "entry_count": len(frontend_paths),
+        },
+        "backend_structure": {
+            "files": backend_paths[:20],
+            "areas_detected": sorted({"backend", "api"} & areas),
+            "entry_count": len(backend_paths),
+        },
+        "api_surface_guess": api_surface_guess,
+        "data_config_files": data_config_files,
+        "test_quality_files": test_quality_files,
+        "docs_and_prompts": docs_and_prompts,
+        "risk_flags": risk_flags,
+        "recommended_next_phase": {
+            "phase": "CA-28",
+            "title": "Real Task Planner from Project Context",
+        },
+        "safety": _ca26_safety_flags(),
+        **_ca26_safety_flags(),
+    }
+
+
 @app.get("/api/coding-agent/github-public-reader/health")
 def coding_agent_github_public_reader_health():
     return {
@@ -2396,6 +2646,23 @@ def coding_agent_project_indexer_search(request: ProjectIndexerSearchRequest):
         "safety": _ca26_safety_flags(),
         **_ca26_safety_flags(),
     }
+
+
+@app.get("/api/coding-agent/architecture-analyzer/health")
+def coding_agent_architecture_analyzer_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-architecture-analyzer",
+        "mode": "architecture-analyzer",
+        "detected_stack": "metadata-only-preview",
+        "recommended_next_phase": "CA-28",
+        **_ca26_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/architecture-analyzer/analyze")
+def coding_agent_architecture_analyzer_analyze(request: ArchitectureAnalyzerRequest):
+    return _ca27_build_architecture_analysis(request)
 
 
 

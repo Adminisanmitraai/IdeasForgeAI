@@ -1,4 +1,31 @@
 ﻿# IdeasForgeAI Project Status
+## Phase CA-27 - Real Architecture Analyzer
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Real Architecture Analyzer for Coding Agent.
+- Analyzes project structure from CA-26 indexed metadata.
+- Detects frontend, backend, API, scripts, docs, prompts, config, tests, and generated-output areas from metadata only.
+- Produces deterministic architecture layers, entrypoints, stack hints, risk flags, and next-phase guidance.
+- Does not fetch file contents.
+- Does not clone repositories.
+- Does not read local filesystem.
+- Does not write files.
+- Does not run terminal or Git commands.
+- Does not deploy or rollback.
+- Does not expose frontend tokens or secrets.
+- Normal users remain preview/analyze-only.
+- Founder/Admin approval remains required for future protected apply/export/Git/deploy flows.
+
+Validation commands:
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-27
+
+NEXT AFTER: CA-28 - Real Task Planner from Project Context
+
 ## Phase CA-26 - Project Indexer + File Search
 
 Status: Completed locally, validation required before deploy.
