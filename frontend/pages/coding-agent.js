@@ -33,6 +33,9 @@ const diffFeedback = document.querySelector("[data-diff-feedback]");
 const architectureModuleChip = document.querySelector("[data-module-chip-architecture]");
 const projectReaderModuleChip = document.querySelector("[data-module-chip-project-reader]");
 const codeEditorModuleChip = document.querySelector("[data-module-chip-code-editor]");
+const moduleChipButtons = document.querySelectorAll("[data-module-chip]");
+const moduleInlineMessage = document.querySelector("[data-module-inline-message]");
+const moduleToast = document.querySelector("[data-module-toast]");
 const demoArchitectureModuleChip = document.querySelector("[data-demo-module-architecture]");
 const demoTaskPlannerModuleChip = document.querySelector("[data-demo-module-task-planner]");
 const demoCodeEditorModuleChip = document.querySelector("[data-demo-module-code-editor]");
@@ -284,9 +287,9 @@ const demoArchitectureData = {
   ],
   safety: [
     {
-      label: "Architecture Analyzer is read-only in CA-04",
+      label: "Architecture Analyzer stays read-only in CA-06",
       title: "Safety card",
-      description: "This preview explains structure only and does not unlock project mutation.",
+      description: "This preview explains structure only and does not unlock project mutation or real editor actions.",
       items: [
         "No file edits",
         "No terminal commands",
@@ -309,6 +312,7 @@ const connectionState = {
   diffPreviewGenerated: false,
   diffPreviewRejected: false,
   diffPreviewApproval: "pending",
+  activeModule: null,
   currentReaderData: demoProjectReaderData,
 };
 
@@ -318,6 +322,84 @@ const isLikelyMobilePreview = () =>
 const supportsFolderPreview = () =>
   Boolean(folderPreviewInput) &&
   ("webkitdirectory" in folderPreviewInput || "directory" in folderPreviewInput);
+
+let moduleToastTimeoutId = 0;
+
+const setModuleChipText = (chip, label, status) => {
+  if (!chip) {
+    return;
+  }
+
+  chip.innerHTML = `<span>${label}</span><small>${status}</small>`;
+};
+
+const clearModuleFeedback = () => {
+  if (moduleInlineMessage) {
+    moduleInlineMessage.hidden = true;
+    moduleInlineMessage.textContent = "";
+  }
+  if (moduleToast) {
+    moduleToast.hidden = true;
+    moduleToast.classList.remove("is-visible");
+    moduleToast.textContent = "";
+  }
+  if (moduleToastTimeoutId) {
+    window.clearTimeout(moduleToastTimeoutId);
+    moduleToastTimeoutId = 0;
+  }
+};
+
+const showLockedModuleFeedback = (phaseCode) => {
+  const message = `Coming in ${phaseCode}. This module is locked for now.`;
+  if (moduleInlineMessage) {
+    moduleInlineMessage.hidden = false;
+    moduleInlineMessage.textContent = message;
+  }
+  if (moduleToast) {
+    moduleToast.hidden = false;
+    moduleToast.textContent = message;
+    window.requestAnimationFrame(() => {
+      moduleToast.classList.add("is-visible");
+    });
+    if (moduleToastTimeoutId) {
+      window.clearTimeout(moduleToastTimeoutId);
+    }
+    moduleToastTimeoutId = window.setTimeout(() => {
+      moduleToast?.classList.remove("is-visible");
+      window.setTimeout(() => {
+        if (moduleToast) {
+          moduleToast.hidden = true;
+        }
+      }, 180);
+    }, 2200);
+  }
+};
+
+const moduleSections = {
+  "project-reader": projectReaderPreview,
+  "architecture-analyzer": architecturePreview,
+  "code-editor": codeEditorPreview,
+};
+
+const setActiveModule = (moduleName) => {
+  connectionState.activeModule = moduleName;
+  moduleChipButtons.forEach((button) => {
+    const isActive = button.dataset.moduleNav === moduleName;
+    button.setAttribute("aria-pressed", String(isActive));
+  });
+  Object.entries(moduleSections).forEach(([key, section]) => {
+    section?.classList.toggle("is-module-active", key === moduleName);
+  });
+};
+
+const getScrollBehavior = () => (prefersReducedMotion() ? "auto" : "smooth");
+
+const scrollModuleIntoView = (section) => {
+  if (!section) {
+    return;
+  }
+  section.scrollIntoView({ behavior: getScrollBehavior(), block: "start" });
+};
 
 const setProjectReaderExpanded = (isExpanded) => {
   connectionState.projectReaderExpanded = isExpanded;
@@ -343,6 +425,46 @@ const setArchitectureExpanded = (isExpanded) => {
       button.textContent = isExpanded ? "Hide Preview" : "Open Preview";
     }
   });
+};
+
+const openModulePanel = (moduleName) => {
+  if (moduleName === "project-reader") {
+    if (projectReaderPreview?.hidden) {
+      showLockedModuleFeedback("CA-03");
+      return;
+    }
+    setProjectReaderExpanded(true);
+    setArchitectureExpanded(false);
+    setActiveModule(moduleName);
+    clearModuleFeedback();
+    scrollModuleIntoView(projectReaderPreview);
+    return;
+  }
+
+  if (moduleName === "architecture-analyzer") {
+    if (architecturePreview?.hidden) {
+      showLockedModuleFeedback("CA-04");
+      return;
+    }
+    setProjectReaderExpanded(false);
+    setArchitectureExpanded(true);
+    setActiveModule(moduleName);
+    clearModuleFeedback();
+    scrollModuleIntoView(architecturePreview);
+    return;
+  }
+
+  if (moduleName === "code-editor") {
+    if (codeEditorPreview?.hidden) {
+      showLockedModuleFeedback("CA-06");
+      return;
+    }
+    setProjectReaderExpanded(false);
+    setArchitectureExpanded(false);
+    setActiveModule(moduleName);
+    clearModuleFeedback();
+    scrollModuleIntoView(codeEditorPreview);
+  }
 };
 
 const createSummaryItemMarkup = (item) =>
@@ -442,6 +564,10 @@ const renderDiffPreviewState = () => {
   const isVisible = isUnlocked;
   const hasPreview = isUnlocked && connectionState.diffPreviewGenerated && !connectionState.diffPreviewRejected;
 
+  if (!isVisible && connectionState.activeModule === "code-editor") {
+    connectionState.activeModule = null;
+  }
+
   if (codeEditorPreview) {
     codeEditorPreview.hidden = !isVisible;
   }
@@ -465,9 +591,7 @@ const renderDiffPreviewState = () => {
   }
 
   if (codeEditorModuleChip) {
-    codeEditorModuleChip.innerHTML = isUnlocked
-      ? "Code Editor with Diff <small>CA-06 Preview</small>"
-      : "Code Editor with Diff <small>CA-06 Preview</small>";
+    setModuleChipText(codeEditorModuleChip, "Code Editor with Diff", connectionState.activeModule === "code-editor" ? "Open" : "CA-06 Preview");
   }
 
   if (demoTaskPlannerModuleChip) {
@@ -713,6 +837,9 @@ const renderConnectionState = () => {
   if (projectReaderPreview) {
     projectReaderPreview.hidden = !hasReaderPreview;
   }
+  if (!hasReaderPreview && connectionState.activeModule === "project-reader") {
+    connectionState.activeModule = null;
+  }
   if (hasReaderPreview) {
     renderProjectReader();
   } else {
@@ -722,19 +849,26 @@ const renderConnectionState = () => {
   if (architecturePreview) {
     architecturePreview.hidden = !hasArchitecturePreview;
   }
+  if (!hasArchitecturePreview && connectionState.activeModule === "architecture-analyzer") {
+    connectionState.activeModule = null;
+  }
   if (architectureStatus) {
     architectureStatus.textContent = hasArchitecturePreview ? "Preview Unlocked" : initialArchitectureStatus;
     architectureStatus.classList.toggle("workspace-status-badge--locked", !hasArchitecturePreview);
   }
   if (architectureModuleChip) {
-    architectureModuleChip.innerHTML = hasArchitecturePreview
-      ? "Architecture Analyzer <small>Preview Unlocked</small>"
-      : "Architecture Analyzer <small>CA-04</small>";
+    setModuleChipText(
+      architectureModuleChip,
+      "Architecture Analyzer",
+      connectionState.activeModule === "architecture-analyzer" ? "Open" : hasArchitecturePreview ? "Preview Unlocked" : "CA-04"
+    );
   }
   if (projectReaderModuleChip) {
-    projectReaderModuleChip.innerHTML = hasReaderPreview
-      ? "Project Reader Preview <small>Unlocked</small>"
-      : "Project Reader Preview <small>Locked</small>";
+    setModuleChipText(
+      projectReaderModuleChip,
+      "Project Reader Preview",
+      connectionState.activeModule === "project-reader" ? "Open" : hasReaderPreview ? "Unlocked" : "Locked"
+    );
   }
   if (demoArchitectureModuleChip) {
     demoArchitectureModuleChip.innerHTML = hasArchitecturePreview
@@ -759,6 +893,8 @@ const renderConnectionState = () => {
       ? "Demo Project Selected"
       : initialConnectButtonLabel;
   }
+
+  setActiveModule(connectionState.activeModule);
 };
 
 const setConnectModalOpen = (isOpen) => {
@@ -793,7 +929,9 @@ const handleConnectOptionSelection = (optionName) => {
   connectionState.browserPreviewSelected = false;
   connectionState.noProjectConnected = true;
   connectionState.projectConnectionPreviewReady = true;
+  connectionState.activeModule = null;
   connectionState.currentReaderData = demoProjectReaderData;
+  clearModuleFeedback();
   renderConnectionState();
 };
 
@@ -805,11 +943,14 @@ const selectDemoProject = () => {
   connectionState.diffPreviewGenerated = false;
   connectionState.diffPreviewRejected = false;
   connectionState.diffPreviewApproval = "pending";
+  connectionState.activeModule = "project-reader";
   connectionState.currentReaderData = demoProjectReaderData;
+  clearModuleFeedback();
   renderConnectionState();
   setProjectReaderExpanded(true);
-  setArchitectureExpanded(true);
+  setArchitectureExpanded(false);
   setConnectModalOpen(false);
+  scrollModuleIntoView(projectReaderPreview);
 };
 
 const setFolderPreviewAvailability = () => {
@@ -840,10 +981,14 @@ const handleFolderPreviewSelection = (event) => {
   connectionState.diffPreviewGenerated = false;
   connectionState.diffPreviewRejected = false;
   connectionState.diffPreviewApproval = "pending";
+  connectionState.activeModule = "project-reader";
   connectionState.currentReaderData = buildBrowserPreviewData(files);
+  clearModuleFeedback();
   renderConnectionState();
   setProjectReaderExpanded(true);
+  setArchitectureExpanded(false);
   folderPreviewStatus.textContent = "Preview loaded";
+  scrollModuleIntoView(projectReaderPreview);
   event.target.value = "";
 };
 
@@ -856,6 +1001,10 @@ const generateSafeDiffPreview = () => {
   connectionState.diffPreviewRejected = false;
   connectionState.diffPreviewApproval = "pending";
   renderDiffPreviewState();
+  setActiveModule("code-editor");
+  window.setTimeout(() => {
+    scrollModuleIntoView(codeEditorResults?.hidden ? codeEditorPreview : codeEditorResults);
+  }, 20);
 };
 
 const approveDiffLater = () => {
@@ -1005,6 +1154,16 @@ projectReaderToggleButtons.forEach((button) => {
       return;
     }
     setProjectReaderExpanded(!connectionState.projectReaderExpanded);
+    if (!projectReaderDetails?.hidden) {
+      setArchitectureExpanded(false);
+      setActiveModule("project-reader");
+      clearModuleFeedback();
+      scrollModuleIntoView(projectReaderPreview);
+      renderConnectionState();
+      return;
+    }
+    connectionState.activeModule = null;
+    renderConnectionState();
   });
 });
 
@@ -1014,6 +1173,34 @@ architectureToggleButtons.forEach((button) => {
       return;
     }
     setArchitectureExpanded(!connectionState.architecturePreviewExpanded);
+    if (!architectureDetails?.hidden) {
+      setProjectReaderExpanded(false);
+      setActiveModule("architecture-analyzer");
+      clearModuleFeedback();
+      scrollModuleIntoView(architecturePreview);
+      renderConnectionState();
+      return;
+    }
+    connectionState.activeModule = null;
+    renderConnectionState();
+  });
+});
+
+moduleChipButtons.forEach((button) => {
+  button.setAttribute("aria-pressed", "false");
+  button.addEventListener("click", () => {
+    const moduleName = button.dataset.moduleNav;
+    const lockedPhase = button.dataset.moduleLock;
+
+    if (moduleName) {
+      openModulePanel(moduleName);
+      renderConnectionState();
+      return;
+    }
+
+    if (lockedPhase) {
+      showLockedModuleFeedback(lockedPhase);
+    }
   });
 });
 

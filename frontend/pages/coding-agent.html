@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=6-code-editor-diff-preview-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca061-module-open-scroll-repair-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -112,7 +112,7 @@
       </article>
     </section>
 
-    <section class="project-reader-preview" data-project-reader-preview hidden aria-labelledby="project-reader-title">
+    <section class="project-reader-preview" id="project-reader-panel" data-project-reader-preview hidden aria-labelledby="project-reader-title" data-module-panel="project-reader">
       <div class="project-reader-preview__header">
         <div>
           <span class="eyebrow">Safe read-only workspace</span>
@@ -203,7 +203,7 @@
       </div>
     </section>
 
-    <section class="architecture-analyzer-preview" data-architecture-preview hidden aria-labelledby="architecture-analyzer-title">
+    <section class="architecture-analyzer-preview" id="architecture-panel" data-architecture-preview hidden aria-labelledby="architecture-analyzer-title" data-module-panel="architecture-analyzer">
       <div class="architecture-analyzer-preview__header">
         <div>
           <span class="eyebrow">Safe read-only architecture view</span>
@@ -283,14 +283,14 @@
         <article class="reader-detail-card">
           <div class="reader-detail-card__header">
             <strong>Safety Boundaries</strong>
-            <span class="workspace-status-badge">CA-04 read-only</span>
+            <span class="workspace-status-badge">CA-06 read-only</span>
           </div>
           <div class="safety-card-list" data-architecture-safety-list></div>
         </article>
       </div>
     </section>
 
-    <section class="code-editor-preview" data-code-editor-preview hidden aria-labelledby="code-editor-title">
+    <section class="code-editor-preview" id="code-editor-panel" data-code-editor-preview hidden aria-labelledby="code-editor-title" data-module-panel="code-editor">
       <div class="code-editor-preview__header">
         <div>
           <span class="eyebrow">Safe preview-only code review</span>
@@ -431,17 +431,43 @@
       <div class="future-modules__header">
         <span class="eyebrow">Reserved placeholders</span>
         <h2>Future module map</h2>
+        <p class="future-modules__copy">Open unlocked previews directly from here. Locked modules show their upcoming phase.</p>
       </div>
       <div class="future-modules__chips">
-        <span data-module-chip data-module-chip-project-reader>Project Reader Preview <small>Locked</small></span>
-        <span data-module-chip data-module-chip-architecture>Architecture Analyzer <small>CA-04</small></span>
-        <span data-module-chip>Task Planner <small>CA-05</small></span>
-        <span data-module-chip data-module-chip-code-editor>Code Editor with Diff <small>CA-06 Preview</small></span>
-        <span data-module-chip>Test Runner <small>CA-07</small></span>
-        <span data-module-chip>Auto Fix Engine <small>CA-08</small></span>
-        <span data-module-chip>Git Manager <small>CA-09</small></span>
-        <span data-module-chip>Deployment Manager <small>CA-10</small></span>
+        <button class="module-chip-button" type="button" data-module-chip data-module-chip-project-reader data-module-nav="project-reader">
+          <span>Project Reader Preview</span>
+          <small>Locked</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-chip-architecture data-module-nav="architecture-analyzer">
+          <span>Architecture Analyzer</span>
+          <small>CA-04</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-05">
+          <span>Task Planner</span>
+          <small>CA-05</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-chip-code-editor data-module-nav="code-editor">
+          <span>Code Editor with Diff</span>
+          <small>CA-06 Preview</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-07">
+          <span>Test Runner</span>
+          <small>CA-07</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-08">
+          <span>Auto Fix Engine</span>
+          <small>CA-08</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-09">
+          <span>Git Manager</span>
+          <small>CA-09</small>
+        </button>
+        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-10">
+          <span>Deployment Manager</span>
+          <small>CA-10</small>
+        </button>
       </div>
+      <p class="module-inline-message" data-module-inline-message aria-live="polite" hidden></p>
       <button class="bottom-cta" type="button" data-connect-project-trigger>Connect Project</button>
     </section>
   </main>
@@ -463,7 +489,7 @@
         <button class="connect-option" type="button" data-connect-option="local">
           <strong>Local Project</strong>
           <p>Connect a local project folder from your computer.</p>
-          <span class="option-status">Coming in CA-03</span>
+          <span class="option-status">Real access coming later</span>
         </button>
         <button class="connect-option" type="button" data-connect-option="github">
           <strong>GitHub Repository</strong>
@@ -517,15 +543,17 @@
       <section class="safety-notice" aria-label="Safety notice">
         <strong>Coding Agent will not edit code, run terminal commands, write Git changes, deploy, or access secrets without your approval.</strong>
         <ul>
-          <li>Read-only preview only in CA-04</li>
-          <li>No terminal commands in CA-04</li>
-          <li>No Git writes in CA-04</li>
-          <li>No deployment actions in CA-04</li>
+          <li>Read-only preview only in CA-06</li>
+          <li>No terminal commands in CA-06</li>
+          <li>No Git writes in CA-06</li>
+          <li>No deployment actions in CA-06</li>
         </ul>
       </section>
     </section>
   </div>
 
-  <script src="./coding-agent.js?v=6-code-editor-diff-preview-20260703" defer></script>
+  <div class="module-toast" data-module-toast role="status" aria-live="polite" hidden></div>
+
+  <script src="./coding-agent.js?v=ca061-module-open-scroll-repair-20260703" defer></script>
 </body>
 </html>
