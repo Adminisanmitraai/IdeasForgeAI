@@ -3032,4 +3032,56 @@ a:focus-visible {
   }
 }
 
+/* Phase CA-19 - Real Deployment Approval Flow */
+.deployment-ca19-card {
+  border-color: rgba(34, 211, 238, .34);
+  background:
+    radial-gradient(circle at 18% 0%, rgba(34, 211, 238, .16), transparent 34%),
+    linear-gradient(135deg, rgba(15, 23, 42, .94), rgba(30, 27, 75, .78));
+}
+
+.deployment-target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.deployment-target-card {
+  border: 1px solid rgba(196, 181, 253, .18);
+  border-radius: 18px;
+  padding: 16px;
+  background: rgba(3, 7, 18, .42);
+}
+
+.deployment-target-card strong {
+  display: block;
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+
+.deployment-target-card span {
+  display: inline-flex;
+  border: 1px solid rgba(34, 211, 238, .32);
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: #bae6fd;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.deployment-target-card p {
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, .72);
+}
+
+@media (max-width: 640px) {
+  .deployment-target-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 

@@ -858,6 +858,142 @@ def coding_agent_github_preview(request: GitHubIntegrationPreviewRequest):
 
 
 
+
+
+# Phase CA-19 - Real Deployment Approval Flow.
+# Preview-only deployment approval planning. No Render API calls, no GitHub deploy actions,
+# no DNS changes, no production promotion, no rollback, no tokens, and no secrets access.
+class DeploymentApprovalPreviewRequest(BaseModel):
+    project_id: str = Field(default="ideasforgeai-demo")
+    proposal_id: str = Field(default="demo-task-planner-fix")
+    target_environment: str = Field(default="preview")
+    mode: str = Field(default="deployment-approval-preview")
+
+
+def _safe_deployment_environment(value: str) -> str:
+    env = (value or "preview").strip().lower()
+    allowed = {"preview", "staging", "production"}
+    return env if env in allowed else "preview"
+
+
+def _build_deployment_approval_preview(request: DeploymentApprovalPreviewRequest) -> Dict[str, Any]:
+    target = _safe_deployment_environment(request.target_environment)
+    return {
+        "ok": True,
+        "status": "deployment-preview-ready",
+        "mode": "deployment-approval-preview",
+        "project_id": request.project_id or "ideasforgeai-demo",
+        "proposal_id": request.proposal_id or "demo-task-planner-fix",
+        "target_environment": target,
+        "deployment_summary": {
+            "title": "Founder/Admin deployment approval flow",
+            "summary": "Prepare deployment review, validation gates, rollback planning, and production approval before any real deployment action is enabled.",
+            "real_deployment": False,
+        },
+        "approval_flow": [
+            "Review protected code proposal",
+            "Confirm affected files and risk level",
+            "Run approved validation checks",
+            "Verify no secrets or deployment settings changed",
+            "Create rollback plan",
+            "Request Founder/Admin deployment approval",
+            "Deploy only after authenticated backend permission exists",
+            "Monitor health after deployment",
+        ],
+        "deployment_targets": [
+            {
+                "name": "Preview",
+                "status": "planned-only",
+                "description": "Safe preview/staging review before production.",
+            },
+            {
+                "name": "Production",
+                "status": "locked",
+                "description": "Production deploy requires Founder/Admin authentication and explicit approval.",
+            },
+        ],
+        "validation_gates": [
+            "node --check frontend/pages/coding-agent.js",
+            "node --check frontend/pages/studio-v4.js",
+            "python backend/sector_qa_runner.py",
+            "Manual mobile Safari test",
+            "Manual desktop browser test",
+            "Backend health check",
+        ],
+        "rollback_plan": [
+            "Keep last stable Git commit reference",
+            "Keep previous deployment available for rollback",
+            "Verify health before and after deploy",
+            "Stop rollout if validation fails",
+            "Rollback only with Founder/Admin approval",
+        ],
+        "locked_actions": [
+            "Deploy to preview",
+            "Deploy to production",
+            "Promote staging to production",
+            "Rollback deployment",
+            "Change DNS",
+            "Read Render token",
+            "Read GitHub token",
+            "Trigger Render API",
+        ],
+        "approval_gate": {
+            "required": True,
+            "role": "Founder/Admin",
+            "message": "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
+        },
+        "audit_preview": [
+            "Deployment flow preview opened — allowed",
+            "Deployment approval requested — recorded",
+            "Render API call — blocked",
+            "GitHub deploy action — blocked",
+            "Production promotion — blocked",
+            "Rollback — blocked",
+            "DNS change — blocked",
+            "Secrets access — blocked",
+        ],
+        "safety": {
+            "render_api_calls": False,
+            "github_api_calls": False,
+            "deployment_token_in_frontend": False,
+            "deployment_token_in_response": False,
+            "git_commands": False,
+            "file_write": False,
+            "deploy": False,
+            "rollback": False,
+            "dns_change": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/deployment/health")
+def coding_agent_deployment_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-deployment-approval",
+        "mode": "deployment-approval-preview",
+        "real_deployment": False,
+        "render_api_calls": False,
+        "github_api_calls": False,
+        "tokens_required": False,
+    }
+
+
+@app.post("/api/coding-agent/deployment/preview")
+def coding_agent_deployment_preview(request: DeploymentApprovalPreviewRequest):
+    return _build_deployment_approval_preview(request)
+
+
+@app.post("/api/coding-agent/deployment/request-approval")
+def coding_agent_deployment_request_approval(request: DeploymentApprovalPreviewRequest):
+    payload = _build_deployment_approval_preview(request)
+    payload["status"] = "approval-request-recorded"
+    payload["message"] = "Deployment approval request recorded in preview mode. No deployment, rollback, GitHub, Render, DNS, or secrets action was performed."
+    return payload
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}
