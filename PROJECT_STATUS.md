@@ -12918,3 +12918,17 @@ Status: Completed locally, validation pending manual browser check.
 - Added mobile-safe swipe-right handling on the Coding Agent page with horizontal-vs-vertical gesture checks, interactive-element ignore rules, and a static-safe return target.
 - Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Safety notes: frontend-only navigation fix; no backend, deployment settings, secrets, `.env`, external services, or KisanMitraAI files touched.
+
+## Phase CA-03 - Project Reader Preview
+
+Status: Completed locally, validation pending.
+
+- Added a frontend-only Project Reader Preview panel to the Coding Agent workspace with Project Tree, Stack Summary, Key Files, Module Map, File Type Summary, and Safety Boundaries cards.
+- Added a realistic IdeasForgeAI Demo Project reader with static project tree data, stack overview, safe file counts, key files, and locked future modules for CA-04 through CA-10.
+- Added optional browser-only folder preview support that reads selected folder names, file names, extensions, and approximate counts client-side only, with mobile-safe fallback messaging when folder selection is unreliable.
+- Preserved read-only behavior: no code editing, no terminal execution, no Git writes, no deployment actions, no secrets access, no backend file reading, and no project file upload.
+- Preserved Coding Agent back button and swipe-right navigation back to ./studio-v4.html; existing Studio V4 chat flow remains unchanged.
+- Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-03 preview work; no deployment settings, secrets, .env, Render config, backend runtime behavior, or KisanMitraAI files touched.
+
