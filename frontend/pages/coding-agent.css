@@ -291,7 +291,7 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 
 .coding-agent-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -330,6 +330,12 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   color: var(--purple-soft);
 }
 
+.workspace-status-badge--locked {
+  color: #f5d38d;
+  border-color: rgba(245, 158, 11, .22);
+  background: rgba(245, 158, 11, .1);
+}
+
 .project-reader-preview {
   display: grid;
   gap: 18px;
@@ -340,6 +346,22 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   background:
     radial-gradient(circle at top left, rgba(139,92,246,.16), transparent 24%),
     radial-gradient(circle at top right, rgba(56,189,248,.14), transparent 22%),
+    var(--panel);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.architecture-analyzer-preview {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 24px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top left, rgba(56,189,248,.18), transparent 24%),
+    radial-gradient(circle at top right, rgba(139,92,246,.18), transparent 24%),
     var(--panel);
   box-shadow: var(--shadow);
   backdrop-filter: blur(18px);
@@ -362,7 +384,21 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   line-height: 1.05;
 }
 
+.architecture-analyzer-preview__header h2 {
+  margin: 14px 0 10px;
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.05;
+}
+
 .project-reader-preview__header p {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.architecture-analyzer-preview__header,
+.architecture-analyzer-preview__header p {
   max-width: 42rem;
   margin: 0;
   color: var(--muted);
@@ -424,6 +460,10 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
 
+.architecture-mini-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
 .reader-mini-card,
 .reader-detail-card {
   border: 1px solid rgba(216, 199, 255, .14);
@@ -458,6 +498,12 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.architecture-analyzer-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
 .reader-detail-card {
   display: grid;
   gap: 16px;
@@ -487,6 +533,15 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .file-type-grid,
 .pill-list,
 .module-map {
+  display: grid;
+  gap: 12px;
+}
+
+.architecture-layer-grid,
+.route-map-list,
+.risk-grid,
+.next-phase-list,
+.safety-card-list {
   display: grid;
   gap: 12px;
 }
@@ -570,6 +625,143 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 }
 
 .module-map {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.architecture-layer-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.architecture-layer-card,
+.route-map-item,
+.risk-card,
+.next-phase-item,
+.safety-card-item,
+.flow-step {
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid rgba(216, 199, 255, .12);
+  border-radius: 20px;
+  background: rgba(8, 11, 18, .5);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.architecture-layer-card small,
+.route-map-item small,
+.risk-card small,
+.next-phase-item small,
+.safety-card-item small,
+.flow-step small {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--purple-soft);
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.architecture-layer-card strong,
+.route-map-item strong,
+.risk-card strong,
+.next-phase-item strong,
+.safety-card-item strong,
+.flow-step strong {
+  display: block;
+  font-size: 15px;
+  font-weight: 760;
+}
+
+.architecture-layer-card p,
+.route-map-item p,
+.risk-card p,
+.next-phase-item p,
+.safety-card-item p,
+.flow-step p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.architecture-layer-card ul,
+.risk-card ul,
+.safety-card-item ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.architecture-layer-card li + li,
+.risk-card li + li,
+.safety-card-item li + li {
+  margin-top: 6px;
+}
+
+.route-map-list,
+.risk-grid,
+.next-phase-list {
+  grid-template-columns: 1fr;
+}
+
+.architecture-flow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  align-items: stretch;
+}
+
+.flow-step {
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-step::after {
+  content: "->";
+  position: absolute;
+  right: -11px;
+  top: calc(50% - 10px);
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(139,92,246,.96), rgba(56,189,248,.96));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 12px 24px rgba(64, 54, 144, .28);
+}
+
+.flow-step:last-child::after {
+  display: none;
+}
+
+.next-phase-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.next-phase-lock {
+  flex: 0 0 auto;
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  padding: 0 12px;
+  border: 1px solid rgba(216, 199, 255, .14);
+  border-radius: 999px;
+  background: rgba(255,255,255,.05);
+  color: var(--purple-soft);
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.safety-card-list {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -932,15 +1124,14 @@ a:focus-visible {
     grid-template-columns: 1fr;
   }
 
-  .coding-agent-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .connect-options {
     grid-template-columns: 1fr;
   }
 
   .project-reader-preview__cards,
+  .architecture-mini-grid,
+  .architecture-layer-grid,
+  .architecture-flow,
   .file-type-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -989,6 +1180,7 @@ a:focus-visible {
   .coding-agent-copy,
   .coding-agent-illustration,
   .project-reader-preview,
+  .architecture-analyzer-preview,
   .future-modules {
     border-radius: 24px;
   }
@@ -1006,17 +1198,29 @@ a:focus-visible {
   }
 
   .project-reader-preview,
+  .architecture-analyzer-preview,
   .reader-detail-card {
     padding: 18px;
   }
 
   .project-reader-preview__cards,
   .project-reader-details,
+  .architecture-mini-grid,
+  .architecture-analyzer-details,
   .stack-summary-list,
   .file-type-grid,
   .pill-list,
-  .module-map {
+  .module-map,
+  .architecture-layer-grid,
+  .architecture-flow,
+  .safety-card-list {
     grid-template-columns: 1fr;
+  }
+
+  .flow-step::after {
+    right: calc(50% - 11px);
+    top: auto;
+    bottom: -11px;
   }
 
   .project-reader-preview__actions {

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=4-project-reader-preview-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=5-architecture-analyzer-preview-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -95,6 +95,13 @@
           <span class="workspace-status-badge" data-workspace-status="github-integration">Locked</span>
         </div>
         <p data-workspace-copy="github-integration">PR context, review threads, and CI visibility will connect here later.</p>
+      </article>
+      <article class="workspace-card workspace-card--architecture" data-workspace-card="architecture-analyzer">
+        <div class="workspace-card__header">
+          <strong>Architecture Analyzer Preview</strong>
+          <span class="workspace-status-badge" data-workspace-status="architecture-analyzer">Locked until CA-04</span>
+        </div>
+        <p data-workspace-copy="architecture-analyzer">Understand how frontend, backend, QA, and deployment pieces connect.</p>
       </article>
     </section>
 
@@ -189,13 +196,100 @@
       </div>
     </section>
 
+    <section class="architecture-analyzer-preview" data-architecture-preview hidden aria-labelledby="architecture-analyzer-title">
+      <div class="architecture-analyzer-preview__header">
+        <div>
+          <span class="eyebrow">Safe read-only architecture view</span>
+          <h2 id="architecture-analyzer-title">Architecture Analyzer Preview</h2>
+          <p>Understand how frontend, backend, QA, and deployment pieces connect.</p>
+        </div>
+        <div class="project-reader-preview__actions">
+          <span class="workspace-status-badge workspace-status-badge--locked" data-architecture-status>Locked until CA-04 / Preview available after Demo Project selection</span>
+          <button class="reader-action-button" type="button" data-architecture-toggle aria-expanded="false" aria-controls="architecture-analyzer-details">Open Preview</button>
+        </div>
+      </div>
+
+      <div class="project-reader-preview__cards architecture-mini-grid" aria-label="Architecture Analyzer cards">
+        <button class="reader-mini-card" type="button" data-architecture-toggle>
+          <strong>Layers</strong>
+          <span>Frontend, backend, QA, and deployment placeholders.</span>
+        </button>
+        <button class="reader-mini-card" type="button" data-architecture-toggle>
+          <strong>Route Map</strong>
+          <span>Page, preview, and API entry points for the demo workspace.</span>
+        </button>
+        <button class="reader-mini-card" type="button" data-architecture-toggle>
+          <strong>Flow Diagram</strong>
+          <span>Read-only journey from user idea to future deployment.</span>
+        </button>
+        <button class="reader-mini-card" type="button" data-architecture-toggle>
+          <strong>Risk Areas</strong>
+          <span>Important preview and rollout concerns to resolve later.</span>
+        </button>
+        <button class="reader-mini-card" type="button" data-architecture-toggle>
+          <strong>Next Phases</strong>
+          <span>Locked roadmap from task planning through deploy tools.</span>
+        </button>
+      </div>
+
+      <div class="architecture-analyzer-details" id="architecture-analyzer-details" data-architecture-details hidden>
+        <article class="reader-detail-card reader-detail-card--tree">
+          <div class="reader-detail-card__header">
+            <strong>Architecture Layer Map</strong>
+            <span class="workspace-status-badge">Preview unlocked</span>
+          </div>
+          <div class="architecture-layer-grid" data-architecture-layers></div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Route / Page Map</strong>
+            <span class="workspace-status-badge">Static-safe</span>
+          </div>
+          <div class="route-map-list" data-route-map-list></div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Architecture Flow</strong>
+            <span class="workspace-status-badge">Read-only demo</span>
+          </div>
+          <div class="architecture-flow" data-architecture-flow></div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Risk Areas</strong>
+            <span class="workspace-status-badge">Review focus</span>
+          </div>
+          <div class="risk-grid" data-risk-list></div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Recommended Next Phases</strong>
+            <span class="workspace-status-badge">Locked roadmap</span>
+          </div>
+          <div class="next-phase-list" data-next-phases-list></div>
+        </article>
+
+        <article class="reader-detail-card">
+          <div class="reader-detail-card__header">
+            <strong>Safety Boundaries</strong>
+            <span class="workspace-status-badge">CA-04 read-only</span>
+          </div>
+          <div class="safety-card-list" data-architecture-safety-list></div>
+        </article>
+      </div>
+    </section>
+
     <section class="future-modules">
       <div class="future-modules__header">
         <span class="eyebrow">Reserved placeholders</span>
         <h2>Future module map</h2>
       </div>
       <div class="future-modules__chips">
-        <span data-module-chip>Architecture Analyzer <small>CA-04</small></span>
+        <span data-module-chip data-module-chip-architecture>Architecture Analyzer <small>CA-04</small></span>
         <span data-module-chip>Task Planner <small>CA-05</small></span>
         <span data-module-chip>Code Editor with Diff <small>CA-06</small></span>
         <span data-module-chip>Test Runner <small>CA-07</small></span>
@@ -263,29 +357,29 @@
         </div>
         <div class="preview-module-list">
           <span>Project Reader Preview <small>Unlocked</small></span>
-          <span>Architecture Analyzer <small>CA-04</small></span>
+          <span data-demo-module-architecture>Architecture Analyzer <small>CA-04</small></span>
           <span>Task Planner <small>CA-05</small></span>
           <span>Code Editor with Diff <small>CA-06</small></span>
           <span>Test Runner <small>CA-07</small></span>
           <span>Git Manager <small>CA-09</small></span>
           <span>Deployment Manager <small>CA-10</small></span>
         </div>
-        <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to preview a safe read-only project reader. Real project access stays locked in CA-03.</p>
+        <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to unlock the safe read-only Project Reader Preview and Architecture Analyzer Preview. Real project access and write actions stay locked.</p>
         <button class="demo-select-button" type="button" data-demo-select>Select Demo Project</button>
       </section>
 
       <section class="safety-notice" aria-label="Safety notice">
         <strong>Coding Agent will not edit code, run terminal commands, write Git changes, deploy, or access secrets without your approval.</strong>
         <ul>
-          <li>Read-only preview only in CA-03</li>
-          <li>No terminal execution in CA-03</li>
-          <li>No Git writes in CA-03</li>
-          <li>No deployment actions in CA-03</li>
+          <li>Read-only preview only in CA-04</li>
+          <li>No terminal commands in CA-04</li>
+          <li>No Git writes in CA-04</li>
+          <li>No deployment actions in CA-04</li>
         </ul>
       </section>
     </section>
   </div>
 
-  <script src="./coding-agent.js?v=4-project-reader-preview-20260703" defer></script>
+  <script src="./coding-agent.js?v=5-architecture-analyzer-preview-20260703" defer></script>
 </body>
 </html>
