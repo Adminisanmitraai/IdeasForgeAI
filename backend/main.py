@@ -1247,6 +1247,158 @@ def coding_agent_read_only_connector_preview(request: ReadOnlyConnectorPreviewRe
 
 
 
+
+
+# Phase CA-22 - Read-Only Project Reader Engine.
+# Reads connector/manifest data only. It does not read the user's computer,
+# does not fetch private GitHub content, does not write files, and does not access secrets.
+class ReadOnlyProjectReaderRequest(BaseModel):
+    project_label: str = Field(default="IdeasForgeAI Demo Project")
+    connector_type: str = Field(default="demo")
+    mode: str = Field(default="read-only-project-reader-preview")
+
+
+def _build_read_only_project_reader_preview(request: ReadOnlyProjectReaderRequest) -> Dict[str, Any]:
+    connector = _normalize_connector_type(request.connector_type) if "_normalize_connector_type" in globals() else (request.connector_type or "demo")
+
+    demo_files = [
+        {
+            "path": "frontend/pages/coding-agent.html",
+            "type": "frontend markup",
+            "purpose": "Coding Agent page structure, module cards, and workspace shell.",
+            "read_mode": "manifest-preview",
+            "risk": "UI-only; no secrets expected.",
+        },
+        {
+            "path": "frontend/pages/coding-agent.js",
+            "type": "frontend controller",
+            "purpose": "Preview module switching, proposal previews, connector previews, and status updates.",
+            "read_mode": "manifest-preview",
+            "risk": "Must never contain API keys or private tokens.",
+        },
+        {
+            "path": "frontend/pages/coding-agent.css",
+            "type": "frontend styling",
+            "purpose": "Mobile-first dark UI, cards, gradients, and module layout.",
+            "read_mode": "manifest-preview",
+            "risk": "UI-only; safe for preview.",
+        },
+        {
+            "path": "backend/main.py",
+            "type": "backend API",
+            "purpose": "FastAPI endpoints for protected code proposal, permissions, connectors, and reader previews.",
+            "read_mode": "manifest-preview",
+            "risk": "Backend-only secrets must remain server-side.",
+        },
+        {
+            "path": "backend/sector_qa_runner.py",
+            "type": "validation runner",
+            "purpose": "Sector QA checks for IdeasForgeAI generation flows.",
+            "read_mode": "manifest-preview",
+            "risk": "Validation-only.",
+        },
+        {
+            "path": "PROJECT_STATUS.md",
+            "type": "project status",
+            "purpose": "Phase history and implementation notes.",
+            "read_mode": "manifest-preview",
+            "risk": "May contain operational notes; should not contain secrets.",
+        },
+    ]
+
+    module_map = [
+        {"module": "Project Reader", "status": "CA-22 active", "scope": "Read connector manifest and summarize project structure."},
+        {"module": "Architecture Analyzer", "status": "preview-ready", "scope": "Use reader summary to infer frontend/backend/QA/deploy relationship."},
+        {"module": "Task Planner", "status": "preview-ready", "scope": "Create safe task plans from reader output."},
+        {"module": "Code Generation", "status": "protected-preview", "scope": "Generate proposals only; no apply action."},
+        {"module": "Test Runner", "status": "locked/allowlisted", "scope": "Only approved validation commands in future backend mode."},
+        {"module": "Git Manager", "status": "locked", "scope": "No branch, commit, push, PR, merge, or rollback."},
+        {"module": "Deployment Manager", "status": "locked", "scope": "No deployment action; approval preview only."},
+    ]
+
+    architecture_summary = {
+        "project_type": "AI coding workspace module inside IdeasForgeAI",
+        "frontend": "Static mobile-first HTML/CSS/JavaScript page for the Coding Agent workspace.",
+        "backend": "FastAPI service exposes safe preview endpoints and protected proposal endpoints.",
+        "validation": "Node syntax checks and Python sector QA runner are used before deploy.",
+        "deployment": "Frontend served from IdeasForgeAI domain; backend served through Render.",
+        "safety_model": "Read-only and approval-gated. Normal users can preview; Founder/Admin approval is required for apply/deploy paths.",
+    }
+
+    return {
+        "ok": True,
+        "status": "project-reader-preview-ready",
+        "mode": "read-only-project-reader-preview",
+        "project": {
+            "label": request.project_label or "IdeasForgeAI Demo Project",
+            "connector_type": connector,
+            "reader_scope": "manifest-only",
+            "real_local_file_read": False,
+            "private_github_fetch": False,
+            "write_access": False,
+        },
+        "architecture_summary": architecture_summary,
+        "file_map": demo_files,
+        "module_map": module_map,
+        "reader_findings": [
+            "The workspace is separated into frontend page files, backend API file, validation runner, and project status notes.",
+            "The Coding Agent already has preview-only modules for reader, planning, diff, tests, auto-fix, Git, deployment, and Founder/Admin permissions.",
+            "The safest next step is a read-only file viewer that displays selected manifest files without exposing secrets or allowing copy/edit for normal users.",
+            "Real local project access still needs a secure local bridge or desktop helper before reading a user's computer.",
+            "Private GitHub access must use backend-only OAuth/token handling, never frontend tokens.",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-23",
+            "title": "Read-Only File Viewer Preview",
+            "goal": "Open selected project files from the read-only manifest in a protected viewer without copy/edit/apply actions for normal users.",
+        },
+        "locked_actions": [
+            "Read arbitrary local folders",
+            "Fetch private GitHub code",
+            "Show secrets",
+            "Edit files",
+            "Apply diffs",
+            "Run terminal commands",
+            "Create commits",
+            "Push branches",
+            "Deploy",
+            "Rollback",
+        ],
+        "safety": {
+            "local_filesystem_read": False,
+            "private_github_fetch": False,
+            "frontend_token": False,
+            "file_write": False,
+            "terminal": False,
+            "git_commands": False,
+            "deployment": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/project-reader/health")
+def coding_agent_project_reader_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-read-only-project-reader",
+        "mode": "read-only-project-reader-preview",
+        "real_local_file_read": False,
+        "private_github_fetch": False,
+        "file_write": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+@app.post("/api/coding-agent/project-reader/preview")
+def coding_agent_project_reader_preview(request: ReadOnlyProjectReaderRequest):
+    return _build_read_only_project_reader_preview(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}
