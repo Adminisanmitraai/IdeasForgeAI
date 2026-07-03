@@ -440,8 +440,8 @@ const FILE_TREE = [
 ];
 
 const CONNECTION_MESSAGES = {
-  local: "Local project access is coming later. CA-20 remains preview-only and does not read your computer.",
-  github: "GitHub repository connection is coming in CA-09. Current preview does not access GitHub.",
+  local: "Real local project access is coming in CA-21. CA-20 uses a safe demo workspace only and does not read your computer.",
+  github: "GitHub repository connection is coming in CA-21. Current preview does not access GitHub.",
   zip: "ZIP upload analysis is coming later. Current preview does not upload files.",
 };
 
@@ -2776,7 +2776,7 @@ const renderActiveScreen = () => {
     activeMessageCard.textContent = "";
   } else {
     const label = state.selectedConnection === "local"
-      ? "Local Project Preview"
+      ? "Local Access Preview"
       : state.selectedConnection === "github"
         ? "GitHub Repository Preview"
         : "Upload ZIP Preview";
