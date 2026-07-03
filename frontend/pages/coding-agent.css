@@ -32,6 +32,8 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   width: min(1200px, calc(100vw - 32px));
   margin: 0 auto;
   padding: 22px 0 36px;
+  transform: translate3d(var(--coding-agent-swipe-offset, 0px), 0, 0);
+  transition: transform 180ms ease;
 }
 
 .coding-agent-topbar {
@@ -137,6 +139,18 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   background: rgba(255,255,255,.04);
   color: var(--text);
   box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+.topbar-back-button,
+.connect-project-back {
+  border-radius: 999px;
+}
+
+.topbar-back-button svg,
+.connect-project-back svg {
+  width: 21px;
+  height: 21px;
+  stroke-width: 2;
 }
 
 .topbar-pill-button,
@@ -418,6 +432,10 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   color: var(--text);
 }
 
+.connect-project-back {
+  box-shadow: 0 12px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.06);
+}
+
 .connect-options {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -625,6 +643,10 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   pointer-events: none;
 }
 
+.coding-agent-shell.is-swipe-dragging {
+  transition: none;
+}
+
 body.is-connect-modal-open {
   overflow: hidden;
 }
@@ -691,6 +713,11 @@ a:focus-visible {
     width: 42px;
     height: 42px;
     border-radius: 14px;
+  }
+
+  .topbar-back-button,
+  .connect-project-back {
+    border-radius: 999px;
   }
 
   .topbar-pill-button {

@@ -1,6 +1,6 @@
 const shell = document.querySelector(".coding-agent-shell");
-const navButtons = document.querySelectorAll("[data-nav-target]");
 const navLinks = document.querySelectorAll("[data-nav-link]");
+const backButtons = document.querySelectorAll("[data-coding-agent-back]");
 const connectProjectTriggers = document.querySelectorAll("[data-connect-project-trigger]");
 const connectProjectModal = document.querySelector("[data-connect-project-modal]");
 const connectProjectCloseButtons = document.querySelectorAll("[data-connect-project-close]");
@@ -21,6 +21,9 @@ const workspaceCopyNodes = {
   githubIntegration: document.querySelector('[data-workspace-copy="github-integration"]'),
 };
 const prefersReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const STUDIO_V4_TARGET = "./studio-v4.html";
+const SWIPE_THRESHOLD_PX = 52;
+const SWIPE_DIRECTION_RATIO = 1.15;
 const initialConnectButtonLabel = demoSelectButton?.textContent || "Select Demo Project";
 const connectionState = {
   noProjectConnected: true,
@@ -104,6 +107,15 @@ const setConnectModalOpen = (isOpen) => {
   document.body.classList.toggle("is-connect-modal-open", isOpen);
 };
 
+const handleBackNavigation = () => {
+  if (connectionState.connectPanelOpen) {
+    setConnectModalOpen(false);
+    return;
+  }
+
+  navigateWithTransition(STUDIO_V4_TARGET);
+};
+
 const handleConnectOptionSelection = (optionName) => {
   connectOptions.forEach((option) => {
     option.classList.toggle("is-selected", option.dataset.connectOption === optionName);
@@ -150,16 +162,57 @@ const navigateWithTransition = (target) => {
   }, 210);
 };
 
-navButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    navigateWithTransition(button.dataset.navTarget);
-  });
-});
+let swipeStartX = 0;
+let swipeStartY = 0;
+let swipeLastX = 0;
+let swipeLastY = 0;
+let swipeStartTarget = null;
+let swipeAxisLock = null;
+
+const resetSwipeState = () => {
+  shell?.classList.remove("is-swipe-dragging");
+  shell?.style.removeProperty("--coding-agent-swipe-offset");
+  swipeStartX = 0;
+  swipeStartY = 0;
+  swipeLastX = 0;
+  swipeLastY = 0;
+  swipeStartTarget = null;
+  swipeAxisLock = null;
+};
+
+const isEditableTarget = (target) => {
+  if (!target?.closest) {
+    return false;
+  }
+
+  return Boolean(
+    target.closest(
+      "button, input, textarea, select, option, a, label, [contenteditable=''], [contenteditable='true']"
+    )
+  );
+};
+
+const canUseBackSwipe = (target) => {
+  if (!target || isEditableTarget(target)) {
+    return false;
+  }
+
+  const swipeIgnoreRegion = target.closest?.(
+    "[data-swipe-ignore], [data-horizontal-scroll], .connect-options, .preview-module-list"
+  );
+  return !swipeIgnoreRegion;
+};
 
 navLinks.forEach((link) => {
   link.addEventListener("click", (event) => {
     event.preventDefault();
-    navigateWithTransition(link.getAttribute("href"));
+    navigateWithTransition(STUDIO_V4_TARGET);
+  });
+});
+
+backButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    handleBackNavigation();
   });
 });
 
@@ -190,5 +243,93 @@ document.addEventListener("keydown", (event) => {
     setConnectModalOpen(false);
   }
 });
+
+shell?.addEventListener(
+  "touchstart",
+  (event) => {
+    const touch = event.touches?.[0];
+    if (!touch || !canUseBackSwipe(event.target)) {
+      resetSwipeState();
+      return;
+    }
+
+    swipeStartX = touch.clientX;
+    swipeStartY = touch.clientY;
+    swipeLastX = touch.clientX;
+    swipeLastY = touch.clientY;
+    swipeStartTarget = event.target;
+    swipeAxisLock = null;
+    shell.style.removeProperty("--coding-agent-swipe-offset");
+  },
+  { passive: true }
+);
+
+shell?.addEventListener(
+  "touchmove",
+  (event) => {
+    const touch = event.touches?.[0];
+    if (!touch || !swipeStartTarget) {
+      return;
+    }
+
+    swipeLastX = touch.clientX;
+    swipeLastY = touch.clientY;
+    const deltaX = swipeLastX - swipeStartX;
+    const deltaY = swipeLastY - swipeStartY;
+
+    if (!swipeAxisLock) {
+      if (Math.abs(deltaY) > 12 && Math.abs(deltaY) > Math.abs(deltaX)) {
+        swipeAxisLock = "vertical";
+        return;
+      }
+
+      if (Math.abs(deltaX) > 12 && Math.abs(deltaX) > Math.abs(deltaY) * SWIPE_DIRECTION_RATIO) {
+        swipeAxisLock = "horizontal";
+      }
+    }
+
+    if (swipeAxisLock !== "horizontal" || deltaX <= 0) {
+      return;
+    }
+
+    shell.classList.add("is-swipe-dragging");
+    shell.style.setProperty("--coding-agent-swipe-offset", `${Math.min(deltaX * 0.18, 18)}px`);
+  },
+  { passive: true }
+);
+
+shell?.addEventListener(
+  "touchend",
+  () => {
+    if (!swipeStartTarget || !canUseBackSwipe(swipeStartTarget)) {
+      resetSwipeState();
+      return;
+    }
+
+    const deltaX = swipeLastX - swipeStartX;
+    const deltaY = swipeLastY - swipeStartY;
+    const wasHorizontalSwipe = swipeAxisLock === "horizontal";
+    resetSwipeState();
+
+    const isValidSwipe =
+      wasHorizontalSwipe &&
+      deltaX >= SWIPE_THRESHOLD_PX &&
+      deltaX > Math.abs(deltaY) * SWIPE_DIRECTION_RATIO;
+    if (!isValidSwipe) {
+      return;
+    }
+
+    handleBackNavigation();
+  },
+  { passive: true }
+);
+
+shell?.addEventListener(
+  "touchcancel",
+  () => {
+    resetSwipeState();
+  },
+  { passive: true }
+);
 
 renderConnectionState();

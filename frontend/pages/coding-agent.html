@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=2-connect-project-flow-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=3-back-swipe-fix-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -17,7 +17,7 @@
         </span>
       </a>
       <div class="coding-agent-topbar__actions">
-        <button class="topbar-square-button" type="button" aria-label="Back to Studio" data-nav-target="./studio-v4.html">
+        <button class="topbar-square-button topbar-back-button" type="button" aria-label="Back to Studio" data-coding-agent-back>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6"></path></svg>
         </button>
         <button class="topbar-pill-button" type="button" data-connect-project-trigger>Connect Project</button>
@@ -122,8 +122,8 @@
   <div class="connect-project-modal" data-connect-project-modal hidden>
     <div class="connect-project-backdrop" data-connect-project-close></div>
     <section class="connect-project-panel" role="dialog" aria-modal="true" aria-labelledby="connect-project-title">
-      <button class="connect-project-close" type="button" aria-label="Close Connect Project panel" data-connect-project-close>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"></path></svg>
+      <button class="connect-project-close connect-project-back" type="button" aria-label="Back from Connect Project panel" data-coding-agent-back>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg>
       </button>
 
       <div class="connect-project-heading">
@@ -198,6 +198,6 @@
     </section>
   </div>
 
-  <script src="./coding-agent.js?v=2-connect-project-flow-20260703" defer></script>
+  <script src="./coding-agent.js?v=3-back-swipe-fix-20260703" defer></script>
 </body>
 </html>

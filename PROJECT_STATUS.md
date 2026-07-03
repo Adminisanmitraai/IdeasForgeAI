@@ -12908,3 +12908,13 @@ Status: Completed locally, frontend-only validation pending manual browser check
 - Added a clear safety notice covering no file edits, no terminal execution, no GitHub writes, and no deployment actions in CA-02.
 - Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
 - Safety notes: no backend project connection, no file reading flow, no GitHub writes, no deployment actions, no secrets access, no .env changes, no Render settings, and no KisanMitraAI files touched.
+
+## Phase CA-02.2 - Coding Agent Close + Swipe Back Navigation Fix
+
+Status: Completed locally, validation pending manual browser check.
+
+- Replaced the Connect Project modal `X` close control with a rounded back/chat-return arrow button to match the Studio V4 return language.
+- Updated Coding Agent back behavior so the back control closes the Connect Project panel first, then returns to `./studio-v4.html` from the main Coding Agent workspace.
+- Added mobile-safe swipe-right handling on the Coding Agent page with horizontal-vs-vertical gesture checks, interactive-element ignore rules, and a static-safe return target.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Safety notes: frontend-only navigation fix; no backend, deployment settings, secrets, `.env`, external services, or KisanMitraAI files touched.
