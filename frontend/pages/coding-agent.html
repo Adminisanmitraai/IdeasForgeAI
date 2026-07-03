@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca063-active-module-panel-repair-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca064-real-open-screen-repair-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
     <header class="coding-agent-topbar">
-      <a class="coding-agent-brand" href="./studio-v4.html" aria-label="Return to IdeasForgeAI Studio" data-nav-link>
+      <a class="coding-agent-brand" href="./studio-v4.html" aria-label="Return to IdeasForgeAI Studio" data-ca-action="back-studio">
         <span class="coding-agent-brand__mark" aria-hidden="true"></span>
         <span class="coding-agent-brand__text">
           <strong>IdeasForgeAI</strong>
@@ -17,10 +17,10 @@
         </span>
       </a>
       <div class="coding-agent-topbar__actions">
-        <button class="topbar-square-button topbar-back-button" type="button" aria-label="Back to Studio" data-coding-agent-back>
+        <button class="topbar-square-button topbar-back-button" type="button" aria-label="Back to Studio" data-ca-action="back-studio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6"></path></svg>
         </button>
-        <button class="topbar-pill-button" type="button" data-connect-project-trigger>Connect Project</button>
+        <button class="topbar-pill-button" type="button" data-ca-action="open-connect">Connect Project</button>
       </div>
     </header>
 
@@ -30,8 +30,8 @@
         <h1>Coding Agent</h1>
         <p>Build, modify, test and improve software projects with AI.</p>
         <div class="hero-actions">
-          <button class="hero-primary" type="button" data-connect-project-trigger>Connect Project</button>
-          <span class="hero-status" data-workspace-hero-status>Workspace placeholder ready</span>
+          <button class="hero-primary" type="button" data-ca-action="open-connect">Connect Project</button>
+          <span class="hero-status" data-workspace-hero-status>Connect Project screen ready</span>
           <span class="connected-chip" data-connected-chip hidden>Demo Project Connected</span>
         </div>
       </div>
@@ -69,46 +69,46 @@
 
     <section class="action-status-banner" data-action-status-banner aria-live="polite">
       <strong>Status Banner</strong>
-      <p data-action-status-message>Choose Demo Project to unlock safe preview modules.</p>
+      <p data-action-status-message>Choose a connection option to open a clear preview screen.</p>
     </section>
 
     <section class="coding-agent-grid" aria-label="Coding Agent modules">
-      <article class="workspace-card" data-workspace-card="project-explorer">
+      <article class="workspace-card">
         <div class="workspace-card__header">
           <strong>Project Explorer</strong>
           <span class="workspace-status-badge" data-workspace-status="project-explorer">No project connected</span>
         </div>
         <p data-workspace-copy="project-explorer">Repository tree, recent files, and connected workspace roots will appear here.</p>
       </article>
-      <article class="workspace-card" data-workspace-card="active-tasks">
+      <article class="workspace-card">
         <div class="workspace-card__header">
           <strong>Active Tasks</strong>
           <span class="workspace-status-badge" data-workspace-status="active-tasks">Waiting</span>
         </div>
         <p data-workspace-copy="active-tasks">Queued builds, patch jobs, and execution history will surface in this panel.</p>
       </article>
-      <article class="workspace-card" data-workspace-card="test-runner">
+      <article class="workspace-card">
         <div class="workspace-card__header">
           <strong>Test Runner</strong>
           <span class="workspace-status-badge" data-workspace-status="test-runner">Locked</span>
         </div>
         <p data-workspace-copy="test-runner">Manual, unit, and integration test controls are reserved for the next phase.</p>
       </article>
-      <article class="workspace-card" data-workspace-card="github-integration">
+      <article class="workspace-card">
         <div class="workspace-card__header">
           <strong>GitHub Integration</strong>
           <span class="workspace-status-badge" data-workspace-status="github-integration">Locked</span>
         </div>
         <p data-workspace-copy="github-integration">PR context, review threads, and CI visibility will connect here later.</p>
       </article>
-      <article class="workspace-card workspace-card--architecture" data-workspace-card="architecture-analyzer">
+      <article class="workspace-card workspace-card--architecture">
         <div class="workspace-card__header">
           <strong>Architecture Analyzer Preview</strong>
-          <span class="workspace-status-badge" data-workspace-status="architecture-analyzer">Locked until CA-04</span>
+          <span class="workspace-status-badge" data-workspace-status="architecture-analyzer">Locked until Demo Project</span>
         </div>
         <p data-workspace-copy="architecture-analyzer">Understand how frontend, backend, QA, and deployment pieces connect.</p>
       </article>
-      <article class="workspace-card workspace-card--code-editor" data-workspace-card="code-editor">
+      <article class="workspace-card workspace-card--code-editor">
         <div class="workspace-card__header">
           <strong>Code Editor with Diff Preview</strong>
           <span class="workspace-status-badge workspace-status-badge--locked" data-workspace-status="code-editor">Preview Locked until Demo Project is selected</span>
@@ -117,469 +117,101 @@
       </article>
     </section>
 
-    <section class="project-reader-preview" id="project-reader-panel" data-project-reader-preview hidden aria-labelledby="project-reader-title" data-module-panel="project-reader">
-      <div class="project-reader-preview__header">
-        <div>
-          <span class="eyebrow">Safe read-only workspace</span>
-          <h2 id="project-reader-title">Project Reader Preview</h2>
-          <p>Understand project structure before planning or editing code.</p>
-        </div>
-        <div class="project-reader-preview__actions">
-          <button class="reader-action-button" type="button" data-project-reader-toggle aria-expanded="false" aria-controls="project-reader-details">Open Preview</button>
-          <label class="reader-action-button reader-action-button--secondary" data-folder-preview-label>
-            <input class="folder-preview-input" type="file" webkitdirectory directory multiple data-folder-preview-input>
-            <span>Select Folder for Preview</span>
-          </label>
-          <span class="option-status" data-folder-preview-status>Client-side only</span>
-        </div>
-      </div>
-
-      <div class="project-reader-preview__cards" aria-label="Project Reader cards">
-        <button class="reader-mini-card" type="button" data-project-reader-toggle>
-          <strong>Project Tree</strong>
-          <span>Folders, key files, and project depth.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-project-reader-toggle>
-          <strong>Stack Summary</strong>
-          <span>Frontend, backend, QA, and generated app engine overview.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-project-reader-toggle>
-          <strong>Key Files</strong>
-          <span>Important entry points and preview-safe files.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-project-reader-toggle>
-          <strong>Module Map</strong>
-          <span>How the preview interprets major system areas.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-project-reader-toggle>
-          <strong>Safety Boundaries</strong>
-          <span>Read-only limits before future approval-based phases.</span>
-        </button>
-      </div>
-
-      <div class="project-reader-details" id="project-reader-details" data-project-reader-details hidden>
-        <article class="reader-detail-card reader-detail-card--tree">
-          <div class="reader-detail-card__header">
-            <strong data-reader-project-name>IdeasForgeAI Demo Project</strong>
-            <span class="workspace-status-badge" data-reader-mode-badge>Demo preview</span>
-          </div>
-          <pre class="project-tree" data-project-tree></pre>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Stack Summary</strong>
-            <span class="workspace-status-badge">Preview only</span>
-          </div>
-          <div class="stack-summary-list" data-stack-summary></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>File Type Summary</strong>
-            <span class="workspace-status-badge" data-reader-file-count-badge>10 files</span>
-          </div>
-          <div class="file-type-grid" data-file-type-grid></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Key Files</strong>
-            <span class="workspace-status-badge">Read-only preview</span>
-          </div>
-          <div class="pill-list" data-key-files-list></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Module Map</strong>
-            <span class="workspace-status-badge">Locked next steps</span>
-          </div>
-          <div class="module-map" data-module-map></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Safety Boundaries</strong>
-            <span class="workspace-status-badge">Approval required</span>
-          </div>
-          <div class="pill-list pill-list--warning" data-safety-boundaries-list></div>
-        </article>
-      </div>
-    </section>
-
-    <section class="architecture-analyzer-preview" id="architecture-panel" data-architecture-preview hidden aria-labelledby="architecture-analyzer-title" data-module-panel="architecture-analyzer">
-      <div class="architecture-analyzer-preview__header">
-        <div>
-          <span class="eyebrow">Safe read-only architecture view</span>
-          <h2 id="architecture-analyzer-title">Architecture Analyzer Preview</h2>
-          <p>Understand how frontend, backend, QA, and deployment pieces connect.</p>
-        </div>
-        <div class="project-reader-preview__actions">
-          <span class="workspace-status-badge workspace-status-badge--locked" data-architecture-status>Locked until CA-04 / Preview available after Demo Project selection</span>
-          <button class="reader-action-button" type="button" data-architecture-toggle aria-expanded="false" aria-controls="architecture-analyzer-details">Open Preview</button>
-        </div>
-      </div>
-
-      <div class="project-reader-preview__cards architecture-mini-grid" aria-label="Architecture Analyzer cards">
-        <button class="reader-mini-card" type="button" data-architecture-toggle>
-          <strong>Layers</strong>
-          <span>Frontend, backend, QA, and deployment placeholders.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-architecture-toggle>
-          <strong>Route Map</strong>
-          <span>Page, preview, and API entry points for the demo workspace.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-architecture-toggle>
-          <strong>Flow Diagram</strong>
-          <span>Read-only journey from user idea to future deployment.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-architecture-toggle>
-          <strong>Risk Areas</strong>
-          <span>Important preview and rollout concerns to resolve later.</span>
-        </button>
-        <button class="reader-mini-card" type="button" data-architecture-toggle>
-          <strong>Next Phases</strong>
-          <span>Locked roadmap from task planning through deploy tools.</span>
-        </button>
-      </div>
-
-      <div class="architecture-analyzer-details" id="architecture-analyzer-details" data-architecture-details hidden>
-        <article class="reader-detail-card reader-detail-card--tree">
-          <div class="reader-detail-card__header">
-            <strong>Architecture Layer Map</strong>
-            <span class="workspace-status-badge">Preview unlocked</span>
-          </div>
-          <div class="architecture-layer-grid" data-architecture-layers></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Route / Page Map</strong>
-            <span class="workspace-status-badge">Static-safe</span>
-          </div>
-          <div class="route-map-list" data-route-map-list></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Architecture Flow</strong>
-            <span class="workspace-status-badge">Read-only demo</span>
-          </div>
-          <div class="architecture-flow" data-architecture-flow></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Risk Areas</strong>
-            <span class="workspace-status-badge">Review focus</span>
-          </div>
-          <div class="risk-grid" data-risk-list></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Recommended Next Phases</strong>
-            <span class="workspace-status-badge">Locked roadmap</span>
-          </div>
-          <div class="next-phase-list" data-next-phases-list></div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Safety Boundaries</strong>
-            <span class="workspace-status-badge">CA-06 read-only</span>
-          </div>
-          <div class="safety-card-list" data-architecture-safety-list></div>
-        </article>
-      </div>
-    </section>
-
-    <section class="code-editor-preview" id="code-editor-panel" data-code-editor-preview hidden aria-labelledby="code-editor-title" data-module-panel="code-editor">
-      <div class="code-editor-preview__header">
-        <div>
-          <span class="eyebrow">Safe preview-only code review</span>
-          <h2 id="code-editor-title">Code Editor with Diff Preview</h2>
-          <p>Review proposed code changes before anything is applied.</p>
-        </div>
-        <div class="project-reader-preview__actions">
-          <span class="workspace-status-badge workspace-status-badge--locked" data-code-editor-status>Preview Locked until Demo Project is selected</span>
-        </div>
-      </div>
-
-      <div class="code-editor-request-card">
-        <div class="code-editor-request-card__copy">
-          <small>Example task</small>
-          <strong>Polish the Coding Agent back button spacing on mobile.</strong>
-          <p>This generates a static diff preview only. No backend calls, AI API requests, or file modifications happen in CA-06.</p>
-        </div>
-        <button class="diff-generate-button" type="button" data-generate-safe-diff>Generate Safe Diff Preview</button>
-      </div>
-
-      <div class="code-editor-preview__results" data-code-editor-results hidden>
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Proposed Files</strong>
-            <span class="workspace-status-badge">Static-safe preview</span>
-          </div>
-          <div class="proposed-files-list">
-            <div class="proposed-file-item">
-              <div>
-                <small>UI polish</small>
-                <strong>frontend/pages/coding-agent.css</strong>
-              </div>
-              <span class="proposed-file-tag">Mobile spacing</span>
-            </div>
-            <div class="proposed-file-item">
-              <div>
-                <small>Navigation safety</small>
-                <strong>frontend/pages/coding-agent.js</strong>
-              </div>
-              <span class="proposed-file-tag">Back handler</span>
-            </div>
-          </div>
-          <div class="pill-list">
-            <span>UI polish</span>
-            <span>Navigation safety</span>
-            <span>Mobile spacing</span>
-          </div>
-        </article>
-
-        <article class="reader-detail-card reader-detail-card--tree">
-          <div class="reader-detail-card__header">
-            <strong>Unified Diff Preview</strong>
-            <span class="workspace-status-badge">Before / After</span>
-          </div>
-          <div class="diff-viewer" data-horizontal-scroll>
-            <section class="diff-file-card">
-              <header class="diff-file-card__header">
-                <strong>frontend/pages/coding-agent.css</strong>
-                <span class="diff-file-label">UI polish</span>
-              </header>
-              <div class="diff-line diff-line--removed"><span class="diff-line__marker">-</span><code>position: fixed;</code></div>
-              <div class="diff-line diff-line--removed"><span class="diff-line__marker">-</span><code>top: 18px;</code></div>
-              <div class="diff-line diff-line--added"><span class="diff-line__marker">+</span><code>position: sticky;</code></div>
-              <div class="diff-line diff-line--added"><span class="diff-line__marker">+</span><code>top: calc(env(safe-area-inset-top) + 16px);</code></div>
-            </section>
-
-            <section class="diff-file-card">
-              <header class="diff-file-card__header">
-                <strong>frontend/pages/coding-agent.js</strong>
-                <span class="diff-file-label">Navigation safety</span>
-              </header>
-              <div class="diff-line diff-line--removed"><span class="diff-line__marker">-</span><code>closeButton.addEventListener("click", closePanel)</code></div>
-              <div class="diff-line diff-line--added"><span class="diff-line__marker">+</span><code>backButton.addEventListener("click", returnToStudioChat)</code></div>
-            </section>
-          </div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Approval Gate</strong>
-            <span class="workspace-status-badge" data-diff-approval-state>Pending review</span>
-          </div>
-          <div class="approval-gate-actions">
-            <button class="reader-action-button" type="button" data-approve-later>Approve Later</button>
-            <button class="reader-action-button" type="button" data-reject-diff>Reject</button>
-            <button class="reader-action-button" type="button" data-copy-diff>Copy Diff</button>
-            <button class="reader-action-button is-disabled" type="button" disabled>Apply Changes - Coming after real project permission</button>
-          </div>
-          <p class="approval-gate-note" data-diff-feedback>Preview only. No changes are saved or applied.</p>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Risk and Validation</strong>
-            <span class="workspace-status-badge">Low risk</span>
-          </div>
-          <div class="risk-validation-grid">
-            <div class="risk-validation-card">
-              <small>Risk Level</small>
-              <strong>Low - UI-only preview</strong>
-              <p>Static, frontend-only review content. No file system mutations, terminal execution, or Git activity are present.</p>
-            </div>
-            <div class="risk-validation-card">
-              <small>Validation Plan</small>
-              <div class="validation-plan-list">
-                <span>node --check frontend/pages/coding-agent.js</span>
-                <span>node --check frontend/pages/studio-v4.js</span>
-                <span>python backend/sector_qa_runner.py</span>
-                <span>Manual mobile Safari test</span>
-              </div>
-            </div>
-          </div>
-        </article>
-
-        <article class="reader-detail-card">
-          <div class="reader-detail-card__header">
-            <strong>Safety Boundary</strong>
-            <span class="workspace-status-badge">CA-06 preview-only</span>
-          </div>
-          <div class="safety-card-list">
-            <article class="safety-card-item">
-              <small>Preview-only boundary</small>
-              <strong>Code Editor is preview-only in CA-06.</strong>
-              <ul>
-                <li>No files are modified.</li>
-                <li>No terminal commands run.</li>
-                <li>No Git writes happen.</li>
-                <li>No deployment actions happen.</li>
-                <li>Approval and rollback will be required in future phases.</li>
-              </ul>
-            </article>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section class="future-modules">
-      <div class="future-modules__header">
-        <span class="eyebrow">Reserved placeholders</span>
-        <h2>Future module map</h2>
-        <p class="future-modules__copy">Open unlocked previews directly from here. Locked modules show their upcoming phase.</p>
-      </div>
-      <div class="future-modules__chips">
-        <button class="module-chip-button" type="button" data-module-chip data-module-chip-project-reader data-module-nav="project-reader">
-          <span>Project Reader Preview</span>
-          <small>Locked</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-chip-architecture data-module-nav="architecture-analyzer">
-          <span>Architecture Analyzer</span>
-          <small>CA-04</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-05">
-          <span>Task Planner</span>
-          <small>CA-05</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-chip-code-editor data-module-nav="code-editor">
-          <span>Code Editor with Diff</span>
-          <small>CA-06 Preview</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-07">
-          <span>Test Runner</span>
-          <small>CA-07</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-08">
-          <span>Auto Fix Engine</span>
-          <small>CA-08</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-09">
-          <span>Git Manager</span>
-          <small>CA-09</small>
-        </button>
-        <button class="module-chip-button" type="button" data-module-chip data-module-lock="CA-10">
-          <span>Deployment Manager</span>
-          <small>CA-10</small>
-        </button>
-      </div>
-      <section class="active-module-panel" data-active-module-panel hidden aria-live="polite" aria-labelledby="active-module-title">
-        <div class="active-module-panel__header">
+    <section class="workspace-stage" data-workspace-stage data-screen="connect" aria-live="polite">
+      <section class="workspace-screen workspace-screen--connect" data-screen-panel="connect" aria-labelledby="connect-project-title">
+        <div class="workspace-screen__header">
           <div>
-            <span class="eyebrow">Now Open</span>
-            <div class="active-module-panel__title-row">
-              <h3 id="active-module-title" data-active-module-title>Active Preview</h3>
-              <span class="active-module-chip">Open</span>
-            </div>
-            <p data-active-module-copy>Select Demo Project to unlock safe preview modules.</p>
+            <span class="eyebrow">Connect Project screen</span>
+            <h2 id="connect-project-title">Connect Project</h2>
+            <p class="workspace-screen__copy">Choose how Coding Agent should open a safe preview workflow.</p>
           </div>
-          <span class="workspace-status-badge" data-active-module-badge>Preview only</span>
+          <span class="workspace-status-badge">CA-06 preview-only</span>
         </div>
-        <div class="active-module-panel__actions" data-active-module-actions hidden></div>
-        <div class="active-module-panel__body" data-active-module-body></div>
+
+        <div class="connect-options" aria-label="Project connection options">
+          <button class="connect-option" type="button" data-ca-action="open-local" data-connection-option="local">
+            <strong>Local Project</strong>
+            <p>Connect a local project folder from your computer.</p>
+            <span class="option-status">Coming later</span>
+          </button>
+          <button class="connect-option" type="button" data-ca-action="open-github" data-connection-option="github">
+            <strong>GitHub Repository</strong>
+            <p>Connect a repository for reading code and future review workflows.</p>
+            <span class="option-status">Coming in CA-09</span>
+          </button>
+          <button class="connect-option" type="button" data-ca-action="open-zip" data-connection-option="zip">
+            <strong>Upload ZIP</strong>
+            <p>Upload a project ZIP for safe analysis in a later phase.</p>
+            <span class="option-status">Coming later</span>
+          </button>
+          <button class="connect-option connect-option--demo" type="button" data-ca-action="open-demo" data-connection-option="demo">
+            <strong>Demo Project</strong>
+            <p>Open a safe sample workspace immediately with preview-only modules.</p>
+            <span class="option-status">Available now</span>
+          </button>
+        </div>
+
+        <section class="connect-screen-summary">
+          <div class="connect-screen-summary__header">
+            <div>
+              <span class="eyebrow">Preview-only connection</span>
+              <h3>Demo Project Workspace</h3>
+            </div>
+            <span class="project-overview-badge">Safe preview</span>
+          </div>
+          <div class="demo-summary-card">
+            <div class="demo-summary-card__meta">
+              <span>Project</span>
+              <strong>IdeasForgeAI Demo Project</strong>
+            </div>
+            <div class="demo-summary-card__meta">
+              <span>Default open</span>
+              <strong>Project Reader</strong>
+            </div>
+          </div>
+          <div class="preview-module-list">
+            <span>Project Reader <small>Default</small></span>
+            <span>Architecture Analyzer <small>Preview</small></span>
+            <span>Code Diff Preview <small>Preview</small></span>
+          </div>
+          <p class="workspace-screen__copy">Demo Project opens a real Active Module screen immediately. It does not just mark the card as selected.</p>
+        </section>
+
+        <section class="safety-notice" aria-label="Safety notice">
+          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-06.</strong>
+          <ul>
+            <li>Read-only preview only</li>
+            <li>No terminal commands in the app</li>
+            <li>No Git writes</li>
+            <li>No deployment actions</li>
+          </ul>
+        </section>
       </section>
-      <p class="module-inline-message" data-module-inline-message aria-live="polite" hidden></p>
-      <button class="bottom-cta" type="button" data-connect-project-trigger>Connect Project</button>
+
+      <section class="workspace-screen workspace-screen--active" data-screen-panel="active" hidden aria-labelledby="active-screen-title">
+        <div class="workspace-screen__header workspace-screen__header--active">
+          <div>
+            <span class="workspace-screen__status" data-active-status-text>Now Open: Project Reader Preview</span>
+            <h2 id="active-screen-title" data-active-screen-title>Demo Project Workspace</h2>
+            <p class="workspace-screen__copy" data-active-screen-copy>Safe preview-only project connected.</p>
+          </div>
+          <button class="reader-action-button" type="button" data-ca-action="back-connect">Back to Connect Project</button>
+        </div>
+
+        <div class="module-toolbar" data-module-toolbar hidden aria-label="Demo Project modules">
+          <button class="module-tab-button" type="button" data-ca-action="open-project-reader" data-module-tab="project-reader" aria-pressed="false">Project Reader</button>
+          <button class="module-tab-button" type="button" data-ca-action="open-architecture" data-module-tab="architecture" aria-pressed="false">Architecture Analyzer</button>
+          <button class="module-tab-button" type="button" data-ca-action="open-code-diff" data-module-tab="code-diff" aria-pressed="false">Code Diff Preview</button>
+        </div>
+
+        <div class="workspace-message-card" data-active-message-card hidden></div>
+        <div class="workspace-screen__body" data-active-screen-body></div>
+      </section>
     </section>
+
+    <button class="bottom-cta" type="button" data-ca-action="open-connect">Connect Project</button>
   </main>
 
-  <div class="connect-project-modal" data-connect-project-modal hidden>
-    <div class="connect-project-backdrop" data-connect-project-close></div>
-    <section class="connect-project-panel" role="dialog" aria-modal="true" aria-labelledby="connect-project-title">
-      <button class="connect-project-close connect-project-back" type="button" aria-label="Back from Connect Project panel" data-coding-agent-back>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg>
-      </button>
-
-      <div class="connect-project-heading">
-        <span class="eyebrow">Safe preview flow</span>
-        <h2 id="connect-project-title">Connect Project</h2>
-        <p>Choose how IdeasForgeAI Coding Agent will inspect your project in a future phase.</p>
-      </div>
-
-      <div class="connect-options" aria-label="Project connection options">
-        <button class="connect-option" type="button" data-connect-option="local">
-          <strong>Local Project</strong>
-          <p>Connect a local project folder from your computer.</p>
-          <span class="option-status">Real access coming later</span>
-        </button>
-        <button class="connect-option" type="button" data-connect-option="github">
-          <strong>GitHub Repository</strong>
-          <p>Connect a GitHub repository for reading code, planning changes, and creating pull requests.</p>
-          <span class="option-status">Real access coming later</span>
-        </button>
-        <button class="connect-option" type="button" data-connect-option="zip">
-          <strong>Upload ZIP</strong>
-          <p>Upload a project ZIP for safe analysis.</p>
-          <span class="option-status">Coming later</span>
-        </button>
-        <button class="connect-option connect-option--demo" type="button" data-connect-option="demo" aria-describedby="demo-project-preview-note">
-          <strong>Demo Project</strong>
-          <p>Explore the Coding Agent workflow using a safe sample project.</p>
-          <span class="option-status">Available as preview only</span>
-        </button>
-      </div>
-      <p class="connect-option-feedback" data-connect-option-feedback aria-live="polite" hidden></p>
-
-      <section class="demo-project-preview" data-demo-preview aria-live="polite">
-        <div class="demo-project-preview__header">
-          <div>
-            <span class="eyebrow">Preview-only connection</span>
-            <h3>Project Reader Preview</h3>
-          </div>
-          <span class="project-overview-badge">Unlocked</span>
-        </div>
-        <div class="demo-summary-card">
-          <div class="demo-summary-card__meta">
-            <span>Project</span>
-            <strong>IdeasForgeAI Demo Project</strong>
-          </div>
-          <div class="demo-summary-card__meta">
-            <span>Stack</span>
-            <strong>Frontend, Backend, QA, Deployment</strong>
-          </div>
-        </div>
-        <div class="preview-module-list">
-          <span>Project Reader Preview <small>Unlocked</small></span>
-          <span data-demo-module-architecture>Architecture Analyzer <small>CA-04</small></span>
-          <span data-demo-module-task-planner>Task Planner <small>CA-05</small></span>
-          <span data-demo-module-code-editor>Code Editor with Diff <small>CA-06 Preview</small></span>
-          <span>Test Runner <small>CA-07</small></span>
-          <span>Auto Fix Engine <small>CA-08</small></span>
-          <span>Git Manager <small>CA-09</small></span>
-          <span>Deployment Manager <small>CA-10</small></span>
-        </div>
-        <div class="demo-preview-actions">
-          <button class="reader-action-button" type="button" data-demo-open-module="project-reader">Open Project Reader</button>
-          <button class="reader-action-button" type="button" data-demo-open-module="architecture-analyzer">Open Architecture Analyzer</button>
-          <button class="reader-action-button" type="button" data-demo-open-module="code-editor">Open Code Diff Preview</button>
-        </div>
-        <p class="demo-project-preview__note" id="demo-project-preview-note">Select Demo Project to unlock the safe read-only Project Reader Preview, Architecture Analyzer Preview, and CA-06 diff preview shell. Real project access and write actions stay locked.</p>
-        <button class="demo-select-button" type="button" data-demo-select>Select Demo Project</button>
-      </section>
-
-      <section class="safety-notice" aria-label="Safety notice">
-        <strong>Coding Agent will not edit code, run terminal commands, write Git changes, deploy, or access secrets without your approval.</strong>
-        <ul>
-          <li>Read-only preview only in CA-06</li>
-          <li>No terminal commands in CA-06</li>
-          <li>No Git writes in CA-06</li>
-          <li>No deployment actions in CA-06</li>
-        </ul>
-      </section>
-    </section>
-  </div>
-
-  <div class="module-toast" data-module-toast role="status" aria-live="polite" hidden></div>
-
-  <script src="./coding-agent.js?v=ca063-active-module-panel-repair-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca064-real-open-screen-repair-20260703" defer></script>
 </body>
 </html>

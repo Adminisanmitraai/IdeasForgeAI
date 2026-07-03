@@ -12994,3 +12994,16 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: frontend-only CA-06.2 repair; no deployment settings, secrets, `.env`, backend runtime behavior, or KisanMitraAI files touched.
+
+## Phase CA-06.4 - Coding Agent Real Open Screen Repair
+
+Status: Completed locally, validation pending manual browser check.
+
+- Replaced the unclear multi-panel/scroll behavior on the Coding Agent page with a two-state open-screen workflow: a visible Connect Project screen and a separate Active Module screen.
+- Demo Project now opens `Demo Project Workspace` immediately with `Project Reader` open by default and clear module tabs for `Project Reader`, `Architecture Analyzer`, and `Code Diff Preview`.
+- Local Project, GitHub Repository, and Upload ZIP now open a dedicated Active Module message screen instead of only showing selection styling.
+- Added visible `Now Open:` status text, an in-screen `Back to Connect Project` action, and delegated `data-ca-action` handling for module open, diff generation, copy, reject, approve-later, and back actions.
+- Code Diff Preview now renders a visible preview screen with proposed files, a diff viewer, `Copy Diff`, `Reject`, `Approve Later`, and disabled `Apply Changes - Locked`.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-06.4 repair; no backend edits, deployment settings, secrets, `.env`, external services, or KisanMitraAI files touched.
