@@ -747,7 +747,9 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 .protected-preview-card__header,
 .locked-control-grid,
 .protected-preview-grid,
-.permission-card-grid {
+.permission-card-grid,
+.protected-meta-row,
+.preview-chip-row {
   display: grid;
   gap: 12px;
 }
@@ -778,12 +780,26 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   grid-template-columns: 1fr;
 }
 
+.protected-meta-row {
+  grid-template-columns: repeat(auto-fit, minmax(150px, max-content));
+  align-items: center;
+}
+
+.preview-chip-row {
+  grid-template-columns: repeat(auto-fit, minmax(120px, max-content));
+  align-items: center;
+}
+
 .protected-preview-card {
+  position: relative;
+  overflow: hidden;
   padding: 18px;
   border: 1px solid rgba(216, 199, 255, .14);
   border-radius: 22px;
-  background: rgba(255,255,255,.04);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.06), rgba(139,92,246,.08)),
+    rgba(255,255,255,.04);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 0 0 1px rgba(56,189,248,.04);
 }
 
 .protected-preview-card__header {
@@ -791,17 +807,35 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   align-items: center;
 }
 
+.protected-preview-card::before {
+  content: "IdeasForgeAI Protected Preview";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  z-index: 0;
+  color: rgba(255,255,255,.06);
+  font-size: clamp(20px, 4vw, 34px);
+  font-weight: 900;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  transform: translate(-50%, -50%) rotate(-18deg);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
 .ca-code-preview-protected {
   position: relative;
   overflow: auto;
   padding: 20px;
-  border: 1px dashed rgba(216, 199, 255, .18);
+  border: 1px solid rgba(56, 189, 248, .22);
   border-radius: 18px;
   background:
+    radial-gradient(circle at top right, rgba(56,189,248,.12), transparent 26%),
     linear-gradient(135deg, rgba(56,189,248,.06), rgba(139,92,246,.08)),
     rgba(5, 7, 12, .74);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 0 24px rgba(56,189,248,.08);
   user-select: none;
   -webkit-user-select: none;
+  cursor: default;
 }
 
 .ca-code-preview-protected::after {
@@ -814,13 +848,15 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
 }
 
 .ca-code-preview-protected pre {
+  position: relative;
+  z-index: 1;
   margin: 0;
   color: #dfe6f4;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 13px;
   line-height: 1.7;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
+  white-space: pre;
+  min-width: max-content;
 }
 
 .ca-code-preview-watermark {
@@ -840,6 +876,39 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   font-weight: 780;
   letter-spacing: .04em;
   text-transform: uppercase;
+}
+
+.ca-code-preview-overlay-label,
+.access-mode-chip,
+.protected-preview-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 780;
+  letter-spacing: .03em;
+}
+
+.ca-code-preview-overlay-label {
+  border: 1px solid rgba(245, 158, 11, .28);
+  background: rgba(120,53,15,.28);
+  color: #fde68a;
+}
+
+.access-mode-chip {
+  border: 1px solid rgba(56, 189, 248, .24);
+  background: rgba(56,189,248,.12);
+  color: #d9f5ff;
+}
+
+.protected-preview-chip {
+  border: 1px solid rgba(216, 199, 255, .16);
+  background: rgba(255,255,255,.05);
+  color: var(--purple-soft);
 }
 
 .locked-control-grid {
@@ -874,18 +943,51 @@ svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width:
   line-height: 1.55;
 }
 
+.preview-warning-note {
+  padding: 16px 18px;
+  border: 1px solid rgba(245, 158, 11, .16);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(120,53,15,.14), rgba(56,189,248,.08)),
+    rgba(255,255,255,.04);
+}
+
+.preview-warning-note p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
 .locked-control-grid .reader-action-button {
   width: 100%;
 }
 
 .diff-file-card {
+  position: relative;
+  overflow: hidden;
   display: grid;
   gap: 10px;
   min-width: 0;
   padding: 18px;
   border: 1px solid rgba(216, 199, 255, .12);
   border-radius: 22px;
-  background: rgba(5, 7, 12, .58);
+  background:
+    linear-gradient(135deg, rgba(56,189,248,.04), rgba(139,92,246,.08)),
+    rgba(5, 7, 12, .58);
+}
+
+.diff-file-card::before {
+  content: "Protected Diff";
+  position: absolute;
+  right: 18px;
+  bottom: 16px;
+  color: rgba(255,255,255,.08);
+  font-size: 20px;
+  font-weight: 820;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  pointer-events: none;
 }
 
 .diff-file-card__header,

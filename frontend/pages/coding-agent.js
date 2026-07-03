@@ -35,6 +35,8 @@ const SWIPE_THRESHOLD_PX = 52;
 const SWIPE_DIRECTION_RATIO = 1.15;
 const DEFAULT_STATUS_MESSAGE = "Choose a connection option to open a clear preview screen.";
 const DEFAULT_CODE_REQUEST = "Fix the Task Planner button so it opens the Task Planner Preview screen.";
+const LOCKED_NORMAL_USER_MESSAGE = "This action is locked in Normal User Mode. Founder/Admin permission is required.";
+const COPY_BLOCKED_MESSAGE = "Copy is locked for normal users. Founder/Admin permission is required.";
 const DEMO_PROTECTED_CODE_FILES = [
   {
     path: "frontend/pages/coding-agent.html",
@@ -519,6 +521,17 @@ const escapeHtml = (value) =>
 
 const getCurrentPermissionProfile = () => CODE_PERMISSION_ROLES[state.permissionRole] || CODE_PERMISSION_ROLES.user;
 
+const isProtectedPreviewTarget = (target) => {
+  if (target?.closest?.("[data-protected-preview]")) {
+    return true;
+  }
+
+  const selection = window.getSelection?.();
+  const anchorNode = selection?.anchorNode;
+  const anchorElement = anchorNode?.nodeType === Node.TEXT_NODE ? anchorNode.parentElement : anchorNode;
+  return Boolean(anchorElement?.closest?.("[data-protected-preview]"));
+};
+
 const renderProjectReaderMarkup = () => `
   <section class="screen-detail-card">
     <small>Title</small>
@@ -761,7 +774,7 @@ const renderPermissionStatusCard = () => {
   return `
     <section class="screen-detail-card">
       <small>Permission Status</small>
-      <strong>Current Access: ${escapeHtml(profile.accessLabel)}</strong>
+      <strong>Current Access: Normal User Mode</strong>
       <p>Role: ${escapeHtml(profile.label)}. Founder/Admin verification is required before protected code actions can be unlocked.</p>
       <div class="permission-card-grid">
         <div class="permission-subcard">
@@ -790,28 +803,70 @@ const renderPermissionStatusCard = () => {
           </ul>
         </div>
       </div>
-      <p class="permission-footnote">Browser no-copy styling is not absolute security, but product action controls remain protected in CA-12.</p>
+      <p class="permission-footnote">Browser previews cannot fully prevent screenshots or manual copying, but product actions remain locked. Full protection requires backend role enforcement and controlled code delivery.</p>
     </section>
   `;
 };
 
-const renderVerificationPlaceholderCard = () => `
+const renderNormalUserAccessCard = () => `
   <section class="screen-detail-card">
-    <small>Founder/Admin Verification</small>
-    <strong>Status: Not connected in CA-12</strong>
-    <p>Real Founder/Admin access will be enforced through backend authentication and server-side permission checks in a future phase.</p>
-    <button class="reader-action-button" type="button" data-ca-action="request-founder-review">Request Founder/Admin Review</button>
+    <small>Normal User Access</small>
+    <strong>View-only generated proposal access</strong>
+    <div class="permission-card-grid">
+      <div class="permission-subcard">
+        <span class="diff-file-label">Allowed</span>
+        <ul class="screen-detail-list">
+          ${renderPermissionList([
+            "View generated proposal summary",
+            "View protected code preview",
+            "View protected diff",
+            "Request revision",
+            "Reject proposal",
+            "Send for Founder/Admin review",
+          ])}
+        </ul>
+      </div>
+      <div class="permission-subcard permission-subcard--locked">
+        <span class="diff-file-label">Locked</span>
+        <ul class="screen-detail-list">
+          ${renderPermissionList([
+            "Copy raw code",
+            "Edit code",
+            "Export patch",
+            "Apply code",
+            "Commit/push/deploy",
+            "Rollback",
+          ])}
+        </ul>
+      </div>
+    </div>
+  </section>
+`;
+
+const renderFounderAdminAccessCard = () => `
+  <section class="screen-detail-card">
+    <small>Founder/Admin Access</small>
+    <strong>Status: Verification required</strong>
+    <p>Founder/Admin unlock will require backend authentication and server-side permission checks in a future phase.</p>
+    <div class="locked-control-grid">
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Unlock Copy - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Unlock Edit - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Unlock Apply - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Unlock Export - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Unlock Git - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Unlock Deploy - Locked</button>
+    </div>
   </section>
 `;
 
 const renderFounderAdminControlsCard = () => `
   <section class="screen-detail-card screen-detail-card--wide">
-    <small>Founder/Admin Controls</small>
-    <strong>Status: Locked until verified</strong>
+    <small>Role-Based Locked Controls</small>
+    <strong>Normal users cannot execute protected actions</strong>
     <div class="locked-control-grid">
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Code - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Raw Code - Locked</button>
       <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Edit Code - Locked</button>
-      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Diff - Locked</button>
+      <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Generated Code - Locked</button>
       <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Export Patch - Locked</button>
       <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit - Locked</button>
       <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Push - Locked</button>
@@ -825,18 +880,21 @@ const renderFounderAdminControlsCard = () => `
 const renderPermissionAuditCard = () => `
   <section class="screen-detail-card">
     <small>Permission Audit Preview</small>
-    <strong>Status: Preview only</strong>
+    <strong>Status: Preview-only audit</strong>
     <ul class="screen-detail-list">
       ${renderPermissionList([
         "Code proposal generated - allowed",
-        "Raw code copy - blocked",
+        "Protected preview viewed - allowed",
+        "Copy raw code - blocked",
+        "Edit code - blocked",
         "Apply generated code - blocked",
         "Export patch - blocked",
         "Git action - blocked",
         "Deployment action - blocked",
+        "Founder/Admin review requested - allowed",
       ])}
     </ul>
-    <p>Server-side audit will be added later.</p>
+    <p>Preview-only audit. Server-side audit will be added later.</p>
   </section>
 `;
 
@@ -865,8 +923,13 @@ const renderProtectedCodePreviewCards = () =>
           <span class="diff-file-label">Protected file</span>
           <strong>${escapeHtml(file.path)}</strong>
         </div>
-        <div class="ca-code-preview-protected" aria-readonly="true" tabindex="-1">
-          <span class="ca-code-preview-watermark" aria-hidden="true">Protected Preview</span>
+        <div class="protected-meta-row">
+          <span class="ca-code-preview-overlay-label">Protected Preview</span>
+          <span class="access-mode-chip">View-only</span>
+          <span class="protected-preview-chip">Normal User Mode</span>
+        </div>
+        <div class="ca-code-preview-protected" aria-readonly="true" tabindex="-1" data-protected-preview>
+          <span class="ca-code-preview-watermark" aria-hidden="true">IdeasForgeAI Protected Preview</span>
           <pre>${escapeHtml(file.code)}</pre>
         </div>
       </article>
@@ -946,23 +1009,29 @@ const renderCodeGenerationMarkup = (view = "generation") => `
           </ul>
         </section>
         ${renderPermissionStatusCard()}
-        ${renderVerificationPlaceholderCard()}
         <section class="screen-detail-card screen-detail-card--wide">
           <small>Protected Code Preview</small>
-          <strong>Protected read-only preview</strong>
-          <p>Normal users can review protected code previews only. Copy, edit, apply, export, commit, push, deploy, and rollback actions stay locked until backend verification exists.</p>
+          <strong>View-only generated code proposal</strong>
+          <p>View-only generated code proposal. Copy, edit, export, and apply actions are locked for normal users.</p>
+          <div class="preview-chip-row">
+            <span class="ca-code-preview-overlay-label">Protected Preview</span>
+            <span class="access-mode-chip">View-only</span>
+            <span class="protected-preview-chip">Normal User Mode</span>
+          </div>
           <div class="protected-preview-grid">
             ${renderProtectedCodePreviewCards()}
           </div>
         </section>
         <section class="screen-detail-card screen-detail-card--wide">
-          <small>Unified Diff Viewer</small>
-          <strong>Preview text only</strong>
-          <p>This is preview text only. Do not apply it.</p>
-          <div class="diff-viewer">
+          <small>Protected Unified Diff</small>
+          <strong>Review-only diff preview</strong>
+          <p>Diff is visible for review only. Applying or exporting this patch requires Founder/Admin approval.</p>
+          <div class="diff-viewer" data-protected-preview>
             ${renderDiffFileCards()}
           </div>
         </section>
+        ${renderNormalUserAccessCard()}
+        ${renderFounderAdminAccessCard()}
         ${renderFounderAdminControlsCard()}
         <section class="screen-detail-card">
           <small>Risk Summary</small>
@@ -982,7 +1051,7 @@ const renderCodeGenerationMarkup = (view = "generation") => `
           <div class="approval-gate-actions">
             <button class="reader-action-button" type="button" data-ca-action="request-code-revision">Request Revision</button>
             <button class="reader-action-button" type="button" data-ca-action="reject-code-proposal">Reject Proposal</button>
-            <button class="reader-action-button" type="button" data-ca-action="request-founder-review">Request Founder/Admin Review</button>
+            <button class="reader-action-button" type="button" data-ca-action="request-founder-review">Send to Founder/Admin Review</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Generated Code - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Raw Code - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Edit Code - Locked</button>
@@ -990,10 +1059,18 @@ const renderCodeGenerationMarkup = (view = "generation") => `
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Push - Locked</button>
             <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Rollback - Locked</button>
           </div>
         </section>
         ${renderPermissionAuditCard()}
         ${renderBackendEnforcementCard()}
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Protection Note</small>
+          <strong>Professional browser-side restriction note</strong>
+          <div class="preview-warning-note">
+            <p>Browser previews cannot fully prevent screenshots or manual copying, but IdeasForgeAI product actions remain locked. Full protection requires backend role enforcement and controlled code delivery.</p>
+          </div>
+        </section>
         <section class="screen-detail-card screen-detail-card--wide">
           <small>Validation Plan</small>
           <strong>Required before any future apply phase</strong>
@@ -2125,7 +2202,7 @@ const handleAction = async (action) => {
     case "approve-founder-review":
     case "request-founder-review":
       state.codeProposalDecision = "founder-review";
-      setStatusMessage("Founder/Admin review requested. No code was copied, edited, applied, exported, committed, pushed, or deployed.");
+      setStatusMessage("Proposal sent for Founder/Admin review. No code was copied, edited, applied, exported, committed, pushed, or deployed.");
       renderScreenState();
       break;
     case "mark-test-plan-later":
@@ -2189,7 +2266,7 @@ const handleAction = async (action) => {
       renderScreenState();
       break;
     case "locked-founder-action":
-      setStatusMessage("This action is locked for your current role. Founder/Admin verification is required.");
+      setStatusMessage(LOCKED_NORMAL_USER_MESSAGE);
       renderScreenState();
       break;
     default:
@@ -2214,6 +2291,29 @@ document.addEventListener("input", (event) => {
   }
 
   state.codeRequest = requestInput.value;
+});
+
+document.addEventListener("copy", (event) => {
+  if (!isProtectedPreviewTarget(event.target)) {
+    return;
+  }
+
+  event.preventDefault();
+  setStatusMessage(COPY_BLOCKED_MESSAGE);
+});
+
+document.addEventListener("keydown", (event) => {
+  const isCopyShortcut = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "c";
+  if (!isCopyShortcut) {
+    return;
+  }
+
+  if (!isProtectedPreviewTarget(event.target) && !isProtectedPreviewTarget(document.activeElement)) {
+    return;
+  }
+
+  event.preventDefault();
+  setStatusMessage(COPY_BLOCKED_MESSAGE);
 });
 
 let swipeStartX = 0;

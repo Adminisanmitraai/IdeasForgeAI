@@ -13115,3 +13115,16 @@ Status: Completed locally, validation pending manual browser check.
 - Backend touched: no.
 - Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: no real file editing from the app, no raw code copy or export for normal users, no terminal commands from the app, no Git commands from the app, no deployment actions, no backend edits, no secrets exposed, no `.env` access, and no KisanMitraAI or deployment configuration files touched.
+
+## Phase CA-13 - Protected Code Preview for Normal Users
+
+Status: Completed locally, validation pending manual browser check.
+
+- Strengthened the frontend-only protected code preview inside `Coding Agent` with a larger view-only presentation, visible `IdeasForgeAI Protected Preview` watermarking, protected overlay labels, Normal User Mode chips, and read-only protected preview cards for generated proposal files.
+- Upgraded the protected unified diff experience with review-only messaging, embedded `Protected Diff` watermarking, stronger locked Founder/Admin action feedback, explicit Normal User Access and Founder/Admin Access cards, and a fuller permission audit preview.
+- Added protected copy friction only inside the protected preview and diff areas by preventing browser copy events and `Ctrl/Cmd+C` there, while keeping copy behavior outside protected preview untouched.
+- Updated the roadmap to show `Protected Code Preview` as current preview-unlocked scope and set next phases to `CA-14 - Backend Code Proposal API` and `CA-15 - Founder/Admin Apply Diff System`.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Backend touched: no.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-13 preview work; no real file editing from the app, no raw code export/apply/Git/deploy behavior, no terminal execution from the app, no backend edits, no secrets exposed, no `.env` access, and no KisanMitraAI or deployment configuration files touched.
