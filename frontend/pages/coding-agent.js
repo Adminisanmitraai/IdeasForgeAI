@@ -3736,7 +3736,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-22 - Read-Only Project Reader Engine */
+/* Phase CA-23 - Read-Only File Viewer Preview */
 (() => {
   if (window.__ideasforgeCa20ConnectedWorkspaceLoaded) {
     return;
@@ -4025,7 +4025,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-22 - Read-Only Project Reader Engine */
+/* Phase CA-23 - Read-Only File Viewer Preview */
 (() => {
   if (window.__ideasforgeCa21ReadOnlyConnectorLoaded) {
     return;
@@ -4309,6 +4309,304 @@ document.addEventListener("click", async (event) => {
     document.addEventListener("DOMContentLoaded", ca21EnsureSection);
   } else {
     ca21EnsureSection();
+  }
+})();
+
+
+
+/* Phase CA-22 - Read-Only Project Reader Engine */
+(() => {
+  if (window.__ideasforgeCa22ProjectReaderLoaded) {
+    return;
+  }
+  window.__ideasforgeCa22ProjectReaderLoaded = true;
+
+  const PROJECT_READER_PATH_CA22 = "/api/coding-agent/project-reader/preview";
+  const PROJECT_READER_BACKEND_SOURCE_CA22 = "Backend Project Reader API";
+  const PROJECT_READER_FALLBACK_SOURCE_CA22 = "Local Project Reader Preview";
+
+  const ca22Escape = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const ca22ApiCandidates = (path) => {
+    const endpoints = [];
+    try {
+      if (typeof API_BASE !== "undefined" && API_BASE) {
+        endpoints.push(`${API_BASE}${path}`);
+      }
+    } catch (error) {}
+    endpoints.push(path);
+    return endpoints;
+  };
+
+  const ca22FallbackReader = () => ({
+    ok: true,
+    status: "project-reader-preview-ready",
+    mode: "local-read-only-project-reader-preview",
+    project: {
+      label: "IdeasForgeAI Demo Project",
+      connector_type: "demo",
+      reader_scope: "manifest-only",
+      real_local_file_read: false,
+      private_github_fetch: false,
+      write_access: false,
+    },
+    architecture_summary: {
+      project_type: "AI coding workspace module inside IdeasForgeAI",
+      frontend: "Static mobile-first HTML/CSS/JavaScript page for the Coding Agent workspace.",
+      backend: "FastAPI service exposes safe preview endpoints and protected proposal endpoints.",
+      validation: "Node syntax checks and Python sector QA runner are used before deploy.",
+      deployment: "Frontend served from IdeasForgeAI domain; backend served through Render.",
+      safety_model: "Read-only and approval-gated. Normal users can preview; Founder/Admin approval is required for apply/deploy paths.",
+    },
+    file_map: [
+      { path: "frontend/pages/coding-agent.html", type: "frontend markup", purpose: "Coding Agent page structure and workspace shell.", read_mode: "manifest-preview", risk: "UI-only; no secrets expected." },
+      { path: "frontend/pages/coding-agent.js", type: "frontend controller", purpose: "Module switching, proposal previews, connectors, reader previews, and status updates.", read_mode: "manifest-preview", risk: "Must never contain API keys or private tokens." },
+      { path: "frontend/pages/coding-agent.css", type: "frontend styling", purpose: "Mobile-first dark UI, cards, gradients, and module layout.", read_mode: "manifest-preview", risk: "UI-only; safe for preview." },
+      { path: "backend/main.py", type: "backend API", purpose: "FastAPI endpoints for safe preview and protected proposal flow.", read_mode: "manifest-preview", risk: "Backend-only secrets must remain server-side." },
+      { path: "backend/sector_qa_runner.py", type: "validation runner", purpose: "Sector QA checks for IdeasForgeAI generation flows.", read_mode: "manifest-preview", risk: "Validation-only." },
+      { path: "PROJECT_STATUS.md", type: "project status", purpose: "Phase history and implementation notes.", read_mode: "manifest-preview", risk: "Should not contain secrets." },
+    ],
+    module_map: [
+      { module: "Project Reader", status: "CA-22 active", scope: "Read connector manifest and summarize project structure." },
+      { module: "Architecture Analyzer", status: "preview-ready", scope: "Use reader summary to infer frontend/backend/QA/deploy relationship." },
+      { module: "Task Planner", status: "preview-ready", scope: "Create safe task plans from reader output." },
+      { module: "Code Generation", status: "protected-preview", scope: "Generate proposals only; no apply action." },
+      { module: "Test Runner", status: "locked/allowlisted", scope: "Only approved validation commands in future backend mode." },
+      { module: "Git Manager", status: "locked", scope: "No branch, commit, push, PR, merge, or rollback." },
+      { module: "Deployment Manager", status: "locked", scope: "No deployment action; approval preview only." },
+    ],
+    reader_findings: [
+      "The workspace is separated into frontend page files, backend API file, validation runner, and project status notes.",
+      "The Coding Agent already has preview-only modules for reader, planning, diff, tests, auto-fix, Git, deployment, and Founder/Admin permissions.",
+      "The safest next step is a read-only file viewer that displays selected manifest files without copy/edit/apply actions for normal users.",
+      "Real local project access still needs a secure local bridge or desktop helper before reading a user's computer.",
+      "Private GitHub access must use backend-only OAuth/token handling, never frontend tokens.",
+    ],
+    recommended_next_phase: {
+      phase: "CA-23",
+      title: "Read-Only File Viewer Preview",
+      goal: "Open selected project files from the read-only manifest in a protected viewer without copy/edit/apply actions for normal users.",
+    },
+    locked_actions: [
+      "Read arbitrary local folders",
+      "Fetch private GitHub code",
+      "Show secrets",
+      "Edit files",
+      "Apply diffs",
+      "Run terminal commands",
+      "Create commits",
+      "Push branches",
+      "Deploy",
+      "Rollback",
+    ],
+    safety: {
+      local_filesystem_read: false,
+      private_github_fetch: false,
+      frontend_token: false,
+      file_write: false,
+      terminal: false,
+      git_commands: false,
+      deployment: false,
+      secrets: false,
+    },
+  });
+
+  const ca22FetchReader = async () => {
+    const payload = {
+      project_label: "IdeasForgeAI Demo Project",
+      connector_type: "demo",
+      mode: "read-only-project-reader-preview",
+    };
+
+    for (const endpoint of ca22ApiCandidates(PROJECT_READER_PATH_CA22)) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.ok) {
+            return { data, source: PROJECT_READER_BACKEND_SOURCE_CA22 };
+          }
+        }
+      } catch (error) {}
+    }
+
+    return { data: ca22FallbackReader(), source: PROJECT_READER_FALLBACK_SOURCE_CA22 };
+  };
+
+  const ca22List = (items = []) => items.map((item) => `<li>${ca22Escape(item)}</li>`).join("");
+
+  const ca22FileCards = (files = []) => files.map((file) => `
+    <article class="ca22-file-card">
+      <small>${ca22Escape(file.type)}</small>
+      <strong>${ca22Escape(file.path)}</strong>
+      <p>${ca22Escape(file.purpose)}</p>
+      <em>${ca22Escape(file.read_mode)} · ${ca22Escape(file.risk)}</em>
+    </article>
+  `).join("");
+
+  const ca22ModuleCards = (modules = []) => modules.map((item) => `
+    <article class="ca22-module-card">
+      <small>${ca22Escape(item.status)}</small>
+      <strong>${ca22Escape(item.module)}</strong>
+      <p>${ca22Escape(item.scope)}</p>
+    </article>
+  `).join("");
+
+  const ca22SummaryRows = (summary = {}) => Object.entries(summary).map(([key, value]) => `
+    <li>
+      <span>${ca22Escape(key.replaceAll("_", " "))}</span>
+      <strong>${ca22Escape(value)}</strong>
+    </li>
+  `).join("");
+
+  const ca22RenderReader = (data, source) => `
+    <section class="ca22-reader-panel" id="ca22-reader-panel">
+      <div class="ca22-kicker">Now Open: Read-Only Project Reader</div>
+      <h2>Read-Only Project Reader</h2>
+      <p>Project Reader has summarized the connected demo workspace from manifest data only. No real file read, code edit, terminal command, Git command, deployment, or secrets access was used.</p>
+
+      <div class="ca22-status-grid">
+        <article>
+          <small>Reader Source</small>
+          <strong>${ca22Escape(source)}</strong>
+          <p>Status: ${ca22Escape(data.status)}</p>
+        </article>
+        <article>
+          <small>Project</small>
+          <strong>${ca22Escape(data.project?.label)}</strong>
+          <p>Scope: ${ca22Escape(data.project?.reader_scope)}</p>
+        </article>
+      </div>
+
+      <section class="ca22-card">
+        <small>Architecture Summary</small>
+        <strong>High-level project understanding</strong>
+        <ul class="ca22-summary-list">${ca22SummaryRows(data.architecture_summary || {})}</ul>
+      </section>
+
+      <section class="ca22-card">
+        <small>File Map</small>
+        <strong>Reader manifest files</strong>
+        <div class="ca22-file-grid">${ca22FileCards(data.file_map || [])}</div>
+      </section>
+
+      <section class="ca22-card">
+        <small>Module Map</small>
+        <strong>How Coding Agent modules connect</strong>
+        <div class="ca22-module-grid">${ca22ModuleCards(data.module_map || [])}</div>
+      </section>
+
+      <section class="ca22-card">
+        <small>Reader Findings</small>
+        <strong>Safe analysis output</strong>
+        <ul>${ca22List(data.reader_findings || [])}</ul>
+      </section>
+
+      <section class="ca22-card">
+        <small>Next Phase</small>
+        <strong>${ca22Escape(data.recommended_next_phase?.phase)} — ${ca22Escape(data.recommended_next_phase?.title)}</strong>
+        <p>${ca22Escape(data.recommended_next_phase?.goal)}</p>
+      </section>
+
+      <section class="ca22-card ca22-safety-card">
+        <small>Safety Boundary</small>
+        <strong>Locked actions in CA-22</strong>
+        <ul>${ca22List(data.locked_actions || [])}</ul>
+      </section>
+    </section>
+  `;
+
+  const ca22EnsureSection = () => {
+    if (document.getElementById("ca22-project-reader-section")) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.id = "ca22-project-reader-section";
+    section.className = "ca22-project-reader-section";
+    section.innerHTML = `
+      <div class="ca22-shell-card">
+        <div class="ca22-kicker">CA-22 — Read-Only Project Reader Engine</div>
+        <h2>Project Reader Engine</h2>
+        <p>Analyze the connected workspace manifest and produce a safe project map, architecture summary, module map, and next-step guidance.</p>
+        <button class="ca22-open-button" type="button" data-ca22-open-reader>
+          Run Project Reader
+        </button>
+      </div>
+      <div id="ca22-project-reader-output"></div>
+    `;
+
+    const ca21 = document.getElementById("ca21-readonly-connector-section");
+    const ca20 = document.getElementById("ca20-connected-workspace-section");
+    const anchor = ca21 || ca20;
+    if (anchor?.parentNode) {
+      anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    } else {
+      const container = document.querySelector("main") || document.querySelector(".coding-agent-page") || document.body;
+      container.appendChild(section);
+    }
+  };
+
+  const ca22OpenReader = async () => {
+    ca22EnsureSection();
+
+    const output = document.getElementById("ca22-project-reader-output");
+    if (!output) return;
+
+    output.innerHTML = `
+      <section class="ca22-card">
+        <small>Status Banner</small>
+        <strong>Project Reader is preparing a read-only analysis.</strong>
+        <p>No local filesystem, private GitHub, file write, terminal, Git, deployment, or secrets access will be used.</p>
+      </section>
+    `;
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Read-Only Project Reader is running from manifest data only. No real file access is used.");
+      }
+    } catch (error) {}
+
+    const { data, source } = await ca22FetchReader();
+    output.innerHTML = ca22RenderReader(data, source);
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Read-Only Project Reader is now open. Analysis used manifest data only; real access remains locked.");
+      }
+    } catch (error) {}
+
+    document.getElementById("ca22-reader-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  document.addEventListener("click", async (event) => {
+    const explicit = event.target.closest("[data-ca22-open-reader]");
+    if (explicit) {
+      event.preventDefault();
+      await ca22OpenReader();
+      return;
+    }
+
+    const target = event.target.closest("button, a, .ca-module-pill, .module-pill");
+    const text = target?.textContent || "";
+    if (target && text.includes("Project Reader")) {
+      setTimeout(() => ca22OpenReader(), 80);
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ca22EnsureSection);
+  } else {
+    ca22EnsureSection();
   }
 })();
 
