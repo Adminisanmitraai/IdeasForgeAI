@@ -4023,3 +4023,292 @@ document.addEventListener("click", async (event) => {
   }
 })();
 
+
+
+/* Phase CA-22 - Read-Only Project Reader Engine */
+(() => {
+  if (window.__ideasforgeCa21ReadOnlyConnectorLoaded) {
+    return;
+  }
+  window.__ideasforgeCa21ReadOnlyConnectorLoaded = true;
+
+  const CONNECTOR_PREVIEW_PATH_CA21 = "/api/coding-agent/connectors/read-only-preview";
+  const CONNECTOR_BACKEND_SOURCE_CA21 = "Backend Read-Only Connector API";
+  const CONNECTOR_FALLBACK_SOURCE_CA21 = "Local Read-Only Connector Preview";
+
+  const ca21Escape = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const ca21ApiCandidates = (path) => {
+    const endpoints = [];
+    try {
+      if (typeof API_BASE !== "undefined" && API_BASE) {
+        endpoints.push(`${API_BASE}${path}`);
+      }
+    } catch (error) {}
+    endpoints.push(path);
+    return endpoints;
+  };
+
+  const ca21Fallback = (connectorType = "github") => ({
+    ok: true,
+    status: "read-only-connector-ready",
+    mode: "local-read-only-connector-preview",
+    connector: {
+      type: connectorType,
+      title: connectorType === "local" ? "Local Read-Only Connector" : connectorType === "demo" ? "Demo Read-Only Connector" : "GitHub Read-Only Connector",
+      project_label: "IdeasForgeAI Demo Project",
+      repository_url: "https://github.com/Adminisanmitraai/IdeasForgeAI",
+      connection_status: connectorType === "local"
+        ? "Local folder read remains locked until secure local bridge is enabled."
+        : connectorType === "demo"
+          ? "Demo workspace is available as safe read-only preview."
+          : "Public GitHub repository preview can be prepared without storing tokens.",
+      available_now: connectorType !== "local",
+      real_local_read: false,
+      private_repo_access: false,
+      write_access: false,
+    },
+    read_scope: connectorType === "local"
+      ? ["Local project selection UI", "Permission explanation", "Future local bridge handshake", "Read-only project manifest preview"]
+      : ["Repository URL validation", "Public repo metadata preview", "Read-only project structure plan", "Branch/read-only scope planning"],
+    planned_workspace_manifest: [
+      { name: "Project root", kind: "folder", access: "read-only-preview" },
+      { name: "frontend/pages", kind: "folder", access: "read-only-preview" },
+      { name: "frontend/pages/coding-agent.html", kind: "file", access: "read-only-preview" },
+      { name: "frontend/pages/coding-agent.js", kind: "file", access: "read-only-preview" },
+      { name: "frontend/pages/coding-agent.css", kind: "file", access: "read-only-preview" },
+      { name: "backend/main.py", kind: "file", access: "read-only-preview" },
+      { name: "PROJECT_STATUS.md", kind: "file", access: "read-only-preview" },
+    ],
+    permission_steps: [
+      "User chooses Local, GitHub, or Demo connector",
+      "System explains exact read-only scope",
+      "Founder/Admin approval is required for any real private project access",
+      "No file writes are allowed in CA-21",
+      "No tokens are accepted in frontend",
+      "No Git command is executed",
+      "Connected workspace opens in read-only mode only",
+    ],
+    locked_actions: [
+      "Edit files",
+      "Apply patch",
+      "Run terminal commands",
+      "Create branch",
+      "Commit changes",
+      "Push branch",
+      "Create pull request",
+      "Deploy",
+      "Rollback",
+      "Read secrets",
+    ],
+    safety: {
+      local_filesystem_read: false,
+      github_private_token: false,
+      frontend_token: false,
+      file_write: false,
+      terminal: false,
+      git_commands: false,
+      deployment: false,
+      secrets: false,
+    },
+  });
+
+  const ca21FetchConnector = async (connectorType = "github") => {
+    const repoInput = document.querySelector("[data-ca21-repo-input]");
+    const payload = {
+      connector_type: connectorType,
+      repository_url: repoInput?.value || "https://github.com/Adminisanmitraai/IdeasForgeAI",
+      project_label: "IdeasForgeAI Demo Project",
+      mode: "read-only-connector-preview",
+    };
+
+    for (const endpoint of ca21ApiCandidates(CONNECTOR_PREVIEW_PATH_CA21)) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.ok) {
+            return { data, source: CONNECTOR_BACKEND_SOURCE_CA21 };
+          }
+        }
+      } catch (error) {}
+    }
+
+    return { data: ca21Fallback(connectorType), source: CONNECTOR_FALLBACK_SOURCE_CA21 };
+  };
+
+  const ca21List = (items = []) => items.map((item) => `<li>${ca21Escape(item)}</li>`).join("");
+
+  const ca21Manifest = (items = []) => items.map((item) => `
+    <li>
+      <span>${item.kind === "folder" ? "▸" : "•"}</span>
+      <strong>${ca21Escape(item.name)}</strong>
+      <em>${ca21Escape(item.access)}</em>
+    </li>
+  `).join("");
+
+  const ca21RenderResult = (data, source) => `
+    <section class="ca21-result-panel" id="ca21-result-panel">
+      <div class="ca21-kicker">Now Open: Read-Only Connector</div>
+      <h2>${ca21Escape(data.connector?.title || "Read-Only Connector")}</h2>
+      <p>${ca21Escape(data.connector?.connection_status || "Read-only connector preview ready.")}</p>
+
+      <div class="ca21-grid">
+        <article>
+          <small>Source</small>
+          <strong>${ca21Escape(source)}</strong>
+          <p>Status: ${ca21Escape(data.status)}</p>
+        </article>
+        <article>
+          <small>Access</small>
+          <strong>${data.connector?.write_access ? "Write enabled" : "Read-only preview"}</strong>
+          <p>Private repo access: ${data.connector?.private_repo_access ? "enabled" : "locked"}</p>
+        </article>
+      </div>
+
+      <section class="ca21-card">
+        <small>Read Scope</small>
+        <strong>Allowed preview scope</strong>
+        <ul>${ca21List(data.read_scope || [])}</ul>
+      </section>
+
+      <section class="ca21-card">
+        <small>Workspace Manifest Preview</small>
+        <strong>Read-only structure</strong>
+        <ul class="ca21-manifest">${ca21Manifest(data.planned_workspace_manifest || [])}</ul>
+      </section>
+
+      <section class="ca21-card">
+        <small>Permission Steps</small>
+        <strong>Required before real access</strong>
+        <ol>${ca21List(data.permission_steps || [])}</ol>
+      </section>
+
+      <section class="ca21-card">
+        <small>Locked Actions</small>
+        <strong>Not allowed in CA-21</strong>
+        <ul>${ca21List(data.locked_actions || [])}</ul>
+      </section>
+
+      <section class="ca21-card ca21-safety-card">
+        <small>Safety Boundary</small>
+        <strong>No real write or secret access.</strong>
+        <ul>
+          <li>Local filesystem read: ${data.safety?.local_filesystem_read ? "enabled" : "blocked"}</li>
+          <li>GitHub private token: ${data.safety?.github_private_token ? "present" : "blocked"}</li>
+          <li>Frontend token: ${data.safety?.frontend_token ? "present" : "blocked"}</li>
+          <li>File write: ${data.safety?.file_write ? "enabled" : "blocked"}</li>
+          <li>Terminal: ${data.safety?.terminal ? "enabled" : "blocked"}</li>
+          <li>Git commands: ${data.safety?.git_commands ? "enabled" : "blocked"}</li>
+          <li>Deployment: ${data.safety?.deployment ? "enabled" : "blocked"}</li>
+          <li>Secrets: ${data.safety?.secrets ? "enabled" : "blocked"}</li>
+        </ul>
+      </section>
+    </section>
+  `;
+
+  const ca21EnsureSection = () => {
+    if (document.getElementById("ca21-readonly-connector-section")) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.id = "ca21-readonly-connector-section";
+    section.className = "ca21-readonly-connector-section";
+    section.innerHTML = `
+      <div class="ca21-shell-card">
+        <div class="ca21-kicker">CA-21 — Local/GitHub Read-Only Connector</div>
+        <h2>Read-Only Connector</h2>
+        <p>Prepare safe local and GitHub connector workflows without editing files, running Git, deploying, or exposing secrets.</p>
+
+        <div class="ca21-repo-input-wrap">
+          <label for="ca21-repo-input">Public GitHub repository URL</label>
+          <input id="ca21-repo-input" data-ca21-repo-input value="https://github.com/Adminisanmitraai/IdeasForgeAI" autocomplete="off" />
+        </div>
+
+        <div class="ca21-action-grid">
+          <button type="button" data-ca21-open="github">Preview GitHub Read-Only</button>
+          <button type="button" data-ca21-open="local">Preview Local Read-Only</button>
+          <button type="button" data-ca21-open="demo">Open Demo Read-Only</button>
+        </div>
+      </div>
+      <div id="ca21-readonly-connector-output"></div>
+    `;
+
+    const ca20 = document.getElementById("ca20-connected-workspace-section");
+    if (ca20?.parentNode) {
+      ca20.parentNode.insertBefore(section, ca20.nextSibling);
+    } else {
+      const container = document.querySelector("main") || document.querySelector(".coding-agent-page") || document.body;
+      container.appendChild(section);
+    }
+  };
+
+  const ca21Open = async (connectorType = "github") => {
+    ca21EnsureSection();
+
+    const output = document.getElementById("ca21-readonly-connector-output");
+    if (!output) return;
+
+    output.innerHTML = `
+      <section class="ca21-card">
+        <small>Status Banner</small>
+        <strong>Preparing read-only connector preview.</strong>
+        <p>No real local folder read, private GitHub token, file write, terminal, Git, deployment, or secrets access will be used.</p>
+      </section>
+    `;
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Read-only connector preview is opening. No write, Git, deploy, or secrets access will be used.");
+      }
+    } catch (error) {}
+
+    const { data, source } = await ca21FetchConnector(connectorType);
+    output.innerHTML = ca21RenderResult(data, source);
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Read-only connector preview is now open. Real edit, Git, deployment, and secrets access remain locked.");
+      }
+    } catch (error) {}
+
+    document.getElementById("ca21-result-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  document.addEventListener("click", async (event) => {
+    const explicit = event.target.closest("[data-ca21-open]");
+    if (explicit) {
+      event.preventDefault();
+      await ca21Open(explicit.getAttribute("data-ca21-open") || "github");
+      return;
+    }
+
+    const target = event.target.closest("button, a, .connection-card, .connect-option, .ca-connect-card");
+    const text = target?.textContent || "";
+
+    if (target && text.includes("GitHub Repository")) {
+      setTimeout(() => ca21Open("github"), 80);
+    }
+
+    if (target && text.includes("Local Project")) {
+      setTimeout(() => ca21Open("local"), 80);
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ca21EnsureSection);
+  } else {
+    ca21EnsureSection();
+  }
+})();
+
