@@ -13030,3 +13030,17 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: frontend/pages/coding-agent.html, frontend/pages/coding-agent.css, frontend/pages/coding-agent.js, PROJECT_STATUS.md.
 - Validation commands required: node --check frontend/pages/coding-agent.js; node --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
 - Safety notes: frontend-only CA-05 preview; no backend edits, deployment settings, secrets, .env access, terminal execution from the app, Git writes, external services, or KisanMitraAI files touched.
+## Phase CA-07 - Test Runner Preview
+
+Status: Completed locally, validation pending manual browser check.
+
+- Added a frontend-only Test Runner Preview module to the Demo Project Workspace using the existing Active Module screen system and placed the tab order after Code Diff Preview.
+- Added exact CA-07 copy for Test Runner Preview, Preview validation steps before real test execution is enabled., Now Open: Test Runner Preview, and the locked status banner that states real command execution remains locked.
+- Added static preview test suites for JavaScript syntax checks, backend QA, manual UI checks, and safety checks plus premium status chips for Passed, Needs Review, Locked, and Manual.
+- Added preview-only actions for Preview Test Run, Preview Failed Test Example, Copy Test Plan, Mark for Later, and Reject Test Plan, along with a disabled Run Real Tests — Coming after project permission control.
+- Updated the visible roadmap chips and safety notice to show Project Reader — Unlocked, Architecture Analyzer — Unlocked, Task Planner — Preview Unlocked, Code Editor with Diff — Preview Unlocked, Test Runner — Preview Unlocked, and CA-08 through CA-10 remaining locked.
+- Files changed: rontend/pages/coding-agent.html, rontend/pages/coding-agent.css, rontend/pages/coding-agent.js, PROJECT_STATUS.md.
+- Validation commands required: 
+ode --check frontend/pages/coding-agent.js; 
+ode --check frontend/pages/studio-v4.js; python backend/sector_qa_runner.py.
+- Safety notes: frontend-only CA-07 preview; no real command execution from the app, no backend edits, no deployment settings, no secrets access, no .env access, no Git writes, no backend file reading, and no KisanMitraAI files touched.

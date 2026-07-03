@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca051-task-planner-open-repair-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca07-test-runner-preview-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -169,23 +169,26 @@
             <strong>Project Reader</strong>
           </div>
         </div>
-        <div class="preview-module-list">
+          <div class="preview-module-list">
             <button class="module-chip-button" type="button" data-ca-action="open-project-reader">Project Reader <small>Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-architecture">Architecture Analyzer <small>Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-task-planner">Task Planner <small>Preview Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-code-diff">Code Diff Preview <small>Preview Unlocked</small></button>
-        </div>
+            <button class="module-chip-button" type="button" data-ca-action="open-test-runner">Test Runner <small>Preview Unlocked</small></button>
+          </div>
           <p class="workspace-screen__copy">Demo Project opens a real Active Module screen immediately. It does not just mark the card as selected.</p>
         </section>
 
         <section class="safety-notice" aria-label="Safety notice">
-          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-05 / CA-06.</strong>
+          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-07.</strong>
           <ul>
-            <li>Read-only preview only in CA-05 / CA-06</li>
+            <li>Preview-only validation in CA-07</li>
+            <li>No real command execution</li>
             <li>No terminal commands</li>
             <li>No Git writes</li>
             <li>No deployment actions</li>
             <li>No secrets access</li>
+            <li>Real tests require future approval and project permission</li>
           </ul>
         </section>
       </section>
@@ -205,6 +208,7 @@
           <button class="module-tab-button" type="button" data-ca-action="open-architecture" data-module-tab="architecture" aria-pressed="false">Architecture Analyzer</button>
           <button class="module-tab-button" type="button" data-ca-action="open-task-planner" data-module-tab="task-planner" aria-pressed="false">Task Planner</button>
           <button class="module-tab-button" type="button" data-ca-action="open-code-diff" data-module-tab="code-diff" aria-pressed="false">Code Diff Preview</button>
+          <button class="module-tab-button" type="button" data-ca-action="open-test-runner" data-module-tab="test-runner" aria-pressed="false">Test Runner</button>
         </div>
 
         <div class="workspace-message-card" data-active-message-card hidden></div>
@@ -222,8 +226,8 @@
         <button class="module-chip-button" type="button" data-ca-action="open-project-reader"><span>Project Reader</span><small>Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-architecture"><span>Architecture Analyzer</span><small>Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-task-planner"><span>Task Planner</span><small>Preview Unlocked</small></button>
-        <button class="module-chip-button" type="button" data-ca-action="open-code-diff"><span>Code Diff Preview</span><small>Preview Unlocked</small></button>
-        <span class="module-chip-button" data-module-lock><span>Test Runner</span><small>CA-07</small></span>
+        <button class="module-chip-button" type="button" data-ca-action="open-code-diff"><span>Code Editor with Diff</span><small>Preview Unlocked</small></button>
+        <button class="module-chip-button" type="button" data-ca-action="open-test-runner"><span>Test Runner</span><small>Preview Unlocked</small></button>
         <span class="module-chip-button" data-module-lock><span>Auto Fix Engine</span><small>CA-08</small></span>
         <span class="module-chip-button" data-module-lock><span>Git Manager</span><small>CA-09</small></span>
         <span class="module-chip-button" data-module-lock><span>Deployment Manager</span><small>CA-10</small></span>
@@ -233,6 +237,6 @@
     <button class="bottom-cta" type="button" data-ca-action="open-connect">Connect Project</button>
   </main>
 
-  <script src="./coding-agent.js?v=ca051-task-planner-open-repair-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca07-test-runner-preview-20260703" defer></script>
 </body>
 </html>
