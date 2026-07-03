@@ -43,6 +43,8 @@ const RUN_TESTS_PATH = "/api/coding-agent/run-tests";
 const AUTO_FIX_ANALYZE_PATH = "/api/coding-agent/auto-fix/analyze";
 const AUTO_FIX_PLAN_PATH = "/api/coding-agent/auto-fix/plan";
 const GITHUB_PREVIEW_PATH = "/api/coding-agent/github/preview";
+const DEPLOYMENT_PREVIEW_PATH = "/api/coding-agent/deployment/preview";
+const DEPLOYMENT_APPROVAL_PATH = "/api/coding-agent/deployment/request-approval";
 const CODE_PROPOSAL_FALLBACK_SOURCE = "Local Protected Fallback";
 const CODE_PROPOSAL_BACKEND_SOURCE = "Backend Protected API";
 const APPLY_DIFF_FALLBACK_SOURCE = "Local Apply Review Preview";
@@ -52,6 +54,8 @@ const AUTO_FIX_BACKEND_SOURCE = "Backend Auto Fix Preview API";
 const AUTO_FIX_FALLBACK_SOURCE = "Local Auto Fix Preview";
 const GITHUB_BACKEND_SOURCE = "Backend GitHub Preview API";
 const GITHUB_FALLBACK_SOURCE = "Local GitHub Preview";
+const DEPLOYMENT_BACKEND_SOURCE = "Backend Deployment Approval API";
+const DEPLOYMENT_FALLBACK_SOURCE = "Local Deployment Approval Preview";
 const TEST_RUNNER_LOCKED_SOURCE = "Locked preview mode";
 const TEST_RUNNER_FALLBACK_SOURCE = "Local fallback preview";
 const APPROVED_TEST_IDS = [
@@ -462,7 +466,7 @@ const MODULE_STATUS_MESSAGES = {
   "test-runner": "Real Test Runner Execution is now open. Real execution is locked unless backend validation mode is enabled.",
   "auto-fix": "Auto Fix Loop Foundation is now open. No code changes will be applied.",
   "git-manager": "GitHub Integration Foundation is now open. No GitHub commands will run.",
-  "deployment-manager": "Deployment Manager Preview is now open. No deployment actions will run.",
+  "deployment-manager": "Real Deployment Approval Flow is now open. No deployment actions will run.",
 };
 
 const MODULE_SUBTITLES = {
@@ -616,6 +620,10 @@ const state = {
   githubPreviewLoading: false,
   githubPreviewSource: "",
   githubPreviewData: null,
+  deploymentPreviewLoading: false,
+  deploymentPreviewSource: "",
+  deploymentPreviewData: null,
+  deploymentApprovalData: null,
   gitPlanDecision: "pending",
   gitPlanCopyFeedback: "",
   deploymentPlanGenerated: false,
@@ -2223,6 +2231,246 @@ const renderGitManagerMarkup = () => `
   </section>
 `;
 
+
+const getDeploymentEndpointCandidates = (path) => {
+  const endpoints = [];
+  if (API_BASE) {
+    endpoints.push(`${API_BASE}${path}`);
+  }
+  endpoints.push(path);
+  return endpoints;
+};
+
+const buildLocalDeploymentPreview = (status = "deployment-preview-ready") => ({
+  ok: true,
+  status,
+  mode: "local-deployment-approval-preview",
+  project_id: "ideasforgeai-demo",
+  proposal_id: "demo-task-planner-fix",
+  target_environment: "preview",
+  deployment_summary: {
+    title: "Founder/Admin deployment approval flow",
+    summary: "Prepare deployment review, validation gates, rollback planning, and production approval before any real deployment action is enabled.",
+    real_deployment: false,
+  },
+  approval_flow: [
+    "Review protected code proposal",
+    "Confirm affected files and risk level",
+    "Run approved validation checks",
+    "Verify no secrets or deployment settings changed",
+    "Create rollback plan",
+    "Request Founder/Admin deployment approval",
+    "Deploy only after authenticated backend permission exists",
+    "Monitor health after deployment",
+  ],
+  deployment_targets: [
+    { name: "Preview", status: "planned-only", description: "Safe preview/staging review before production." },
+    { name: "Production", status: "locked", description: "Production deploy requires Founder/Admin authentication and explicit approval." },
+  ],
+  validation_gates: [
+    "node --check frontend/pages/coding-agent.js",
+    "node --check frontend/pages/studio-v4.js",
+    "python backend/sector_qa_runner.py",
+    "Manual mobile Safari test",
+    "Manual desktop browser test",
+    "Backend health check",
+  ],
+  rollback_plan: [
+    "Keep last stable Git commit reference",
+    "Keep previous deployment available for rollback",
+    "Verify health before and after deploy",
+    "Stop rollout if validation fails",
+    "Rollback only with Founder/Admin approval",
+  ],
+  locked_actions: [
+    "Deploy to preview",
+    "Deploy to production",
+    "Promote staging to production",
+    "Rollback deployment",
+    "Change DNS",
+    "Read Render token",
+    "Read GitHub token",
+    "Trigger Render API",
+  ],
+  approval_gate: {
+    required: true,
+    role: "Founder/Admin",
+    message: "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
+  },
+  audit_preview: [
+    "Deployment flow preview opened — allowed",
+    "Deployment approval requested — recorded",
+    "Render API call — blocked",
+    "GitHub deploy action — blocked",
+    "Production promotion — blocked",
+    "Rollback — blocked",
+    "DNS change — blocked",
+    "Secrets access — blocked",
+  ],
+  safety: {
+    render_api_calls: false,
+    github_api_calls: false,
+    deployment_token_in_frontend: false,
+    deployment_token_in_response: false,
+    git_commands: false,
+    file_write: false,
+    deploy: false,
+    rollback: false,
+    dns_change: false,
+    secrets: false,
+  },
+});
+
+const postDeploymentPreview = async (path, fallbackStatus = "deployment-preview-ready") => {
+  const payload = {
+    project_id: "ideasforgeai-demo",
+    proposal_id: "demo-task-planner-fix",
+    target_environment: "preview",
+    mode: "deployment-approval-preview",
+  };
+
+  for (const endpoint of getDeploymentEndpointCandidates(path)) {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (response.ok) {
+        return await response.json();
+      }
+    } catch (error) {
+      // Keep frontend safe with local fallback.
+    }
+  }
+
+  return buildLocalDeploymentPreview(fallbackStatus);
+};
+
+const renderDeploymentList = (items = []) => items
+  .map((item) => `<li>${escapeHtml(String(item))}</li>`)
+  .join("");
+
+const openDeploymentPreview = async () => {
+  state.deploymentPreviewLoading = true;
+  state.deploymentPreviewSource = "";
+  state.deploymentPreviewData = null;
+  setStatusMessage("Opening Deployment Approval Flow. No deployment action will run.");
+  renderScreenState();
+
+  const preview = await postDeploymentPreview(DEPLOYMENT_PREVIEW_PATH);
+
+  if (preview?.ok && preview.mode !== "local-deployment-approval-preview") {
+    state.deploymentPreviewSource = DEPLOYMENT_BACKEND_SOURCE;
+  } else {
+    state.deploymentPreviewSource = DEPLOYMENT_FALLBACK_SOURCE;
+  }
+
+  state.deploymentPreviewData = preview;
+  state.deploymentPreviewLoading = false;
+  setStatusMessage("Deployment Approval Flow is now open. No Render, GitHub, DNS, rollback, or deploy action will run.");
+  renderScreenState();
+};
+
+const requestDeploymentApproval = async () => {
+  state.deploymentPreviewLoading = true;
+  setStatusMessage("Recording deployment approval request in preview mode. No deployment will run.");
+  renderScreenState();
+
+  const approval = await postDeploymentPreview(DEPLOYMENT_APPROVAL_PATH, "approval-request-recorded");
+
+  if (approval?.ok && approval.mode !== "local-deployment-approval-preview") {
+    state.deploymentPreviewSource = DEPLOYMENT_BACKEND_SOURCE;
+  } else {
+    state.deploymentPreviewSource = DEPLOYMENT_FALLBACK_SOURCE;
+    approval.message = "Deployment approval request saved locally as preview. Backend deployment approval API unavailable. No deployment action was performed.";
+  }
+
+  state.deploymentApprovalData = approval;
+  state.deploymentPreviewData = approval;
+  state.deploymentPreviewLoading = false;
+  setStatusMessage(approval.message || "Deployment approval request recorded. No deployment action was performed.");
+  renderScreenState();
+};
+
+const renderDeploymentTargets = (targets = []) => targets.map((target) => `
+  <article class="deployment-target-card">
+    <strong>${escapeHtml(target.name || "Target")}</strong>
+    <span>${escapeHtml(target.status || "planned-only")}</span>
+    <p>${escapeHtml(target.description || "")}</p>
+  </article>
+`).join("");
+
+const renderDeploymentPreviewCards = () => {
+  const data = state.deploymentPreviewData;
+  if (!data) {
+    return "";
+  }
+
+  return `
+    <section class="screen-detail-card screen-detail-card--wide deployment-ca19-card">
+      <small>Proposal Source</small>
+      <strong>${escapeHtml(state.deploymentPreviewSource || DEPLOYMENT_FALLBACK_SOURCE)}</strong>
+      <p>Status: ${escapeHtml(data.status || "deployment-preview-ready")} | Mode: ${escapeHtml(data.mode || "deployment-approval-preview")}</p>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Deployment Summary</small>
+      <strong>${escapeHtml(data.deployment_summary?.title || "Founder/Admin deployment approval flow")}</strong>
+      <p>${escapeHtml(data.deployment_summary?.summary || "")}</p>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Deployment Targets</small>
+      <strong>Preview and Production remain controlled</strong>
+      <div class="deployment-target-grid">${renderDeploymentTargets(data.deployment_targets || [])}</div>
+    </section>
+    <section class="screen-detail-card">
+      <small>Approval Flow</small>
+      <strong>Required steps</strong>
+      <ol class="screen-detail-list">${renderDeploymentList(data.approval_flow || [])}</ol>
+    </section>
+    <section class="screen-detail-card">
+      <small>Validation Gates</small>
+      <strong>Must pass before real deploy</strong>
+      <ul class="screen-detail-list">${renderDeploymentList(data.validation_gates || [])}</ul>
+    </section>
+    <section class="screen-detail-card">
+      <small>Rollback Plan</small>
+      <strong>Prepared before deployment</strong>
+      <ul class="screen-detail-list">${renderDeploymentList(data.rollback_plan || [])}</ul>
+    </section>
+    <section class="screen-detail-card">
+      <small>Locked Deployment Actions</small>
+      <strong>Founder/Admin required</strong>
+      <ul class="screen-detail-list">${renderDeploymentList(data.locked_actions || [])}</ul>
+    </section>
+    <section class="screen-detail-card screen-detail-card--wide">
+      <small>Approval Gate</small>
+      <strong>${escapeHtml(data.approval_gate?.role || "Founder/Admin")} verification required</strong>
+      <p>${escapeHtml(data.approval_gate?.message || "Real deployment remains locked.")}</p>
+    </section>
+    <section class="screen-detail-card">
+      <small>Audit Preview</small>
+      <strong>Preview-only deployment audit</strong>
+      <ul class="screen-detail-list">${renderDeploymentList(data.audit_preview || [])}</ul>
+    </section>
+    <section class="screen-detail-card">
+      <small>Safety Flags</small>
+      <strong>No real deployment action</strong>
+      <ul class="screen-detail-list">
+        <li>Render API calls: ${data.safety?.render_api_calls ? "enabled" : "blocked"}</li>
+        <li>GitHub API calls: ${data.safety?.github_api_calls ? "enabled" : "blocked"}</li>
+        <li>Token in frontend: ${data.safety?.deployment_token_in_frontend ? "present" : "blocked"}</li>
+        <li>Git commands: ${data.safety?.git_commands ? "enabled" : "blocked"}</li>
+        <li>Deployment: ${data.safety?.deploy ? "enabled" : "blocked"}</li>
+        <li>Rollback: ${data.safety?.rollback ? "enabled" : "blocked"}</li>
+        <li>DNS change: ${data.safety?.dns_change ? "enabled" : "blocked"}</li>
+        <li>Secrets access: ${data.safety?.secrets ? "enabled" : "blocked"}</li>
+      </ul>
+    </section>
+  `;
+};
+
+
 const renderDeploymentManagerMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Title</small>
@@ -3468,4 +3716,20 @@ document.addEventListener("click", async (event) => {
   }
   event.preventDefault();
   await openGitHubPreview();
+});
+
+
+document.addEventListener("click", async (event) => {
+  const deploymentTrigger = event.target.closest('[data-ca-action="preview-deployment-flow"]');
+  if (deploymentTrigger) {
+    event.preventDefault();
+    await openDeploymentPreview();
+    return;
+  }
+
+  const approvalTrigger = event.target.closest('[data-ca-action="request-deployment-approval"]');
+  if (approvalTrigger) {
+    event.preventDefault();
+    await requestDeploymentApproval();
+  }
 });
