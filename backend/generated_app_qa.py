@@ -13,6 +13,8 @@ QA_RULE_IDS = [
     "no_large_monetization_section_without_request",
     "required_screens_exist",
     "required_clickable_aliases_exist",
+    "required_visible_terms_exist",
+    "forbidden_visible_terms_absent",
     "no_generic_crm_fallback_for_specific_sector",
     "no_fake_policy_certificate_document_language",
     "no_guaranteed_returns_for_investments",
@@ -68,6 +70,8 @@ def check_generated_app_output(
     sector_id: str = "generic_saas",
     required_screens: Iterable[str] | None = None,
     required_aliases: Iterable[str] | None = None,
+    required_terms: Iterable[str] | None = None,
+    forbidden_terms: Iterable[str] | None = None,
     user_prompt: str = "",
 ) -> Dict[str, Any]:
     text = flatten_generated_output(output)
@@ -119,6 +123,24 @@ def check_generated_app_output(
         )
     )
 
+    missing_terms = [term for term in required_terms or [] if not _contains_alias(text, str(term))]
+    checks.append(
+        _result(
+            "required_visible_terms_exist",
+            not missing_terms,
+            "Missing required visible terms: " + ", ".join(missing_terms) if missing_terms else "All required visible terms are present.",
+        )
+    )
+
+    found_forbidden_terms = [term for term in forbidden_terms or [] if _contains_alias(text, str(term))]
+    checks.append(
+        _result(
+            "forbidden_visible_terms_absent",
+            not found_forbidden_terms,
+            "Forbidden visible terms appeared: " + ", ".join(found_forbidden_terms) if found_forbidden_terms else "No forbidden visible terms found.",
+        )
+    )
+
     generic_fallback_found = any(term in lower_text for term in GENERIC_CRM_TERMS)
     checks.append(
         _result(
@@ -163,6 +185,8 @@ def assert_generated_app_output(
     sector_id: str = "generic_saas",
     required_screens: Iterable[str] | None = None,
     required_aliases: Iterable[str] | None = None,
+    required_terms: Iterable[str] | None = None,
+    forbidden_terms: Iterable[str] | None = None,
     user_prompt: str = "",
 ) -> Dict[str, Any]:
     report = check_generated_app_output(
@@ -170,6 +194,8 @@ def assert_generated_app_output(
         sector_id=sector_id,
         required_screens=required_screens,
         required_aliases=required_aliases,
+        required_terms=required_terms,
+        forbidden_terms=forbidden_terms,
         user_prompt=user_prompt,
     )
     if not report["ok"]:

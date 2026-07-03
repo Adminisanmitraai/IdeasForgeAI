@@ -1100,8 +1100,80 @@ def _render_image_guided_reference(plan: Dict[str, Any]) -> str:
     </section>"""
 
 
+def _premium_mockup_payload(plan: Dict[str, Any]) -> Dict[str, Any]:
+    concept = plan.get("premium_ui_image_concept")
+    mockup = plan.get("image_first_mockup")
+    payload = concept if isinstance(concept, dict) and concept.get("ok") else {}
+    fallback = mockup if isinstance(mockup, dict) and mockup.get("ok") else {}
+    if not payload and not fallback:
+        return {}
+
+    style_label = _clean_text(payload.get("style_tokens", {}).get("style_label")) or _clean_text(fallback.get("style_direction"))
+    layout_targets = _clean_list(payload.get("layout_targets"), []) or _clean_list(fallback.get("layout_targets"), [])
+    required_visible_content = _clean_list(payload.get("required_visible_content"), []) or _clean_list(fallback.get("required_visible_content"), [])
+    color_story = _clean_text(payload.get("style_tokens", {}).get("color_story")) or _clean_text(fallback.get("rendering_profile", {}).get("color_story"))
+    surface_style = _clean_text(payload.get("style_tokens", {}).get("surface_style")) or _clean_text(fallback.get("rendering_profile", {}).get("surface_style"))
+    return {
+        "style_label": style_label,
+        "layout_targets": layout_targets,
+        "required_visible_content": required_visible_content,
+        "color_story": color_story,
+        "surface_style": surface_style,
+        "prompt_summary": _clean_text(payload.get("prompt_summary")) or _clean_text(fallback.get("visual_prompt_summary")),
+    }
+
+
+def _render_mockup_brief(plan: Dict[str, Any]) -> str:
+    mockup = _premium_mockup_payload(plan)
+    if not mockup:
+        return ""
+
+    layout_targets = mockup["layout_targets"][:4]
+    visible_content = mockup["required_visible_content"][:6]
+    detail_parts = [part for part in [mockup["color_story"], mockup["surface_style"]] if part]
+    detail_line = ". ".join(detail_parts) or "Premium image-first mockup direction is active for this preview."
+    chips = "".join(f"<span>{html.escape(item)}</span>" for item in visible_content)
+    layout_list = "".join(f"<li>{html.escape(item)}</li>" for item in layout_targets)
+    style_title = html.escape(mockup["style_label"] or "Premium mockup direction")
+    prompt_summary = html.escape(mockup["prompt_summary"] or detail_line)
+
+    return f"""
+    <section class="content-block mockup-brief" aria-label="Premium mockup direction">
+      <div class="section-heading">
+        <span class="eyebrow">Premium Mockup Direction</span>
+        <h2>{style_title}</h2>
+        <p>{prompt_summary}</p>
+      </div>
+      <div class="mockup-brief-grid">
+        <article>
+          <span>Visible content</span>
+          <div class="mockup-chip-row">{chips}</div>
+        </article>
+        <article>
+          <span>Layout targets</span>
+          <ul>{layout_list}</ul>
+        </article>
+      </div>
+      <p class="mockup-brief-note">{html.escape(detail_line)}</p>
+    </section>"""
+
+
 def _render_metric_cards(domain: str, plan: Dict[str, Any]) -> str:
     money = _currency_sample_values(plan)
+    if domain == "school" and plan.get("tutor_mode"):
+        metrics = [
+            ("Attendance", "12 Today"),
+            ("Homework Due", "8 Pending"),
+            ("Parent Messages", "249 Unread"),
+            ("Class Notices", "38 New"),
+            ("Fees Pending", f"{money['feesPending']} Total Pending"),
+            ("Students", "142 Total"),
+        ]
+        return "\n".join(
+            f'<article data-screen="{html.escape(_screen_slug(label))}"><span>{html.escape(label)}</span><strong>{html.escape(value)}</strong></article>'
+            for label, value in metrics
+        )
+
     blueprint_cards = _blueprint_list(plan, "dashboard_cards")
     if blueprint_cards:
         sector_values = {
@@ -1671,7 +1743,89 @@ def _domain_theme_class(domain: str, theme: Dict[str, Any] | None = None) -> str
     return f"theme-{domain.replace('_', '-')}" if domain != "generic" else "theme-generic"
 
 
-def _render_app_visual(domain: str, profile: Dict[str, Any] | None = None) -> str:
+def _render_app_visual(domain: str, profile: Dict[str, Any] | None = None, plan: Dict[str, Any] | None = None) -> str:
+    if domain == "school" and isinstance(plan, dict) and plan.get("tutor_mode"):
+        return """
+        <aside class="hero-visual" aria-label="Generated app visual preview">
+          <div class="hero-visual-panel">
+            <div class="hero-visual-topline"><span>Private Tutor App</span><strong>Tutor Classroom Bridge</strong></div>
+            <div class="hero-visual-card">
+              <strong>Attendance, homework, and fee follow-up in one premium tutor flow.</strong>
+              <p>Inline mockup panel with student, calendar, and notice signals instead of a generic school landing page.</p>
+              <svg viewBox="0 0 320 160" aria-hidden="true">
+                <defs>
+                  <linearGradient id="tutorHeroGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#5e7eff"/>
+                    <stop offset="100%" stop-color="#9a61ff"/>
+                  </linearGradient>
+                </defs>
+                <rect x="8" y="12" width="180" height="132" rx="24" fill="url(#tutorHeroGlow)" opacity=".12"/>
+                <rect x="24" y="28" width="124" height="24" rx="12" fill="#5e7eff" opacity=".22"/>
+                <rect x="24" y="64" width="80" height="52" rx="16" fill="#eef2ff"/>
+                <rect x="116" y="64" width="60" height="52" rx="16" fill="#f5edff"/>
+                <rect x="200" y="24" width="88" height="40" rx="20" fill="#f4f7ff"/>
+                <rect x="200" y="76" width="88" height="56" rx="20" fill="#fff4de"/>
+                <circle cx="64" cy="90" r="14" fill="#6b7cff"/>
+                <rect x="86" y="80" width="40" height="8" rx="4" fill="#a5b4ff"/>
+                <rect x="86" y="94" width="28" height="8" rx="4" fill="#cfd7ff"/>
+                <rect x="132" y="80" width="24" height="8" rx="4" fill="#b39aff"/>
+                <rect x="132" y="94" width="18" height="8" rx="4" fill="#d8c5ff"/>
+                <rect x="218" y="38" width="38" height="8" rx="4" fill="#7e6bff"/>
+                <rect x="218" y="90" width="46" height="8" rx="4" fill="#f0a322"/>
+                <rect x="218" y="104" width="30" height="8" rx="4" fill="#f7cd67"/>
+              </svg>
+            </div>
+            <div class="hero-visual-mini-grid">
+              <article class="hero-visual-mini-card"><span>Students</span><strong>142 Total</strong></article>
+              <article class="hero-visual-mini-card"><span>Fees Pending</span><strong>₹38k</strong></article>
+            </div>
+            <div class="hero-visual-list">
+              <div><span>Homework Due</span><strong>8 Pending</strong></div>
+              <div><span>Parent Messages</span><strong>249 Unread</strong></div>
+            </div>
+          </div>
+        </aside>"""
+
+    if domain == "wedding_venue":
+        return """
+        <aside class="hero-visual" aria-label="Generated app visual preview">
+          <div class="hero-visual-panel">
+            <div class="hero-visual-topline"><span>Wedding Venue Suite</span><strong>Plum / Gold</strong></div>
+            <div class="hero-visual-card">
+              <strong>Calendar-led venue dashboard with package, decor, and payment flow.</strong>
+              <p>Premium event composition with lead pipeline, vendor tasks, and site visit rhythm.</p>
+            </div>
+            <div class="hero-visual-mini-grid">
+              <article class="hero-visual-mini-card"><span>Event Calendar</span><strong>12 Holds</strong></article>
+              <article class="hero-visual-mini-card"><span>Payment Progress</span><strong>7 Advances</strong></article>
+            </div>
+            <div class="hero-visual-list">
+              <div><span>Decor Themes</span><strong>4 Active</strong></div>
+              <div><span>Site Visits</span><strong>Tomorrow 6 PM</strong></div>
+            </div>
+          </div>
+        </aside>"""
+
+    if domain == "agriculture":
+        return """
+        <aside class="hero-visual" aria-label="Generated app visual preview">
+          <div class="hero-visual-panel">
+            <div class="hero-visual-topline"><span>Farm Intelligence</span><strong>Green Agri</strong></div>
+            <div class="hero-visual-card">
+              <strong>Field-ready crop, weather, mandi, and advisory layout.</strong>
+              <p>Compact operational cards with buyer connect and next farm tasks rather than generic SaaS blocks.</p>
+            </div>
+            <div class="hero-visual-mini-grid">
+              <article class="hero-visual-mini-card"><span>Crop Health</span><strong>86% Stable</strong></article>
+              <article class="hero-visual-mini-card"><span>Mandi Price</span><strong>₹4,200/q</strong></article>
+            </div>
+            <div class="hero-visual-list">
+              <div><span>Weather</span><strong>Low Risk</strong></div>
+              <div><span>Buyer Connect</span><strong>3 Leads</strong></div>
+            </div>
+          </div>
+        </aside>"""
+
     visual = {
         "car_detailing": ("Detail route", "Ceramic SUV", "Paid", ["Foam wash", "Interior reset", "Coating prep"]),
         "gym": ("Tonight", "HIIT 7 PM", "34 booked", ["Strength", "Yoga", "Diet consult"]),
@@ -1739,48 +1893,73 @@ def _render_operations_section(
     </section>"""
 
 
+def _render_tutor_action_buttons() -> str:
+    actions = [
+        ("Add New Student", "students"),
+        ("Create Class", "classes"),
+        ("Send Message", "parent_messages"),
+        ("Add Notice", "parent_notices"),
+    ]
+    return "".join(
+        f'<button type="button" data-screen="{html.escape(screen)}">{html.escape(label)}</button>'
+        for label, screen in actions
+    )
+
+
 def _render_wedding_venue_sections(plan: Dict[str, Any]) -> str:
     money = _currency_sample_values(plan)
-    packages = [
-        ("Haldi Theme", money["weddingPackage"], "Outdoor lawn booking, marigold decor, turmeric color palette, and welcome drinks"),
-        ("Mehendi Theme", money["weddingPremium"], "Stage seating, artist corner, photo wall, and family lounge setup"),
-        ("Royal Wedding", money["weddingRoyal"], "Full venue, banquet package, premium decor, catering coordination, and VIP support desk"),
-    ]
-    package_cards = _render_package_cards(packages, "Compare Package")
-    leads = [
-        ("Aarav & Meera", "Royal Wedding", "Booking Lead"),
-        ("Kapoor Family", "Banquet Package", "Date hold pending"),
-        ("Nisha Events", "Haldi Theme", "Quotation sent"),
-    ]
+    package_cards = _render_package_cards(
+        [
+            ("Classic Celebration", money["weddingPackage"], "Champagne seating plan, floral welcome lane, and intimate family hosting"),
+            ("Signature Mehendi", money["weddingPremium"], "Artist lounge, premium mehendi corners, and live family hospitality flow"),
+            ("Royal Wedding", money["weddingRoyal"], "Full lawn booking, premium decor, vendor coordination, and elevated guest journey"),
+        ],
+        "Compare Package",
+    )
     return f"""
     <section class="content-block">
       <div class="section-heading">
-        <span class="eyebrow">Wedding Packages</span>
-        <h2>Package Comparison for lawn and banquet events</h2>
+        <span class="eyebrow">Event Calendar</span>
+        <h2>Premium wedding venue dashboard for booking flow and event timing</h2>
+      </div>
+      <div class="screen-card-grid">
+        <article class="screen-card" data-screen="booking_calendar" role="button" tabindex="0"><strong>July Calendar</strong><span>12 holds, 4 site visits, 2 final confirmations</span></article>
+        <article class="screen-card" data-screen="admin_lead_dashboard" role="button" tabindex="0"><strong>Lead Pipeline</strong><span>{money["weddingPipeline"]} across fresh enquiries, quoted couples, and booked dates</span></article>
+        <article class="screen-card" data-screen="payments" role="button" tabindex="0"><strong>Payment Progress</strong><span>7 advances collected, 3 balances due this week</span></article>
+      </div>
+    </section>
+
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Package Showcase</span>
+        <h2>Packages, decor themes, and premium venue composition</h2>
       </div>
       <div class="package-grid">{package_cards}</div>
     </section>
 
     <section class="content-block gallery-panel">
       <div class="section-heading">
-        <span class="eyebrow">Gallery</span>
-        <h2>Haldi, Mehendi, and wedding lawn showcase</h2>
+        <span class="eyebrow">Decor Themes</span>
+        <h2>Plum, gold, and champagne venue styling with family-first layouts</h2>
       </div>
       <div class="gallery-grid">
-        {_render_gallery_tiles(["Haldi Theme", "Mehendi Theme", "Lawn Booking", "Banquet Package"])}
+        {_render_gallery_tiles(["Plum Stage", "Champagne Lounge", "Haldi Courtyard", "Mehendi Garden"])}
       </div>
     </section>
 
-    {_render_operations_section(
-        "Enquiry Form",
-        "Booking Calendar",
-        "Capture event enquiries",
-        [("Customer name", "Priya Sharma"), ("Event date", "24 Feb 2027"), ("Guest capacity", "300 guests")],
-        "Send Enquiry",
-        "Admin Lead Dashboard",
-        "Booking calendar and lead status",
-        leads,
-    )}"""
+    <section class="content-block enquiry-admin-grid" aria-label="Wedding operations">
+      <div class="workflow-label">Venue operations</div>
+      <article class="admin-card">
+        <span class="eyebrow">Vendor Tasks</span>
+        <h2>Decorator, catering, and artist coordination</h2>
+        <ul>{_render_status_rows([("Decorator team", "Plum floral stage build", "Today 4 PM"), ("Catering", "Tasting sign-off", "Pending"), ("Photography", "Golden-hour walkthrough", "Confirmed")])}</ul>
+      </article>
+      <article class="admin-card">
+        <span class="eyebrow">Site Visit Schedule</span>
+        <h2>Upcoming couple visits and venue walkthroughs</h2>
+        <ul>{_render_status_rows([("Aarav & Meera", "Royal wedding walkthrough", "Tomorrow 6 PM"), ("Kapoor Family", "Reception layout review", "Saturday"), ("Nisha Events", "Mehendi setup review", "Booked")])}</ul>
+      </article>
+    </section>"""
 
 
 def _render_car_detailing_sections(plan: Dict[str, Any]) -> str:
@@ -1963,6 +2142,43 @@ def _render_clinic_sections(plan: Dict[str, Any]) -> str:
 
 def _render_school_sections(plan: Dict[str, Any]) -> str:
     money = _currency_sample_values(plan)
+    if plan.get("tutor_mode"):
+        return f"""
+    <section class="content-block">
+      <div class="section-heading">
+        <span class="eyebrow">Upcoming Classes</span>
+        <h2>Premium tutor dashboard with subject timing and batch hierarchy</h2>
+      </div>
+      <div class="screen-card-grid">
+        <article class="screen-card" role="button" tabindex="0" data-screen="classes"><strong>Mathematics - Grade 10</strong><span>4:00 PM live batch with attendance roll-call and revision drill</span></article>
+        <article class="screen-card" role="button" tabindex="0" data-screen="classes"><strong>Physics - Grade 11</strong><span>5:30 PM numericals lab, parent follow-up, and homework review</span></article>
+        <article class="screen-card" role="button" tabindex="0" data-screen="classes"><strong>Chemistry - Grade 12</strong><span>7:00 PM concept sprint with test feedback and fee reminder note</span></article>
+      </div>
+    </section>
+
+    <section class="content-block tutor-quick-actions-panel">
+      <div class="section-heading">
+        <span class="eyebrow">Quick Actions</span>
+        <h2>Daily classroom actions for attendance, homework, and communication</h2>
+      </div>
+      <div class="tutor-quick-action-grid">
+        {_render_tutor_action_buttons()}
+      </div>
+    </section>
+
+    <section class="content-block enquiry-admin-grid" aria-label="Tutor guidance and notices">
+      <article class="admin-card">
+        <span class="eyebrow">Pro Tip</span>
+        <h2>Keep parents ahead of classroom follow-up</h2>
+        <ul>{_render_status_rows([("Attendance pulse", "Send same-day absent follow-up before 8 PM", "Recommended"), ("Homework rhythm", "Batch assignments perform better with one clear due date", "Today"), ("Fees clarity", f"Use {money['feesPending']} total pending as the lead summary metric", "Pinned")])}</ul>
+      </article>
+      <article class="admin-card">
+        <span class="eyebrow">Tutor Classroom Bridge</span>
+        <h2>Student records, progress, parent updates, and fee visibility in one flow</h2>
+        <ul>{_render_status_rows([("Student Progress", "Fractions and algebra revision tracker", "Updated"), ("Parent Messages", "249 unread message threads grouped by batch", "Live"), ("Add Notice", "Send Saturday test reminder to all Grade 10 families", "Ready")])}</ul>
+      </article>
+    </section>"""
+
     modules = [
         ("Parent Portal", f"{money['basic']}/student", "Attendance, notices, homework, and teacher remarks in one parent view"),
         ("Class Dashboard", f"{money['serviceMedium']}/mo", "Teacher workload, class attendance, and assignment status"),
@@ -2141,52 +2357,41 @@ def _render_mutual_fund_sections(plan: Dict[str, Any]) -> str:
 
 def _render_agriculture_sections(plan: Dict[str, Any]) -> str:
     money = _currency_sample_values(plan)
-    cards = [
-        ("Wheat Crop Health", money["mandiRate"], "Crop health card with field status, mandi price, and weather risk"),
-        ("Input Cost", money["inputCost"], "Seed, fertilizer, and input cost tracking for the current crop cycle"),
-        ("Profit Estimate", money["profitEstimate"], "Estimated profit after input and diesel cost review"),
-        ("Weather Advisory", "Low risk", "Rain window, temperature signal, and irrigation reminder"),
-        ("Satellite Intelligence", "86%", "Satellite intelligence card with scouting priority and NDVI-style status"),
-    ]
-    rows = [
-        ("Crop Health", "North field wheat", "86% stable"),
-        ("Weather Card", "Rain chance", "Low risk"),
-        ("Mandi Rate", "Wheat", money["mandiRate"]),
-        ("Input Cost", "Current crop", money["inputCost"]),
-        ("Diesel Cost", "This week", money["dieselCost"]),
-        ("Farmer Profile", "Ramesh Patel", "Advisory sent"),
-        ("Farm Records", "8 acres", "Updated today"),
-        ("AI Chat", "Ask advisory", "Ready"),
-    ]
     return f"""
     <section class="content-block">
       <div class="section-heading">
-        <span class="eyebrow">Farmer Dashboard</span>
-        <h2>Crop health, weather, mandi, and satellite intelligence</h2>
+        <span class="eyebrow">Crop Health</span>
+        <h2>Premium green agri dashboard for field health and weather decisions</h2>
       </div>
-      <div class="package-grid">{_render_package_cards(cards, "View Field")}</div>
+      <div class="screen-card-grid">
+        <article class="screen-card" role="button" tabindex="0" data-screen="crop"><strong>Crop Health</strong><span>86% stable with scout priority on the west patch</span></article>
+        <article class="screen-card" role="button" tabindex="0" data-screen="weather"><strong>Weather</strong><span>31 C, low rain risk, irrigation planned for tomorrow morning</span></article>
+        <article class="screen-card" role="button" tabindex="0" data-screen="mandi"><strong>Mandi Price</strong><span>Wheat trading at {money["mandiRate"]} with buyer demand improving</span></article>
+      </div>
     </section>
 
     <section class="content-block gallery-panel">
       <div class="section-heading">
-        <span class="eyebrow">Agriculture Intelligence Hub</span>
-        <h2>Green agri cards for daily decisions</h2>
+        <span class="eyebrow">Farm Tasks</span>
+        <h2>Daily execution, buyer connect, and advisory workflow</h2>
       </div>
       <div class="gallery-grid">
-        {_render_gallery_tiles(["Crop Health", "Weather", "Mandi Prices", "Satellite Intelligence", "Farmer Profile", "Farm Records", "AI Chat"])}
+        {_render_gallery_tiles(["Spray window", "Soil check", "Harvest prep", "Buyer call", "Mandi follow-up", "Advisory note"])}
       </div>
     </section>
 
-    {_render_operations_section(
-        "AI Chat",
-        "Farmer Profile",
-        "Record a farm update",
-        [("Farmer name", "Ramesh Patel"), ("Crop", "Wheat"), ("Field status", "Healthy")],
-        "Save Update",
-        "Admin Dashboard",
-        "Weather, prices, and field status",
-        rows,
-    )}"""
+    <section class="content-block enquiry-admin-grid" aria-label="Agriculture operations">
+      <article class="admin-card">
+        <span class="eyebrow">Buyer Connect</span>
+        <h2>Match mandi momentum with live buyer follow-up</h2>
+        <ul>{_render_status_rows([("FPO buyer board", "3 buyers interested in clean wheat lots", "Open"), ("Harvest schedule", "North farm cut planned in 5 days", "Tracked"), ("Transport quote", "Pickup cost tied to mandi timing", "Pending")])}</ul>
+      </article>
+      <article class="admin-card">
+        <span class="eyebrow">Advisory Section</span>
+        <h2>Field guidance stays practical and non-promissory</h2>
+        <ul>{_render_status_rows([("Weather Advisory", "Delay irrigation by one day if humidity remains high", "Suggested"), ("Farm Tasks", "Scout rust risk in shaded rows this evening", "Today"), ("Farmer Profile", "Ramesh Patel - 8 acres, advisory sent", "Updated")])}</ul>
+      </article>
+    </section>"""
 
 
 def _render_government_sections() -> str:
@@ -2317,6 +2522,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
     default_primary, default_secondary = actions.get(domain, ("Open Workflow", "View Dashboard"))
     primary_action = blueprint_actions[0] if blueprint_actions else default_primary
     secondary_action = blueprint_actions[1] if len(blueprint_actions) > 1 else default_secondary
+    has_mockup = bool(_premium_mockup_payload(plan))
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -2326,7 +2532,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
   <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style.css">
 </head>
-<body class="{_domain_theme_class(domain, theme)} {sector_classes}{' is-image-guided' if plan.get('image_guided') else ''}">
+<body class="{_domain_theme_class(domain, theme)} {sector_classes}{' is-image-guided' if plan.get('image_guided') else ''}{' has-premium-mockup' if has_mockup else ''}">
   <main class="app-shell">
     <header class="hero">
       <nav class="top-nav" aria-label="Prototype navigation">
@@ -2343,7 +2549,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
             <button type="button" class="ghost-button" data-screen="{html.escape(_screen_slug(secondary_action))}">{html.escape(secondary_action)}</button>
           </div>
         </div>
-        {_render_app_visual(domain, sector_profile)}
+        {_render_app_visual(domain, sector_profile, plan)}
       </section>
     </header>
 
@@ -2364,6 +2570,7 @@ def _build_html(plan: Dict[str, Any], app_id: str) -> str:
     </section>
 
     {_render_image_guided_reference(plan)}
+    {_render_mockup_brief(plan)}
 
     {_render_domain_sections(domain, plan)}
   </main>
@@ -2560,13 +2767,35 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
 .is-image-guided .phone-focus { min-height: 150px; border-radius: 26px; background: linear-gradient(180deg, #ffffff, color-mix(in srgb, var(--accent-soft) 58%, #ffffff)); }
 .is-image-guided .phone-chip-grid { grid-template-columns: 1fr 1fr; }
 .is-image-guided .phone-chip-grid span:first-child { grid-column: 1 / -1; min-height: 72px; }
-.image-guided-panel { padding: 18px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 55%, var(--surface-strong))); box-shadow: var(--shadow); }
+.image-guided-panel, .mockup-brief { padding: 18px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 55%, var(--surface-strong))); box-shadow: var(--shadow); }
 .image-guided-grid { display: grid; gap: 12px; }
 .image-guided-grid article { display: grid; gap: 10px; min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-strong); }
 .image-guided-grid span { color: var(--accent); font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
 .image-guided-grid strong { overflow-wrap: anywhere; font-size: 19px; }
 .image-guided-grid p { color: var(--muted); font-size: 14px; line-height: 1.5; }
 .image-guided-grid ul { display: grid; gap: 8px; margin: 0; padding-left: 18px; color: var(--text); }
+.mockup-brief-grid { display: grid; gap: 12px; }
+.mockup-brief-grid article { display: grid; gap: 10px; min-width: 0; padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface-strong); }
+.mockup-brief-grid span { color: var(--accent); font-size: 11px; font-weight: 850; letter-spacing: .08em; text-transform: uppercase; }
+.mockup-brief-grid ul { display: grid; gap: 8px; margin: 0; padding-left: 18px; color: var(--text); }
+.mockup-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.mockup-chip-row span { display: inline-flex; align-items: center; min-height: 30px; padding: 0 12px; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line)); background: color-mix(in srgb, var(--accent-soft) 72%, var(--surface-strong)); color: var(--text); font-size: 12px; font-weight: 800; letter-spacing: 0; text-transform: none; }
+.mockup-brief-note { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.tutor-quick-actions-panel { padding: 18px; border: 1px solid var(--line); border-radius: 24px; background: linear-gradient(180deg, var(--surface-strong), color-mix(in srgb, var(--accent-soft) 40%, var(--surface-strong))); box-shadow: var(--shadow); }
+.tutor-quick-action-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.tutor-quick-action-grid button { min-height: 50px; border: 1px solid color-mix(in srgb, var(--accent) 20%, var(--line)); border-radius: 18px; background: color-mix(in srgb, var(--accent-soft) 65%, var(--surface-strong)); color: var(--text); font-weight: 850; box-shadow: none; }
+.hero-visual-panel { display: grid; gap: 14px; max-width: 388px; margin: 0 auto; padding: 18px; border: 1px solid rgba(255,255,255,.18); border-radius: 30px; background: rgba(255,255,255,.14); box-shadow: inset 0 1px 0 rgba(255,255,255,.22); backdrop-filter: blur(14px); }
+.hero-visual-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: rgba(255,255,255,.78); font-size: 12px; font-weight: 850; letter-spacing: .05em; text-transform: uppercase; }
+.hero-visual-card { display: grid; gap: 12px; padding: 18px; border-radius: 24px; background: rgba(255,255,255,.94); color: #172244; box-shadow: 0 20px 45px rgba(18,24,40,.14); }
+.hero-visual-card strong { font-size: 24px; line-height: 1.05; }
+.hero-visual-card p { color: #5f6f93; font-size: 13px; line-height: 1.45; }
+.hero-visual-mini-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hero-visual-mini-card { display: grid; gap: 6px; min-height: 82px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,.16); color: #fff; }
+.hero-visual-mini-card strong { font-size: 16px; line-height: 1.1; }
+.hero-visual-mini-card span { color: rgba(255,255,255,.72); font-size: 11px; font-weight: 750; letter-spacing: .04em; text-transform: uppercase; }
+.hero-visual-list { display: grid; gap: 8px; }
+.hero-visual-list div { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,.14); color: #fff; font-size: 13px; font-weight: 750; }
+.hero-visual-list strong { font-size: 13px; }
 @media (max-width: 640px) {
   .app-shell { padding: 18px 10px max(108px, calc(env(safe-area-inset-bottom) + 88px)); }
   .hero { border-radius: 22px; }
@@ -2609,12 +2838,14 @@ h1 { max-width: 720px; font-size: clamp(34px, 8vw, 66px); line-height: .98; lett
   .feature-grid, .package-grid { grid-template-columns: 1fr; gap: 10px; }
   .feature-card, .package-card { min-height: auto; padding: 14px; border-radius: 18px; }
   .premium-action-card { min-height: 128px; }
+  .tutor-quick-action-grid { grid-template-columns: 1fr; }
 }
 @media (min-width: 860px) {
   .app-shell { max-width: 1160px; margin: 0 auto; padding: 20px 20px 104px; }
   .hero-content { grid-template-columns: minmax(0, 1.25fr) minmax(280px, .75fr); align-items: center; padding: 64px 42px 44px; }
   .data-panel { grid-template-columns: 1fr 1fr; }
   .image-guided-grid { grid-template-columns: 1fr 1fr; }
+  .mockup-brief-grid { grid-template-columns: 1fr 1fr; }
   .enquiry-admin-grid { grid-template-columns: 1fr 1fr; }
   .workflow-label { grid-column: 1 / -1; }
 }
@@ -2991,7 +3222,7 @@ const SCREEN_CONFIG = {{
         ? "Student batches, class schedule, attendance, homework, fees pending, and parent messages."
         : "Attendance, notices, homework, fees, exam results, and teacher contact.",
       cards: IS_TUTOR_MODE
-        ? [["Student Batches", "6 active"], ["Attendance", "92%"], ["Fees Pending", "12 dues"]]
+        ? [["Students", "142 Total"], ["Attendance", "12 Today"], ["Fees Pending", `${MONEY.feesPending} Total Pending`]]
         : [["Attendance", "92%"], ["Homework", "3 due"], ["Fees", "Term 2 pending"]]
     }},
     students: {{
@@ -3005,13 +3236,13 @@ const SCREEN_CONFIG = {{
         ? "Batch-wise view for tutoring groups, subject focus, and upcoming sessions."
         : "Class and section overview for school coordination.",
       cards: IS_TUTOR_MODE
-        ? [["Batch A", "Math revision"], ["Batch B", "Science practice"], ["One-to-one", "English grammar"]]
+        ? [["Mathematics - Grade 10", "4:00 PM"], ["Physics - Grade 11", "5:30 PM"], ["Chemistry - Grade 12", "7:00 PM"]]
         : [["Class 5A", "24 students"], ["Class 6B", "Homework pending"], ["Class 8", "Exam prep"]]
     }},
     schedule: {{
       title: "Class Schedule",
       summary: "Upcoming tutoring sessions, reschedules, and parent-visible timing updates.",
-      cards: [["4:00 PM", "Batch A Math"], ["5:30 PM", "Science practice"], ["7:00 PM", "Parent review call"]]
+      cards: [["Mathematics - Grade 10", "4:00 PM"], ["Physics - Grade 11", "5:30 PM"], ["Chemistry - Grade 12", "7:00 PM"]]
     }},
     parent_portal: {{
       title: "Parent Portal",
@@ -3034,13 +3265,13 @@ const SCREEN_CONFIG = {{
         ? "Pending fees, receipts, monthly dues, and reminder status for tutor collections."
         : "Fee status, receipts, reminders, and admin follow-up states.",
       cards: IS_TUTOR_MODE
-        ? [["Aarohi Sharma", "Pending"], ["Batch B", "Paid"], ["July Reminder", "Ready"]]
+        ? [["Aarohi Sharma", "Pending"], ["Grade 11 Batch", "Paid"], ["Total Pending", `${MONEY.feesPending}`]]
         : [["Term 2", "Pending"], ["Transport", "Paid"], ["Receipt", "Ready"]]
     }},
     parent_messages: {{
       title: "Parent Messages",
       summary: "Tutor-to-parent updates for attendance, homework, and progress follow-up.",
-      cards: [["Homework reminder", "Sent to 12 parents"], ["Attendance note", "3 pending replies"], ["Fee reminder", "Ready to send"]]
+      cards: [["Homework reminder", "Sent to 12 parents"], ["Attendance note", "3 pending replies"], ["Fee reminder", "249 unread threads"]]
     }},
     student_progress: {{
       title: "Student Progress",
@@ -3241,6 +3472,13 @@ const SCREEN_ALIASES = {{
   doctor_schedule: "doctor_schedule",
   view_module: "parent_portal",
   send_notice: "parent_notices",
+  messages: "parent_messages",
+  mark_attendance: "attendance",
+  assign_homework: "homework",
+  add_new_student: "students",
+  create_class: "classes",
+  send_message: "parent_messages",
+  add_notice: "parent_notices",
   parent_messages: "parent_messages",
   student_progress: "student_progress",
   test_results: "test_results",

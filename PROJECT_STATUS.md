@@ -12878,3 +12878,21 @@ Status: Completed locally, validation pending.
 - Extended sector QA coverage so tutor and wedding prompts validate the new `image_first_mockup` object and required sector-specific mockup terms.
 - Files changed: `backend/image_first_mockup_engine.py`, `backend/premium_ui_image_concept.py`, `backend/product_flow.py`, `backend/sector_test_cases.py`, `backend/sector_qa_runner.py`, `frontend/pages/studio-v4.js`, `frontend/pages/studio-v4.css`, `frontend/pages/studio-v4.html`, `PROJECT_STATUS.md`.
 - Safety notes: no deployment settings, Render config, GitHub workflow settings, secrets, `.env`, external image provider URLs, or KisanMitraAI files touched.
+
+## Phase 34I - Premium Mockup-to-Frontend Renderer
+
+Status: Completed locally, validation passed.
+
+- Connected generated frontend rendering to `plan["image_first_mockup"]` and `plan["premium_ui_image_concept"]` through a shared mockup brief that now surfaces style direction, layout targets, required visible content, and premium rendering cues in the generated preview HTML.
+- Upgraded private tutor generated previews into a premium tutor dashboard with `Private Tutor App`, `Tutor Classroom Bridge`, metric cards for attendance / homework / parent messages / class notices / fees / students, `Upcoming Classes`, `Quick Actions`, `Pro Tip`, and a richer inline SVG/CSS hero visual with no external assets.
+- Upgraded wedding/event lawn previews into a plum/gold/champagne venue dashboard with event calendar, package showcase, decor themes, vendor tasks, payment progress, lead pipeline, and site visit schedule sections.
+- Upgraded agriculture previews into a premium green agri dashboard with crop health, weather, mandi price, farm tasks, buyer connect, and advisory sections while avoiding generic SaaS fallback language.
+- Added rendered-HTML QA coverage for the exact tutor prompt variant so the output must include the premium tutor terms and must not include farmer leakage or dollar-fee text.
+- Fixed mojibake currency symbols in backend currency defaults so INR-driven previews render a real rupee sign in generated HTML.
+- Validation commands passed:
+  - `python -m py_compile backend/product_flow.py backend/sector_ui_rendering.py backend/blueprint_ui_adapter.py backend/main.py backend/sector_blueprints.py backend/sector_qa_runner.py backend/generated_app_qa.py backend/sector_test_cases.py backend/api/sector_classifier.py backend/premium_ui_image_concept.py backend/image_first_mockup_engine.py`
+  - `python backend/sector_qa_runner.py` -> `25/25` passed
+  - `node --check frontend/pages/studio-v4.js`
+- Smoke test for `Create an app for a private tutors` confirmed the rendered HTML includes `Private Tutor App`, `Upcoming Classes`, `Quick Actions`, `Add New Student`, `Create Class`, `Send Message`, `Add Notice`, `Fees Pending`, and `?38k`, with no `Farmer Dashboard`, `crop`, `mandi`, or `$38k fees` leakage in the generated HTML.
+- Files changed: `backend/product_flow.py`, `backend/generated_app_qa.py`, `backend/sector_qa_runner.py`, `backend/sector_test_cases.py`, `PROJECT_STATUS.md`.
+- Safety notes: no deployment settings, Render settings, GitHub workflow settings, API keys, secrets, `.env`, or KisanMitraAI files touched.

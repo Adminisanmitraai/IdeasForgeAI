@@ -10,6 +10,9 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from backend.product_flow import create_product_plan, resolve_currency_profile
+from backend.blueprint_ui_adapter import apply_blueprint_to_generated_plan
+from backend.generated_app_qa import check_generated_app_output
+from backend.product_flow import _build_html, normalize_product_plan, select_visual_theme
 from backend.sector_registry import get_sector_entry
 from backend.sector_router import route_sector
 from backend.sector_templates import create_sector_template
@@ -57,6 +60,7 @@ def _mockup_text(plan: Dict[str, Any]) -> str:
 
 def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     prompt = case["prompt"]
+    expected_sector = case["expected_sector_id"]
     sector_result = route_sector(prompt)
     template = create_sector_template(sector_result, prompt)
     plan = create_product_plan(prompt)
@@ -66,8 +70,20 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     visible_text = f"{_flatten_visible_text(template)} {_flatten_visible_text(plan)}".lower()
     concept_text = _concept_text(plan)
     mockup_text = _mockup_text(plan)
+    render_plan = apply_blueprint_to_generated_plan(plan, user_text=prompt)
+    render_plan = normalize_product_plan(render_plan)
+    render_plan["visual_theme"] = select_visual_theme(render_plan, "qa-render")
+    rendered_html = _build_html(render_plan, "qa-render")
+    html_qa = check_generated_app_output(
+        rendered_html,
+        sector_id=expected_sector,
+        required_screens=case.get("required_rendered_screens", []),
+        required_aliases=case.get("required_rendered_aliases", []),
+        required_terms=case.get("required_rendered_terms", []),
+        forbidden_terms=case.get("forbidden_rendered_terms", []),
+        user_prompt=prompt,
+    )
 
-    expected_sector = case["expected_sector_id"]
     if sector_result["sector_id"] != expected_sector:
         failures.append(f"expected sector {expected_sector}, got {sector_result['sector_id']}")
 
@@ -158,6 +174,9 @@ def _case_result(case: Dict[str, Any]) -> Dict[str, Any]:
     missing_aliases = [alias for alias in case.get("required_aliases", []) if alias not in aliases]
     if missing_aliases:
         failures.append("missing clickable aliases: " + ", ".join(missing_aliases))
+
+    for qa_failure in html_qa["failures"]:
+        failures.append("rendered html: " + qa_failure["message"])
 
     safety_text = " ".join(entry.get("safety_rules", []) + entry.get("forbidden_outputs", [])).lower()
     missing_safety = [
