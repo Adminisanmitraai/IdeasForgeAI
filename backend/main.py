@@ -741,6 +741,123 @@ def coding_agent_auto_fix_plan(request: AutoFixPreviewRequest):
 
 
 
+
+
+# Phase CA-18 - GitHub Integration Foundation.
+# Preview-only GitHub workflow planning. No GitHub API calls, no tokens,
+# no branch creation, no commits, no pushes, no PR creation, no merge, and no deployment.
+class GitHubIntegrationPreviewRequest(BaseModel):
+    project_id: str = Field(default="ideasforgeai-demo")
+    repository_url: str = Field(default="https://github.com/Adminisanmitraai/IdeasForgeAI")
+    mode: str = Field(default="github-integration-preview")
+
+
+def _safe_repo_preview_url(value: str) -> str:
+    repo = (value or "").strip()
+    if not repo:
+        return "https://github.com/Adminisanmitraai/IdeasForgeAI"
+    if "token" in repo.lower() or "@" in repo.replace("https://github.com/", ""):
+        return "Protected repository reference"
+    return repo[:180]
+
+
+def _build_github_integration_preview(request: GitHubIntegrationPreviewRequest) -> Dict[str, Any]:
+    repo_url = _safe_repo_preview_url(request.repository_url)
+    return {
+        "ok": True,
+        "status": "github-preview-ready",
+        "mode": "github-integration-preview",
+        "project_id": request.project_id or "ideasforgeai-demo",
+        "repository": {
+            "name": "IdeasForgeAI",
+            "url_preview": repo_url,
+            "connection_status": "Preview only",
+            "real_connection": False,
+        },
+        "workflow": {
+            "title": "Founder/Admin GitHub workflow preview",
+            "steps": [
+                "Review generated proposal and protected diff",
+                "Request Founder/Admin Git review",
+                "Create branch only after verified backend permission",
+                "Commit only approved changes",
+                "Push branch only after validation passes",
+                "Create pull request for review",
+                "Merge only after Founder/Admin approval",
+                "Keep rollback plan available",
+            ],
+        },
+        "branch_plan": {
+            "suggested_branch": "work/ideasforgeai-approved-change",
+            "base_branch": "main",
+            "status": "planned-only",
+        },
+        "pull_request_plan": {
+            "title": "Apply approved IdeasForgeAI Coding Agent change",
+            "body_sections": [
+                "Summary",
+                "Affected files",
+                "Validation results",
+                "Safety checks",
+                "Rollback plan",
+            ],
+            "status": "planned-only",
+        },
+        "locked_actions": [
+            "Connect GitHub account",
+            "Read private repository",
+            "Create branch",
+            "Commit changes",
+            "Push branch",
+            "Create pull request",
+            "Merge pull request",
+            "Rollback",
+        ],
+        "approval_gate": {
+            "required": True,
+            "role": "Founder/Admin",
+            "message": "Real GitHub actions require backend authentication, secure token storage, connected repository permission, and Founder/Admin approval.",
+        },
+        "audit_preview": [
+            "GitHub workflow preview opened — allowed",
+            "Repository token access — blocked",
+            "Branch creation — blocked",
+            "Commit — blocked",
+            "Push — blocked",
+            "Pull request creation — blocked",
+            "Merge — blocked",
+            "Rollback — blocked",
+        ],
+        "safety": {
+            "github_api_calls": False,
+            "token_in_frontend": False,
+            "token_in_response": False,
+            "git_commands": False,
+            "file_write": False,
+            "deploy": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/github/health")
+def coding_agent_github_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-github-integration",
+        "mode": "github-integration-preview",
+        "github_api_calls": False,
+        "git_commands": False,
+        "token_required": False,
+    }
+
+
+@app.post("/api/coding-agent/github/preview")
+def coding_agent_github_preview(request: GitHubIntegrationPreviewRequest):
+    return _build_github_integration_preview(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}
