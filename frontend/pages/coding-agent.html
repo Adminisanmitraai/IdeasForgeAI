@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>IdeasForgeAI | Coding Agent</title>
+  <link rel="stylesheet" href="./coding-agent.css?v=1-coding-agent-placeholder-20260703">
+</head>
+<body>
+  <main class="coding-agent-shell">
+    <header class="coding-agent-topbar">
+      <a class="coding-agent-brand" href="./studio-v4.html" aria-label="Return to IdeasForgeAI Studio" data-nav-link>
+        <span class="coding-agent-brand__mark" aria-hidden="true"></span>
+        <span class="coding-agent-brand__text">
+          <strong>IdeasForgeAI</strong>
+          <span>Coding Agent</span>
+        </span>
+      </a>
+      <div class="coding-agent-topbar__actions">
+        <button class="topbar-square-button" type="button" aria-label="Back to Studio" data-nav-target="./studio-v4.html">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6 9 12l6 6"></path></svg>
+        </button>
+        <button class="topbar-pill-button" type="button">Connect Project</button>
+      </div>
+    </header>
+
+    <section class="coding-agent-hero">
+      <div class="coding-agent-copy">
+        <span class="eyebrow">Built-in AI coding module</span>
+        <h1>Coding Agent</h1>
+        <p>Build, modify, test and improve software projects with AI.</p>
+        <div class="hero-actions">
+          <button class="hero-primary" type="button">Connect Project</button>
+          <span class="hero-status">Workspace placeholder ready</span>
+        </div>
+      </div>
+
+      <div class="coding-agent-illustration" aria-hidden="true">
+        <svg viewBox="0 0 560 420">
+          <defs>
+            <linearGradient id="agentGlow" x1="96" y1="70" x2="436" y2="322" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#d8b4fe"></stop>
+              <stop offset="0.48" stop-color="#8b5cf6"></stop>
+              <stop offset="1" stop-color="#38bdf8"></stop>
+            </linearGradient>
+            <radialGradient id="agentPanel" cx="0" cy="0" r="1" gradientTransform="translate(280 216) rotate(90) scale(186 210)" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#221a38"></stop>
+              <stop offset="1" stop-color="#110f1d"></stop>
+            </radialGradient>
+          </defs>
+          <ellipse cx="280" cy="340" rx="148" ry="34" fill="rgba(39,27,74,.22)"></ellipse>
+          <rect x="138" y="74" width="284" height="232" rx="40" fill="url(#agentPanel)" stroke="rgba(204,191,255,.28)" stroke-width="2"></rect>
+          <rect x="186" y="110" width="188" height="126" rx="36" fill="rgba(18,16,30,.92)" stroke="url(#agentGlow)" stroke-width="3"></rect>
+          <circle cx="240" cy="172" r="14" fill="#f8fafc"></circle>
+          <circle cx="320" cy="172" r="14" fill="#f8fafc"></circle>
+          <path d="M236 213c12 13 27 19 44 19s32-6 44-19" fill="none" stroke="#f8fafc" stroke-width="12" stroke-linecap="round"></path>
+          <path d="M280 74v34" fill="none" stroke="url(#agentGlow)" stroke-width="10" stroke-linecap="round"></path>
+          <rect x="220" y="260" width="120" height="24" rx="12" fill="none" stroke="url(#agentGlow)" stroke-width="8"></rect>
+          <path d="m420 142 30 30-30 30" fill="none" stroke="#c4b5fd" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="m140 142-30 30 30 30" fill="none" stroke="#c4b5fd" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"></path>
+          <path d="M432 94h38v38" fill="none" stroke="rgba(196,181,253,.78)" stroke-width="6" stroke-linecap="round"></path>
+          <path d="M470 94 420 144" fill="none" stroke="rgba(196,181,253,.78)" stroke-width="6" stroke-linecap="round"></path>
+          <path d="M90 294h38v38" fill="none" stroke="rgba(56,189,248,.64)" stroke-width="6" stroke-linecap="round"></path>
+          <path d="M128 332 78 282" fill="none" stroke="rgba(56,189,248,.64)" stroke-width="6" stroke-linecap="round"></path>
+        </svg>
+      </div>
+    </section>
+
+    <section class="coding-agent-grid" aria-label="Coding Agent modules">
+      <article class="workspace-card">
+        <strong>Project Explorer</strong>
+        <p>Repository tree, recent files, and connected workspace roots will appear here.</p>
+      </article>
+      <article class="workspace-card">
+        <strong>Active Tasks</strong>
+        <p>Queued builds, patch jobs, and execution history will surface in this panel.</p>
+      </article>
+      <article class="workspace-card">
+        <strong>Test Runner</strong>
+        <p>Manual, unit, and integration test controls are reserved for the next phase.</p>
+      </article>
+      <article class="workspace-card">
+        <strong>GitHub Integration</strong>
+        <p>PR context, review threads, and CI visibility will connect here later.</p>
+      </article>
+    </section>
+
+    <section class="future-modules">
+      <div class="future-modules__header">
+        <span class="eyebrow">Reserved placeholders</span>
+        <h2>Future module map</h2>
+      </div>
+      <div class="future-modules__chips">
+        <span>Project Reader</span>
+        <span>Architecture Analyzer</span>
+        <span>Task Planner</span>
+        <span>Code Editor</span>
+        <span>Test Runner</span>
+        <span>Auto Fix Engine</span>
+        <span>GitHub Manager</span>
+        <span>Deployment Manager</span>
+        <span>Logs</span>
+        <span>Project Memory</span>
+      </div>
+      <button class="bottom-cta" type="button">Connect Project</button>
+    </section>
+  </main>
+  <script src="./coding-agent.js?v=1-coding-agent-placeholder-20260703" defer></script>
+</body>
+</html>

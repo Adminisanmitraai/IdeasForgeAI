@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -142,12 +143,23 @@ if BACKEND_GENERATED_APPS_DIR.exists():
     )
 
 frontend_dir = PROJECT_ROOT / "frontend"
+coding_agent_page = frontend_dir / "pages" / "coding-agent.html"
 if frontend_dir.exists():
     app.mount(
         "/frontend",
         StaticFiles(directory=str(frontend_dir)),
         name="frontend",
     )
+
+
+@app.get("/coding-agent")
+def coding_agent_workspace():
+    if coding_agent_page.exists():
+        return FileResponse(coding_agent_page)
+    return {
+        "ok": False,
+        "message": "Coding Agent workspace is not available.",
+    }
 
 
 class GenerateRequest(BaseModel):
@@ -1513,4 +1525,3 @@ async def phase23c_apple_like_visual_qa_score(request: Request):
     except Exception:
         payload = {}
     return get_phase23c_apple_like_visual_qa_score(payload)
-
