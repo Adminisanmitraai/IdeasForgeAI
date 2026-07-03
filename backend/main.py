@@ -1399,6 +1399,230 @@ def coding_agent_project_reader_preview(request: ReadOnlyProjectReaderRequest):
 
 
 
+
+
+# Phase CA-23 - Read-Only File Viewer Preview.
+# Preview-only file viewer. It uses a safe demo file catalog and does not read the
+# user's computer, does not fetch private GitHub files, does not write files,
+# does not expose secrets, and does not provide copy/edit/apply actions.
+class ReadOnlyFileViewerRequest(BaseModel):
+    file_path: str = Field(default="frontend/pages/coding-agent.js")
+    viewer_role: str = Field(default="normal_user")
+    mode: str = Field(default="read-only-file-viewer-preview")
+
+
+def _build_ca23_file_catalog() -> Dict[str, Dict[str, Any]]:
+    return {
+        "frontend/pages/coding-agent.html": {
+            "language": "html",
+            "purpose": "Coding Agent page shell, module containers, and static markup.",
+            "risk": "UI markup only; no keys should be present.",
+            "lines": [
+                "<main class=\"coding-agent-shell\">",
+                "  <section class=\"coding-agent-hero\">",
+                "    <p class=\"eyebrow\">Built-in AI Coding Module</p>",
+                "    <h1>Coding Agent</h1>",
+                "    <p>Build, modify, test and improve software projects with AI.</p>",
+                "  </section>",
+                "</main>",
+            ],
+        },
+        "frontend/pages/coding-agent.js": {
+            "language": "javascript",
+            "purpose": "Coding Agent preview controller, module switching, protected proposals, and safe status banners.",
+            "risk": "Frontend must never contain OpenAI keys, GitHub private tokens, Render keys, or secrets.",
+            "lines": [
+                "function setStatusMessage(message) {",
+                "  const status = document.querySelector('[data-status-banner]');",
+                "  if (!status) return;",
+                "  status.textContent = message;",
+                "}",
+                "",
+                "document.addEventListener('click', (event) => {",
+                "  const action = event.target.closest('[data-ca-action]');",
+                "  if (!action) return;",
+                "  // Route preview-only module actions safely.",
+                "});",
+            ],
+        },
+        "frontend/pages/coding-agent.css": {
+            "language": "css",
+            "purpose": "Mobile-first dark UI, sticky header, gradient cards, and module polish.",
+            "risk": "Styling only; no secrets expected.",
+            "lines": [
+                ".coding-agent-shell {",
+                "  min-height: 100vh;",
+                "  background: #05070f;",
+                "  color: #fff;",
+                "}",
+                "",
+                ".ca-module-pill {",
+                "  border-radius: 999px;",
+                "  border: 1px solid rgba(255,255,255,.12);",
+                "}",
+            ],
+        },
+        "backend/main.py": {
+            "language": "python",
+            "purpose": "FastAPI backend endpoints for safe proposal, permission, connector, reader, and file viewer previews.",
+            "risk": "Backend can use server-side secrets only; secrets must never be returned to frontend.",
+            "lines": [
+                "from fastapi import FastAPI",
+                "from pydantic import BaseModel, Field",
+                "",
+                "app = FastAPI()",
+                "",
+                "@app.get('/health')",
+                "def health():",
+                "    return {'ok': True}",
+            ],
+        },
+        "backend/sector_qa_runner.py": {
+            "language": "python",
+            "purpose": "IdeasForgeAI sector QA validation runner.",
+            "risk": "Validation-only file; no secrets expected.",
+            "lines": [
+                "def run_sector_qa():",
+                "    total = 25",
+                "    passed = 25",
+                "    failed = 0",
+                "    return {'total': total, 'passed': passed, 'failed': failed}",
+            ],
+        },
+        "PROJECT_STATUS.md": {
+            "language": "markdown",
+            "purpose": "Project phase history, implementation notes, and validation records.",
+            "risk": "Should not contain secrets, credentials, or private tokens.",
+            "lines": [
+                "# IdeasForgeAI Project Status",
+                "",
+                "## Coding Agent",
+                "- CA-20 Connected Project Workspace",
+                "- CA-21 Read-Only Connector",
+                "- CA-22 Read-Only Project Reader",
+                "- CA-23 Read-Only File Viewer Preview",
+            ],
+        },
+    }
+
+
+def _build_read_only_file_viewer_preview(request: ReadOnlyFileViewerRequest) -> Dict[str, Any]:
+    catalog = _build_ca23_file_catalog()
+    requested_path = (request.file_path or "frontend/pages/coding-agent.js").strip()
+    selected_path = requested_path if requested_path in catalog else "frontend/pages/coding-agent.js"
+    selected = catalog[selected_path]
+    role = (request.viewer_role or "normal_user").strip().lower()
+
+    return {
+        "ok": True,
+        "status": "read-only-file-viewer-ready",
+        "mode": "read-only-file-viewer-preview",
+        "viewer": {
+            "role": role,
+            "selected_file": selected_path,
+            "language": selected["language"],
+            "purpose": selected["purpose"],
+            "risk": selected["risk"],
+            "source": "safe-demo-catalog",
+            "real_local_file_read": False,
+            "private_github_fetch": False,
+            "write_access": False,
+            "copy_action": False,
+            "edit_action": False,
+            "apply_action": False,
+        },
+        "available_files": [
+            {
+                "path": path,
+                "language": data["language"],
+                "purpose": data["purpose"],
+                "risk": data["risk"],
+                "access": "protected-read-only-preview",
+            }
+            for path, data in catalog.items()
+        ],
+        "content_preview": {
+            "file_path": selected_path,
+            "language": selected["language"],
+            "line_count": len(selected["lines"]),
+            "lines": [
+                {"line": index + 1, "content": value}
+                for index, value in enumerate(selected["lines"])
+            ],
+            "notice": "Preview sample only. CA-23 does not read the user's computer or private GitHub files.",
+        },
+        "normal_user_rules": [
+            "Can view protected preview only",
+            "Cannot copy from app controls",
+            "Cannot edit code",
+            "Cannot apply code",
+            "Cannot export code",
+            "Cannot access secrets",
+            "Cannot run commands",
+            "Cannot commit, push, deploy, or rollback",
+        ],
+        "founder_admin_rules": [
+            "Can review protected file previews",
+            "Can approve future apply flows only after backend permission checks",
+            "Still cannot bypass safety boundaries from frontend-only UI",
+        ],
+        "locked_actions": [
+            "Real local file read",
+            "Private GitHub file fetch",
+            "Copy button",
+            "Direct edit",
+            "Apply diff",
+            "Terminal execution",
+            "Git commands",
+            "Deployment",
+            "Secrets access",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-24",
+            "title": "Protected Code Viewer for Normal Users",
+            "goal": "Strengthen viewer permissions, hide/collapse raw code for normal users, and separate founder/admin review mode.",
+        },
+        "safety": {
+            "local_filesystem_read": False,
+            "private_github_fetch": False,
+            "frontend_token": False,
+            "file_write": False,
+            "copy_button": False,
+            "edit_button": False,
+            "apply_button": False,
+            "terminal": False,
+            "git_commands": False,
+            "deployment": False,
+            "secrets": False,
+        },
+    }
+
+
+@app.get("/api/coding-agent/file-viewer/health")
+def coding_agent_file_viewer_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-read-only-file-viewer",
+        "mode": "read-only-file-viewer-preview",
+        "real_local_file_read": False,
+        "private_github_fetch": False,
+        "file_write": False,
+        "copy_button": False,
+        "edit_button": False,
+        "apply_button": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+@app.post("/api/coding-agent/file-viewer/preview")
+def coding_agent_file_viewer_preview(request: ReadOnlyFileViewerRequest):
+    return _build_read_only_file_viewer_preview(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}

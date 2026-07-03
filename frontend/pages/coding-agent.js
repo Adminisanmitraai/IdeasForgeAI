@@ -3736,7 +3736,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-23 - Read-Only File Viewer Preview */
+/* Phase CA-24 - Protected Code Viewer for Normal Users */
 (() => {
   if (window.__ideasforgeCa20ConnectedWorkspaceLoaded) {
     return;
@@ -4025,7 +4025,7 @@ document.addEventListener("click", async (event) => {
 
 
 
-/* Phase CA-23 - Read-Only File Viewer Preview */
+/* Phase CA-24 - Protected Code Viewer for Normal Users */
 (() => {
   if (window.__ideasforgeCa21ReadOnlyConnectorLoaded) {
     return;
@@ -4607,6 +4607,382 @@ document.addEventListener("click", async (event) => {
     document.addEventListener("DOMContentLoaded", ca22EnsureSection);
   } else {
     ca22EnsureSection();
+  }
+})();
+
+
+
+/* Phase CA-23 - Read-Only File Viewer Preview */
+(() => {
+  if (window.__ideasforgeCa23FileViewerLoaded) {
+    return;
+  }
+  window.__ideasforgeCa23FileViewerLoaded = true;
+
+  const FILE_VIEWER_PATH_CA23 = "/api/coding-agent/file-viewer/preview";
+  const FILE_VIEWER_BACKEND_SOURCE_CA23 = "Backend File Viewer API";
+  const FILE_VIEWER_FALLBACK_SOURCE_CA23 = "Local File Viewer Preview";
+
+  const ca23Escape = (value) => String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+  const ca23ApiCandidates = (path) => {
+    const endpoints = [];
+    try {
+      if (typeof API_BASE !== "undefined" && API_BASE) {
+        endpoints.push(`${API_BASE}${path}`);
+      }
+    } catch (error) {}
+    endpoints.push(path);
+    return endpoints;
+  };
+
+  const ca23Fallback = (filePath = "frontend/pages/coding-agent.js") => {
+    const catalog = {
+      "frontend/pages/coding-agent.html": {
+        language: "html",
+        purpose: "Coding Agent page shell, module containers, and static markup.",
+        risk: "UI markup only; no keys should be present.",
+        lines: [
+          "<main class=\"coding-agent-shell\">",
+          "  <section class=\"coding-agent-hero\">",
+          "    <h1>Coding Agent</h1>",
+          "  </section>",
+          "</main>",
+        ],
+      },
+      "frontend/pages/coding-agent.js": {
+        language: "javascript",
+        purpose: "Coding Agent preview controller and safe module routing.",
+        risk: "Frontend must never contain API keys, GitHub private tokens, Render keys, or secrets.",
+        lines: [
+          "function setStatusMessage(message) {",
+          "  const status = document.querySelector('[data-status-banner]');",
+          "  if (!status) return;",
+          "  status.textContent = message;",
+          "}",
+          "",
+          "// Preview-only actions are routed safely.",
+        ],
+      },
+      "frontend/pages/coding-agent.css": {
+        language: "css",
+        purpose: "Mobile-first dark UI, sticky header, gradient cards, and module polish.",
+        risk: "Styling only; no secrets expected.",
+        lines: [
+          ".coding-agent-shell {",
+          "  min-height: 100vh;",
+          "  background: #05070f;",
+          "}",
+        ],
+      },
+      "backend/main.py": {
+        language: "python",
+        purpose: "FastAPI backend endpoints for safe preview and protected proposal flows.",
+        risk: "Backend-only secrets must remain server-side.",
+        lines: [
+          "from fastapi import FastAPI",
+          "from pydantic import BaseModel, Field",
+          "app = FastAPI()",
+        ],
+      },
+      "PROJECT_STATUS.md": {
+        language: "markdown",
+        purpose: "Project phase history and implementation notes.",
+        risk: "Should not contain secrets or private tokens.",
+        lines: [
+          "# IdeasForgeAI Project Status",
+          "- CA-23 Read-Only File Viewer Preview",
+        ],
+      },
+    };
+
+    const selected = catalog[filePath] ? filePath : "frontend/pages/coding-agent.js";
+    const file = catalog[selected];
+
+    return {
+      ok: true,
+      status: "read-only-file-viewer-ready",
+      mode: "local-read-only-file-viewer-preview",
+      viewer: {
+        role: "normal_user",
+        selected_file: selected,
+        language: file.language,
+        purpose: file.purpose,
+        risk: file.risk,
+        source: "safe-demo-catalog",
+        real_local_file_read: false,
+        private_github_fetch: false,
+        write_access: false,
+        copy_action: false,
+        edit_action: false,
+        apply_action: false,
+      },
+      available_files: Object.entries(catalog).map(([path, item]) => ({
+        path,
+        language: item.language,
+        purpose: item.purpose,
+        risk: item.risk,
+        access: "protected-read-only-preview",
+      })),
+      content_preview: {
+        file_path: selected,
+        language: file.language,
+        line_count: file.lines.length,
+        lines: file.lines.map((content, index) => ({ line: index + 1, content })),
+        notice: "Preview sample only. CA-23 does not read the user's computer or private GitHub files.",
+      },
+      normal_user_rules: [
+        "Can view protected preview only",
+        "Cannot copy from app controls",
+        "Cannot edit code",
+        "Cannot apply code",
+        "Cannot export code",
+        "Cannot access secrets",
+        "Cannot run commands",
+      ],
+      locked_actions: [
+        "Real local file read",
+        "Private GitHub file fetch",
+        "Copy button",
+        "Direct edit",
+        "Apply diff",
+        "Terminal execution",
+        "Git commands",
+        "Deployment",
+        "Secrets access",
+      ],
+      recommended_next_phase: {
+        phase: "CA-24",
+        title: "Protected Code Viewer for Normal Users",
+        goal: "Strengthen viewer permissions and separate founder/admin review mode.",
+      },
+      safety: {
+        local_filesystem_read: false,
+        private_github_fetch: false,
+        frontend_token: false,
+        file_write: false,
+        copy_button: false,
+        edit_button: false,
+        apply_button: false,
+        terminal: false,
+        git_commands: false,
+        deployment: false,
+        secrets: false,
+      },
+    };
+  };
+
+  const ca23FetchViewer = async (filePath) => {
+    const payload = {
+      file_path: filePath || "frontend/pages/coding-agent.js",
+      viewer_role: "normal_user",
+      mode: "read-only-file-viewer-preview",
+    };
+
+    for (const endpoint of ca23ApiCandidates(FILE_VIEWER_PATH_CA23)) {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data?.ok) {
+            return { data, source: FILE_VIEWER_BACKEND_SOURCE_CA23 };
+          }
+        }
+      } catch (error) {}
+    }
+
+    return { data: ca23Fallback(filePath), source: FILE_VIEWER_FALLBACK_SOURCE_CA23 };
+  };
+
+  const ca23List = (items = []) => items.map((item) => `<li>${ca23Escape(item)}</li>`).join("");
+
+  const ca23FileButtons = (files = [], selected = "") => files.map((file) => `
+    <button type="button" class="ca23-file-button ${file.path === selected ? "is-active" : ""}" data-ca23-file="${ca23Escape(file.path)}">
+      <span>${ca23Escape(file.path)}</span>
+      <small>${ca23Escape(file.language)} · ${ca23Escape(file.access)}</small>
+    </button>
+  `).join("");
+
+  const ca23CodeLines = (lines = []) => lines.map((line) => `
+    <div class="ca23-code-line">
+      <span>${ca23Escape(line.line)}</span>
+      <code>${ca23Escape(line.content)}</code>
+    </div>
+  `).join("");
+
+  const ca23RenderViewer = (data, source) => `
+    <section class="ca23-viewer-panel" id="ca23-viewer-panel">
+      <div class="ca23-kicker">Now Open: Read-Only File Viewer</div>
+      <h2>Read-Only File Viewer</h2>
+      <p>Normal users can preview selected files safely. Copy, edit, apply, terminal, Git, deployment, and secrets access remain locked.</p>
+
+      <div class="ca23-status-grid">
+        <article>
+          <small>Viewer Source</small>
+          <strong>${ca23Escape(source)}</strong>
+          <p>Status: ${ca23Escape(data.status)}</p>
+        </article>
+        <article>
+          <small>Selected File</small>
+          <strong>${ca23Escape(data.viewer?.selected_file)}</strong>
+          <p>${ca23Escape(data.viewer?.purpose)}</p>
+        </article>
+      </div>
+
+      <section class="ca23-card">
+        <small>File List</small>
+        <strong>Select a read-only preview file</strong>
+        <div class="ca23-file-list">
+          ${ca23FileButtons(data.available_files || [], data.viewer?.selected_file)}
+        </div>
+      </section>
+
+      <section class="ca23-card ca23-protected-viewer">
+        <small>Protected Code Preview</small>
+        <strong>${ca23Escape(data.content_preview?.file_path)} · ${ca23Escape(data.content_preview?.language)}</strong>
+        <p>${ca23Escape(data.content_preview?.notice)}</p>
+        <div class="ca23-code-toolbar">
+          <span>No copy</span>
+          <span>No edit</span>
+          <span>No apply</span>
+          <span>No secrets</span>
+        </div>
+        <div class="ca23-code-window" aria-label="Protected read-only code preview">
+          ${ca23CodeLines(data.content_preview?.lines || [])}
+        </div>
+      </section>
+
+      <section class="ca23-card">
+        <small>Normal User Rules</small>
+        <strong>Viewer permissions</strong>
+        <ul>${ca23List(data.normal_user_rules || [])}</ul>
+      </section>
+
+      <section class="ca23-card ca23-safety-card">
+        <small>Locked Actions</small>
+        <strong>Not allowed in CA-23</strong>
+        <ul>${ca23List(data.locked_actions || [])}</ul>
+      </section>
+
+      <section class="ca23-card">
+        <small>Next Phase</small>
+        <strong>${ca23Escape(data.recommended_next_phase?.phase)} — ${ca23Escape(data.recommended_next_phase?.title)}</strong>
+        <p>${ca23Escape(data.recommended_next_phase?.goal)}</p>
+      </section>
+    </section>
+  `;
+
+  const ca23EnsureSection = () => {
+    if (document.getElementById("ca23-file-viewer-section")) {
+      return;
+    }
+
+    const section = document.createElement("section");
+    section.id = "ca23-file-viewer-section";
+    section.className = "ca23-file-viewer-section";
+    section.innerHTML = `
+      <div class="ca23-shell-card">
+        <div class="ca23-kicker">CA-23 — Read-Only File Viewer Preview</div>
+        <h2>File Viewer Preview</h2>
+        <p>Open selected files from the reader manifest in a protected, read-only viewer. Normal users can view only; founder/admin controls come later.</p>
+        <button class="ca23-open-button" type="button" data-ca23-open-viewer>
+          Open File Viewer
+        </button>
+      </div>
+      <div id="ca23-file-viewer-output"></div>
+    `;
+
+    const ca22 = document.getElementById("ca22-project-reader-section");
+    const ca21 = document.getElementById("ca21-readonly-connector-section");
+    const ca20 = document.getElementById("ca20-connected-workspace-section");
+    const anchor = ca22 || ca21 || ca20;
+    if (anchor?.parentNode) {
+      anchor.parentNode.insertBefore(section, anchor.nextSibling);
+    } else {
+      const container = document.querySelector("main") || document.querySelector(".coding-agent-page") || document.body;
+      container.appendChild(section);
+    }
+  };
+
+  const ca23OpenViewer = async (filePath = "frontend/pages/coding-agent.js") => {
+    ca23EnsureSection();
+
+    const output = document.getElementById("ca23-file-viewer-output");
+    if (!output) return;
+
+    output.innerHTML = `
+      <section class="ca23-card">
+        <small>Status Banner</small>
+        <strong>Opening protected read-only file viewer.</strong>
+        <p>No real local file read, private GitHub fetch, copy action, edit, apply, terminal, Git, deployment, or secrets access will be used.</p>
+      </section>
+    `;
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Read-Only File Viewer is opening. Normal users can view protected previews only.");
+      }
+    } catch (error) {}
+
+    const { data, source } = await ca23FetchViewer(filePath);
+    output.innerHTML = ca23RenderViewer(data, source);
+
+    try {
+      if (typeof setStatusMessage === "function") {
+        setStatusMessage("Read-Only File Viewer is now open. No copy, edit, apply, Git, deploy, or secrets access is enabled.");
+      }
+    } catch (error) {}
+
+    document.getElementById("ca23-viewer-panel")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  document.addEventListener("click", async (event) => {
+    const open = event.target.closest("[data-ca23-open-viewer]");
+    if (open) {
+      event.preventDefault();
+      await ca23OpenViewer();
+      return;
+    }
+
+    const fileButton = event.target.closest("[data-ca23-file]");
+    if (fileButton) {
+      event.preventDefault();
+      await ca23OpenViewer(fileButton.getAttribute("data-ca23-file"));
+      return;
+    }
+
+    const target = event.target.closest("button, a, .ca22-file-card, .ca-module-pill, .module-pill");
+    const text = target?.textContent || "";
+    if (target && (text.includes("File Viewer") || text.includes("coding-agent.js") || text.includes("coding-agent.html"))) {
+      setTimeout(() => ca23OpenViewer(), 80);
+    }
+  });
+
+  document.addEventListener("copy", (event) => {
+    const protectedViewer = event.target?.closest?.(".ca23-protected-viewer, .ca23-code-window");
+    if (protectedViewer) {
+      event.preventDefault();
+      try {
+        if (typeof setStatusMessage === "function") {
+          setStatusMessage("Copy is disabled in the protected CA-23 viewer for normal users.");
+        }
+      } catch (error) {}
+    }
+  });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", ca23EnsureSection);
+  } else {
+    ca23EnsureSection();
   }
 })();
 
