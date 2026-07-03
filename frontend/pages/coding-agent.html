@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca09-git-manager-preview-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca10-deployment-manager-preview-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -177,23 +177,24 @@
             <button class="module-chip-button" type="button" data-ca-action="open-test-runner">Test Runner <small>Preview Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-auto-fix">Auto Fix Engine <small>Preview Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-git-manager">Git Manager <small>Preview Unlocked</small></button>
+            <button class="module-chip-button" type="button" data-ca-action="open-deployment-manager">Deployment Manager <small>Preview Unlocked</small></button>
           </div>
           <p class="workspace-screen__copy">Demo Project opens a real Active Module screen immediately. It does not just mark the card as selected.</p>
         </section>
 
         <section class="safety-notice" aria-label="Safety notice">
-          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-09.</strong>
+          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-10.</strong>
           <ul>
-            <li>Git Manager is preview-only in CA-09</li>
-            <li>No Git commands are run</li>
-            <li>No branches are created</li>
-            <li>No commits are made</li>
-            <li>No push/merge/PR happens</li>
-            <li>No deployment actions</li>
+            <li>Deployment Manager is preview-only in CA-10</li>
+            <li>No deployment actions are run</li>
+            <li>No Render API calls</li>
+            <li>No GitHub API calls</li>
+            <li>No DNS changes</li>
+            <li>No rollback actions</li>
             <li>No secrets access</li>
-            <li>Real Git actions require founder/admin approval</li>
+            <li>Real deployment requires founder/admin approval</li>
           </ul>
-          <p class="workspace-screen__copy">Normal users can preview the Git workflow only. Founder/Admin approval is required before approving commit, push, PR, merge, rollback, export, or deployment actions.</p>
+          <p class="workspace-screen__copy">Normal users can preview deployment workflow only. Founder/Admin approval is required before approving deployment, rollback, production promotion, Git actions, export, or secret-sensitive operations.</p>
         </section>
       </section>
 
@@ -215,6 +216,7 @@
           <button class="module-tab-button" type="button" data-ca-action="open-test-runner" data-module-tab="test-runner" aria-pressed="false">Test Runner</button>
           <button class="module-tab-button" type="button" data-ca-action="open-auto-fix" data-module-tab="auto-fix" aria-pressed="false">Auto Fix Engine</button>
           <button class="module-tab-button" type="button" data-ca-action="open-git-manager" data-module-tab="git-manager" aria-pressed="false">Git Manager</button>
+          <button class="module-tab-button" type="button" data-ca-action="open-deployment-manager" data-module-tab="deployment-manager" aria-pressed="false">Deployment Manager</button>
         </div>
 
         <div class="workspace-message-card" data-active-message-card hidden></div>
@@ -227,7 +229,7 @@
         <span class="eyebrow">Module roadmap</span>
         <h2>Current and upcoming modules</h2>
       </div>
-      <p class="future-modules__copy">Preview modules remain read-only. Planning, editing, testing, Git, and deployment actions stay locked until later phases.</p>
+      <p class="future-modules__copy">Preview modules remain read-only. Planning, editing, testing, Git, and deployment controls stay protected until later phases.</p>
       <div class="future-modules__chips">
         <button class="module-chip-button" type="button" data-ca-action="open-project-reader"><span>Project Reader</span><small>Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-architecture"><span>Architecture Analyzer</span><small>Unlocked</small></button>
@@ -236,13 +238,21 @@
         <button class="module-chip-button" type="button" data-ca-action="open-test-runner"><span>Test Runner</span><small>Preview Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-auto-fix"><span>Auto Fix Engine</span><small>Preview Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-git-manager"><span>Git Manager</span><small>Preview Unlocked</small></button>
-        <span class="module-chip-button" data-module-lock><span>Deployment Manager</span><small>CA-10</small></span>
+        <button class="module-chip-button" type="button" data-ca-action="open-deployment-manager"><span>Deployment Manager</span><small>Preview Unlocked</small></button>
+      </div>
+      <div class="future-modules__next">
+        <span class="eyebrow">Next after CA-10</span>
+        <ul class="screen-detail-list">
+          <li>CA-11 - Real Code Generation with Diff Approval</li>
+          <li>CA-12 - Founder/Admin Code Permission System</li>
+          <li>CA-13 - Protected Code Preview for Normal Users</li>
+        </ul>
       </div>
     </section>
 
     <button class="bottom-cta" type="button" data-ca-action="open-connect">Connect Project</button>
   </main>
 
-  <script src="./coding-agent.js?v=ca09-git-manager-preview-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca10-deployment-manager-preview-20260703" defer></script>
 </body>
 </html>
