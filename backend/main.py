@@ -616,6 +616,131 @@ def coding_agent_run_tests(request: RunTestsRequest):
     }
 
 
+
+
+# Phase CA-17 - Auto Fix Loop Foundation.
+# Preview-only auto-fix analysis and repair plan. No file writes, no terminal execution,
+# no Git commands, no deployment actions, and no secrets access.
+class AutoFixPreviewRequest(BaseModel):
+    project_id: str = Field(default="ideasforgeai-demo")
+    proposal_id: str = Field(default="demo-task-planner-fix")
+    failed_check_id: str = Field(default="mobile-safe-area-layout")
+    mode: str = Field(default="auto-fix-loop-preview")
+
+
+def _build_auto_fix_analysis_payload(request: AutoFixPreviewRequest) -> Dict[str, Any]:
+    return {
+        "ok": True,
+        "status": "analysis-ready",
+        "mode": "auto-fix-loop-preview",
+        "project_id": request.project_id or "ideasforgeai-demo",
+        "proposal_id": request.proposal_id or "demo-task-planner-fix",
+        "failed_check": {
+            "id": request.failed_check_id or "mobile-safe-area-layout",
+            "label": "Mobile safe-area layout check",
+            "summary": "Sticky header/status banner may overlap module content on mobile Safari.",
+            "severity": "Medium",
+        },
+        "root_cause": {
+            "title": "Sticky overlap on mobile Safari",
+            "summary": "The sticky header and status banner can sit above module content without enough scroll margin and safe-area spacing.",
+            "evidence": [
+                "Mobile Safari bottom and top bars reduce the visible viewport",
+                "Sticky UI elements remain visible while module cards scroll underneath",
+                "Module panels need safer scroll offset and spacing",
+            ],
+        },
+        "affected_files": [
+            "frontend/pages/coding-agent.css",
+            "frontend/pages/coding-agent.js",
+        ],
+        "suggested_fix": {
+            "title": "Safer scroll offsets",
+            "summary": "Add safer scroll padding, reduce sticky overlap risk, and apply scroll-margin-top to active module panels.",
+        },
+        "loop_steps": [
+            "Analyze failed validation",
+            "Generate safe fix plan",
+            "Show protected diff",
+            "Request Founder/Admin review",
+            "Apply only in a future approved workspace",
+            "Run allowlisted validation again",
+        ],
+        "safety": {
+            "real_file_write": False,
+            "terminal": False,
+            "git": False,
+            "deploy": False,
+            "secrets": False,
+        },
+    }
+
+
+def _build_auto_fix_plan_payload(request: AutoFixPreviewRequest) -> Dict[str, Any]:
+    analysis = _build_auto_fix_analysis_payload(request)
+    return {
+        **analysis,
+        "status": "fix-plan-ready",
+        "fix_steps": [
+            "Add scroll-margin-top to module detail panels",
+            "Increase mobile safe-area padding around sticky banners",
+            "Keep status banner visible without covering the active module title",
+            "Re-run approved validation checks after Founder/Admin approval",
+        ],
+        "protected_diff": [
+            {
+                "file": "frontend/pages/coding-agent.css",
+                "diff": "+ .workspace-message-card { scroll-margin-top: 168px; }\n+ .screen-detail-card { scroll-margin-top: 156px; }",
+            },
+            {
+                "file": "frontend/pages/coding-agent.js",
+                "diff": "+ setStatusMessage('Safe fix plan generated. Static diff preview is ready and Apply Auto Fix remains locked.');",
+            },
+        ],
+        "validation_plan": [
+            "node --check frontend/pages/coding-agent.js",
+            "node --check frontend/pages/studio-v4.js",
+            "python backend/sector_qa_runner.py",
+            "Manual mobile Safari scroll test",
+        ],
+        "approval_gate": {
+            "required": True,
+            "role": "Founder/Admin",
+            "message": "Apply Auto Fix remains locked until verified Founder/Admin approval and connected workspace permission exist.",
+        },
+        "retry_plan": [
+            "Run allowlisted validation",
+            "If validation fails, return to Auto Fix analysis",
+            "Generate another protected plan",
+            "Do not apply without Founder/Admin approval",
+        ],
+    }
+
+
+@app.get("/api/coding-agent/auto-fix/health")
+def coding_agent_auto_fix_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-auto-fix-loop",
+        "mode": "auto-fix-loop-preview",
+        "real_file_write": False,
+        "terminal": False,
+        "git": False,
+        "deploy": False,
+    }
+
+
+@app.post("/api/coding-agent/auto-fix/analyze")
+def coding_agent_auto_fix_analyze(request: AutoFixPreviewRequest):
+    return _build_auto_fix_analysis_payload(request)
+
+
+@app.post("/api/coding-agent/auto-fix/plan")
+def coding_agent_auto_fix_plan(request: AutoFixPreviewRequest):
+    return _build_auto_fix_plan_payload(request)
+
+
+
 @app.post("/api/generate")
 def generate_product(request: GenerateRequest):
     plan = request.plan or {}
