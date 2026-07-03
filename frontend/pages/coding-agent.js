@@ -34,19 +34,103 @@ const STUDIO_V4_TARGET = "./studio-v4.html";
 const SWIPE_THRESHOLD_PX = 52;
 const SWIPE_DIRECTION_RATIO = 1.15;
 const DEFAULT_STATUS_MESSAGE = "Choose a connection option to open a clear preview screen.";
-const DEMO_DIFF_TEXT = [
-  "--- frontend/pages/coding-agent.css",
-  "+++ frontend/pages/coding-agent.css",
-  "@@ mobile topbar spacing @@",
-  "- top: calc(env(safe-area-inset-top) + 10px);",
-  "+ top: calc(env(safe-area-inset-top) + 8px);",
-  "",
-  "--- frontend/pages/coding-agent.js",
-  "+++ frontend/pages/coding-agent.js",
-  "@@ back button spacing @@",
-  '- topbarBackButton.style.marginInlineStart = "0";',
-  '+ topbarBackButton.style.marginInlineStart = "2px";',
-].join("\n");
+const DEFAULT_CODE_REQUEST = "Fix the Task Planner button so it opens the Task Planner Preview screen.";
+const DEMO_PROTECTED_CODE_FILES = [
+  {
+    path: "frontend/pages/coding-agent.html",
+    code: [
+      '<button class="module-chip-button" type="button" data-ca-action="open-task-planner">',
+      "  Task Planner",
+      "</button>",
+      "",
+      '<button class="module-tab-button" type="button" data-ca-action="open-task-planner" data-module-tab="task-planner">',
+      "  Task Planner",
+      "</button>",
+    ].join("\n"),
+  },
+  {
+    path: "frontend/pages/coding-agent.js",
+    code: [
+      'if (action === "open-task-planner") {',
+      '  openDemoModule("task-planner");',
+      '  setStatusMessage("Task Planner Preview is now open.");',
+      "}",
+    ].join("\n"),
+  },
+  {
+    path: "frontend/pages/coding-agent.css",
+    code: [
+      ".ca-code-preview-protected {",
+      "  user-select: none;",
+      "  overflow: auto;",
+      "}",
+    ].join("\n"),
+  },
+];
+const DEMO_CODE_SUMMARY_ITEMS = [
+  "Add data action for Task Planner",
+  "Route open-task-planner in event delegation",
+  "Render Task Planner panel",
+  "Update active module state",
+  "Update status banner",
+];
+const DEMO_DIFF_FILES = [
+  {
+    path: "frontend/pages/coding-agent.html",
+    lines: [
+      {
+        type: "removed",
+        code: '<button class="ca-module-pill">Task Planner</button>',
+      },
+      {
+        type: "added",
+        code: '<button class="ca-module-pill" data-ca-action="open-task-planner">Task Planner</button>',
+      },
+    ],
+  },
+  {
+    path: "frontend/pages/coding-agent.js",
+    lines: [
+      {
+        type: "added",
+        code: 'if (action === "open-task-planner") {',
+      },
+      {
+        type: "added",
+        code: '  openModule("task-planner");',
+      },
+      {
+        type: "added",
+        code: '  updateStatus("Task Planner Preview is now open.");',
+      },
+      {
+        type: "added",
+        code: "}",
+      },
+    ],
+  },
+  {
+    path: "frontend/pages/coding-agent.css",
+    lines: [
+      {
+        type: "added",
+        code: ".ca-code-preview-protected {",
+      },
+      {
+        type: "added",
+        code: "  user-select: none;",
+      },
+      {
+        type: "added",
+        code: "  overflow: auto;",
+      },
+      {
+        type: "added",
+        code: "}",
+      },
+    ],
+  },
+];
 const DEMO_TASK_PLAN_TEXT = [
   "Task Planner Preview",
   "Convert a request into safe implementation steps before editing code.",
@@ -278,7 +362,7 @@ const FILE_TREE = [
 ];
 
 const CONNECTION_MESSAGES = {
-  local: "Local project access is coming later. CA-05 / CA-06 is preview-only and does not read your computer.",
+  local: "Local project access is coming later. CA-11 remains preview-only and does not read your computer.",
   github: "GitHub repository connection is coming in CA-09. Current preview does not access GitHub.",
   zip: "ZIP upload analysis is coming later. Current preview does not upload files.",
 };
@@ -287,6 +371,7 @@ const MODULE_TITLES = {
   "project-reader": "Project Reader Preview",
   architecture: "Architecture Analyzer Preview",
   "task-planner": "Task Planner Preview",
+  "code-generation": "Real Code Generation",
   "code-diff": "Code Diff Preview",
   "test-runner": "Test Runner Preview",
   "auto-fix": "Auto Fix Engine Preview",
@@ -298,6 +383,7 @@ const MODULE_STATUS_MESSAGES = {
   "project-reader": "Project Reader Preview is now open.",
   architecture: "Architecture Analyzer Preview is now open.",
   "task-planner": "Task Planner Preview is now open.",
+  "code-generation": "Code proposal workspace is open. Generated code remains protected until Founder/Admin approval.",
   "code-diff": "Code Diff Preview is now open.",
   "test-runner": "Test Runner Preview is now open. Real command execution remains locked.",
   "auto-fix": "Auto Fix Engine Preview is now open. No code changes will be applied.",
@@ -309,7 +395,8 @@ const MODULE_SUBTITLES = {
   "project-reader": "Review the Demo Project structure in a safe read-only preview.",
   architecture: "Understand how frontend, backend, QA, and deployment layers connect.",
   "task-planner": "Convert a request into safe implementation steps before editing code.",
-  "code-diff": "Preview proposed frontend changes before any approval-enabled phase.",
+  "code-generation": "Generate protected code proposals and review diffs before approval.",
+  "code-diff": "Real Code Generation with Diff Approval is available for protected review.",
   "test-runner": "Preview validation steps before real test execution is enabled.",
   "auto-fix": "Analyze failed checks and prepare safe repair plans before any code changes.",
   "git-manager": "Prepare branches, commits, pull requests, and rollback plans before real Git access is enabled.",
@@ -320,9 +407,9 @@ const state = {
   screen: "connect",
   selectedConnection: null,
   activeModule: null,
-  diffGenerated: false,
-  diffDecision: "pending",
-  copyFeedback: "",
+  codeProposalGenerated: false,
+  codeProposalDecision: "pending",
+  codeRequest: DEFAULT_CODE_REQUEST,
   planGenerated: false,
   planDecision: "pending",
   planCopyFeedback: "",
@@ -398,7 +485,7 @@ const renderProjectReaderMarkup = () => `
   <section class="screen-detail-card screen-detail-card--wide">
     <small>Safety</small>
     <strong>Read-only preview only</strong>
-    <p>No file edits, terminal commands from the app, Git writes, deployment actions, or secrets access are available in CA-05 / CA-06.</p>
+    <p>No file edits, terminal commands from the app, Git writes, deployment actions, or secrets access are available in CA-11.</p>
   </section>
 `;
 
@@ -574,73 +661,195 @@ const renderTaskPlannerMarkup = () => `
   }
 `;
 
-const getDiffFeedback = () => {
-  if (!state.diffGenerated) {
-    return "Preview only. No changes are saved or applied.";
+const getCodeProposalFeedback = () => {
+  if (!state.codeProposalGenerated) {
+    return "Deterministic local demo only. No files are written and no code is applied.";
   }
-  if (state.copyFeedback) {
-    return state.copyFeedback;
+  if (state.codeProposalDecision === "revision-requested") {
+    return "Revision requested. No code was applied.";
   }
-  if (state.diffDecision === "rejected") {
-    return "Diff marked as rejected. No changes were applied.";
+  if (state.codeProposalDecision === "rejected") {
+    return "Code proposal rejected. No code was applied.";
   }
-  if (state.diffDecision === "approved-later") {
-    return "Diff saved for later review only. No changes were applied.";
+  if (state.codeProposalDecision === "founder-review") {
+    return "Proposal saved for Founder/Admin review. No code was applied.";
   }
-  return "Diff preview generated. Apply Changes remains locked.";
+  return "Protected code proposal generated. Founder/Admin approval is required before any future code permission step.";
 };
 
-const getDiffBadge = () => {
-  if (!state.diffGenerated) {
-    return "Pending review";
+const getCodeProposalBadge = () => {
+  if (!state.codeProposalGenerated) {
+    return "Awaiting proposal";
   }
-  if (state.diffDecision === "rejected") {
+  if (state.codeProposalDecision === "revision-requested") {
+    return "Revision requested";
+  }
+  if (state.codeProposalDecision === "rejected") {
     return "Rejected";
   }
-  if (state.diffDecision === "approved-later") {
-    return "Approve Later";
+  if (state.codeProposalDecision === "founder-review") {
+    return "Founder review";
   }
   return "Preview ready";
 };
 
-const renderCodeDiffMarkup = () => `
+const renderProtectedCodePreviewCards = () =>
+  DEMO_PROTECTED_CODE_FILES.map(
+    (file) => `
+      <article class="protected-preview-card">
+        <div class="protected-preview-card__header">
+          <span class="diff-file-label">Protected file</span>
+          <strong>${escapeHtml(file.path)}</strong>
+        </div>
+        <div class="ca-code-preview-protected" aria-readonly="true" tabindex="-1">
+          <span class="ca-code-preview-watermark" aria-hidden="true">Protected Preview</span>
+          <pre>${escapeHtml(file.code)}</pre>
+        </div>
+      </article>
+    `
+  ).join("");
+
+const renderDiffFileCards = () =>
+  DEMO_DIFF_FILES.map(
+    (file) => `
+      <article class="diff-file-card">
+        <div class="diff-file-card__header">
+          <span class="diff-file-label">File</span>
+          <strong>${escapeHtml(file.path)}</strong>
+        </div>
+        ${file.lines
+          .map(
+            (line) => `
+              <div class="diff-line diff-line--${line.type}">
+                <span class="diff-line__marker">${line.type === "added" ? "+" : "-"}</span>
+                <code>${escapeHtml(line.code)}</code>
+              </div>
+            `
+          )
+          .join("")}
+      </article>
+    `
+  ).join("");
+
+const renderCodeGenerationMarkup = (view = "generation") => `
   <section class="screen-detail-card screen-detail-card--wide">
-    <small>Example Task</small>
-    <strong>Polish the Coding Agent back button spacing on mobile.</strong>
-    <p>Static diff preview only. No backend calls, project writes, or Git actions happen in CA-06.</p>
-    <button class="diff-generate-button" type="button" data-ca-action="generate-diff">Generate Safe Diff Preview</button>
+    <small>${view === "code-diff" ? "Real Code Generation with Diff Approval" : "Title"}</small>
+    <strong>Real Code Generation</strong>
+    <p>Generate protected code proposals and review diffs before approval.</p>
+    <div class="code-generation-status-row">
+      <span class="workspace-screen__status">Now Open: Real Code Generation</span>
+      <span class="status-chip status-chip--manual">Preview Unlocked</span>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Status Banner</small>
+    <div class="test-runner-banner">
+      <strong>Code proposal workspace is open. Generated code remains protected until Founder/Admin approval.</strong>
+      <p>${escapeHtml(getCodeProposalFeedback())}</p>
+    </div>
+  </section>
+  <section class="screen-detail-card screen-detail-card--wide">
+    <small>Request Input</small>
+    <strong>Describe the code change</strong>
+    <p>Deterministic local demo generation only. No OpenAI call, frontend API key, file write, terminal command, or Git action occurs here.</p>
+    <div class="code-generation-request">
+      <textarea
+        class="code-generation-textarea"
+        data-code-generation-input
+        rows="4"
+        placeholder="Describe the code change you want IdeasForgeAI to generate..."
+      >${escapeHtml(state.codeRequest)}</textarea>
+      <button class="diff-generate-button" type="button" data-ca-action="generate-code-proposal">Generate Code Proposal</button>
+    </div>
   </section>
   ${
-    state.diffGenerated
+    state.codeProposalGenerated
       ? `
         <section class="screen-detail-card">
-          <small>Proposed Files</small>
-          <strong>Preview-only file list</strong>
+          <small>Affected Files</small>
+          <strong>Frontend-only proposal scope</strong>
           <ul class="screen-detail-list">
-            <li>frontend/pages/coding-agent.css</li>
+            <li>frontend/pages/coding-agent.html</li>
             <li>frontend/pages/coding-agent.js</li>
+            <li>frontend/pages/coding-agent.css</li>
           </ul>
         </section>
         <section class="screen-detail-card">
-          <small>Status</small>
-          <strong>${escapeHtml(getDiffBadge())}</strong>
-          <p>${escapeHtml(getDiffFeedback())}</p>
+          <small>Generated Summary</small>
+          <strong>${escapeHtml(getCodeProposalBadge())}</strong>
+          <ul class="screen-detail-list">
+            ${DEMO_CODE_SUMMARY_ITEMS.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}
+          </ul>
         </section>
         <section class="screen-detail-card screen-detail-card--wide">
-          <small>Diff Viewer</small>
-          <strong>Safe preview only</strong>
-          <pre class="screen-file-tree">${escapeHtml(DEMO_DIFF_TEXT)}</pre>
-          <div class="diff-preview-actions">
-            <button class="reader-action-button" type="button" data-ca-action="copy-diff">Copy Diff</button>
-            <button class="reader-action-button" type="button" data-ca-action="reject-diff">Reject</button>
-            <button class="reader-action-button" type="button" data-ca-action="approve-later">Approve Later</button>
-            <button class="reader-action-button is-disabled" type="button" disabled>Apply Changes - Locked</button>
+          <small>Protected Code Preview</small>
+          <strong>Protected read-only preview</strong>
+          <p>Normal users can review protected code previews only. Founder/Admin approval is required to copy, edit, apply, export, commit, push, or deploy.</p>
+          <div class="protected-preview-grid">
+            ${renderProtectedCodePreviewCards()}
+          </div>
+        </section>
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Unified Diff Viewer</small>
+          <strong>Preview text only</strong>
+          <p>This is preview text only. Do not apply it.</p>
+          <div class="diff-viewer">
+            ${renderDiffFileCards()}
+          </div>
+        </section>
+        <section class="screen-detail-card">
+          <small>Founder/Admin Controls</small>
+          <strong>Locked controls</strong>
+          <div class="locked-control-grid">
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Code - Locked until CA-12</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Edit Code - Locked until CA-12</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Diff - Locked until CA-12</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Export Files - Locked until CA-12</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Commit - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Deploy - Locked</button>
+          </div>
+        </section>
+        <section class="screen-detail-card">
+          <small>Risk Summary</small>
+          <strong>Low - frontend interaction fix preview</strong>
+          <ul class="planner-risk-list">
+            <li>Affects frontend Coding Agent files only</li>
+            <li>No backend changes</li>
+            <li>No secrets touched</li>
+            <li>No deployment settings changed</li>
+            <li>Requires validation before apply</li>
+          </ul>
+        </section>
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Approval Gate</small>
+          <strong>Founder/Admin review required</strong>
+          <p class="approval-gate-note">${escapeHtml(getCodeProposalFeedback())}</p>
+          <div class="approval-gate-actions">
+            <button class="reader-action-button" type="button" data-ca-action="request-code-revision">Request Revision</button>
+            <button class="reader-action-button" type="button" data-ca-action="reject-code-proposal">Reject Proposal</button>
+            <button class="reader-action-button" type="button" data-ca-action="approve-founder-review">Approve for Founder Review</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Apply Generated Code - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Copy Raw Code - Locked</button>
+            <button class="reader-action-button is-disabled" type="button" aria-disabled="true" data-ca-action="locked-founder-action">Export Patch - Locked</button>
+          </div>
+        </section>
+        <section class="screen-detail-card screen-detail-card--wide">
+          <small>Validation Plan</small>
+          <strong>Required before any future apply phase</strong>
+          <div class="validation-plan-list">
+            <span>node --check frontend/pages/coding-agent.js</span>
+            <span>node --check frontend/pages/studio-v4.js</span>
+            <span>python backend/sector_qa_runner.py</span>
+            <span>Manual mobile Safari test</span>
+            <span>Manual desktop browser test</span>
           </div>
         </section>
       `
       : ""
   }
 `;
+
+const renderCodeDiffMarkup = () => renderCodeGenerationMarkup("code-diff");
 
 const getTestPlanFeedback = () => {
   if (state.testPlanCopyFeedback) {
@@ -1221,6 +1430,11 @@ const renderModuleBody = () => {
     return;
   }
 
+  if (state.activeModule === "code-generation") {
+    activeScreenBody.innerHTML = renderCodeGenerationMarkup();
+    return;
+  }
+
   if (state.activeModule === "code-diff") {
     activeScreenBody.innerHTML = renderCodeDiffMarkup();
     return;
@@ -1285,7 +1499,7 @@ const renderWorkspaceCards = () => {
   }
   if (workspaceCopyNodes.activeTasks) {
     workspaceCopyNodes.activeTasks.textContent = demoConnected
-      ? "No active tasks. CA-06 only unlocks preview modules with no execution or edit actions."
+      ? "No active tasks. CA-11 unlocks protected preview modules only, with no execution or edit actions."
       : "Queued builds, patch jobs, and execution history will surface in this panel.";
   }
 
@@ -1399,9 +1613,9 @@ const openFallbackScreen = (connection) => {
   state.screen = "active";
   state.selectedConnection = connection;
   state.activeModule = null;
-  state.diffGenerated = false;
-  state.diffDecision = "pending";
-  state.copyFeedback = "";
+  state.codeProposalGenerated = false;
+  state.codeProposalDecision = "pending";
+  state.codeRequest = DEFAULT_CODE_REQUEST;
   state.planGenerated = false;
   state.planDecision = "pending";
   state.planCopyFeedback = "";
@@ -1428,9 +1642,9 @@ const openDemoScreen = () => {
   state.screen = "active";
   state.selectedConnection = "demo";
   state.activeModule = "project-reader";
-  state.diffGenerated = false;
-  state.diffDecision = "pending";
-  state.copyFeedback = "";
+  state.codeProposalGenerated = false;
+  state.codeProposalDecision = "pending";
+  state.codeRequest = DEFAULT_CODE_REQUEST;
   state.planGenerated = false;
   state.planDecision = "pending";
   state.planCopyFeedback = "";
@@ -1460,9 +1674,8 @@ const openDemoModule = (moduleName) => {
 
   state.screen = "active";
   state.activeModule = moduleName;
-  if (moduleName !== "code-diff") {
-    state.copyFeedback = "";
-    state.diffDecision = "pending";
+  if (!["code-generation", "code-diff"].includes(moduleName)) {
+    state.codeProposalDecision = "pending";
   }
   if (moduleName !== "task-planner") {
     state.planCopyFeedback = "";
@@ -1497,11 +1710,10 @@ const generateTaskPlan = () => {
   renderScreenState();
 };
 
-const generateDiff = () => {
-  state.diffGenerated = true;
-  state.diffDecision = "pending";
-  state.copyFeedback = "";
-  setStatusMessage("Code Diff Preview generated. Apply Changes remains locked.");
+const generateCodeProposal = () => {
+  state.codeProposalGenerated = true;
+  state.codeProposalDecision = "pending";
+  setStatusMessage("Protected code proposal generated. No code was applied.");
   renderScreenState();
 };
 
@@ -1513,16 +1725,6 @@ const copyTaskPlan = async () => {
   } catch (error) {
     state.planCopyFeedback = "Clipboard copy was unavailable. The task plan remains preview-only.";
     setStatusMessage("Clipboard copy was unavailable. The task plan remains preview-only.");
-  }
-  renderScreenState();
-};
-
-const copyDiff = async () => {
-  try {
-    await navigator.clipboard.writeText(DEMO_DIFF_TEXT);
-    state.copyFeedback = "Diff copied to clipboard. No changes were applied.";
-  } catch (error) {
-    state.copyFeedback = "Clipboard copy was unavailable. The diff remains preview-only.";
   }
   renderScreenState();
 };
@@ -1680,6 +1882,9 @@ const handleAction = async (action) => {
     case "open-task-planner":
       openDemoModule("task-planner");
       break;
+    case "open-code-generation":
+      openDemoModule("code-generation");
+      break;
     case "open-code-diff":
       openDemoModule("code-diff");
       break;
@@ -1698,8 +1903,8 @@ const handleAction = async (action) => {
     case "generate-task-plan":
       generateTaskPlan();
       break;
-    case "generate-diff":
-      generateDiff();
+    case "generate-code-proposal":
+      generateCodeProposal();
       break;
     case "preview-test-run":
       previewTestRun();
@@ -1715,9 +1920,6 @@ const handleAction = async (action) => {
       break;
     case "copy-plan":
       await copyTaskPlan();
-      break;
-    case "copy-diff":
-      await copyDiff();
       break;
     case "copy-test-plan":
       await copyTestPlan();
@@ -1749,16 +1951,19 @@ const handleAction = async (action) => {
       setStatusMessage("Plan saved for future approval. No code changes were made.");
       renderScreenState();
       break;
-    case "reject-diff":
-      state.diffDecision = "rejected";
-      state.copyFeedback = "";
-      setStatusMessage("Code Diff Preview rejected. No changes were applied.");
+    case "request-code-revision":
+      state.codeProposalDecision = "revision-requested";
+      setStatusMessage("Revision requested. No code was applied.");
       renderScreenState();
       break;
-    case "approve-later":
-      state.diffDecision = "approved-later";
-      state.copyFeedback = "";
-      setStatusMessage("Code Diff Preview saved for later approval only.");
+    case "reject-code-proposal":
+      state.codeProposalDecision = "rejected";
+      setStatusMessage("Code proposal rejected. No code was applied.");
+      renderScreenState();
+      break;
+    case "approve-founder-review":
+      state.codeProposalDecision = "founder-review";
+      setStatusMessage("Proposal saved for Founder/Admin review. No code was applied.");
       renderScreenState();
       break;
     case "mark-test-plan-later":
@@ -1821,6 +2026,10 @@ const handleAction = async (action) => {
       setStatusMessage("This deployment action is locked until real project permission and founder/admin approval.");
       renderScreenState();
       break;
+    case "locked-founder-action":
+      setStatusMessage("This action is locked until Founder/Admin permission system is enabled in CA-12.");
+      renderScreenState();
+      break;
     default:
       break;
   }
@@ -1834,6 +2043,15 @@ document.addEventListener("click", (event) => {
 
   event.preventDefault();
   void handleAction(actionTarget.dataset.caAction);
+});
+
+document.addEventListener("input", (event) => {
+  const requestInput = event.target.closest("[data-code-generation-input]");
+  if (!requestInput) {
+    return;
+  }
+
+  state.codeRequest = requestInput.value;
 });
 
 let swipeStartX = 0;

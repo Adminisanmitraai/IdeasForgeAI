@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca10-deployment-manager-preview-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca11-real-code-generation-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -110,7 +110,7 @@
       </article>
       <article class="workspace-card workspace-card--code-editor">
         <div class="workspace-card__header">
-          <strong>Code Editor with Diff Preview</strong>
+          <strong>Code Generation with Diff Approval</strong>
           <span class="workspace-status-badge workspace-status-badge--locked" data-workspace-status="code-editor">Preview Locked until Demo Project is selected</span>
         </div>
         <p data-workspace-copy="code-editor">Review proposed code changes before anything is applied.</p>
@@ -125,7 +125,7 @@
             <h2 id="connect-project-title">Connect Project</h2>
             <p class="workspace-screen__copy">Choose how Coding Agent should open a safe preview workflow.</p>
           </div>
-          <span class="workspace-status-badge">CA-05 / CA-06 preview-only</span>
+          <span class="workspace-status-badge">CA-11 preview-only</span>
         </div>
 
         <div class="connect-options" aria-label="Project connection options">
@@ -173,6 +173,7 @@
             <button class="module-chip-button" type="button" data-ca-action="open-project-reader">Project Reader <small>Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-architecture">Architecture Analyzer <small>Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-task-planner">Task Planner <small>Preview Unlocked</small></button>
+            <button class="module-chip-button" type="button" data-ca-action="open-code-generation">Code Generation <small>Preview Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-code-diff">Code Diff Preview <small>Preview Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-test-runner">Test Runner <small>Preview Unlocked</small></button>
             <button class="module-chip-button" type="button" data-ca-action="open-auto-fix">Auto Fix Engine <small>Preview Unlocked</small></button>
@@ -183,10 +184,11 @@
         </section>
 
         <section class="safety-notice" aria-label="Safety notice">
-          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-10.</strong>
+          <strong>Coding Agent will not edit code, run terminal commands from the app, write Git changes, deploy, or access secrets in CA-11.</strong>
           <ul>
-            <li>Deployment Manager is preview-only in CA-10</li>
+            <li>Real Code Generation is preview-only in CA-11</li>
             <li>No deployment actions are run</li>
+            <li>No file writes are performed</li>
             <li>No Render API calls</li>
             <li>No GitHub API calls</li>
             <li>No DNS changes</li>
@@ -212,6 +214,7 @@
           <button class="module-tab-button" type="button" data-ca-action="open-project-reader" data-module-tab="project-reader" aria-pressed="false">Project Reader</button>
           <button class="module-tab-button" type="button" data-ca-action="open-architecture" data-module-tab="architecture" aria-pressed="false">Architecture Analyzer</button>
           <button class="module-tab-button" type="button" data-ca-action="open-task-planner" data-module-tab="task-planner" aria-pressed="false">Task Planner</button>
+          <button class="module-tab-button" type="button" data-ca-action="open-code-generation" data-module-tab="code-generation" aria-pressed="false">Code Generation</button>
           <button class="module-tab-button" type="button" data-ca-action="open-code-diff" data-module-tab="code-diff" aria-pressed="false">Code Diff Preview</button>
           <button class="module-tab-button" type="button" data-ca-action="open-test-runner" data-module-tab="test-runner" aria-pressed="false">Test Runner</button>
           <button class="module-tab-button" type="button" data-ca-action="open-auto-fix" data-module-tab="auto-fix" aria-pressed="false">Auto Fix Engine</button>
@@ -234,16 +237,16 @@
         <button class="module-chip-button" type="button" data-ca-action="open-project-reader"><span>Project Reader</span><small>Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-architecture"><span>Architecture Analyzer</span><small>Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-task-planner"><span>Task Planner</span><small>Preview Unlocked</small></button>
-        <button class="module-chip-button" type="button" data-ca-action="open-code-diff"><span>Code Editor with Diff</span><small>Preview Unlocked</small></button>
+        <button class="module-chip-button" type="button" data-ca-action="open-code-generation"><span>Code Generation</span><small>Preview Unlocked</small></button>
+        <button class="module-chip-button" type="button" data-ca-action="open-code-diff"><span>Code Diff Preview</span><small>Preview Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-test-runner"><span>Test Runner</span><small>Preview Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-auto-fix"><span>Auto Fix Engine</span><small>Preview Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-git-manager"><span>Git Manager</span><small>Preview Unlocked</small></button>
         <button class="module-chip-button" type="button" data-ca-action="open-deployment-manager"><span>Deployment Manager</span><small>Preview Unlocked</small></button>
       </div>
       <div class="future-modules__next">
-        <span class="eyebrow">Next after CA-10</span>
+        <span class="eyebrow">Next after CA-11</span>
         <ul class="screen-detail-list">
-          <li>CA-11 - Real Code Generation with Diff Approval</li>
           <li>CA-12 - Founder/Admin Code Permission System</li>
           <li>CA-13 - Protected Code Preview for Normal Users</li>
         </ul>
@@ -253,6 +256,6 @@
     <button class="bottom-cta" type="button" data-ca-action="open-connect">Connect Project</button>
   </main>
 
-  <script src="./coding-agent.js?v=ca10-deployment-manager-preview-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca11-real-code-generation-20260703" defer></script>
 </body>
 </html>
