@@ -1,4 +1,15 @@
 # IdeasForgeAI Project Status
+## Phase CA-05.1 - Task Planner Open Screen Repair
+
+Status: Completed locally, validation pending manual browser check.
+
+- Repaired the Task Planner open flow so unlocked Task Planner controls now use a real delegated `data-ca-action="open-task-planner"` path that opens the same Active Module screen system used by Project Reader, Architecture Analyzer, and Code Diff Preview.
+- Converted the visible unlocked Demo Project module chips/buttons for Project Reader, Architecture Analyzer, Task Planner, and Code Diff Preview into actionable controls instead of passive labels, preventing Task Planner from appearing unlocked without opening.
+- Updated the Task Planner active screen copy to show `Now Open: Task Planner Preview`, the required subtitle about safe implementation steps before editing code, and the exact static Generate Safe Task Plan preview flow.
+- Reordered the Task Planner approval controls to `Copy Plan`, `Reject Plan`, `Approve Plan Later`, and disabled `Start Code Changes - Locked`, with visible preview-only feedback for copy/reject/save-later actions.
+- Files changed: `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
+- Validation commands required: `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
+- Safety notes: frontend-only CA-05.1 repair; no backend edits, deployment settings, secrets, `.env`, external services, or KisanMitraAI files touched.
 ## Phase CA-06.3 - Active Module Panel Repair
 
 Status: Completed locally, validation pending manual browser check.

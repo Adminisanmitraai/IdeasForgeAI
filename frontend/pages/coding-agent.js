@@ -120,7 +120,7 @@ const MODULE_TITLES = {
   "project-reader": "Project Reader Preview",
   architecture: "Architecture Analyzer Preview",
   "task-planner": "Task Planner Preview",
-  "code-diff": "Code Editor with Diff Preview",
+  "code-diff": "Code Diff Preview",
 };
 
 const MODULE_STATUS_MESSAGES = {
@@ -128,6 +128,13 @@ const MODULE_STATUS_MESSAGES = {
   architecture: "Architecture Analyzer Preview is now open.",
   "task-planner": "Task Planner Preview is now open.",
   "code-diff": "Code Diff Preview is now open.",
+};
+
+const MODULE_SUBTITLES = {
+  "project-reader": "Review the Demo Project structure in a safe read-only preview.",
+  architecture: "Understand how frontend, backend, QA, and deployment layers connect.",
+  "task-planner": "Convert a request into safe implementation steps before editing code.",
+  "code-diff": "Preview proposed frontend changes before any approval-enabled phase.",
 };
 
 const state = {
@@ -363,10 +370,10 @@ const renderTaskPlannerMarkup = () => `
           <small>Approval actions</small>
           <strong>Static preview controls</strong>
           <div class="planner-approval-actions">
-            <button class="reader-action-button" type="button" data-ca-action="approve-plan-later">Approve Plan Later</button>
-            <button class="reader-action-button" type="button" data-ca-action="reject-plan">Reject Plan</button>
             <button class="reader-action-button" type="button" data-ca-action="copy-plan">Copy Plan</button>
-            <button class="reader-action-button is-disabled" type="button" disabled>Start Code Changes - Coming in CA-06 with approval</button>
+            <button class="reader-action-button" type="button" data-ca-action="reject-plan">Reject Plan</button>
+            <button class="reader-action-button" type="button" data-ca-action="approve-plan-later">Approve Plan Later</button>
+            <button class="reader-action-button is-disabled" type="button" disabled>Start Code Changes - Locked</button>
           </div>
         </section>
       `
@@ -571,8 +578,8 @@ const renderActiveScreen = () => {
 
   if (isDemo) {
     activeStatusText.textContent = `Now Open: ${MODULE_TITLES[state.activeModule] || "Project Reader Preview"}`;
-    activeScreenTitle.textContent = "Demo Project Workspace";
-    activeScreenCopy.textContent = "Safe preview-only project connected.";
+    activeScreenTitle.textContent = MODULE_TITLES[state.activeModule] || "Project Reader Preview";
+    activeScreenCopy.textContent = MODULE_SUBTITLES[state.activeModule] || "Safe preview-only project connected.";
     activeMessageCard.textContent = "";
   } else {
     const label = state.selectedConnection === "local"
@@ -670,7 +677,7 @@ const generateTaskPlan = () => {
   state.planGenerated = true;
   state.planDecision = "pending";
   state.planCopyFeedback = "";
-  setStatusMessage("Task Planner Preview is now open.");
+  setStatusMessage("Task plan ready for review. Start Code Changes remains locked.");
   renderScreenState();
 };
 
@@ -686,8 +693,10 @@ const copyTaskPlan = async () => {
   try {
     await navigator.clipboard.writeText(DEMO_TASK_PLAN_TEXT);
     state.planCopyFeedback = "Task plan copied.";
+    setStatusMessage("Task plan copied.");
   } catch (error) {
     state.planCopyFeedback = "Clipboard copy was unavailable. The task plan remains preview-only.";
+    setStatusMessage("Clipboard copy was unavailable. The task plan remains preview-only.");
   }
   renderScreenState();
 };

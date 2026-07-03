@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>IdeasForgeAI | Coding Agent</title>
-  <link rel="stylesheet" href="./coding-agent.css?v=ca05-task-planner-preview-20260703">
+  <link rel="stylesheet" href="./coding-agent.css?v=ca051-task-planner-open-repair-20260703">
 </head>
 <body>
   <main class="coding-agent-shell">
@@ -170,10 +170,10 @@
           </div>
         </div>
         <div class="preview-module-list">
-            <span>Project Reader <small>Unlocked</small></span>
-            <span>Architecture Analyzer <small>Unlocked</small></span>
-            <span>Task Planner <small>Preview Unlocked</small></span>
-            <span>Code Diff Preview <small>Preview Unlocked</small></span>
+            <button class="module-chip-button" type="button" data-ca-action="open-project-reader">Project Reader <small>Unlocked</small></button>
+            <button class="module-chip-button" type="button" data-ca-action="open-architecture">Architecture Analyzer <small>Unlocked</small></button>
+            <button class="module-chip-button" type="button" data-ca-action="open-task-planner">Task Planner <small>Preview Unlocked</small></button>
+            <button class="module-chip-button" type="button" data-ca-action="open-code-diff">Code Diff Preview <small>Preview Unlocked</small></button>
         </div>
           <p class="workspace-screen__copy">Demo Project opens a real Active Module screen immediately. It does not just mark the card as selected.</p>
         </section>
@@ -219,10 +219,10 @@
       </div>
       <p class="future-modules__copy">Preview modules remain read-only. Planning, editing, testing, Git, and deployment actions stay locked until later phases.</p>
       <div class="future-modules__chips">
-        <span class="module-chip-button" aria-pressed="true"><span>Project Reader</span><small>Unlocked</small></span>
-        <span class="module-chip-button" aria-pressed="true"><span>Architecture Analyzer</span><small>Unlocked</small></span>
-        <span class="module-chip-button" aria-pressed="true"><span>Task Planner</span><small>Preview Unlocked</small></span>
-        <span class="module-chip-button" aria-pressed="true"><span>Code Editor with Diff</span><small>Preview Unlocked</small></span>
+        <button class="module-chip-button" type="button" data-ca-action="open-project-reader"><span>Project Reader</span><small>Unlocked</small></button>
+        <button class="module-chip-button" type="button" data-ca-action="open-architecture"><span>Architecture Analyzer</span><small>Unlocked</small></button>
+        <button class="module-chip-button" type="button" data-ca-action="open-task-planner"><span>Task Planner</span><small>Preview Unlocked</small></button>
+        <button class="module-chip-button" type="button" data-ca-action="open-code-diff"><span>Code Diff Preview</span><small>Preview Unlocked</small></button>
         <span class="module-chip-button" data-module-lock><span>Test Runner</span><small>CA-07</small></span>
         <span class="module-chip-button" data-module-lock><span>Auto Fix Engine</span><small>CA-08</small></span>
         <span class="module-chip-button" data-module-lock><span>Git Manager</span><small>CA-09</small></span>
@@ -233,6 +233,6 @@
     <button class="bottom-cta" type="button" data-ca-action="open-connect">Connect Project</button>
   </main>
 
-  <script src="./coding-agent.js?v=ca05-task-planner-preview-20260703" defer></script>
+  <script src="./coding-agent.js?v=ca051-task-planner-open-repair-20260703" defer></script>
 </body>
 </html>
