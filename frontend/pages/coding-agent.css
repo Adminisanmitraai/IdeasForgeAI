@@ -3084,4 +3084,197 @@ a:focus-visible {
   }
 }
 
+/* Phase CA-20 final premium workspace UI polish */
+#ca20-connected-workspace-section.ca20-connected-workspace-section,
+.ca20-connected-workspace-section {
+  width: min(calc(100% - 28px), 1120px) !important;
+  margin: 32px auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+}
+
+.ca20-shell-card,
+.ca20-connected-workspace-panel {
+  width: 100% !important;
+  border: 1px solid rgba(56, 189, 248, .34) !important;
+  border-radius: 34px !important;
+  padding: clamp(26px, 6vw, 46px) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(56, 189, 248, .18), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(139, 92, 246, .20), transparent 36%),
+    linear-gradient(135deg, rgba(15, 23, 42, .96), rgba(8, 10, 22, .98)) !important;
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .36) !important;
+  box-sizing: border-box !important;
+}
+
+.ca20-shell-card *,
+.ca20-connected-workspace-panel *,
+#ca20-connected-workspace-section * {
+  box-sizing: border-box !important;
+}
+
+.ca20-kicker {
+  display: inline-flex !important;
+  align-items: center !important;
+  width: auto !important;
+  max-width: 100% !important;
+  border: 1px solid rgba(196, 181, 253, .34) !important;
+  border-radius: 999px !important;
+  padding: 10px 16px !important;
+  color: #d8b4fe !important;
+  background: rgba(255, 255, 255, .045) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+}
+
+.ca20-shell-card h2,
+.ca20-connected-workspace-panel h2 {
+  margin: 18px 0 14px !important;
+  color: #fff !important;
+  font-size: clamp(38px, 8vw, 66px) !important;
+  line-height: .98 !important;
+  letter-spacing: -.055em !important;
+}
+
+.ca20-shell-card p,
+.ca20-connected-workspace-panel p,
+.ca20-lead {
+  max-width: 940px !important;
+  color: rgba(255, 255, 255, .72) !important;
+  font-size: clamp(18px, 4vw, 23px) !important;
+  line-height: 1.55 !important;
+}
+
+button.ca20-open-button,
+.ca20-open-button {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: min(100%, 560px) !important;
+  min-height: 64px !important;
+  margin-top: 22px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  padding: 18px 24px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #8b5cf6, #38bdf8) !important;
+  font-size: clamp(18px, 4vw, 22px) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 18px 50px rgba(56, 189, 248, .24) !important;
+}
+
+button.ca20-open-button:active,
+.ca20-open-button:active {
+  transform: translateY(1px) !important;
+}
+
+#ca20-connected-workspace-output {
+  margin-top: 24px !important;
+}
+
+.ca20-source-card,
+.ca20-wide-card,
+.ca20-grid > article {
+  border: 1px solid rgba(196, 181, 253, .20) !important;
+  border-radius: 24px !important;
+  padding: 20px !important;
+  background: rgba(3, 7, 18, .50) !important;
+}
+
+.ca20-source-card {
+  margin: 20px 0 !important;
+  border-color: rgba(56, 189, 248, .30) !important;
+}
+
+.ca20-source-card small,
+.ca20-wide-card small,
+.ca20-grid small {
+  display: block !important;
+  color: #d8b4fe !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: .14em !important;
+  margin-bottom: 10px !important;
+  text-transform: uppercase !important;
+}
+
+.ca20-source-card strong,
+.ca20-wide-card strong,
+.ca20-grid strong {
+  display: block !important;
+  color: #fff !important;
+  font-size: 21px !important;
+  line-height: 1.25 !important;
+}
+
+.ca20-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin: 18px 0 !important;
+}
+
+.ca20-wide-card {
+  margin-top: 16px !important;
+}
+
+.ca20-project-tree,
+.ca20-safety-list,
+.ca20-pill-list {
+  display: grid !important;
+  gap: 10px !important;
+  margin: 14px 0 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.ca20-project-tree li,
+.ca20-safety-list li,
+.ca20-pill-list li {
+  border: 1px solid rgba(255,255,255,.08) !important;
+  border-radius: 16px !important;
+  padding: 12px 14px !important;
+  color: rgba(255,255,255,.82) !important;
+  background: rgba(15,23,42,.58) !important;
+}
+
+.ca20-pill-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+@media (max-width: 640px) {
+  #ca20-connected-workspace-section.ca20-connected-workspace-section,
+  .ca20-connected-workspace-section {
+    width: calc(100% - 28px) !important;
+    margin: 26px auto !important;
+  }
+
+  .ca20-shell-card,
+  .ca20-connected-workspace-panel {
+    border-radius: 30px !important;
+    padding: 26px 20px !important;
+  }
+
+  .ca20-grid,
+  .ca20-pill-list {
+    grid-template-columns: 1fr !important;
+  }
+
+  button.ca20-open-button,
+  .ca20-open-button {
+    width: 100% !important;
+  }
+}
+
 
