@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ForgeWork — IdeasForgeAI</title>
+  <link rel="stylesheet" href="/pages/app-shell.css?v=nav01" />
+</head>
+<body>
+  <main class="nav01-page nav01-module-page" data-nav-page="ForgeWork">
+    <div class="nav01-module-inner">
+      <nav class="nav01-module-tools" aria-label="Page navigation">
+        <div class="nav01-tool-left">
+          <button class="nav01-icon-btn" type="button" data-nav01-chat aria-label="Back to Chat">⌂</button>
+          <button class="nav01-icon-btn" type="button" data-nav01-prev aria-label="Previous page">‹</button>
+        </div>
+        <div class="nav01-mini-label">ForgeWork</div>
+        <div class="nav01-tool-right">
+          <button class="nav01-icon-btn" type="button" data-nav01-next aria-label="Next page">›</button>
+        </div>
+      </nav>
+
+      <section class="nav01-card nav01-card-center">
+        <div class="nav01-mark">
+          <img src="/assets/brand/ideasforgeai-mark.png?v=nav01" alt="IdeasForgeAI" />
+        </div>
+        <h1 class="nav01-title">Forge<span>Work</span></h1>
+        <p class="nav01-subtitle">Connect your computer and let AI work with your professional software with approval.</p>
+        
+<div class="nav01-work-actions">
+  <button class="nav01-primary" type="button" id="nav01-connect-computer">Connect Computer</button>
+  <div class="nav01-status" id="nav01-work-status">
+    <strong>Not connected</strong><br />
+    Waiting for trusted desktop connection.
+  </div>
+</div>
+<div class="nav01-preview" id="nav01-live-preview">
+  Live desktop preview will appear here after trusted connection.
+</div>
+<script>
+(function () {
+  const button = document.getElementById("nav01-connect-computer");
+  const status = document.getElementById("nav01-work-status");
+  const preview = document.getElementById("nav01-live-preview");
+
+  async function checkGateway() {
+    const candidates = [
+      "http://localhost:7071/health",
+      "/api/forgework/desktop/health",
+      "/api/forgepilot/health"
+    ];
+
+    for (const url of candidates) {
+      try {
+        const res = await fetch(url, { cache: "no-store" });
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          status.innerHTML = "<strong>Connected</strong><br />Trusted desktop gateway detected.";
+          preview.textContent = "Connected. Live desktop preview will appear when screen streaming is available.";
+          return true;
+        }
+      } catch (err) {}
+    }
+
+    status.innerHTML = "<strong>Not connected</strong><br />Waiting for trusted desktop connection.";
+    preview.textContent = "Live desktop preview will appear here after trusted connection.";
+    return false;
+  }
+
+  button && button.addEventListener("click", () => {
+    status.innerHTML = "<strong>Connecting…</strong><br />Open the Desktop Companion and approve the trusted pairing request.";
+    checkGateway();
+    setTimeout(checkGateway, 1200);
+  });
+
+  checkGateway();
+  setInterval(checkGateway, 5000);
+})();
+</script>
+
+        <div class="nav01-swipe-hint">Swipe left or right to move between Chat, Studio, Code, and Work.</div>
+      </section>
+    </div>
+  </main>
+  <script src="/pages/app-shell.js?v=nav01"></script>
+</body>
+</html>

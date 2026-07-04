@@ -1,3 +1,23 @@
+## NAV-01 - Four Page Swipe Shell
+
+Status: Completed locally, validation required before deploy.
+
+- Added four public routes: /chat, /forgestudio, /forgecode, /forgework.
+- Root index redirects to the Chat page.
+- Added shared swipe navigation shell for Chat, ForgeStudio, ForgeCode, and ForgeWork.
+- ForgeStudio page shows “Nothing to preview yet.”
+- ForgeCode page shows a clean coding-agent capability panel.
+- ForgeWork page shows Connect Computer first and a live desktop preview placeholder until a real trusted connection is available.
+- Module pages do not show the main Chat top header.
+- Public UI uses ForgeWork, not ForgePilot.
+- No backend, gateway, desktop companion, or KisanMitraAI changes.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## UI-02Q - Lower Chat Tray + Make Coding Agent Default Index
 
 Status: Completed locally, validation required before deploy.
