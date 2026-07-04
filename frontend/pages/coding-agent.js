@@ -8342,3 +8342,372 @@ ${files}`;
   };
 })();
 
+
+// AI-02B - ChatGPT-like composer, memory, files, voice, and product brains
+(function () {
+  if (window.__IFAI_AI02B__) return;
+  window.__IFAI_AI02B__ = true;
+
+  const state = {
+    mode: "chat",
+    active: false,
+    sending: false,
+    files: [],
+    userId: localStorage.getItem("ifai_user_id") || ("u_" + Date.now().toString(36)),
+    projectId: new URL(location.href).searchParams.get("project") || "default",
+    messages: []
+  };
+  localStorage.setItem("ifai_user_id", state.userId);
+
+  const apiBases = ["https://ideasforgeai-api.onrender.com", ""];
+  const modes = {
+    chat: ["IdeasForgeAI", ["I’m ready.", "Tell me what you want to create, code, or work on."]],
+    studio: ["ForgeStudio", ["Welcome to ForgeStudio.", "You can create apps, websites, UI screens, logos, images, documents, and preview flows here.", "Share your idea in simple words."]],
+    code: ["ForgeCode", ["Welcome to ForgeCode.", "You can plan features, understand code, fix bugs, and prepare safe changes here.", "Tell me the project or error."]],
+    work: ["ForgeWork", ["Welcome to ForgeWork.", "You can work on documents, research, reports, tasks, and professional software workflows here.", "For computer work, connect your desktop first."]]
+  };
+
+  function memoryKey() {
+    return `ifai_memory_${state.userId}_${state.projectId}_${state.mode}`;
+  }
+
+  function saveMemory() {
+    localStorage.setItem(memoryKey(), JSON.stringify(state.messages.slice(-40)));
+  }
+
+  function loadMemory() {
+    try {
+      return JSON.parse(localStorage.getItem(memoryKey()) || "[]");
+    } catch {
+      return [];
+    }
+  }
+
+  function root() {
+    return document.querySelector(".ui01b-messages") || document.querySelector("main");
+  }
+
+  function input() {
+    let el = document.querySelector(".ui01b-composer textarea") || document.querySelector("textarea.ifai-ai02-input") || document.querySelector(".ui01b-composer input[type='text']") || document.querySelector("input[placeholder]");
+    if (!el) return null;
+
+    if (el.tagName === "INPUT") {
+      const t = document.createElement("textarea");
+      t.className = (el.className || "") + " ifai-ai02-input";
+      t.placeholder = el.placeholder || "Ask IdeasForgeAI";
+      t.value = el.value || "";
+      t.rows = 1;
+      el.replaceWith(t);
+      el = t;
+    }
+
+    el.classList.add("ifai-ai02-input");
+    autoGrow(el);
+    return el;
+  }
+
+  function autoGrow(el) {
+    if (!el || el.tagName !== "TEXTAREA") return;
+    el.style.height = "auto";
+    el.style.height = Math.min(Math.max(el.scrollHeight, 50), 142) + "px";
+  }
+
+  function sendBtn() {
+    return Array.from(document.querySelectorAll("button")).find((b) => {
+      const txt = (b.textContent || "").trim();
+      const label = (b.getAttribute("aria-label") || "").toLowerCase();
+      return txt === "↑" || txt === "→" || label.includes("send");
+    });
+  }
+
+  function micBtn() {
+    return Array.from(document.querySelectorAll("button")).find((b) => {
+      const label = (b.getAttribute("aria-label") || "").toLowerCase();
+      return label.includes("mic") || label.includes("voice");
+    });
+  }
+
+  function attachBtn() {
+    return Array.from(document.querySelectorAll("button")).find((b) => {
+      const txt = (b.textContent || "").trim();
+      const label = (b.getAttribute("aria-label") || "").toLowerCase();
+      return txt === "+" || label.includes("attach") || label.includes("upload");
+    });
+  }
+
+  function feed() {
+    const r = root();
+    if (!r) return null;
+    let f = r.querySelector(".ifai-ai-feed");
+    if (!f) {
+      r.innerHTML = "";
+      f = document.createElement("div");
+      f.className = "ifai-ai-feed";
+      r.appendChild(f);
+    }
+    return f;
+  }
+
+  function bubble(role, text, streaming) {
+    const f = feed();
+    if (!f) return null;
+    const b = document.createElement("div");
+    b.className = `ifai-ai-message ${role}${streaming ? " streaming" : ""}`;
+    b.textContent = text || "";
+    f.appendChild(b);
+    try { b.scrollIntoView({ behavior: "smooth", block: "end" }); } catch {}
+    if (role === "assistant" && !streaming) {
+      b.addEventListener("click", () => speak(b.textContent || ""));
+    }
+    return b;
+  }
+
+  function push(role, content) {
+    if (!content || !content.trim()) return;
+    state.messages.push({ role, content: content.trim() });
+    state.messages = state.messages.slice(-40);
+    saveMemory();
+  }
+
+  function modeFromCard(card) {
+    const t = ((card.getAttribute("data-product") || "") + " " + (card.innerText || "")).toLowerCase();
+    if (t.includes("studio")) return "studio";
+    if (t.includes("code")) return "code";
+    if (t.includes("work")) return "work";
+    return "chat";
+  }
+
+  function activateMode(mode) {
+    state.mode = mode || "chat";
+    state.active = true;
+    state.messages = loadMemory();
+
+    const f = feed();
+    if (!f) return;
+    f.innerHTML = "";
+
+    const chip = document.createElement("div");
+    chip.className = "ifai-ai-mode-chip";
+    chip.textContent = modes[state.mode][0];
+    f.appendChild(chip);
+
+    if (state.messages.length) {
+      bubble("assistant", `Welcome back to ${modes[state.mode][0]}.`);
+      state.messages.slice(-6).forEach(m => bubble(m.role === "user" ? "user" : "assistant", m.content));
+      return;
+    }
+
+    const greeting = new Date().getHours() < 12 ? "Good morning." : new Date().getHours() < 17 ? "Good afternoon." : "Good evening.";
+    modes[state.mode][1].forEach((m, i) => {
+      const msg = i === 0 ? `${greeting} ${m}` : m;
+      setTimeout(() => {
+        bubble("assistant", msg);
+        push("assistant", msg);
+      }, i * 260);
+    });
+  }
+
+  function fileText() {
+    if (!state.files.length) return "";
+    return "\n\nAttached file context:\n" + state.files.map((f, i) => `File ${i+1}: ${f.name}\n${f.text || "[file attached]"}`).join("\n\n---\n\n");
+  }
+
+  async function send(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+    if (state.sending) return;
+
+    const el = input();
+    if (!el) return;
+
+    const text = (el.value || "").trim();
+    if (!text) return;
+
+    if (!state.active) activateMode("chat");
+
+    el.value = "";
+    autoGrow(el);
+
+    state.sending = true;
+    bubble("user", text);
+    push("user", text);
+
+    const out = bubble("assistant", "Thinking", true);
+
+    const payload = {
+      mode: state.mode,
+      user_id: state.userId,
+      project_id: state.projectId,
+      message: text + fileText(),
+      messages: state.messages.slice(-16)
+    };
+
+    let finalText = "";
+
+    try {
+      for (const base of apiBases) {
+        const url = `${base.replace(/\/$/, "")}/api/ideasforge/chat/stream`;
+        const res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        if (!res.ok || !res.body) continue;
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        out.textContent = "";
+
+        while (true) {
+          const x = await reader.read();
+          if (x.done) break;
+          finalText += decoder.decode(x.value);
+          out.textContent = finalText;
+        }
+        break;
+      }
+
+      if (!finalText.trim()) finalText = "I’m ready, but the AI connection is not responding yet.";
+      out.classList.remove("streaming");
+      out.textContent = finalText.trim();
+      push("assistant", finalText.trim());
+      state.files = [];
+      renderFiles();
+    } catch {
+      out.classList.remove("streaming");
+      out.textContent = "I’m ready, but the backend AI connection is not fully connected yet.";
+    } finally {
+      state.sending = false;
+    }
+  }
+
+  function renderFiles() {
+    let strip = document.querySelector(".ifai-file-strip");
+    if (!state.files.length) {
+      if (strip) strip.remove();
+      return;
+    }
+    if (!strip) {
+      strip = document.createElement("div");
+      strip.className = "ifai-file-strip";
+      const wrap = document.querySelector(".ui01b-composer-wrap");
+      if (wrap && wrap.parentNode) wrap.parentNode.insertBefore(strip, wrap);
+    }
+    strip.innerHTML = state.files.map(f => `<span class="ifai-file-chip">📎 ${f.name}</span>`).join("");
+  }
+
+  async function chooseFiles(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+
+    let picker = document.getElementById("ifai-file-picker");
+    if (!picker) {
+      picker = document.createElement("input");
+      picker.id = "ifai-file-picker";
+      picker.type = "file";
+      picker.multiple = true;
+      picker.accept = ".txt,.md,.csv,.json,.js,.ts,.tsx,.jsx,.py,.html,.css,.log,.sql,.pdf,.png,.jpg,.jpeg,.webp";
+      picker.style.display = "none";
+      document.body.appendChild(picker);
+      picker.addEventListener("change", async () => {
+        for (const file of Array.from(picker.files || [])) {
+          let text = "";
+          if (file.size < 220000 && /\.(txt|md|csv|json|js|ts|tsx|jsx|py|html|css|log|sql)$/i.test(file.name)) {
+            text = await file.text();
+            text = text.slice(0, 14000);
+          } else {
+            text = "[File attached. Full extraction will be added in next file intelligence phase.]";
+          }
+          state.files.push({ name: file.name, text });
+        }
+        picker.value = "";
+        renderFiles();
+      });
+    }
+    picker.click();
+  }
+
+  function voice(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+    }
+
+    const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!R) {
+      bubble("assistant", "Voice input is not supported in this browser yet.");
+      return;
+    }
+
+    const rec = new R();
+    rec.lang = navigator.language || "en-IN";
+    rec.interimResults = true;
+    rec.onresult = (event) => {
+      let text = "";
+      for (let i = 0; i < event.results.length; i++) text += event.results[i][0].transcript;
+      const el = input();
+      if (el) {
+        el.value = text;
+        autoGrow(el);
+      }
+    };
+    rec.start();
+  }
+
+  function speak(text) {
+    if (!("speechSynthesis" in window)) return;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(text));
+  }
+
+  function bind() {
+    const el = input();
+    if (el && !el.dataset.ai02b) {
+      el.dataset.ai02b = "1";
+      el.addEventListener("input", () => autoGrow(el));
+      el.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) send(e);
+      }, true);
+    }
+
+    const s = sendBtn();
+    if (s && !s.dataset.ai02b) {
+      s.dataset.ai02b = "1";
+      s.addEventListener("click", send, true);
+    }
+
+    const m = micBtn();
+    if (m && !m.dataset.ai02b) {
+      m.dataset.ai02b = "1";
+      m.addEventListener("click", voice, true);
+    }
+
+    const a = attachBtn();
+    if (a && !a.dataset.ai02b) {
+      a.dataset.ai02b = "1";
+      a.addEventListener("click", chooseFiles, true);
+    }
+
+    document.addEventListener("click", (e) => {
+      const card = e.target.closest && e.target.closest(".ui02-module-card");
+      if (!card) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      activateMode(modeFromCard(card));
+    }, true);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bind, { once: true });
+  else bind();
+
+  setTimeout(bind, 300);
+  setTimeout(bind, 1000);
+  setTimeout(bind, 2000);
+
+  window.IdeasForgeAIChatV2 = { activateMode, send, state };
+})();
+

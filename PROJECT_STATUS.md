@@ -1,3 +1,26 @@
+## AI-02B - Force Apply ChatGPT-like Chat Improvements
+
+Status: Completed locally, validation required before deploy.
+
+- Polished the chat input box for more comfortable typing.
+- Added auto-growing textarea up to a safe height limit.
+- Added token-by-token streaming display.
+- Added local memory per user/project/mode.
+- Added file attachment context for text/code files.
+- Added browser voice input where supported.
+- Added click-to-speak voice output on assistant messages.
+- Added separate chat behavior for ForgeStudio, ForgeCode, and ForgeWork.
+- User messages use light grey bubbles.
+- API key remains backend-only.
+
+Validation commands:
+python -m py_compile backend/ideasforge_chat_api.py
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## AI-02 - Polished Composer + Memory + Files + Voice + Product Brains
 
 Status: Completed locally, validation required before deploy.
