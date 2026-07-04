@@ -7662,3 +7662,683 @@ document.addEventListener("click", async (event) => {
   };
 })();
 
+
+// ---------------------------------------------------------------------------
+// AI-02 - Polished Composer + Memory + Files + Voice + Product Brains
+// This layer intercepts send before older handlers and gives ChatGPT-like UX.
+// ---------------------------------------------------------------------------
+(function ai02PolishedChatMemoryFilesVoice() {
+  if (window.__AI02_POLISHED_CHAT__) return;
+  window.__AI02_POLISHED_CHAT__ = true;
+
+  const state = {
+    mode: "chat",
+    active: false,
+    sending: false,
+    userId: getOrCreateId("ifai:user:id"),
+    projectId: getProjectId(),
+    messages: [],
+    files: [],
+    recognition: null,
+    recognizing: false
+  };
+
+  const apiBases = [
+    window.IDEASFORGE_API_BASE,
+    localStorage.getItem("ideasforge_api_base"),
+    "https://ideasforgeai-api.onrender.com",
+    ""
+  ].filter(Boolean);
+
+  const brains = {
+    chat: {
+      label: "IdeasForgeAI",
+      starter: [
+        () => `${timeGreeting()}. I’m ready.`,
+        () => "Tell me what you want to create, code, or work on."
+      ]
+    },
+    studio: {
+      label: "ForgeStudio",
+      starter: [
+        () => `${timeGreeting()}. Welcome to ForgeStudio.`,
+        () => "You can create apps, websites, UI screens, logos, images, documents, and preview flows here.",
+        () => "Share your idea in simple words. I’ll turn it into a clear creation plan."
+      ]
+    },
+    code: {
+      label: "ForgeCode",
+      starter: [
+        () => `${timeGreeting()}. Welcome to ForgeCode.`,
+        () => "You can plan features, understand code, fix bugs, and prepare safe changes here.",
+        () => "Tell me the project or error. I’ll guide the next step clearly."
+      ]
+    },
+    work: {
+      label: "ForgeWork",
+      starter: [
+        () => `${timeGreeting()}. Welcome to ForgeWork.`,
+        () => "You can work on documents, research, reports, tasks, and professional software workflows here.",
+        () => "For computer work, connect your desktop first. I’ll only act after approval."
+      ]
+    }
+  };
+
+  function getOrCreateId(key) {
+    let value = localStorage.getItem(key);
+    if (!value) {
+      value = "ifai_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
+      localStorage.setItem(key, value);
+    }
+    return value;
+  }
+
+  function getProjectId() {
+    const url = new URL(window.location.href);
+    return url.searchParams.get("project") || localStorage.getItem("ifai:active:project") || "default";
+  }
+
+  function memoryKey(mode = state.mode) {
+    return `ifai:memory:${state.userId}:${state.projectId}:${mode}`;
+  }
+
+  function saveMemory() {
+    try {
+      const compact = state.messages.slice(-40);
+      localStorage.setItem(memoryKey(), JSON.stringify(compact));
+    } catch (err) {}
+  }
+
+  function loadMemory(mode = state.mode) {
+    try {
+      const raw = localStorage.getItem(memoryKey(mode));
+      const parsed = raw ? JSON.parse(raw) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function timeGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  }
+
+  function timeLabel() {
+    try {
+      return new Intl.DateTimeFormat(undefined, { hour: "numeric", minute: "2-digit" }).format(new Date());
+    } catch (err) {
+      return "";
+    }
+  }
+
+  function root() {
+    return document.querySelector(".ui01b-messages") || document.querySelector("[data-chat-messages]") || document.querySelector("main");
+  }
+
+  function ensureTextarea() {
+    let input =
+      document.querySelector(".ui01b-composer textarea") ||
+      document.querySelector("textarea.ifai-ai02-input") ||
+      document.querySelector(".ui01b-composer input[type='text']") ||
+      document.querySelector("input[placeholder]");
+
+    if (!input) return null;
+
+    if (input.tagName === "INPUT") {
+      const textarea = document.createElement("textarea");
+      textarea.className = (input.className || "") + " ifai-ai02-input";
+      textarea.placeholder = input.placeholder || "Ask IdeasForgeAI";
+      textarea.value = input.value || "";
+      textarea.rows = 1;
+      textarea.autocomplete = "off";
+      textarea.spellcheck = true;
+      input.replaceWith(textarea);
+      input = textarea;
+    }
+
+    input.classList.add("ifai-ai02-input");
+    autosize(input);
+    return input;
+  }
+
+  function autosize(input) {
+    if (!input || input.tagName !== "TEXTAREA") return;
+    input.style.height = "auto";
+    const next = Math.min(Math.max(input.scrollHeight, 48), 138);
+    input.style.height = `${next}px`;
+  }
+
+  function sendButton() {
+    return (
+      document.querySelector(".ui01b-send") ||
+      document.querySelector(".ui01b-submit") ||
+      document.querySelector("[aria-label='Send']") ||
+      document.querySelector("[data-send]") ||
+      Array.from(document.querySelectorAll("button")).find((btn) => {
+        const txt = (btn.textContent || "").trim();
+        const label = (btn.getAttribute("aria-label") || "").toLowerCase();
+        return txt === "↑" || txt === "→" || label.includes("send");
+      })
+    );
+  }
+
+  function micButton() {
+    return Array.from(document.querySelectorAll("button")).find((btn) => {
+      const label = (btn.getAttribute("aria-label") || "").toLowerCase();
+      const txt = (btn.textContent || "").trim().toLowerCase();
+      const cls = btn.className || "";
+      return label.includes("mic") || label.includes("voice") || txt === "🎙" || txt === "🎤" || String(cls).toLowerCase().includes("mic");
+    });
+  }
+
+  function attachButton() {
+    return Array.from(document.querySelectorAll("button")).find((btn) => {
+      const label = (btn.getAttribute("aria-label") || "").toLowerCase();
+      const txt = (btn.textContent || "").trim();
+      const cls = String(btn.className || "").toLowerCase();
+      if (label.includes("send") || label.includes("mic") || label.includes("voice") || cls.includes("menu")) return false;
+      return label.includes("attach") || label.includes("upload") || label.includes("add") || cls.includes("attach") || txt === "+";
+    });
+  }
+
+  function ensureFeed() {
+    const r = root();
+    if (!r) return null;
+
+    let feed = r.querySelector(".ifai-ai-feed");
+    if (feed) return feed;
+
+    r.innerHTML = "";
+    feed = document.createElement("div");
+    feed.className = "ifai-ai-feed";
+    r.appendChild(feed);
+    return feed;
+  }
+
+  function scrollDown() {
+    const r = root();
+    try {
+      if (r) r.scrollTop = r.scrollHeight;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } catch (err) {}
+  }
+
+  function addModeChip(mode) {
+    const feed = ensureFeed();
+    if (!feed) return;
+
+    const chip = document.createElement("div");
+    chip.className = "ifai-ai-mode-chip";
+    chip.textContent = brains[mode]?.label || "IdeasForgeAI";
+    feed.appendChild(chip);
+  }
+
+  function addBubble(role, text = "", options = {}) {
+    const feed = ensureFeed();
+    if (!feed) return null;
+
+    const bubble = document.createElement("div");
+    bubble.className = `ifai-ai-message ${role}`;
+    if (options.streaming) bubble.classList.add("streaming");
+
+    const row = document.createElement("div");
+    row.className = "ifai-bubble-row";
+
+    const textEl = document.createElement("span");
+    textEl.className = "ifai-bubble-text";
+    textEl.textContent = text;
+
+    row.appendChild(textEl);
+
+    if (role === "assistant") {
+      const speak = document.createElement("button");
+      speak.type = "button";
+      speak.className = "ifai-speak-btn";
+      speak.textContent = "🔊";
+      speak.setAttribute("aria-label", "Read aloud");
+      speak.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        speakText(textEl.textContent || "");
+      });
+      row.appendChild(speak);
+    }
+
+    bubble.appendChild(row);
+    feed.appendChild(bubble);
+
+    if (!options.noTime) {
+      const time = document.createElement("div");
+      time.className = `ifai-ai-time ${role === "user" ? "user-time" : "assistant-time"}`;
+      time.textContent = timeLabel();
+      feed.appendChild(time);
+    }
+
+    scrollDown();
+    return { bubble, textEl };
+  }
+
+  function push(role, content) {
+    const clean = (content || "").trim();
+    if (!clean) return;
+    state.messages.push({ role, content: clean, ts: Date.now(), mode: state.mode });
+    state.messages = state.messages.slice(-40);
+    saveMemory();
+  }
+
+  function setInputValue(value) {
+    const input = ensureTextarea();
+    if (!input) return;
+    input.value = value;
+    autosize(input);
+    input.focus();
+  }
+
+  function getInputValue() {
+    const input = ensureTextarea();
+    return input ? (input.value || "").trim() : "";
+  }
+
+  function clearInput() {
+    const input = ensureTextarea();
+    if (!input) return;
+    input.value = "";
+    autosize(input);
+  }
+
+  function activateMode(mode) {
+    mode = mode || "chat";
+    state.mode = mode;
+    state.active = true;
+
+    const r = root();
+    if (r) r.classList.add("ifai-ai-feed-emptying");
+
+    setTimeout(() => {
+      if (r) {
+        r.classList.remove("ifai-ai-feed-emptying");
+        r.innerHTML = "";
+      }
+
+      ensureFeed();
+      addModeChip(mode);
+
+      const memory = loadMemory(mode);
+      state.messages = memory.slice(-20);
+
+      if (memory.length > 0) {
+        addBubble("assistant", `Welcome back to ${brains[mode]?.label || "IdeasForgeAI"}.`);
+        addBubble("assistant", "I remember the recent context from this project.");
+        memory.slice(-6).forEach((m) => addBubble(m.role === "user" ? "user" : "assistant", m.content));
+        return;
+      }
+
+      const starters = brains[mode]?.starter || brains.chat.starter;
+      starters.forEach((fn, index) => {
+        setTimeout(() => {
+          const msg = fn();
+          addBubble("assistant", msg);
+          push("assistant", msg);
+        }, index * 260);
+      });
+    }, 230);
+  }
+
+  function modeFromCard(card) {
+    const product = (card.getAttribute("data-product") || "").toLowerCase();
+    const text = (card.innerText || "").toLowerCase();
+    if (product.includes("studio") || text.includes("forgestudio")) return "studio";
+    if (product.includes("code") || text.includes("forgecode")) return "code";
+    if (product.includes("work") || text.includes("forgework")) return "work";
+    return "chat";
+  }
+
+  function fileSummary() {
+    if (!state.files.length) return "";
+    return state.files.map((f, i) => {
+      const header = `File ${i + 1}: ${f.name} (${f.type || "unknown"}, ${f.size} bytes)`;
+      return f.text ? `${header}\n${f.text}` : header;
+    }).join("\n\n---\n\n");
+  }
+
+  function payloadMessage(userText) {
+    const files = fileSummary();
+    if (!files) return userText;
+
+    return `${userText}
+
+Attached file context:
+${files}`;
+  }
+
+  async function streamFromBackend(userText, textEl, bubble) {
+    const payload = {
+      mode: state.mode,
+      user_id: state.userId,
+      project_id: state.projectId,
+      message: payloadMessage(userText),
+      messages: state.messages.slice(-18).map((m) => ({ role: m.role, content: m.content })),
+      local_time: new Date().toLocaleString()
+    };
+
+    let lastError = null;
+
+    for (const base of apiBases) {
+      const url = `${base.replace(/\/$/, "")}/api/ideasforge/chat/stream`;
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "text/plain" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok || !res.body) {
+          lastError = new Error(`HTTP ${res.status}`);
+          continue;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let final = "";
+        let visible = "";
+        let lastPaint = 0;
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          final += decoder.decode(value, { stream: true });
+
+          const now = performance.now();
+          if (now - lastPaint > 18) {
+            visible = final;
+            textEl.textContent = visible;
+            lastPaint = now;
+            scrollDown();
+          }
+        }
+
+        final = final.trim();
+        textEl.textContent = final || "I’m here. Tell me a little more.";
+        bubble.classList.remove("streaming");
+        return textEl.textContent;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    throw lastError || new Error("AI connection failed");
+  }
+
+  async function send(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    }
+
+    if (state.sending) return;
+
+    const text = getInputValue();
+    if (!text) return;
+
+    if (!state.active) {
+      activateMode("chat");
+      await new Promise((resolve) => setTimeout(resolve, 360));
+    }
+
+    state.sending = true;
+    clearInput();
+
+    addBubble("user", text);
+    push("user", text);
+
+    const assistant = addBubble("assistant", "", { streaming: true, noTime: true });
+    if (!assistant) {
+      state.sending = false;
+      return;
+    }
+
+    assistant.textEl.textContent = "Thinking";
+
+    try {
+      const reply = await streamFromBackend(text, assistant.textEl, assistant.bubble);
+      push("assistant", reply);
+      state.files = [];
+      renderFileStrip();
+    } catch (err) {
+      assistant.bubble.classList.remove("streaming");
+      assistant.textEl.textContent = "I’m ready, but the AI connection is not fully connected yet. Please check the backend OpenAI key and Render environment.";
+      push("assistant", assistant.textEl.textContent);
+    } finally {
+      state.sending = false;
+      scrollDown();
+    }
+  }
+
+  function ensureFileInput() {
+    let input = document.getElementById("ifai-ai02-file-input");
+    if (input) return input;
+
+    input = document.createElement("input");
+    input.id = "ifai-ai02-file-input";
+    input.type = "file";
+    input.multiple = true;
+    input.accept = ".txt,.md,.json,.csv,.html,.css,.js,.ts,.tsx,.jsx,.py,.sql,.xml,.yml,.yaml,.log,.pdf,.png,.jpg,.jpeg,.webp";
+    input.style.display = "none";
+    document.body.appendChild(input);
+
+    input.addEventListener("change", async () => {
+      const files = Array.from(input.files || []);
+      for (const file of files) {
+        await addFileContext(file);
+      }
+      input.value = "";
+      renderFileStrip();
+    });
+
+    return input;
+  }
+
+  async function addFileContext(file) {
+    const entry = {
+      name: file.name,
+      type: file.type || "unknown",
+      size: file.size,
+      text: ""
+    };
+
+    const lower = file.name.toLowerCase();
+    const readable =
+      file.type.startsWith("text/") ||
+      /\.(txt|md|json|csv|html|css|js|ts|tsx|jsx|py|sql|xml|yml|yaml|log)$/i.test(lower);
+
+    if (readable && file.size <= 220000) {
+      entry.text = await file.text();
+      if (entry.text.length > 14000) {
+        entry.text = entry.text.slice(0, 14000) + "\n...[file trimmed for chat context]";
+      }
+    } else if (lower.endsWith(".pdf")) {
+      entry.text = "[PDF attached. Text extraction will be added in the next file intelligence phase.]";
+    } else if (file.type.startsWith("image/")) {
+      entry.text = "[Image attached. Vision analysis will be added in the next image intelligence phase.]";
+    } else {
+      entry.text = "[File attached as metadata. Full extraction is not enabled for this file type yet.]";
+    }
+
+    state.files.push(entry);
+    state.files = state.files.slice(-5);
+  }
+
+  function renderFileStrip() {
+    let strip = document.querySelector(".ifai-ai02-file-strip");
+
+    if (!state.files.length) {
+      if (strip) strip.remove();
+      return;
+    }
+
+    if (!strip) {
+      strip = document.createElement("div");
+      strip.className = "ifai-ai02-file-strip";
+      const composer = document.querySelector(".ui01b-composer-wrap") || document.body;
+      composer.parentNode.insertBefore(strip, composer);
+    }
+
+    strip.innerHTML = "";
+
+    state.files.forEach((file, index) => {
+      const chip = document.createElement("span");
+      chip.className = "ifai-ai02-file-chip";
+      chip.innerHTML = `<span>📎 ${file.name}</span><button type="button" aria-label="Remove file">×</button>`;
+      chip.querySelector("button").addEventListener("click", () => {
+        state.files.splice(index, 1);
+        renderFileStrip();
+      });
+      strip.appendChild(chip);
+    });
+  }
+
+  function speakText(text) {
+    if (!("speechSynthesis" in window)) {
+      addBubble("assistant", "Voice output is not supported in this browser yet.");
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.96;
+    utterance.pitch = 1;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function startVoiceInput(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const mic = micButton();
+
+    if (!SpeechRecognition) {
+      addBubble("assistant", "Voice input is not supported in this browser yet. You can still type normally.");
+      return;
+    }
+
+    if (state.recognizing && state.recognition) {
+      state.recognition.stop();
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    state.recognition = recognition;
+    recognition.lang = navigator.language || "en-IN";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+
+    let finalText = "";
+
+    recognition.onstart = () => {
+      state.recognizing = true;
+      if (mic) mic.classList.add("ifai-ai02-mic-active");
+    };
+
+    recognition.onresult = (event) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const text = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalText += text;
+        else interim += text;
+      }
+      setInputValue((finalText + " " + interim).trim());
+    };
+
+    recognition.onerror = () => {
+      state.recognizing = false;
+      if (mic) mic.classList.remove("ifai-ai02-mic-active");
+    };
+
+    recognition.onend = () => {
+      state.recognizing = false;
+      if (mic) mic.classList.remove("ifai-ai02-mic-active");
+      const input = ensureTextarea();
+      if (input) input.focus();
+    };
+
+    recognition.start();
+  }
+
+  function bind() {
+    const input = ensureTextarea();
+
+    if (input && !input.dataset.ai02AutosizeBound) {
+      input.dataset.ai02AutosizeBound = "true";
+      input.addEventListener("input", () => autosize(input));
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) send(event);
+      }, true);
+    }
+
+    document.addEventListener("click", (event) => {
+      const sendBtn = event.target.closest && event.target.closest("button");
+      if (sendBtn && sendButton() === sendBtn) {
+        send(event);
+      }
+    }, true);
+
+    const mic = micButton();
+    if (mic && !mic.dataset.ai02VoiceBound) {
+      mic.dataset.ai02VoiceBound = "true";
+      mic.addEventListener("click", startVoiceInput, true);
+    }
+
+    const attach = attachButton();
+    if (attach && !attach.dataset.ai02AttachBound) {
+      attach.dataset.ai02AttachBound = "true";
+      attach.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+        ensureFileInput().click();
+      }, true);
+    }
+
+    document.addEventListener("click", (event) => {
+      const card = event.target.closest && event.target.closest(".ui02-module-card");
+      if (!card) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+      activateMode(modeFromCard(card));
+    }, true);
+  }
+
+  function boot() {
+    ensureTextarea();
+    bind();
+
+    setTimeout(bind, 250);
+    setTimeout(bind, 900);
+    setTimeout(bind, 1800);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+
+  window.IdeasForgeAIChatV2 = {
+    activateMode,
+    send,
+    speakText,
+    state
+  };
+})();
+

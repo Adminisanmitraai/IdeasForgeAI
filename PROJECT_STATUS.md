@@ -1,3 +1,28 @@
+## AI-02 - Polished Composer + Memory + Files + Voice + Product Brains
+
+Status: Completed locally, validation required before deploy.
+
+- Polished the chat input box.
+- Increased typing comfort and spacing.
+- Converted text input to auto-growing textarea where needed.
+- Composer grows with message lines within a safe height limit.
+- Improved token-by-token streaming display with polished cursor.
+- Added local chat memory per user, project, and mode.
+- Added file context for text/code files and safe placeholders for PDF/image intelligence.
+- Added browser voice input using speech recognition where supported.
+- Added voice output using speech synthesis on assistant messages.
+- Added stronger separate backend brains for Chat, ForgeStudio, ForgeCode, and ForgeWork.
+- Public UI keeps ForgeWork, not ForgePilot.
+- OpenAI API key remains backend-only.
+
+Validation commands:
+python -m py_compile backend/ideasforge_chat_api.py
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## AI-01 - ChatGPT-like OpenAI Chat Experience
 
 Status: Completed locally, validation required before deploy.

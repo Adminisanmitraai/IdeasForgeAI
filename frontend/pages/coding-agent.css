@@ -8536,3 +8536,144 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   AI-02 - Polished Composer + Memory + Files + Voice
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    padding: 8px 10px !important;
+    border-radius: 32px !important;
+    background: rgba(255,255,255,0.84) !important;
+    backdrop-filter: blur(18px) saturate(1.15) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.15) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    box-shadow: 0 20px 60px rgba(26,31,58,0.15) !important;
+  }
+
+  .ui01b-composer,
+  .composer,
+  form:has(textarea),
+  form:has(input[type="text"]) {
+    align-items: flex-end !important;
+  }
+
+  .ui01b-composer textarea,
+  .ui01b-composer input[type="text"],
+  textarea.ifai-ai02-input {
+    min-height: 48px !important;
+    max-height: 138px !important;
+    height: 48px;
+    resize: none !important;
+    overflow-y: auto !important;
+    line-height: 1.35 !important;
+    padding: 13px 17px !important;
+    border-radius: 24px !important;
+    font-size: 17px !important;
+    letter-spacing: -0.025em !important;
+    background: rgba(255,255,255,0.92) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    color: #11131b !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.7) !important;
+  }
+
+  .ui01b-composer textarea::placeholder,
+  .ui01b-composer input[type="text"]::placeholder,
+  textarea.ifai-ai02-input::placeholder {
+    color: rgba(17,19,27,0.34) !important;
+  }
+
+  .ui01b-composer textarea:focus,
+  .ui01b-composer input[type="text"]:focus,
+  textarea.ifai-ai02-input:focus {
+    outline: none !important;
+    border-color: rgba(95,77,255,0.34) !important;
+    box-shadow:
+      0 0 0 4px rgba(95,77,255,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.8) !important;
+  }
+
+  .ifai-ai02-file-strip {
+    width: calc(100vw - 44px) !important;
+    max-width: 720px !important;
+    margin: 0 auto 8px !important;
+    display: flex !important;
+    gap: 8px !important;
+    overflow-x: auto !important;
+    padding: 0 4px !important;
+  }
+
+  .ifai-ai02-file-chip {
+    flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    max-width: 230px !important;
+    padding: 8px 10px !important;
+    border-radius: 999px !important;
+    background: rgba(95,77,255,0.08) !important;
+    color: #4f3cff !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    white-space: nowrap !important;
+  }
+
+  .ifai-ai02-file-chip button {
+    border: 0 !important;
+    background: rgba(95,77,255,0.10) !important;
+    color: #4f3cff !important;
+    width: 20px !important;
+    height: 20px !important;
+    border-radius: 999px !important;
+    font-weight: 900 !important;
+  }
+
+  .ifai-ai-message .ifai-bubble-row {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 8px !important;
+  }
+
+  .ifai-bubble-text {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .ifai-speak-btn {
+    flex: 0 0 auto !important;
+    width: 26px !important;
+    height: 26px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: rgba(9,11,20,0.055) !important;
+    color: rgba(9,11,20,0.62) !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .ifai-ai-message.streaming .ifai-bubble-text::after {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 17px;
+    margin-left: 3px;
+    border-radius: 99px;
+    background: rgba(95,77,255,0.65);
+    vertical-align: -3px;
+    animation: ifaiCursorBlink 0.8s infinite;
+  }
+
+  .ifai-ai02-mic-active {
+    box-shadow: 0 0 0 5px rgba(95,77,255,0.10), 0 12px 34px rgba(95,77,255,0.18) !important;
+    color: #5f4dff !important;
+  }
+}
+
+@keyframes ifaiCursorBlink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
