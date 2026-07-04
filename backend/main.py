@@ -298,6 +298,162 @@ async def ca32_auto_fix_plan(request: Request):
     return AutoFixLoop.plan(payload)
 
 
+
+
+# ---------------------------------------------------------------------------
+# CA-34 - Deployment Approval + Render Flow
+# ---------------------------------------------------------------------------
+# DeploymentApprovalRenderFlow
+# deployment-render-flow
+# recommended_next_phase CA-35
+# render_api_write False
+# render_token_access False
+# deployment False
+# git_commands False
+# file_write False
+# apply_diff False
+# terminal False
+# secrets False
+
+def _ca34_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "render_token_in_frontend": False,
+        "render_api_write": False,
+        "render_token_access": False,
+        "deployment": False,
+        "git_commands": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "secrets": False,
+    }
+
+
+def _ca34_role(payload: Dict[str, Any]) -> str:
+    approval_context = payload.get("approval_context") or {}
+    return str(
+        payload.get("requested_by_role")
+        or approval_context.get("requested_by_role")
+        or approval_context.get("role")
+        or "normal_user"
+    ).strip().lower()
+
+
+def _ca34_permission_status(payload: Dict[str, Any]) -> str:
+    role = _ca34_role(payload)
+    if role in {"founder", "admin", "founder_admin", "founder-admin", "owner"}:
+        return "founder_admin_preview_only"
+    return "normal_user_preview_only"
+
+
+class DeploymentApprovalRenderFlow:
+    @staticmethod
+    def preview(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = payload.get("project_id") or "ideasforgeai"
+        proposal_id = payload.get("proposal_id") or "deployment-preview"
+        target_environment = payload.get("target_environment") or "production"
+        service_name = payload.get("service_name") or "ideasforgeai-api"
+        source_branch = payload.get("source_branch") or "main"
+
+        return {
+            "ok": True,
+            "project_id": project_id,
+            "proposal_id": proposal_id,
+            "mode": "deployment-render-preview-only",
+            "deployment_flow_enabled": False,
+            "founder_admin_required": True,
+            "permission_status": _ca34_permission_status(payload),
+            "target_environment": target_environment,
+            "render_service_name": service_name,
+            "source_branch": source_branch,
+            "deploy_plan": {
+                "provider": "Render",
+                "service": service_name,
+                "branch": source_branch,
+                "steps": [
+                    "Verify phase audit is SAFE TO DEPLOY.",
+                    "Verify backend import check passes.",
+                    "Verify Render deploy target and service manually.",
+                    "Founder/Admin approval required before any future real deployment.",
+                ],
+                "real_deploy_enabled": False,
+            },
+            "approval_gate": {
+                "founder_admin_required": True,
+                "backend_permission_required": True,
+                "frontend_token_can_enable": False,
+                "manual_render_confirmation_required": True,
+            },
+            "blocked_actions": [
+                "render_api_write",
+                "render_token_access",
+                "deployment",
+                "git_commands",
+                "file_write",
+                "apply_diff",
+                "terminal_execution",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-35",
+                "title": "Rollback + Production Safety",
+            },
+            **_ca34_safety_flags(),
+        }
+
+    @staticmethod
+    def request_approval(payload: Dict[str, Any]) -> Dict[str, Any]:
+        preview = DeploymentApprovalRenderFlow.preview(payload)
+        preview.update(
+            {
+                "mode": "deployment-approval-request-preview-only",
+                "approval_request": {
+                    "status": "preview_only",
+                    "message": "Deployment approval request prepared. Real Render deployment remains disabled in CA-34.",
+                    "requires_founder_admin_backend_permission": True,
+                },
+            }
+        )
+        return preview
+
+
+@app.get("/api/coding-agent/deployment/health")
+def ca34_deployment_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-deployment-render-flow",
+        "mode": "deployment-approval-preview-only",
+        "deployment_flow_enabled": False,
+        "founder_admin_required": True,
+        "recommended_next_phase": "CA-35",
+        **_ca34_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/deployment/preview")
+async def ca34_deployment_preview(request: Request):
+    payload = await request.json()
+    return DeploymentApprovalRenderFlow.preview(payload)
+
+
+@app.post("/api/coding-agent/deployment/request-approval")
+async def ca34_deployment_request_approval(request: Request):
+    payload = await request.json()
+    return DeploymentApprovalRenderFlow.request_approval(payload)
+
+
+@app.get("/api/coding-agent/render-flow/health")
+def ca34_render_flow_health_alias():
+    return ca34_deployment_health()
+
+
+@app.post("/api/coding-agent/render-flow/preview")
+async def ca34_render_flow_preview_alias(request: Request):
+    payload = await request.json()
+    return DeploymentApprovalRenderFlow.preview(payload)
+
+
 @app.get("/")
 def ideasforgeai_root():
     return {

@@ -1,3 +1,34 @@
+## Phase CA-34 - Deployment Approval + Render Flow
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Deployment Approval + Render Flow foundation for Coding Agent.
+- Added deployment health, preview, and request-approval endpoints.
+- Added Render flow compatibility preview endpoints.
+- Deployment is preview-only by default.
+- No Render API write is performed.
+- No Render token is accessed or exposed.
+- No frontend token can enable deployment.
+- Normal users can preview deployment workflow only.
+- Founder/Admin backend approval remains required before any future real deployment.
+- Does not run Git commands.
+- Does not write files.
+- Does not apply diffs.
+- Does not run terminal commands.
+- Does not deploy or rollback.
+- Does not expose secrets.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-34
+
+NEXT AFTER: CA-35 - Rollback + Production Safety
+
+
 ## Phase CA-33 - GitHub Branch + Commit + PR Flow
 
 Status: Completed locally, validation required before deploy.
