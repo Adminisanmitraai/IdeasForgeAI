@@ -617,6 +617,188 @@ async def ca35_rollback_request_approval(request: Request):
     return RollbackProductionSafety.request_approval(payload)
 
 
+
+
+# ---------------------------------------------------------------------------
+# CA-36 - Project Memory + Task History
+# ---------------------------------------------------------------------------
+# ProjectMemoryTaskHistory
+# project-memory-task-history
+# recommended_next_phase CA-37
+# memory_write_enabled False
+# persistent_storage False
+# database_write False
+# file_write False
+# apply_diff False
+# terminal False
+# git_commands False
+# deployment False
+# secrets False
+
+def _ca36_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "memory_write_enabled": False,
+        "persistent_storage": False,
+        "database_write": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+def _ca36_role(payload: Dict[str, Any]) -> str:
+    approval_context = payload.get("approval_context") or {}
+    return str(
+        payload.get("requested_by_role")
+        or approval_context.get("requested_by_role")
+        or approval_context.get("role")
+        or "normal_user"
+    ).strip().lower()
+
+
+def _ca36_safe_text(value: object, fallback: str = "") -> str:
+    text = str(value or fallback).strip()
+    return text[:500]
+
+
+class ProjectMemoryTaskHistory:
+    @staticmethod
+    def health() -> Dict[str, Any]:
+        return {
+            "ok": True,
+            "feature": "coding-agent-project-memory-task-history",
+            "mode": "memory-preview-only",
+            "founder_admin_required": True,
+            "memory_write_enabled": False,
+            "persistent_storage": False,
+            "recommended_next_phase": "CA-37",
+            **_ca36_safety_flags(),
+        }
+
+    @staticmethod
+    def record(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = _ca36_safe_text(payload.get("project_id"), "ideasforgeai")
+        task_id = _ca36_safe_text(payload.get("task_id") or payload.get("proposal_id"), "preview-task")
+        phase = _ca36_safe_text(payload.get("phase"), "CA-36")
+        task_title = _ca36_safe_text(payload.get("task_title"), "Coding Agent task")
+        status = _ca36_safe_text(payload.get("status"), "preview_only")
+
+        memory_preview = {
+            "project_id": project_id,
+            "task_id": task_id,
+            "phase": phase,
+            "task_title": task_title,
+            "status": status,
+            "summary": _ca36_safe_text(payload.get("summary"), "Preview-only memory record prepared."),
+            "affected_files": payload.get("affected_files") if isinstance(payload.get("affected_files"), list) else [],
+            "validation_summary": payload.get("validation_summary") if isinstance(payload.get("validation_summary"), dict) else {},
+        }
+
+        return {
+            "ok": True,
+            "mode": "memory-record-preview-only",
+            "project_id": project_id,
+            "task_id": task_id,
+            "founder_admin_required": True,
+            "permission_status": "preview_only_no_persistence",
+            "memory_record_preview": memory_preview,
+            "task_history_event": {
+                "event_type": "phase_task_preview",
+                "phase": phase,
+                "status": status,
+                "persisted": False,
+            },
+            "blocked_actions": [
+                "persistent_storage",
+                "database_write",
+                "file_write",
+                "apply_diff",
+                "terminal_execution",
+                "git_commands",
+                "deployment",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-37",
+                "title": "Founder/Admin Dashboard",
+            },
+            **_ca36_safety_flags(),
+        }
+
+    @staticmethod
+    def history(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = _ca36_safe_text(payload.get("project_id"), "ideasforgeai")
+        phase_filter = _ca36_safe_text(payload.get("phase"), "")
+        events = payload.get("events") if isinstance(payload.get("events"), list) else []
+
+        safe_events = []
+        for item in events[:20]:
+            if isinstance(item, dict):
+                safe_events.append(
+                    {
+                        "task_id": _ca36_safe_text(item.get("task_id"), "task"),
+                        "phase": _ca36_safe_text(item.get("phase"), phase_filter or "unknown"),
+                        "status": _ca36_safe_text(item.get("status"), "preview"),
+                        "summary": _ca36_safe_text(item.get("summary"), "Preview event"),
+                    }
+                )
+
+        return {
+            "ok": True,
+            "mode": "task-history-preview-only",
+            "project_id": project_id,
+            "phase_filter": phase_filter,
+            "history_source": "request_payload_preview_only",
+            "persistent_storage": False,
+            "task_history": safe_events,
+            "task_history_count": len(safe_events),
+            "founder_admin_required": True,
+            "recommended_next_phase": {
+                "phase": "CA-37",
+                "title": "Founder/Admin Dashboard",
+            },
+            **_ca36_safety_flags(),
+        }
+
+
+@app.get("/api/coding-agent/project-memory/health")
+def ca36_project_memory_health():
+    return ProjectMemoryTaskHistory.health()
+
+
+@app.post("/api/coding-agent/project-memory/record")
+async def ca36_project_memory_record(request: Request):
+    payload = await request.json()
+    return ProjectMemoryTaskHistory.record(payload)
+
+
+@app.post("/api/coding-agent/project-memory/history")
+async def ca36_project_memory_history(request: Request):
+    payload = await request.json()
+    return ProjectMemoryTaskHistory.history(payload)
+
+
+@app.get("/api/coding-agent/memory/health")
+def ca36_memory_health_alias():
+    return ProjectMemoryTaskHistory.health()
+
+
+@app.post("/api/coding-agent/memory/record")
+async def ca36_memory_record_alias(request: Request):
+    payload = await request.json()
+    return ProjectMemoryTaskHistory.record(payload)
+
+
+@app.post("/api/coding-agent/memory/history")
+async def ca36_memory_history_alias(request: Request):
+    payload = await request.json()
+    return ProjectMemoryTaskHistory.history(payload)
+
+
 @app.get("/")
 def ideasforgeai_root():
     return {

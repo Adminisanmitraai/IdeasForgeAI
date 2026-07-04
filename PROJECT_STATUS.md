@@ -1,3 +1,35 @@
+## Phase CA-36 - Project Memory + Task History
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Project Memory + Task History foundation for Coding Agent.
+- Added project-memory health, record, and history preview endpoints.
+- Added memory compatibility preview endpoints.
+- Memory recording is preview-only by default.
+- No persistent storage is performed.
+- No database write is performed.
+- No file write is performed.
+- Normal users can preview task history only.
+- Founder/Admin backend approval remains required before any future persistent project memory.
+- Produces memory record preview, task history event, task history preview, blocked actions, and next-phase guidance.
+- Does not run Git commands.
+- Does not write files.
+- Does not apply diffs.
+- Does not run terminal commands.
+- Does not deploy or rollback.
+- Does not expose secrets.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-36
+
+NEXT AFTER: CA-37 - Founder/Admin Dashboard
+
+
 ## Phase CA-35 - Rollback + Production Safety
 
 Status: Completed locally, validation required before deploy.
