@@ -799,6 +799,240 @@ async def ca36_memory_history_alias(request: Request):
     return ProjectMemoryTaskHistory.history(payload)
 
 
+
+
+# ---------------------------------------------------------------------------
+# CA-37 - Founder/Admin Dashboard
+# ---------------------------------------------------------------------------
+# FounderAdminDashboard
+# founder-admin-dashboard
+# recommended_next_phase CA-38
+# admin_write_enabled False
+# phase_control_write False
+# deployment False
+# git_commands False
+# file_write False
+# apply_diff False
+# terminal False
+# secrets False
+
+def _ca37_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "admin_write_enabled": False,
+        "phase_control_write": False,
+        "dashboard_write": False,
+        "deployment": False,
+        "git_commands": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "secrets": False,
+    }
+
+
+def _ca37_role(payload: Dict[str, Any]) -> str:
+    approval_context = payload.get("approval_context") or {}
+    return str(
+        payload.get("requested_by_role")
+        or approval_context.get("requested_by_role")
+        or approval_context.get("role")
+        or "normal_user"
+    ).strip().lower()
+
+
+def _ca37_permission_status(payload: Dict[str, Any]) -> str:
+    role = _ca37_role(payload)
+    if role in {"founder", "admin", "founder_admin", "founder-admin", "owner"}:
+        return "founder_admin_preview_only"
+    return "normal_user_preview_only"
+
+
+def _ca37_phase_cards() -> List[Dict[str, Any]]:
+    return [
+        {"phase": "CA-25", "title": "Real GitHub Public Repo Reader API", "status": "completed", "write_enabled": False},
+        {"phase": "CA-26", "title": "Project Indexer + File Search", "status": "completed", "write_enabled": False},
+        {"phase": "CA-27", "title": "Real Architecture Analyzer", "status": "completed", "write_enabled": False},
+        {"phase": "CA-28", "title": "Real Task Planner from Project Context", "status": "completed", "write_enabled": False},
+        {"phase": "CA-29", "title": "Real Code Proposal from Selected Files", "status": "completed", "write_enabled": False},
+        {"phase": "CA-30", "title": "Founder/Admin Apply Diff to Workspace", "status": "completed_locked", "write_enabled": False},
+        {"phase": "CA-31", "title": "Real Test Runner Backend Execution", "status": "completed_locked", "write_enabled": False},
+        {"phase": "CA-32", "title": "Auto-Fix Loop Using Test Results", "status": "completed_preview", "write_enabled": False},
+        {"phase": "CA-33", "title": "GitHub Branch + Commit + PR Flow", "status": "completed_preview", "write_enabled": False},
+        {"phase": "CA-34", "title": "Deployment Approval + Render Flow", "status": "completed_preview", "write_enabled": False},
+        {"phase": "CA-35", "title": "Rollback + Production Safety", "status": "completed_preview", "write_enabled": False},
+        {"phase": "CA-36", "title": "Project Memory + Task History", "status": "completed_preview", "write_enabled": False},
+        {"phase": "CA-37", "title": "Founder/Admin Dashboard", "status": "current_preview", "write_enabled": False},
+        {"phase": "CA-38", "title": "Full Security Audit + Production Freeze", "status": "next", "write_enabled": False},
+    ]
+
+
+class FounderAdminDashboard:
+    @staticmethod
+    def health() -> Dict[str, Any]:
+        return {
+            "ok": True,
+            "feature": "coding-agent-founder-admin-dashboard",
+            "mode": "founder-admin-dashboard-preview-only",
+            "founder_admin_required": True,
+            "admin_write_enabled": False,
+            "phase_control_write": False,
+            "recommended_next_phase": "CA-38",
+            **_ca37_safety_flags(),
+        }
+
+    @staticmethod
+    def summary(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = str(payload.get("project_id") or "ideasforgeai").strip()[:120]
+        phase_cards = _ca37_phase_cards()
+        completed_count = len([card for card in phase_cards if str(card.get("status", "")).startswith("completed")])
+
+        return {
+            "ok": True,
+            "project_id": project_id,
+            "mode": "founder-admin-dashboard-summary-preview-only",
+            "founder_admin_required": True,
+            "permission_status": _ca37_permission_status(payload),
+            "admin_write_enabled": False,
+            "phase_control_write": False,
+            "dashboard_summary": {
+                "completed_phase_count": completed_count,
+                "current_phase": "CA-37",
+                "next_phase": "CA-38",
+                "production_posture": "safe_preview_locked",
+                "normal_user_mode": "preview_only",
+                "founder_admin_mode": "review_only_without_backend_write_permission",
+            },
+            "phase_cards": phase_cards,
+            "safety_locks": {
+                "apply_diff": False,
+                "test_execution": False,
+                "auto_fix": False,
+                "github_write": False,
+                "deployment": False,
+                "rollback": False,
+                "persistent_memory": False,
+                "admin_write": False,
+            },
+            "recommended_next_phase": {
+                "phase": "CA-38",
+                "title": "Full Security Audit + Production Freeze",
+            },
+            **_ca37_safety_flags(),
+        }
+
+    @staticmethod
+    def approval_queue(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = str(payload.get("project_id") or "ideasforgeai").strip()[:120]
+        queue_items = payload.get("approval_queue") if isinstance(payload.get("approval_queue"), list) else []
+        safe_items = []
+
+        for item in queue_items[:20]:
+            if isinstance(item, dict):
+                safe_items.append(
+                    {
+                        "request_id": str(item.get("request_id") or "preview-request")[:120],
+                        "phase": str(item.get("phase") or "unknown")[:40],
+                        "title": str(item.get("title") or "Preview approval request")[:200],
+                        "risk": str(item.get("risk") or "unknown")[:80],
+                        "status": "preview_only",
+                        "approval_enabled": False,
+                    }
+                )
+
+        return {
+            "ok": True,
+            "project_id": project_id,
+            "mode": "founder-admin-approval-queue-preview-only",
+            "founder_admin_required": True,
+            "permission_status": _ca37_permission_status(payload),
+            "approval_queue": safe_items,
+            "approval_queue_count": len(safe_items),
+            "approval_actions_enabled": False,
+            "blocked_actions": [
+                "approve_apply_diff",
+                "approve_test_execution",
+                "approve_github_write",
+                "approve_deployment",
+                "approve_rollback",
+                "approve_memory_write",
+                "admin_write",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-38",
+                "title": "Full Security Audit + Production Freeze",
+            },
+            **_ca37_safety_flags(),
+        }
+
+    @staticmethod
+    def phase_control(payload: Dict[str, Any]) -> Dict[str, Any]:
+        requested_phase = str(payload.get("requested_phase") or "CA-38").strip()[:40]
+        requested_action = str(payload.get("requested_action") or "preview").strip()[:80]
+
+        return {
+            "ok": True,
+            "mode": "phase-control-preview-only",
+            "requested_phase": requested_phase,
+            "requested_action": requested_action,
+            "founder_admin_required": True,
+            "permission_status": _ca37_permission_status(payload),
+            "phase_control_write": False,
+            "phase_action_enabled": False,
+            "message": "Founder/Admin phase control is preview-only in CA-37. No phase mutation is performed.",
+            "blocked_actions": [
+                "phase_write",
+                "status_mutation",
+                "deployment",
+                "git_commands",
+                "file_write",
+                "apply_diff",
+                "terminal_execution",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-38",
+                "title": "Full Security Audit + Production Freeze",
+            },
+            **_ca37_safety_flags(),
+        }
+
+
+@app.get("/api/coding-agent/founder-dashboard/health")
+def ca37_founder_dashboard_health():
+    return FounderAdminDashboard.health()
+
+
+@app.post("/api/coding-agent/founder-dashboard/summary")
+async def ca37_founder_dashboard_summary(request: Request):
+    payload = await request.json()
+    return FounderAdminDashboard.summary(payload)
+
+
+@app.post("/api/coding-agent/founder-dashboard/approval-queue")
+async def ca37_founder_dashboard_approval_queue(request: Request):
+    payload = await request.json()
+    return FounderAdminDashboard.approval_queue(payload)
+
+
+@app.post("/api/coding-agent/founder-dashboard/phase-control")
+async def ca37_founder_dashboard_phase_control(request: Request):
+    payload = await request.json()
+    return FounderAdminDashboard.phase_control(payload)
+
+
+@app.get("/api/coding-agent/admin-dashboard/health")
+def ca37_admin_dashboard_health_alias():
+    return FounderAdminDashboard.health()
+
+
+@app.post("/api/coding-agent/admin-dashboard/summary")
+async def ca37_admin_dashboard_summary_alias(request: Request):
+    payload = await request.json()
+    return FounderAdminDashboard.summary(payload)
+
+
 @app.get("/")
 def ideasforgeai_root():
     return {

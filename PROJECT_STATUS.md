@@ -1,3 +1,35 @@
+## Phase CA-37 - Founder/Admin Dashboard
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Founder/Admin Dashboard foundation for Coding Agent.
+- Added founder-dashboard health, summary, approval-queue, and phase-control preview endpoints.
+- Added admin-dashboard compatibility preview endpoints.
+- Dashboard is preview-only by default.
+- No admin write is performed.
+- No phase control write is performed.
+- No approval action is executed.
+- Normal users remain preview-only.
+- Founder/Admin backend approval remains required before any future admin action.
+- Produces dashboard summary, phase cards, safety locks, approval queue preview, phase control preview, blocked actions, and next-phase guidance.
+- Does not run Git commands.
+- Does not write files.
+- Does not apply diffs.
+- Does not run terminal commands.
+- Does not deploy or rollback.
+- Does not expose secrets.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-37
+
+NEXT AFTER: CA-38 - Full Security Audit + Production Freeze
+
+
 ## Phase CA-36 - Project Memory + Task History
 
 Status: Completed locally, validation required before deploy.
