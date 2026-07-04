@@ -8101,3 +8101,33 @@ body {
   }
 }
 
+/* --------------------------------------------------------------------------
+   UI-02M - Center Align Mobile Home Content Only
+   Final alignment correction for mobile home prompt/cards only.
+   Leaves header and composer sizing/position untouched.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ui02-home-prompt,
+  .ui02-module-grid {
+    width: min(88vw, 700px) !important;
+    max-width: min(88vw, 700px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-self: center !important;
+  }
+
+  .ui02-home-title,
+  .ui02-home-subtitle {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .ui02-module-card {
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
