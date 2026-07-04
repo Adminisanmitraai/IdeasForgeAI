@@ -1,3 +1,20 @@
+## UI-02H - Final Mobile Composer Fit Override
+
+Status: Completed locally, validation required before deploy.
+
+- Replaced unstable hard-coded composer positioning with final balanced mobile override.
+- Lowered composer from too-high browser-safe position.
+- Kept composer above mobile browser bottom UI.
+- Reduced home content height so the screen feels more fitted.
+- Tightened header, title, and module card spacing.
+- Preserved ForgeStudio, ForgeCode, and ForgeWork cards.
+- No backend files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## UI-02G - Browser-Safe Composer Position Fix
 
 Status: Completed locally, validation required before deploy.
