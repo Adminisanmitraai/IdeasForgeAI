@@ -8711,3 +8711,67 @@ ${files}`;
   window.IdeasForgeAIChatV2 = { activateMode, send, state };
 })();
 
+
+// AI-02C - Composer autosize visible fit
+(function () {
+  if (window.__AI02C_COMPOSER_FIT__) return;
+  window.__AI02C_COMPOSER_FIT__ = true;
+
+  function getInput() {
+    return (
+      document.querySelector(".ui01b-composer textarea") ||
+      document.querySelector("textarea.ifai-ai02-input") ||
+      document.querySelector(".ui01b-composer input[type='text']") ||
+      document.querySelector("input[placeholder]")
+    );
+  }
+
+  function normalizeInput() {
+    let input = getInput();
+    if (!input) return;
+
+    if (input.tagName === "INPUT") {
+      const textarea = document.createElement("textarea");
+      textarea.className = (input.className || "") + " ifai-ai02-input";
+      textarea.placeholder = input.placeholder || "Ask IdeasForgeAI";
+      textarea.value = input.value || "";
+      textarea.rows = 1;
+      textarea.autocomplete = "off";
+      textarea.spellcheck = true;
+      input.replaceWith(textarea);
+      input = textarea;
+    }
+
+    input.classList.add("ifai-ai02-input");
+    input.placeholder = "Ask IdeasForgeAI";
+
+    autosize(input);
+
+    if (!input.dataset.ai02cAutosize) {
+      input.dataset.ai02cAutosize = "true";
+      input.addEventListener("input", function () {
+        autosize(input);
+      });
+    }
+  }
+
+  function autosize(input) {
+    if (!input || input.tagName !== "TEXTAREA") return;
+    input.style.height = "52px";
+    const next = Math.min(Math.max(input.scrollHeight, 52), 118);
+    input.style.height = next + "px";
+  }
+
+  function boot() {
+    normalizeInput();
+    setTimeout(normalizeInput, 250);
+    setTimeout(normalizeInput, 900);
+    setTimeout(normalizeInput, 1800);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();
