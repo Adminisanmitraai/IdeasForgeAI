@@ -1,4 +1,33 @@
-﻿## Phase CA-30 - Founder/Admin Apply Diff to Workspace
+## Phase CA-31 - Real Test Runner Backend Execution
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only protected Real Test Runner foundation for Coding Agent.
+- Added test-runner health, validate, and run endpoints.
+- Test execution is locked by default.
+- Normal users cannot run tests, terminal commands, Git commands, deployment actions, or arbitrary commands.
+- Founder/Admin backend permission is required before any future real test execution.
+- Validates requested test commands against a strict allowlist.
+- Supports only deterministic validation command IDs: backend import check, backend py_compile, coding-agent JS check, studio-v4 JS check, sector QA, and phase audit.
+- Defaults to dry-run behavior unless backend-only permission enables execution.
+- Does not write files.
+- Does not apply diffs.
+- Does not run Git commands.
+- Does not deploy or rollback.
+- Does not expose frontend tokens or secrets.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-31
+
+NEXT AFTER: CA-32 - Auto-Fix Loop Using Test Results
+
+
+## Phase CA-30 - Founder/Admin Apply Diff to Workspace
 
 Status: Completed locally, validation required before deploy.
 

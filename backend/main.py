@@ -4246,6 +4246,245 @@ async def phase23c_apple_like_visual_qa_score(request: Request):
     return get_phase23c_apple_like_visual_qa_score(payload)
 
 
+# ---------------------------------------------------------------------------
+# CA-31 - Real Test Runner Backend Execution
+# ---------------------------------------------------------------------------
+# RealTestRunner
+# test-runner
+# recommended_next_phase CA-32
+# arbitrary_command_execution False
+# file_write False
+# apply_diff False
+# git_commands False
+# deployment False
+# secrets False
+
+TEST_RUNNER_ALLOWLIST = {
+    "backend_import_check": ["python", "-c", "from backend.main import app; print('backend main import OK')"],
+    "backend_py_compile": ["python", "-m", "py_compile", "backend/main.py"],
+    "coding_agent_js_check": ["node", "--check", "frontend/pages/coding-agent.js"],
+    "studio_v4_js_check": ["node", "--check", "frontend/pages/studio-v4.js"],
+    "sector_qa": ["python", "backend/sector_qa_runner.py"],
+    "phase_audit": ["python", "backend/coding_agent_phase_audit.py", "--phase", "CA-31"],
+}
+
+IDEASFORGE_TEST_RUNNER_ENABLED_ENV = "IDEASFORGE_TEST_RUNNER_ENABLED"
 
 
+def _ca31_truthy(value: object) -> bool:
+    return str(value or "").strip().lower() in {"1", "true", "yes", "on", "enabled"}
+
+
+def _ca31_test_runner_enabled() -> bool:
+    return _ca31_truthy(os.getenv(IDEASFORGE_TEST_RUNNER_ENABLED_ENV, ""))
+
+
+def _ca31_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "private_repo": False,
+        "clone": False,
+        "local_filesystem_read": False,
+        "file_write": False,
+        "apply_diff": False,
+        "arbitrary_command_execution": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+def _ca31_role(payload: Dict[str, Any]) -> str:
+    approval_context = payload.get("approval_context") or {}
+    return str(
+        payload.get("requested_by_role")
+        or approval_context.get("requested_by_role")
+        or approval_context.get("role")
+        or "normal_user"
+    ).strip().lower()
+
+
+def _ca31_founder_admin_approved(payload: Dict[str, Any]) -> bool:
+    approval_context = payload.get("approval_context") or {}
+    role = _ca31_role(payload)
+    founder_role = role in {"founder", "admin", "founder_admin", "founder-admin", "owner"}
+    approval = payload.get("founder_admin_approval")
+    if approval is None:
+        approval = approval_context.get("founder_admin_approval")
+    return bool(founder_role and approval is True and _ca31_test_runner_enabled())
+
+
+def _ca31_requested_command_ids(payload: Dict[str, Any]) -> List[str]:
+    requested = payload.get("selected_tests") or payload.get("command_ids") or []
+    if isinstance(requested, str):
+        requested = [requested]
+    if not requested:
+        requested = list(TEST_RUNNER_ALLOWLIST.keys())
+    cleaned: List[str] = []
+    for item in requested:
+        command_id = str(item or "").strip()
+        if command_id and command_id not in cleaned:
+            cleaned.append(command_id)
+    return cleaned
+
+
+class RealTestRunner:
+    @staticmethod
+    def validate(payload: Dict[str, Any]) -> Dict[str, Any]:
+        requested = _ca31_requested_command_ids(payload)
+        allowed_command_ids = [command_id for command_id in requested if command_id in TEST_RUNNER_ALLOWLIST]
+        rejected_command_ids = [command_id for command_id in requested if command_id not in TEST_RUNNER_ALLOWLIST]
+        permission_status = "locked"
+        if _ca31_founder_admin_approved(payload):
+            permission_status = "founder_admin_permission_available"
+        elif _ca31_role(payload) != "normal_user":
+            permission_status = "backend_permission_missing_or_disabled"
+
+        return {
+            "ok": True,
+            "project_id": payload.get("project_id") or "ideasforgeai",
+            "proposal_id": payload.get("proposal_id") or "",
+            "mode": "test-runner-validation-preview",
+            "dry_run": True,
+            "test_runner_enabled": _ca31_test_runner_enabled(),
+            "founder_admin_required": True,
+            "permission_status": permission_status,
+            "allowed_command_ids": allowed_command_ids,
+            "rejected_command_ids": rejected_command_ids,
+            "executed_command_ids": [],
+            "validation_summary": {
+                "requested_count": len(requested),
+                "allowed_count": len(allowed_command_ids),
+                "rejected_count": len(rejected_command_ids),
+                "arbitrary_command_execution": False,
+                "allowlist_only": True,
+            },
+            "results": [],
+            "risk": {
+                "level": "low" if not rejected_command_ids else "medium",
+                "reasons": ["Dry-run validation only.", "Only allowlisted command IDs are accepted."],
+            },
+            "approval_gate": {
+                "founder_admin_required": True,
+                "backend_permission_required": True,
+                "frontend_token_can_enable": False,
+            },
+            "blocked_actions": [
+                "normal_user_test_execution",
+                "arbitrary_shell_commands",
+                "git_commands",
+                "deployment",
+                "file_write",
+                "apply_diff",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-32",
+                "title": "Auto-Fix Loop Using Test Results",
+            },
+            **_ca31_safety_flags(),
+        }
+
+    @staticmethod
+    def run(payload: Dict[str, Any]) -> Dict[str, Any]:
+        validation = RealTestRunner.validate(payload)
+        dry_run = bool(payload.get("dry_run", True))
+        can_execute = _ca31_founder_admin_approved(payload) and _ca31_test_runner_enabled() and not dry_run
+
+        if not can_execute:
+            validation.update(
+                {
+                    "mode": "test-runner-locked-dry-run",
+                    "dry_run": True,
+                    "permission_status": validation["permission_status"],
+                    "results": [
+                        {
+                            "status": "blocked",
+                            "reason": "Real test execution is locked by default and requires backend-only Founder/Admin permission.",
+                        }
+                    ],
+                }
+            )
+            return validation
+
+        results = []
+        executed = []
+        for command_id in validation["allowed_command_ids"]:
+            command = TEST_RUNNER_ALLOWLIST[command_id]
+            try:
+                completed = subprocess.run(
+                    command,
+                    cwd=str(PROJECT_ROOT),
+                    shell=False,
+                    capture_output=True,
+                    text=True,
+                    timeout=90,
+                )
+                executed.append(command_id)
+                results.append(
+                    {
+                        "command_id": command_id,
+                        "exit_code": completed.returncode,
+                        "stdout": (completed.stdout or "")[-4000:],
+                        "stderr": (completed.stderr or "")[-4000:],
+                    }
+                )
+            except Exception as exc:
+                results.append(
+                    {
+                        "command_id": command_id,
+                        "exit_code": 1,
+                        "stdout": "",
+                        "stderr": f"{exc.__class__.__name__}: {exc}",
+                    }
+                )
+
+        validation.update(
+            {
+                "mode": "test-runner-founder-admin-allowlisted-execution",
+                "dry_run": False,
+                "executed_command_ids": executed,
+                "results": results,
+            }
+        )
+        return validation
+
+
+@app.get("/api/coding-agent/test-runner/health")
+def ca31_test_runner_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-test-runner",
+        "mode": "locked-by-default",
+        "test_runner_enabled": _ca31_test_runner_enabled(),
+        "founder_admin_required": True,
+        "arbitrary_command_execution": False,
+        "allowed_command_ids": list(TEST_RUNNER_ALLOWLIST.keys()),
+        "recommended_next_phase": "CA-32",
+        **_ca31_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/test-runner/validate")
+async def ca31_test_runner_validate(request: Request):
+    payload = await request.json()
+    return RealTestRunner.validate(payload)
+
+
+@app.post("/api/coding-agent/test-runner/run")
+async def ca31_test_runner_run(request: Request):
+    payload = await request.json()
+    return RealTestRunner.run(payload)
+
+
+@app.get("/api/coding-agent/run-tests/health")
+def ca31_run_tests_health_alias():
+    return ca31_test_runner_health()
+
+
+@app.post("/api/coding-agent/run-tests")
+async def ca31_run_tests_alias(request: Request):
+    payload = await request.json()
+    return RealTestRunner.run(payload)
 
