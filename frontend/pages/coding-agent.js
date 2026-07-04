@@ -6770,3 +6770,75 @@ document.addEventListener("click", async (event) => {
   }
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-02L - Lower composer with stable mobile browser offset
+// ---------------------------------------------------------------------------
+(function ui02lLowerComposerOffset() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  function isStandalone() {
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    );
+  }
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+  }
+
+  function updateComposerBottom() {
+    if (!mq.matches) return;
+
+    let bottom = 52;
+
+    if (isStandalone()) {
+      bottom = 18;
+    } else if (window.visualViewport) {
+      const vv = window.visualViewport;
+      const overlap = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+
+      const active = document.activeElement;
+      const keyboardOpen =
+        active &&
+        (active.tagName === "INPUT" ||
+          active.tagName === "TEXTAREA" ||
+          active.isContentEditable);
+
+      if (keyboardOpen) {
+        bottom = 12;
+      } else {
+        bottom = clamp(overlap + 8, 44, 68);
+      }
+    }
+
+    document.documentElement.style.setProperty("--mobile-composer-bottom", `${bottom}px`);
+  }
+
+  function schedule() {
+    updateComposerBottom();
+    requestAnimationFrame(updateComposerBottom);
+    setTimeout(updateComposerBottom, 120);
+    setTimeout(updateComposerBottom, 420);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+
+  window.addEventListener("resize", schedule, { passive: true });
+  window.addEventListener("orientationchange", schedule, { passive: true });
+  window.addEventListener("scroll", schedule, { passive: true });
+
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", schedule, { passive: true });
+    window.visualViewport.addEventListener("scroll", schedule, { passive: true });
+  }
+
+  document.addEventListener("focusin", schedule, true);
+  document.addEventListener("focusout", schedule, true);
+})();
+

@@ -1,3 +1,19 @@
+## UI-02L - Center Home Layout + Lower Composer
+
+Status: Completed locally, validation required before deploy.
+
+- Center-aligned the mobile home hero and module card column.
+- Matched the approved final mockup more closely with balanced left/right margins.
+- Lowered the ChatGPT-like composer closer to the browser bottom area.
+- Kept the composer visible above mobile browser toolbar.
+- Preserved official IdeasForgeAI logo/header and ForgeStudio, ForgeCode, ForgeWork cards.
+- No backend files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## BRAND-01C - Runtime Header Logo Repair
 
 Status: Completed locally, validation required before deploy.
