@@ -1,4 +1,4 @@
-﻿const shell = document.querySelector(".coding-agent-shell");
+const shell = document.querySelector(".coding-agent-shell");
 const workspaceStage = document.querySelector("[data-workspace-stage]");
 const actionStatusMessage = document.querySelector("[data-action-status-message]");
 const heroStatus = document.querySelector("[data-workspace-hero-status]");
@@ -5863,3 +5863,115 @@ document.addEventListener("click", async (event) => {
   autoResizeComposer();
   renderChat();
 })();
+
+
+// ---------------------------------------------------------------------------
+// UI-01A Brand Asset Polish
+// Safely injects compact IdeasForgeAI / ForgeCode transparent PNG assets.
+// ---------------------------------------------------------------------------
+(function ui01aBrandAssets() {
+  const BRAND = {
+    forgeCodeIcon: "../assets/brand/forgecode-icon.png",
+    forgeCodeWordmark: "../assets/brand/forgecode-wordmark.png",
+    ideasForgeWordmark: "../assets/brand/ideasforgeai-wordmark.png",
+  };
+
+  function textOf(el) {
+    return (el && el.textContent ? el.textContent : "").trim();
+  }
+
+  function makeImg(src, alt, className) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = alt;
+    img.className = className;
+    img.loading = "eager";
+    img.decoding = "async";
+    return img;
+  }
+
+  function injectHeaderBrand() {
+    if (document.querySelector(".ifai-header-brand")) return;
+
+    const candidates = Array.from(
+      document.querySelectorAll("header, .header, .topbar, .app-header, .agent-header, .brand, .brand-row, .shell-header")
+    );
+
+    const header = candidates.find((el) => /IdeasForgeAI|ForgeCode|Coding Agent/i.test(textOf(el)));
+    if (!header) return;
+
+    const titleNode = Array.from(header.querySelectorAll("h1,h2,h3,.title,.brand-title,strong,b,span,div"))
+      .find((el) => /IdeasForgeAI|ForgeCode/i.test(textOf(el)));
+
+    if (!titleNode) return;
+
+    const wrapper = document.createElement("span");
+    wrapper.className = "ifai-header-brand";
+    const icon = makeImg(BRAND.forgeCodeIcon, "ForgeCode", "ifai-brand-img");
+    wrapper.appendChild(icon);
+
+    titleNode.parentNode.insertBefore(wrapper, titleNode);
+    wrapper.appendChild(titleNode);
+  }
+
+  function injectEmptyStateBrand() {
+    if (document.querySelector(".ifai-empty-brand")) return;
+
+    const headings = Array.from(document.querySelectorAll("h1,h2,.hero-title,.empty-title,.chat-title"));
+    const heading = headings.find((el) => /Coding Agent|ForgeCode|protected Coding Agent/i.test(textOf(el)));
+    if (!heading) return;
+
+    const box = document.createElement("div");
+    box.className = "ifai-empty-brand";
+    box.appendChild(makeImg(BRAND.forgeCodeIcon, "ForgeCode AI Coding Agent", "ifai-forgecode-img"));
+
+    const copy = document.createElement("div");
+    copy.className = "ifai-empty-brand-text";
+
+    const kicker = document.createElement("div");
+    kicker.className = "ifai-empty-brand-kicker";
+    kicker.textContent = "ForgeCode";
+
+    const title = document.createElement("div");
+    title.className = "ifai-empty-brand-title";
+    title.textContent = "AI Coding Agent";
+
+    copy.appendChild(kicker);
+    copy.appendChild(title);
+    box.appendChild(copy);
+
+    heading.parentNode.insertBefore(box, heading);
+  }
+
+  function polishAvatarPlaceholders() {
+    const avatarCandidates = Array.from(
+      document.querySelectorAll(".avatar,.assistant-avatar,.agent-avatar,.bot-avatar,.logo-mark,.brand-mark")
+    );
+
+    avatarCandidates.slice(0, 4).forEach((el) => {
+      const hasImg = el.querySelector && el.querySelector("img");
+      if (hasImg) return;
+
+      const label = textOf(el);
+      if (label && label.length > 4) return;
+
+      el.innerHTML = "";
+      const img = makeImg(BRAND.forgeCodeIcon, "ForgeCode", "ifai-injected-avatar");
+      el.appendChild(img);
+    });
+  }
+
+  function run() {
+    document.documentElement.classList.add("ifai-ui01a-brand-ready");
+    injectHeaderBrand();
+    injectEmptyStateBrand();
+    polishAvatarPlaceholders();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run, { once: true });
+  } else {
+    run();
+  }
+})();
+

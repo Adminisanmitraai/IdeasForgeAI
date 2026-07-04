@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   color-scheme: dark;
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ca-topbar-offset: calc(env(safe-area-inset-top) + 8px);
@@ -4568,3 +4568,631 @@ body {
   .coding-agent-composer__footer { flex-direction: column; align-items: flex-start; }
   .chat-message__bubble { max-width: calc(100% - 12px); }
 }
+
+
+/* UI-01A - Brand references + mobile repair */
+.coding-agent-topbar {
+  top: max(6px, env(safe-area-inset-top));
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  min-height: 68px;
+}
+
+.coding-agent-brand {
+  gap: 10px;
+}
+
+.coding-agent-brand__mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 14px;
+  border-color: rgba(130, 170, 255, 0.28);
+  background:
+    radial-gradient(circle at 50% 48%, rgba(255, 212, 90, 0.28), transparent 22%),
+    radial-gradient(circle at 18% 22%, rgba(96, 165, 250, 0.26), transparent 26%),
+    linear-gradient(145deg, rgba(32, 36, 52, 0.98), rgba(12, 13, 16, 1));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 10px 20px rgba(67, 56, 202, 0.18);
+}
+
+.coding-agent-brand__mark::before,
+.coding-agent-brand__mark::after {
+  inset: 7px;
+  border-radius: 10px;
+}
+
+.coding-agent-brand__mark::before {
+  background: url('../assets/brand/ideasforgeai-if-spark-icon-cropped.png') center/cover no-repeat;
+  clip-path: none;
+  filter: saturate(1.12) contrast(1.05);
+}
+
+.coding-agent-brand__mark::after {
+  content: '</>';
+  inset: auto;
+  right: -6px;
+  bottom: -7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid rgba(143, 186, 255, 0.22);
+  border-radius: 999px;
+  background: rgba(8, 10, 18, 0.94);
+  color: #eef4ff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  clip-path: none;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.28);
+}
+
+.coding-agent-brand__text strong {
+  font-size: 15px;
+  font-weight: 860;
+  letter-spacing: -0.02em;
+}
+
+.coding-agent-brand__ai {
+  background: linear-gradient(135deg, #7c93ff, #9e78ff 60%, #5eb7ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.coding-agent-brand__text span {
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.coding-agent-topbar__actions {
+  gap: 8px;
+}
+
+.topbar-mode-pill {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.6);
+}
+
+.topbar-square-button,
+.topbar-pill-button {
+  min-height: 42px;
+}
+
+.topbar-pill-button {
+  padding: 0 14px;
+  font-size: 13px;
+}
+
+.coding-agent-chat-layout {
+  gap: 14px;
+}
+
+.coding-agent-rail {
+  gap: 12px;
+}
+
+.coding-agent-rail__card,
+.coding-agent-chat-panel {
+  border-radius: 24px;
+}
+
+.coding-agent-rail__card {
+  padding: 16px;
+}
+
+.coding-agent-rail__card--hero {
+  padding: 18px;
+}
+
+.coding-agent-rail__card h1 {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.02;
+}
+
+.coding-agent-rail__meta,
+.coding-agent-quick-actions,
+.coding-agent-suggestion-row,
+.coding-agent-chat-panel__status {
+  gap: 8px;
+}
+
+.coding-agent-chat-panel {
+  min-height: 620px;
+  padding: 14px;
+}
+
+.coding-agent-chat-panel__header {
+  gap: 12px;
+  padding-bottom: 10px;
+}
+
+.coding-agent-chat-panel__header h2 {
+  margin: 10px 0 8px;
+  font-size: clamp(24px, 3vw, 34px);
+}
+
+.coding-agent-chat-panel__header p,
+.coding-agent-rail__card p,
+.coding-agent-empty-state p {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.coding-agent-transcript {
+  min-height: 360px;
+  padding: 10px 4px 4px;
+}
+
+.coding-agent-transcript__list {
+  gap: 10px;
+  padding-right: 2px;
+}
+
+.coding-agent-empty-state {
+  gap: 12px;
+  padding: 22px;
+  border-radius: 24px;
+}
+
+.coding-agent-empty-state__mark {
+  position: relative;
+  width: 82px;
+  height: 82px;
+  display: grid;
+  place-items: center;
+  border-radius: 28px;
+  border: 1px solid rgba(123, 145, 255, 0.18);
+  background:
+    radial-gradient(circle at 50% 40%, rgba(255, 210, 84, 0.18), transparent 24%),
+    radial-gradient(circle at 22% 25%, rgba(96, 165, 250, 0.22), transparent 28%),
+    linear-gradient(145deg, rgba(17, 18, 25, 1), rgba(8, 9, 12, 1));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 20px 34px rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+
+.forgecode-avatar__core {
+  position: absolute;
+  inset: 12px;
+  border-radius: 22px;
+  background: url('../assets/brand/ideasforgeai-if-spark-icon-cropped.png') center/cover no-repeat;
+  filter: saturate(1.12) contrast(1.06);
+}
+
+.forgecode-avatar__orbit {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(123, 145, 255, 0.96), rgba(94, 183, 255, 0.86));
+  box-shadow: 0 0 0 6px rgba(123, 145, 255, 0.08);
+}
+
+.forgecode-avatar__orbit--left {
+  top: 18px;
+  left: 12px;
+}
+
+.forgecode-avatar__orbit--right {
+  right: 13px;
+  bottom: 15px;
+  background: linear-gradient(135deg, rgba(158, 120, 255, 0.96), rgba(123, 145, 255, 0.86));
+}
+
+.forgecode-avatar__code {
+  position: absolute;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: rgba(10, 12, 20, 0.94);
+  border: 1px solid rgba(143, 186, 255, 0.18);
+  color: #eef3ff;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.22);
+}
+
+.forgecode-avatar__code--left {
+  left: 10px;
+  bottom: 10px;
+}
+
+.forgecode-avatar__code--right {
+  top: 12px;
+  right: 10px;
+}
+
+.chat-message__bubble {
+  max-width: min(100%, 680px);
+  padding: 14px 16px;
+  border-radius: 20px;
+}
+
+.chat-message--assistant .chat-message__bubble {
+  background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02));
+}
+
+.chat-message--user .chat-message__bubble {
+  background: linear-gradient(180deg, #f5f7fb, #eceff6);
+}
+
+.chat-message__meta {
+  margin-bottom: 6px;
+  font-size: 10px;
+}
+
+.chat-message__body {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.coding-agent-thinking {
+  font-size: 12px;
+}
+
+.coding-agent-composer {
+  padding-top: 10px;
+}
+
+.coding-agent-composer__surface {
+  gap: 8px;
+  padding: 10px;
+  border-radius: 22px;
+}
+
+.composer-icon-button,
+.composer-submit-button,
+.composer-stop-button {
+  min-height: 42px;
+  min-width: 42px;
+  border-radius: 14px;
+}
+
+.coding-agent-chat-input {
+  min-height: 42px;
+  padding: 10px 2px;
+  font-size: 14px;
+}
+
+.composer-submit-button {
+  font-size: 13px;
+}
+
+.coding-agent-composer__footer {
+  padding: 8px 4px calc(4px + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 1120px) {
+  .coding-agent-chat-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .coding-agent-chat-panel {
+    order: 1;
+  }
+
+  .coding-agent-rail {
+    order: 2;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .coding-agent-rail__card--hero {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .coding-agent-shell {
+    width: min(100vw - 8px, 100%);
+    padding-top: max(8px, env(safe-area-inset-top));
+    padding-bottom: calc(18px + env(safe-area-inset-bottom));
+  }
+
+  .coding-agent-topbar {
+    top: max(4px, env(safe-area-inset-top));
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    min-height: 60px;
+    border-radius: 18px;
+  }
+
+  .coding-agent-brand__mark {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+
+  .coding-agent-brand__mark::after {
+    right: -4px;
+    bottom: -4px;
+    min-width: 22px;
+    height: 22px;
+    font-size: 9px;
+  }
+
+  .coding-agent-brand__text strong {
+    font-size: 14px;
+  }
+
+  .coding-agent-brand__text span {
+    font-size: 10px;
+  }
+
+  .coding-agent-topbar__actions {
+    width: auto;
+    margin-left: auto;
+    gap: 6px;
+  }
+
+  .topbar-mode-pill {
+    max-width: 92px;
+    min-height: 28px;
+    padding: 0 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar-square-button {
+    width: 40px;
+    height: 40px;
+  }
+
+  .topbar-pill-button {
+    min-height: 40px;
+    padding: 0 12px;
+    font-size: 12px;
+  }
+
+  .coding-agent-chat-layout {
+    gap: 10px;
+  }
+
+  .coding-agent-chat-panel {
+    min-height: calc(100vh - 88px - env(safe-area-inset-top));
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .coding-agent-chat-panel__header {
+    gap: 10px;
+    padding-bottom: 8px;
+  }
+
+  .coding-agent-chat-panel__header h2 {
+    margin: 8px 0 6px;
+    font-size: clamp(20px, 6vw, 26px);
+  }
+
+  .coding-agent-chat-panel__header p {
+    font-size: 13px;
+    line-height: 1.48;
+  }
+
+  .coding-agent-chat-panel__status {
+    gap: 6px;
+  }
+
+  .chat-mode-pill,
+  .hero-status,
+  .connected-chip {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 11px;
+  }
+
+  .coding-agent-transcript {
+    min-height: 0;
+    flex: 1;
+    padding: 8px 0 2px;
+  }
+
+  .coding-agent-empty-state {
+    padding: 18px;
+    gap: 10px;
+  }
+
+  .coding-agent-empty-state__mark {
+    width: 74px;
+    height: 74px;
+    border-radius: 24px;
+  }
+
+  .coding-agent-empty-state h3 {
+    font-size: clamp(20px, 6vw, 24px);
+  }
+
+  .coding-agent-empty-state p {
+    font-size: 13px;
+  }
+
+  .coding-agent-suggestion-row {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .chat-suggestion-chip {
+    width: 100%;
+    justify-content: center;
+    min-height: 40px;
+  }
+
+  .chat-message__bubble {
+    max-width: calc(100% - 8px);
+    padding: 12px 14px;
+    border-radius: 18px;
+  }
+
+  .chat-message__body {
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .coding-agent-composer {
+    padding-top: 8px;
+    margin-top: auto;
+  }
+
+  .coding-agent-composer__surface {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 18px;
+  }
+
+  .coding-agent-chat-input {
+    min-height: 40px;
+    max-height: 140px;
+    font-size: 13px;
+  }
+
+  .composer-submit-button {
+    grid-column: 1 / -1;
+    min-height: 44px;
+    border-radius: 14px;
+  }
+
+  .coding-agent-composer__footer {
+    padding: 8px 2px calc(6px + env(safe-area-inset-bottom));
+  }
+
+  .coding-agent-composer__footer span {
+    font-size: 11px;
+  }
+
+  .coding-agent-rail {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .coding-agent-rail__card {
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .coding-agent-rail__card--hero {
+    padding: 14px;
+  }
+
+  .coding-agent-rail__card h1 {
+    font-size: clamp(20px, 5.8vw, 24px);
+  }
+
+  .coding-agent-rail__card p,
+  .coding-agent-safety-list {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   UI-01A Brand Asset Polish
+   Uses transparent PNG assets from frontend/assets/brand.
+-------------------------------------------------------------------------- */
+
+.ifai-brand-img,
+.ifai-forgecode-img {
+  display: block;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.ifai-header-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ifai-header-brand .ifai-brand-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  filter: drop-shadow(0 10px 24px rgba(103, 78, 255, 0.22));
+}
+
+.ifai-empty-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 0 18px;
+}
+
+.ifai-empty-brand .ifai-forgecode-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  filter: drop-shadow(0 18px 42px rgba(103, 78, 255, 0.24));
+}
+
+.ifai-empty-brand-text {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ifai-empty-brand-kicker {
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.48);
+  font-weight: 800;
+}
+
+.ifai-empty-brand-title {
+  font-size: 20px;
+  line-height: 1.1;
+  color: rgba(255,255,255,0.94);
+  font-weight: 850;
+}
+
+.ifai-assistant-avatar,
+.ifai-injected-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 12px 28px rgba(103, 78, 255, 0.22);
+}
+
+@media (max-width: 640px) {
+  .ifai-header-brand .ifai-brand-img {
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+  }
+
+  .ifai-empty-brand {
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .ifai-empty-brand .ifai-forgecode-img {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .ifai-empty-brand-title {
+    font-size: 17px;
+  }
+
+  .ifai-empty-brand-kicker {
+    font-size: 10px;
+  }
+}
+

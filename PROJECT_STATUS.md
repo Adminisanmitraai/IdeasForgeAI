@@ -1,3 +1,26 @@
+## UI-01A - Brand Asset Polish
+
+Status: Completed locally, validation required before deploy.
+
+- Connected transparent PNG brand assets to the Coding Agent UI.
+- Added compact ForgeCode icon treatment for header/avatar/empty-state usage.
+- Preserved chat-first mobile layout direction.
+- Preserved protected preview-only safety model.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+- No KisanMitraAI or ForgePilot files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-02 - Mobile Composer Attachment Voice Polish
+
+
 ## UI-01 - ChatGPT-like Chat Layout Polish
 
 Status: Completed locally, validation required before deploy.
