@@ -5863,7 +5863,7 @@ body {
     min-height: 60px !important;
     border-radius: 30px !important;
     gap: 7px !important;
-    padding: 8px !important;
+    padding: 8px 9px !important;
     box-shadow: 0 16px 40px rgba(45,58,110,0.13) !important;
   }
 
@@ -6041,8 +6041,8 @@ body {
   }
 
   .ui01b-composer-wrap {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
   }
 
   .ui01b-composer {
@@ -6859,9 +6859,9 @@ body {
   .ui01b-plus,
   .ui01b-mic,
   .ui01b-send {
-    flex: 0 0 42px !important;
-    width: 42px !important;
-    height: 42px !important;
+    flex: 0 0 40px !important;
+    width: 40px !important;
+    height: 40px !important;
   }
 
   .ui01b-input {
@@ -7179,8 +7179,8 @@ body {
 
 :root {
   --mobile-header-height: 68px;
-  --mobile-composer-bottom: 64px;
-  --mobile-composer-height: 76px;
+  --mobile-composer-bottom: 72px;
+  --mobile-composer-height: 78px;
 }
 
 @media (max-width: 760px) {
@@ -7260,7 +7260,7 @@ body {
     max-width: none !important;
     margin-left: auto !important;
     margin-right: 0 !important;
-    padding-right: 2px !important;
+    padding-right: 6px !important;
     gap: 8px !important;
   }
 
@@ -7289,8 +7289,8 @@ body {
     height: calc(100dvh - var(--mobile-header-height)) !important;
     max-height: calc(100dvh - var(--mobile-header-height)) !important;
     overflow-y: auto !important;
-    padding: 18px 16px calc(var(--mobile-composer-height) + var(--mobile-composer-bottom) + 18px) !important;
-    scroll-padding-bottom: calc(var(--mobile-composer-height) + var(--mobile-composer-bottom) + 18px);
+    padding: 18px 16px calc(var(--mobile-composer-height) + var(--mobile-composer-bottom) + 20px) !important;
+    scroll-padding-bottom: calc(var(--mobile-composer-height) + var(--mobile-composer-bottom) + 20px);
   }
 
   body.ui02-home-mode:not(.ui02-chat-started) .ui01b-message {
@@ -7298,11 +7298,7 @@ body {
   }
 
   .ui01b-safety-chip {
-    margin: 0 auto 12px !important;
-    background: rgba(255, 255, 255, 0.82) !important;
-    border: 1px solid rgba(17, 24, 39, 0.08) !important;
-    color: rgba(17, 24, 39, 0.72) !important;
-    backdrop-filter: blur(14px);
+    display: none !important;
   }
 
   .ui02-home-prompt {
@@ -7407,7 +7403,7 @@ body {
     bottom: var(--mobile-composer-bottom) !important;
     width: 100vw !important;
     max-width: 100vw !important;
-    padding: 0 12px env(safe-area-inset-bottom, 0px) !important;
+    padding: 0 14px env(safe-area-inset-bottom, 0px) !important;
     background: transparent !important;
     z-index: 30 !important;
     pointer-events: none;
@@ -7416,7 +7412,7 @@ body {
   .ui01b-composer {
     pointer-events: auto;
     width: 100% !important;
-    max-width: 390px !important;
+    max-width: 382px !important;
     min-height: 58px !important;
     margin: 0 auto !important;
     padding: 8px !important;
@@ -7513,11 +7509,11 @@ body {
   }
 
   .ui01b-composer-wrap {
-    padding-left: 10px !important;
-    padding-right: 10px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
   }
 
   .ui01b-composer {
-    max-width: 370px !important;
+    max-width: 364px !important;
   }
 }

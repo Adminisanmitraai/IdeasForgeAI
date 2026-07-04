@@ -6419,9 +6419,9 @@ document.addEventListener("click", async (event) => {
 (function ui02iCleanMobileChatLayout() {
   const mq = window.matchMedia("(max-width: 760px)");
   const ICONS = {
-    studio: "../assets/brand/forgestudio-icon.png?v=ui02i-1",
-    code: "../assets/brand/forgecode-icon.png?v=ui02i-1",
-    work: "../assets/brand/forgework-icon.png?v=ui02i-1"
+    studio: "../assets/brand/forgestudio-icon.png?v=ui02j-1",
+    code: "../assets/brand/forgecode-icon.png?v=ui02j-1",
+    work: "../assets/brand/forgework-icon.png?v=ui02j-1"
   };
   const MODULES = [
     {
@@ -6642,19 +6642,30 @@ document.addEventListener("click", async (event) => {
 
     const shell = document.querySelector(".ui01b-mobile-chat");
     const composerWrap = shell && shell.querySelector(".ui01b-composer-wrap");
+    const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
+    const safeAreaBottom = 14;
 
     let bottomOffset = 64;
-    if (window.visualViewport) {
+    if (standalone) {
+      bottomOffset = safeAreaBottom;
+    } else if (window.visualViewport) {
       const vv = window.visualViewport;
-      const hiddenBottom = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-      bottomOffset = Math.max(12, Math.round(hiddenBottom + 12));
+      const keyboardLift = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      const toolbarOverlap = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+      if (toolbarOverlap > 18) {
+        bottomOffset = 112;
+      } else if (keyboardLift > 120) {
+        bottomOffset = Math.max(24, Math.round(keyboardLift + 14));
+      } else {
+        bottomOffset = Math.max(72, Math.round(toolbarOverlap + 72));
+      }
     }
 
     root.style.setProperty("--mobile-composer-bottom", bottomOffset + "px");
 
     const composerHeight = composerWrap
-      ? Math.max(76, Math.ceil(composerWrap.getBoundingClientRect().height || 0))
-      : 76;
+      ? Math.max(78, Math.ceil(composerWrap.getBoundingClientRect().height || 0))
+      : 78;
     root.style.setProperty("--mobile-composer-height", composerHeight + "px");
   }
 

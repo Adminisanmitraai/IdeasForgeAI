@@ -1,12 +1,12 @@
-## UI-02I ? Clean Mobile Chat Layout Consolidation
+## UI-02J ? Final Home Chat Icon and Composer Fix
 
 Status: Completed locally, validation required before deploy.
 
-- Consolidated stacked mobile home chat overrides into one final layout section.
-- Stabilized header spacing, top-right actions, home cards, and composer positioning.
-- Added visualViewport-based composer bottom offset handling for mobile browsers.
-- Preserved ForgeStudio, ForgeCode, and ForgeWork on the public mobile home screen.
-- Kept protected preview behavior and left backend files unchanged.
+- Corrected mobile home icon mapping to use exact ForgeStudio, ForgeCode, and ForgeWork files by name.
+- Removed the protected preview chip from the public mobile home screen.
+- Tightened top-right action spacing so share and publish buttons stay fully visible.
+- Improved visualViewport composer positioning with browser-toolbar and standalone handling.
+- Kept the public home screen limited to ForgeStudio, ForgeCode, and ForgeWork.
 
 Validation commands:
 node --check frontend/pages/coding-agent.js
