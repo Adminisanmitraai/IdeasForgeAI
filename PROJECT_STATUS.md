@@ -1,3 +1,20 @@
+## NAV-02 - Mobile Drawer Menu + Partial Chat Slide
+
+Status: Completed locally, validation required before deploy.
+
+- Added mobile drawer menu on the three-line icon.
+- Added menu entries for Chat, ForgeStudio, ForgeCode, ForgeWork, Projects, Connect Computer, Activity Log, Files, Settings, Help, and Sign in.
+- Swipe right on Chat opens the menu.
+- Chat screen shifts right while keeping 25% visible.
+- Tap visible chat area or swipe left closes the menu.
+- Public UI shows ForgeWork, not ForgePilot.
+- No backend, gateway, desktop companion, or KisanMitraAI changes.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## NAV-01 - Four Page Swipe Shell
 
 Status: Completed locally, validation required before deploy.

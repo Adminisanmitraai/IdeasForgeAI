@@ -6842,3 +6842,223 @@ document.addEventListener("click", async (event) => {
   document.addEventListener("focusout", schedule, true);
 })();
 
+
+// ---------------------------------------------------------------------------
+// NAV-02 - Mobile Drawer Menu + Partial Chat Slide
+// 3-line icon opens menu. Swipe right opens. Swipe left/tap chat closes.
+// ---------------------------------------------------------------------------
+(function nav02MobileDrawerMenu() {
+  const mq = window.matchMedia("(max-width: 760px)");
+  const MARK_SRC = "/assets/brand/ideasforgeai-mark.png?v=nav02";
+
+  const menu = [
+    {
+      label: "Core",
+      items: [
+        { title: "Chat", desc: "Ask anything", icon: "✦", href: "/chat" },
+        { title: "ForgeStudio", desc: "Create apps and designs", icon: "◧", href: "/forgestudio" },
+        { title: "ForgeCode", desc: "Build and fix software", icon: "</>", href: "/forgecode" },
+        { title: "ForgeWork", desc: "Professional workspace", icon: "●", href: "/forgework" },
+        { title: "Projects", desc: "Saved work and outputs", icon: "▣", href: "/projects" },
+      ],
+    },
+    {
+      label: "Work",
+      items: [
+        { title: "Connect Computer", desc: "Trusted desktop connection", icon: "⌁", href: "/forgework" },
+        { title: "Activity Log", desc: "Actions and approvals", icon: "≡", href: "/forgework#activity" },
+        { title: "Files", desc: "Uploads and documents", icon: "▤", href: "/projects#files" },
+      ],
+    },
+    {
+      label: "Account",
+      items: [
+        { title: "Settings", desc: "Preferences and theme", icon: "⚙", href: "/settings" },
+        { title: "Help", desc: "Security and support", icon: "?", href: "/help" },
+        { title: "Sign in", desc: "Access your workspace", icon: "↗", href: "/login" },
+      ],
+    },
+  ];
+
+  function isChatPath() {
+    const path = window.location.pathname.replace(/\/+$/, "") || "/";
+    return path === "/" || path === "/chat" || path.endsWith("/coding-agent.html");
+  }
+
+  function createDrawer() {
+    if (document.querySelector(".ifai-mobile-drawer")) return;
+
+    const drawer = document.createElement("aside");
+    drawer.className = "ifai-mobile-drawer";
+    drawer.setAttribute("aria-label", "IdeasForgeAI menu");
+
+    const brand = document.createElement("div");
+    brand.className = "ifai-drawer-brand";
+    brand.innerHTML = `
+      <img src="${MARK_SRC}" alt="IdeasForgeAI">
+      <div class="ifai-drawer-title">
+        <strong>IdeasForgeAI</strong>
+        <span>Create · Code · Work</span>
+      </div>
+    `;
+    drawer.appendChild(brand);
+
+    menu.forEach((section) => {
+      const block = document.createElement("section");
+      block.className = "ifai-drawer-section";
+
+      const label = document.createElement("div");
+      label.className = "ifai-drawer-label";
+      label.textContent = section.label;
+      block.appendChild(label);
+
+      section.items.forEach((item) => {
+        const link = document.createElement("a");
+        link.className = "ifai-drawer-link";
+        link.href = item.href;
+        link.innerHTML = `
+          <span class="ifai-drawer-ico">${item.icon}</span>
+          <span class="ifai-drawer-copy">
+            <strong>${item.title}</strong>
+            <span>${item.desc}</span>
+          </span>
+        `;
+
+        const current = (window.location.pathname.replace(/\/+$/, "") || "/");
+        if (
+          item.href === current ||
+          (item.href === "/chat" && (current === "/" || current.endsWith("/coding-agent.html")))
+        ) {
+          link.classList.add("is-active");
+        }
+
+        block.appendChild(link);
+      });
+
+      drawer.appendChild(block);
+    });
+
+    const footer = document.createElement("div");
+    footer.className = "ifai-drawer-footer";
+    footer.textContent = "IdeasForgeAI · Preview";
+    drawer.appendChild(footer);
+
+    const catcher = document.createElement("button");
+    catcher.type = "button";
+    catcher.className = "ifai-menu-tap-catcher";
+    catcher.setAttribute("aria-label", "Close menu");
+
+    document.body.appendChild(drawer);
+    document.body.appendChild(catcher);
+
+    catcher.addEventListener("click", closeMenu);
+  }
+
+  function openMenu() {
+    if (!mq.matches) return;
+    createDrawer();
+    document.body.classList.add("ifai-menu-open");
+  }
+
+  function closeMenu() {
+    document.body.classList.remove("ifai-menu-open");
+  }
+
+  function toggleMenu(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (document.body.classList.contains("ifai-menu-open")) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  function bindMenuButtons() {
+    const selectors = [
+      ".ui01c-header-menu",
+      "[aria-label='Open menu']",
+      ".menu-button",
+      ".hamburger",
+      "[data-menu-toggle]"
+    ];
+
+    document.querySelectorAll(selectors.join(",")).forEach((button) => {
+      if (button.dataset.nav02MenuBound) return;
+      button.dataset.nav02MenuBound = "true";
+      button.addEventListener("click", toggleMenu, true);
+    });
+  }
+
+  function bindSwipe() {
+    if (window.__nav02SwipeBound) return;
+    window.__nav02SwipeBound = true;
+
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    document.addEventListener("touchstart", (event) => {
+      if (!mq.matches || !isChatPath()) return;
+      const touch = event.touches && event.touches[0];
+      if (!touch) return;
+      startX = touch.clientX;
+      startY = touch.clientY;
+      tracking = true;
+    }, { passive: true });
+
+    document.addEventListener("touchend", (event) => {
+      if (!tracking || !mq.matches || !isChatPath()) return;
+      tracking = false;
+
+      const touch = event.changedTouches && event.changedTouches[0];
+      if (!touch) return;
+
+      const dx = touch.clientX - startX;
+      const dy = touch.clientY - startY;
+
+      if (Math.abs(dy) > 80) return;
+      if (Math.abs(dx) < 70) return;
+
+      if (dx > 0 && !document.body.classList.contains("ifai-menu-open")) {
+        openMenu();
+      }
+
+      if (dx < 0 && document.body.classList.contains("ifai-menu-open")) {
+        closeMenu();
+      }
+    }, { passive: true });
+  }
+
+  function boot() {
+    if (!mq.matches) return;
+
+    createDrawer();
+    bindMenuButtons();
+    bindSwipe();
+
+    window.setTimeout(bindMenuButtons, 200);
+    window.setTimeout(bindMenuButtons, 700);
+    window.setTimeout(bindMenuButtons, 1400);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+
+  if (mq.addEventListener) {
+    mq.addEventListener("change", boot);
+  }
+
+  window.IdeasForgeAIMenu = {
+    open: openMenu,
+    close: closeMenu,
+    toggle: toggleMenu
+  };
+})();
+
