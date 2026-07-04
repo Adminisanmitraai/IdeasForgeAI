@@ -1,4 +1,32 @@
-﻿# IdeasForgeAI Project Status
+﻿## Phase CA-29 - Real Code Proposal from Selected Files
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only protected code proposal engine for Coding Agent.
+- Creates safe proposal metadata from selected files, CA-28 task plan, and CA-27 architecture context.
+- Produces protected code preview and protected unified diff preview.
+- Does not read local filesystem.
+- Does not fetch private GitHub files.
+- Does not clone repositories.
+- Does not write files.
+- Does not apply diffs.
+- Does not run tests, terminal commands, or Git commands.
+- Does not deploy or rollback.
+- Does not expose frontend tokens or secrets.
+- Normal users remain protected-preview-only.
+- Founder/Admin approval remains required for future copy/export/apply/Git/deploy flows.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-29
+
+NEXT AFTER: CA-30 - Founder/Admin Apply Diff to Workspace
+
+# IdeasForgeAI Project Status
 ## Phase CA-28 - Real Task Planner from Project Context
 
 Status: Completed locally, validation required before deploy.
@@ -13265,4 +13293,5 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `backend/main.py`, `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `python -m py_compile backend/main.py`; `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: no external legacy project files touched; no deployment settings touched; no `.env` or secret values added; backend execution remains allowlisted only.
+
 
