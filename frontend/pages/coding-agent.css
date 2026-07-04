@@ -7595,3 +7595,21 @@ body {
   }
 }
 
+
+/* BRAND-01C - Official header logo image repair */
+@media (max-width: 760px) {
+  .ui01b-brand-mark {
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
+  }
+
+  .ideasforgeai-official-header-mark,
+  .ui01b-brand-mark img {
+    width: 34px !important;
+    height: 34px !important;
+    object-fit: contain !important;
+    display: block !important;
+  }
+}
+

@@ -1,3 +1,17 @@
+## BRAND-01C - Runtime Header Logo Repair
+
+Status: Completed locally, validation required before deploy.
+
+- Forces the mobile header to use the official IdeasForgeAI mark image.
+- Tests multiple possible deployed paths before applying the logo.
+- Repairs broken placeholder logo in runtime without touching cards/composer.
+- No backend files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## UI-02K-1 - Mobile Header Safe-Area Clip Fix
 
 Status: Completed locally, validation required before deploy.

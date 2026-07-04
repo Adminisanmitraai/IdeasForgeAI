@@ -5873,7 +5873,8 @@ document.addEventListener("click", async (event) => {
   const BRAND = {
     forgeCodeIcon: "../assets/brand/forgecode-icon.png",
     forgeCodeWordmark: "../assets/brand/forgecode-wordmark.png",
-    ideasForgeWordmark: "../assets/brand/ideasforgeai-wordmark.png",
+    ideasForgeMark: "../assets/brand/ideasforgeai-mark.png",
+    ideasForgeLogoFull: "../assets/brand/ideasforgeai-logo-full.png",
   };
 
   function textOf(el) {
@@ -5891,7 +5892,7 @@ document.addEventListener("click", async (event) => {
   }
 
   function injectHeaderBrand() {
-    if (document.querySelector(".ifai-header-brand")) return;
+    if (document.querySelector(".ifai-header-brand") || document.querySelector(".coding-agent-brand__mark img, .brand-mark img")) return;
 
     const candidates = Array.from(
       document.querySelectorAll("header, .header, .topbar, .app-header, .agent-header, .brand, .brand-row, .shell-header")
@@ -5907,7 +5908,7 @@ document.addEventListener("click", async (event) => {
 
     const wrapper = document.createElement("span");
     wrapper.className = "ifai-header-brand";
-    const icon = makeImg(BRAND.forgeCodeIcon, "ForgeCode", "ifai-brand-img");
+    const icon = makeImg(BRAND.ideasForgeMark, "IdeasForgeAI", "ifai-brand-img");
     wrapper.appendChild(icon);
 
     titleNode.parentNode.insertBefore(wrapper, titleNode);
@@ -5915,7 +5916,7 @@ document.addEventListener("click", async (event) => {
   }
 
   function injectEmptyStateBrand() {
-    if (document.querySelector(".ifai-empty-brand")) return;
+    if (document.querySelector(".ifai-empty-brand") || document.querySelector(".coding-agent-empty-state__logo")) return;
 
     const headings = Array.from(document.querySelectorAll("h1,h2,.hero-title,.empty-title,.chat-title"));
     const heading = headings.find((el) => /Coding Agent|ForgeCode|protected Coding Agent/i.test(textOf(el)));
@@ -5923,18 +5924,18 @@ document.addEventListener("click", async (event) => {
 
     const box = document.createElement("div");
     box.className = "ifai-empty-brand";
-    box.appendChild(makeImg(BRAND.forgeCodeIcon, "ForgeCode AI Coding Agent", "ifai-forgecode-img"));
+    box.appendChild(makeImg(BRAND.ideasForgeLogoFull, "IdeasForgeAI", "ifai-forgecode-img"));
 
     const copy = document.createElement("div");
     copy.className = "ifai-empty-brand-text";
 
     const kicker = document.createElement("div");
     kicker.className = "ifai-empty-brand-kicker";
-    kicker.textContent = "ForgeCode";
+    kicker.textContent = "IdeasForgeAI";
 
     const title = document.createElement("div");
     title.className = "ifai-empty-brand-title";
-    title.textContent = "AI Coding Agent";
+    title.textContent = "ForgeCode Coding Agent";
 
     copy.appendChild(kicker);
     copy.appendChild(title);
@@ -5982,7 +5983,7 @@ document.addEventListener("click", async (event) => {
 // ---------------------------------------------------------------------------
 (function ui01bCleanMobileChat() {
   const mq = window.matchMedia("(max-width: 760px)");
-  const BRAND_ICON = "../assets/brand/ideasforgeai-app-touch-icon.png";
+  const BRAND_ICON = "../assets/brand/ideasforgeai-mark.png";
   const FORGECODE_ICON = "../assets/brand/forgecode-icon.png";
 
   function nowLabel() {
@@ -6130,8 +6131,8 @@ document.addEventListener("click", async (event) => {
 // ---------------------------------------------------------------------------
 (function ui01cMobileHeaderIconRepair() {
   const mq = window.matchMedia("(max-width: 760px)");
-  const BRAND_LOGO = "../assets/brand/ideasforgeai-fspark-icon-cropped.png";
-  const BRAND_FALLBACK = "../assets/brand/ideasforgeai-app-touch-icon.png";
+  const BRAND_LOGO = "../assets/brand/ideasforgeai-mark.png";
+  const BRAND_FALLBACK = "../assets/brand/ideasforgeai-mark.png";
 
   function svgMenu() {
     return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-linecap="round"/></svg>';
@@ -6176,7 +6177,7 @@ document.addEventListener("click", async (event) => {
       brandImg.src = BRAND_LOGO;
       brandImg.alt = "IdeasForgeAI";
       brandImg.onerror = function () {
-        if (brandImg.src.indexOf("ideasforgeai-app-touch-icon.png") === -1) {
+        if (brandImg.src.indexOf("ideasforgeai-mark.png") === -1) {
           brandImg.src = BRAND_FALLBACK;
         }
       };
@@ -6229,24 +6230,6 @@ document.addEventListener("click", async (event) => {
 
 // UI-01D final mobile icon fixes
 (function ui01dFinalMobileIconFixes() {
-  function sparkLogoSvg() {
-    return `
-      <svg class="ui01d-brand-logo" viewBox="0 0 64 64" fill="none" aria-hidden="true">
-        <path d="M31.8 5.5c3.8 15.2 11.5 23 26.7 26.7-15.2 3.8-22.9 11.5-26.7 26.7C28 43.7 20.3 36 5.1 32.2 20.3 28.5 28 20.7 31.8 5.5Z" fill="url(#g1)"/>
-        <path d="M31.8 19.8c1.8 6 5.2 9.5 11.2 11.2-6 1.8-9.4 5.2-11.2 11.2-1.8-6-5.2-9.4-11.2-11.2 6-1.7 9.4-5.2 11.2-11.2Z" fill="white"/>
-        <path d="M49.5 12.5c1.2 4.2 3.4 6.4 7.6 7.6-4.2 1.2-6.4 3.4-7.6 7.6-1.2-4.2-3.4-6.4-7.6-7.6 4.2-1.2 6.4-3.4 7.6-7.6Z" fill="#F5B828"/>
-        <circle cx="12" cy="15" r="3.2" fill="#4B84FF"/>
-        <circle cx="13" cy="49" r="3.2" fill="#4B84FF"/>
-        <circle cx="52" cy="48" r="3.2" fill="#7B4DFF"/>
-        <defs>
-          <linearGradient id="g1" x1="5" y1="12" x2="58" y2="54" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#3B82F6"/>
-            <stop offset="1" stop-color="#7C3AED"/>
-          </linearGradient>
-        </defs>
-      </svg>`;
-  }
-
   function shareSvg() {
     return `
       <svg class="ui01d-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -6284,11 +6267,6 @@ document.addEventListener("click", async (event) => {
   }
 
   function apply() {
-    const brand = document.querySelector(".ui01b-brand-mark");
-    if (brand && !brand.querySelector(".ui01d-brand-logo")) {
-      brand.insertAdjacentHTML("afterbegin", sparkLogoSvg());
-    }
-
     const share = document.querySelector(".ui01c-share-btn") || document.querySelector(".ui01b-icon-btn");
     if (share) {
       share.innerHTML = shareSvg();
@@ -6709,3 +6687,86 @@ document.addEventListener("click", async (event) => {
     });
   }
 })();
+
+
+// ---------------------------------------------------------------------------
+// BRAND-01C - Runtime Header Logo Repair
+// Forces official IdeasForgeAI mark into the mobile header and retries paths.
+// ---------------------------------------------------------------------------
+(function brand01cRuntimeHeaderLogoRepair() {
+  const candidates = [
+    "/assets/brand/ideasforgeai-mark.png?v=brand01c",
+    "../assets/brand/ideasforgeai-mark.png?v=brand01c",
+    "assets/brand/ideasforgeai-mark.png?v=brand01c"
+  ];
+
+  function testImage(src) {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(src);
+      img.onerror = () => resolve(null);
+      img.src = src;
+    });
+  }
+
+  async function findWorkingLogo() {
+    for (const src of candidates) {
+      const ok = await testImage(src);
+      if (ok) return ok;
+    }
+    return candidates[0];
+  }
+
+  async function applyLogo() {
+    const src = await findWorkingLogo();
+
+    const marks = document.querySelectorAll(
+      ".ui01b-brand-mark, .brand-mark, .mobile-brand-mark, [data-brand-mark]"
+    );
+
+    marks.forEach((mark) => {
+      mark.innerHTML = "";
+      mark.style.backgroundImage = "none";
+
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "IdeasForgeAI";
+      img.loading = "eager";
+      img.decoding = "async";
+      img.className = "ideasforgeai-official-header-mark";
+      mark.appendChild(img);
+    });
+
+    document
+      .querySelectorAll("img")
+      .forEach((img) => {
+        const srcText = String(img.getAttribute("src") || "");
+        const altText = String(img.getAttribute("alt") || "");
+        if (
+          srcText.includes("ideasforgeai") ||
+          srcText.includes("spark") ||
+          altText.toLowerCase().includes("ideasforgeai")
+        ) {
+          if (img.closest(".ui01b-topbar")) {
+            img.src = src;
+            img.alt = "IdeasForgeAI";
+            img.classList.add("ideasforgeai-official-header-mark");
+          }
+        }
+      });
+  }
+
+  function schedule() {
+    applyLogo();
+    setTimeout(applyLogo, 150);
+    setTimeout(applyLogo, 600);
+    setTimeout(applyLogo, 1200);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+})();
+
