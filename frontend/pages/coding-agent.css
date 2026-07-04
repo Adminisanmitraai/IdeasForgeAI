@@ -5624,3 +5624,54 @@ body {
   }
 }
 
+/* UI-01D final mobile icon fixes */
+@media (max-width: 760px) {
+  .ui01b-brand-mark img {
+    display: none !important;
+  }
+
+  .ui01d-brand-logo {
+    width: 38px;
+    height: 38px;
+    display: block;
+  }
+
+  .ui01c-share-btn,
+  .ui01c-publish-btn {
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .ui01d-svg {
+    width: 25px;
+    height: 25px;
+    display: block;
+  }
+
+  .ui01d-publish-svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  .ui01b-mic,
+  .ui01b-send {
+    font-size: 0 !important;
+    display: grid !important;
+    place-items: center !important;
+  }
+
+  .ui01b-mic .ui01d-svg,
+  .ui01b-send .ui01d-svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .ui01b-send .ui01d-svg {
+    stroke: #ffffff;
+  }
+
+  .ui01b-mic .ui01d-svg {
+    stroke: #111318;
+  }
+}
+

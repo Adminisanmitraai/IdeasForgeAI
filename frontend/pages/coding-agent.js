@@ -6229,3 +6229,100 @@ document.addEventListener("click", async (event) => {
   }
 })();
 
+// UI-01D final mobile icon fixes
+(function ui01dFinalMobileIconFixes() {
+  function sparkLogoSvg() {
+    return `
+      <svg class="ui01d-brand-logo" viewBox="0 0 64 64" fill="none" aria-hidden="true">
+        <path d="M31.8 5.5c3.8 15.2 11.5 23 26.7 26.7-15.2 3.8-22.9 11.5-26.7 26.7C28 43.7 20.3 36 5.1 32.2 20.3 28.5 28 20.7 31.8 5.5Z" fill="url(#g1)"/>
+        <path d="M31.8 19.8c1.8 6 5.2 9.5 11.2 11.2-6 1.8-9.4 5.2-11.2 11.2-1.8-6-5.2-9.4-11.2-11.2 6-1.7 9.4-5.2 11.2-11.2Z" fill="white"/>
+        <path d="M49.5 12.5c1.2 4.2 3.4 6.4 7.6 7.6-4.2 1.2-6.4 3.4-7.6 7.6-1.2-4.2-3.4-6.4-7.6-7.6 4.2-1.2 6.4-3.4 7.6-7.6Z" fill="#F5B828"/>
+        <circle cx="12" cy="15" r="3.2" fill="#4B84FF"/>
+        <circle cx="13" cy="49" r="3.2" fill="#4B84FF"/>
+        <circle cx="52" cy="48" r="3.2" fill="#7B4DFF"/>
+        <defs>
+          <linearGradient id="g1" x1="5" y1="12" x2="58" y2="54" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#3B82F6"/>
+            <stop offset="1" stop-color="#7C3AED"/>
+          </linearGradient>
+        </defs>
+      </svg>`;
+  }
+
+  function shareSvg() {
+    return `
+      <svg class="ui01d-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 14V4" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        <path d="M8 8l4-4 4 4" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M7 11H6.5A2.5 2.5 0 0 0 4 13.5v4A2.5 2.5 0 0 0 6.5 20h11a2.5 2.5 0 0 0 2.5-2.5v-4A2.5 2.5 0 0 0 17.5 11H17" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+      </svg>`;
+  }
+
+  function publishSvg() {
+    return `
+      <svg class="ui01d-svg ui01d-publish-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 16V4.8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M7.5 9.3 12 4.8l4.5 4.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6 18h12" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <path d="M8.5 21h7" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>`;
+  }
+
+  function micSvg() {
+    return `
+      <svg class="ui01d-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="9" y="3.5" width="6" height="11" rx="3" stroke="currentColor" stroke-width="2.4"/>
+        <path d="M5.8 11.5c0 3.6 2.6 6.2 6.2 6.2s6.2-2.6 6.2-6.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+        <path d="M12 17.8V21" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>`;
+  }
+
+  function upArrowSvg() {
+    return `
+      <svg class="ui01d-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 19V5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/>
+        <path d="M6.8 10.2 12 5l5.2 5.2" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>`;
+  }
+
+  function apply() {
+    const brand = document.querySelector(".ui01b-brand-mark");
+    if (brand && !brand.querySelector(".ui01d-brand-logo")) {
+      brand.insertAdjacentHTML("afterbegin", sparkLogoSvg());
+    }
+
+    const share = document.querySelector(".ui01c-share-btn") || document.querySelector(".ui01b-icon-btn");
+    if (share) {
+      share.innerHTML = shareSvg();
+      share.setAttribute("aria-label", "Share");
+    }
+
+    const publish = document.querySelector(".ui01c-publish-btn") || document.querySelector(".ui01b-primary-btn");
+    if (publish) {
+      publish.innerHTML = publishSvg();
+      publish.setAttribute("aria-label", "Publish");
+    }
+
+    const mic = document.querySelector(".ui01b-mic");
+    if (mic) {
+      mic.innerHTML = micSvg();
+      mic.setAttribute("aria-label", "Voice input");
+    }
+
+    const send = document.querySelector(".ui01b-send");
+    if (send) {
+      send.innerHTML = upArrowSvg();
+      send.setAttribute("aria-label", "Send");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", apply, { once: true });
+  } else {
+    apply();
+  }
+
+  setTimeout(apply, 250);
+  setTimeout(apply, 800);
+})();
+
