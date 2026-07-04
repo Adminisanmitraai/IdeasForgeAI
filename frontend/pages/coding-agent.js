@@ -6661,3 +6661,116 @@ document.addEventListener("click", async (event) => {
   if (mq.addEventListener) mq.addEventListener("change", schedule);
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-02C - ForgeWork Module + Premium Home Chat Polish
+// Replaces ForgePilot home card with ForgeWork, using premium inline icons.
+// ---------------------------------------------------------------------------
+(function ui02cForgeWorkModulePolish() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  function studioIconSvg() {
+    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="12" y="15" width="56" height="48" rx="14" fill="#fff" stroke="#DFE4F2" stroke-width="2"/><path d="M21 24h38" stroke="#7C61FF" stroke-width="5" stroke-linecap="round"/><rect x="22" y="33" width="22" height="18" rx="5" fill="url(#studioGrad)"/><path d="M48 34h10M48 43h13M48 52h8" stroke="#CBD1DF" stroke-width="4" stroke-linecap="round"/><path d="M53 52l9 9" stroke="#5138EA" stroke-width="5" stroke-linecap="round"/><path d="M59 47l5 14-14-5 9-9Z" fill="#644CFF"/><defs><linearGradient id="studioGrad" x1="22" y1="33" x2="44" y2="51"><stop stop-color="#7B61FF"/><stop offset="1" stop-color="#AFC6FF"/></linearGradient></defs></svg>';
+  }
+
+  function codeIconSvg() {
+    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="12" y="14" width="56" height="50" rx="14" fill="#12151C"/><circle cx="22" cy="23" r="3" fill="#FF5F57"/><circle cx="31" cy="23" r="3" fill="#FFBD2E"/><circle cx="40" cy="23" r="3" fill="#28C840"/><path d="M31 37l-8 8 8 8" stroke="#7C61FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M49 37l8 8-8 8" stroke="#7C61FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M43 34l-6 22" stroke="#A994FF" stroke-width="5" stroke-linecap="round"/><path d="M24 59h32" stroke="#6D55FF" stroke-width="4" stroke-linecap="round"/></svg>';
+  }
+
+  function workIconSvg() {
+    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d="M18 52c-6-6-7-19 3-29 10-10 27-10 38 0 10 10 10 27 0 37-8 8-21 10-32 5L16 68l2-16Z" fill="#151820"/><path d="M18 52c-6-6-7-19 3-29 10-10 27-10 38 0 10 10 10 27 0 37-8 8-21 10-32 5L16 68l2-16Z" stroke="#272B36" stroke-width="2"/><circle cx="31" cy="42" r="4" fill="#fff"/><circle cx="40" cy="42" r="4" fill="#fff"/><circle cx="49" cy="42" r="4" fill="#fff"/><path d="M13 45c12-15 34-21 56-13" stroke="#7C61FF" stroke-width="4" stroke-linecap="round"/><path d="M62 17l2.5 5 5.5 2-5.5 2-2.5 5-2.5-5-5.5-2 5.5-2 2.5-5Z" fill="#7C61FF"/></svg>';
+  }
+
+  function setIcon(card, svg) {
+    const icon = card && card.querySelector(".ui02-module-icon");
+    if (!icon) return;
+    icon.innerHTML = svg;
+  }
+
+  function setName(card, left, accent) {
+    const name = card && card.querySelector(".ui02-module-name");
+    if (!name) return;
+    name.innerHTML = left + '<span>' + accent + '</span>';
+  }
+
+  function apply() {
+    if (!mq.matches) return;
+
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    if (!shell) return;
+
+    const title = shell.querySelector(".ui02-home-title");
+    if (title) title.textContent = "What do you want to create, code, or work on today?";
+
+    const subtitle = shell.querySelector(".ui02-home-subtitle");
+    if (subtitle) subtitle.textContent = "Choose a mode or simply describe your task.";
+
+    const studio = shell.querySelector('.ui02-module-card[data-module="studio"]');
+    if (studio) {
+      setIcon(studio, studioIconSvg());
+      setName(studio, "Forge", "Studio");
+      const desc = studio.querySelector(".ui02-module-desc");
+      if (desc) desc.textContent = "Create apps, websites, UI, images, logos, documents.";
+    }
+
+    const code = shell.querySelector('.ui02-module-card[data-module="code"]');
+    if (code) {
+      setIcon(code, codeIconSvg());
+      setName(code, "Forge", "Code");
+      const desc = code.querySelector(".ui02-module-desc");
+      if (desc) desc.textContent = "Analyze projects, write code, fix errors, test, deploy.";
+    }
+
+    const oldPilot = shell.querySelector('.ui02-module-card[data-module="pilot"]');
+    if (oldPilot) {
+      oldPilot.dataset.module = "work";
+    }
+
+    const work = shell.querySelector('.ui02-module-card[data-module="work"]');
+    if (work) {
+      setIcon(work, workIconSvg());
+      setName(work, "Forge", "Work");
+      const desc = work.querySelector(".ui02-module-desc");
+      if (desc) desc.textContent = "AI workspace for documents, research, tasks, reports.";
+    }
+
+    const input = shell.querySelector(".ui01b-input");
+    if (input) input.placeholder = "Ask IdeasForgeAI...";
+
+    const cards = shell.querySelectorAll(".ui02-module-card");
+    cards.forEach((card) => {
+      if (card.dataset.ui02cBound) return;
+      card.dataset.ui02cBound = "true";
+      card.addEventListener("click", function () {
+        const input = shell.querySelector(".ui01b-input");
+        if (!input) return;
+
+        const prompts = {
+          studio: "I want to create something with ForgeStudio.",
+          code: "I want to build or fix software with ForgeCode.",
+          work: "I want to work on documents, research, tasks, or reports with ForgeWork.",
+        };
+
+        input.value = prompts[card.dataset.module] || "";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        input.focus();
+      });
+    });
+  }
+
+  function schedule() {
+    apply();
+    window.setTimeout(apply, 100);
+    window.setTimeout(apply, 350);
+    window.setTimeout(apply, 900);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+
+  if (mq.addEventListener) mq.addEventListener("change", schedule);
+})();
+

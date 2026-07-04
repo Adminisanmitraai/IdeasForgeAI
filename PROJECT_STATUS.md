@@ -1,3 +1,27 @@
+## UI-02C - ForgeWork Module + Premium Home Chat Polish
+
+Status: Completed locally, validation required before deploy.
+
+- Replaced ForgePilot home module card with ForgeWork.
+- Updated home prompt to create, code, or work.
+- Added premium inline module icons inspired by the uploaded reference style.
+- Polished ForgeStudio, ForgeCode, and ForgeWork cards for better visual clarity.
+- Kept ForgePilot available as a future protected computer-control feature, not a main home card.
+- Preserved ChatGPT-like composer behavior.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02B - Mobile Edge Clipping + Header Balance Fix
 
 Status: Completed locally, validation required before deploy.
