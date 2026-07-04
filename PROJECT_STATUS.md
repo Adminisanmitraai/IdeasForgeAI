@@ -1,3 +1,17 @@
+## UI-02Q - Lower Chat Tray + Make Coding Agent Default Index
+
+Status: Completed locally, validation required before deploy.
+
+- Lowered the mobile chat tray slightly.
+- Made frontend/index.html redirect to /pages/coding-agent.html.
+- Backed up the previous frontend index as frontend/index.before-ui02q.html.
+- Did not change header, cards, icons, backend, ForgePilot gateway, or desktop companion.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## UI-02P - Force Product Selector Default from HTML
 
 Status: Completed locally, validation required before deploy.

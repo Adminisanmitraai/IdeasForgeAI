@@ -8131,3 +8131,20 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   UI-02Q - Lower Chat Tray Slightly
+   Only lowers mobile composer a little. No card/header/content changes.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    bottom: 24px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    bottom: 22px !important;
+  }
+}
+
