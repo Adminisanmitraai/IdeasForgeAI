@@ -1,4 +1,4 @@
-﻿import json
+import json
 import os
 import re
 import subprocess
@@ -575,6 +575,57 @@ def coding_agent_apply_diff(request: ApplyDiffRequest):
     }
 
 
+
+def _build_founder_apply_diff_locked_response(request: ApplyDiffRequest, action: str) -> Dict[str, Any]:
+    return {
+        "ok": True,
+        "feature": "coding-agent-founder-apply-diff",
+        "mode": "founder-admin-approval-preview",
+        "action": action,
+        "project_id": request.project_id.strip() or "ideasforgeai-demo",
+        "proposal_id": request.proposal_id.strip() or "demo-task-planner-fix",
+        "apply_enabled": False,
+        "founder_admin_required": True,
+        "real_file_write": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+        "requested_by_role": request.requested_by_role,
+        "approval_intent": request.approval_intent,
+        "message": "Founder/Admin apply-diff is locked by default. No files were changed.",
+    }
+
+
+@app.get("/api/coding-agent/founder-apply-diff/health")
+def coding_agent_founder_apply_diff_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-founder-apply-diff",
+        "mode": "founder-admin-approval-preview",
+        "apply_enabled": False,
+        "founder_admin_required": True,
+        "real_file_write": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+        "message": "Founder/Admin apply-diff health is locked by default.",
+    }
+
+
+@app.post("/api/coding-agent/founder-apply-diff/validate")
+def coding_agent_founder_apply_diff_validate(request: ApplyDiffRequest):
+    return _build_founder_apply_diff_locked_response(request, "validate")
+
+
+@app.post("/api/coding-agent/founder-apply-diff/apply")
+def coding_agent_founder_apply_diff_apply(request: ApplyDiffRequest):
+    return _build_founder_apply_diff_locked_response(request, "apply")
 @app.get("/api/coding-agent/run-tests/health")
 def coding_agent_run_tests_health():
     return {
@@ -818,14 +869,14 @@ def _build_github_integration_preview(request: GitHubIntegrationPreviewRequest) 
             "message": "Real GitHub actions require backend authentication, secure token storage, connected repository permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "GitHub workflow preview opened â€” allowed",
-            "Repository token access â€” blocked",
-            "Branch creation â€” blocked",
-            "Commit â€” blocked",
-            "Push â€” blocked",
-            "Pull request creation â€” blocked",
-            "Merge â€” blocked",
-            "Rollback â€” blocked",
+            "GitHub workflow preview opened — allowed",
+            "Repository token access — blocked",
+            "Branch creation — blocked",
+            "Commit — blocked",
+            "Push — blocked",
+            "Pull request creation — blocked",
+            "Merge — blocked",
+            "Rollback — blocked",
         ],
         "safety": {
             "github_api_calls": False,
@@ -942,14 +993,14 @@ def _build_deployment_approval_preview(request: DeploymentApprovalPreviewRequest
             "message": "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "Deployment flow preview opened â€” allowed",
-            "Deployment approval requested â€” recorded",
-            "Render API call â€” blocked",
-            "GitHub deploy action â€” blocked",
-            "Production promotion â€” blocked",
-            "Rollback â€” blocked",
-            "DNS change â€” blocked",
-            "Secrets access â€” blocked",
+            "Deployment flow preview opened — allowed",
+            "Deployment approval requested — recorded",
+            "Render API call — blocked",
+            "GitHub deploy action — blocked",
+            "Production promotion — blocked",
+            "Rollback — blocked",
+            "DNS change — blocked",
+            "Secrets access — blocked",
         ],
         "safety": {
             "render_api_calls": False,
@@ -1721,7 +1772,7 @@ def _mask_ca24_line(line: str, role: str) -> str:
     if any(token in stripped.lower() for token in ["key", "token", "secret", "password", "credential"]):
         return "[protected-sensitive-line]"
     if len(line) > 96:
-        return line[:96] + " â€¦"
+        return line[:96] + " …"
     return line
 
 
@@ -4193,6 +4244,8 @@ async def phase23c_apple_like_visual_qa_score(request: Request):
     except Exception:
         payload = {}
     return get_phase23c_apple_like_visual_qa_score(payload)
+
+
 
 
 

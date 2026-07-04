@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import os
@@ -191,9 +191,9 @@ PHASE_REGISTRY: Dict[str, Dict[str, object]] = {
         "title": "Founder/Admin Apply Diff to Workspace",
         "next": "CA-31",
         "implemented": False,
-        "required_endpoints": [("POST", "/api/coding-agent/apply-diff")],
+        "required_endpoints": [("POST", "/api/coding-agent/apply-diff"), ("GET", "/api/coding-agent/founder-apply-diff/health"), ("POST", "/api/coding-agent/founder-apply-diff/validate"), ("POST", "/api/coding-agent/founder-apply-diff/apply")],
         "required_frontend_terms": ["Founder/Admin", "Apply Diff"],
-        "required_backend_terms": ["ApplyDiffRequest"],
+        "required_backend_terms": ["ApplyDiffRequest", "founder-apply-diff", "apply_enabled", "founder_admin_required", "real_file_write", "file_write", "apply_diff", "terminal", "git_commands", "deployment", "secrets"],
     },
     "CA-31": {
         "title": "Real Test Runner Backend Execution",
@@ -535,7 +535,7 @@ def check_phase_registry(report: AuditReport, phase: str, all_mode: bool) -> Non
         "Coding Agent phase registry",
         "backend/coding_agent_phase_audit.py",
         "Requested phase is registered with title and NEXT AFTER metadata.",
-        f"{phase} â€” {title}; NEXT AFTER: {phase_data.get('next')}",
+        f"{phase} — {title}; NEXT AFTER: {phase_data.get('next')}",
     )
 
 
@@ -596,7 +596,7 @@ def check_project_status(report: AuditReport, phase: str) -> None:
                 "PROJECT_STATUS.md",
                 f"Latest phase status should include NEXT AFTER: {expected_next}.",
                 "No matching NEXT AFTER label found.",
-                f"Add `NEXT AFTER: {expected_next} â€” {PHASE_REGISTRY.get(expected_next, {}).get('title', 'next planned phase')}` to the latest phase block.",
+                f"Add `NEXT AFTER: {expected_next} — {PHASE_REGISTRY.get(expected_next, {}).get('title', 'next planned phase')}` to the latest phase block.",
             )
 
 
@@ -1177,5 +1177,6 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
 
 
