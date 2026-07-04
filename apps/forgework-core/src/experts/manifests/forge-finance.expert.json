@@ -1,0 +1,62 @@
+{
+  "id": "forge-finance",
+  "name": "ForgeFinance",
+  "version": "1.0.0",
+  "description": "Finance expert for projections, pricing, cost analysis, investment planning, revenue models, budgeting and financial risk reasoning.",
+  "category": "finance-accounting",
+  "priority": 86,
+  "status": "active",
+  "skills": [
+    "financial-analysis",
+    "budgeting",
+    "revenue-modelling",
+    "pricing-strategy"
+  ],
+  "supportedTasks": [
+    "create-financial-model",
+    "analyze-project-cost",
+    "prepare-revenue-forecast",
+    "review-investment-plan"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "financial-model",
+    "spreadsheet",
+    "report",
+    "calculation",
+    "risk-summary"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "finance",
+    "budget",
+    "revenue",
+    "projection",
+    "pricing"
+  ],
+  "examples": [
+    "Create a revenue model for this startup.",
+    "Analyze the project investment and expected return.",
+    "Prepare a cost and pricing model."
+  ]
+}

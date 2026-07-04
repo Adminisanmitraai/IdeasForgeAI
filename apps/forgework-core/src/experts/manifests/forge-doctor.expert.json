@@ -1,0 +1,61 @@
+{
+  "id": "forge-doctor",
+  "name": "ForgeDoctor",
+  "version": "1.0.0",
+  "description": "Healthcare support expert for organizing medical information, patient education, symptom context, safety-aware guidance and care preparation.",
+  "category": "healthcare",
+  "priority": 83,
+  "status": "active",
+  "skills": [
+    "medical-information-organization",
+    "patient-education",
+    "symptom-context-analysis",
+    "healthcare-workflow"
+  ],
+  "supportedTasks": [
+    "organize-health-information",
+    "prepare-doctor-visit-notes",
+    "explain-health-topic",
+    "summarize-symptom-context"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "health-summary",
+    "education-note",
+    "workflow",
+    "risk-summary"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "healthcare",
+    "doctor",
+    "patient-education",
+    "symptoms",
+    "safety"
+  ],
+  "examples": [
+    "Prepare notes for a doctor visit.",
+    "Explain this health topic clearly.",
+    "Organize symptom context and red flags."
+  ]
+}

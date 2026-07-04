@@ -1,0 +1,61 @@
+{
+  "id": "forge-lighting",
+  "name": "ForgeLighting",
+  "version": "1.0.0",
+  "description": "Lighting design expert for architectural, interior, landscape, event and cinematic lighting concepts.",
+  "category": "architecture-construction",
+  "priority": 82,
+  "status": "active",
+  "skills": [
+    "lighting-design",
+    "event-lighting",
+    "architectural-lighting",
+    "mood-lighting"
+  ],
+  "supportedTasks": [
+    "create-lighting-plan",
+    "review-lighting-concept",
+    "plan-event-lighting",
+    "prepare-night-visual-brief"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "lighting-plan",
+    "visual-brief",
+    "technical-spec",
+    "client-presentation"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "lighting",
+    "event",
+    "architecture",
+    "night-look",
+    "ambience"
+  ],
+  "examples": [
+    "Create a night lighting concept for this wedding lawn.",
+    "Plan facade lighting for this structure.",
+    "Prepare a warm luxury lighting scheme."
+  ]
+}

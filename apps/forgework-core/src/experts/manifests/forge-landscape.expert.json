@@ -1,0 +1,68 @@
+{
+  "id": "forge-landscape",
+  "name": "ForgeLandscape",
+  "version": "1.0.0",
+  "description": "Landscape design expert for gardens, event lawns, outdoor experiences, horticulture, movement flow and site beautification.",
+  "category": "architecture-construction",
+  "priority": 86,
+  "status": "active",
+  "skills": [
+    "landscape-design",
+    "garden-planning",
+    "horticulture-layout",
+    "outdoor-flow-planning"
+  ],
+  "supportedTasks": [
+    "create-landscape-layout",
+    "plan-wedding-garden",
+    "review-outdoor-space",
+    "prepare-horticulture-concept"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "layout",
+    "visual-brief",
+    "planting-plan",
+    "client-presentation",
+    "plan"
+  ],
+  "dependencies": [
+    {
+      "expertId": "forge-lighting",
+      "versionRange": ">=1.0.0",
+      "required": false
+    }
+  ],
+  "capabilityTags": [
+    "landscape",
+    "garden",
+    "horticulture",
+    "outdoor",
+    "event-lawn"
+  ],
+  "examples": [
+    "Create a wedding garden layout for this lawn.",
+    "Design a horticulture garden concept.",
+    "Plan landscape lighting and movement flow."
+  ]
+}

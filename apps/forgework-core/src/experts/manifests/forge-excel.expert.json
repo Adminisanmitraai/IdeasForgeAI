@@ -1,0 +1,62 @@
+{
+  "id": "forge-excel",
+  "name": "ForgeExcel",
+  "version": "1.0.0",
+  "description": "Spreadsheet expert for Excel models, formulas, dashboards, data cleanup, reporting, calculations and automation planning.",
+  "category": "office-productivity",
+  "priority": 88,
+  "status": "active",
+  "skills": [
+    "spreadsheet-modelling",
+    "excel-formulas",
+    "dashboard-planning",
+    "data-cleanup"
+  ],
+  "supportedTasks": [
+    "create-excel-model",
+    "fix-spreadsheet-formula",
+    "prepare-dashboard-plan",
+    "analyze-table-data"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "spreadsheet",
+    "dashboard-spec",
+    "calculation",
+    "report",
+    "template"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "excel",
+    "spreadsheet",
+    "dashboard",
+    "formula",
+    "data"
+  ],
+  "examples": [
+    "Create an Excel model for this business.",
+    "Fix this spreadsheet formula logic.",
+    "Plan a dashboard from this data."
+  ]
+}

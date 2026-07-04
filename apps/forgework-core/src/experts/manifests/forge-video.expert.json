@@ -1,0 +1,62 @@
+{
+  "id": "forge-video",
+  "name": "ForgeVideo",
+  "version": "1.0.0",
+  "description": "Video production expert for scripts, shot lists, editing plans, content strategy, production setup and publishing workflows.",
+  "category": "media-production",
+  "priority": 78,
+  "status": "active",
+  "skills": [
+    "video-production-planning",
+    "scriptwriting",
+    "shot-list-planning",
+    "editing-strategy"
+  ],
+  "supportedTasks": [
+    "create-video-script",
+    "prepare-shot-list",
+    "plan-editing-workflow",
+    "create-content-video-plan"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "video-brief",
+    "script",
+    "shot-list",
+    "editing-plan",
+    "content-plan"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "video",
+    "script",
+    "shots",
+    "editing",
+    "production"
+  ],
+  "examples": [
+    "Create a video script for this concept.",
+    "Prepare a shot list for a podcast studio.",
+    "Plan the editing workflow for this campaign."
+  ]
+}

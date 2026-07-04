@@ -1,0 +1,62 @@
+{
+  "id": "forge-teacher",
+  "name": "ForgeTeacher",
+  "version": "1.0.0",
+  "description": "Education expert for lesson plans, tutoring, training materials, explanations, worksheets, rubrics and curriculum support.",
+  "category": "education-training",
+  "priority": 80,
+  "status": "active",
+  "skills": [
+    "lesson-planning",
+    "curriculum-design",
+    "worksheet-creation",
+    "student-explanation"
+  ],
+  "supportedTasks": [
+    "create-lesson-plan",
+    "prepare-worksheet",
+    "explain-topic",
+    "create-training-plan"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "lesson-plan",
+    "worksheet",
+    "rubric",
+    "explanation",
+    "training-plan"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "education",
+    "teaching",
+    "lesson",
+    "worksheet",
+    "training"
+  ],
+  "examples": [
+    "Create a lesson plan for this topic.",
+    "Prepare a worksheet with answers.",
+    "Explain this concept for beginners."
+  ]
+}

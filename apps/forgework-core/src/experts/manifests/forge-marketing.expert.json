@@ -1,0 +1,62 @@
+{
+  "id": "forge-marketing",
+  "name": "ForgeMarketing",
+  "version": "1.0.0",
+  "description": "Marketing expert for positioning, campaigns, launch strategy, content systems, funnels, social media and growth planning.",
+  "category": "business-marketing",
+  "priority": 84,
+  "status": "active",
+  "skills": [
+    "marketing-strategy",
+    "brand-positioning",
+    "campaign-planning",
+    "growth-copywriting"
+  ],
+  "supportedTasks": [
+    "create-launch-plan",
+    "prepare-marketing-campaign",
+    "write-sales-copy",
+    "plan-social-content"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "strategy",
+    "campaign-plan",
+    "copy",
+    "content-plan",
+    "report"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "marketing",
+    "growth",
+    "copy",
+    "campaign",
+    "launch"
+  ],
+  "examples": [
+    "Create a launch campaign for this product.",
+    "Write a high-converting landing page strategy.",
+    "Plan a month of social media content."
+  ]
+}

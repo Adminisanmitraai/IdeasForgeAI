@@ -1,0 +1,68 @@
+{
+  "id": "forge-interior",
+  "name": "ForgeInterior",
+  "version": "1.0.0",
+  "description": "Interior design expert for space planning, furniture layout, material strategy, styling, lighting coordination and presentation-ready concepts.",
+  "category": "architecture-construction",
+  "priority": 88,
+  "status": "active",
+  "skills": [
+    "interior-design",
+    "furniture-layout",
+    "material-selection",
+    "space-styling"
+  ],
+  "supportedTasks": [
+    "create-interior-concept",
+    "review-room-layout",
+    "plan-furniture-layout",
+    "prepare-interior-moodboard"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "visual-brief",
+    "layout",
+    "client-presentation",
+    "material-spec",
+    "plan"
+  ],
+  "dependencies": [
+    {
+      "expertId": "forge-architecture",
+      "versionRange": ">=1.0.0",
+      "required": false
+    }
+  ],
+  "capabilityTags": [
+    "interior",
+    "furniture",
+    "materials",
+    "moodboard",
+    "room-design"
+  ],
+  "examples": [
+    "Create a modern interior concept for this room.",
+    "Plan the furniture layout for this hall.",
+    "Prepare a material and color direction for a client presentation."
+  ]
+}

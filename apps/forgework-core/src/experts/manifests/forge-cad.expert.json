@@ -1,0 +1,74 @@
+{
+  "id": "forge-cad",
+  "name": "ForgeCAD",
+  "version": "1.0.0",
+  "description": "Professional CAD drafting, layout planning, technical drawing and spatial design expert.",
+  "category": "design-engineering",
+  "priority": 90,
+  "status": "active",
+  "skills": [
+    "cad-drafting",
+    "layout-planning",
+    "technical-drawing",
+    "floor-plan-analysis"
+  ],
+  "supportedTasks": [
+    "create-cad-layout",
+    "review-floor-plan",
+    "convert-sketch-to-layout",
+    "prepare-client-presentation-layout"
+  ],
+  "requiredSoftware": [
+    {
+      "name": "AutoCAD",
+      "required": false,
+      "minimumVersion": null
+    }
+  ],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "plan",
+    "layout",
+    "technical-spec",
+    "image-brief",
+    "file-instruction"
+  ],
+  "dependencies": [
+    {
+      "expertId": "forge-architecture",
+      "versionRange": ">=1.0.0",
+      "required": false
+    }
+  ],
+  "capabilityTags": [
+    "cad",
+    "architecture",
+    "layout",
+    "drawing",
+    "technical-design"
+  ],
+  "examples": [
+    "Create an AutoCAD-style layout for this plot.",
+    "Review this floor plan like a senior architect.",
+    "Prepare a client-ready technical layout presentation."
+  ]
+}

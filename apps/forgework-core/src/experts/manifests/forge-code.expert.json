@@ -1,0 +1,62 @@
+{
+  "id": "forge-code",
+  "name": "ForgeCode",
+  "version": "1.0.0",
+  "description": "Software engineering expert for project understanding, architecture analysis, code planning, debugging, testing and deployment strategy.",
+  "category": "software-engineering",
+  "priority": 95,
+  "status": "active",
+  "skills": [
+    "software-architecture",
+    "code-analysis",
+    "debugging-strategy",
+    "safe-edit-planning"
+  ],
+  "supportedTasks": [
+    "analyze-project-architecture",
+    "plan-code-change",
+    "debug-application",
+    "prepare-deployment-plan"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "architecture-plan",
+    "code-plan",
+    "test-plan",
+    "deployment-plan",
+    "diff-plan"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "code",
+    "software",
+    "debugging",
+    "architecture",
+    "deployment"
+  ],
+  "examples": [
+    "Analyze this project architecture.",
+    "Plan a safe code change with test steps.",
+    "Prepare a deployment strategy for this app."
+  ]
+}

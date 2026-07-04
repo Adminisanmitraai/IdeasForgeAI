@@ -1,0 +1,62 @@
+{
+  "id": "forge-legal",
+  "name": "ForgeLegal",
+  "version": "1.0.0",
+  "description": "Legal and compliance expert for document review, policy reasoning, risk identification, contract summaries and compliance planning.",
+  "category": "legal-compliance",
+  "priority": 84,
+  "status": "active",
+  "skills": [
+    "legal-research",
+    "compliance-analysis",
+    "contract-review",
+    "risk-identification"
+  ],
+  "supportedTasks": [
+    "review-legal-document",
+    "prepare-compliance-checklist",
+    "summarize-contract",
+    "identify-legal-risks"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "legal-summary",
+    "risk-summary",
+    "checklist",
+    "document-review",
+    "policy-draft"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "legal",
+    "compliance",
+    "contract",
+    "risk",
+    "policy"
+  ],
+  "examples": [
+    "Review this agreement and summarize risks.",
+    "Prepare a compliance checklist for this workflow.",
+    "Identify legal points to discuss with a lawyer."
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "id": "forge-3d",
+  "name": "Forge3D",
+  "version": "1.0.0",
+  "description": "3D concept expert for spatial visualization, product forms, architecture massing, prototype direction and rendering briefs.",
+  "category": "design-engineering",
+  "priority": 88,
+  "status": "active",
+  "skills": [
+    "3d-concepting",
+    "spatial-visualization",
+    "render-briefing",
+    "prototype-design"
+  ],
+  "supportedTasks": [
+    "create-3d-concept",
+    "prepare-render-brief",
+    "review-3d-layout",
+    "plan-prototype-visual"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "3d-brief",
+    "visual-brief",
+    "prototype-plan",
+    "render-instruction"
+  ],
+  "dependencies": [
+    {
+      "expertId": "forge-architecture",
+      "versionRange": ">=1.0.0",
+      "required": false
+    }
+  ],
+  "capabilityTags": [
+    "3d",
+    "render",
+    "prototype",
+    "spatial",
+    "visualization"
+  ],
+  "examples": [
+    "Create a 3D concept direction for this structure.",
+    "Prepare a realistic render brief for a wedding facade.",
+    "Review this 3D layout for design quality."
+  ]
+}

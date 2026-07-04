@@ -1,0 +1,61 @@
+{
+  "id": "forge-photo",
+  "name": "ForgePhoto",
+  "version": "1.0.0",
+  "description": "Photo expert for image direction, retouching briefs, composition, product photography, event photography and visual quality review.",
+  "category": "media-production",
+  "priority": 76,
+  "status": "active",
+  "skills": [
+    "photo-direction",
+    "composition-review",
+    "retouching-brief",
+    "product-photography"
+  ],
+  "supportedTasks": [
+    "prepare-photo-brief",
+    "review-image-quality",
+    "plan-product-shoot",
+    "create-retouching-instructions"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "photo-brief",
+    "editing-plan",
+    "visual-brief",
+    "quality-review"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "photo",
+    "image",
+    "composition",
+    "retouching",
+    "shoot"
+  ],
+  "examples": [
+    "Prepare a product photo shoot brief.",
+    "Review this image composition.",
+    "Create retouching instructions for this photo."
+  ]
+}

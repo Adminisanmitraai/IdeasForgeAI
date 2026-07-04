@@ -1,0 +1,62 @@
+{
+  "id": "forge-presentation",
+  "name": "ForgePresentation",
+  "version": "1.0.0",
+  "description": "Presentation expert for pitch decks, project reports, visual storytelling, slide structure and client-facing communication.",
+  "category": "office-productivity",
+  "priority": 84,
+  "status": "active",
+  "skills": [
+    "presentation-structure",
+    "visual-storytelling",
+    "pitch-deck-planning",
+    "client-reporting"
+  ],
+  "supportedTasks": [
+    "create-presentation-outline",
+    "prepare-pitch-deck",
+    "review-slide-story",
+    "plan-project-report"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "presentation",
+    "outline",
+    "client-presentation",
+    "report",
+    "visual-brief"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "presentation",
+    "deck",
+    "slides",
+    "pitch",
+    "storytelling"
+  ],
+  "examples": [
+    "Create a pitch deck for this startup.",
+    "Plan a graphical project report.",
+    "Improve this presentation structure."
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "id": "forge-research",
+  "name": "ForgeResearch",
+  "version": "1.0.0",
+  "description": "Research intelligence expert for structured investigation, source analysis, industry research, synthesis and evidence-aware recommendations.",
+  "category": "research-intelligence",
+  "priority": 90,
+  "status": "active",
+  "skills": [
+    "research-planning",
+    "source-analysis",
+    "competitive-analysis",
+    "synthesis"
+  ],
+  "supportedTasks": [
+    "perform-market-research",
+    "summarize-research",
+    "compare-options",
+    "prepare-intelligence-report"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "research-brief",
+    "analysis",
+    "source-map",
+    "report",
+    "recommendation"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "research",
+    "intelligence",
+    "analysis",
+    "sources",
+    "market"
+  ],
+  "examples": [
+    "Research this industry and prepare a decision brief.",
+    "Compare competitors and summarize key opportunities.",
+    "Create an evidence-backed market intelligence report."
+  ]
+}

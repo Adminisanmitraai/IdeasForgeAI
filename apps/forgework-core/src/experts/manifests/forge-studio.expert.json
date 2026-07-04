@@ -1,0 +1,62 @@
+{
+  "id": "forge-studio",
+  "name": "ForgeStudio",
+  "version": "1.0.0",
+  "description": "Creation platform expert for apps, websites, UI/UX, branding, graphics, documents, images, videos and presentation assets.",
+  "category": "creative-production",
+  "priority": 94,
+  "status": "active",
+  "skills": [
+    "creative-direction",
+    "ui-ux-planning",
+    "asset-planning",
+    "brand-system-design"
+  ],
+  "supportedTasks": [
+    "create-app-concept",
+    "create-website-concept",
+    "create-branding-system",
+    "prepare-creative-asset-plan"
+  ],
+  "requiredSoftware": [],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "creative-brief",
+    "ui-spec",
+    "brand-guide",
+    "presentation",
+    "image-brief"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "creation",
+    "uiux",
+    "branding",
+    "assets",
+    "studio"
+  ],
+  "examples": [
+    "Create a polished mobile app concept.",
+    "Plan a complete website design system.",
+    "Prepare branding assets for a startup."
+  ]
+}

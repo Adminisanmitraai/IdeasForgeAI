@@ -1,0 +1,73 @@
+{
+  "id": "forge-architecture",
+  "name": "ForgeArchitecture",
+  "version": "1.0.0",
+  "description": "Senior architecture planning expert for spatial strategy, building concepts, elevations, layouts and client-ready architectural reasoning.",
+  "category": "architecture-construction",
+  "priority": 92,
+  "status": "active",
+  "skills": [
+    "architecture-planning",
+    "spatial-analysis",
+    "floor-plan-review",
+    "building-concept-design"
+  ],
+  "supportedTasks": [
+    "create-architecture-concept",
+    "review-building-layout",
+    "plan-residential-space",
+    "prepare-architecture-brief"
+  ],
+  "requiredSoftware": [
+    {
+      "name": "AutoCAD",
+      "required": false,
+      "minimumVersion": null
+    },
+    {
+      "name": "SketchUp",
+      "required": false,
+      "minimumVersion": null
+    }
+  ],
+  "desktopPermissions": {
+    "requiresDesktop": false,
+    "canUseForgePilot": true,
+    "allowedActions": [
+      "screen-preview",
+      "keyboard-type",
+      "mouse-click"
+    ],
+    "blockedActions": [
+      "delete-files",
+      "send-email",
+      "make-payment"
+    ]
+  },
+  "approvalRequirements": {
+    "requiresUserApprovalBeforeExecution": true,
+    "requiresUserApprovalBeforeDesktopAction": true,
+    "requiresUserApprovalBeforeFileWrite": true,
+    "requiresUserApprovalBeforeExternalSend": true
+  },
+  "outputTypes": [
+    "plan",
+    "layout",
+    "technical-spec",
+    "visual-brief",
+    "client-presentation"
+  ],
+  "dependencies": [],
+  "capabilityTags": [
+    "architecture",
+    "building",
+    "floor-plan",
+    "elevation",
+    "space-planning"
+  ],
+  "examples": [
+    "Review this residential layout like a senior architect.",
+    "Create a client-ready architecture concept from this plot.",
+    "Prepare an elevation design brief for a compact commercial building."
+  ]
+}
