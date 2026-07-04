@@ -1,3 +1,18 @@
+## UI-02L - Center Home Content + Lower Composer
+
+Status: Completed locally, validation required before deploy.
+
+- Centered the mobile home content column.
+- Kept headline and text left-aligned inside the centered column.
+- Centered the three module cards with balanced left/right margins.
+- Lowered the chat composer slightly while keeping it above the browser toolbar.
+- Did not change card order, icons, header logo, backend, or gateway files.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## UI-02L - Center Home Layout + Lower Composer
 
 Status: Completed locally, validation required before deploy.
