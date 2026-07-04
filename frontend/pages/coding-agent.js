@@ -5975,3 +5975,153 @@ document.addEventListener("click", async (event) => {
   }
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-01B - Clean Light ChatGPT-like Mobile Chat
+// Creates a mobile chat-first shell while keeping existing backend safety locked.
+// ---------------------------------------------------------------------------
+(function ui01bCleanMobileChat() {
+  const mq = window.matchMedia("(max-width: 760px)");
+  const BRAND_ICON = "../assets/brand/ideasforgeai-app-touch-icon.png";
+  const FORGECODE_ICON = "../assets/brand/forgecode-icon.png";
+
+  function nowLabel() {
+    try {
+      return new Intl.DateTimeFormat([], { hour: "numeric", minute: "2-digit" }).format(new Date());
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  function iconImage(src, alt) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = alt;
+    img.loading = "eager";
+    img.decoding = "async";
+    return img;
+  }
+
+  function buildShell() {
+    if (document.querySelector(".ui01b-mobile-chat")) return;
+
+    const shell = el("section", "ui01b-mobile-chat");
+    shell.setAttribute("aria-label", "IdeasForgeAI Coding Agent mobile chat");
+
+    const topbar = el("div", "ui01b-topbar");
+    const brandRow = el("div", "ui01b-brand-row");
+
+    const brand = el("div", "ui01b-brand-mark");
+    brand.appendChild(iconImage(BRAND_ICON, "IdeasForgeAI"));
+
+    const titleWrap = el("div", "ui01b-title-wrap");
+    titleWrap.appendChild(el("div", "ui01b-product", "IdeasForgeAI"));
+    titleWrap.appendChild(el("div", "ui01b-subtitle", "ForgeCode / Coding Agent"));
+
+    const actions = el("div", "ui01b-top-actions");
+    actions.appendChild(el("button", "ui01b-icon-btn", "↥"));
+    actions.appendChild(el("button", "ui01b-primary-btn", "↑"));
+
+    brandRow.appendChild(brand);
+    brandRow.appendChild(titleWrap);
+    brandRow.appendChild(actions);
+    topbar.appendChild(brandRow);
+
+    const agentBar = el("div", "ui01b-agent-bar");
+    agentBar.appendChild(el("button", "ui01b-menu-btn", "≡"));
+
+    const agentTitle = el("div", "ui01b-agent-title");
+    agentTitle.appendChild(el("strong", "", "AI Assistant"));
+    agentTitle.appendChild(el("span", "", "IdeasForgeAI Product Builder"));
+    agentBar.appendChild(agentTitle);
+    agentBar.appendChild(el("button", "ui01b-panel-btn", "▻"));
+
+    const messages = el("main", "ui01b-messages");
+    const chip = el("div", "ui01b-safety-chip", "Protected preview only");
+    messages.appendChild(chip);
+
+    const m1 = el("article", "ui01b-message assistant");
+    m1.appendChild(document.createTextNode("Hi, I am IdeasForgeAI. Tell me what you want to build, and I will help shape it into a product plan and preview flow."));
+    m1.appendChild(el("span", "ui01b-time", nowLabel()));
+    messages.appendChild(m1);
+
+    const m2 = el("article", "ui01b-message assistant");
+    m2.appendChild(document.createTextNode("What kind of app, website, or tool should we start with?"));
+    m2.appendChild(el("span", "ui01b-time", nowLabel()));
+    messages.appendChild(m2);
+
+    const composerWrap = el("div", "ui01b-composer-wrap");
+    const composer = el("form", "ui01b-composer");
+    composer.setAttribute("autocomplete", "off");
+
+    const plus = el("button", "ui01b-plus", "+");
+    plus.type = "button";
+
+    const input = el("input", "ui01b-input");
+    input.placeholder = "Describe your idea...";
+    input.type = "text";
+
+    const mic = el("button", "ui01b-mic", "♬");
+    mic.type = "button";
+    mic.setAttribute("aria-label", "Voice preview");
+
+    const send = el("button", "ui01b-send", "→");
+    send.type = "submit";
+
+    composer.appendChild(plus);
+    composer.appendChild(input);
+    composer.appendChild(mic);
+    composer.appendChild(send);
+    composerWrap.appendChild(composer);
+
+    composer.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+
+      const user = el("article", "ui01b-message user");
+      user.appendChild(document.createTextNode(value));
+      user.appendChild(el("span", "ui01b-time", nowLabel()));
+      messages.appendChild(user);
+
+      const assistant = el("article", "ui01b-message assistant");
+      assistant.appendChild(document.createTextNode("Safe preview received. I can turn this into a protected plan before any real file, GitHub, test, deploy, or rollback action."));
+      assistant.appendChild(el("span", "ui01b-time", nowLabel()));
+      messages.appendChild(assistant);
+
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+    });
+
+    shell.appendChild(topbar);
+    shell.appendChild(agentBar);
+    shell.appendChild(messages);
+    shell.appendChild(composerWrap);
+    document.body.appendChild(shell);
+  }
+
+  function apply() {
+    if (mq.matches) {
+      buildShell();
+      document.body.classList.add("ui01b-active");
+    } else {
+      document.body.classList.remove("ui01b-active");
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", apply, { once: true });
+  } else {
+    apply();
+  }
+
+  if (mq.addEventListener) mq.addEventListener("change", apply);
+})();
+

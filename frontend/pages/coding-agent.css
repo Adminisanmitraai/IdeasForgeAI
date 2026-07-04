@@ -5196,3 +5196,303 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   UI-01B - Clean Light ChatGPT-like Mobile Chat
+   Mobile-first repair: chat screen, not landing page.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  html,
+  body {
+    background: #f7f7fb !important;
+    color: #111318 !important;
+    overflow-x: hidden !important;
+  }
+
+  body::before,
+  body::after {
+    display: none !important;
+  }
+
+  .ui01b-mobile-chat {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    background: #f7f7fb;
+    color: #111318;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .ui01b-topbar {
+    flex: 0 0 auto;
+    padding: calc(env(safe-area-inset-top, 0px) + 18px) 22px 16px;
+    background: rgba(255,255,255,0.94);
+    backdrop-filter: blur(22px);
+    border-bottom: 1px solid rgba(20,22,30,0.08);
+  }
+
+  .ui01b-brand-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .ui01b-brand-mark {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+    background: #fff;
+    border: 1px solid rgba(20,22,30,0.08);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 14px 34px rgba(45, 58, 110, 0.10);
+    overflow: hidden;
+  }
+
+  .ui01b-brand-mark img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+  }
+
+  .ui01b-title-wrap {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .ui01b-product {
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 850;
+    letter-spacing: -0.03em;
+    color: #111318;
+  }
+
+  .ui01b-subtitle {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.2;
+    font-weight: 750;
+    color: rgba(17,19,24,0.56);
+  }
+
+  .ui01b-top-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ui01b-icon-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 18px;
+    border: 1px solid rgba(20,22,30,0.10);
+    background: #fff;
+    color: #111318;
+    display: grid;
+    place-items: center;
+    font-size: 20px;
+    font-weight: 750;
+    box-shadow: 0 12px 28px rgba(45,58,110,0.08);
+  }
+
+  .ui01b-primary-btn {
+    width: 54px;
+    height: 54px;
+    border-radius: 20px;
+    border: 0;
+    background: linear-gradient(135deg, #6b4dff, #2f7bff);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-size: 28px;
+    font-weight: 800;
+    box-shadow: 0 18px 42px rgba(76, 88, 255, 0.28);
+  }
+
+  .ui01b-agent-bar {
+    flex: 0 0 auto;
+    padding: 20px 24px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+    border-bottom: 1px solid rgba(20,22,30,0.06);
+  }
+
+  .ui01b-menu-btn,
+  .ui01b-panel-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    border: 1px solid rgba(20,22,30,0.10);
+    background: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    color: #111318;
+    box-shadow: 0 12px 26px rgba(45,58,110,0.08);
+  }
+
+  .ui01b-agent-title {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .ui01b-agent-title strong {
+    display: block;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 850;
+    color: #111318;
+    letter-spacing: -0.025em;
+  }
+
+  .ui01b-agent-title span {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 750;
+    color: rgba(17,19,24,0.54);
+  }
+
+  .ui01b-messages {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 24px 20px 130px;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(110,88,255,0.06), transparent 34%),
+      #f7f7fb;
+  }
+
+  .ui01b-message {
+    width: min(100%, 680px);
+    margin: 0 auto 16px;
+    padding: 18px 18px 42px;
+    border-radius: 22px;
+    position: relative;
+    font-size: 16px;
+    line-height: 1.48;
+    letter-spacing: -0.015em;
+    box-shadow: 0 18px 45px rgba(45,58,110,0.08);
+  }
+
+  .ui01b-message.assistant {
+    background: #fff;
+    border: 1px solid rgba(20,22,30,0.08);
+    color: #252936;
+  }
+
+  .ui01b-message.user {
+    background: #111318;
+    color: #fff;
+    margin-left: auto;
+    max-width: 82%;
+  }
+
+  .ui01b-time {
+    position: absolute;
+    right: 18px;
+    bottom: 14px;
+    font-size: 12px;
+    font-weight: 750;
+    color: rgba(37,41,54,0.48);
+  }
+
+  .ui01b-message.user .ui01b-time {
+    color: rgba(255,255,255,0.58);
+  }
+
+  .ui01b-safety-chip {
+    display: inline-flex;
+    align-items: center;
+    margin: 4px auto 18px;
+    padding: 9px 13px;
+    border-radius: 999px;
+    background: rgba(17,19,24,0.05);
+    color: rgba(17,19,24,0.62);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .ui01b-composer-wrap {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    padding: 12px 12px calc(env(safe-area-inset-bottom, 0px) + 14px);
+    background: linear-gradient(to top, rgba(247,247,251,1) 70%, rgba(247,247,251,0));
+  }
+
+  .ui01b-composer {
+    width: min(100%, 760px);
+    margin: 0 auto;
+    min-height: 66px;
+    border-radius: 34px;
+    background: rgba(255,255,255,0.96);
+    border: 1px solid rgba(20,22,30,0.10);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    box-shadow: 0 18px 45px rgba(45,58,110,0.14);
+  }
+
+  .ui01b-plus,
+  .ui01b-mic,
+  .ui01b-send {
+    flex: 0 0 auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid rgba(20,22,30,0.10);
+    background: #fff;
+    color: #111318;
+    display: grid;
+    place-items: center;
+    font-size: 27px;
+    line-height: 1;
+    font-weight: 500;
+  }
+
+  .ui01b-input {
+    flex: 1;
+    min-width: 0;
+    height: 48px;
+    border-radius: 999px;
+    border: 1px solid rgba(20,22,30,0.08);
+    background: #fff;
+    color: #111318;
+    font-size: 16px;
+    font-weight: 650;
+    padding: 0 16px;
+    outline: none;
+  }
+
+  .ui01b-input::placeholder {
+    color: rgba(17,19,24,0.32);
+  }
+
+  .ui01b-send {
+    background: #111318;
+    color: #fff;
+    border-color: #111318;
+    font-size: 24px;
+  }
+
+  body.ui01b-active > *:not(.ui01b-mobile-chat):not(script):not(style) {
+    display: none !important;
+  }
+}
+
+@media (min-width: 761px) {
+  .ui01b-mobile-chat {
+    display: none !important;
+  }
+}
+
