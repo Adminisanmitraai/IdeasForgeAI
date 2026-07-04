@@ -454,6 +454,169 @@ async def ca34_render_flow_preview_alias(request: Request):
     return DeploymentApprovalRenderFlow.preview(payload)
 
 
+
+
+# ---------------------------------------------------------------------------
+# CA-35 - Rollback + Production Safety
+# ---------------------------------------------------------------------------
+# RollbackProductionSafety
+# rollback-production-safety
+# recommended_next_phase CA-36
+# rollback_enabled False
+# production_write False
+# render_api_write False
+# deployment False
+# git_commands False
+# file_write False
+# apply_diff False
+# terminal False
+# secrets False
+
+def _ca35_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "rollback_enabled": False,
+        "production_write": False,
+        "render_api_write": False,
+        "render_token_access": False,
+        "deployment": False,
+        "git_commands": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "secrets": False,
+    }
+
+
+def _ca35_role(payload: Dict[str, Any]) -> str:
+    approval_context = payload.get("approval_context") or {}
+    return str(
+        payload.get("requested_by_role")
+        or approval_context.get("requested_by_role")
+        or approval_context.get("role")
+        or "normal_user"
+    ).strip().lower()
+
+
+def _ca35_permission_status(payload: Dict[str, Any]) -> str:
+    role = _ca35_role(payload)
+    if role in {"founder", "admin", "founder_admin", "founder-admin", "owner"}:
+        return "founder_admin_preview_only"
+    return "normal_user_preview_only"
+
+
+class RollbackProductionSafety:
+    @staticmethod
+    def health() -> Dict[str, Any]:
+        return {
+            "ok": True,
+            "feature": "coding-agent-rollback-production-safety",
+            "mode": "rollback-safety-preview-only",
+            "founder_admin_required": True,
+            "recommended_next_phase": "CA-36",
+            **_ca35_safety_flags(),
+        }
+
+    @staticmethod
+    def plan(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = payload.get("project_id") or "ideasforgeai"
+        proposal_id = payload.get("proposal_id") or "rollback-preview"
+        current_phase = payload.get("current_phase") or "CA-35"
+        target_restore_point = payload.get("target_restore_point") or payload.get("rollback_target") or "last-known-good"
+
+        return {
+            "ok": True,
+            "project_id": project_id,
+            "proposal_id": proposal_id,
+            "mode": "rollback-plan-preview-only",
+            "current_phase": current_phase,
+            "target_restore_point": target_restore_point,
+            "founder_admin_required": True,
+            "permission_status": _ca35_permission_status(payload),
+            "rollback_plan": {
+                "rollback_plan_id": f"CA35-{project_id}-{target_restore_point}",
+                "restore_point": target_restore_point,
+                "steps": [
+                    "Verify latest failed deployment or unsafe phase.",
+                    "Identify last known good commit/deploy manually.",
+                    "Confirm Founder/Admin rollback approval.",
+                    "Prepare rollback preview only in CA-35.",
+                    "Keep real rollback disabled until a later explicit backend permission phase.",
+                ],
+                "real_rollback_enabled": False,
+            },
+            "production_safety_checklist": [
+                "Backend import check must pass before redeploy.",
+                "ForgeAudit must show SAFE TO DEPLOY before production changes.",
+                "Render deployment must be manually verified green.",
+                "Health endpoints must be checked after deployment.",
+                "No secrets, tokens, or deployment keys may be exposed to frontend.",
+            ],
+            "risk": {
+                "level": "low",
+                "reasons": [
+                    "Rollback is preview-only.",
+                    "No production write, no Render API write, no Git command, and no deployment is performed.",
+                ],
+            },
+            "approval_gate": {
+                "founder_admin_required": True,
+                "backend_permission_required": True,
+                "frontend_token_can_enable": False,
+                "manual_production_confirmation_required": True,
+            },
+            "blocked_actions": [
+                "real_rollback",
+                "production_write",
+                "render_api_write",
+                "render_token_access",
+                "deployment",
+                "git_commands",
+                "file_write",
+                "apply_diff",
+                "terminal_execution",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-36",
+                "title": "Project Memory + Task History",
+            },
+            **_ca35_safety_flags(),
+        }
+
+    @staticmethod
+    def request_approval(payload: Dict[str, Any]) -> Dict[str, Any]:
+        plan = RollbackProductionSafety.plan(payload)
+        plan.update(
+            {
+                "mode": "rollback-approval-request-preview-only",
+                "approval_request": {
+                    "status": "preview_only",
+                    "message": "Rollback approval request prepared. Real rollback remains disabled in CA-35.",
+                    "requires_founder_admin_backend_permission": True,
+                },
+            }
+        )
+        return plan
+
+
+@app.get("/api/coding-agent/rollback/health")
+def ca35_rollback_health():
+    return RollbackProductionSafety.health()
+
+
+@app.post("/api/coding-agent/rollback/plan")
+async def ca35_rollback_plan(request: Request):
+    payload = await request.json()
+    return RollbackProductionSafety.plan(payload)
+
+
+@app.post("/api/coding-agent/rollback/request-approval")
+async def ca35_rollback_request_approval(request: Request):
+    payload = await request.json()
+    return RollbackProductionSafety.request_approval(payload)
+
+
 @app.get("/")
 def ideasforgeai_root():
     return {

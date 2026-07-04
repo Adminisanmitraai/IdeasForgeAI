@@ -1,3 +1,35 @@
+## Phase CA-35 - Rollback + Production Safety
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Rollback + Production Safety foundation for Coding Agent.
+- Added rollback health, plan, and request-approval endpoints.
+- Rollback is preview-only by default.
+- No production write is performed.
+- No Render API write is performed.
+- No Render token is accessed or exposed.
+- No frontend token can enable rollback.
+- Normal users can preview rollback workflow only.
+- Founder/Admin backend approval remains required before any future real rollback.
+- Produces rollback plan, production safety checklist, approval gate, blocked actions, risk, and next-phase guidance.
+- Does not run Git commands.
+- Does not write files.
+- Does not apply diffs.
+- Does not run terminal commands.
+- Does not deploy or rollback.
+- Does not expose secrets.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-35
+
+NEXT AFTER: CA-36 - Project Memory + Task History
+
+
 ## Phase CA-34 - Deployment Approval + Render Flow
 
 Status: Completed locally, validation required before deploy.
