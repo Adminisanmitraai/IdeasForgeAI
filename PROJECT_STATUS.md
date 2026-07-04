@@ -1,3 +1,23 @@
+## UI-02E - Root Icon Binding + Final Chat Polish
+
+Status: Completed locally, validation required before deploy.
+
+- Forced ForgeStudio, ForgeCode, and ForgeWork cards to use saved PNG icons from frontend/assets/brand.
+- Added cache-busting icon URLs to prevent old placeholder icons.
+- Added inline SVG fallback if a PNG asset is not found in production.
+- Fixed right-edge clipping on top action buttons and composer send button.
+- Removed mobile Studio Preview strip for cleaner ChatGPT-like home chat.
+- Preserved composer behavior: mic hides when typing and input stretches toward submit.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02D - ChatGPT-like Home Chat Final Polish
 
 Status: Completed locally, validation required before deploy.
