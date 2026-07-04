@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ForgePilot Cloud Gateway</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin:0; font-family: Georgia, serif; background:#eee7dc; color:#1d1915; }
+    .wrap { max-width:900px; margin:70px auto; background:#fffaf3; border:1px solid #ddd3c5; border-radius:24px; padding:36px; }
+    h1 { font-size:48px; margin:0 0 12px; }
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:24px; }
+    .card { border:1px solid #ded7cc; border-radius:16px; padding:18px; background:white; }
+    .label { font-size:12px; text-transform:uppercase; color:#71685e; letter-spacing:.08em; }
+    .value { margin-top:8px; font-size:20px; font-weight:bold; }
+    .online { color:#087a3d; }
+    .offline { color:#a02b2b; }
+    .log { margin-top:24px; background:#1e1d1b; color:#f7f1e8; padding:18px; border-radius:16px; white-space:pre-wrap; font-family:monospace; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>ForgePilot Cloud Gateway</h1>
+    <p>Desktop Companion connection monitor. Script-only mode. No task relay yet.</p>
+
+    <div class="grid">
+      <div class="card"><div class="label">Desktop Status</div><div id="status" class="value offline">Offline</div></div>
+      <div class="card"><div class="label">Device Name</div><div id="deviceName" class="value">Waiting...</div></div>
+      <div class="card"><div class="label">Hostname</div><div id="hostname" class="value">—</div></div>
+      <div class="card"><div class="label">OS Platform</div><div id="osPlatform" class="value">—</div></div>
+      <div class="card"><div class="label">OS Release</div><div id="osRelease" class="value">—</div></div>
+      <div class="card"><div class="label">Mode</div><div id="mode" class="value">Script Only</div></div>
+      <div class="card"><div class="label">Version</div><div id="version" class="value">—</div></div>
+      <div class="card"><div class="label">Pairing</div><div class="value">Local Trusted Placeholder</div></div>
+      <div class="card"><div class="label">Connected At</div><div id="connectedAt" class="value">—</div></div>
+      <div class="card"><div class="label">Last Heartbeat</div><div id="lastHeartbeatAt" class="value">—</div></div>
+    </div>
+
+    <div class="log" id="log">Activity log ready.
+No task relay yet.
+No mouse/keyboard/screen control.</div>
+  </div>
+
+<script>
+const ws = new WebSocket(`ws://${location.host}`);
+const log = document.getElementById("log");
+
+function addLog(text) {
+  log.textContent += `\n[${new Date().toLocaleTimeString()}] ${text}`;
+}
+function setText(id, value) {
+  document.getElementById(id).textContent = value || "—";
+}
+
+ws.onopen = () => {
+  ws.send(JSON.stringify({ type: "REGISTER_BROWSER" }));
+  addLog("Browser connected to gateway.");
+};
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  if (data.type === "DEVICE_STATUS") {
+    const d = data.desktop || {};
+    const status = document.getElementById("status");
+    status.textContent = d.online ? "Online" : "Offline";
+    status.className = "value " + (d.online ? "online" : "offline");
+
+    setText("deviceName", d.deviceName || "Waiting...");
+    setText("hostname", d.hostname);
+    setText("osPlatform", d.osPlatform);
+    setText("osRelease", d.osRelease);
+    setText("mode", d.mode || "Script Only");
+    setText("version", d.version);
+    setText("connectedAt", d.connectedAt ? new Date(d.connectedAt).toLocaleString() : "—");
+    setText("lastHeartbeatAt", d.lastHeartbeatAt ? new Date(d.lastHeartbeatAt).toLocaleString() : "—");
+  }
+  if (data.type === "LOG") addLog(data.message);
+};
+
+ws.onclose = () => addLog("Disconnected from gateway.");
+</script>
+</body>
+</html>

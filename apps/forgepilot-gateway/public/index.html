@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ForgePilot Cloud Gateway</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin:0; font-family: Georgia, serif; background:#eee7dc; color:#1d1915; }
+    .wrap { max-width:1050px; margin:50px auto; background:#fffaf3; border:1px solid #ddd3c5; border-radius:24px; padding:32px; }
+    h1 { font-size:46px; margin:0 0 10px; }
+    button { padding:12px 16px; border:0; border-radius:14px; background:#2457e6; color:white; font-weight:bold; cursor:pointer; margin:5px; }
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:20px; }
+    .card,.preview { border:1px solid #ded7cc; border-radius:16px; padding:16px; background:white; }
+    .label { font-size:12px; text-transform:uppercase; color:#71685e; letter-spacing:.08em; }
+    .value { margin-top:8px; font-size:20px; font-weight:bold; }
+    .online,.trusted { color:#087a3d; }
+    .offline { color:#a02b2b; }
+    .untrusted { color:#b56b00; }
+    .screen { width:100%; max-height:540px; object-fit:contain; background:#111; border-radius:16px; border:1px solid #222; display:block; cursor:crosshair; }
+    .log { margin-top:20px; background:#1e1d1b; color:#f7f1e8; padding:16px; border-radius:16px; white-space:pre-wrap; font-family:monospace; max-height:360px; overflow:auto; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ForgePilot Cloud Gateway</h1>
+  <p>FP-3D-1: Click on live preview ? real desktop click.</p>
+
+  <button onclick="requestPairing()">Request Pairing</button>
+  <button onclick="startScreen()">Start Screen Preview</button>
+  <button onclick="stopScreen()">Stop Screen Preview</button>
+
+  <div class="grid">
+    <div class="card"><div class="label">Desktop Status</div><div id="status" class="value offline">Offline</div></div>
+    <div class="card"><div class="label">Trusted</div><div id="trusted" class="value untrusted">Not Trusted</div></div>
+    <div class="card"><div class="label">Pairing Code</div><div id="pairingCode" class="value">—</div></div>
+    <div class="card"><div class="label">Device Name</div><div id="deviceName" class="value">Waiting...</div></div>
+    <div class="card"><div class="label">Version</div><div id="version" class="value">—</div></div>
+    <div class="card"><div class="label">Last Heartbeat</div><div id="lastHeartbeatAt" class="value">—</div></div>
+  </div>
+
+  <div class="preview">
+    <h2>Live Screen Preview</h2>
+    <p>Frame time: <span id="frameTime">—</span></p>
+    <p>Click directly on the preview to click the real desktop.</p>
+    <img id="screen" class="screen" alt="Screen preview will appear here" onclick="previewClick(event)" />
+  </div>
+
+  <div class="log" id="log">Activity log ready.
+Interactive preview click ready.</div>
+</div>
+
+<script>
+const ws = new WebSocket(`ws://${location.host}`);
+const log = document.getElementById("log");
+
+let latestScreenWidth = 0;
+let latestScreenHeight = 0;
+
+function addLog(text) {
+  log.textContent += `\n[${new Date().toLocaleTimeString()}] ${text}`;
+  log.scrollTop = log.scrollHeight;
+}
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value || "—";
+}
+function requestPairing() {
+  ws.send(JSON.stringify({ type: "REQUEST_PAIRING" }));
+  addLog("Pairing requested.");
+}
+function startScreen() {
+  ws.send(JSON.stringify({ type: "START_SCREEN_STREAM" }));
+  addLog("Start screen preview requested.");
+}
+function stopScreen() {
+  ws.send(JSON.stringify({ type: "STOP_SCREEN_STREAM" }));
+  addLog("Stop screen preview requested.");
+}
+
+function previewClick(event) {
+  const img = document.getElementById("screen");
+  if (!latestScreenWidth || !latestScreenHeight) {
+    addLog("Preview click blocked: no screen size yet.");
+    return;
+  }
+
+  const rect = img.getBoundingClientRect();
+  const displayX = event.clientX - rect.left;
+  const displayY = event.clientY - rect.top;
+
+  const realX = Math.round((displayX / rect.width) * latestScreenWidth);
+  const realY = Math.round((displayY / rect.height) * latestScreenHeight);
+
+  ws.send(JSON.stringify({
+    type: "PREVIEW_CLICK",
+    x: realX,
+    y: realY,
+    button: "left"
+  }));
+
+  addLog(`Preview click requested: x=${realX}, y=${realY}`);
+}
+
+ws.onopen = () => {
+  ws.send(JSON.stringify({ type: "REGISTER_BROWSER" }));
+  addLog("Browser connected to gateway.");
+};
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+
+  if (data.type === "DEVICE_STATUS") {
+    const d = data.desktop || {};
+    const status = document.getElementById("status");
+    status.textContent = d.online ? "Online" : "Offline";
+    status.className = "value " + (d.online ? "online" : "offline");
+
+    const trusted = document.getElementById("trusted");
+    trusted.textContent = d.trusted ? "Trusted" : "Not Trusted";
+    trusted.className = "value " + (d.trusted ? "trusted" : "untrusted");
+
+    setText("pairingCode", d.pairingCode || "—");
+    setText("deviceName", d.deviceName || "Waiting...");
+    setText("version", d.version);
+    setText("lastHeartbeatAt", d.lastHeartbeatAt ? new Date(d.lastHeartbeatAt).toLocaleString() : "—");
+  }
+
+  if (data.type === "SCREEN_FRAME") {
+    latestScreenWidth = data.screenWidth || 0;
+    latestScreenHeight = data.screenHeight || 0;
+    document.getElementById("screen").src = "data:image/jpeg;base64," + data.image;
+    document.getElementById("frameTime").textContent = new Date(data.timestamp).toLocaleTimeString();
+  }
+
+  if (data.type === "LOG") addLog(data.message);
+};
+
+ws.onclose = () => addLog("Disconnected from gateway.");
+</script>
+</body>
+</html>

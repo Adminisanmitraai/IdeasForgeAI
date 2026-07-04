@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ForgePilot Cloud Gateway</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin:0; font-family: Georgia, serif; background:#eee7dc; color:#1d1915; }
+    .wrap { max-width:1050px; margin:50px auto; background:#fffaf3; border:1px solid #ddd3c5; border-radius:24px; padding:32px; }
+    h1 { font-size:46px; margin:0 0 10px; }
+    button { padding:12px 16px; border:0; border-radius:14px; background:#2457e6; color:white; font-weight:bold; cursor:pointer; margin:5px; }
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:20px; }
+    .card,.controls,.preview { border:1px solid #ded7cc; border-radius:16px; padding:16px; background:white; }
+    .controls,.preview { margin-top:20px; }
+    .label { font-size:12px; text-transform:uppercase; color:#71685e; letter-spacing:.08em; }
+    .value { margin-top:8px; font-size:20px; font-weight:bold; }
+    .online,.trusted { color:#087a3d; }
+    .offline { color:#a02b2b; }
+    .untrusted { color:#b56b00; }
+    .pad { display:grid; grid-template-columns:90px 90px 90px; gap:8px; width:max-content; }
+    textarea { width:100%; min-height:80px; border-radius:14px; border:1px solid #ddd3c5; padding:12px; font-size:16px; box-sizing:border-box; }
+    .screen { width:100%; max-height:540px; object-fit:contain; background:#111; border-radius:16px; border:1px solid #222; display:block; }
+    .log { margin-top:20px; background:#1e1d1b; color:#f7f1e8; padding:16px; border-radius:16px; white-space:pre-wrap; font-family:monospace; max-height:360px; overflow:auto; }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>ForgePilot Cloud Gateway</h1>
+  <p>FP-3C Live Screen Preview. Trusted desktop only.</p>
+
+  <button onclick="requestPairing()">Request Pairing</button>
+
+  <div class="grid">
+    <div class="card"><div class="label">Desktop Status</div><div id="status" class="value offline">Offline</div></div>
+    <div class="card"><div class="label">Trusted</div><div id="trusted" class="value untrusted">Not Trusted</div></div>
+    <div class="card"><div class="label">Pairing Code</div><div id="pairingCode" class="value">—</div></div>
+    <div class="card"><div class="label">Device Name</div><div id="deviceName" class="value">Waiting...</div></div>
+    <div class="card"><div class="label">Version</div><div id="version" class="value">—</div></div>
+    <div class="card"><div class="label">Last Heartbeat</div><div id="lastHeartbeatAt" class="value">—</div></div>
+  </div>
+
+  <div class="preview">
+    <h2>Live Screen Preview</h2>
+    <button onclick="startScreen()">Start Screen Preview</button>
+    <button onclick="stopScreen()">Stop Screen Preview</button>
+    <p>Frame time: <span id="frameTime">—</span></p>
+    <img id="screen" class="screen" alt="Screen preview will appear here" />
+  </div>
+
+  <div class="controls">
+    <h2>Mouse Control</h2>
+    <div class="pad">
+      <div></div><button onclick="mouseMove(0,-80)">?</button><div></div>
+      <button onclick="mouseMove(-80,0)">?</button><button onclick="sendMouse('LEFT_CLICK')">Click</button><button onclick="mouseMove(80,0)">?</button>
+      <div></div><button onclick="mouseMove(0,80)">?</button><div></div>
+    </div>
+    <button onclick="sendMouse('RIGHT_CLICK')">Right Click</button>
+    <button onclick="sendMouse('DOUBLE_CLICK')">Double Click</button>
+  </div>
+
+  <div class="controls">
+    <h2>Keyboard Control</h2>
+    <textarea id="keyboardText">Hello from IdeasForgeAI ForgePilot.</textarea>
+    <br />
+    <button onclick="typeText()">Type Text</button>
+    <button onclick="sendKey('ENTER')">Enter</button>
+    <button onclick="sendKey('BACKSPACE')">Backspace</button>
+    <button onclick="sendKey('TAB')">Tab</button>
+    <button onclick="sendKey('ESCAPE')">Escape</button>
+    <br />
+    <button onclick="sendHotkey('CTRL_A')">Ctrl+A</button>
+    <button onclick="sendHotkey('CTRL_C')">Ctrl+C</button>
+    <button onclick="sendHotkey('CTRL_V')">Ctrl+V</button>
+    <button onclick="sendHotkey('CTRL_Z')">Ctrl+Z</button>
+  </div>
+
+  <div class="log" id="log">Activity log ready.
+Mouse control enabled.
+Keyboard control enabled.
+Screen preview ready.</div>
+</div>
+
+<script>
+const ws = new WebSocket(`ws://${location.host}`);
+const log = document.getElementById("log");
+
+function addLog(text) {
+  log.textContent += `\n[${new Date().toLocaleTimeString()}] ${text}`;
+  log.scrollTop = log.scrollHeight;
+}
+function setText(id, value) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = value || "—";
+}
+function requestPairing() {
+  ws.send(JSON.stringify({ type: "REQUEST_PAIRING" }));
+  addLog("Pairing requested.");
+}
+function startScreen() {
+  ws.send(JSON.stringify({ type: "START_SCREEN_STREAM" }));
+  addLog("Start screen preview requested.");
+}
+function stopScreen() {
+  ws.send(JSON.stringify({ type: "STOP_SCREEN_STREAM" }));
+  addLog("Stop screen preview requested.");
+}
+function sendMouse(action, dx = 0, dy = 0) {
+  ws.send(JSON.stringify({ type: "MOUSE_COMMAND", action, dx, dy }));
+  addLog(`Mouse command requested: ${action} dx=${dx} dy=${dy}`);
+}
+function mouseMove(dx, dy) {
+  sendMouse("MOVE", dx, dy);
+}
+function typeText() {
+  ws.send(JSON.stringify({ type: "KEYBOARD_COMMAND", action: "TYPE_TEXT", text: document.getElementById("keyboardText").value }));
+  addLog("Keyboard command requested: TYPE_TEXT");
+}
+function sendKey(command) {
+  ws.send(JSON.stringify({ type: "KEYBOARD_COMMAND", action: "KEY", command }));
+  addLog("Keyboard command requested: " + command);
+}
+function sendHotkey(command) {
+  ws.send(JSON.stringify({ type: "KEYBOARD_COMMAND", action: "HOTKEY", command }));
+  addLog("Keyboard hotkey requested: " + command);
+}
+
+ws.onopen = () => {
+  ws.send(JSON.stringify({ type: "REGISTER_BROWSER" }));
+  addLog("Browser connected to gateway.");
+};
+
+ws.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+
+  if (data.type === "DEVICE_STATUS") {
+    const d = data.desktop || {};
+    const status = document.getElementById("status");
+    status.textContent = d.online ? "Online" : "Offline";
+    status.className = "value " + (d.online ? "online" : "offline");
+
+    const trusted = document.getElementById("trusted");
+    trusted.textContent = d.trusted ? "Trusted" : "Not Trusted";
+    trusted.className = "value " + (d.trusted ? "trusted" : "untrusted");
+
+    setText("pairingCode", d.pairingCode || "—");
+    setText("deviceName", d.deviceName || "Waiting...");
+    setText("version", d.version);
+    setText("lastHeartbeatAt", d.lastHeartbeatAt ? new Date(d.lastHeartbeatAt).toLocaleString() : "—");
+  }
+
+  if (data.type === "SCREEN_FRAME") {
+    document.getElementById("screen").src = "data:image/jpeg;base64," + data.image;
+    document.getElementById("frameTime").textContent = new Date(data.timestamp).toLocaleTimeString();
+  }
+
+  if (data.type === "LOG") addLog(data.message);
+};
+
+ws.onclose = () => addLog("Disconnected from gateway.");
+</script>
+</body>
+</html>
