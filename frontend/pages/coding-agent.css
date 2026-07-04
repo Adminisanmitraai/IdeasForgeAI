@@ -8148,3 +8148,16 @@ body {
   }
 }
 
+
+/* UI-02R - Shift Mobile Chat Tray 25px Further Down */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    bottom: max(0px, calc(24px - 25px)) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    bottom: max(0px, calc(22px - 25px)) !important;
+  }
+}
