@@ -8845,3 +8845,48 @@ ${files}`;
     boot();
   }
 })();
+
+// AI-02E - Force short composer placeholder
+(function () {
+  if (window.__AI02E_PLACEHOLDER_FIX__) return;
+  window.__AI02E_PLACEHOLDER_FIX__ = true;
+
+  function fixPlaceholder() {
+    const inputs = document.querySelectorAll(
+      ".ui01b-composer textarea, textarea.ifai-ai02-input, .ui01b-composer input[type='text'], input.ifai-ai02-input"
+    );
+
+    inputs.forEach((el) => {
+      el.placeholder = "Ask...";
+      el.setAttribute("placeholder", "Ask...");
+
+      if (el.tagName === "TEXTAREA") {
+        el.rows = 1;
+        el.style.height = "52px";
+
+        if (!el.dataset.ai02eAutosize) {
+          el.dataset.ai02eAutosize = "true";
+          el.addEventListener("input", function () {
+            el.style.height = "52px";
+            const next = Math.min(Math.max(el.scrollHeight, 52), 112);
+            el.style.height = next + "px";
+          });
+        }
+      }
+    });
+  }
+
+  function boot() {
+    fixPlaceholder();
+    setTimeout(fixPlaceholder, 200);
+    setTimeout(fixPlaceholder, 700);
+    setTimeout(fixPlaceholder, 1500);
+    setInterval(fixPlaceholder, 2500);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();
