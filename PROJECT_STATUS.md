@@ -1,3 +1,24 @@
+## UI-02D - ChatGPT-like Home Chat Final Polish
+
+Status: Completed locally, validation required before deploy.
+
+- Polished the mobile home chat page closer to a ChatGPT-like layout.
+- Used saved PNG module icons from frontend/assets/brand.
+- Mapped icons by visual meaning based on the current folder screenshot.
+- Hid the Studio Preview strip on mobile home to reduce clutter.
+- Tightened the header, prevented right-side clipping, and improved card spacing.
+- Preserved ForgeStudio, ForgeCode, and ForgeWork as the three main modules.
+- Preserved composer behavior: mic hides when typing and input stretches toward submit.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02C - ForgeWork Module + Premium Home Chat Polish
 
 Status: Completed locally, validation required before deploy.

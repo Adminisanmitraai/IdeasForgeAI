@@ -6774,3 +6774,145 @@ document.addEventListener("click", async (event) => {
   if (mq.addEventListener) mq.addEventListener("change", schedule);
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-02D - ChatGPT-like Home Chat Final Polish
+// Uses saved brand folder PNG icons and keeps the screen clean/chat-first.
+// ---------------------------------------------------------------------------
+(function ui02dChatGPTLikeHomePolish() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  /*
+    Folder screenshot shows the visual assets are currently named this way:
+    - forgework-icon.png visually contains ForgeStudio design-builder icon.
+    - forgecode-icon.png visually contains ForgeCode code icon.
+    - forgestudio-icon.png visually contains ForgeWork chat/orbit icon.
+  */
+  const ICONS = {
+    studio: "../assets/brand/forgework-icon.png",
+    code: "../assets/brand/forgecode-icon.png",
+    work: "../assets/brand/forgestudio-icon.png",
+  };
+
+  function setModule(card, module, nameHtml, desc, iconSrc, prompt) {
+    if (!card) return;
+
+    card.dataset.module = module;
+    card.dataset.ui02dPrompt = prompt;
+
+    const icon = card.querySelector(".ui02-module-icon");
+    if (icon) {
+      icon.innerHTML = "";
+      const img = document.createElement("img");
+      img.src = iconSrc;
+      img.alt = nameHtml.replace(/<[^>]+>/g, "");
+      img.loading = "eager";
+      img.decoding = "async";
+      icon.appendChild(img);
+    }
+
+    const name = card.querySelector(".ui02-module-name");
+    if (name) name.innerHTML = nameHtml;
+
+    const copy = card.querySelector(".ui02-module-desc");
+    if (copy) copy.textContent = desc;
+  }
+
+  function bindCards(shell) {
+    shell.querySelectorAll(".ui02-module-card").forEach((card) => {
+      if (card.dataset.ui02dBound) return;
+      card.dataset.ui02dBound = "true";
+
+      card.addEventListener("click", function () {
+        const input = shell.querySelector(".ui01b-input");
+        const composer = shell.querySelector(".ui01b-composer");
+        if (!input) return;
+
+        input.value = card.dataset.ui02dPrompt || "";
+        input.dispatchEvent(new Event("input", { bubbles: true }));
+        if (composer) composer.classList.add("ui02-has-text");
+        input.focus();
+      });
+    });
+  }
+
+  function apply() {
+    if (!mq.matches) return;
+
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    if (!shell) return;
+
+    document.body.classList.add("ui02-home-mode");
+
+    const subtitle = shell.querySelector(".ui01b-subtitle");
+    if (subtitle) subtitle.textContent = "Create · Code · Work";
+
+    const homeTitle = shell.querySelector(".ui02-home-title");
+    if (homeTitle) {
+      homeTitle.textContent = "What do you want to create, code, or work on today?";
+    }
+
+    const homeSub = shell.querySelector(".ui02-home-subtitle");
+    if (homeSub) {
+      homeSub.textContent = "Choose a mode or simply describe your task.";
+    }
+
+    const cards = Array.from(shell.querySelectorAll(".ui02-module-card"));
+    const studio =
+      shell.querySelector('.ui02-module-card[data-module="studio"]') || cards[0];
+    const code =
+      shell.querySelector('.ui02-module-card[data-module="code"]') || cards[1];
+    const work =
+      shell.querySelector('.ui02-module-card[data-module="work"]') ||
+      shell.querySelector('.ui02-module-card[data-module="pilot"]') ||
+      cards[2];
+
+    setModule(
+      studio,
+      "studio",
+      "Forge<span>Studio</span>",
+      "Create apps, websites, UI, images, logos, documents.",
+      ICONS.studio,
+      "I want to create something with ForgeStudio."
+    );
+
+    setModule(
+      code,
+      "code",
+      "Forge<span>Code</span>",
+      "Analyze projects, write code, fix errors, test, deploy.",
+      ICONS.code,
+      "I want to build or fix software with ForgeCode."
+    );
+
+    setModule(
+      work,
+      "work",
+      "Forge<span>Work</span>",
+      "AI workspace for documents, research, tasks, reports.",
+      ICONS.work,
+      "I want to work on documents, research, tasks, or reports with ForgeWork."
+    );
+
+    const input = shell.querySelector(".ui01b-input");
+    if (input) input.placeholder = "Ask IdeasForgeAI...";
+
+    bindCards(shell);
+  }
+
+  function schedule() {
+    apply();
+    window.setTimeout(apply, 120);
+    window.setTimeout(apply, 420);
+    window.setTimeout(apply, 900);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+
+  if (mq.addEventListener) mq.addEventListener("change", schedule);
+})();
+
