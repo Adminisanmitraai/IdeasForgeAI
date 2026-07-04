@@ -4482,7 +4482,7 @@ body {
 .coding-agent-shell { width: min(1380px, calc(100vw - 24px)); padding: max(16px, env(safe-area-inset-top)) 0 calc(32px + env(safe-area-inset-bottom)); }
 .coding-agent-topbar { gap: 12px; margin-bottom: 18px; padding: 12px 14px; border-radius: 22px; background: rgba(10, 10, 11, 0.82); border-color: rgba(255, 255, 255, 0.08); }
 .coding-agent-brand__mark { border-color: rgba(255, 255, 255, 0.14); background: linear-gradient(180deg, rgba(34, 34, 36, 0.98), rgba(12, 12, 13, 1)); }
-.coding-agent-brand__mark::before { background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(143, 186, 255, 0.78)); }
+.coding-agent-brand__mark::before { content: none; }
 .coding-agent-brand__text span { color: rgba(245, 245, 245, 0.58); }
 .topbar-mode-pill, .chat-mode-pill { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); color: #f5f5f5; font-size: 12px; font-weight: 760; }
 .topbar-mode-pill { min-height: 38px; letter-spacing: 0.06em; text-transform: uppercase; color: rgba(255,255,255,0.72); }
@@ -4757,12 +4757,16 @@ body {
   overflow: hidden;
 }
 
+.coding-agent-empty-state__logo {
+  width: min(100%, 184px);
+  height: auto;
+  display: block;
+  object-fit: contain;
+  filter: drop-shadow(0 20px 40px rgba(89, 102, 177, 0.18));
+}
+
 .forgecode-avatar__core {
-  position: absolute;
-  inset: 12px;
-  border-radius: 22px;
-  background: url('../assets/brand/ideasforgeai-if-spark-icon-cropped.png') center/cover no-repeat;
-  filter: saturate(1.12) contrast(1.06);
+  display: none;
 }
 
 .forgecode-avatar__orbit {
@@ -5133,10 +5137,10 @@ body {
 }
 
 .ifai-empty-brand .ifai-forgecode-img {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
-  filter: drop-shadow(0 18px 42px rgba(103, 78, 255, 0.24));
+  width: min(100%, 176px);
+  height: auto;
+  border-radius: 0;
+  filter: drop-shadow(0 18px 42px rgba(103, 78, 255, 0.18));
 }
 
 .ifai-empty-brand-text {
@@ -5627,13 +5631,11 @@ body {
 /* UI-01D final mobile icon fixes */
 @media (max-width: 760px) {
   .ui01b-brand-mark img {
-    display: none !important;
+    display: block !important;
   }
 
   .ui01d-brand-logo {
-    width: 38px;
-    height: 38px;
-    display: block;
+    display: none !important;
   }
 
   .ui01c-share-btn,
@@ -7536,3 +7538,60 @@ body {
     max-width: calc(100vw - 32px) !important;
   }
 }
+
+
+/* --------------------------------------------------------------------------
+   UI-02K-1 - Mobile Header Safe-Area Clip Fix
+   Fixes top header being partially hidden under mobile status/browser area.
+   Does not touch cards or composer.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ui01b-topbar {
+    position: sticky !important;
+    top: 0 !important;
+    transform: none !important;
+    translate: none !important;
+    min-height: 82px !important;
+    height: 82px !important;
+    padding-top: calc(env(safe-area-inset-top, 0px) + 14px) !important;
+    padding-bottom: 10px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    overflow: visible !important;
+    z-index: 100000 !important;
+    background: rgba(255,255,255,0.96) !important;
+  }
+
+  .ui01b-brand-row {
+    height: 46px !important;
+    min-height: 46px !important;
+    align-items: center !important;
+    overflow: visible !important;
+  }
+
+  .ui01c-header-menu {
+    align-self: center !important;
+  }
+
+  .ui01b-brand-mark {
+    align-self: center !important;
+    overflow: visible !important;
+  }
+
+  .ui01b-title-wrap {
+    align-self: center !important;
+  }
+
+  .ui01b-top-actions {
+    align-self: center !important;
+    overflow: visible !important;
+  }
+
+  .ui01b-messages {
+    padding-top: 22px !important;
+  }
+}
+

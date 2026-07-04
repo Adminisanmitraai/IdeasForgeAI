@@ -1,3 +1,34 @@
+## UI-02K-1 - Mobile Header Safe-Area Clip Fix
+
+Status: Completed locally, validation required before deploy.
+
+- Fixed mobile header clipping under the status/browser area.
+- Increased header safe-area padding and height.
+- Kept the composer unchanged.
+- Kept ForgeStudio, ForgeCode, and ForgeWork cards unchanged.
+- No backend files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
+## BRAND-01 - Official IdeasForgeAI Logo Integration
+
+Status: Completed locally, validation required before deploy.
+
+- Replaced public header branding with official IdeasForgeAI logo assets.
+- Removed generated sparkle/placeholder logo usage from the public Coding Agent and Studio UI.
+- Kept mobile header spacing stable and preserved ForgeStudio, ForgeCode, and ForgeWork cards.
+- No backend files changed.
+- No ForgePilot gateway, desktop companion, KisanMitraAI, secrets, or deployment files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
 ## UI-02K ? Final Mobile Chat Runtime Fix
 
 Status: Completed locally, validation required before deploy.
