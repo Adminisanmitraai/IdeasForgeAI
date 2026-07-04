@@ -1,3 +1,19 @@
+## UI-02I ? Clean Mobile Chat Layout Consolidation
+
+Status: Completed locally, validation required before deploy.
+
+- Consolidated stacked mobile home chat overrides into one final layout section.
+- Stabilized header spacing, top-right actions, home cards, and composer positioning.
+- Added visualViewport-based composer bottom offset handling for mobile browsers.
+- Preserved ForgeStudio, ForgeCode, and ForgeWork on the public mobile home screen.
+- Kept protected preview behavior and left backend files unchanged.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
 ## UI-02H - Final Mobile Composer Fit Override
 
 Status: Completed locally, validation required before deploy.

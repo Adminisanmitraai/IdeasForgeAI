@@ -6413,427 +6413,263 @@ document.addEventListener("click", async (event) => {
 
 
 // ---------------------------------------------------------------------------
-// UI-02 - Home Chat Three Modules + ChatGPT-like Composer
-// Adds module cards and typing behavior without enabling any locked actions.
+// UI-02I - Clean Mobile Chat Layout Consolidation
+// Keeps the mobile home chat stable, public, and limited to Studio/Code/Work.
 // ---------------------------------------------------------------------------
-(function ui02HomeModulesAndComposer() {
+(function ui02iCleanMobileChatLayout() {
   const mq = window.matchMedia("(max-width: 760px)");
-
-  const ASSETS = {
-    ideasForge: "../assets/brand/ideasforgeai-fspark-icon-cropped.png",
-    forgeCode: "../assets/brand/forgecode-icon.png",
+  const ICONS = {
+    studio: "../assets/brand/forgestudio-icon.png?v=ui02i-1",
+    code: "../assets/brand/forgecode-icon.png?v=ui02i-1",
+    work: "../assets/brand/forgework-icon.png?v=ui02i-1"
   };
-
-  function makeEl(tag, className, text) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text) node.textContent = text;
-    return node;
-  }
-
-  function iconImg(src, alt) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = alt;
-    img.loading = "eager";
-    img.decoding = "async";
-    return img;
-  }
-
-  function upArrowSvg() {
-    return '<svg class="ui02-up-arrow-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M6.5 10.5 12 5l5.5 5.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  }
-
-  function moduleCard(module, title, desc, iconType) {
-    const card = makeEl("button", "ui02-module-card");
-    card.type = "button";
-    card.dataset.module = module;
-
-    const icon = makeEl("div", "ui02-module-icon");
-
-    if (iconType === "studio") {
-      icon.appendChild(iconImg(ASSETS.ideasForge, "ForgeStudio"));
-    } else if (iconType === "code") {
-      icon.appendChild(iconImg(ASSETS.forgeCode, "ForgeCode"));
-    } else {
-      icon.appendChild(makeEl("span", "", "⌁"));
+  const MODULES = [
+    {
+      key: "studio",
+      titleHtml: "Forge<span>Studio</span>",
+      alt: "ForgeStudio",
+      desc: "Create apps, websites, UI, images, logos, documents.",
+      prompt: "I want to create something with ForgeStudio."
+    },
+    {
+      key: "code",
+      titleHtml: "Forge<span>Code</span>",
+      alt: "ForgeCode",
+      desc: "Analyze projects, write code, fix errors, test, deploy.",
+      prompt: "I want to build or fix software with ForgeCode."
+    },
+    {
+      key: "work",
+      titleHtml: "Forge<span>Work</span>",
+      alt: "ForgeWork",
+      desc: "AI workspace for documents, research, tasks, reports.",
+      prompt: "I want to work on documents, research, tasks, or reports with ForgeWork."
     }
+  ];
 
-    const copy = makeEl("div", "ui02-module-copy");
-    copy.appendChild(makeEl("div", "ui02-module-name", title));
-    copy.appendChild(makeEl("div", "ui02-module-desc", desc));
+  let viewportBound = false;
+  let viewportRaf = 0;
 
-    card.appendChild(icon);
-    card.appendChild(copy);
-    card.appendChild(makeEl("div", "ui02-module-arrow", "›"));
-
-    return card;
+  function iconFallback(label) {
+    return '<span class="ui02i-icon-fallback" aria-hidden="true">' + label + '</span>';
   }
 
-  function addHomeModules(shell) {
-    const messages = shell.querySelector(".ui01b-messages");
-    if (!messages || messages.querySelector(".ui02-home-prompt")) return;
-
-    messages.classList.add("ui02-home-ready");
-
-    const prompt = makeEl("section", "ui02-home-prompt");
-    prompt.appendChild(makeEl("h1", "ui02-home-title", "What do you want to build, fix, design, or control today?"));
-    prompt.appendChild(makeEl("p", "ui02-home-subtitle", "Choose a mode or simply describe your task."));
-
-    const modeChip = makeEl("div", "ui02-mode-chip", "Create · Code · Control");
-
-    const grid = makeEl("section", "ui02-module-grid");
-    grid.appendChild(moduleCard("studio", "ForgeStudio", "Create apps, websites, UI, images, logos, documents.", "studio"));
-    grid.appendChild(moduleCard("code", "ForgeCode", "Analyze projects, write code, fix errors, test, deploy.", "code"));
-    grid.appendChild(moduleCard("pilot", "ForgePilot", "Connect your computer and control software with approval.", "pilot"));
-
-    const firstMessage = messages.querySelector(".ui01b-message");
-    if (firstMessage) {
-      messages.insertBefore(prompt, firstMessage);
-      messages.insertBefore(modeChip, firstMessage);
-      messages.insertBefore(grid, firstMessage);
-    } else {
-      messages.prepend(grid);
-      messages.prepend(modeChip);
-      messages.prepend(prompt);
-    }
-
-    grid.querySelectorAll(".ui02-module-card").forEach((card) => {
-      card.addEventListener("click", function () {
-        const input = shell.querySelector(".ui01b-input");
-        const module = card.dataset.module;
-
-        const prompts = {
-          studio: "I want to create something with ForgeStudio.",
-          code: "I want to build or fix software with ForgeCode.",
-          pilot: "I want to connect my computer with ForgePilot.",
-        };
-
-        if (input) {
-          input.value = prompts[module] || "";
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-          input.focus();
-        }
-      });
+  function requestViewportSync() {
+    if (viewportRaf) return;
+    viewportRaf = window.requestAnimationFrame(function () {
+      viewportRaf = 0;
+      syncViewportVars();
     });
   }
 
-  function polishComposer(shell) {
+  function ensureHomePrompt(shell) {
+    const messages = shell.querySelector(".ui01b-messages");
+    if (!messages) return null;
+
+    let prompt = messages.querySelector(".ui02-home-prompt");
+    if (!prompt) {
+      prompt = document.createElement("section");
+      prompt.className = "ui02-home-prompt";
+      prompt.innerHTML = [
+        '<h1 class="ui02-home-title">What do you want to create, code, or work on today?</h1>',
+        '<p class="ui02-home-subtitle">Choose a mode or simply describe your task.</p>'
+      ].join("");
+      messages.insertBefore(prompt, messages.firstChild);
+    }
+
+    const oldChip = messages.querySelector(".ui02-mode-chip");
+    if (oldChip) oldChip.remove();
+
+    let grid = messages.querySelector(".ui02-module-grid");
+    if (!grid) {
+      grid = document.createElement("section");
+      grid.className = "ui02-module-grid";
+      prompt.insertAdjacentElement("afterend", grid);
+    }
+
+    return { messages: messages, prompt: prompt, grid: grid };
+  }
+
+  function applyCardContent(card, module) {
+    if (!card) return;
+
+    card.dataset.module = module.key;
+    card.dataset.ui02iPrompt = module.prompt;
+    card.type = "button";
+
+    let icon = card.querySelector(".ui02-module-icon");
+    if (!icon) {
+      icon = document.createElement("div");
+      icon.className = "ui02-module-icon";
+      card.appendChild(icon);
+    }
+
+    let copy = card.querySelector(".ui02-module-copy");
+    if (!copy) {
+      copy = document.createElement("div");
+      copy.className = "ui02-module-copy";
+      card.appendChild(copy);
+    }
+
+    let name = copy.querySelector(".ui02-module-name");
+    if (!name) {
+      name = document.createElement("div");
+      name.className = "ui02-module-name";
+      copy.appendChild(name);
+    }
+
+    let desc = copy.querySelector(".ui02-module-desc");
+    if (!desc) {
+      desc = document.createElement("div");
+      desc.className = "ui02-module-desc";
+      copy.appendChild(desc);
+    }
+
+    let arrow = card.querySelector(".ui02-module-arrow");
+    if (!arrow) {
+      arrow = document.createElement("div");
+      arrow.className = "ui02-module-arrow";
+      card.appendChild(arrow);
+    }
+
+    icon.innerHTML = "";
+    const img = document.createElement("img");
+    img.src = ICONS[module.key];
+    img.alt = module.alt;
+    img.loading = "eager";
+    img.decoding = "async";
+    img.onerror = function () {
+      icon.innerHTML = iconFallback(module.alt.slice(5, 6) || module.alt.slice(0, 1));
+    };
+    icon.appendChild(img);
+
+    name.innerHTML = module.titleHtml;
+    desc.textContent = module.desc;
+    arrow.textContent = ">";
+  }
+
+  function ensureModuleGrid(shell) {
+    const parts = ensureHomePrompt(shell);
+    if (!parts) return;
+
+    const grid = parts.grid;
+    const existingCards = Array.from(grid.querySelectorAll(".ui02-module-card"));
+    existingCards.forEach(function (card, index) {
+      if (index > 2) card.remove();
+    });
+
+    while (grid.children.length < 3) {
+      const card = document.createElement("button");
+      card.className = "ui02-module-card";
+      grid.appendChild(card);
+    }
+
+    Array.from(grid.children).slice(0, 3).forEach(function (card, index) {
+      if (!card.classList.contains("ui02-module-card")) {
+        card.className = "ui02-module-card";
+      }
+      applyCardContent(card, MODULES[index]);
+    });
+  }
+
+  function syncTypingState(shell) {
     const composer = shell.querySelector(".ui01b-composer");
     const input = shell.querySelector(".ui01b-input");
+    if (!composer || !input) return;
+
+    const hasText = input.value.trim().length > 0;
+    composer.classList.toggle("ui02-has-text", hasText);
+  }
+
+  function bindShell(shell) {
+    const input = shell.querySelector(".ui01b-input");
+    const composer = shell.querySelector(".ui01b-composer");
     const send = shell.querySelector(".ui01b-send");
+    const share = shell.querySelector(".ui01c-share-btn, .ui01b-icon-btn");
+    const publish = shell.querySelector(".ui01c-publish-btn, .ui01b-primary-btn");
 
-    if (!composer || !input || !send) return;
+    if (share) share.setAttribute("aria-label", "Share");
+    if (publish) publish.setAttribute("aria-label", "Publish");
+    if (send) send.setAttribute("aria-label", "Send");
 
-    input.placeholder = "Ask IdeasForgeAI...";
-    send.innerHTML = upArrowSvg();
-    send.setAttribute("aria-label", "Send message");
-
-    function syncTypingState() {
-      if (input.value.trim().length > 0) {
-        composer.classList.add("ui02-has-text");
-      } else {
-        composer.classList.remove("ui02-has-text");
+    if (input) {
+      input.placeholder = "Ask IdeasForgeAI...";
+      if (!input.dataset.ui02iBound) {
+        input.addEventListener("input", function () {
+          syncTypingState(shell);
+          requestViewportSync();
+        });
+        input.addEventListener("focus", requestViewportSync);
+        input.addEventListener("blur", requestViewportSync);
+        input.dataset.ui02iBound = "true";
       }
     }
 
-    if (!input.dataset.ui02TypingBound) {
-      input.addEventListener("input", syncTypingState);
-      input.dataset.ui02TypingBound = "true";
-    }
-
-    syncTypingState();
-  }
-
-  function apply() {
-    if (!mq.matches) return;
-
-    const shell = document.querySelector(".ui01b-mobile-chat");
-    if (!shell) return;
-
-    addHomeModules(shell);
-    polishComposer(shell);
-  }
-
-  function schedule() {
-    apply();
-    window.setTimeout(apply, 100);
-    window.setTimeout(apply, 350);
-    window.setTimeout(apply, 800);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", schedule, { once: true });
-  } else {
-    schedule();
-  }
-
-  if (mq.addEventListener) {
-    mq.addEventListener("change", schedule);
-  }
-})();
-
-
-// ---------------------------------------------------------------------------
-// UI-02A - Home Chat Layout Balance Repair
-// Fixes module icon quality, hides old assistant message on home, and prevents
-// floating suggestion overlap.
-// ---------------------------------------------------------------------------
-(function ui02aHomeChatBalanceRepair() {
-  const mq = window.matchMedia("(max-width: 760px)");
-
-  function studioSvg() {
-    return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 6c4.7 13.2 12.8 21.3 26 26-13.2 4.7-21.3 12.8-26 26C27.3 44.8 19.2 36.7 6 32c13.2-4.7 21.3-12.8 26-26Z" stroke="#5B5BFF" stroke-width="4" stroke-linejoin="round"/><path d="M45 12l2.7 5.3L53 20l-5.3 2.7L45 28l-2.7-5.3L37 20l5.3-2.7L45 12Z" fill="#FFC83D"/><circle cx="14" cy="17" r="3.5" fill="#3B82F6"/><circle cx="15" cy="48" r="3.5" fill="#3B82F6"/></svg>';
-  }
-
-  function pilotSvg() {
-    return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="12" y="15" width="40" height="28" rx="6" fill="#FFFFFF" stroke="#7AB8FF" stroke-width="3"/><path d="M24 49h16" stroke="#7AB8FF" stroke-width="4" stroke-linecap="round"/><path d="M34 22 25 34h8l-3 9 10-14h-8l2-7Z" fill="#4C7DFF"/></svg>';
-  }
-
-  function applyIcons(shell) {
-    const studioIcon = shell.querySelector('.ui02-module-card[data-module="studio"] .ui02-module-icon');
-    if (studioIcon && !studioIcon.dataset.ui02aFixed) {
-      studioIcon.innerHTML = studioSvg();
-      studioIcon.dataset.ui02aFixed = "true";
-    }
-
-    const pilotIcon = shell.querySelector('.ui02-module-card[data-module="pilot"] .ui02-module-icon');
-    if (pilotIcon && !pilotIcon.dataset.ui02aFixed) {
-      pilotIcon.innerHTML = pilotSvg();
-      pilotIcon.dataset.ui02aFixed = "true";
-    }
-  }
-
-  function setHomeMode(shell) {
-    const messages = shell.querySelector(".ui01b-messages");
-    const composer = shell.querySelector(".ui01b-composer");
-    const input = shell.querySelector(".ui01b-input");
-
-    if (!messages) return;
-
-    if (messages.querySelector(".ui02-home-prompt") && !document.body.classList.contains("ui02-chat-started")) {
-      document.body.classList.add("ui02-home-mode");
-    }
-
-    if (composer && !composer.dataset.ui02aSubmitBound) {
+    if (composer && !composer.dataset.ui02iSubmitBound) {
       composer.addEventListener("submit", function () {
         if (input && input.value.trim()) {
           document.body.classList.add("ui02-chat-started");
           document.body.classList.remove("ui02-home-mode");
         }
+        window.setTimeout(requestViewportSync, 40);
       }, true);
-      composer.dataset.ui02aSubmitBound = "true";
-    }
-  }
-
-  function polishText(shell) {
-    const subtitle = shell.querySelector(".ui01b-subtitle");
-    if (subtitle) subtitle.textContent = "ForgeCode · Coding Agent";
-
-    const input = shell.querySelector(".ui01b-input");
-    if (input) input.placeholder = "Ask IdeasForgeAI...";
-  }
-
-  function apply() {
-    if (!mq.matches) return;
-
-    const shell = document.querySelector(".ui01b-mobile-chat");
-    if (!shell) return;
-
-    applyIcons(shell);
-    setHomeMode(shell);
-    polishText(shell);
-  }
-
-  function schedule() {
-    apply();
-    window.setTimeout(apply, 120);
-    window.setTimeout(apply, 400);
-    window.setTimeout(apply, 900);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", schedule, { once: true });
-  } else {
-    schedule();
-  }
-
-  if (mq.addEventListener) mq.addEventListener("change", schedule);
-})();
-
-
-// ---------------------------------------------------------------------------
-// UI-02C - ForgeWork Module + Premium Home Chat Polish
-// Replaces ForgePilot home card with ForgeWork, using premium inline icons.
-// ---------------------------------------------------------------------------
-(function ui02cForgeWorkModulePolish() {
-  const mq = window.matchMedia("(max-width: 760px)");
-
-  function studioIconSvg() {
-    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="12" y="15" width="56" height="48" rx="14" fill="#fff" stroke="#DFE4F2" stroke-width="2"/><path d="M21 24h38" stroke="#7C61FF" stroke-width="5" stroke-linecap="round"/><rect x="22" y="33" width="22" height="18" rx="5" fill="url(#studioGrad)"/><path d="M48 34h10M48 43h13M48 52h8" stroke="#CBD1DF" stroke-width="4" stroke-linecap="round"/><path d="M53 52l9 9" stroke="#5138EA" stroke-width="5" stroke-linecap="round"/><path d="M59 47l5 14-14-5 9-9Z" fill="#644CFF"/><defs><linearGradient id="studioGrad" x1="22" y1="33" x2="44" y2="51"><stop stop-color="#7B61FF"/><stop offset="1" stop-color="#AFC6FF"/></linearGradient></defs></svg>';
-  }
-
-  function codeIconSvg() {
-    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="12" y="14" width="56" height="50" rx="14" fill="#12151C"/><circle cx="22" cy="23" r="3" fill="#FF5F57"/><circle cx="31" cy="23" r="3" fill="#FFBD2E"/><circle cx="40" cy="23" r="3" fill="#28C840"/><path d="M31 37l-8 8 8 8" stroke="#7C61FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M49 37l8 8-8 8" stroke="#7C61FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M43 34l-6 22" stroke="#A994FF" stroke-width="5" stroke-linecap="round"/><path d="M24 59h32" stroke="#6D55FF" stroke-width="4" stroke-linecap="round"/></svg>';
-  }
-
-  function workIconSvg() {
-    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d="M18 52c-6-6-7-19 3-29 10-10 27-10 38 0 10 10 10 27 0 37-8 8-21 10-32 5L16 68l2-16Z" fill="#151820"/><path d="M18 52c-6-6-7-19 3-29 10-10 27-10 38 0 10 10 10 27 0 37-8 8-21 10-32 5L16 68l2-16Z" stroke="#272B36" stroke-width="2"/><circle cx="31" cy="42" r="4" fill="#fff"/><circle cx="40" cy="42" r="4" fill="#fff"/><circle cx="49" cy="42" r="4" fill="#fff"/><path d="M13 45c12-15 34-21 56-13" stroke="#7C61FF" stroke-width="4" stroke-linecap="round"/><path d="M62 17l2.5 5 5.5 2-5.5 2-2.5 5-2.5-5-5.5-2 5.5-2 2.5-5Z" fill="#7C61FF"/></svg>';
-  }
-
-  function setIcon(card, svg) {
-    const icon = card && card.querySelector(".ui02-module-icon");
-    if (!icon) return;
-    icon.innerHTML = svg;
-  }
-
-  function setName(card, left, accent) {
-    const name = card && card.querySelector(".ui02-module-name");
-    if (!name) return;
-    name.innerHTML = left + '<span>' + accent + '</span>';
-  }
-
-  function apply() {
-    if (!mq.matches) return;
-
-    const shell = document.querySelector(".ui01b-mobile-chat");
-    if (!shell) return;
-
-    const title = shell.querySelector(".ui02-home-title");
-    if (title) title.textContent = "What do you want to create, code, or work on today?";
-
-    const subtitle = shell.querySelector(".ui02-home-subtitle");
-    if (subtitle) subtitle.textContent = "Choose a mode or simply describe your task.";
-
-    const studio = shell.querySelector('.ui02-module-card[data-module="studio"]');
-    if (studio) {
-      setIcon(studio, studioIconSvg());
-      setName(studio, "Forge", "Studio");
-      const desc = studio.querySelector(".ui02-module-desc");
-      if (desc) desc.textContent = "Create apps, websites, UI, images, logos, documents.";
+      composer.dataset.ui02iSubmitBound = "true";
     }
 
-    const code = shell.querySelector('.ui02-module-card[data-module="code"]');
-    if (code) {
-      setIcon(code, codeIconSvg());
-      setName(code, "Forge", "Code");
-      const desc = code.querySelector(".ui02-module-desc");
-      if (desc) desc.textContent = "Analyze projects, write code, fix errors, test, deploy.";
-    }
-
-    const oldPilot = shell.querySelector('.ui02-module-card[data-module="pilot"]');
-    if (oldPilot) {
-      oldPilot.dataset.module = "work";
-    }
-
-    const work = shell.querySelector('.ui02-module-card[data-module="work"]');
-    if (work) {
-      setIcon(work, workIconSvg());
-      setName(work, "Forge", "Work");
-      const desc = work.querySelector(".ui02-module-desc");
-      if (desc) desc.textContent = "AI workspace for documents, research, tasks, reports.";
-    }
-
-    const input = shell.querySelector(".ui01b-input");
-    if (input) input.placeholder = "Ask IdeasForgeAI...";
-
-    const cards = shell.querySelectorAll(".ui02-module-card");
-    cards.forEach((card) => {
-      if (card.dataset.ui02cBound) return;
-      card.dataset.ui02cBound = "true";
+    shell.querySelectorAll(".ui02-module-card").forEach(function (card) {
+      if (card.dataset.ui02iCardBound) return;
+      card.dataset.ui02iCardBound = "true";
       card.addEventListener("click", function () {
-        const input = shell.querySelector(".ui01b-input");
-        if (!input) return;
-
-        const prompts = {
-          studio: "I want to create something with ForgeStudio.",
-          code: "I want to build or fix software with ForgeCode.",
-          work: "I want to work on documents, research, tasks, or reports with ForgeWork.",
-        };
-
-        input.value = prompts[card.dataset.module] || "";
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        input.focus();
+        const field = shell.querySelector(".ui01b-input");
+        if (!field) return;
+        field.value = card.dataset.ui02iPrompt || "";
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+        field.focus();
       });
     });
+
+    syncTypingState(shell);
   }
 
-  function schedule() {
-    apply();
-    window.setTimeout(apply, 100);
-    window.setTimeout(apply, 350);
-    window.setTimeout(apply, 900);
-  }
+  function syncViewportVars() {
+    const root = document.documentElement;
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", schedule, { once: true });
-  } else {
-    schedule();
-  }
-
-  if (mq.addEventListener) mq.addEventListener("change", schedule);
-})();
-
-
-// ---------------------------------------------------------------------------
-// UI-02D - ChatGPT-like Home Chat Final Polish
-// Uses saved brand folder PNG icons and keeps the screen clean/chat-first.
-// ---------------------------------------------------------------------------
-(function ui02dChatGPTLikeHomePolish() {
-  const mq = window.matchMedia("(max-width: 760px)");
-
-  /*
-    Folder screenshot shows the visual assets are currently named this way:
-    - forgework-icon.png visually contains ForgeStudio design-builder icon.
-    - forgecode-icon.png visually contains ForgeCode code icon.
-    - forgestudio-icon.png visually contains ForgeWork chat/orbit icon.
-  */
-  const ICONS = {
-    studio: "../assets/brand/forgework-icon.png",
-    code: "../assets/brand/forgecode-icon.png",
-    work: "../assets/brand/forgestudio-icon.png",
-  };
-
-  function setModule(card, module, nameHtml, desc, iconSrc, prompt) {
-    if (!card) return;
-
-    card.dataset.module = module;
-    card.dataset.ui02dPrompt = prompt;
-
-    const icon = card.querySelector(".ui02-module-icon");
-    if (icon) {
-      icon.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = iconSrc;
-      img.alt = nameHtml.replace(/<[^>]+>/g, "");
-      img.loading = "eager";
-      img.decoding = "async";
-      icon.appendChild(img);
+    if (!mq.matches) {
+      root.style.removeProperty("--mobile-composer-bottom");
+      root.style.removeProperty("--mobile-composer-height");
+      return;
     }
 
-    const name = card.querySelector(".ui02-module-name");
-    if (name) name.innerHTML = nameHtml;
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    const composerWrap = shell && shell.querySelector(".ui01b-composer-wrap");
 
-    const copy = card.querySelector(".ui02-module-desc");
-    if (copy) copy.textContent = desc;
+    let bottomOffset = 64;
+    if (window.visualViewport) {
+      const vv = window.visualViewport;
+      const hiddenBottom = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      bottomOffset = Math.max(12, Math.round(hiddenBottom + 12));
+    }
+
+    root.style.setProperty("--mobile-composer-bottom", bottomOffset + "px");
+
+    const composerHeight = composerWrap
+      ? Math.max(76, Math.ceil(composerWrap.getBoundingClientRect().height || 0))
+      : 76;
+    root.style.setProperty("--mobile-composer-height", composerHeight + "px");
   }
 
-  function bindCards(shell) {
-    shell.querySelectorAll(".ui02-module-card").forEach((card) => {
-      if (card.dataset.ui02dBound) return;
-      card.dataset.ui02dBound = "true";
+  function bindViewportListeners() {
+    if (viewportBound) return;
+    viewportBound = true;
 
-      card.addEventListener("click", function () {
-        const input = shell.querySelector(".ui01b-input");
-        const composer = shell.querySelector(".ui01b-composer");
-        if (!input) return;
+    window.addEventListener("resize", requestViewportSync, { passive: true });
+    window.addEventListener("scroll", requestViewportSync, { passive: true });
+    window.addEventListener("orientationchange", requestViewportSync, { passive: true });
 
-        input.value = card.dataset.ui02dPrompt || "";
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        if (composer) composer.classList.add("ui02-has-text");
-        input.focus();
-      });
-    });
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", requestViewportSync, { passive: true });
+      window.visualViewport.addEventListener("scroll", requestViewportSync, { passive: true });
+    }
   }
 
   function apply() {
@@ -6847,64 +6683,20 @@ document.addEventListener("click", async (event) => {
     const subtitle = shell.querySelector(".ui01b-subtitle");
     if (subtitle) subtitle.textContent = "Create · Code · Work";
 
-    const homeTitle = shell.querySelector(".ui02-home-title");
-    if (homeTitle) {
-      homeTitle.textContent = "What do you want to create, code, or work on today?";
-    }
+    const slimSubbar = shell.querySelector(".ui01c-slim-subbar");
+    if (slimSubbar) slimSubbar.setAttribute("aria-hidden", "true");
 
-    const homeSub = shell.querySelector(".ui02-home-subtitle");
-    if (homeSub) {
-      homeSub.textContent = "Choose a mode or simply describe your task.";
-    }
-
-    const cards = Array.from(shell.querySelectorAll(".ui02-module-card"));
-    const studio =
-      shell.querySelector('.ui02-module-card[data-module="studio"]') || cards[0];
-    const code =
-      shell.querySelector('.ui02-module-card[data-module="code"]') || cards[1];
-    const work =
-      shell.querySelector('.ui02-module-card[data-module="work"]') ||
-      shell.querySelector('.ui02-module-card[data-module="pilot"]') ||
-      cards[2];
-
-    setModule(
-      studio,
-      "studio",
-      "Forge<span>Studio</span>",
-      "Create apps, websites, UI, images, logos, documents.",
-      ICONS.studio,
-      "I want to create something with ForgeStudio."
-    );
-
-    setModule(
-      code,
-      "code",
-      "Forge<span>Code</span>",
-      "Analyze projects, write code, fix errors, test, deploy.",
-      ICONS.code,
-      "I want to build or fix software with ForgeCode."
-    );
-
-    setModule(
-      work,
-      "work",
-      "Forge<span>Work</span>",
-      "AI workspace for documents, research, tasks, reports.",
-      ICONS.work,
-      "I want to work on documents, research, tasks, or reports with ForgeWork."
-    );
-
-    const input = shell.querySelector(".ui01b-input");
-    if (input) input.placeholder = "Ask IdeasForgeAI...";
-
-    bindCards(shell);
+    ensureModuleGrid(shell);
+    bindShell(shell);
+    bindViewportListeners();
+    requestViewportSync();
   }
 
   function schedule() {
     apply();
     window.setTimeout(apply, 120);
     window.setTimeout(apply, 420);
-    window.setTimeout(apply, 900);
+    window.setTimeout(requestViewportSync, 800);
   }
 
   if (document.readyState === "loading") {
@@ -6913,149 +6705,10 @@ document.addEventListener("click", async (event) => {
     schedule();
   }
 
-  if (mq.addEventListener) mq.addEventListener("change", schedule);
-})();
-
-
-// ---------------------------------------------------------------------------
-// UI-02E - Root Icon Binding + Final Chat Polish
-// Final binding uses saved PNG assets and cache-busts to avoid old placeholders.
-// ---------------------------------------------------------------------------
-(function ui02eRootIconBindingFinal() {
-  const mq = window.matchMedia("(max-width: 760px)");
-  const stamp = "v=ui02e-final-1";
-
-  // Current local visual mapping from frontend/assets/brand screenshot:
-  const ICONS = {
-    studio: "../assets/brand/forgework-icon.png?" + stamp,
-    code: "../assets/brand/forgecode-icon.png?" + stamp,
-    work: "../assets/brand/forgestudio-icon.png?" + stamp
-  };
-
-  function fallbackSvg(type) {
-    if (type === "code") {
-      return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="12" y="14" width="56" height="50" rx="14" fill="#12151C"/><circle cx="22" cy="23" r="3" fill="#FF5F57"/><circle cx="31" cy="23" r="3" fill="#FFBD2E"/><circle cx="40" cy="23" r="3" fill="#28C840"/><path d="M31 37l-8 8 8 8" stroke="#7C61FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M49 37l8 8-8 8" stroke="#7C61FF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M43 34l-6 22" stroke="#A994FF" stroke-width="5" stroke-linecap="round"/></svg>';
-    }
-    if (type === "work") {
-      return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><path d="M18 52c-6-6-7-19 3-29 10-10 27-10 38 0 10 10 10 27 0 37-8 8-21 10-32 5L16 68l2-16Z" fill="#151820"/><circle cx="31" cy="42" r="4" fill="#fff"/><circle cx="40" cy="42" r="4" fill="#fff"/><circle cx="49" cy="42" r="4" fill="#fff"/><path d="M13 45c12-15 34-21 56-13" stroke="#7C61FF" stroke-width="4" stroke-linecap="round"/><path d="M62 17l2.5 5 5.5 2-5.5 2-2.5 5-2.5-5-5.5-2 5.5-2 2.5-5Z" fill="#7C61FF"/></svg>';
-    }
-    return '<svg viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="12" y="15" width="56" height="48" rx="14" fill="#fff" stroke="#DFE4F2" stroke-width="2"/><path d="M21 24h38" stroke="#7C61FF" stroke-width="5" stroke-linecap="round"/><rect x="22" y="33" width="22" height="18" rx="5" fill="#7B61FF"/><path d="M48 34h10M48 43h13M48 52h8" stroke="#CBD1DF" stroke-width="4" stroke-linecap="round"/><path d="M59 47l5 14-14-5 9-9Z" fill="#644CFF"/></svg>';
-  }
-
-  function setModule(card, type, nameHtml, desc, prompt) {
-    if (!card) return;
-
-    card.dataset.module = type;
-    card.dataset.ui02ePrompt = prompt;
-
-    const icon = card.querySelector(".ui02-module-icon");
-    if (icon) {
-      icon.innerHTML = "";
-      const img = document.createElement("img");
-      img.src = ICONS[type];
-      img.alt = nameHtml.replace(/<[^>]+>/g, "");
-      img.loading = "eager";
-      img.decoding = "async";
-      img.onerror = function () {
-        icon.innerHTML = fallbackSvg(type);
-      };
-      icon.appendChild(img);
-    }
-
-    const name = card.querySelector(".ui02-module-name");
-    if (name) name.innerHTML = nameHtml;
-
-    const copy = card.querySelector(".ui02-module-desc");
-    if (copy) copy.textContent = desc;
-  }
-
-  function bindCards(shell) {
-    shell.querySelectorAll(".ui02-module-card").forEach(function (card) {
-      if (card.dataset.ui02eBound) return;
-      card.dataset.ui02eBound = "true";
-
-      card.addEventListener("click", function () {
-        const input = shell.querySelector(".ui01b-input");
-        const composer = shell.querySelector(".ui01b-composer");
-        if (!input) return;
-
-        input.value = card.dataset.ui02ePrompt || "";
-        input.dispatchEvent(new Event("input", { bubbles: true }));
-        if (composer) composer.classList.add("ui02-has-text");
-        input.focus();
-      });
+  if (mq.addEventListener) {
+    mq.addEventListener("change", function () {
+      schedule();
+      requestViewportSync();
     });
   }
-
-  function apply() {
-    if (!mq.matches) return;
-
-    const shell = document.querySelector(".ui01b-mobile-chat");
-    if (!shell) return;
-
-    document.body.classList.add("ui02-home-mode");
-
-    const topSubtitle = shell.querySelector(".ui01b-subtitle");
-    if (topSubtitle) topSubtitle.textContent = "Create · Code · Work";
-
-    const homeTitle = shell.querySelector(".ui02-home-title");
-    if (homeTitle) homeTitle.textContent = "What do you want to create, code, or work on today?";
-
-    const homeSub = shell.querySelector(".ui02-home-subtitle");
-    if (homeSub) homeSub.textContent = "Choose a mode or simply describe your task.";
-
-    const cards = Array.from(shell.querySelectorAll(".ui02-module-card"));
-    const studio = shell.querySelector('.ui02-module-card[data-module="studio"]') || cards[0];
-    const code = shell.querySelector('.ui02-module-card[data-module="code"]') || cards[1];
-    const work =
-      shell.querySelector('.ui02-module-card[data-module="work"]') ||
-      shell.querySelector('.ui02-module-card[data-module="pilot"]') ||
-      cards[2];
-
-    setModule(
-      studio,
-      "studio",
-      "Forge<span>Studio</span>",
-      "Create apps, websites, UI, images, logos, documents.",
-      "I want to create something with ForgeStudio."
-    );
-
-    setModule(
-      code,
-      "code",
-      "Forge<span>Code</span>",
-      "Analyze projects, write code, fix errors, test, deploy.",
-      "I want to build or fix software with ForgeCode."
-    );
-
-    setModule(
-      work,
-      "work",
-      "Forge<span>Work</span>",
-      "AI workspace for documents, research, tasks, reports.",
-      "I want to work on documents, research, tasks, or reports with ForgeWork."
-    );
-
-    const input = shell.querySelector(".ui01b-input");
-    if (input) input.placeholder = "Ask IdeasForgeAI...";
-
-    bindCards(shell);
-  }
-
-  function schedule() {
-    apply();
-    window.setTimeout(apply, 100);
-    window.setTimeout(apply, 400);
-    window.setTimeout(apply, 900);
-    window.setTimeout(apply, 1600);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", schedule, { once: true });
-  } else {
-    schedule();
-  }
-
-  if (mq.addEventListener) mq.addEventListener("change", schedule);
 })();
-
