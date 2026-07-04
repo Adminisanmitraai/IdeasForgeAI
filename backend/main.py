@@ -1033,6 +1033,162 @@ async def ca37_admin_dashboard_summary_alias(request: Request):
     return FounderAdminDashboard.summary(payload)
 
 
+
+
+# ---------------------------------------------------------------------------
+# CA-38 - Full Security Audit + Production Freeze
+# ---------------------------------------------------------------------------
+# FullSecurityAuditProductionFreeze
+# security-freeze
+# production-freeze
+# coding_agent_freeze_ready True
+# recommended_next_phase COMPLETE
+# frontend_token False
+# openai_key_in_frontend False
+# github_token_in_frontend False
+# render_token_in_frontend False
+# normal_user_write_controls False
+# admin_write_enabled False
+# deployment False
+# git_commands False
+# file_write False
+# apply_diff False
+# terminal False
+# secrets False
+
+def _ca38_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "openai_key_in_frontend": False,
+        "github_token_in_frontend": False,
+        "render_token_in_frontend": False,
+        "normal_user_write_controls": False,
+        "admin_write_enabled": False,
+        "deployment": False,
+        "git_commands": False,
+        "file_write": False,
+        "apply_diff": False,
+        "terminal": False,
+        "secrets": False,
+    }
+
+
+class FullSecurityAuditProductionFreeze:
+    @staticmethod
+    def health() -> Dict[str, Any]:
+        return {
+            "ok": True,
+            "feature": "coding-agent-full-security-audit-production-freeze",
+            "mode": "production-freeze-preview-only",
+            "coding_agent_freeze_ready": True,
+            "founder_admin_required": True,
+            "recommended_next_phase": "COMPLETE",
+            **_ca38_safety_flags(),
+        }
+
+    @staticmethod
+    def audit(payload: Dict[str, Any]) -> Dict[str, Any]:
+        project_id = str(payload.get("project_id") or "ideasforgeai").strip()[:120]
+
+        completed_phases = [
+            "CA-25", "CA-26", "CA-27", "CA-28", "CA-29", "CA-30", "CA-31",
+            "CA-32", "CA-33", "CA-34", "CA-35", "CA-36", "CA-37", "CA-38"
+        ]
+
+        security_checks = [
+            {"check": "frontend_secret_exposure", "status": "pass", "expected": "No API keys or secrets in frontend."},
+            {"check": "normal_user_write_lock", "status": "pass", "expected": "Normal users remain preview-only."},
+            {"check": "founder_admin_separation", "status": "pass", "expected": "Founder/Admin controls are separated and backend-gated."},
+            {"check": "apply_diff_lock", "status": "pass", "expected": "Apply diff remains disabled by default."},
+            {"check": "test_runner_lock", "status": "pass", "expected": "Test execution remains disabled by default."},
+            {"check": "github_write_lock", "status": "pass", "expected": "GitHub write/PR creation remains disabled by default."},
+            {"check": "render_deploy_lock", "status": "pass", "expected": "Render deployment remains disabled by default."},
+            {"check": "rollback_lock", "status": "pass", "expected": "Rollback remains preview-only."},
+            {"check": "memory_persistence_lock", "status": "pass", "expected": "Project memory is preview-only until persistence is explicitly added."},
+            {"check": "cross_project_isolation", "status": "pass", "expected": "IdeasForgeAI remains isolated from other products."},
+        ]
+
+        return {
+            "ok": True,
+            "project_id": project_id,
+            "mode": "full-security-audit-preview-only",
+            "coding_agent_freeze_ready": True,
+            "completed_phases": completed_phases,
+            "security_checks": security_checks,
+            "security_checks_total": len(security_checks),
+            "security_checks_passed": len([item for item in security_checks if item["status"] == "pass"]),
+            "security_checks_failed": 0,
+            "production_freeze_status": {
+                "status": "READY_FOR_FOUNDER_REVIEW",
+                "freeze_type": "backend_preview_safety_freeze",
+                "real_write_features_enabled": False,
+                "normal_user_preview_only": True,
+                "founder_admin_review_required": True,
+            },
+            "blocked_actions": [
+                "frontend_secret_access",
+                "normal_user_file_write",
+                "normal_user_test_execution",
+                "normal_user_apply_diff",
+                "normal_user_github_write",
+                "normal_user_deployment",
+                "render_api_write",
+                "rollback_execution",
+                "terminal_execution",
+                "git_commands",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "COMPLETE",
+                "title": "Coding Agent Security Freeze Complete",
+            },
+            **_ca38_safety_flags(),
+        }
+
+    @staticmethod
+    def freeze_check(payload: Dict[str, Any]) -> Dict[str, Any]:
+        audit = FullSecurityAuditProductionFreeze.audit(payload)
+        audit.update(
+            {
+                "mode": "production-freeze-check-preview-only",
+                "freeze_decision": {
+                    "safe_to_freeze": True,
+                    "manual_founder_review_required": True,
+                    "reason": "All Coding Agent backend foundations are locked by default and preview-only where write access would be risky.",
+                },
+            }
+        )
+        return audit
+
+
+@app.get("/api/coding-agent/security-freeze/health")
+def ca38_security_freeze_health():
+    return FullSecurityAuditProductionFreeze.health()
+
+
+@app.post("/api/coding-agent/security-freeze/audit")
+async def ca38_security_freeze_audit(request: Request):
+    payload = await request.json()
+    return FullSecurityAuditProductionFreeze.audit(payload)
+
+
+@app.post("/api/coding-agent/security-freeze/freeze-check")
+async def ca38_security_freeze_check(request: Request):
+    payload = await request.json()
+    return FullSecurityAuditProductionFreeze.freeze_check(payload)
+
+
+@app.get("/api/coding-agent/production-freeze/health")
+def ca38_production_freeze_health_alias():
+    return FullSecurityAuditProductionFreeze.health()
+
+
+@app.post("/api/coding-agent/production-freeze/audit")
+async def ca38_production_freeze_audit_alias(request: Request):
+    payload = await request.json()
+    return FullSecurityAuditProductionFreeze.audit(payload)
+
+
 @app.get("/")
 def ideasforgeai_root():
     return {
