@@ -1015,118 +1015,186 @@ def coding_agent_auto_fix_plan(request: AutoFixPreviewRequest):
 
 
 
-# Phase CA-18 - GitHub Integration Foundation.
-# Preview-only GitHub workflow planning. No GitHub API calls, no tokens,
-# no branch creation, no commits, no pushes, no PR creation, no merge, and no deployment.
-class GitHubIntegrationPreviewRequest(BaseModel):
+# Phase CA-33 - GitHub Branch + Commit + PR Flow.
+# Preview-only GitHub flow planning. No GitHub API calls, no Git commands,
+# no branch creation, no commit creation, no pull request creation, no deployment,
+# no secrets access, and no file writes.
+class GitHubFlowRequest(BaseModel):
     project_id: str = Field(default="ideasforgeai-demo")
-    repository_url: str = Field(default="https://github.com/Adminisanmitraai/IdeasForgeAI")
-    mode: str = Field(default="github-integration-preview")
+    proposal_id: str = Field(default="demo-task-planner-fix")
+    requested_by_role: str = Field(default="user")
+    repository_url: str = Field(default="https://github.com/IdeasForgeAI/IdeasForgeAI")
+    target_branch: str = Field(default="main")
+    changed_files_summary: List[str] = Field(
+        default_factory=lambda: [
+            "frontend/pages/coding-agent.js",
+            "backend/main.py",
+            "PROJECT_STATUS.md",
+        ]
+    )
 
+
+# GitHubBranchCommitPRFlow
+# github-flow
+# github_flow_enabled
+# proposed_branch_name
+# commit_message
+# pr_title
+# pr_body_preview
+# github_api_write False
+# git_commands False
+# branch_create False
+# commit_create False
+# pull_request_create False
+# recommended_next_phase CA-34
 
 def _safe_repo_preview_url(value: str) -> str:
     repo = (value or "").strip()
     if not repo:
-        return "https://github.com/Adminisanmitraai/IdeasForgeAI"
+        return "https://github.com/IdeasForgeAI/IdeasForgeAI"
     if "token" in repo.lower() or "@" in repo.replace("https://github.com/", ""):
         return "Protected repository reference"
     return repo[:180]
 
 
-def _build_github_integration_preview(request: GitHubIntegrationPreviewRequest) -> Dict[str, Any]:
-    repo_url = _safe_repo_preview_url(request.repository_url)
+def _safe_branch_name(value: str) -> str:
+    branch = re.sub(r"[^a-zA-Z0-9/_-]+", "-", (value or "main").strip())
+    branch = branch.strip("-/") or "main"
+    return branch[:80]
+
+
+def _safe_changed_files_summary(values: List[str]) -> List[str]:
+    summary: List[str] = []
+    for value in values or []:
+        cleaned = (value or "").strip()
+        if not cleaned:
+            continue
+        summary.append(cleaned[:160])
+    return summary[:12]
+
+
+def _build_github_flow_payload(request: GitHubFlowRequest, permission_status: str, mode: str) -> Dict[str, Any]:
+    project_id = request.project_id.strip() or "ideasforgeai-demo"
+    proposal_id = request.proposal_id.strip() or "demo-task-planner-fix"
+    target_branch = _safe_branch_name(request.target_branch)
+    proposed_branch_name = f"codex/{project_id}/{proposal_id}".replace(" ", "-").lower()[:120]
+    commit_message = f"CA-33 preview: prepare {proposal_id} for review"[:140]
+    pr_title = f"[CA-33 Preview] {project_id} - {proposal_id}"[:140]
+    pr_body_preview = (
+        "Preview only. This CA-33 foundation prepares a branch, commit, and pull request plan "
+        "for Founder/Admin review without creating any Git or GitHub state."
+    )
     return {
         "ok": True,
-        "status": "github-preview-ready",
-        "mode": "github-integration-preview",
-        "project_id": request.project_id or "ideasforgeai-demo",
-        "repository": {
-            "name": "IdeasForgeAI",
-            "url_preview": repo_url,
-            "connection_status": "Preview only",
-            "real_connection": False,
-        },
-        "workflow": {
-            "title": "Founder/Admin GitHub workflow preview",
-            "steps": [
-                "Review generated proposal and protected diff",
-                "Request Founder/Admin Git review",
-                "Create branch only after verified backend permission",
-                "Commit only approved changes",
-                "Push branch only after validation passes",
-                "Create pull request for review",
-                "Merge only after Founder/Admin approval",
-                "Keep rollback plan available",
-            ],
-        },
-        "branch_plan": {
-            "suggested_branch": "work/ideasforgeai-approved-change",
-            "base_branch": "main",
-            "status": "planned-only",
-        },
-        "pull_request_plan": {
-            "title": "Apply approved IdeasForgeAI Coding Agent change",
-            "body_sections": [
-                "Summary",
-                "Affected files",
-                "Validation results",
-                "Safety checks",
-                "Rollback plan",
-            ],
-            "status": "planned-only",
-        },
-        "locked_actions": [
-            "Connect GitHub account",
-            "Read private repository",
-            "Create branch",
-            "Commit changes",
-            "Push branch",
-            "Create pull request",
-            "Merge pull request",
-            "Rollback",
+        "project_id": project_id,
+        "proposal_id": proposal_id,
+        "mode": mode,
+        "github_flow_enabled": False,
+        "founder_admin_required": True,
+        "permission_status": permission_status,
+        "target_branch": target_branch,
+        "proposed_branch_name": proposed_branch_name,
+        "commit_message": commit_message,
+        "pr_title": pr_title,
+        "pr_body_preview": pr_body_preview,
+        "changed_files_summary": _safe_changed_files_summary(request.changed_files_summary),
+        "approval_gate": "Founder/Admin backend approval is required before any future real GitHub branch, commit, or PR write.",
+        "blocked_actions": [
+            "github_api_write",
+            "git_commands",
+            "branch_create",
+            "commit_create",
+            "pull_request_create",
+            "deployment",
+            "file_write",
+            "apply_diff",
         ],
-        "approval_gate": {
-            "required": True,
-            "role": "Founder/Admin",
-            "message": "Real GitHub actions require backend authentication, secure token storage, connected repository permission, and Founder/Admin approval.",
+        "recommended_next_phase": {
+            "phase": "CA-34",
+            "title": "Deployment Approval + Render Flow",
         },
-        "audit_preview": [
-            "GitHub workflow preview opened — allowed",
-            "Repository token access — blocked",
-            "Branch creation — blocked",
-            "Commit — blocked",
-            "Push — blocked",
-            "Pull request creation — blocked",
-            "Merge — blocked",
-            "Rollback — blocked",
-        ],
-        "safety": {
-            "github_api_calls": False,
-            "token_in_frontend": False,
-            "token_in_response": False,
-            "git_commands": False,
-            "file_write": False,
-            "deploy": False,
-            "secrets": False,
-        },
+        "frontend_token": False,
+        "github_token_in_frontend": False,
+        "github_api_write": False,
+        "git_commands": False,
+        "branch_create": False,
+        "commit_create": False,
+        "pull_request_create": False,
+        "deployment": False,
+        "secrets": False,
+        "file_write": False,
+        "apply_diff": False,
+        "repository_url_preview": _safe_repo_preview_url(request.repository_url),
     }
+
+
+@app.get("/api/coding-agent/github-flow/health")
+def coding_agent_github_flow_health():
+    return {
+        "ok": True,
+        "project_id": "ideasforgeai-demo",
+        "proposal_id": "demo-task-planner-fix",
+        "mode": "github-flow-preview",
+        "github_flow_enabled": False,
+        "founder_admin_required": True,
+        "permission_status": "preview_only",
+        "target_branch": "main",
+        "proposed_branch_name": "codex/ideasforgeai-demo/demo-task-planner-fix",
+        "commit_message": "CA-33 preview: prepare demo-task-planner-fix for review",
+        "pr_title": "[CA-33 Preview] ideasforgeai-demo - demo-task-planner-fix",
+        "pr_body_preview": "Preview only. No GitHub write action is enabled.",
+        "changed_files_summary": [],
+        "approval_gate": "Founder/Admin backend approval is required before any future real GitHub branch, commit, or PR write.",
+        "blocked_actions": [
+            "github_api_write",
+            "git_commands",
+            "branch_create",
+            "commit_create",
+            "pull_request_create",
+            "deployment",
+            "file_write",
+            "apply_diff",
+        ],
+        "recommended_next_phase": {
+            "phase": "CA-34",
+            "title": "Deployment Approval + Render Flow",
+        },
+        "frontend_token": False,
+        "github_token_in_frontend": False,
+        "github_api_write": False,
+        "git_commands": False,
+        "branch_create": False,
+        "commit_create": False,
+        "pull_request_create": False,
+        "deployment": False,
+        "secrets": False,
+        "file_write": False,
+        "apply_diff": False,
+    }
+
+
+@app.post("/api/coding-agent/github-flow/preview")
+def coding_agent_github_flow_preview(request: GitHubFlowRequest):
+    return _build_github_flow_payload(request, permission_status="preview_only", mode="github-flow-preview")
+
+
+@app.post("/api/coding-agent/github-flow/request-approval")
+def coding_agent_github_flow_request_approval(request: GitHubFlowRequest):
+    return _build_github_flow_payload(
+        request,
+        permission_status="founder_admin_backend_approval_required",
+        mode="github-flow-approval-requested",
+    )
 
 
 @app.get("/api/coding-agent/github/health")
 def coding_agent_github_health():
-    return {
-        "ok": True,
-        "feature": "coding-agent-github-integration",
-        "mode": "github-integration-preview",
-        "github_api_calls": False,
-        "git_commands": False,
-        "token_required": False,
-    }
+    return coding_agent_github_flow_health()
 
 
 @app.post("/api/coding-agent/github/preview")
-def coding_agent_github_preview(request: GitHubIntegrationPreviewRequest):
-    return _build_github_integration_preview(request)
+def coding_agent_github_preview(request: GitHubFlowRequest):
+    return coding_agent_github_flow_preview(request)
 
 
 
@@ -4709,4 +4777,5 @@ def ca31_run_tests_health_alias():
 async def ca31_run_tests_alias(request: Request):
     payload = await request.json()
     return RealTestRunner.run(payload)
+
 

@@ -1,3 +1,30 @@
+## Phase CA-33 - GitHub Branch + Commit + PR Flow
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only protected GitHub Branch + Commit + PR Flow foundation for Coding Agent.
+- Added github-flow health, preview, and request-approval endpoints.
+- Kept compatibility github health and preview aliases.
+- Previews GitHub branch, commit, and PR plan only.
+- Does not create branch.
+- Does not commit.
+- Does not open PR.
+- Does not run Git commands.
+- Does not call GitHub API.
+- Does not access GitHub token.
+- Does not expose frontend tokens or secrets.
+- Founder/Admin backend approval remains required before any future real GitHub write.
+- Normal users remain preview only.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-33
+
+NEXT AFTER: CA-34 - Deployment Approval + Render Flow
 ## Phase CA-32 - Auto-Fix Loop Using Test Results
 
 Status: Completed locally, validation required before deploy.
@@ -13377,6 +13404,7 @@ Status: Completed locally, validation pending manual browser check.
 - Files changed: `backend/main.py`, `frontend/pages/coding-agent.html`, `frontend/pages/coding-agent.css`, `frontend/pages/coding-agent.js`, `PROJECT_STATUS.md`.
 - Validation commands required: `python -m py_compile backend/main.py`; `node --check frontend/pages/coding-agent.js`; `node --check frontend/pages/studio-v4.js`; `python backend/sector_qa_runner.py`.
 - Safety notes: no external legacy project files touched; no deployment settings touched; no `.env` or secret values added; backend execution remains allowlisted only.
+
 
 
 
