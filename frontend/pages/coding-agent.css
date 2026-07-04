@@ -5675,3 +5675,220 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   UI-01E - Premium Mobile Chat Visual Polish
+   Compact header, better hierarchy, lighter bubbles, slimmer utility bar,
+   wider composer input, and subtle suggestion chips.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ui01b-topbar {
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 18px 10px !important;
+    min-height: 82px !important;
+  }
+
+  .ui01b-brand-row {
+    gap: 10px !important;
+    align-items: center !important;
+  }
+
+  .ui01c-header-menu {
+    width: 34px !important;
+    height: 34px !important;
+    margin-right: 2px !important;
+  }
+
+  .ui01c-header-menu svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .ui01b-brand-mark {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 14px !important;
+    background: rgba(255,255,255,0.76) !important;
+    border: 1px solid rgba(20,22,30,0.06) !important;
+    box-shadow: 0 10px 24px rgba(45,58,110,0.07) !important;
+  }
+
+  .ui01d-brand-svg {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .ui01b-product {
+    font-size: 17px !important;
+    line-height: 1.05 !important;
+    letter-spacing: -0.045em !important;
+    white-space: nowrap !important;
+  }
+
+  .ui01b-subtitle {
+    font-size: 11.5px !important;
+    line-height: 1.15 !important;
+    margin-top: 4px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 150px !important;
+    color: rgba(17,19,24,0.54) !important;
+  }
+
+  .ui01b-top-actions {
+    gap: 8px !important;
+  }
+
+  .ui01b-icon-btn.ui01c-share-btn,
+  .ui01b-primary-btn.ui01c-publish-btn {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 15px !important;
+  }
+
+  .ui01c-share-btn .ui01c-action-svg,
+  .ui01c-publish-btn .ui01c-action-svg,
+  .ui01d-action-svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .ui01c-publish-btn .ui01c-action-svg,
+  .ui01d-publish-svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+
+  .ui01c-slim-subbar {
+    height: 26px !important;
+    padding: 0 18px !important;
+    background: rgba(239,241,247,0.78) !important;
+    border-top: 1px solid rgba(20,22,30,0.045) !important;
+    border-bottom: 1px solid rgba(20,22,30,0.06) !important;
+  }
+
+  .ui01e-subbar-label {
+    margin-right: auto;
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(17,19,24,0.36);
+  }
+
+  .ui01c-next-screen-btn {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    background: rgba(255,255,255,0.88) !important;
+  }
+
+  .ui01c-next-screen-btn svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .ui01b-messages {
+    padding: 18px 18px 118px !important;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(111, 88, 255, 0.055), transparent 32%),
+      linear-gradient(180deg, #f7f7fb 0%, #f5f6fb 100%) !important;
+  }
+
+  .ui01b-safety-chip {
+    margin: 4px auto 18px 4px !important;
+    padding: 8px 13px !important;
+    font-size: 11.5px !important;
+    background: rgba(17,19,24,0.055) !important;
+  }
+
+  .ui01b-message {
+    width: min(90%, 660px) !important;
+    margin-bottom: 14px !important;
+    padding: 16px 16px 36px !important;
+    border-radius: 20px !important;
+    font-size: 15.8px !important;
+    line-height: 1.45 !important;
+    box-shadow: 0 14px 36px rgba(45,58,110,0.075) !important;
+  }
+
+  .ui01b-message.assistant {
+    border-color: rgba(20,22,30,0.075) !important;
+  }
+
+  .ui01b-time {
+    right: 16px !important;
+    bottom: 11px !important;
+    font-size: 11.5px !important;
+  }
+
+  .ui01e-suggestion-row {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 94px);
+    z-index: 9999;
+    display: flex;
+    gap: 8px;
+    padding: 0 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    pointer-events: auto;
+  }
+
+  .ui01e-suggestion-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ui01e-suggestion-chip {
+    flex: 0 0 auto;
+    border: 1px solid rgba(20,22,30,0.08);
+    background: rgba(255,255,255,0.86);
+    color: rgba(17,19,24,0.68);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    box-shadow: 0 10px 24px rgba(45,58,110,0.07);
+    backdrop-filter: blur(12px);
+  }
+
+  .ui01b-composer-wrap {
+    padding: 10px 12px calc(env(safe-area-inset-bottom, 0px) + 12px) !important;
+  }
+
+  .ui01b-composer {
+    min-height: 60px !important;
+    border-radius: 30px !important;
+    gap: 7px !important;
+    padding: 8px !important;
+    box-shadow: 0 16px 40px rgba(45,58,110,0.13) !important;
+  }
+
+  .ui01b-plus,
+  .ui01b-mic,
+  .ui01b-send {
+    width: 43px !important;
+    height: 43px !important;
+  }
+
+  .ui01b-input {
+    height: 43px !important;
+    min-width: 0 !important;
+    font-size: 15px !important;
+    padding: 0 13px !important;
+  }
+
+  .ui01b-input::placeholder {
+    color: rgba(17,19,24,0.34) !important;
+  }
+
+  .ui01b-send .ui01d-composer-svg,
+  .ui01b-mic .ui01d-composer-svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+}
+

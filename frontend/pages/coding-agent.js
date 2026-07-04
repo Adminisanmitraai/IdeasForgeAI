@@ -6326,3 +6326,88 @@ document.addEventListener("click", async (event) => {
   setTimeout(apply, 800);
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-01E - Premium Mobile Chat Visual Polish
+// Final mobile visual refinement without backend/write/deploy changes.
+// ---------------------------------------------------------------------------
+(function ui01ePremiumMobilePolish() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  function apply() {
+    if (!mq.matches) return;
+
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    if (!shell) return;
+
+    const subtitle = shell.querySelector(".ui01b-subtitle");
+    if (subtitle) subtitle.textContent = "ForgeCode · Coding Agent";
+
+    const subbar = shell.querySelector(".ui01c-slim-subbar");
+    if (subbar && !subbar.querySelector(".ui01e-subbar-label")) {
+      const label = document.createElement("span");
+      label.className = "ui01e-subbar-label";
+      label.textContent = "Studio preview";
+      subbar.insertBefore(label, subbar.firstChild);
+    }
+
+    const input = shell.querySelector(".ui01b-input");
+    if (input) {
+      input.placeholder = "Ask IdeasForgeAI...";
+    }
+
+    if (!shell.querySelector(".ui01e-suggestion-row")) {
+      const composerWrap = shell.querySelector(".ui01b-composer-wrap");
+      const messages = shell.querySelector(".ui01b-messages");
+
+      const row = document.createElement("div");
+      row.className = "ui01e-suggestion-row";
+
+      const suggestions = [
+        "Create app",
+        "Improve UI",
+        "Connect project",
+      ];
+
+      suggestions.forEach((text) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "ui01e-suggestion-chip";
+        chip.textContent = text;
+        chip.addEventListener("click", function () {
+          const field = shell.querySelector(".ui01b-input");
+          if (field) {
+            field.value = text;
+            field.focus();
+          }
+        });
+        row.appendChild(chip);
+      });
+
+      if (composerWrap && composerWrap.parentNode) {
+        composerWrap.parentNode.insertBefore(row, composerWrap);
+      } else {
+        shell.appendChild(row);
+      }
+
+      if (messages) {
+        messages.scrollTop = 0;
+      }
+    }
+  }
+
+  function schedule() {
+    apply();
+    window.setTimeout(apply, 100);
+    window.setTimeout(apply, 350);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+
+  if (mq.addEventListener) mq.addEventListener("change", schedule);
+})();
+
