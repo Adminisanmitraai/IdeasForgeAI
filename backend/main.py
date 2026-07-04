@@ -76,6 +76,228 @@ app.add_middleware(
 
 
 
+
+
+# ---------------------------------------------------------------------------
+# CA-32 - Auto-Fix Loop Using Test Results
+# ---------------------------------------------------------------------------
+# AutoFixLoop
+# auto-fix
+# recommended_next_phase CA-33
+# file_write False
+# apply_diff False
+# terminal False
+# git_commands False
+# deployment False
+# secrets False
+
+def _ca32_safety_flags() -> Dict[str, bool]:
+    return {
+        "frontend_token": False,
+        "private_repo": False,
+        "clone": False,
+        "local_filesystem_read": False,
+        "file_write": False,
+        "apply_diff": False,
+        "auto_fix_enabled": False,
+        "arbitrary_command_execution": False,
+        "terminal": False,
+        "git_commands": False,
+        "deployment": False,
+        "secrets": False,
+    }
+
+
+def _ca32_test_results(payload: Dict[str, Any]) -> List[Dict[str, Any]]:
+    raw_results = payload.get("test_results") or payload.get("results") or []
+    if not isinstance(raw_results, list):
+        return []
+    cleaned: List[Dict[str, Any]] = []
+    for item in raw_results:
+        if isinstance(item, dict):
+            cleaned.append(item)
+    return cleaned
+
+
+def _ca32_is_failed_result(result: Dict[str, Any]) -> bool:
+    status = str(result.get("status") or "").lower()
+    exit_code = result.get("exit_code")
+    stderr = str(result.get("stderr") or "")
+    if status in {"fail", "failed", "error", "blocked"}:
+        return True
+    if isinstance(exit_code, int) and exit_code != 0:
+        return True
+    if "error" in stderr.lower() or "traceback" in stderr.lower():
+        return True
+    return False
+
+
+def _ca32_classify_failure(result: Dict[str, Any]) -> Dict[str, Any]:
+    command_id = str(result.get("command_id") or result.get("name") or "unknown_test")
+    stderr = str(result.get("stderr") or "")
+    stdout = str(result.get("stdout") or "")
+    combined = f"{stderr}\n{stdout}".lower()
+
+    if "syntaxerror" in combined or "node --check" in combined:
+        category = "syntax"
+        likely_files = ["frontend/pages/coding-agent.js", "frontend/pages/studio-v4.js", "backend/main.py"]
+        suggested_fix_strategy = "Fix syntax errors first, then rerun the exact failed syntax check."
+    elif "importerror" in combined or "modulenotfounderror" in combined:
+        category = "backend_import"
+        likely_files = ["backend/main.py", "backend/agents/", "backend/api/"]
+        suggested_fix_strategy = "Fix backend imports or missing modules, then rerun backend import check."
+    elif "sector qa" in command_id.lower() or command_id == "sector_qa":
+        category = "sector_qa"
+        likely_files = ["backend/sector_qa_runner.py", "backend/api/sector_classifier.py"]
+        suggested_fix_strategy = "Review sector classifier mappings and restore 25/25 QA pass."
+    elif "phase_audit" in command_id.lower():
+        category = "phase_audit"
+        likely_files = ["backend/coding_agent_phase_audit.py", "PROJECT_STATUS.md", "backend/main.py"]
+        suggested_fix_strategy = "Fix the missing audit marker, endpoint, status block, or NEXT AFTER label."
+    else:
+        category = "validation"
+        likely_files = ["backend/main.py", "frontend/pages/coding-agent.js", "PROJECT_STATUS.md"]
+        suggested_fix_strategy = "Review failed validation output and produce a minimal safe patch plan."
+
+    return {
+        "command_id": command_id,
+        "category": category,
+        "likely_files": likely_files,
+        "suggested_fix_strategy": suggested_fix_strategy,
+        "evidence": (stderr or stdout or "No output provided.")[:1000],
+    }
+
+
+class AutoFixLoop:
+    @staticmethod
+    def analyze(payload: Dict[str, Any]) -> Dict[str, Any]:
+        test_results = _ca32_test_results(payload)
+        failed_results = [result for result in test_results if _ca32_is_failed_result(result)]
+        fix_diagnosis = [_ca32_classify_failure(result) for result in failed_results]
+
+        if not test_results:
+            summary = "No test results were provided. Auto-fix analysis remains preview-only."
+            risk_level = "low"
+        elif failed_results:
+            summary = f"Detected {len(failed_results)} failed validation result(s). Prepared safe fix diagnosis only."
+            risk_level = "medium"
+        else:
+            summary = "No failing test results detected. No auto-fix action needed."
+            risk_level = "low"
+
+        likely_causes = []
+        for item in fix_diagnosis:
+            cause = item["category"]
+            if cause not in likely_causes:
+                likely_causes.append(cause)
+
+        return {
+            "ok": True,
+            "project_id": payload.get("project_id") or "ideasforgeai",
+            "proposal_id": payload.get("proposal_id") or "",
+            "mode": "auto-fix-analysis-preview-only",
+            "auto_fix_enabled": False,
+            "founder_admin_required": True,
+            "test_results_count": len(test_results),
+            "failed_results_count": len(failed_results),
+            "fix_diagnosis": fix_diagnosis,
+            "likely_causes": likely_causes,
+            "suggested_fix_strategy": "Create a minimal safe patch plan from failed validation outputs. Do not write files or apply diffs in CA-32.",
+            "validation_plan": [
+                "python -c \"from backend.main import app; print('backend main import OK')\"",
+                "python -m py_compile backend/main.py",
+                "node --check frontend/pages/coding-agent.js",
+                "node --check frontend/pages/studio-v4.js",
+                "python backend/sector_qa_runner.py",
+                "python backend/coding_agent_phase_audit.py --phase CA-32",
+            ],
+            "risk": {
+                "level": risk_level,
+                "reasons": [
+                    "Analysis-only auto-fix loop.",
+                    "No file writes, no diff apply, no terminal execution, no Git, and no deployment.",
+                ],
+            },
+            "approval_gate": {
+                "founder_admin_required": True,
+                "future_real_auto_fix_requires_backend_permission": True,
+                "frontend_token_can_enable": False,
+            },
+            "blocked_actions": [
+                "file_write",
+                "apply_diff",
+                "terminal_execution",
+                "arbitrary_command_execution",
+                "git_commands",
+                "deployment",
+                "secrets_access",
+            ],
+            "recommended_next_phase": {
+                "phase": "CA-33",
+                "title": "GitHub Branch + Commit + PR Flow",
+            },
+            **_ca32_safety_flags(),
+        }
+
+    @staticmethod
+    def plan(payload: Dict[str, Any]) -> Dict[str, Any]:
+        analysis = AutoFixLoop.analyze(payload)
+        diagnosis = analysis.get("fix_diagnosis", [])
+        likely_files: List[str] = []
+        implementation_steps: List[str] = []
+
+        for item in diagnosis:
+            for file_path in item.get("likely_files", []):
+                if file_path not in likely_files:
+                    likely_files.append(file_path)
+            implementation_steps.append(item.get("suggested_fix_strategy", "Create a minimal safe fix plan."))
+
+        if not implementation_steps:
+            implementation_steps = [
+                "No failing test result was provided.",
+                "Keep the workspace unchanged.",
+                "Rerun validation if a failure appears.",
+            ]
+
+        return {
+            **analysis,
+            "mode": "auto-fix-plan-preview-only",
+            "fix_plan": {
+                "fix_plan_id": f"CA32-{analysis.get('project_id', 'ideasforgeai')}-{analysis.get('failed_results_count', 0)}",
+                "likely_files": likely_files,
+                "implementation_steps": implementation_steps,
+                "code_generation_enabled": False,
+                "file_write_enabled": False,
+                "apply_diff_enabled": False,
+            },
+        }
+
+
+@app.get("/api/coding-agent/auto-fix/health")
+def ca32_auto_fix_health():
+    return {
+        "ok": True,
+        "feature": "coding-agent-auto-fix-loop",
+        "mode": "test-results-analysis-preview-only",
+        "auto_fix_enabled": False,
+        "founder_admin_required": True,
+        "recommended_next_phase": "CA-33",
+        **_ca32_safety_flags(),
+    }
+
+
+@app.post("/api/coding-agent/auto-fix/analyze")
+async def ca32_auto_fix_analyze(request: Request):
+    payload = await request.json()
+    return AutoFixLoop.analyze(payload)
+
+
+@app.post("/api/coding-agent/auto-fix/plan")
+async def ca32_auto_fix_plan(request: Request):
+    payload = await request.json()
+    return AutoFixLoop.plan(payload)
+
+
 @app.get("/")
 def ideasforgeai_root():
     return {

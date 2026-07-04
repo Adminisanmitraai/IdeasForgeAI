@@ -1,3 +1,31 @@
+## Phase CA-32 - Auto-Fix Loop Using Test Results
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend-only Auto-Fix Loop foundation for Coding Agent.
+- Uses CA-31 test results to produce fix diagnosis and safe fix plans.
+- Auto-fix is analysis/planning-only by default.
+- Does not write files.
+- Does not apply diffs.
+- Does not run terminal commands.
+- Does not run Git commands.
+- Does not deploy or rollback.
+- Does not access or expose secrets.
+- Normal users cannot trigger real auto-fix actions.
+- Founder/Admin backend permission remains required before any future real auto-fix action.
+- Produces likely causes, suggested fix strategy, likely files, implementation steps, risk, approval gate, and validation plan.
+
+Validation commands:
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-32
+
+NEXT AFTER: CA-33 - GitHub Branch + Commit + PR Flow
+
+
 ## Phase CA-31 - Real Test Runner Backend Execution
 
 Status: Completed locally, validation required before deploy.
