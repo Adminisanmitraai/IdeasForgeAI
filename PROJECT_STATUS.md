@@ -1,3 +1,23 @@
+## UI-02F - Mobile Fit-to-Screen + Composer Lower Fix
+
+Status: Completed locally, validation required before deploy.
+
+- Reduced mobile header height.
+- Tightened home title and module card spacing.
+- Reduced module card height so the screen fits better.
+- Lowered the chat composer tray from high floating position to near the mobile bottom.
+- Improved right-side action button fit.
+- Preserved ForgeStudio, ForgeCode, and ForgeWork module icons.
+- Preserved ChatGPT-like composer behavior.
+- No backend files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02E - Root Icon Binding + Final Chat Polish
 
 Status: Completed locally, validation required before deploy.
