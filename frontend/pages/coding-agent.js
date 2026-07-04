@@ -7244,3 +7244,421 @@ document.addEventListener("click", async (event) => {
   };
 })();
 
+
+// ---------------------------------------------------------------------------
+// AI-01 - ChatGPT-like IdeasForgeAI OpenAI Chat Experience
+// Backend-only API key. Frontend talks only to /api/ideasforge/chat/stream.
+// ---------------------------------------------------------------------------
+(function ai01IdeasForgeChatExperience() {
+  if (window.__AI01_IDEASFORGE_CHAT__) return;
+  window.__AI01_IDEASFORGE_CHAT__ = true;
+
+  const state = {
+    mode: "chat",
+    messages: [],
+    active: false,
+    sending: false,
+  };
+
+  const apiBases = [
+    window.IDEASFORGE_API_BASE,
+    localStorage.getItem("ideasforge_api_base"),
+    "https://ideasforgeai-api.onrender.com",
+    ""
+  ].filter(Boolean);
+
+  const modeData = {
+    studio: {
+      label: "ForgeStudio",
+      greet: [
+        () => `${timeGreeting()}. Welcome to ForgeStudio.`,
+        () => "Here you can create apps, websites, UI screens, logos, presentations, and preview flows.",
+        () => "Tell me your idea in simple words. I’ll shape it step by step."
+      ]
+    },
+    code: {
+      label: "ForgeCode",
+      greet: [
+        () => `${timeGreeting()}. Welcome to ForgeCode.`,
+        () => "Here you can plan software, understand projects, fix errors, and prepare code changes safely.",
+        () => "Share your project issue or feature idea. I’ll guide it clearly."
+      ]
+    },
+    work: {
+      label: "ForgeWork",
+      greet: [
+        () => `${timeGreeting()}. Welcome to ForgeWork.`,
+        () => "Here you can work on documents, research, reports, tasks, and professional software workflows.",
+        () => "For computer control, connect your desktop first and approve every important action."
+      ]
+    },
+    chat: {
+      label: "IdeasForgeAI",
+      greet: [
+        () => `${timeGreeting()}. I’m ready.`,
+        () => "Tell me what you want to create, code, or work on."
+      ]
+    }
+  };
+
+  function timeGreeting() {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good morning";
+    if (hour < 17) return "Good afternoon";
+    return "Good evening";
+  }
+
+  function nowLabel() {
+    try {
+      return new Intl.DateTimeFormat(undefined, {
+        hour: "numeric",
+        minute: "2-digit"
+      }).format(new Date());
+    } catch (err) {
+      return "";
+    }
+  }
+
+  function getMessagesRoot() {
+    return (
+      document.querySelector(".ui01b-messages") ||
+      document.querySelector("[data-chat-messages]") ||
+      document.querySelector("#messages") ||
+      document.querySelector("main")
+    );
+  }
+
+  function getComposerInput() {
+    const focused = document.activeElement;
+    if (focused && (focused.tagName === "TEXTAREA" || focused.tagName === "INPUT") && focused.type !== "hidden") {
+      return focused;
+    }
+
+    return (
+      document.querySelector(".ui01b-composer textarea") ||
+      document.querySelector(".ui01b-composer input[type='text']") ||
+      document.querySelector("textarea[placeholder]") ||
+      document.querySelector("input[placeholder]")
+    );
+  }
+
+  function getSendButton() {
+    return (
+      document.querySelector(".ui01b-send") ||
+      document.querySelector(".ui01b-submit") ||
+      document.querySelector("[aria-label='Send']") ||
+      document.querySelector("[data-send]") ||
+      document.querySelector("button[type='submit']")
+    );
+  }
+
+  function modeFromCard(card) {
+    const product = (card.getAttribute("data-product") || "").toLowerCase();
+    const text = (card.innerText || "").toLowerCase();
+
+    if (product.includes("studio") || text.includes("forgestudio")) return "studio";
+    if (product.includes("code") || text.includes("forgecode")) return "code";
+    if (product.includes("work") || text.includes("forgework")) return "work";
+    return "chat";
+  }
+
+  function ensureFeed() {
+    const root = getMessagesRoot();
+    if (!root) return null;
+
+    let feed = root.querySelector(".ifai-ai-feed");
+    if (feed) return feed;
+
+    root.innerHTML = "";
+
+    feed = document.createElement("div");
+    feed.className = "ifai-ai-feed";
+    root.appendChild(feed);
+
+    return feed;
+  }
+
+  function scrollToBottom() {
+    const root = getMessagesRoot();
+    try {
+      if (root) root.scrollTop = root.scrollHeight;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    } catch (err) {}
+  }
+
+  function addBubble(role, text, options = {}) {
+    const feed = ensureFeed();
+    if (!feed) return null;
+
+    const bubble = document.createElement("div");
+    bubble.className = `ifai-ai-message ${role}`;
+    if (options.typing) bubble.classList.add("typing");
+    bubble.textContent = text || "";
+
+    feed.appendChild(bubble);
+
+    if (!options.noTime) {
+      const time = document.createElement("div");
+      time.className = `ifai-ai-time ${role === "user" ? "user-time" : "assistant-time"}`;
+      time.textContent = nowLabel();
+      feed.appendChild(time);
+    }
+
+    scrollToBottom();
+    return bubble;
+  }
+
+  function addModeChip(mode) {
+    const feed = ensureFeed();
+    if (!feed) return;
+
+    const chip = document.createElement("div");
+    chip.className = "ifai-ai-mode-chip";
+    chip.textContent = modeData[mode]?.label || "IdeasForgeAI";
+    feed.appendChild(chip);
+  }
+
+  function pushMessage(role, content) {
+    const clean = (content || "").trim();
+    if (!clean) return;
+    state.messages.push({ role, content: clean });
+    if (state.messages.length > 20) {
+      state.messages = state.messages.slice(-20);
+    }
+  }
+
+  function splitAssistantText(text) {
+    const clean = (text || "").trim();
+    if (!clean) return [];
+
+    const blocks = clean
+      .split(/\n{2,}/)
+      .map((x) => x.trim())
+      .filter(Boolean);
+
+    if (blocks.length > 1) return blocks.slice(0, 4);
+
+    const sentences = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
+
+    if (sentences.length <= 2) return [clean];
+
+    const chunks = [];
+    let current = "";
+
+    sentences.forEach((sentence) => {
+      const s = sentence.trim();
+      if (!s) return;
+
+      if ((current + " " + s).trim().length > 145 && current) {
+        chunks.push(current.trim());
+        current = s;
+      } else {
+        current = (current + " " + s).trim();
+      }
+    });
+
+    if (current) chunks.push(current.trim());
+
+    return chunks.slice(0, 4);
+  }
+
+  function activateMode(mode) {
+    const root = getMessagesRoot();
+    if (!root) return;
+
+    state.mode = mode;
+    state.active = true;
+    state.messages = [];
+
+    root.classList.add("ifai-ai-feed-emptying");
+
+    setTimeout(() => {
+      root.classList.remove("ifai-ai-feed-emptying");
+      root.innerHTML = "";
+
+      ensureFeed();
+      addModeChip(mode);
+
+      const messages = modeData[mode]?.greet || modeData.chat.greet;
+      messages.forEach((fn, index) => {
+        setTimeout(() => {
+          const text = fn();
+          addBubble("assistant", text);
+          pushMessage("assistant", text);
+        }, index * 280);
+      });
+    }, 240);
+  }
+
+  async function tryFetchStream(payload, bubble) {
+    let lastError = null;
+
+    for (const base of apiBases) {
+      const url = `${base.replace(/\/$/, "")}/api/ideasforge/chat/stream`;
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "text/plain"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok || !response.body) {
+          lastError = new Error(`HTTP ${response.status}`);
+          continue;
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let finalText = "";
+
+        bubble.textContent = "";
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+
+          const chunk = decoder.decode(value, { stream: true });
+          finalText += chunk;
+          bubble.textContent = finalText;
+          scrollToBottom();
+        }
+
+        finalText = finalText.trim();
+
+        if (!finalText) {
+          throw new Error("Empty AI reply");
+        }
+
+        return finalText;
+      } catch (err) {
+        lastError = err;
+      }
+    }
+
+    throw lastError || new Error("AI connection failed");
+  }
+
+  async function sendMessage(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    }
+
+    if (state.sending) return;
+
+    const input = getComposerInput();
+    if (!input) return;
+
+    const text = (input.value || "").trim();
+    if (!text) return;
+
+    if (!state.active) {
+      activateMode("chat");
+      await new Promise((resolve) => setTimeout(resolve, 360));
+    }
+
+    input.value = "";
+    state.sending = true;
+
+    addBubble("user", text);
+    pushMessage("user", text);
+
+    const typing = addBubble("assistant", "Thinking…", { typing: true, noTime: true });
+
+    const payload = {
+      mode: state.mode,
+      message: text,
+      messages: state.messages.slice(-16),
+      local_time: new Date().toLocaleString()
+    };
+
+    try {
+      const reply = await tryFetchStream(payload, typing);
+      typing.classList.remove("typing");
+
+      const chunks = splitAssistantText(reply);
+
+      if (chunks.length > 1) {
+        typing.remove();
+        chunks.forEach((chunk, index) => {
+          setTimeout(() => addBubble("assistant", chunk), index * 220);
+        });
+      }
+
+      pushMessage("assistant", reply);
+    } catch (err) {
+      typing.classList.remove("typing");
+      typing.textContent = "I’m ready, but the AI connection is not fully connected yet. Please check the backend OpenAI API key and Render environment.";
+      pushMessage("assistant", typing.textContent);
+    } finally {
+      state.sending = false;
+      scrollToBottom();
+    }
+  }
+
+  function bindComposer() {
+    const send = getSendButton();
+    if (send && !send.dataset.ai01Bound) {
+      send.dataset.ai01Bound = "true";
+      send.addEventListener("click", sendMessage, true);
+    }
+
+    document.querySelectorAll("textarea, input[type='text']").forEach((input) => {
+      if (input.dataset.ai01InputBound) return;
+      input.dataset.ai01InputBound = "true";
+
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          sendMessage(event);
+        }
+      }, true);
+    });
+
+    document.querySelectorAll("form").forEach((form) => {
+      if (form.dataset.ai01FormBound) return;
+      form.dataset.ai01FormBound = "true";
+      form.addEventListener("submit", sendMessage, true);
+    });
+  }
+
+  function bindCards() {
+    document.addEventListener("click", (event) => {
+      const card = event.target.closest && event.target.closest(".ui02-module-card");
+      if (!card) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+
+      const mode = modeFromCard(card);
+      activateMode(mode);
+    }, true);
+  }
+
+  function boot() {
+    bindComposer();
+    bindCards();
+
+    setTimeout(bindComposer, 300);
+    setTimeout(bindComposer, 900);
+    setTimeout(bindComposer, 1800);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+
+  window.IdeasForgeAIChat = {
+    activateMode,
+    sendMessage,
+    state
+  };
+})();
+

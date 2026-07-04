@@ -5670,3 +5670,19 @@ async def ca31_run_tests_alias(request: Request):
     return RealTestRunner.run(payload)
 
 
+# AI-01 - IdeasForgeAI OpenAI chat router
+try:
+    from backend.ideasforge_chat_api import router as ideasforge_chat_router
+except Exception:
+    try:
+        from ideasforge_chat_api import router as ideasforge_chat_router
+    except Exception as ideasforge_chat_import_error:
+        ideasforge_chat_router = None
+        print("IdeasForgeAI chat router import skipped:", ideasforge_chat_import_error)
+
+try:
+    if ideasforge_chat_router is not None:
+        app.include_router(ideasforge_chat_router)
+except Exception as ideasforge_chat_include_error:
+    print("IdeasForgeAI chat router include skipped:", ideasforge_chat_include_error)
+

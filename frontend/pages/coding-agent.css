@@ -8426,3 +8426,113 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   AI-01 - ChatGPT-like IdeasForgeAI Chat
+   Left/right bubbles, light grey user messages, human typing feel.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ifai-ai-feed {
+    width: calc(100vw - 36px) !important;
+    max-width: 760px !important;
+    margin: 22px auto 150px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    padding: 0 !important;
+  }
+
+  .ifai-ai-message {
+    max-width: 84% !important;
+    padding: 13px 15px !important;
+    border-radius: 22px !important;
+    font-size: 16px !important;
+    line-height: 1.36 !important;
+    letter-spacing: -0.015em !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    animation: ifaiBubbleIn 220ms ease both !important;
+  }
+
+  .ifai-ai-message.assistant {
+    align-self: flex-start !important;
+    background: rgba(255,255,255,0.96) !important;
+    color: #171923 !important;
+    border: 1px solid rgba(10,12,20,0.07) !important;
+    border-bottom-left-radius: 8px !important;
+    box-shadow: 0 12px 36px rgba(30,38,70,0.08) !important;
+  }
+
+  .ifai-ai-message.user {
+    align-self: flex-end !important;
+    background: #eef0f5 !important;
+    color: #11131b !important;
+    border: 1px solid rgba(10,12,20,0.045) !important;
+    border-bottom-right-radius: 8px !important;
+    box-shadow: none !important;
+  }
+
+  .ifai-ai-message.typing {
+    min-width: 58px !important;
+    color: rgba(17,19,27,0.56) !important;
+  }
+
+  .ifai-ai-time {
+    margin: 2px 6px 0 !important;
+    font-size: 10.5px !important;
+    font-weight: 750 !important;
+    color: rgba(17,19,27,0.34) !important;
+  }
+
+  .ifai-ai-time.user-time {
+    text-align: right !important;
+  }
+
+  .ifai-ai-feed-emptying {
+    animation: ifaiSectionOut 260ms ease both !important;
+  }
+
+  .ifai-ai-mode-chip {
+    align-self: center !important;
+    margin: 4px 0 10px !important;
+    padding: 8px 12px !important;
+    border-radius: 999px !important;
+    background: rgba(101, 85, 255, 0.08) !important;
+    color: #5f4dff !important;
+    font-size: 12px !important;
+    font-weight: 850 !important;
+    letter-spacing: -0.01em !important;
+  }
+
+  .ui01b-message-user,
+  .message.user,
+  .user-message,
+  [data-role="user"] {
+    background: #eef0f5 !important;
+    color: #11131b !important;
+  }
+}
+
+@keyframes ifaiBubbleIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ifaiSectionOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+}
+

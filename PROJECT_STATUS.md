@@ -1,3 +1,27 @@
+## AI-01 - ChatGPT-like OpenAI Chat Experience
+
+Status: Completed locally, validation required before deploy.
+
+- Added backend OpenAI Responses API router at /api/ideasforge/chat and /api/ideasforge/chat/stream.
+- API key remains backend-only through OPENAI_API_KEY.
+- Added OPENAI_MODEL environment support.
+- Added ChatGPT-like left/right message bubbles.
+- User messages are light grey instead of black.
+- Card click clears the product card section with swipe motion and starts a mode-specific chat.
+- ForgeStudio starts with live-time greeting and short human messages.
+- ForgeCode and ForgeWork also start with short mode-specific guidance.
+- Replies are kept short, simple, and human-style.
+- Public UI uses ForgeWork, not ForgePilot.
+- No KisanMitraAI changes.
+
+Validation commands:
+python -m py_compile backend/ideasforge_chat_api.py
+python -m py_compile backend/main.py
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## NAV-02B - Fix Drawer Visibility + Stop Swipe Conflict
 
 Status: Completed locally, validation required before deploy.
