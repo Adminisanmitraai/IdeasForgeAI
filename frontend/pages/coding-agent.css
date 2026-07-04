@@ -7173,14 +7173,13 @@ body {
 
 
 /* --------------------------------------------------------------------------
-   UI-02I - Clean Mobile Chat Layout Consolidation
-   Replaces the stacked mobile composer overrides with one stable final layout.
+   UI-02K - Final Mobile Chat Runtime Fix
+   Consolidates the mobile home chat runtime layout into one final section.
 -------------------------------------------------------------------------- */
 
 :root {
   --mobile-header-height: 68px;
   --mobile-composer-bottom: 72px;
-  --mobile-composer-height: 78px;
 }
 
 @media (max-width: 760px) {
@@ -7203,21 +7202,27 @@ body {
 
   .ui01b-topbar {
     min-height: var(--mobile-header-height) !important;
-    padding: calc(env(safe-area-inset-top, 0px) + 10px) 14px 10px 12px !important;
-    background: rgba(243, 244, 247, 0.9) !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 10px) 16px 10px 14px !important;
+    background: rgba(243, 244, 247, 0.94) !important;
     border-bottom: 1px solid rgba(17, 24, 39, 0.08) !important;
     backdrop-filter: blur(18px);
+    overflow: visible !important;
   }
 
   .ui01b-brand-row {
+    display: grid !important;
+    grid-template-columns: 32px 42px minmax(0, 1fr) 92px !important;
     align-items: center !important;
-    gap: 10px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    overflow: visible !important;
   }
 
   .ui01c-header-menu {
-    flex: 0 0 30px !important;
-    width: 30px !important;
-    height: 30px !important;
+    width: 32px !important;
+    height: 32px !important;
+    flex: 0 0 32px !important;
+    margin: 0 !important;
   }
 
   .ui01c-header-menu svg {
@@ -7226,50 +7231,63 @@ body {
   }
 
   .ui01b-brand-mark {
-    flex: 0 0 38px !important;
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 13px !important;
+    width: 42px !important;
+    height: 42px !important;
+    flex: 0 0 42px !important;
+    border-radius: 14px !important;
     box-shadow: 0 8px 20px rgba(26, 33, 58, 0.12);
+    overflow: hidden !important;
+  }
+
+  .ui01b-brand-mark img {
+    width: 30px !important;
+    height: 30px !important;
+    object-fit: contain !important;
   }
 
   .ui01b-title-wrap {
-    min-width: 0;
-    flex: 1 1 auto;
+    min-width: 0 !important;
+    overflow: hidden !important;
   }
 
   .ui01b-product {
     font-size: 15px !important;
     line-height: 1.1 !important;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.03em !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
   }
 
   .ui01b-subtitle {
-    max-width: none !important;
     font-size: 10.5px !important;
     line-height: 1.2 !important;
     color: rgba(38, 43, 56, 0.72) !important;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: none !important;
   }
 
   .ui01b-top-actions {
-    flex: 0 0 auto !important;
-    width: auto !important;
-    max-width: none !important;
-    margin-left: auto !important;
-    margin-right: 0 !important;
-    padding-right: 6px !important;
+    width: 92px !important;
+    min-width: 92px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
     gap: 8px !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding-right: 0 !important;
   }
 
   .ui01b-icon-btn.ui01c-share-btn,
   .ui01b-primary-btn.ui01c-publish-btn {
-    flex: 0 0 34px !important;
-    width: 34px !important;
-    height: 34px !important;
-    border-radius: 12px !important;
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px !important;
+    border-radius: 14px !important;
   }
 
   .ui01c-action-svg,
@@ -7281,7 +7299,8 @@ body {
 
   .ui01c-slim-subbar,
   .ui01e-suggestion-row,
-  .ui02-mode-chip {
+  .ui02-mode-chip,
+  .ui01b-safety-chip {
     display: none !important;
   }
 
@@ -7289,20 +7308,16 @@ body {
     height: calc(100dvh - var(--mobile-header-height)) !important;
     max-height: calc(100dvh - var(--mobile-header-height)) !important;
     overflow-y: auto !important;
-    padding: 18px 16px calc(var(--mobile-composer-height) + var(--mobile-composer-bottom) + 20px) !important;
-    scroll-padding-bottom: calc(var(--mobile-composer-height) + var(--mobile-composer-bottom) + 20px);
+    padding: 18px 16px calc(var(--mobile-composer-bottom) + 96px) !important;
+    scroll-padding-bottom: calc(var(--mobile-composer-bottom) + 96px) !important;
   }
 
   body.ui02-home-mode:not(.ui02-chat-started) .ui01b-message {
     display: none !important;
   }
 
-  .ui01b-safety-chip {
-    display: none !important;
-  }
-
   .ui02-home-prompt {
-    width: min(100%, 360px) !important;
+    width: min(100%, 358px) !important;
     margin: 0 auto 12px !important;
   }
 
@@ -7321,16 +7336,16 @@ body {
   }
 
   .ui02-module-grid {
-    width: min(100%, 360px) !important;
+    width: min(100%, 358px) !important;
     margin: 0 auto !important;
     gap: 10px !important;
   }
 
   .ui02-module-card {
-    min-height: 74px !important;
-    padding: 10px 12px !important;
+    min-height: 70px !important;
+    padding: 9px 11px !important;
     border-radius: 22px !important;
-    grid-template-columns: 46px minmax(0, 1fr) 24px !important;
+    grid-template-columns: 44px minmax(0, 1fr) 22px !important;
     gap: 12px !important;
     background: rgba(255, 255, 255, 0.98) !important;
     border: 1px solid rgba(17, 24, 39, 0.06) !important;
@@ -7338,17 +7353,21 @@ body {
   }
 
   .ui02-module-icon {
-    width: 46px !important;
-    height: 46px !important;
+    width: 44px !important;
+    height: 44px !important;
     border-radius: 16px !important;
     background: #f8fafc !important;
-    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.16) !important;
+    display: grid !important;
+    place-items: center !important;
+    overflow: hidden !important;
   }
 
   .ui02-module-icon img {
-    width: 40px !important;
-    height: 40px !important;
-    object-fit: contain;
+    width: 38px !important;
+    height: 38px !important;
+    display: block !important;
+    object-fit: contain !important;
   }
 
   .ui02i-icon-fallback {
@@ -7363,30 +7382,30 @@ body {
   }
 
   .ui02-module-copy {
-    min-width: 0;
+    min-width: 0 !important;
   }
 
   .ui02-module-name {
-    font-size: 15.5px !important;
+    font-size: 15.4px !important;
     line-height: 1.08 !important;
     letter-spacing: -0.03em !important;
     color: #111827 !important;
   }
 
   .ui02-module-name span {
-    color: #4f46e5;
+    color: #4f46e5 !important;
   }
 
   .ui02-module-desc {
     margin-top: 4px !important;
-    font-size: 11.2px !important;
+    font-size: 10.8px !important;
     line-height: 1.28 !important;
     color: rgba(17, 24, 39, 0.68) !important;
   }
 
   .ui02-module-arrow {
-    width: 24px !important;
-    height: 24px !important;
+    width: 22px !important;
+    height: 22px !important;
     font-size: 14px !important;
     color: rgba(79, 70, 229, 0.9) !important;
   }
@@ -7403,16 +7422,17 @@ body {
     bottom: var(--mobile-composer-bottom) !important;
     width: 100vw !important;
     max-width: 100vw !important;
-    padding: 0 14px env(safe-area-inset-bottom, 0px) !important;
+    padding: 0 16px !important;
     background: transparent !important;
     z-index: 30 !important;
-    pointer-events: none;
+    pointer-events: none !important;
+    overflow: visible !important;
   }
 
   .ui01b-composer {
-    pointer-events: auto;
+    pointer-events: auto !important;
     width: 100% !important;
-    max-width: 382px !important;
+    max-width: calc(100vw - 32px) !important;
     min-height: 58px !important;
     margin: 0 auto !important;
     padding: 8px !important;
@@ -7427,16 +7447,18 @@ body {
   .ui01b-plus,
   .ui01b-mic,
   .ui01b-send {
-    flex: 0 0 42px !important;
-    width: 42px !important;
-    height: 42px !important;
+    width: 40px !important;
+    height: 40px !important;
+    flex: 0 0 40px !important;
+    flex-shrink: 0 !important;
     border-radius: 50% !important;
   }
 
   .ui01b-input {
+    flex: 1 1 auto !important;
     min-width: 0 !important;
-    height: 42px !important;
-    padding: 0 4px !important;
+    height: 40px !important;
+    padding: 0 6px !important;
     font-size: 15px !important;
   }
 
@@ -7445,8 +7467,16 @@ body {
     transition: opacity 0.18s ease, transform 0.18s ease;
   }
 
+  .ui01b-composer.ui02-has-text {
+    gap: 8px !important;
+  }
+
   .ui01b-composer.ui02-has-text .ui01b-mic {
     display: none !important;
+  }
+
+  .ui01b-composer.ui02-has-text .ui01b-input {
+    flex: 1 1 100% !important;
   }
 }
 
@@ -7456,13 +7486,17 @@ body {
   }
 
   .ui01b-topbar {
-    padding: calc(env(safe-area-inset-top, 0px) + 9px) 12px 9px 10px !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 9px) 14px 9px 12px !important;
+  }
+
+  .ui01b-brand-row {
+    grid-template-columns: 30px 40px minmax(0, 1fr) 90px !important;
   }
 
   .ui01b-brand-mark {
-    flex-basis: 36px !important;
-    width: 36px !important;
-    height: 36px !important;
+    width: 40px !important;
+    height: 40px !important;
+    flex-basis: 40px !important;
   }
 
   .ui01b-product {
@@ -7473,11 +7507,16 @@ body {
     font-size: 10px !important;
   }
 
+  .ui01b-top-actions {
+    width: 90px !important;
+    min-width: 90px !important;
+  }
+
   .ui01b-icon-btn.ui01c-share-btn,
   .ui01b-primary-btn.ui01c-publish-btn {
-    flex-basis: 33px !important;
-    width: 33px !important;
-    height: 33px !important;
+    width: 39px !important;
+    height: 39px !important;
+    flex-basis: 39px !important;
   }
 
   .ui02-home-title {
@@ -7488,32 +7527,12 @@ body {
     font-size: 12.2px !important;
   }
 
-  .ui02-module-card {
-    min-height: 70px !important;
-    padding: 9px 11px !important;
-    grid-template-columns: 44px minmax(0, 1fr) 22px !important;
-  }
-
-  .ui02-module-icon {
-    width: 44px !important;
-    height: 44px !important;
-  }
-
-  .ui02-module-icon img {
-    width: 38px !important;
-    height: 38px !important;
-  }
-
-  .ui02-module-desc {
-    font-size: 10.8px !important;
-  }
-
-  .ui01b-composer-wrap {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+  .ui02-module-grid,
+  .ui02-home-prompt {
+    width: min(100%, 354px) !important;
   }
 
   .ui01b-composer {
-    max-width: 364px !important;
+    max-width: calc(100vw - 32px) !important;
   }
 }

@@ -1,12 +1,12 @@
-## UI-02J ? Final Home Chat Icon and Composer Fix
+## UI-02K ? Final Mobile Chat Runtime Fix
 
 Status: Completed locally, validation required before deploy.
 
-- Corrected mobile home icon mapping to use exact ForgeStudio, ForgeCode, and ForgeWork files by name.
-- Removed the protected preview chip from the public mobile home screen.
-- Tightened top-right action spacing so share and publish buttons stay fully visible.
-- Improved visualViewport composer positioning with browser-toolbar and standalone handling.
-- Kept the public home screen limited to ForgeStudio, ForgeCode, and ForgeWork.
+- Consolidated the mobile home chat runtime layout into one final section.
+- Removed the mobile home protected preview chip structurally from the runtime shell.
+- Kept the public mobile home screen limited to ForgeStudio, ForgeCode, and ForgeWork with correct icon filenames.
+- Stabilized visualViewport composer positioning with one `--mobile-composer-bottom` variable.
+- Fixed header action spacing and composer sizing so publish, share, and send controls remain visible.
 
 Validation commands:
 node --check frontend/pages/coding-agent.js

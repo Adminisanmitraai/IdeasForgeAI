@@ -6044,8 +6044,6 @@ document.addEventListener("click", async (event) => {
     agentBar.appendChild(el("button", "ui01b-panel-btn", "▻"));
 
     const messages = el("main", "ui01b-messages");
-    const chip = el("div", "ui01b-safety-chip", "Protected preview only");
-    messages.appendChild(chip);
 
     const m1 = el("article", "ui01b-message assistant");
     m1.appendChild(document.createTextNode("Hi, I am IdeasForgeAI. Tell me what you want to build, and I will help shape it into a product plan and preview flow."));
@@ -6419,9 +6417,9 @@ document.addEventListener("click", async (event) => {
 (function ui02iCleanMobileChatLayout() {
   const mq = window.matchMedia("(max-width: 760px)");
   const ICONS = {
-    studio: "../assets/brand/forgestudio-icon.png?v=ui02j-1",
-    code: "../assets/brand/forgecode-icon.png?v=ui02j-1",
-    work: "../assets/brand/forgework-icon.png?v=ui02j-1"
+    studio: "../assets/brand/forgestudio-icon.png?v=ui02k-1",
+    code: "../assets/brand/forgecode-icon.png?v=ui02k-1",
+    work: "../assets/brand/forgework-icon.png?v=ui02k-1"
   };
   const MODULES = [
     {
@@ -6479,6 +6477,9 @@ document.addEventListener("click", async (event) => {
 
     const oldChip = messages.querySelector(".ui02-mode-chip");
     if (oldChip) oldChip.remove();
+
+    const safetyChip = messages.querySelector(".ui01b-safety-chip");
+    if (safetyChip) safetyChip.remove();
 
     let grid = messages.querySelector(".ui02-module-grid");
     if (!grid) {
@@ -6636,37 +6637,22 @@ document.addEventListener("click", async (event) => {
 
     if (!mq.matches) {
       root.style.removeProperty("--mobile-composer-bottom");
-      root.style.removeProperty("--mobile-composer-height");
       return;
     }
 
-    const shell = document.querySelector(".ui01b-mobile-chat");
-    const composerWrap = shell && shell.querySelector(".ui01b-composer-wrap");
     const standalone = window.matchMedia && window.matchMedia("(display-mode: standalone)").matches;
     const safeAreaBottom = 14;
 
-    let bottomOffset = 64;
+    let bottomOffset = 72;
     if (standalone) {
       bottomOffset = safeAreaBottom;
     } else if (window.visualViewport) {
       const vv = window.visualViewport;
-      const keyboardLift = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-      const toolbarOverlap = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
-      if (toolbarOverlap > 18) {
-        bottomOffset = 112;
-      } else if (keyboardLift > 120) {
-        bottomOffset = Math.max(24, Math.round(keyboardLift + 14));
-      } else {
-        bottomOffset = Math.max(72, Math.round(toolbarOverlap + 72));
-      }
+      const overlap = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+      bottomOffset = Math.min(118, Math.max(72, overlap + 18));
     }
 
     root.style.setProperty("--mobile-composer-bottom", bottomOffset + "px");
-
-    const composerHeight = composerWrap
-      ? Math.max(78, Math.ceil(composerWrap.getBoundingClientRect().height || 0))
-      : 78;
-    root.style.setProperty("--mobile-composer-height", composerHeight + "px");
   }
 
   function bindViewportListeners() {
