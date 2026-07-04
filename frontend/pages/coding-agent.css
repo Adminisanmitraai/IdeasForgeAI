@@ -8790,3 +8790,116 @@ body {
   46%, 100% { opacity: 0; }
 }
 
+
+/* --------------------------------------------------------------------------
+   AI-02D - Composer Real Mobile Fit
+   Fixes clipped input, placeholder wrapping, and browser-toolbar overlap.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    left: 14px !important;
+    right: 14px !important;
+    width: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 96px) !important;
+    min-height: 78px !important;
+    max-height: 158px !important;
+    padding: 10px !important;
+    border-radius: 36px !important;
+    overflow: visible !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    background: rgba(255,255,255,0.94) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    box-shadow: 0 20px 58px rgba(24,30,60,0.16) !important;
+    backdrop-filter: blur(18px) saturate(1.12) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+  }
+
+  .ui01b-composer {
+    width: 100% !important;
+    min-height: 58px !important;
+    max-height: 136px !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  .ui01b-composer button,
+  .ui01b-composer-wrap button {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    flex: 0 0 56px !important;
+  }
+
+  .ui01b-composer textarea,
+  .ui01b-composer input[type="text"],
+  textarea.ifai-ai02-input,
+  input.ifai-ai02-input,
+  .ifai-ai02-input,
+  .ui01b-composer [contenteditable="true"] {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 118px !important;
+    padding: 16px 18px !important;
+    border-radius: 28px !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.02em !important;
+    resize: none !important;
+    overflow-y: auto !important;
+    background: rgba(255,255,255,0.97) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    color: #11131b !important;
+    box-sizing: border-box !important;
+  }
+
+  .ui01b-composer textarea::placeholder,
+  .ui01b-composer input[type="text"]::placeholder,
+  textarea.ifai-ai02-input::placeholder,
+  input.ifai-ai02-input::placeholder {
+    color: rgba(17,19,27,0.34) !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+  }
+
+  .ui01b-messages,
+  .ifai-ai-feed {
+    padding-bottom: 215px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 92px) !important;
+  }
+
+  .ui01b-composer {
+    gap: 8px !important;
+  }
+
+  .ui01b-composer button,
+  .ui01b-composer-wrap button {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    min-height: 54px !important;
+    flex-basis: 54px !important;
+  }
+
+  .ui01b-composer textarea,
+  .ui01b-composer input[type="text"],
+  textarea.ifai-ai02-input,
+  input.ifai-ai02-input,
+  .ifai-ai02-input {
+    height: 54px !important;
+    min-height: 54px !important;
+    padding: 15px 16px !important;
+    font-size: 16px !important;
+  }
+}

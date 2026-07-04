@@ -8775,3 +8775,73 @@ ${files}`;
     boot();
   }
 })();
+
+// AI-02D - Force clean composer placeholder and autosize
+(function () {
+  if (window.__AI02D_COMPOSER_REAL_FIT__) return;
+  window.__AI02D_COMPOSER_REAL_FIT__ = true;
+
+  function findInput() {
+    return (
+      document.querySelector(".ui01b-composer textarea") ||
+      document.querySelector("textarea.ifai-ai02-input") ||
+      document.querySelector(".ui01b-composer input[type='text']") ||
+      document.querySelector("input.ifai-ai02-input") ||
+      document.querySelector(".ui01b-composer [contenteditable='true']")
+    );
+  }
+
+  function fixInput() {
+    let el = findInput();
+    if (!el) return;
+
+    if (el.tagName === "INPUT") {
+      const textarea = document.createElement("textarea");
+      textarea.className = (el.className || "") + " ifai-ai02-input";
+      textarea.value = el.value || "";
+      textarea.placeholder = "Ask anything...";
+      textarea.rows = 1;
+      textarea.autocomplete = "off";
+      textarea.spellcheck = true;
+      el.replaceWith(textarea);
+      el = textarea;
+    }
+
+    if (el.tagName === "TEXTAREA") {
+      el.classList.add("ifai-ai02-input");
+      el.placeholder = "Ask anything...";
+      autosize(el);
+
+      if (!el.dataset.ai02dAutosize) {
+        el.dataset.ai02dAutosize = "true";
+        el.addEventListener("input", function () {
+          autosize(el);
+        });
+      }
+    }
+
+    if (el.getAttribute("contenteditable") === "true") {
+      el.setAttribute("data-placeholder", "Ask anything...");
+    }
+  }
+
+  function autosize(el) {
+    if (!el || el.tagName !== "TEXTAREA") return;
+    el.style.height = "56px";
+    const next = Math.min(Math.max(el.scrollHeight, 56), 118);
+    el.style.height = next + "px";
+  }
+
+  function boot() {
+    fixInput();
+    setTimeout(fixInput, 200);
+    setTimeout(fixInput, 700);
+    setTimeout(fixInput, 1500);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();
