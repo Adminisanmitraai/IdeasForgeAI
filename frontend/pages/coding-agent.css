@@ -6290,3 +6290,161 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   UI-02B - Mobile Edge Clipping + Header Balance Fix
+   Fixes right-side clipping for header actions and composer send button.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ui01b-mobile-chat,
+  .ui01b-topbar,
+  .ui01b-brand-row,
+  .ui01b-composer-wrap,
+  .ui01b-composer {
+    box-sizing: border-box !important;
+  }
+
+  .ui01b-mobile-chat {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .ui01b-topbar {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow: hidden !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .ui01b-brand-row {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .ui01c-header-menu {
+    flex: 0 0 30px !important;
+    width: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+  }
+
+  .ui01c-header-menu svg {
+    width: 23px !important;
+    height: 23px !important;
+  }
+
+  .ui01b-brand-mark {
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .ui01d-brand-svg {
+    width: 29px !important;
+    height: 29px !important;
+  }
+
+  .ui01b-title-wrap {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    overflow: hidden !important;
+  }
+
+  .ui01b-product {
+    font-size: 15.8px !important;
+    line-height: 1.05 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .ui01b-subtitle {
+    font-size: 10.8px !important;
+    max-width: 118px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .ui01b-top-actions {
+    flex: 0 0 auto !important;
+    margin-left: auto !important;
+    gap: 7px !important;
+    max-width: 86px !important;
+  }
+
+  .ui01b-icon-btn.ui01c-share-btn,
+  .ui01b-primary-btn.ui01c-publish-btn {
+    flex: 0 0 39px !important;
+    width: 39px !important;
+    height: 39px !important;
+    border-radius: 13px !important;
+  }
+
+  .ui01c-share-btn .ui01c-action-svg,
+  .ui01c-publish-btn .ui01c-action-svg,
+  .ui01d-action-svg,
+  .ui01d-publish-svg {
+    width: 21px !important;
+    height: 21px !important;
+  }
+
+  .ui01b-messages {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .ui02-home-prompt,
+  .ui02-module-grid {
+    width: min(91%, 650px) !important;
+  }
+
+  .ui02-home-title {
+    font-size: 20px !important;
+    line-height: 1.13 !important;
+  }
+
+  .ui02-module-card {
+    border-radius: 18px !important;
+  }
+
+  .ui01b-composer-wrap {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .ui01b-composer {
+    width: 100% !important;
+    max-width: calc(100vw - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    overflow: hidden !important;
+  }
+
+  .ui01b-plus,
+  .ui01b-mic,
+  .ui01b-send {
+    flex: 0 0 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .ui01b-input {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+}
+

@@ -1,3 +1,26 @@
+## UI-02B - Mobile Edge Clipping + Header Balance Fix
+
+Status: Completed locally, validation required before deploy.
+
+- Fixed top-right Share/Publish action clipping on mobile.
+- Fixed composer send button clipping near the right screen edge.
+- Tightened mobile header spacing and subtitle width.
+- Preserved ForgeStudio, ForgeCode, and ForgePilot home module layout.
+- Preserved ChatGPT-like composer behavior.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02A - Home Chat Layout Balance Repair
 
 Status: Completed locally, validation required before deploy.
