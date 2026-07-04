@@ -1,3 +1,30 @@
+## UI-02 - Home Chat Three Modules + ChatGPT-like Composer
+
+Status: Completed locally, validation required before deploy.
+
+- Added home chat prompt: What do you want to build, fix, design, or control today?
+- Added clear ForgeStudio, ForgeCode, and ForgePilot quick-start cards.
+- Preserved chat-first mobile layout.
+- Improved composer to behave like a premium AI chat tray.
+- Voice icon hides when user starts typing.
+- Input stretches toward the submit icon while typing.
+- Submit icon uses upward arrow.
+- Protected preview-only safety model remains unchanged.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+- No KisanMitraAI or ForgePilot desktop files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-01E - Premium Mobile Chat Visual Polish
 
 Status: Completed locally, validation required before deploy.

@@ -6411,3 +6411,165 @@ document.addEventListener("click", async (event) => {
   if (mq.addEventListener) mq.addEventListener("change", schedule);
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-02 - Home Chat Three Modules + ChatGPT-like Composer
+// Adds module cards and typing behavior without enabling any locked actions.
+// ---------------------------------------------------------------------------
+(function ui02HomeModulesAndComposer() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  const ASSETS = {
+    ideasForge: "../assets/brand/ideasforgeai-fspark-icon-cropped.png",
+    forgeCode: "../assets/brand/forgecode-icon.png",
+  };
+
+  function makeEl(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text) node.textContent = text;
+    return node;
+  }
+
+  function iconImg(src, alt) {
+    const img = document.createElement("img");
+    img.src = src;
+    img.alt = alt;
+    img.loading = "eager";
+    img.decoding = "async";
+    return img;
+  }
+
+  function upArrowSvg() {
+    return '<svg class="ui02-up-arrow-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><path d="M6.5 10.5 12 5l5.5 5.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+
+  function moduleCard(module, title, desc, iconType) {
+    const card = makeEl("button", "ui02-module-card");
+    card.type = "button";
+    card.dataset.module = module;
+
+    const icon = makeEl("div", "ui02-module-icon");
+
+    if (iconType === "studio") {
+      icon.appendChild(iconImg(ASSETS.ideasForge, "ForgeStudio"));
+    } else if (iconType === "code") {
+      icon.appendChild(iconImg(ASSETS.forgeCode, "ForgeCode"));
+    } else {
+      icon.appendChild(makeEl("span", "", "⌁"));
+    }
+
+    const copy = makeEl("div", "ui02-module-copy");
+    copy.appendChild(makeEl("div", "ui02-module-name", title));
+    copy.appendChild(makeEl("div", "ui02-module-desc", desc));
+
+    card.appendChild(icon);
+    card.appendChild(copy);
+    card.appendChild(makeEl("div", "ui02-module-arrow", "›"));
+
+    return card;
+  }
+
+  function addHomeModules(shell) {
+    const messages = shell.querySelector(".ui01b-messages");
+    if (!messages || messages.querySelector(".ui02-home-prompt")) return;
+
+    messages.classList.add("ui02-home-ready");
+
+    const prompt = makeEl("section", "ui02-home-prompt");
+    prompt.appendChild(makeEl("h1", "ui02-home-title", "What do you want to build, fix, design, or control today?"));
+    prompt.appendChild(makeEl("p", "ui02-home-subtitle", "Choose a mode or simply describe your task."));
+
+    const modeChip = makeEl("div", "ui02-mode-chip", "Create · Code · Control");
+
+    const grid = makeEl("section", "ui02-module-grid");
+    grid.appendChild(moduleCard("studio", "ForgeStudio", "Create apps, websites, UI, images, logos, documents.", "studio"));
+    grid.appendChild(moduleCard("code", "ForgeCode", "Analyze projects, write code, fix errors, test, deploy.", "code"));
+    grid.appendChild(moduleCard("pilot", "ForgePilot", "Connect your computer and control software with approval.", "pilot"));
+
+    const firstMessage = messages.querySelector(".ui01b-message");
+    if (firstMessage) {
+      messages.insertBefore(prompt, firstMessage);
+      messages.insertBefore(modeChip, firstMessage);
+      messages.insertBefore(grid, firstMessage);
+    } else {
+      messages.prepend(grid);
+      messages.prepend(modeChip);
+      messages.prepend(prompt);
+    }
+
+    grid.querySelectorAll(".ui02-module-card").forEach((card) => {
+      card.addEventListener("click", function () {
+        const input = shell.querySelector(".ui01b-input");
+        const module = card.dataset.module;
+
+        const prompts = {
+          studio: "I want to create something with ForgeStudio.",
+          code: "I want to build or fix software with ForgeCode.",
+          pilot: "I want to connect my computer with ForgePilot.",
+        };
+
+        if (input) {
+          input.value = prompts[module] || "";
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.focus();
+        }
+      });
+    });
+  }
+
+  function polishComposer(shell) {
+    const composer = shell.querySelector(".ui01b-composer");
+    const input = shell.querySelector(".ui01b-input");
+    const send = shell.querySelector(".ui01b-send");
+
+    if (!composer || !input || !send) return;
+
+    input.placeholder = "Ask IdeasForgeAI...";
+    send.innerHTML = upArrowSvg();
+    send.setAttribute("aria-label", "Send message");
+
+    function syncTypingState() {
+      if (input.value.trim().length > 0) {
+        composer.classList.add("ui02-has-text");
+      } else {
+        composer.classList.remove("ui02-has-text");
+      }
+    }
+
+    if (!input.dataset.ui02TypingBound) {
+      input.addEventListener("input", syncTypingState);
+      input.dataset.ui02TypingBound = "true";
+    }
+
+    syncTypingState();
+  }
+
+  function apply() {
+    if (!mq.matches) return;
+
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    if (!shell) return;
+
+    addHomeModules(shell);
+    polishComposer(shell);
+  }
+
+  function schedule() {
+    apply();
+    window.setTimeout(apply, 100);
+    window.setTimeout(apply, 350);
+    window.setTimeout(apply, 800);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+
+  if (mq.addEventListener) {
+    mq.addEventListener("change", schedule);
+  }
+})();
+
