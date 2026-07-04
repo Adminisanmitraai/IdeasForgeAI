@@ -7062,3 +7062,185 @@ document.addEventListener("click", async (event) => {
   };
 })();
 
+
+// ---------------------------------------------------------------------------
+// NAV-02B - Force Visible Drawer + Stop Swipe Conflict
+// Ensures menu exists, shows simple icons, and swipe-left closes menu instead
+// of going to ForgeStudio.
+// ---------------------------------------------------------------------------
+(function nav02bFixDrawerVisibilityAndSwipeConflict() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  const items = [
+    ["✦", "Chat", "Ask anything", "/chat"],
+    ["◧", "ForgeStudio", "Create apps and designs", "/forgestudio"],
+    ["</>", "ForgeCode", "Build and fix software", "/forgecode"],
+    ["●", "ForgeWork", "Professional workspace", "/forgework"],
+    ["▣", "Projects", "Saved work and outputs", "/projects"],
+    ["⌁", "Connect Computer", "Trusted desktop connection", "/forgework"],
+    ["≡", "Activity Log", "Actions and approvals", "/forgework#activity"],
+    ["▤", "Files", "Uploads and documents", "/projects#files"],
+    ["⚙", "Settings", "Preferences", "/settings"],
+    ["?", "Help", "Support and privacy", "/help"],
+    ["↗", "Sign in", "Access workspace", "/login"]
+  ];
+
+  function ensureDrawer() {
+    let drawer = document.getElementById("ifai-mobile-drawer");
+    if (drawer) return drawer;
+
+    drawer = document.createElement("aside");
+    drawer.id = "ifai-mobile-drawer";
+    drawer.className = "ifai-mobile-drawer";
+    drawer.setAttribute("aria-label", "IdeasForgeAI menu");
+
+    drawer.innerHTML = `
+      <div class="ifai-drawer-brand">
+        <img src="/assets/brand/ideasforgeai-mark.png?v=nav02b" alt="IdeasForgeAI">
+        <div class="ifai-drawer-title">
+          <strong>IdeasForgeAI</strong>
+          <span>Create · Code · Work</span>
+        </div>
+      </div>
+
+      <section class="ifai-drawer-section">
+        <div class="ifai-drawer-label">Menu</div>
+        ${items.map(([icon, title, desc, href]) => `
+          <a class="ifai-drawer-link" href="${href}">
+            <span class="ifai-drawer-ico">${icon}</span>
+            <span class="ifai-drawer-copy">
+              <strong>${title}</strong>
+              <span>${desc}</span>
+            </span>
+          </a>
+        `).join("")}
+      </section>
+
+      <div class="ifai-drawer-footer">IdeasForgeAI · Preview mode</div>
+    `;
+
+    const catcher = document.createElement("button");
+    catcher.id = "ifai-menu-tap-catcher";
+    catcher.className = "ifai-menu-tap-catcher";
+    catcher.type = "button";
+    catcher.setAttribute("aria-label", "Close menu");
+    catcher.addEventListener("click", closeMenu);
+
+    document.body.appendChild(drawer);
+    document.body.appendChild(catcher);
+
+    return drawer;
+  }
+
+  function openMenu(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    }
+
+    if (!mq.matches) return;
+    ensureDrawer();
+    document.body.classList.add("ifai-menu-open");
+  }
+
+  function closeMenu(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+    }
+
+    document.body.classList.remove("ifai-menu-open");
+  }
+
+  function toggleMenu(event) {
+    if (document.body.classList.contains("ifai-menu-open")) {
+      closeMenu(event);
+    } else {
+      openMenu(event);
+    }
+  }
+
+  function bindMenuIcon() {
+    const buttons = document.querySelectorAll(
+      ".ui01c-header-menu, [aria-label='Open menu'], .menu-button, .hamburger, [data-menu-toggle]"
+    );
+
+    buttons.forEach((button) => {
+      if (button.dataset.nav02bBound) return;
+      button.dataset.nav02bBound = "true";
+      button.addEventListener("click", toggleMenu, true);
+    });
+  }
+
+  function bindSwipeCapture() {
+    if (window.__nav02bSwipeCaptureBound) return;
+    window.__nav02bSwipeCaptureBound = true;
+
+    let startX = 0;
+    let startY = 0;
+    let active = false;
+
+    document.addEventListener("touchstart", function(event) {
+      if (!mq.matches) return;
+      const t = event.touches && event.touches[0];
+      if (!t) return;
+      startX = t.clientX;
+      startY = t.clientY;
+      active = true;
+    }, { capture: true, passive: true });
+
+    document.addEventListener("touchend", function(event) {
+      if (!mq.matches || !active) return;
+      active = false;
+
+      const t = event.changedTouches && event.changedTouches[0];
+      if (!t) return;
+
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+
+      if (Math.abs(dy) > 80 || Math.abs(dx) < 65) return;
+
+      const menuOpen = document.body.classList.contains("ifai-menu-open");
+
+      // Menu open + swipe left = close menu only. Do not navigate to Studio.
+      if (menuOpen && dx < 0) {
+        closeMenu(event);
+        return;
+      }
+
+      // Chat closed + swipe right from left side = open menu.
+      if (!menuOpen && dx > 0 && startX < 90) {
+        openMenu(event);
+        return;
+      }
+    }, { capture: true, passive: false });
+  }
+
+  function boot() {
+    if (!mq.matches) return;
+
+    ensureDrawer();
+    bindMenuIcon();
+    bindSwipeCapture();
+
+    setTimeout(bindMenuIcon, 200);
+    setTimeout(bindMenuIcon, 700);
+    setTimeout(bindMenuIcon, 1400);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+
+  window.IdeasForgeAIMenu = {
+    open: openMenu,
+    close: closeMenu,
+    toggle: toggleMenu
+  };
+})();
+

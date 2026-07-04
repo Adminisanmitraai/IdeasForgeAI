@@ -1,3 +1,19 @@
+## NAV-02B - Fix Drawer Visibility + Stop Swipe Conflict
+
+Status: Completed locally, validation required before deploy.
+
+- Fixed mobile drawer so menu content is visible.
+- Keeps chat shifted right with 25% visible.
+- Swipe left while drawer is open closes the drawer instead of navigating to ForgeStudio.
+- Added drawer-open guard to app-shell navigation.
+- Public menu uses ForgeWork, not ForgePilot.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## NAV-02 - Mobile Drawer Menu + Partial Chat Slide
 
 Status: Completed locally, validation required before deploy.

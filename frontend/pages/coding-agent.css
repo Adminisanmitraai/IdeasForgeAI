@@ -8347,3 +8347,82 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   NAV-02B - Drawer Visibility Fix
+   Makes the left drawer content visible and keeps 25% chat visible.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ifai-mobile-drawer,
+  #ifai-mobile-drawer {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 75vw !important;
+    max-width: 340px !important;
+    height: 100dvh !important;
+    z-index: 2147483000 !important;
+    background: #ffffff !important;
+    color: #090b14 !important;
+    transform: translateX(-101%) !important;
+    transition: transform 260ms cubic-bezier(.2,.9,.2,1) !important;
+    padding: calc(env(safe-area-inset-top, 0px) + 18px) 16px calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    box-shadow: 28px 0 80px rgba(20,24,50,0.18) !important;
+    border-right: 1px solid rgba(10,12,20,0.08) !important;
+  }
+
+  body.ifai-menu-open .ifai-mobile-drawer,
+  body.ifai-menu-open #ifai-mobile-drawer {
+    transform: translateX(0) !important;
+  }
+
+  body.ifai-menu-open .ui01b-mobile-chat {
+    transform: translateX(75vw) !important;
+    width: 100vw !important;
+    max-width: none !important;
+    transition: transform 260ms cubic-bezier(.2,.9,.2,1) !important;
+    box-shadow: -26px 0 80px rgba(20,24,50,0.18) !important;
+    border-radius: 28px 0 0 28px !important;
+    overflow: hidden !important;
+  }
+
+  .ifai-menu-tap-catcher,
+  #ifai-menu-tap-catcher {
+    display: none !important;
+  }
+
+  body.ifai-menu-open .ifai-menu-tap-catcher,
+  body.ifai-menu-open #ifai-menu-tap-catcher {
+    display: block !important;
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 25vw !important;
+    z-index: 2147483001 !important;
+    background: transparent !important;
+    border: 0 !important;
+  }
+
+  .ifai-drawer-brand,
+  .ifai-drawer-section,
+  .ifai-drawer-footer {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  .ifai-drawer-link {
+    color: #090b14 !important;
+  }
+
+  .ifai-drawer-ico {
+    color: #5f4dff !important;
+    background: rgba(95,77,255,0.08) !important;
+  }
+}
+

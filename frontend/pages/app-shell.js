@@ -29,11 +29,13 @@
   }
 
   function next() {
+    if (document.body.classList.contains('ifai-menu-open')) return; // NAV-02B drawer-open guard
     const i = routeIndex(currentPath());
     if (i < routes.length - 1) goTo(routes[i + 1], "next");
   }
 
   function prev() {
+    if (document.body.classList.contains('ifai-menu-open')) return; // NAV-02B drawer-open guard
     const i = routeIndex(currentPath());
     if (i > 0) goTo(routes[i - 1], "prev");
   }
