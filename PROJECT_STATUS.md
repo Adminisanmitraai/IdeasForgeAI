@@ -1,3 +1,20 @@
+## UI-02G - Browser-Safe Composer Position Fix
+
+Status: Completed locally, validation required before deploy.
+
+- Fixed mobile composer being hidden behind browser bottom toolbar.
+- Positioned composer above Safari/Chrome bottom bar.
+- Preserved standalone/PWA behavior separately.
+- Increased message bottom padding so content does not hide behind composer.
+- No backend files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02F - Mobile Fit-to-Screen + Composer Lower Fix
 
 Status: Completed locally, validation required before deploy.
