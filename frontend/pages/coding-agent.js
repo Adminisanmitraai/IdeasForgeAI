@@ -6125,3 +6125,107 @@ document.addEventListener("click", async (event) => {
   if (mq.addEventListener) mq.addEventListener("change", apply);
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-01C - Mobile Header Icon Repair
+// Only fixes header/action icons and removes second mobile top bar.
+// ---------------------------------------------------------------------------
+(function ui01cMobileHeaderIconRepair() {
+  const mq = window.matchMedia("(max-width: 760px)");
+  const BRAND_LOGO = "../assets/brand/ideasforgeai-fspark-icon-cropped.png";
+  const BRAND_FALLBACK = "../assets/brand/ideasforgeai-app-touch-icon.png";
+
+  function svgMenu() {
+    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-linecap="round"/></svg>';
+  }
+
+  function svgShare() {
+    return '<svg class="ui01c-action-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 15V4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 8l4-4 4 4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 11H6.5A2.5 2.5 0 0 0 4 13.5v4A2.5 2.5 0 0 0 6.5 20h11a2.5 2.5 0 0 0 2.5-2.5v-4A2.5 2.5 0 0 0 17.5 11H17" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+
+  function svgPublish() {
+    return '<svg class="ui01c-action-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 16V5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M7.5 9.5 12 5l4.5 4.5" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17.5h14" stroke="currentColor" stroke-linecap="round"/><path d="M7 20h10" stroke="currentColor" stroke-linecap="round"/></svg>';
+  }
+
+  function svgNextScreen() {
+    return '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 5h10a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5V5Z" stroke="currentColor" stroke-linejoin="round"/><path d="M11 9l3 3-3 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  }
+
+  function applyHeaderRepair() {
+    if (!mq.matches) return;
+
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    if (!shell) return;
+
+    const topbar = shell.querySelector(".ui01b-topbar");
+    const brandRow = shell.querySelector(".ui01b-brand-row");
+    if (!topbar || !brandRow) return;
+
+    const oldAgentBar = shell.querySelector(".ui01b-agent-bar");
+    if (oldAgentBar) oldAgentBar.remove();
+
+    if (!brandRow.querySelector(".ui01c-header-menu")) {
+      const menu = document.createElement("button");
+      menu.type = "button";
+      menu.className = "ui01c-header-menu";
+      menu.setAttribute("aria-label", "Open menu");
+      menu.innerHTML = svgMenu();
+      brandRow.insertBefore(menu, brandRow.firstElementChild);
+    }
+
+    const brandImg = brandRow.querySelector(".ui01b-brand-mark img");
+    if (brandImg) {
+      brandImg.src = BRAND_LOGO;
+      brandImg.alt = "IdeasForgeAI";
+      brandImg.onerror = function () {
+        if (brandImg.src.indexOf("ideasforgeai-app-touch-icon.png") === -1) {
+          brandImg.src = BRAND_FALLBACK;
+        }
+      };
+    }
+
+    const actions = brandRow.querySelectorAll(".ui01b-top-actions button");
+    if (actions[0]) {
+      actions[0].classList.add("ui01c-share-btn");
+      actions[0].setAttribute("aria-label", "Share");
+      actions[0].innerHTML = svgShare();
+    }
+
+    if (actions[1]) {
+      actions[1].classList.add("ui01c-publish-btn");
+      actions[1].setAttribute("aria-label", "Publish");
+      actions[1].innerHTML = svgPublish();
+    }
+
+    if (!shell.querySelector(".ui01c-slim-subbar")) {
+      const subbar = document.createElement("div");
+      subbar.className = "ui01c-slim-subbar";
+
+      const next = document.createElement("button");
+      next.type = "button";
+      next.className = "ui01c-next-screen-btn";
+      next.setAttribute("aria-label", "Close chat and go to studio screen");
+      next.innerHTML = svgNextScreen();
+
+      subbar.appendChild(next);
+      topbar.insertAdjacentElement("afterend", subbar);
+    }
+  }
+
+  function scheduleRepair() {
+    applyHeaderRepair();
+    window.setTimeout(applyHeaderRepair, 100);
+    window.setTimeout(applyHeaderRepair, 350);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", scheduleRepair, { once: true });
+  } else {
+    scheduleRepair();
+  }
+
+  if (mq.addEventListener) {
+    mq.addEventListener("change", scheduleRepair);
+  }
+})();
+

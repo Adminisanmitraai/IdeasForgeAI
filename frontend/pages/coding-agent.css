@@ -5496,3 +5496,131 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   UI-01C - Mobile Header Icon Repair
+   Only fixes: top-left menu order, correct logo, top-right share/publish icons,
+   removes second top bar, adds slim studio-return bar.
+-------------------------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .ui01b-agent-bar {
+    display: none !important;
+  }
+
+  .ui01b-topbar {
+    padding: calc(env(safe-area-inset-top, 0px) + 16px) 18px 14px !important;
+  }
+
+  .ui01b-brand-row {
+    gap: 12px !important;
+  }
+
+  .ui01c-header-menu {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    background: transparent;
+    color: #111318;
+    display: grid;
+    place-items: center;
+    padding: 0;
+  }
+
+  .ui01c-header-menu svg {
+    width: 25px;
+    height: 25px;
+    stroke-width: 2.4;
+  }
+
+  .ui01b-brand-mark {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 16px !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(20,22,30,0.08) !important;
+  }
+
+  .ui01b-brand-mark img {
+    width: 36px !important;
+    height: 36px !important;
+    object-fit: contain !important;
+  }
+
+  .ui01b-top-actions {
+    gap: 10px !important;
+  }
+
+  .ui01b-icon-btn.ui01c-share-btn,
+  .ui01b-primary-btn.ui01c-publish-btn {
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 18px !important;
+    padding: 0 !important;
+  }
+
+  .ui01b-icon-btn.ui01c-share-btn {
+    background: #ffffff !important;
+    border: 1px solid rgba(20,22,30,0.12) !important;
+    color: #111318 !important;
+    box-shadow: 0 12px 28px rgba(45,58,110,0.08) !important;
+  }
+
+  .ui01b-primary-btn.ui01c-publish-btn {
+    background: linear-gradient(135deg, #7257ff, #2f7bff) !important;
+    border: 0 !important;
+    color: #ffffff !important;
+    box-shadow: 0 18px 42px rgba(76,88,255,0.28) !important;
+  }
+
+  .ui01c-action-svg {
+    width: 25px;
+    height: 25px;
+    display: block;
+  }
+
+  .ui01c-share-btn .ui01c-action-svg {
+    stroke: #111318;
+  }
+
+  .ui01c-publish-btn .ui01c-action-svg {
+    stroke: #ffffff;
+  }
+
+  .ui01c-slim-subbar {
+    flex: 0 0 auto;
+    height: 34px;
+    background: rgba(246,247,251,0.96);
+    border-top: 1px solid rgba(20,22,30,0.06);
+    border-bottom: 1px solid rgba(20,22,30,0.07);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 18px;
+  }
+
+  .ui01c-next-screen-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: 1px solid rgba(20,22,30,0.12);
+    background: #ffffff;
+    color: #111318;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    box-shadow: 0 8px 18px rgba(45,58,110,0.06);
+  }
+
+  .ui01c-next-screen-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.2;
+  }
+
+  .ui01b-messages {
+    padding-top: 18px !important;
+  }
+}
+

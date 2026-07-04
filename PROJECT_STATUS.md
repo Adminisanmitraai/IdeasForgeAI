@@ -1,3 +1,28 @@
+## UI-01C - Mobile Header Icon Repair
+
+Status: Completed locally, validation required before deploy.
+
+- Removed the second AI Assistant top bar from the mobile Coding Agent shell.
+- Shifted the three-line menu icon before the IdeasForgeAI logo in the top header.
+- Corrected the mobile header logo to use the IdeasForgeAI brand asset.
+- Repaired top-right header actions so Share and Publish use distinct polished icons.
+- Added a slim grey studio-return bar with a next-screen icon instead of an X.
+- Preserved the existing chat messages and bottom composer layout.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+- No KisanMitraAI or ForgePilot files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-02 - Mobile Composer Attachment Voice Polish
+
+
 ## UI-01B - Clean Light ChatGPT-like Mobile Chat
 
 Status: Completed locally, validation required before deploy.
