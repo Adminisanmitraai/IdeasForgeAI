@@ -1,3 +1,28 @@
+## UI-02A - Home Chat Layout Balance Repair
+
+Status: Completed locally, validation required before deploy.
+
+- Reduced mobile home module height and improved spacing.
+- Fixed ForgeStudio and ForgePilot icons with crisp inline SVG icons.
+- Hid default assistant messages on the home module screen until the user sends a message.
+- Removed floating suggestion chip overlap.
+- Lifted the composer above the mobile browser bottom bar.
+- Preserved the ChatGPT-like composer behavior where voice hides during typing.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+- No KisanMitraAI or ForgePilot desktop files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-03 - Module Routing Preview Cards
+
+
 ## UI-02 - Home Chat Three Modules + ChatGPT-like Composer
 
 Status: Completed locally, validation required before deploy.

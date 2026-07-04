@@ -6573,3 +6573,91 @@ document.addEventListener("click", async (event) => {
   }
 })();
 
+
+// ---------------------------------------------------------------------------
+// UI-02A - Home Chat Layout Balance Repair
+// Fixes module icon quality, hides old assistant message on home, and prevents
+// floating suggestion overlap.
+// ---------------------------------------------------------------------------
+(function ui02aHomeChatBalanceRepair() {
+  const mq = window.matchMedia("(max-width: 760px)");
+
+  function studioSvg() {
+    return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><path d="M32 6c4.7 13.2 12.8 21.3 26 26-13.2 4.7-21.3 12.8-26 26C27.3 44.8 19.2 36.7 6 32c13.2-4.7 21.3-12.8 26-26Z" stroke="#5B5BFF" stroke-width="4" stroke-linejoin="round"/><path d="M45 12l2.7 5.3L53 20l-5.3 2.7L45 28l-2.7-5.3L37 20l5.3-2.7L45 12Z" fill="#FFC83D"/><circle cx="14" cy="17" r="3.5" fill="#3B82F6"/><circle cx="15" cy="48" r="3.5" fill="#3B82F6"/></svg>';
+  }
+
+  function pilotSvg() {
+    return '<svg viewBox="0 0 64 64" fill="none" aria-hidden="true"><rect x="12" y="15" width="40" height="28" rx="6" fill="#FFFFFF" stroke="#7AB8FF" stroke-width="3"/><path d="M24 49h16" stroke="#7AB8FF" stroke-width="4" stroke-linecap="round"/><path d="M34 22 25 34h8l-3 9 10-14h-8l2-7Z" fill="#4C7DFF"/></svg>';
+  }
+
+  function applyIcons(shell) {
+    const studioIcon = shell.querySelector('.ui02-module-card[data-module="studio"] .ui02-module-icon');
+    if (studioIcon && !studioIcon.dataset.ui02aFixed) {
+      studioIcon.innerHTML = studioSvg();
+      studioIcon.dataset.ui02aFixed = "true";
+    }
+
+    const pilotIcon = shell.querySelector('.ui02-module-card[data-module="pilot"] .ui02-module-icon');
+    if (pilotIcon && !pilotIcon.dataset.ui02aFixed) {
+      pilotIcon.innerHTML = pilotSvg();
+      pilotIcon.dataset.ui02aFixed = "true";
+    }
+  }
+
+  function setHomeMode(shell) {
+    const messages = shell.querySelector(".ui01b-messages");
+    const composer = shell.querySelector(".ui01b-composer");
+    const input = shell.querySelector(".ui01b-input");
+
+    if (!messages) return;
+
+    if (messages.querySelector(".ui02-home-prompt") && !document.body.classList.contains("ui02-chat-started")) {
+      document.body.classList.add("ui02-home-mode");
+    }
+
+    if (composer && !composer.dataset.ui02aSubmitBound) {
+      composer.addEventListener("submit", function () {
+        if (input && input.value.trim()) {
+          document.body.classList.add("ui02-chat-started");
+          document.body.classList.remove("ui02-home-mode");
+        }
+      }, true);
+      composer.dataset.ui02aSubmitBound = "true";
+    }
+  }
+
+  function polishText(shell) {
+    const subtitle = shell.querySelector(".ui01b-subtitle");
+    if (subtitle) subtitle.textContent = "ForgeCode · Coding Agent";
+
+    const input = shell.querySelector(".ui01b-input");
+    if (input) input.placeholder = "Ask IdeasForgeAI...";
+  }
+
+  function apply() {
+    if (!mq.matches) return;
+
+    const shell = document.querySelector(".ui01b-mobile-chat");
+    if (!shell) return;
+
+    applyIcons(shell);
+    setHomeMode(shell);
+    polishText(shell);
+  }
+
+  function schedule() {
+    apply();
+    window.setTimeout(apply, 120);
+    window.setTimeout(apply, 400);
+    window.setTimeout(apply, 900);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", schedule, { once: true });
+  } else {
+    schedule();
+  }
+
+  if (mq.addEventListener) mq.addEventListener("change", schedule);
+})();
+
