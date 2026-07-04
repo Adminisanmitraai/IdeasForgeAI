@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ForgePilot Cloud Gateway</title>
+    <style>
+      :root {
+        --bg-a: #f4ede1;
+        --bg-b: #eadfcf;
+        --panel: rgba(255, 252, 247, 0.94);
+        --text: #241f18;
+        --muted: #6b645c;
+        --line: rgba(36, 31, 24, 0.12);
+        --shadow: 0 22px 60px rgba(70, 49, 24, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 26%),
+          linear-gradient(140deg, var(--bg-a) 0%, var(--bg-b) 100%);
+      }
+
+      main {
+        width: min(760px, 100%);
+        padding: 32px;
+        border-radius: 28px;
+        border: 1px solid var(--line);
+        background: var(--panel);
+        box-shadow: var(--shadow);
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2rem, 4.5vw, 3.25rem);
+        letter-spacing: -0.03em;
+      }
+
+      .status {
+        margin: 0 0 24px;
+        font-size: 1.35rem;
+        font-weight: 700;
+      }
+
+      .messages {
+        display: grid;
+        gap: 14px;
+      }
+
+      .message {
+        padding: 18px 20px;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.7);
+        color: var(--muted);
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+
+      @media (max-width: 640px) {
+        body {
+          padding: 16px;
+        }
+
+        main {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>ForgePilot Cloud Gateway</h1>
+      <p class="status" id="status">Waiting for Desktop Companion...</p>
+      <section class="messages">
+        <div class="message" id="desktop-message">No desktop communication yet.</div>
+        <div class="message" id="heartbeat-message">No heartbeat yet.</div>
+        <div class="message" id="pairing-message">No pairing yet.</div>
+        <div class="message" id="task-relay-message">No task relay yet.</div>
+      </section>
+    </main>
+
+    <script>
+      const desktopMessageEl = document.getElementById("desktop-message");
+      const heartbeatMessageEl = document.getElementById("heartbeat-message");
+      const pairingMessageEl = document.getElementById("pairing-message");
+      const statusEl = document.getElementById("status");
+      const taskRelayMessageEl = document.getElementById("task-relay-message");
+
+      const socketUrl = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host}`;
+      const socket = new WebSocket(socketUrl);
+
+      socket.addEventListener("open", () => socket.send("status"));
+
+      socket.addEventListener("message", (event) => {
+        const payload = JSON.parse(event.data);
+
+        if (payload.type === "gateway-status") {
+          statusEl.textContent = payload.status || "Waiting for Desktop Companion...";
+          desktopMessageEl.textContent = payload.desktopMessage || "No desktop communication yet.";
+          heartbeatMessageEl.textContent = payload.heartbeatMessage || "No heartbeat yet.";
+          pairingMessageEl.textContent = payload.pairingMessage || "No pairing yet.";
+          taskRelayMessageEl.textContent = payload.taskRelayMessage || "No task relay yet.";
+        }
+      });
+    </script>
+  </body>
+</html>
