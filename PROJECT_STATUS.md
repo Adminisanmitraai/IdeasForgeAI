@@ -1,3 +1,26 @@
+## UI-01 - ChatGPT-like Chat Layout Polish
+
+Status: Completed locally, validation required before deploy.
+
+- Polished Coding Agent chat layout.
+- Improved top header, chat area, message spacing, composer, mobile safe spacing, and responsive behavior.
+- Preserved existing Coding Agent backend integrations.
+- Preserved protected preview-only safety model.
+- Normal users cannot access real apply, test, GitHub, deploy, rollback, or admin-write controls.
+- No backend files changed.
+- No secrets, deployment config, Render config, GitHub workflow, or environment files touched.
+- No unrelated external product files or ForgePilot files touched.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+python -c "from backend.main import app; print('backend main import OK')"
+python -m py_compile backend/main.py
+python backend/sector_qa_runner.py
+python backend/coding_agent_phase_audit.py --phase CA-38
+
+NEXT AFTER: UI-02 - Mobile Composer Attachment Voice Polish
+
 ## Phase CA-38 - Full Security Audit + Production Freeze
 
 Status: Completed locally, validation required before deploy.

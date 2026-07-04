@@ -5757,3 +5757,109 @@ document.addEventListener("click", async (event) => {
 })();
 
 
+
+/* UI-01 - ChatGPT-like Chat Layout Polish */
+(() => {
+  const chatList = document.querySelector('[data-chat-list]');
+  const chatEmpty = document.querySelector('[data-chat-empty]');
+  const chatThinking = document.querySelector('[data-chat-thinking]');
+  const chatComposer = document.querySelector('[data-chat-composer]');
+  const chatInput = document.querySelector('[data-chat-input]');
+  const chatSubmit = document.querySelector('[data-chat-submit]');
+  const chatStop = document.querySelector('[data-chat-stop]');
+  const attachButton = document.querySelector('[data-chat-attachment]');
+  const voiceButton = document.querySelector('[data-chat-voice]');
+  const suggestionButtons = Array.from(document.querySelectorAll('[data-chat-prompt]'));
+  if (!chatList || !chatComposer || !chatInput || !chatSubmit || !chatStop) return;
+  const chatState = { messages: [], pending: false, timerId: null, lastStatus: actionStatusMessage ? actionStatusMessage.textContent.trim() : DEFAULT_STATUS_MESSAGE, hasInteracted: false };
+  const escapeChatHtml = (value) => String(value ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
+  const autoResizeComposer = () => { chatInput.style.height = 'auto'; chatInput.style.height = `${Math.min(chatInput.scrollHeight, 220)}px`; };
+  const scrollChatToBottom = () => { chatList.scrollTop = chatList.scrollHeight; };
+  const renderChat = () => {
+    chatEmpty.hidden = chatState.messages.length > 0;
+    chatList.innerHTML = chatState.messages.map((message) => {
+      const roleLabel = message.role === 'user' ? 'You' : 'IdeasForgeAI';
+      const tag = message.tag ? `<span class="chat-message__tag">${escapeChatHtml(message.tag)}</span>` : '';
+      return `<article class="chat-message chat-message--${escapeChatHtml(message.role)}"><div class="chat-message__bubble"><div class="chat-message__meta"><span>${escapeChatHtml(roleLabel)}</span>${tag}</div><p class="chat-message__body">${escapeChatHtml(message.body)}</p></div></article>`;
+    }).join('');
+    requestAnimationFrame(scrollChatToBottom);
+  };
+  const addChatMessage = (role, body, tag = '') => { chatState.messages.push({ role, body, tag }); renderChat(); };
+  const setPending = (value) => { chatState.pending = value; chatThinking.hidden = !value; chatSubmit.textContent = value ? 'Working...' : 'Send'; chatSubmit.disabled = value; chatStop.hidden = !value; };
+  const triggerSafeAction = (action) => {
+    if (!action) return;
+    const button = document.querySelector(`[data-ca-action="${action}"]`);
+    if (button instanceof HTMLElement) button.click();
+  };
+  const buildReply = (prompt) => {
+    const normalized = prompt.trim().toLowerCase();
+    if (/demo project|open demo|demo workspace/.test(normalized)) return { action: 'open-demo', reply: 'Opening the Demo Project preview now. This stays in protected preview mode with no real apply, Git, deploy, or admin-write action enabled.', tag: 'Safe preview' };
+    if (/connect|github|repository|repo|local project|zip/.test(normalized)) return { action: 'open-connect', reply: 'Opening the Connect Project preview so you can choose a safe workspace entry point. Repository and connector flows remain preview-first.', tag: 'Connect preview' };
+    if (/architecture|system design|flow/.test(normalized)) return { action: 'open-architecture', reply: 'Opening the Architecture Analyzer preview. This is a read-only guided view with no write, deployment, or secret access.', tag: 'Read-only' };
+    if (/task plan|planner|plan this/.test(normalized)) return { action: 'open-task-planner', reply: 'Opening the Task Planner preview so we can shape the work safely before any protected action is even considered.', tag: 'Planning' };
+    if (/code generation|generate code|diff|patch/.test(normalized)) return { action: 'open-code-generation', reply: 'Opening the code proposal preview. Normal users can review proposals, but apply diff, edit, export, and admin-write actions remain locked.', tag: 'Protected preview' };
+    if (/test|validation|runner/.test(normalized)) return { action: 'open-test-runner', reply: 'Opening the Test Runner preview. Approved validation remains gated, and arbitrary commands still stay blocked for normal users.', tag: 'Locked actions' };
+    if (/github pr|pull request|branch|commit/.test(normalized)) return { action: 'open-git-manager', reply: 'Opening the Git preview flow. Branch, commit, and PR creation remain preview-only and Founder/Admin-gated.', tag: 'Preview only' };
+    if (/deploy|rollback|render|production/.test(normalized)) return { action: 'open-deployment-manager', reply: 'Opening the Deployment Manager preview. Real deployment and rollback remain locked and approval-gated by design.', tag: 'Approval gate' };
+    if (/locked|admin|founder|permission|unsafe/.test(normalized)) return { action: '', reply: 'Normal users can safely preview planning, analysis, and protected proposals here. Real apply diff, unrestricted tests, GitHub write, deploy, rollback, secrets access, and admin-write controls remain locked behind Founder/Admin review.', tag: 'Security' };
+    return { action: '', reply: 'I can help you open a safe module preview, connect the demo workspace, review architecture, or explain which protected actions are still locked. This composer does not enable real apply, GitHub write, deploy, rollback, or admin-write actions.', tag: 'Guidance' };
+  };
+  const stopPendingReply = (message = 'Stopped the current preview response. No action was executed.') => {
+    if (chatState.timerId) { window.clearTimeout(chatState.timerId); chatState.timerId = null; }
+    if (chatState.pending) { setPending(false); addChatMessage('assistant', message, 'Stopped'); }
+  };
+  chatComposer.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const prompt = chatInput.value.trim();
+    if (!prompt || chatState.pending) return;
+    chatState.hasInteracted = true;
+    addChatMessage('user', prompt, 'Prompt');
+    chatInput.value = '';
+    autoResizeComposer();
+    setPending(true);
+    const response = buildReply(prompt);
+    chatState.timerId = window.setTimeout(() => {
+      chatState.timerId = null;
+      setPending(false);
+      addChatMessage('assistant', response.reply, response.tag);
+      triggerSafeAction(response.action);
+    }, 520);
+  });
+  chatStop.addEventListener('click', () => { stopPendingReply(); });
+  attachButton?.addEventListener('click', () => {
+    chatState.hasInteracted = true;
+    addChatMessage('assistant', 'Attachment preview is available in the composer UI, but real file upload and apply flows remain disabled in this phase.', 'Attachment preview');
+    setStatusMessage('Attachment preview opened in UI only. Real file upload and apply remain locked.');
+  });
+  voiceButton?.addEventListener('click', () => {
+    chatState.hasInteracted = true;
+    addChatMessage('assistant', 'Voice preview is UI-only right now. No recording, desktop control, execution, or protected action is enabled.', 'Voice preview');
+    setStatusMessage('Voice preview is UI-only. No recording or protected action is enabled.');
+  });
+  suggestionButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const prompt = button.getAttribute('data-chat-prompt') || '';
+      chatInput.value = prompt;
+      autoResizeComposer();
+      chatInput.focus();
+    });
+  });
+  chatInput.addEventListener('input', autoResizeComposer);
+  chatInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      chatComposer.requestSubmit();
+    }
+  });
+  if (actionStatusMessage) {
+    const observer = new MutationObserver(() => {
+      const nextStatus = actionStatusMessage.textContent.trim();
+      if (!nextStatus || nextStatus === chatState.lastStatus) return;
+      chatState.lastStatus = nextStatus;
+      if (chatState.hasInteracted) addChatMessage('assistant', nextStatus, 'Status update');
+    });
+    observer.observe(actionStatusMessage, { childList: true, subtree: true, characterData: true });
+  }
+  autoResizeComposer();
+  renderChat();
+})();
