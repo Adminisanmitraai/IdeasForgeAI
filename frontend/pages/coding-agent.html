@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -10,10 +10,10 @@
   <main class="coding-agent-shell">
     <header class="coding-agent-topbar">
       <a class="coding-agent-brand" href="./studio-v4.html" aria-label="Return to IdeasForgeAI Studio" data-ca-action="back-studio">
-        <span class="coding-agent-brand__mark" aria-hidden="true"></span>
+        <span class="coding-agent-brand__mark" aria-hidden="true"><img src="../assets/brand/ideasforgeai-mark.png" alt="" class="coding-agent-brand__mark-image"></span>
         <span class="coding-agent-brand__text">
-          <strong>IdeasForgeAI</strong>
-          <span>ForgeCode / Coding Agent</span>
+          <strong>IdeasForge<span class="coding-agent-brand__ai">AI</span></strong>
+          <span>ForgeCode secure coding workspace</span>
         </span>
       </a>
       <div class="coding-agent-topbar__actions">
@@ -79,7 +79,7 @@
 
         <section class="coding-agent-transcript" data-chat-transcript aria-live="polite">
           <div class="coding-agent-empty-state" data-chat-empty>
-            <div class="coding-agent-empty-state__mark" aria-hidden="true"></div>
+            <div class="coding-agent-empty-state__mark" aria-hidden="true"><img src="../assets/brand/ideasforgeai-logo-full.png" alt="" class="coding-agent-empty-state__logo"></div>
             <h3>Welcome to the IdeasForgeAI coding workspace</h3>
             <p>Start with a preview request, open the Demo Project, or review protected workflow steps without enabling any unsafe action.</p>
             <div class="coding-agent-suggestion-row">
@@ -307,6 +307,112 @@
   </main>
 
   <script src="./coding-agent.js?v=ui01-chat-polish-20260704" defer></script>
+
+<script id="ui02p-product-selector-default">
+(function () {
+  const products = [
+    {
+      key: "studio",
+      title: "ForgeStudio",
+      desc: "Create apps, websites, UI, images, logos, documents.",
+      icon: "/assets/brand/forgestudio-icon.png?v=ui02p"
+    },
+    {
+      key: "code",
+      title: "ForgeCode",
+      desc: "Analyze projects, write code, fix errors, test, deploy.",
+      icon: "/assets/brand/forgecode-icon.png?v=ui02p"
+    },
+    {
+      key: "work",
+      title: "ForgeWork",
+      desc: "AI workspace for documents, research, tasks, reports.",
+      icon: "/assets/brand/forgework-icon.png?v=ui02p"
+    }
+  ];
+
+  function findMessageRoot() {
+    return (
+      document.querySelector(".ui01b-messages") ||
+      document.querySelector(".chat-messages") ||
+      document.querySelector("[data-chat-messages]") ||
+      document.querySelector("#messages")
+    );
+  }
+
+  function buildProductHome() {
+    const shell = document.createElement("section");
+    shell.className = "ui02-home-shell ui02p-product-selector-home";
+    shell.setAttribute("data-home-mode", "product-selector");
+
+    shell.innerHTML = `
+      <div class="ui02-home-prompt">
+        <h1 class="ui02-home-title">What do you want to create, code, or work on today?</h1>
+        <p class="ui02-home-subtitle">Choose a mode or simply describe your task.</p>
+      </div>
+
+      <div class="ui02-module-grid">
+        ${products.map((product) => `
+          <button class="ui02-module-card" type="button" data-product="${product.key}" aria-label="${product.title}">
+            <span class="ui02-module-icon">
+              <img src="${product.icon}" alt="${product.title}" loading="eager" decoding="async">
+            </span>
+            <span class="ui02-module-copy">
+              <strong class="ui02-module-name">${product.title.replace(/(Studio|Code|Work)$/,'<span>$1</span>')}</strong>
+              <span class="ui02-module-desc">${product.desc}</span>
+            </span>
+            <span class="ui02-module-arrow" aria-hidden="true">&gt;</span>
+          </button>
+        `).join("")}
+      </div>
+    `;
+
+    return shell;
+  }
+
+  function removeOldAssistantBar() {
+    document.querySelectorAll("section, div, header").forEach((el) => {
+      const text = (el.innerText || "").trim();
+      if (
+        text.includes("AI Assistant") &&
+        text.includes("IdeasForgeAI Product Builder") &&
+        !el.classList.contains("ui01b-topbar")
+      ) {
+        el.style.display = "none";
+      }
+    });
+  }
+
+  function showProductHome() {
+    const root = findMessageRoot();
+    if (!root) return false;
+
+    if (root.querySelector(".ui02p-product-selector-home")) return true;
+
+    root.innerHTML = "";
+    root.appendChild(buildProductHome());
+    document.body.classList.add("ui02p-product-home-default");
+
+    removeOldAssistantBar();
+    return true;
+  }
+
+  function boot() {
+    showProductHome();
+    setTimeout(showProductHome, 100);
+    setTimeout(showProductHome, 300);
+    setTimeout(showProductHome, 700);
+    setTimeout(showProductHome, 1200);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+</script>
+
 </body>
 </html>
 

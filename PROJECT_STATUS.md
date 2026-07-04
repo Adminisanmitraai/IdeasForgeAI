@@ -1,3 +1,17 @@
+## UI-02P - Force Product Selector Default from HTML
+
+Status: Completed locally, validation required before deploy.
+
+- Injected first-load product selector boot directly into coding-agent.html.
+- Forces ForgeStudio / ForgeCode / ForgeWork home screen on first load.
+- Hides old AI Assistant / Product Builder intro bar.
+- Does not change composer, header, card styling, backend, gateway, or desktop companion.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+
+
 ## UI-02L - Center Home Content + Lower Composer
 
 Status: Completed locally, validation required before deploy.
