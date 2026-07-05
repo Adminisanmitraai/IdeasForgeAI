@@ -39,5 +39,13 @@
       "stage_unrelated_files",
       "use_screenshot_as_background"
     ]
-  }
+  },
+  "accuracy_tests": [
+    {
+      "name": "agent-type-requirement-alignment-benchmark",
+      "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\ideasforgeai_product_template_template.py --contract backend\\agent_auditor\\contracts\\ideasforgeai_product_template_template.contract.json --fail-under 70",
+      "timeout_seconds": 30
+    }
+  ],
+  "accuracy_benchmark_level": "type_requirement_baseline_v1"
 }
