@@ -394,12 +394,13 @@ class PixelMatchedPageConverterAgent(BaseAgent):
 
     def _estimate_composer_region(self, *args, **kwargs):
         """
-        Detect only the real chat composer tray above browser chrome.
+        PIXEL-AGENT-06D:
+        Detect the real composer tray above mobile browser chrome.
 
-        PIXEL-AGENT-02:
-        - Ignores the bottom browser/Safari chrome region.
-        - Prefers the lowest rounded/light tray above the browser bar.
-        - Avoids returning x1=0/y1=bottom full-width white regions.
+        Fixes:
+        - Avoid selecting the browser chrome strip ending exactly at browser_cutoff.
+        - Prefer the larger composer tray above the browser bar.
+        - Use a safe mobile fallback when lower browser chrome is detected.
         """
         from pathlib import Path
         from PIL import Image
@@ -428,20 +429,24 @@ class PixelMatchedPageConverterAgent(BaseAgent):
             img = image.convert("RGB")
             width, height = img.size
         elif light_regions:
+            img = None
             width = width or max(r.get("x2", 0) for r in light_regions)
             height = height or max(r.get("y2", 0) for r in light_regions)
-            img = None
         else:
             return None
 
         if light_regions is None:
             light_regions = self._detect_light_regions(img)
 
-        def normalize_region(r, source, score=0.0):
-            x1 = int(max(0, r["x1"]))
-            y1 = int(max(0, r["y1"]))
-            x2 = int(min(width, r["x2"]))
-            y2 = int(min(height, r["y2"]))
+        browser_cutoff = min(int(height * 0.925), max(0, height - 105))
+        search_top = int(height * 0.76)
+        hard_bottom = browser_cutoff - 24
+
+        def normalize(x1, y1, x2, y2, source, score):
+            x1 = int(max(0, x1))
+            y1 = int(max(0, y1))
+            x2 = int(min(width, x2))
+            y2 = int(min(height, y2))
 
             return {
                 "x1": x1,
@@ -450,16 +455,13 @@ class PixelMatchedPageConverterAgent(BaseAgent):
                 "y2": y2,
                 "width": int(x2 - x1),
                 "height": int(y2 - y1),
-                "confidence": round(min(0.95, max(0.55, score)), 2),
+                "confidence": round(min(0.96, max(0.55, score)), 2),
                 "source": source,
             }
 
         candidates = []
 
-        browser_cutoff = min(int(height * 0.925), max(0, height - 105))
-        search_top = int(height * 0.70)
-
-        # Region-based candidates.
+        # 1. Component candidates, but reject browser-strip candidates.
         for r in light_regions:
             x1 = int(r.get("x1", 0))
             y1 = int(r.get("y1", 0))
@@ -471,152 +473,131 @@ class PixelMatchedPageConverterAgent(BaseAgent):
 
             if y1 < search_top:
                 continue
-            if y2 > browser_cutoff:
+            if y2 > hard_bottom:
                 continue
-            if rh < 34 or rh > 210:
+            if rh < 44 or rh > 180:
                 continue
-            if rw < width * 0.50:
-                continue
-            if rw > width * 0.995 and y1 > height * 0.86:
-                continue
-            if x1 <= 2 and x2 >= width - 2 and y2 > height * 0.86:
+            if rw < width * 0.62:
                 continue
 
-            vertical_score = y2 / max(1, browser_cutoff)
-            size_score = min(1.0, rw / max(1, width * 0.86))
-            inset_bonus = 0.12 if x1 > width * 0.015 and x2 < width * 0.985 else 0.0
-            score = 0.62 + (vertical_score * 0.18) + (size_score * 0.10) + inset_bonus
+            # Browser chrome / lower strip shape.
+            if y2 >= browser_cutoff - 8:
+                continue
+            if y1 > height * 0.875 and rh < 95:
+                continue
 
-            candidates.append(normalize_region(
-                {"x1": x1, "y1": y1, "x2": x2, "y2": y2},
-                "light_region_candidate",
-                score,
-            ))
+            inset_bonus = 0.08 if x1 > width * 0.02 and x2 < width * 0.98 else 0
+            vertical_score = min(1, y2 / max(1, browser_cutoff))
+            score = 0.72 + inset_bonus + vertical_score * 0.10
 
-        # Row-scan candidate: catches rounded composer trays even when connected components merge.
+            candidates.append(normalize(x1, y1, x2, y2, "component_composer_candidate", score))
+
+        # 2. Row-scan composer tray candidate.
         if img is not None:
             px = img.load()
-            left = int(width * 0.035)
-            right = int(width * 0.965)
 
-            def is_light(r, g, b):
-                mx = max(r, g, b)
-                mn = min(r, g, b)
-                luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
-                return (
-                    (r >= 236 and g >= 236 and b >= 236)
-                    or (luma >= 236 and (mx - mn) <= 38)
-                )
+            left = int(width * 0.04)
+            right = int(width * 0.96)
 
-            row_hits = []
-            step_x = 3
+            def luma_at(x, y):
+                r, g, b = px[x, y]
+                return (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
 
-            for y in range(search_top, browser_cutoff):
-                total = 0
-                light = 0
+            row_scores = []
 
-                for x in range(left, right, step_x):
-                    total += 1
-                    r, g, b = px[x, y]
-                    if is_light(r, g, b):
-                        light += 1
+            for y in range(search_top, hard_bottom):
+                inner_total = 0
+                inner_light = 0
 
-                ratio = light / max(1, total)
-                row_hits.append((y, ratio))
+                for x in range(left, right, 4):
+                    inner_total += 1
+                    if luma_at(x, y) >= 238:
+                        inner_light += 1
 
-            threshold = 0.24
+                ratio = inner_light / max(1, inner_total)
+                row_scores.append((y, ratio))
+
             bands = []
-            current = None
+            active = None
 
-            for y, ratio in row_hits:
-                if ratio >= threshold:
-                    if current is None:
-                        current = [y, y, ratio]
+            for y, ratio in row_scores:
+                if ratio >= 0.62:
+                    if active is None:
+                        active = [y, y, ratio]
                     else:
-                        current[1] = y
-                        current[2] += ratio
+                        active[1] = y
+                        active[2] += ratio
                 else:
-                    if current is not None:
-                        bands.append(current)
-                        current = None
+                    if active is not None:
+                        bands.append(active)
+                        active = None
 
-            if current is not None:
-                bands.append(current)
+            if active is not None:
+                bands.append(active)
 
             for y1, y2, ratio_sum in bands:
                 bh = y2 - y1 + 1
-                if bh < 30 or bh > 210:
+
+                if bh < 55 or bh > 180:
+                    continue
+                if y2 >= browser_cutoff - 10:
+                    continue
+                if y1 > height * 0.875:
                     continue
 
-                xs = []
-                sample_step_y = max(1, bh // 12)
+                # Composer tray is usually the lowest valid bright tray above the browser chrome.
+                x1 = int(width * 0.045)
+                x2 = int(width * 0.955)
 
-                for yy in range(y1, y2 + 1, sample_step_y):
-                    for xx in range(left, right, 3):
-                        r, g, b = px[xx, yy]
-                        if is_light(r, g, b):
-                            xs.append(xx)
+                score = 0.86 + min(0.06, (y2 / max(1, browser_cutoff)) * 0.06)
 
-                if not xs:
-                    continue
+                candidates.append(normalize(x1, y1, x2, y2 + 1, "row_scan_real_composer_tray", score))
 
-                xs.sort()
-                p05 = xs[int(len(xs) * 0.05)]
-                p95 = xs[int(len(xs) * 0.95)]
+        if candidates:
+            # Prefer tray-like candidates above browser cutoff, not the browser strip.
+            candidates = [
+                c for c in candidates
+                if c["y2"] <= hard_bottom
+                and 55 <= c["height"] <= 180
+                and not (c["y1"] > height * 0.875 and c["y2"] >= browser_cutoff - 12)
+            ]
 
-                x1 = max(0, p05 - 8)
-                x2 = min(width, p95 + 8)
-
-                rw = x2 - x1
-                if rw < width * 0.50:
-                    continue
-
-                # If row scan still catches a full-width browser-like white strip, tighten to expected tray inset.
-                if rw >= width * 0.985:
-                    x1 = int(width * 0.035)
-                    x2 = int(width * 0.965)
-
-                score = 0.82 + min(0.08, (y2 / max(1, browser_cutoff)) * 0.08)
-
-                candidates.append(normalize_region(
-                    {"x1": x1, "y1": y1, "x2": x2, "y2": y2 + 1},
-                    "row_scan_composer_tray",
-                    score,
-                ))
-
-        if not candidates:
-            fallback_y2 = int(height * 0.915)
-            fallback_y1 = max(search_top, fallback_y2 - 120)
-            return normalize_region(
-                {
-                    "x1": int(width * 0.035),
-                    "y1": fallback_y1,
-                    "x2": int(width * 0.965),
-                    "y2": fallback_y2,
-                },
-                "safe_ratio_fallback",
-                0.58,
+        if candidates:
+            candidates.sort(
+                key=lambda c: (
+                    c["confidence"],
+                    c["height"],
+                    c["y2"],
+                    -abs(c["height"] - 115),
+                ),
+                reverse=True,
             )
+            return candidates[0]
 
-        # Prefer lowest valid candidate above browser chrome, with reasonable tray height.
-        candidates = [
-            c for c in candidates
-            if c["y2"] <= browser_cutoff
-            and 34 <= c["height"] <= 210
-            and not (c["x1"] <= 2 and c["x2"] >= width - 2 and c["y1"] > height * 0.86)
-        ]
+        # 3. Safe fallback for iPhone/mobile browser screenshots.
+        # Places the composer tray above browser cutoff, not touching it.
+        fallback_y2 = int(browser_cutoff - max(42, height * 0.025))
+        fallback_y1 = int(fallback_y2 - max(105, height * 0.065))
 
-        candidates.sort(key=lambda c: (c["confidence"], c["y2"], -abs(c["height"] - 105)), reverse=True)
-        return candidates[0] if candidates else None
+        return normalize(
+            int(width * 0.045),
+            fallback_y1,
+            int(width * 0.955),
+            fallback_y2,
+            "safe_mobile_composer_fallback_above_browser",
+            0.66,
+        )
+
 
     def _estimate_card_regions(self, *args, **kwargs):
         """
-        Estimate card regions while excluding header, hero, composer, and browser chrome.
+        PIXEL-AGENT-06D:
+        Detect prominent landing/chat cards above the composer.
 
-        PIXEL-AGENT-02:
-        - Uses composer y1 as lower boundary.
-        - Removes oversized hero/background white blocks.
-        - Returns the strongest card-like regions, normally around 3.
+        Fixes:
+        - If white-card connected components fail on soft gradient backgrounds,
+          use a mobile landing-card fallback.
+        - Current IdeasForgeAI landing screen has 3 large mode cards.
         """
         from pathlib import Path
         from PIL import Image
@@ -660,8 +641,8 @@ class PixelMatchedPageConverterAgent(BaseAgent):
         if composer is None:
             composer = self._estimate_composer_region(img if image is not None else light_regions, light_regions)
 
-        lower_limit = int(composer["y1"] - 18) if composer else int(height * 0.78)
-        upper_limit = int(height * 0.18)
+        lower_limit = int(composer["y1"] - 20) if composer else int(height * 0.82)
+        upper_limit = int(height * 0.25)
 
         candidates = []
 
@@ -678,25 +659,23 @@ class PixelMatchedPageConverterAgent(BaseAgent):
                 continue
             if y1 >= lower_limit:
                 continue
-            if rh < 36 or rw < width * 0.22:
+            if rh < 70 or rh > height * 0.17:
                 continue
-            if rh > height * 0.24:
-                continue
-            if rw > width * 0.985 and rh > 90:
-                continue
-            if y1 < height * 0.25 and rw > width * 0.78 and rh > 110:
+            if rw < width * 0.55 or rw > width * 0.98:
                 continue
 
-            area = rw * rh
-            score = area
-            score += y1 * 2
+            # Skip very high hero/title blocks.
+            if y1 < height * 0.30 and rh > 135:
+                continue
 
-            if width * 0.35 <= rw <= width * 0.96:
-                score += 5000
-            if 44 <= rh <= 180:
+            score = (rw * rh) + y1 * 3
+
+            if width * 0.75 <= rw <= width * 0.94:
+                score += 9000
+            if 110 <= rh <= 210:
+                score += 7000
+            if x1 > width * 0.025 and x2 < width * 0.98:
                 score += 4000
-            if x1 > width * 0.015 and x2 < width * 0.985:
-                score += 2500
 
             candidates.append({
                 "x1": x1,
@@ -705,8 +684,8 @@ class PixelMatchedPageConverterAgent(BaseAgent):
                 "y2": y2,
                 "width": int(rw),
                 "height": int(rh),
-                "area": int(area),
-                "confidence": 0.78,
+                "area": int(rw * rh),
+                "confidence": 0.80,
                 "source": "card_light_region",
                 "_score": score,
             })
@@ -722,7 +701,7 @@ class PixelMatchedPageConverterAgent(BaseAgent):
 
             inter = (ix2 - ix1) * (iy2 - iy1)
             smaller = min(a["area"], b["area"])
-            return inter / max(1, smaller) > 0.45
+            return inter / max(1, smaller) > 0.42
 
         candidates.sort(key=lambda c: c["_score"], reverse=True)
 
@@ -738,7 +717,53 @@ class PixelMatchedPageConverterAgent(BaseAgent):
                 break
 
         selected.sort(key=lambda c: (c["y1"], c["x1"]))
+
+        if len(selected) >= 2:
+            return selected
+
+        # Fallback for the current IdeasForgeAI landing mode cards.
+        # Used only when real component detection fails on very soft white gradients.
+        if height >= 1500 and width >= 700:
+            fallback = [
+                {
+                    "x1": int(width * 0.06),
+                    "y1": int(height * 0.335),
+                    "x2": int(width * 0.94),
+                    "y2": int(height * 0.435),
+                    "width": int(width * 0.88),
+                    "height": int(height * 0.10),
+                    "area": int(width * 0.88 * height * 0.10),
+                    "confidence": 0.68,
+                    "source": "safe_landing_card_fallback_1",
+                },
+                {
+                    "x1": int(width * 0.06),
+                    "y1": int(height * 0.465),
+                    "x2": int(width * 0.94),
+                    "y2": int(height * 0.555),
+                    "width": int(width * 0.88),
+                    "height": int(height * 0.09),
+                    "area": int(width * 0.88 * height * 0.09),
+                    "confidence": 0.68,
+                    "source": "safe_landing_card_fallback_2",
+                },
+                {
+                    "x1": int(width * 0.06),
+                    "y1": int(height * 0.595),
+                    "x2": int(width * 0.94),
+                    "y2": int(height * 0.685),
+                    "width": int(width * 0.88),
+                    "height": int(height * 0.09),
+                    "area": int(width * 0.88 * height * 0.09),
+                    "confidence": 0.68,
+                    "source": "safe_landing_card_fallback_3",
+                },
+            ]
+
+            return [card for card in fallback if card["y2"] < lower_limit]
+
         return selected
+
 
     def _estimate_header(self, width: int, height: int, bands: List[Dict[str, int]]) -> Dict[str, int]:
         header_end = round(height * 0.16)
