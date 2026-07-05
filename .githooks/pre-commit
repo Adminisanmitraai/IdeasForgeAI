@@ -1,0 +1,24 @@
+﻿#!/bin/sh
+echo "AGENT-AUDIT-04: checking changed backend agents..."
+
+CHANGED_AGENTS=$(git diff --cached --name-only --diff-filter=ACMR -- "backend/agents/*.py")
+
+if [ -z "$CHANGED_AGENTS" ]; then
+  echo "AGENT-AUDIT-04: no staged backend agent changes."
+  exit 0
+fi
+
+echo "AGENT-AUDIT-04: changed agents detected:"
+echo "$CHANGED_AGENTS"
+
+python backend/agent_auditor/forge_agent_auditor.py --changed-only
+STATUS=$?
+
+if [ $STATUS -ne 0 ]; then
+  echo "AGENT-AUDIT-04: commit blocked. One or more changed agents failed audit."
+  echo "Fix the agent contract, smoke test, accuracy benchmark, or code before committing."
+  exit $STATUS
+fi
+
+echo "AGENT-AUDIT-04: changed agents passed audit."
+exit 0

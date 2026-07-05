@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import ast
@@ -122,25 +122,40 @@ def discover_agent_files(changed_only: bool = False) -> List[Path]:
     if not changed_only:
         return all_files
 
-    try:
+    def git_names(command: List[str]) -> List[str]:
         result = subprocess.run(
-            ["git", "diff", "--name-only", "HEAD", "--", "backend/agents"],
+            command,
             cwd=str(ROOT),
             capture_output=True,
             text=True,
             timeout=10,
         )
 
-        changed_names = {
-            (ROOT / line.strip()).resolve()
-            for line in result.stdout.splitlines()
-            if line.strip().endswith(".py")
-        }
+        if result.returncode != 0:
+            return []
 
-        changed = [p for p in all_files if p.resolve() in changed_names]
-        return changed
-    except Exception:
-        return all_files
+        return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+    changed_names = set()
+
+    commands = [
+        ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "--", "backend/agents"],
+        ["git", "diff", "--name-only", "--diff-filter=ACMR", "HEAD", "--", "backend/agents"],
+        ["git", "ls-files", "--others", "--exclude-standard", "--", "backend/agents"],
+    ]
+
+    for command in commands:
+        for name in git_names(command):
+            if name.endswith(".py"):
+                candidate = (ROOT / name).resolve()
+                if candidate.exists() and is_agent_file(candidate):
+                    changed_names.add(candidate)
+
+    if not changed_names:
+        return []
+
+    return [p for p in all_files if p.resolve() in changed_names]
+
 
 
 def safe_read_text(path: Path) -> str:
