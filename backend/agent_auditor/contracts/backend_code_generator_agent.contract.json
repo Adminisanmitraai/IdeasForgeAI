@@ -20,9 +20,9 @@
   "minimum_health_score": 75,
   "smoke_tests": [
     {
-      "name": "import-smoke-test",
-      "command": "python backend\\agent_auditor\\smoke_import_agent.py --agent backend\\agents\\backend_code_generator_agent.py",
-      "timeout_seconds": 30
+      "name": "static-agent-structure-smoke-test",
+      "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_code_generator_agent.py",
+      "timeout_seconds": 20
     }
   ],
   "safety": {
