@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import json
 import sys
@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 from PIL import Image
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 SCREENSHOT_DIR = ROOT / "backend" / "agent_auditor" / "pixel_benchmarks" / "screenshots"
 EXPECTED_FILE = ROOT / "backend" / "agent_auditor" / "pixel_benchmarks" / "pixel_expected.json"
 

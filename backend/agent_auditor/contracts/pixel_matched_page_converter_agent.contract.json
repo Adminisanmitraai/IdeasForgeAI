@@ -59,5 +59,11 @@
     "json_report": "backend/agent_audit_reports/pixel_debug/pixel-debug-report-*.json",
     "visual_overlay": "backend/agent_audit_reports/pixel_debug/pixel-debug-overlay-*.png",
     "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_debug_report.py"
+  },
+  "pixel_accuracy_wiring": {
+    "phase": "PIXEL-AGENT-06",
+    "status": "wired_to_real_pixel_benchmark",
+    "root_path_rule": "pixel benchmark scripts must resolve ROOT to IdeasForgeAI project root, not backend folder",
+    "required_command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_real_accuracy.py"
   }
 }

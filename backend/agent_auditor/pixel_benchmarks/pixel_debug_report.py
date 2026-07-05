@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import json
@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional
 from PIL import Image, ImageDraw, ImageFont
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_SCREENSHOT = ROOT / "backend" / "agent_auditor" / "pixel_benchmarks" / "screenshots" / "chat-mobile-current.png"
 REPORT_DIR = ROOT / "backend" / "agent_audit_reports" / "pixel_debug"
 
