@@ -1,3 +1,24 @@
+## PIXEL-04 - Measured Composer Calibration Lock
+
+Status: Completed locally, validation required before deploy.
+
+- Removed PIXEL-03 final composer block.
+- Added PIXEL-04 measured composer calibration block.
+- Calibrated from live screenshot vs reference screenshot.
+- Composer is lowered and widened.
+- Submit button remains IdeasForgeAI purple-blue brand gradient.
+- Plus icon remains without extra circular patch.
+- Input width improved.
+- Mic hides while typing and input expands toward submit.
+- JS controls typing behavior only.
+- Created PIXEL-AUDIT-04 report.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## PIXEL-03 - Final Composer Source Of Truth
 
 Status: Completed locally, validation required before deploy.

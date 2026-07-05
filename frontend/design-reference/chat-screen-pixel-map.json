@@ -1,18 +1,27 @@
 {
-  "phase": "PIXEL-03",
-  "name": "Final Composer Source Of Truth",
-  "updated_at": "2026-07-05T09:53:13",
-  "status": "final composer CSS lock",
-  "composer": {
-    "bottom_mobile": "calc(env(safe-area-inset-bottom, 0px) + 24px)",
-    "bottom_small": "calc(env(safe-area-inset-bottom, 0px) + 22px)",
-    "height": "68px",
-    "input_height": "48px",
-    "send_button_size": "46px",
-    "mic_button_size": "34px",
-    "plus_width": "40px",
-    "submit_color": "linear-gradient(135deg, #6f55ff, #2f7bff)",
-    "typing_behavior": "body.ifai-pixel03-typing hides mic and expands input"
+  "phase": "PIXEL-04",
+  "name": "Measured Composer Calibration Lock",
+  "updated_at": "2026-07-05T10:00:14",
+  "status": "calibrated from live-vs-reference screenshot comparison",
+  "measured_difference": {
+    "live_send_center_normalized_y": 0.807,
+    "target_send_center_normalized_y": 0.852,
+    "estimated_required_downshift_px_on_live_screenshot": 58,
+    "live_send_center_normalized_x": 0.811,
+    "target_send_center_normalized_x": 0.887,
+    "estimated_required_rightward_space_gain_px_on_live_screenshot": 45
   },
-  "source_of_truth": "PIXEL-03 - Final Composer Source Of Truth block at end of coding-agent.css"
+  "composer": {
+    "bottom_mobile": "calc(env(safe-area-inset-bottom, 0px) - 18px)",
+    "bottom_small": "calc(env(safe-area-inset-bottom, 0px) - 20px)",
+    "transform": "translateY(34px)",
+    "left_right": "24px mobile, 22px small",
+    "height": "66px",
+    "input_height": "48px",
+    "send_button_size": "44px",
+    "mic_button_size": "30px",
+    "plus_width": "38px",
+    "submit_color": "linear-gradient(135deg, #6f55ff, #2f7bff)"
+  },
+  "source_of_truth": "PIXEL-04 - Measured Composer Calibration Lock"
 }

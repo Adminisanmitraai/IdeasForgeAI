@@ -8718,40 +8718,35 @@ body {
 
 
 /* --------------------------------------------------------------------------
-   PIXEL-04 - Measured Composer Calibration Lock
-   Final composer values after comparing live screenshot against reference.
+   PIXEL-03 - Final Composer Source Of Truth
    Do not add composer layout rules below this block.
 -------------------------------------------------------------------------- */
 @media (max-width: 760px) {
   :root {
-    --pixel04-brand-1: #6f55ff;
-    --pixel04-brand-2: #2f7bff;
-
-    /* Measured correction:
-       Live send center was too high and too far left compared with target.
-       This block lowers composer and widens it without changing the rest UI. */
-    --pixel04-composer-bottom: calc(env(safe-area-inset-bottom, 0px) - 18px);
-    --pixel04-composer-height: 66px;
-    --pixel04-input-height: 48px;
-    --pixel04-send-size: 44px;
-    --pixel04-mic-size: 30px;
-    --pixel04-plus-width: 38px;
+    --pixel03-brand-1: #6f55ff;
+    --pixel03-brand-2: #2f7bff;
+    --pixel03-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
+    --pixel03-composer-height: 68px;
+    --pixel03-input-height: 48px;
+    --pixel03-send-size: 46px;
+    --pixel03-mic-size: 34px;
+    --pixel03-plus-width: 40px;
   }
 
   html body .ui01b-composer-wrap {
     position: fixed !important;
-    left: 24px !important;
-    right: 24px !important;
+    left: 32px !important;
+    right: 32px !important;
     width: auto !important;
-    bottom: var(--pixel04-composer-bottom) !important;
-    min-height: var(--pixel04-composer-height) !important;
-    max-height: 132px !important;
-    padding: 8px 8px !important;
+    bottom: var(--pixel03-composer-bottom) !important;
+    min-height: var(--pixel03-composer-height) !important;
+    max-height: 136px !important;
+    padding: 8px 9px !important;
     border-radius: 28px !important;
     display: flex !important;
     align-items: center !important;
     overflow: visible !important;
-    transform: translateY(34px) !important;
+    transform: none !important;
     background: rgba(255, 255, 255, 0.94) !important;
     border: 1px solid rgba(12, 14, 24, 0.075) !important;
     box-shadow: 0 18px 52px rgba(24, 30, 60, 0.14) !important;
@@ -8762,59 +8757,59 @@ body {
 
   html body .ui01b-composer {
     width: 100% !important;
-    min-height: 50px !important;
-    max-height: 118px !important;
+    min-height: 52px !important;
+    max-height: 120px !important;
     display: flex !important;
     align-items: center !important;
-    gap: 7px !important;
+    gap: 8px !important;
     overflow: visible !important;
   }
 
   html body .ui01b-composer button:first-child,
   html body .ui01b-composer-wrap button:first-child {
-    width: var(--pixel04-plus-width) !important;
+    width: var(--pixel03-plus-width) !important;
     height: 48px !important;
-    min-width: var(--pixel04-plus-width) !important;
+    min-width: var(--pixel03-plus-width) !important;
     min-height: 48px !important;
-    flex: 0 0 var(--pixel04-plus-width) !important;
+    flex: 0 0 var(--pixel03-plus-width) !important;
     border-radius: 0 !important;
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
     color: #090b14 !important;
-    font-size: 29px !important;
+    font-size: 30px !important;
     line-height: 1 !important;
   }
 
   html body .ui01b-composer button:not(:first-child):not(:last-child),
   html body .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
-    width: var(--pixel04-mic-size) !important;
-    height: var(--pixel04-mic-size) !important;
-    min-width: var(--pixel04-mic-size) !important;
-    min-height: var(--pixel04-mic-size) !important;
-    flex: 0 0 var(--pixel04-mic-size) !important;
+    width: var(--pixel03-mic-size) !important;
+    height: var(--pixel03-mic-size) !important;
+    min-width: var(--pixel03-mic-size) !important;
+    min-height: var(--pixel03-mic-size) !important;
+    flex: 0 0 var(--pixel03-mic-size) !important;
     border-radius: 999px !important;
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
     color: #11131b !important;
-    font-size: 18px !important;
+    font-size: 19px !important;
     line-height: 1 !important;
   }
 
   html body .ui01b-composer button:last-child,
   html body .ui01b-composer-wrap button:last-child {
-    width: var(--pixel04-send-size) !important;
-    height: var(--pixel04-send-size) !important;
-    min-width: var(--pixel04-send-size) !important;
-    min-height: var(--pixel04-send-size) !important;
-    flex: 0 0 var(--pixel04-send-size) !important;
+    width: var(--pixel03-send-size) !important;
+    height: var(--pixel03-send-size) !important;
+    min-width: var(--pixel03-send-size) !important;
+    min-height: var(--pixel03-send-size) !important;
+    flex: 0 0 var(--pixel03-send-size) !important;
     border-radius: 999px !important;
-    background: linear-gradient(135deg, var(--pixel04-brand-1), var(--pixel04-brand-2)) !important;
+    background: linear-gradient(135deg, var(--pixel03-brand-1), var(--pixel03-brand-2)) !important;
     color: #ffffff !important;
     border: 0 !important;
     box-shadow: 0 12px 30px rgba(93, 82, 255, 0.24) !important;
-    font-size: 19px !important;
+    font-size: 20px !important;
     line-height: 1 !important;
   }
 
@@ -8825,10 +8820,10 @@ body {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     width: auto !important;
-    height: var(--pixel04-input-height) !important;
-    min-height: var(--pixel04-input-height) !important;
+    height: var(--pixel03-input-height) !important;
+    min-height: var(--pixel03-input-height) !important;
     max-height: 108px !important;
-    padding: 12px 13px !important;
+    padding: 12px 14px !important;
     border-radius: 24px !important;
     font-size: 16px !important;
     line-height: 1.25 !important;
@@ -8849,43 +8844,42 @@ body {
     font-size: 16px !important;
   }
 
-  html body.ifai-pixel04-typing .ui01b-composer button:not(:first-child):not(:last-child),
-  html body.ifai-pixel04-typing .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
+  html body.ifai-pixel03-typing .ui01b-composer button:not(:first-child):not(:last-child),
+  html body.ifai-pixel03-typing .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
     display: none !important;
   }
 
-  html body.ifai-pixel04-typing .ui01b-composer textarea,
-  html body.ifai-pixel04-typing textarea.ifai-ai02-input,
-  html body.ifai-pixel04-typing .ui01b-composer input[type="text"],
-  html body.ifai-pixel04-typing input.ifai-ai02-input {
+  html body.ifai-pixel03-typing .ui01b-composer textarea,
+  html body.ifai-pixel03-typing textarea.ifai-ai02-input,
+  html body.ifai-pixel03-typing .ui01b-composer input[type="text"],
+  html body.ifai-pixel03-typing input.ifai-ai02-input {
     flex: 1 1 100% !important;
   }
 
   html body .ui01b-messages,
   html body .ifai-ai-feed {
-    padding-bottom: 145px !important;
+    padding-bottom: 155px !important;
   }
 }
 
 @media (max-width: 390px) {
   :root {
-    --pixel04-composer-bottom: calc(env(safe-area-inset-bottom, 0px) - 20px);
-    --pixel04-composer-height: 64px;
-    --pixel04-input-height: 47px;
-    --pixel04-send-size: 42px;
-    --pixel04-mic-size: 29px;
-    --pixel04-plus-width: 36px;
+    --pixel03-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
+    --pixel03-composer-height: 66px;
+    --pixel03-input-height: 47px;
+    --pixel03-send-size: 44px;
+    --pixel03-mic-size: 32px;
+    --pixel03-plus-width: 38px;
   }
 
   html body .ui01b-composer-wrap {
-    left: 22px !important;
-    right: 22px !important;
+    left: 30px !important;
+    right: 30px !important;
     padding: 8px !important;
-    transform: translateY(34px) !important;
   }
 
   html body .ui01b-composer {
-    gap: 6px !important;
+    gap: 7px !important;
   }
 }
 
