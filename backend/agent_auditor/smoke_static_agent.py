@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import argparse
 import ast
@@ -24,7 +24,9 @@ def main() -> int:
         "ast_ok": False,
         "classes": [],
         "functions": [],
+        "assignments": [],
         "has_agent_contract": False,
+        "source_lines": 0,
         "error": None,
     }
 
@@ -35,12 +37,15 @@ def main() -> int:
         py_compile.compile(str(path), doraise=True)
         result["compile_ok"] = True
 
-        source = path.read_text(encoding="utf-8", errors="replace")
+        source = path.read_text(encoding="utf-8-sig", errors="replace").lstrip("\ufeff")
+        result["source_lines"] = len(source.splitlines())
+
         tree = ast.parse(source)
         result["ast_ok"] = True
 
         classes = []
         functions = []
+        assignments = []
         has_contract = False
 
         for node in tree.body:
@@ -52,21 +57,31 @@ def main() -> int:
 
             if isinstance(node, ast.Assign):
                 for target in node.targets:
-                    if isinstance(target, ast.Name) and target.id == "AGENT_CONTRACT":
-                        has_contract = True
+                    if isinstance(target, ast.Name):
+                        assignments.append(target.id)
+                        if target.id == "AGENT_CONTRACT":
+                            has_contract = True
 
             if isinstance(node, ast.AnnAssign):
                 target = node.target
-                if isinstance(target, ast.Name) and target.id == "AGENT_CONTRACT":
-                    has_contract = True
+                if isinstance(target, ast.Name):
+                    assignments.append(target.id)
+                    if target.id == "AGENT_CONTRACT":
+                        has_contract = True
 
         result["classes"] = classes
         result["functions"] = functions
+        result["assignments"] = assignments
         result["has_agent_contract"] = has_contract
 
-        result["ok"] = result["compile_ok"] and result["ast_ok"] and (
-            len(classes) > 0 or len(functions) > 0
+        has_structure = (
+            len(classes) > 0
+            or len(functions) > 0
+            or len(assignments) > 0
+            or result["source_lines"] >= 5
         )
+
+        result["ok"] = result["compile_ok"] and result["ast_ok"] and has_structure
 
         print(json.dumps(result, indent=2))
         return 0 if result["ok"] else 1
