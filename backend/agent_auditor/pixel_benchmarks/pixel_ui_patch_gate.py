@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
 PIXEL_DEBUG_SCRIPT = ROOT / "backend" / "agent_auditor" / "pixel_benchmarks" / "pixel_debug_report.py"
 PIXEL_DEBUG_DIR = ROOT / "backend" / "agent_audit_reports" / "pixel_debug"
 PATCH_PLAN_DIR = ROOT / "backend" / "agent_audit_reports" / "pixel_patch_plans"
@@ -196,3 +196,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
