@@ -1,0 +1,8 @@
+{
+  "phase": "AGENT-CLEANUP-01",
+  "reason": "IdeasForgeAI must not mix KisanMitraAI-specific agents in the active IdeasForgeAI registry.",
+  "excluded_agents": [
+    "kisanmitra_landing_template_agent",
+    "kisanmitra_production_sync_agent"
+  ]
+}

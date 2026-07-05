@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 ROOT = Path(__file__).resolve().parents[2]
 AGENTS_DIR = ROOT / "backend" / "agents"
+AGENT_EXCLUSIONS_FILE = ROOT / "backend" / "agent_auditor" / "agent_exclusions.json"
 AUDITOR_DIR = ROOT / "backend" / "agent_auditor"
 CONTRACTS_DIR = AUDITOR_DIR / "contracts"
 REPORTS_DIR = ROOT / "backend" / "agent_audit_reports"
@@ -113,11 +114,31 @@ def is_agent_file(path: Path) -> bool:
     return True
 
 
+def load_excluded_agent_ids() -> set[str]:
+    if not AGENT_EXCLUSIONS_FILE.exists():
+        return set()
+
+    try:
+        data = json.loads(AGENT_EXCLUSIONS_FILE.read_text(encoding="utf-8-sig"))
+    except Exception:
+        return set()
+
+    values = data.get("excluded_agents", [])
+    if not isinstance(values, list):
+        return set()
+
+    return {str(value).strip() for value in values if str(value).strip()}
+
+
+def is_excluded_agent_file(path: Path) -> bool:
+    return path.stem in load_excluded_agent_ids()
+
+
 def discover_agent_files(changed_only: bool = False) -> List[Path]:
     if not AGENTS_DIR.exists():
         return []
 
-    all_files = sorted([p for p in AGENTS_DIR.rglob("*.py") if is_agent_file(p)])
+    all_files = sorted([p for p in AGENTS_DIR.rglob("*.py") if is_agent_file(p) and not is_excluded_agent_file(p)])
 
     if not changed_only:
         return all_files
