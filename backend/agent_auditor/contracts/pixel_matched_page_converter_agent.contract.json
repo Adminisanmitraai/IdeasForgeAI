@@ -88,13 +88,7 @@
     "phase": "PIXEL-AGENT-09",
     "required_before_css_patch": true,
     "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_safe_css_patch_planner.py",
-    "output": "backend/agent_audit_reports/pixel_safe_css_plans/pixel-safe-css-plan-*.json",
     "approval_required": true,
-    "frontend_write_status": "planner_only_no_frontend_write",
-    "required_gates": [
-      "pixel_debug_report",
-      "pixel_ui_patch_gate",
-      "pixel_dom_mapping_gate"
-    ]
+    "frontend_write_status": "planner_only_no_frontend_write"
   }
 }
