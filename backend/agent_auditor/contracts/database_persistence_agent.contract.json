@@ -1,0 +1,41 @@
+{
+  "agent_id": "database_persistence_agent",
+  "name": "Database Persistence Agent",
+  "version": "0.1.0",
+  "purpose": "Database Persistence Agent supports the IdeasForgeAI data persistence workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+  "registry_category": "data_persistence",
+  "capabilities": [
+    "data_storage_planning",
+    "persistence_validation"
+  ],
+  "required_inputs": [
+    "data_model",
+    "storage_requirement"
+  ],
+  "required_outputs": [
+    "persistence_plan",
+    "schema_or_storage_result"
+  ],
+  "minimum_health_score": 75,
+  "smoke_tests": [
+    {
+      "name": "import-smoke-test",
+      "command": "python backend\\agent_auditor\\smoke_import_agent.py --agent backend\\agents\\database_persistence_agent.py",
+      "timeout_seconds": 30
+    }
+  ],
+  "safety": {
+    "requires_approval": true,
+    "allowed_actions": [
+      "analyze_input",
+      "generate_structured_output",
+      "write_agent_report"
+    ],
+    "blocked_actions": [
+      "unapproved_live_execution",
+      "blind_file_patch",
+      "stage_unrelated_files",
+      "use_screenshot_as_background"
+    ]
+  }
+}

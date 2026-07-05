@@ -1,0 +1,42 @@
+{
+  "agent_id": "backend_code_generator_agent",
+  "name": "Backend Code Generator Agent",
+  "version": "0.1.0",
+  "purpose": "Backend Code Generator Agent supports the IdeasForgeAI software engineering workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+  "registry_category": "software_engineering",
+  "capabilities": [
+    "code_generation",
+    "code_patch_planning"
+  ],
+  "required_inputs": [
+    "project_context",
+    "user_requirement"
+  ],
+  "required_outputs": [
+    "implementation_plan",
+    "code_changes",
+    "validation_notes"
+  ],
+  "minimum_health_score": 75,
+  "smoke_tests": [
+    {
+      "name": "import-smoke-test",
+      "command": "python backend\\agent_auditor\\smoke_import_agent.py --agent backend\\agents\\backend_code_generator_agent.py",
+      "timeout_seconds": 30
+    }
+  ],
+  "safety": {
+    "requires_approval": true,
+    "allowed_actions": [
+      "analyze_input",
+      "generate_structured_output",
+      "write_agent_report"
+    ],
+    "blocked_actions": [
+      "unapproved_live_execution",
+      "blind_file_patch",
+      "stage_unrelated_files",
+      "use_screenshot_as_background"
+    ]
+  }
+}

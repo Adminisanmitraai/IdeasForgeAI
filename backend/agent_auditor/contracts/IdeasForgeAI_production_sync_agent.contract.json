@@ -1,0 +1,41 @@
+{
+  "agent_id": "IdeasForgeAI_production_sync_agent",
+  "name": "Ideasforgeai Production Sync Agent",
+  "version": "0.1.0",
+  "purpose": "Ideasforgeai Production Sync Agent supports the IdeasForgeAI requirement intake workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+  "registry_category": "requirement_intake",
+  "capabilities": [
+    "structured_output_generation",
+    "task_execution"
+  ],
+  "required_inputs": [
+    "raw_user_idea"
+  ],
+  "required_outputs": [
+    "structured_requirement",
+    "clarified_scope",
+    "agent_routing_plan"
+  ],
+  "minimum_health_score": 75,
+  "smoke_tests": [
+    {
+      "name": "import-smoke-test",
+      "command": "python backend\\agent_auditor\\smoke_import_agent.py --agent backend\\agents\\IdeasForgeAI_production_sync_agent.py",
+      "timeout_seconds": 30
+    }
+  ],
+  "safety": {
+    "requires_approval": true,
+    "allowed_actions": [
+      "analyze_input",
+      "generate_structured_output",
+      "write_agent_report"
+    ],
+    "blocked_actions": [
+      "unapproved_live_execution",
+      "blind_file_patch",
+      "stage_unrelated_files",
+      "use_screenshot_as_background"
+    ]
+  }
+}

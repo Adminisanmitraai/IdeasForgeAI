@@ -1,0 +1,40 @@
+{
+  "agent_id": "git_versioning_agent",
+  "name": "Git Versioning Agent",
+  "version": "0.1.0",
+  "purpose": "Git Versioning Agent supports the IdeasForgeAI software engineering workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+  "registry_category": "software_engineering",
+  "capabilities": [
+    "git_status_review",
+    "version_control_analysis"
+  ],
+  "required_inputs": [
+    "repository_path"
+  ],
+  "required_outputs": [
+    "git_status_summary",
+    "safe_commit_guidance"
+  ],
+  "minimum_health_score": 75,
+  "smoke_tests": [
+    {
+      "name": "import-smoke-test",
+      "command": "python backend\\agent_auditor\\smoke_import_agent.py --agent backend\\agents\\git_versioning_agent.py",
+      "timeout_seconds": 30
+    }
+  ],
+  "safety": {
+    "requires_approval": true,
+    "allowed_actions": [
+      "analyze_input",
+      "generate_structured_output",
+      "write_agent_report"
+    ],
+    "blocked_actions": [
+      "unapproved_live_execution",
+      "blind_file_patch",
+      "stage_unrelated_files",
+      "use_screenshot_as_background"
+    ]
+  }
+}
