@@ -1,25 +1,18 @@
 {
-  "phase": "PIXEL-02",
-  "name": "Single Source Composer Layout Lock",
-  "updated_at": "2026-07-05T09:44:26",
-  "status": "composer visual source of truth consolidated",
-  "reference_rule": "screenshot is reference only; not used as background",
+  "phase": "PIXEL-03",
+  "name": "Final Composer Source Of Truth",
+  "updated_at": "2026-07-05T09:53:13",
+  "status": "final composer CSS lock",
   "composer": {
-    "bottom_mobile": "calc(env(safe-area-inset-bottom, 0px) + 34px)",
-    "bottom_small": "calc(env(safe-area-inset-bottom, 0px) + 30px)",
+    "bottom_mobile": "calc(env(safe-area-inset-bottom, 0px) + 24px)",
+    "bottom_small": "calc(env(safe-area-inset-bottom, 0px) + 22px)",
     "height": "68px",
     "input_height": "48px",
     "send_button_size": "46px",
     "mic_button_size": "34px",
     "plus_width": "40px",
     "submit_color": "linear-gradient(135deg, #6f55ff, #2f7bff)",
-    "typing_behavior": "body.ifai-pixel02-typing hides mic and expands input"
+    "typing_behavior": "body.ifai-pixel03-typing hides mic and expands input"
   },
-  "removed_conflicts": [
-    "AI-02C composer visual/runtime block",
-    "AI-02D composer visual/runtime block",
-    "AI-02E composer visual/runtime block",
-    "PIXEL-01 composer visual/runtime block",
-    "PIXEL-01B transform runtime block"
-  ]
+  "source_of_truth": "PIXEL-03 - Final Composer Source Of Truth block at end of coding-agent.css"
 }

@@ -8131,6 +8131,38 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   UI-02Q - Lower Chat Tray Slightly
+   Only lowers mobile composer a little. No card/header/content changes.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    bottom: 24px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    bottom: 22px !important;
+  }
+}
+
+
+/* UI-02R - Shift Mobile Chat Tray 25px Further Down */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    bottom: max(0px, calc(24px - 25px)) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    bottom: max(0px, calc(22px - 25px)) !important;
+  }
+}
+
+
 /* --------------------------------------------------------------------------
    NAV-02 - Mobile Drawer Menu + Partial Chat Slide
    3-line menu opens a 75% drawer. Chat shifts right and remains 25% visible.
@@ -8646,11 +8678,35 @@ body {
 }
 
 
-/* --------------------------------------------------------------------------
-   PIXEL-03 - Chat Bubble Styles Only
-   Keeps ChatGPT-like messages. No composer positioning here.
--------------------------------------------------------------------------- */
+/* AI-02B - Polished Chat Composer, Bubbles, Streaming Cursor */
 @media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    padding: 9px 11px !important;
+    border-radius: 34px !important;
+    background: rgba(255,255,255,0.88) !important;
+    backdrop-filter: blur(18px) saturate(1.15) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.15) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    box-shadow: 0 22px 66px rgba(24,30,60,0.16) !important;
+  }
+
+  .ui01b-composer textarea,
+  textarea.ifai-ai02-input,
+  .ui01b-composer input[type="text"] {
+    min-height: 50px !important;
+    max-height: 142px !important;
+    resize: none !important;
+    overflow-y: auto !important;
+    line-height: 1.36 !important;
+    padding: 14px 18px !important;
+    border-radius: 25px !important;
+    font-size: 17px !important;
+    letter-spacing: -0.025em !important;
+    background: rgba(255,255,255,0.95) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    color: #11131b !important;
+  }
+
   .ifai-ai-feed {
     width: calc(100vw - 36px) !important;
     max-width: 760px !important;
@@ -8709,6 +8765,24 @@ body {
     vertical-align: -3px;
     animation: ifaiCursorBlink 0.8s infinite;
   }
+
+  .ifai-file-strip {
+    width: calc(100vw - 44px);
+    margin: 0 auto 8px;
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+  }
+
+  .ifai-file-chip {
+    flex: 0 0 auto;
+    padding: 8px 10px;
+    border-radius: 999px;
+    background: rgba(95,77,255,0.08);
+    color: #4f3cff;
+    font-size: 12px;
+    font-weight: 800;
+  }
 }
 
 @keyframes ifaiCursorBlink {
@@ -8718,28 +8792,29 @@ body {
 
 
 /* --------------------------------------------------------------------------
-   PIXEL-03 - Final Composer Source Of Truth
-   Do not add composer layout rules below this block.
+   PIXEL-02 - Single Source Composer Layout Lock
+   Final measured composer layout. Do not add more composer overrides below.
 -------------------------------------------------------------------------- */
+
 @media (max-width: 760px) {
   :root {
-    --pixel03-brand-1: #6f55ff;
-    --pixel03-brand-2: #2f7bff;
-    --pixel03-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 24px);
-    --pixel03-composer-height: 68px;
-    --pixel03-input-height: 48px;
-    --pixel03-send-size: 46px;
-    --pixel03-mic-size: 34px;
-    --pixel03-plus-width: 40px;
+    --pixel02-brand-1: #6f55ff;
+    --pixel02-brand-2: #2f7bff;
+    --pixel02-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
+    --pixel02-composer-height: 68px;
+    --pixel02-input-height: 48px;
+    --pixel02-send-size: 46px;
+    --pixel02-mic-size: 34px;
+    --pixel02-plus-width: 40px;
   }
 
-  html body .ui01b-composer-wrap {
+  .ui01b-composer-wrap {
     position: fixed !important;
     left: 32px !important;
     right: 32px !important;
     width: auto !important;
-    bottom: var(--pixel03-composer-bottom) !important;
-    min-height: var(--pixel03-composer-height) !important;
+    bottom: var(--pixel02-composer-bottom) !important;
+    min-height: var(--pixel02-composer-height) !important;
     max-height: 136px !important;
     padding: 8px 9px !important;
     border-radius: 28px !important;
@@ -8752,10 +8827,10 @@ body {
     box-shadow: 0 18px 52px rgba(24, 30, 60, 0.14) !important;
     backdrop-filter: blur(18px) saturate(1.12) !important;
     -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
-    z-index: 80 !important;
+    z-index: 50 !important;
   }
 
-  html body .ui01b-composer {
+  .ui01b-composer {
     width: 100% !important;
     min-height: 52px !important;
     max-height: 120px !important;
@@ -8765,13 +8840,13 @@ body {
     overflow: visible !important;
   }
 
-  html body .ui01b-composer button:first-child,
-  html body .ui01b-composer-wrap button:first-child {
-    width: var(--pixel03-plus-width) !important;
+  .ui01b-composer button:first-child,
+  .ui01b-composer-wrap button:first-child {
+    width: var(--pixel02-plus-width) !important;
     height: 48px !important;
-    min-width: var(--pixel03-plus-width) !important;
+    min-width: var(--pixel02-plus-width) !important;
     min-height: 48px !important;
-    flex: 0 0 var(--pixel03-plus-width) !important;
+    flex: 0 0 var(--pixel02-plus-width) !important;
     border-radius: 0 !important;
     background: transparent !important;
     border: 0 !important;
@@ -8781,13 +8856,13 @@ body {
     line-height: 1 !important;
   }
 
-  html body .ui01b-composer button:not(:first-child):not(:last-child),
-  html body .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
-    width: var(--pixel03-mic-size) !important;
-    height: var(--pixel03-mic-size) !important;
-    min-width: var(--pixel03-mic-size) !important;
-    min-height: var(--pixel03-mic-size) !important;
-    flex: 0 0 var(--pixel03-mic-size) !important;
+  .ui01b-composer button:not(:first-child):not(:last-child),
+  .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
+    width: var(--pixel02-mic-size) !important;
+    height: var(--pixel02-mic-size) !important;
+    min-width: var(--pixel02-mic-size) !important;
+    min-height: var(--pixel02-mic-size) !important;
+    flex: 0 0 var(--pixel02-mic-size) !important;
     border-radius: 999px !important;
     background: transparent !important;
     border: 0 !important;
@@ -8797,15 +8872,15 @@ body {
     line-height: 1 !important;
   }
 
-  html body .ui01b-composer button:last-child,
-  html body .ui01b-composer-wrap button:last-child {
-    width: var(--pixel03-send-size) !important;
-    height: var(--pixel03-send-size) !important;
-    min-width: var(--pixel03-send-size) !important;
-    min-height: var(--pixel03-send-size) !important;
-    flex: 0 0 var(--pixel03-send-size) !important;
+  .ui01b-composer button:last-child,
+  .ui01b-composer-wrap button:last-child {
+    width: var(--pixel02-send-size) !important;
+    height: var(--pixel02-send-size) !important;
+    min-width: var(--pixel02-send-size) !important;
+    min-height: var(--pixel02-send-size) !important;
+    flex: 0 0 var(--pixel02-send-size) !important;
     border-radius: 999px !important;
-    background: linear-gradient(135deg, var(--pixel03-brand-1), var(--pixel03-brand-2)) !important;
+    background: linear-gradient(135deg, var(--pixel02-brand-1), var(--pixel02-brand-2)) !important;
     color: #ffffff !important;
     border: 0 !important;
     box-shadow: 0 12px 30px rgba(93, 82, 255, 0.24) !important;
@@ -8813,15 +8888,15 @@ body {
     line-height: 1 !important;
   }
 
-  html body .ui01b-composer textarea,
-  html body textarea.ifai-ai02-input,
-  html body .ui01b-composer input[type="text"],
-  html body input.ifai-ai02-input {
+  .ui01b-composer textarea,
+  textarea.ifai-ai02-input,
+  .ui01b-composer input[type="text"],
+  input.ifai-ai02-input {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     width: auto !important;
-    height: var(--pixel03-input-height) !important;
-    min-height: var(--pixel03-input-height) !important;
+    height: var(--pixel02-input-height) !important;
+    min-height: var(--pixel02-input-height) !important;
     max-height: 108px !important;
     padding: 12px 14px !important;
     border-radius: 24px !important;
@@ -8836,49 +8911,49 @@ body {
     box-sizing: border-box !important;
   }
 
-  html body .ui01b-composer textarea::placeholder,
-  html body textarea.ifai-ai02-input::placeholder,
-  html body .ui01b-composer input[type="text"]::placeholder,
-  html body input.ifai-ai02-input::placeholder {
+  .ui01b-composer textarea::placeholder,
+  textarea.ifai-ai02-input::placeholder,
+  .ui01b-composer input[type="text"]::placeholder,
+  input.ifai-ai02-input::placeholder {
     color: rgba(17, 19, 27, 0.34) !important;
     font-size: 16px !important;
   }
 
-  html body.ifai-pixel03-typing .ui01b-composer button:not(:first-child):not(:last-child),
-  html body.ifai-pixel03-typing .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
+  body.ifai-pixel02-typing .ui01b-composer button:not(:first-child):not(:last-child),
+  body.ifai-pixel02-typing .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
     display: none !important;
   }
 
-  html body.ifai-pixel03-typing .ui01b-composer textarea,
-  html body.ifai-pixel03-typing textarea.ifai-ai02-input,
-  html body.ifai-pixel03-typing .ui01b-composer input[type="text"],
-  html body.ifai-pixel03-typing input.ifai-ai02-input {
+  body.ifai-pixel02-typing .ui01b-composer textarea,
+  body.ifai-pixel02-typing textarea.ifai-ai02-input,
+  body.ifai-pixel02-typing .ui01b-composer input[type="text"],
+  body.ifai-pixel02-typing input.ifai-ai02-input {
     flex: 1 1 100% !important;
   }
 
-  html body .ui01b-messages,
-  html body .ifai-ai-feed {
-    padding-bottom: 155px !important;
+  .ui01b-messages,
+  .ifai-ai-feed {
+    padding-bottom: 165px !important;
   }
 }
 
 @media (max-width: 390px) {
   :root {
-    --pixel03-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 22px);
-    --pixel03-composer-height: 66px;
-    --pixel03-input-height: 47px;
-    --pixel03-send-size: 44px;
-    --pixel03-mic-size: 32px;
-    --pixel03-plus-width: 38px;
+    --pixel02-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
+    --pixel02-composer-height: 66px;
+    --pixel02-input-height: 47px;
+    --pixel02-send-size: 44px;
+    --pixel02-mic-size: 32px;
+    --pixel02-plus-width: 38px;
   }
 
-  html body .ui01b-composer-wrap {
+  .ui01b-composer-wrap {
     left: 30px !important;
     right: 30px !important;
     padding: 8px !important;
   }
 
-  html body .ui01b-composer {
+  .ui01b-composer {
     gap: 7px !important;
   }
 }

@@ -1,3 +1,23 @@
+## PIXEL-03 - Final Composer Source Of Truth
+
+Status: Completed locally, validation required before deploy.
+
+- Removed remaining old composer conflicts including AI-02B composer layout and PIXEL-02 layout block.
+- Re-added chat bubble styling separately without composer positioning.
+- Added one final composer source-of-truth block at the end of coding-agent.css.
+- Composer bottom is controlled only by PIXEL-03 variables.
+- Submit button uses IdeasForgeAI purple-blue brand gradient.
+- Plus icon has no extra circular patch.
+- Mic hides while typing and input expands toward submit.
+- JS controls typing behavior only, not visual position.
+- Created PIXEL-AUDIT-03 report.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## PIXEL-02 - Single Source Composer Layout Lock
 
 Status: Completed locally, validation required before deploy.

@@ -8712,11 +8712,11 @@ ${files}`;
 })();
 
 
-// PIXEL-03 - Composer typing behavior only
+// PIXEL-02 - Composer typing behavior only
 // No visual position is controlled here. CSS is the single source of truth.
 (function () {
-  if (window.__PIXEL03_COMPOSER_TYPING__) return;
-  window.__PIXEL03_COMPOSER_TYPING__ = true;
+  if (window.__PIXEL02_COMPOSER_LOCK__) return;
+  window.__PIXEL02_COMPOSER_LOCK__ = true;
 
   function findInput() {
     return (
@@ -8733,14 +8733,13 @@ ${files}`;
 
   function normalizeInput() {
     let el = findInput();
-    const tray = findTray();
+    if (!el) return;
 
+    // Remove old runtime transform from earlier patch attempts.
+    const tray = findTray();
     if (tray) {
       tray.style.removeProperty("transform");
-      tray.style.removeProperty("bottom");
     }
-
-    if (!el) return;
 
     if (el.tagName === "INPUT") {
       const textarea = document.createElement("textarea");
@@ -8761,8 +8760,8 @@ ${files}`;
       autosize(el);
       updateTypingState(el);
 
-      if (!el.dataset.pixel03Bound) {
-        el.dataset.pixel03Bound = "true";
+      if (!el.dataset.pixel02Bound) {
+        el.dataset.pixel02Bound = "true";
 
         el.addEventListener("input", function () {
           autosize(el);
@@ -8791,7 +8790,7 @@ ${files}`;
 
   function updateTypingState(el) {
     const hasText = !!((el.value || "").trim());
-    document.body.classList.toggle("ifai-pixel03-typing", hasText);
+    document.body.classList.toggle("ifai-pixel02-typing", hasText);
   }
 
   function boot() {
