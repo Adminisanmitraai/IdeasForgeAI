@@ -49,6 +49,10 @@ CATEGORY_EXPECTATIONS = {
         "keywords": ["agent", "task", "result", "confidence", "output"],
         "required_capability_fragments": ["task", "output"],
     },
+    "orchestration": {
+        "keywords": ["orchestrator", "route", "agent", "registry", "workflow", "approval", "health", "plan"],
+        "required_capability_fragments": ["orchestration", "routing", "registry", "approval", "health"],
+    },
 }
 
 
@@ -164,7 +168,8 @@ def category_alignment_score(source: str, contract: Dict[str, Any]) -> Dict[str,
     category = contract.get("registry_category") or "general_agent"
     expectations = CATEGORY_EXPECTATIONS.get(category, CATEGORY_EXPECTATIONS["general_agent"])
 
-    keyword_result = text_hit_score(source, expectations["keywords"], 20)
+    combined_source = source + " " + json.dumps(contract, ensure_ascii=False)
+    keyword_result = text_hit_score(combined_source, expectations["keywords"], 20)
 
     capability_text = " ".join(contract.get("capabilities", [])).lower()
     required_fragments = expectations["required_capability_fragments"]
@@ -206,6 +211,71 @@ def pixel_specific_score(symbols: Dict[str, List[str]], source: str) -> Dict[str
         "required_methods": PIXEL_REQUIRED_METHODS,
         "method_hits": method_hits,
         "extra_checks": extra_checks,
+    }
+
+
+def orchestrator_specific_score(symbols: Dict[str, List[str]], source: str, contract: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Orchestrator-specific benchmark.
+
+    A strong orchestrator must prove routing, planning, health-gating,
+    approval-gating, fallback behavior, and structured output.
+    """
+    haystack = (
+        source.lower()
+        + " "
+        + json.dumps(contract, ensure_ascii=False).lower()
+    )
+
+    expectations = {
+        "agent_routing": ["route", "routing", "select", "selected_agent", "agent"],
+        "registry_awareness": ["registry", "available_agents", "agent_registry", "allowlist"],
+        "health_gate": ["health", "score", "can_load", "approved", "blocked"],
+        "execution_plan": ["plan", "step", "workflow", "execution"],
+        "approval_gate": ["approval", "approve", "requires_approval", "confirm"],
+        "fallback_handling": ["fallback", "error", "failed", "retry", "safe"],
+        "structured_output": ["status", "confidence", "result", "output"],
+        "task_requirement": ["requirement", "user_request", "intent", "task"],
+    }
+
+    category_scores = {}
+    total = 0
+
+    for group, words in expectations.items():
+        hits = [word for word in words if word in haystack]
+        group_score = 10 if len(hits) >= 2 else 5 if len(hits) == 1 else 0
+        category_scores[group] = {
+            "score": group_score,
+            "hits": hits,
+            "expected": words,
+        }
+        total += group_score
+
+    all_symbols = set(symbols.get("classes", [])) | set(symbols.get("functions", [])) | set(symbols.get("methods", []))
+
+    symbol_hints = [
+        "orchestrate",
+        "route",
+        "select",
+        "plan",
+        "execute",
+        "validate",
+        "approve",
+    ]
+
+    symbol_text = " ".join(all_symbols).lower()
+    symbol_hits = [hint for hint in symbol_hints if hint in symbol_text]
+
+    symbol_score = min(20, len(symbol_hits) * 4)
+
+    score = min(100, total + symbol_score)
+
+    return {
+        "score": score,
+        "max_score": 100,
+        "category_scores": category_scores,
+        "symbol_hits": symbol_hits,
+        "symbol_expected": symbol_hints,
     }
 
 
@@ -260,6 +330,10 @@ def audit_accuracy(agent_path: Path, contract_path: Path | None = None) -> Dict[
 
     if category == "ui_pixel_mapping" or "pixel" in agent_path.stem.lower():
         special_result = pixel_specific_score(symbols, source)
+        raw_score = contract_result["score"] + category_result["score"] + special_result["score"]
+        max_score = contract_result["max_score"] + category_result["max_score"] + special_result["max_score"]
+    elif category == "orchestration" or "orchestrator" in agent_path.stem.lower():
+        special_result = orchestrator_specific_score(symbols, source, contract)
         raw_score = contract_result["score"] + category_result["score"] + special_result["score"]
         max_score = contract_result["max_score"] + category_result["max_score"] + special_result["max_score"]
     else:

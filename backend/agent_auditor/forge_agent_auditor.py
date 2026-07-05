@@ -189,7 +189,7 @@ def load_external_contract(path: Path) -> Optional[Dict[str, Any]]:
         return None
 
     try:
-        data = json.loads(contract_file.read_text(encoding="utf-8"))
+        data = json.loads(contract_file.read_text(encoding="utf-8-sig"))
         if isinstance(data, dict):
             return data
     except Exception:
