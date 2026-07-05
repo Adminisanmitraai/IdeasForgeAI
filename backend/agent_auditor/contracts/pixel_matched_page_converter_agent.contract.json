@@ -42,13 +42,13 @@
       "use_screenshot_as_background"
     ]
   },
-  "accuracy_method": "pixel_region_iou",
-  "minimum_accuracy_score": 70,
+  "accuracy_method": "real_pixel_iou_composer_card_detection",
+  "minimum_accuracy_score": 80,
   "accuracy_tests": [
     {
-      "name": "agent-type-requirement-alignment-benchmark",
-      "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\pixel_matched_page_converter_agent.py --contract backend\\agent_auditor\\contracts\\pixel_matched_page_converter_agent.contract.json --fail-under 70",
-      "timeout_seconds": 30
+      "name": "real-pixel-composer-card-iou-benchmark",
+      "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_real_accuracy.py",
+      "timeout_seconds": 45
     }
   ],
   "accuracy_benchmark_level": "type_requirement_baseline_v1"

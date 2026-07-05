@@ -1,0 +1,23 @@
+﻿{
+  "cases": [
+    {
+      "name": "chat-mobile-current",
+      "image": "chat-mobile-current.png",
+      "expected": {
+        "composer": {
+          "x1": 20,
+          "y1": 1450,
+          "x2": 832,
+          "y2": 1620
+        },
+        "cards_count_range": [2, 4],
+        "browser_bad_region": {
+          "x1": 0,
+          "y1": 1644,
+          "x2": 852,
+          "y2": 1767
+        }
+      }
+    }
+  ]
+}
