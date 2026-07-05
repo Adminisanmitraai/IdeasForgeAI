@@ -1,144 +1,111 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>IdeasForgeAI | AI Product Builder</title>
-  <link rel="stylesheet" href="./studio-v4.css?v=35b-static-coding-agent-route-20260703">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>IdeasForgeAI</title>
+  <link rel="stylesheet" href="./studio-v4.css" />
 </head>
 <body>
-  <main class="studio-shell" aria-label="IdeasForgeAI Studio V4">
-    <header class="top-bar">
-      <a class="brand" href="../index.html" aria-label="IdeasForgeAI home">
-        <span class="brand-mark" aria-hidden="true"><span class="brand-spark"></span></span>
-        <span class="brand-text"><strong>IdeasForgeAI</strong><span>AI Product Builder</span></span>
-      </a>
-
-      <div class="desktop-tools" aria-label="Builder tools">
-        <button class="project-selector" type="button">AI Product Builder</button>
-        <nav class="mode-tabs" aria-label="Builder mode">
-          <button class="tab-button is-active" type="button" data-mode-tab="preview">Preview</button>
-          <button class="tab-button" type="button" data-mode-tab="code">Code</button>
-          <button class="tab-button" type="button" data-mode-tab="database">Database</button>
-        </nav>
-        <nav class="device-tabs" aria-label="Preview device">
-          <button class="device-button is-active" type="button" data-preview-mode="mobile" aria-label="Mobile preview" title="Mobile"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"></rect><path d="M10.5 18h3"></path></svg></button>
-          <button class="device-button" type="button" data-preview-mode="tablet" aria-label="Tablet preview" title="Tablet"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2.8"></rect><path d="M11 18h2"></path></svg></button>
-          <button class="device-button" type="button" data-preview-mode="laptop" aria-label="Laptop preview" title="Laptop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14v9H5z"></path><path d="M3.5 18h17"></path><path d="M8.5 15.5 7.5 18"></path><path d="m15.5 15.5 1 2.5"></path></svg></button>
-        </nav>
-        <label class="url-pill" aria-label="Local preview URL"><span>ideasforge.local/mobile-preview</span></label>
+  <main class="if-shell">
+    <section class="if-phone">
+      <div class="if-statusbar">
+        <span>9:02</span>
+        <div class="if-status-icons">
+          <span>▮▮▮</span>
+          <span>⌁</span>
+          <span class="if-battery"></span>
+        </div>
       </div>
 
-      <div class="toolbar-actions">
-        <button class="coding-agent-button" type="button" aria-label="Open Coding Agent" data-coding-agent-nav>
-          <span class="coding-agent-button__glow" aria-hidden="true"></span>
-          <span class="coding-agent-button__badge" hidden aria-hidden="true"></span>
-          <span class="coding-agent-button__icon" aria-hidden="true">
-            <svg viewBox="0 0 48 48">
-              <defs>
-                <linearGradient id="codingAgentIconGradient" x1="8" y1="8" x2="40" y2="40" gradientUnits="userSpaceOnUse">
-                  <stop stop-color="#c084fc"></stop>
-                  <stop offset="0.52" stop-color="#8b5cf6"></stop>
-                  <stop offset="1" stop-color="#38bdf8"></stop>
-                </linearGradient>
-              </defs>
-              <rect x="8" y="8" width="32" height="32" rx="11" fill="url(#codingAgentIconGradient)" fill-opacity="0.18"></rect>
-              <rect x="14" y="12.5" width="20" height="16" rx="8" fill="none" stroke="url(#codingAgentIconGradient)" stroke-width="2"></rect>
-              <path d="M24 8v4.5" stroke="url(#codingAgentIconGradient)" stroke-width="2" stroke-linecap="round"></path>
-              <circle cx="20" cy="20.5" r="1.5" fill="#f8fafc" stroke="none"></circle>
-              <circle cx="28" cy="20.5" r="1.5" fill="#f8fafc" stroke="none"></circle>
-              <path d="M20 25c1.2 1 2.45 1.5 4 1.5s2.8-.5 4-1.5" fill="none" stroke="#f8fafc" stroke-width="2" stroke-linecap="round"></path>
-              <rect x="16" y="31" width="16" height="3.5" rx="1.75" fill="none" stroke="url(#codingAgentIconGradient)" stroke-width="2"></rect>
-              <path d="m35.5 17 3 3-3 3" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-              <path d="m12.5 17-3 3 3 3" fill="none" stroke="#c4b5fd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-            </svg>
-          </span>
-          <span class="coding-agent-button__tooltip" role="tooltip">
-            <strong>Coding Agent</strong>
-            <span>Build</span>
-            <span>Fix</span>
-            <span>Test</span>
-            <span>Deploy</span>
-          </span>
-          <span class="coding-agent-button__ripple" aria-hidden="true"></span>
+      <header class="if-header">
+        <button class="if-icon-btn if-menu" aria-label="Open menu">
+          <span></span><span></span><span></span>
         </button>
-        <button class="profile-button" type="button" aria-label="Profile">R</button>
-        <button class="secondary-button" type="button" aria-label="Share"><svg class="button-icon share-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V4"></path><path d="m8 8 4-4 4 4"></path><path d="M7 11.5H5.8A1.8 1.8 0 0 0 4 13.3v4.9A1.8 1.8 0 0 0 5.8 20h12.4a1.8 1.8 0 0 0 1.8-1.8v-4.9a1.8 1.8 0 0 0-1.8-1.8H17"></path></svg><span>Share</span></button>
-        <button class="primary-button" type="button" aria-label="Publish"><svg class="button-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5"></path><path d="m6 11 6-6 6 6"></path><path d="M5 19h14"></path></svg><span>Publish</span></button>
+
+        <div class="if-brand">
+          <div class="if-logo">✦</div>
+          <div>
+            <div class="if-brand-name">IdeasForgeAI</div>
+            <div class="if-brand-sub">Create · Code · Work</div>
+          </div>
+        </div>
+
+        <div class="if-actions">
+          <button class="if-square-btn" aria-label="Share">
+            <span>⇧</span>
+          </button>
+          <button class="if-primary-btn" aria-label="Upload">
+            <span>↟</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="if-hero">
+        <h1>What do you want to create,<br />code, or work on today?</h1>
+        <p>Choose a mode or simply describe your task.</p>
+      </section>
+
+      <section class="if-card-list">
+        <button class="if-card" data-mode="studio">
+          <span class="if-card-icon if-studio-icon">
+            <span class="if-mini-window"></span>
+            <span class="if-mini-cursor">▸</span>
+          </span>
+          <span class="if-card-copy">
+            <strong>Forge<span>Studio</span></strong>
+            <em>Create apps, websites, UI, images, logos, documents.</em>
+          </span>
+          <span class="if-card-arrow">›</span>
+        </button>
+
+        <button class="if-card" data-mode="code">
+          <span class="if-card-icon if-code-icon">
+            <span>&lt;/&gt;</span>
+          </span>
+          <span class="if-card-copy">
+            <strong>Forge<span>Code</span></strong>
+            <em>Analyze projects, write code, fix errors, test, deploy.</em>
+          </span>
+          <span class="if-card-arrow">›</span>
+        </button>
+
+        <button class="if-card" data-mode="work">
+          <span class="if-card-icon if-work-icon">
+            <span>•••</span>
+          </span>
+          <span class="if-card-copy">
+            <strong>Forge<span>Work</span></strong>
+            <em>AI workspace for documents, research, tasks, reports.</em>
+          </span>
+          <span class="if-card-arrow">›</span>
+        </button>
+      </section>
+
+      <form class="if-composer">
+        <button type="button" class="if-plus" aria-label="Attach">+</button>
+        <label class="if-input-wrap">
+          <input type="text" placeholder="Ask..." />
+          <button type="button" class="if-mic" aria-label="Voice">♩</button>
+        </label>
+        <button class="if-send" aria-label="Send">↑</button>
+      </form>
+
+      <div class="if-browserbar" aria-hidden="true">
+        <span class="if-browser-circle">‹</span>
+        <span class="if-url">
+          <span class="if-puzzle">▣</span>
+          ideasforgeai.com
+          <span class="if-refresh">↻</span>
+        </span>
+        <span class="if-browser-circle">•••</span>
       </div>
-    </header>
 
-    <section class="workspace" aria-label="Studio workspace">
-      <section class="chat-panel" aria-label="AI Assistant">
-        <header class="chat-header">
-          <div class="menu-wrap">
-            <button class="round-button" type="button" aria-label="Open menu" aria-expanded="false" data-menu-toggle><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12"></path><path d="M6 12h12"></path><path d="M6 16h12"></path></svg></button>
-            <div class="menu-popover" data-menu hidden>
-              <button type="button">New Chat</button>
-              <button type="button">Chat History</button>
-              <button type="button">Projects</button>
-              <button type="button">Templates</button>
-              <button type="button">Settings</button>
-            </div>
-          </div>
-          <div class="chat-title"><strong>AI Assistant</strong><span>IdeasForgeAI Product Builder</span></div>
-          <button class="round-button preview-toggle" type="button" aria-label="Show Preview" title="Show Preview" data-show-preview><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"></rect><path d="M9 5v14"></path><path d="m14 9 3 3-3 3"></path></svg></button>
-        </header>
-
-        <div class="messages" data-chat-stream aria-live="polite">
-          <article class="message assistant-message"><p>Hi, I am IdeasForgeAI. Tell me what you want to build, and I will help shape it into a product plan and preview flow.</p><span>10:10 AM</span></article>
-          <article class="message assistant-message"><p>What kind of app, website, or tool should we start with?</p><span>10:11 AM</span></article>
-        </div>
-
-        <form class="composer" data-chat-form>
-          <div class="attachment-wrap">
-            <button class="composer-button" type="button" aria-label="Add attachment" aria-expanded="false" data-attachment-toggle><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg></button>
-            <div class="attachment-menu" data-attachment-menu hidden>
-              <button type="button" data-reference-image-action="camera">Camera</button>
-              <button type="button" data-reference-image-action="photos">Photos</button>
-              <button type="button" data-reference-image-action="files">Files</button>
-            </div>
-            <input type="file" accept="image/*" capture="environment" data-reference-camera-input hidden>
-            <input type="file" accept="image/*" data-reference-photos-input hidden>
-            <input type="file" accept="image/*" data-reference-files-input hidden>
-          </div>
-          <textarea data-chat-input rows="1" placeholder="Describe your idea..." aria-label="Describe your idea"></textarea>
-          <div class="composer-actions">
-            <button class="composer-button" type="button" aria-label="Record voice"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path><path d="M19 11a7 7 0 0 1-14 0"></path><path d="M12 18v3"></path></svg></button>
-            <button class="send-button" type="submit" aria-label="Send message"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13"></path><path d="m12 6 6 6-6 6"></path></svg></button>
-          </div>
-        </form>
-      </section>
-
-      <section class="preview-panel" aria-label="Preview panel">
-        <header class="preview-header">
-          <div class="preview-title-row">
-            <button class="chat-return-button" type="button" aria-label="Back to chat" title="Back to chat" data-show-chat><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg><span>Chat</span></button>
-            <div class="preview-title"><strong>Preview</strong><span data-preview-label>Mobile canvas</span></div>
-            <span class="status-pill" data-preview-status>Waiting for idea</span>
-          </div>
-          <div class="preview-header-actions" aria-label="Preview actions">
-            <button type="button" aria-label="Refresh preview" title="Refresh preview"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"></path><path d="M20 4v6h-6"></path></svg></button>
-            <button type="button" aria-label="Open fullscreen preview" aria-pressed="false" title="Open fullscreen preview" data-fullscreen-toggle>
-              <svg class="fullscreen-open-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4"></path><path d="M4 4l6 6"></path><path d="M16 20h4v-4"></path><path d="M20 20l-6-6"></path></svg>
-              <svg class="fullscreen-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
-            </button>
-          </div>
-        </header>
-        <div class="mobile-preview-rail" aria-hidden="false">
-          <button class="preview-body-back" type="button" aria-label="Back to chat" title="Back to chat" data-show-chat><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5"></path><path d="m11 6-6 6 6 6"></path></svg></button>
-        </div>
-        <div class="preview-empty" data-preview-mount><div class="preview-card"><span class="preview-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="11" width="30" height="24" rx="5"></rect><path d="M15 20h18"></path><path d="M15 26h11"></path><path d="M29 32l4 4 7-8"></path></svg></span><h1>Your preview will appear here</h1><p>This clean shell is ready for future preview work.</p><span class="mobile-preview-status status-pill" data-preview-status>Waiting for idea</span></div></div>
-        <button class="preview-fullscreen-toggle" type="button" aria-label="Open fullscreen preview" aria-pressed="false" title="Open fullscreen preview" data-fullscreen-toggle>
-          <svg class="fullscreen-open-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4H4v4"></path><path d="M4 4l6 6"></path><path d="M16 20h4v-4"></path><path d="M20 20l-6-6"></path></svg>
-          <svg class="fullscreen-close-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12"></path><path d="M18 6 6 18"></path></svg>
-        </button>
-      </section>
+      <div class="if-home-indicator" aria-hidden="true"></div>
     </section>
   </main>
-  <script src="./studio-v4.js?v=35b-static-coding-agent-route-20260703" defer></script>
+
+  <script src="./studio-v4.js"></script>
 </body>
 </html>
-
-
 
