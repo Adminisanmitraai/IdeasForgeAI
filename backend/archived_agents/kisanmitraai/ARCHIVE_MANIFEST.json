@@ -1,0 +1,23 @@
+﻿{
+  "phase": "REGISTRY-CLEANUP-02",
+  "status": "archived_external_agents",
+  "reason": "KisanMitraAI-specific agents must not load inside the active IdeasForgeAI runtime registry.",
+  "active_registry_policy": "Only IdeasForgeAI agents inside backend/agents are eligible for active registry loading.",
+  "archived_agents": [
+    {
+      "agent_id": "kisanmitra_landing_template_agent",
+      "archived_file": "backend/archived_agents/kisanmitraai/kisanmitra_landing_template_agent.py",
+      "archived_contract": "backend/agent_auditor/archived_contracts/kisanmitraai/kisanmitra_landing_template_agent.contract.json"
+    },
+    {
+      "agent_id": "kisanmitra_production_sync_agent",
+      "archived_file": "backend/archived_agents/kisanmitraai/kisanmitra_production_sync_agent.py",
+      "archived_contract": "backend/agent_auditor/archived_contracts/kisanmitraai/kisanmitra_production_sync_agent.contract.json"
+    }
+  ],
+  "blocked_actions": [
+    "load_kisanmitra_agent_in_ideasforgeai_registry",
+    "mix_kisanmitra_runtime_with_ideasforgeai_runtime",
+    "auto_restore_archived_external_agents_without_review"
+  ]
+}

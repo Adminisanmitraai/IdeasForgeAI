@@ -1,8 +1,16 @@
 {
-  "phase": "AGENT-CLEANUP-01",
+  "phase": "REGISTRY-CLEANUP-02",
   "reason": "IdeasForgeAI must not mix KisanMitraAI-specific agents in the active IdeasForgeAI registry.",
   "excluded_agents": [
     "kisanmitra_landing_template_agent",
     "kisanmitra_production_sync_agent"
+  ],
+  "status": "excluded_and_archived",
+  "archive_manifest": "backend/archived_agents/kisanmitraai/ARCHIVE_MANIFEST.json",
+  "archived_paths": [
+    "backend/archived_agents/kisanmitraai/kisanmitra_landing_template_agent.py",
+    "backend/archived_agents/kisanmitraai/kisanmitra_production_sync_agent.py",
+    "backend/agent_auditor/archived_contracts/kisanmitraai/kisanmitra_landing_template_agent.contract.json",
+    "backend/agent_auditor/archived_contracts/kisanmitraai/kisanmitra_production_sync_agent.contract.json"
   ]
 }
