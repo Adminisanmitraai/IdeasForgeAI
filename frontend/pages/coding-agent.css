@@ -9174,3 +9174,13 @@ body {
   }
 }
 
+
+/* --------------------------------------------------------------------------
+   PIXEL-01B - Force Composer 10px Lower Only
+   Do not change anything else.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    transform: translateY(10px) !important;
+  }
+}
