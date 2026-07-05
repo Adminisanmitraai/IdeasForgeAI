@@ -1,3 +1,23 @@
+## PIXEL-01 - Chat Screen Pixel Mapping Agent
+
+Status: Completed locally, validation required before deploy.
+
+- Saved screenshot measurement map to frontend/design-reference/chat-screen-pixel-map.json.
+- Did not use screenshot as a background.
+- Applied real CSS/JS mapping for the chat composer.
+- Shifted composer 10px lower.
+- Set submit button to IdeasForgeAI purple-blue brand color.
+- Removed extra circular patch behind plus icon.
+- Maximized input width.
+- Hides mic while typing and expands input toward submit button.
+- No backend, ForgeWork gateway, Studio V4, or unrelated files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## AI-02B - Force Apply ChatGPT-like Chat Improvements
 
 Status: Completed locally, validation required before deploy.

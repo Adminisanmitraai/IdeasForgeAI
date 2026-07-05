@@ -8890,3 +8890,92 @@ ${files}`;
     boot();
   }
 })();
+
+
+// PIXEL-01 - Chat Screen Pixel Mapping Agent runtime
+// Keeps composer mapped to target screenshot without using screenshot as background.
+(function () {
+  if (window.__PIXEL01_CHAT_SCREEN_AGENT__) return;
+  window.__PIXEL01_CHAT_SCREEN_AGENT__ = true;
+
+  function findInput() {
+    return (
+      document.querySelector(".ui01b-composer textarea") ||
+      document.querySelector("textarea.ifai-ai02-input") ||
+      document.querySelector(".ui01b-composer input[type='text']") ||
+      document.querySelector("input.ifai-ai02-input")
+    );
+  }
+
+  function normalizeInput() {
+    let el = findInput();
+    if (!el) return;
+
+    if (el.tagName === "INPUT") {
+      const textarea = document.createElement("textarea");
+      textarea.className = (el.className || "") + " ifai-ai02-input";
+      textarea.value = el.value || "";
+      textarea.placeholder = "Ask...";
+      textarea.rows = 1;
+      textarea.autocomplete = "off";
+      textarea.spellcheck = true;
+      el.replaceWith(textarea);
+      el = textarea;
+    }
+
+    if (el.tagName === "TEXTAREA") {
+      el.classList.add("ifai-ai02-input");
+      el.placeholder = "Ask...";
+      el.rows = 1;
+      autosize(el);
+
+      if (!el.dataset.pixel01Bound) {
+        el.dataset.pixel01Bound = "true";
+
+        el.addEventListener("input", function () {
+          autosize(el);
+          updateTypingState(el);
+        });
+
+        el.addEventListener("focus", function () {
+          updateTypingState(el);
+        });
+
+        el.addEventListener("blur", function () {
+          setTimeout(function () {
+            updateTypingState(el);
+          }, 80);
+        });
+      }
+
+      updateTypingState(el);
+    }
+  }
+
+  function autosize(el) {
+    if (!el || el.tagName !== "TEXTAREA") return;
+    el.style.height = "50px";
+    const next = Math.min(Math.max(el.scrollHeight, 50), 112);
+    el.style.height = next + "px";
+  }
+
+  function updateTypingState(el) {
+    const hasText = !!((el.value || "").trim());
+    document.body.classList.toggle("ifai-pixel-typing", hasText);
+  }
+
+  function boot() {
+    normalizeInput();
+    setTimeout(normalizeInput, 200);
+    setTimeout(normalizeInput, 700);
+    setTimeout(normalizeInput, 1500);
+    setTimeout(normalizeInput, 3000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot, { once: true });
+  } else {
+    boot();
+  }
+})();
+

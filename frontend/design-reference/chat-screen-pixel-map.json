@@ -1,0 +1,30 @@
+{
+  "phase": "PIXEL-01",
+  "name": "Chat Screen Pixel Mapping Agent",
+  "reference_image": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "reference_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "rule": "Do not use screenshot as background. Convert screenshot into real CSS/JS layout.",
+  "target_screen": "IdeasForgeAI chat home screen",
+  "measured_layout_intent": {
+    "header": "preserve current header",
+    "hero": "preserve current headline/subtitle/cards",
+    "composer": {
+      "shift_down_px": 10,
+      "submit_button_color": "IdeasForgeAI purple-blue brand color",
+      "plus_button": "no extra circular patch",
+      "input": "maximum width possible",
+      "typing_behavior": "hide mic while typing and let input expand toward submit button"
+    }
+  },
+  "css_variables": {
+    "--pm-composer-bottom-mobile": "calc(env(safe-area-inset-bottom, 0px) + 74px)",
+    "--pm-composer-bottom-small": "calc(env(safe-area-inset-bottom, 0px) + 70px)",
+    "--pm-brand-1": "#6f55ff",
+    "--pm-brand-2": "#2f7bff",
+    "--pm-composer-height": "72px",
+    "--pm-input-height": "50px"
+  }
+}
