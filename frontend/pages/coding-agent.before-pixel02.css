@@ -8792,100 +8792,313 @@ body {
 
 
 /* --------------------------------------------------------------------------
-   PIXEL-02 - Single Source Composer Layout Lock
-   Final measured composer layout. Do not add more composer overrides below.
+   AI-02D - Composer Real Mobile Fit
+   Fixes clipped input, placeholder wrapping, and browser-toolbar overlap.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    left: 14px !important;
+    right: 14px !important;
+    width: auto !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 96px) !important;
+    min-height: 78px !important;
+    max-height: 158px !important;
+    padding: 10px !important;
+    border-radius: 36px !important;
+    overflow: visible !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    background: rgba(255,255,255,0.94) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    box-shadow: 0 20px 58px rgba(24,30,60,0.16) !important;
+    backdrop-filter: blur(18px) saturate(1.12) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
+  }
+
+  .ui01b-composer {
+    width: 100% !important;
+    min-height: 58px !important;
+    max-height: 136px !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 10px !important;
+    overflow: visible !important;
+  }
+
+  .ui01b-composer button,
+  .ui01b-composer-wrap button {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    flex: 0 0 56px !important;
+  }
+
+  .ui01b-composer textarea,
+  .ui01b-composer input[type="text"],
+  textarea.ifai-ai02-input,
+  input.ifai-ai02-input,
+  .ifai-ai02-input,
+  .ui01b-composer [contenteditable="true"] {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    max-height: 118px !important;
+    padding: 16px 18px !important;
+    border-radius: 28px !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.02em !important;
+    resize: none !important;
+    overflow-y: auto !important;
+    background: rgba(255,255,255,0.97) !important;
+    border: 1px solid rgba(12,14,24,0.08) !important;
+    color: #11131b !important;
+    box-sizing: border-box !important;
+  }
+
+  .ui01b-composer textarea::placeholder,
+  .ui01b-composer input[type="text"]::placeholder,
+  textarea.ifai-ai02-input::placeholder,
+  input.ifai-ai02-input::placeholder {
+    color: rgba(17,19,27,0.34) !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+  }
+
+  .ui01b-messages,
+  .ifai-ai-feed {
+    padding-bottom: 215px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 92px) !important;
+  }
+
+  .ui01b-composer {
+    gap: 8px !important;
+  }
+
+  .ui01b-composer button,
+  .ui01b-composer-wrap button {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    min-height: 54px !important;
+    flex-basis: 54px !important;
+  }
+
+  .ui01b-composer textarea,
+  .ui01b-composer input[type="text"],
+  textarea.ifai-ai02-input,
+  input.ifai-ai02-input,
+  .ifai-ai02-input {
+    height: 54px !important;
+    min-height: 54px !important;
+    padding: 15px 16px !important;
+    font-size: 16px !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   AI-02E - Composer Width + Placeholder Final Fix
+   Makes input wider and forces placeholder to stay clean.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 88px) !important;
+    min-height: 74px !important;
+    padding: 9px !important;
+    border-radius: 34px !important;
+  }
+
+  .ui01b-composer {
+    gap: 7px !important;
+    min-height: 56px !important;
+    align-items: flex-end !important;
+  }
+
+  .ui01b-composer button,
+  .ui01b-composer-wrap button {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    flex: 0 0 50px !important;
+    border-radius: 999px !important;
+  }
+
+  .ui01b-composer button:last-child,
+  .ui01b-composer-wrap button:last-child {
+    width: 56px !important;
+    height: 56px !important;
+    min-width: 56px !important;
+    min-height: 56px !important;
+    flex: 0 0 56px !important;
+  }
+
+  .ui01b-composer textarea,
+  textarea.ifai-ai02-input,
+  .ui01b-composer input[type="text"],
+  input.ifai-ai02-input {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 112px !important;
+    padding: 14px 15px !important;
+    border-radius: 26px !important;
+    font-size: 16px !important;
+    line-height: 1.25 !important;
+    overflow-y: auto !important;
+  }
+
+  .ui01b-composer textarea::placeholder,
+  textarea.ifai-ai02-input::placeholder,
+  .ui01b-composer input[type="text"]::placeholder,
+  input.ifai-ai02-input::placeholder {
+    content: "Ask..." !important;
+    font-size: 16px !important;
+    color: rgba(17,19,27,0.34) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .ui01b-composer-wrap {
+    left: 14px !important;
+    right: 14px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 84px) !important;
+  }
+
+  .ui01b-composer {
+    gap: 6px !important;
+  }
+
+  .ui01b-composer button,
+  .ui01b-composer-wrap button {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    flex-basis: 48px !important;
+  }
+
+  .ui01b-composer button:last-child,
+  .ui01b-composer-wrap button:last-child {
+    width: 54px !important;
+    height: 54px !important;
+    min-width: 54px !important;
+    min-height: 54px !important;
+    flex-basis: 54px !important;
+  }
+
+  .ui01b-composer textarea,
+  textarea.ifai-ai02-input,
+  .ui01b-composer input[type="text"],
+  input.ifai-ai02-input {
+    height: 50px !important;
+    min-height: 50px !important;
+    padding: 13px 14px !important;
+    font-size: 16px !important;
+  }
+}
+
+
+/* --------------------------------------------------------------------------
+   PIXEL-01 - Chat Screen Pixel Mapping Agent
+   Converts target screenshot measurements into real responsive composer CSS.
+   Does not use screenshot as a background.
 -------------------------------------------------------------------------- */
 
 @media (max-width: 760px) {
   :root {
-    --pixel02-brand-1: #6f55ff;
-    --pixel02-brand-2: #2f7bff;
-    --pixel02-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 34px);
-    --pixel02-composer-height: 68px;
-    --pixel02-input-height: 48px;
-    --pixel02-send-size: 46px;
-    --pixel02-mic-size: 34px;
-    --pixel02-plus-width: 40px;
+    --pm-composer-bottom-mobile: calc(env(safe-area-inset-bottom, 0px) + 74px);
+    --pm-composer-bottom-small: calc(env(safe-area-inset-bottom, 0px) + 70px);
+    --pm-brand-1: #6f55ff;
+    --pm-brand-2: #2f7bff;
+    --pm-composer-height: 72px;
+    --pm-input-height: 50px;
   }
 
   .ui01b-composer-wrap {
-    position: fixed !important;
     left: 32px !important;
     right: 32px !important;
     width: auto !important;
-    bottom: var(--pixel02-composer-bottom) !important;
-    min-height: var(--pixel02-composer-height) !important;
-    max-height: 136px !important;
-    padding: 8px 9px !important;
+    bottom: var(--pm-composer-bottom-mobile) !important;
+    min-height: var(--pm-composer-height) !important;
+    max-height: 150px !important;
+    padding: 8px 10px !important;
     border-radius: 28px !important;
     display: flex !important;
     align-items: center !important;
     overflow: visible !important;
-    transform: none !important;
     background: rgba(255, 255, 255, 0.94) !important;
     border: 1px solid rgba(12, 14, 24, 0.075) !important;
     box-shadow: 0 18px 52px rgba(24, 30, 60, 0.14) !important;
     backdrop-filter: blur(18px) saturate(1.12) !important;
     -webkit-backdrop-filter: blur(18px) saturate(1.12) !important;
-    z-index: 50 !important;
   }
 
   .ui01b-composer {
     width: 100% !important;
-    min-height: 52px !important;
-    max-height: 120px !important;
+    min-height: 56px !important;
+    max-height: 132px !important;
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
     overflow: visible !important;
   }
 
+  /* Plus icon: remove extra circular patch */
   .ui01b-composer button:first-child,
   .ui01b-composer-wrap button:first-child {
-    width: var(--pixel02-plus-width) !important;
-    height: 48px !important;
-    min-width: var(--pixel02-plus-width) !important;
-    min-height: 48px !important;
-    flex: 0 0 var(--pixel02-plus-width) !important;
+    width: 42px !important;
+    height: 50px !important;
+    min-width: 42px !important;
+    min-height: 50px !important;
+    flex: 0 0 42px !important;
     border-radius: 0 !important;
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
     color: #090b14 !important;
     font-size: 30px !important;
-    line-height: 1 !important;
   }
 
+  /* Mic button: smaller and clean */
   .ui01b-composer button:not(:first-child):not(:last-child),
   .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
-    width: var(--pixel02-mic-size) !important;
-    height: var(--pixel02-mic-size) !important;
-    min-width: var(--pixel02-mic-size) !important;
-    min-height: var(--pixel02-mic-size) !important;
-    flex: 0 0 var(--pixel02-mic-size) !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    flex: 0 0 38px !important;
     border-radius: 999px !important;
     background: transparent !important;
-    border: 0 !important;
     box-shadow: none !important;
-    color: #11131b !important;
-    font-size: 19px !important;
-    line-height: 1 !important;
+    border: 0 !important;
+    font-size: 20px !important;
   }
 
+  /* Submit button: brand color */
   .ui01b-composer button:last-child,
   .ui01b-composer-wrap button:last-child {
-    width: var(--pixel02-send-size) !important;
-    height: var(--pixel02-send-size) !important;
-    min-width: var(--pixel02-send-size) !important;
-    min-height: var(--pixel02-send-size) !important;
-    flex: 0 0 var(--pixel02-send-size) !important;
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    min-height: 46px !important;
+    flex: 0 0 46px !important;
     border-radius: 999px !important;
-    background: linear-gradient(135deg, var(--pixel02-brand-1), var(--pixel02-brand-2)) !important;
+    background: linear-gradient(135deg, var(--pm-brand-1), var(--pm-brand-2)) !important;
     color: #ffffff !important;
     border: 0 !important;
     box-shadow: 0 12px 30px rgba(93, 82, 255, 0.24) !important;
-    font-size: 20px !important;
-    line-height: 1 !important;
   }
 
   .ui01b-composer textarea,
@@ -8895,10 +9108,10 @@ body {
     flex: 1 1 auto !important;
     min-width: 0 !important;
     width: auto !important;
-    height: var(--pixel02-input-height) !important;
-    min-height: var(--pixel02-input-height) !important;
-    max-height: 108px !important;
-    padding: 12px 14px !important;
+    height: var(--pm-input-height) !important;
+    min-height: var(--pm-input-height) !important;
+    max-height: 112px !important;
+    padding: 13px 15px !important;
     border-radius: 24px !important;
     font-size: 16px !important;
     line-height: 1.25 !important;
@@ -8919,42 +9132,55 @@ body {
     font-size: 16px !important;
   }
 
-  body.ifai-pixel02-typing .ui01b-composer button:not(:first-child):not(:last-child),
-  body.ifai-pixel02-typing .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
+  /* While typing: hide mic and let input expand till submit icon */
+  body.ifai-pixel-typing .ui01b-composer button:not(:first-child):not(:last-child),
+  body.ifai-pixel-typing .ui01b-composer-wrap button:not(:first-child):not(:last-child) {
     display: none !important;
   }
 
-  body.ifai-pixel02-typing .ui01b-composer textarea,
-  body.ifai-pixel02-typing textarea.ifai-ai02-input,
-  body.ifai-pixel02-typing .ui01b-composer input[type="text"],
-  body.ifai-pixel02-typing input.ifai-ai02-input {
+  body.ifai-pixel-typing .ui01b-composer textarea,
+  body.ifai-pixel-typing textarea.ifai-ai02-input,
+  body.ifai-pixel-typing .ui01b-composer input[type="text"],
+  body.ifai-pixel-typing input.ifai-ai02-input {
     flex: 1 1 100% !important;
-  }
-
-  .ui01b-messages,
-  .ifai-ai-feed {
-    padding-bottom: 165px !important;
   }
 }
 
 @media (max-width: 390px) {
-  :root {
-    --pixel02-composer-bottom: calc(env(safe-area-inset-bottom, 0px) + 30px);
-    --pixel02-composer-height: 66px;
-    --pixel02-input-height: 47px;
-    --pixel02-send-size: 44px;
-    --pixel02-mic-size: 32px;
-    --pixel02-plus-width: 38px;
-  }
-
   .ui01b-composer-wrap {
     left: 30px !important;
     right: 30px !important;
-    padding: 8px !important;
+    bottom: var(--pm-composer-bottom-small) !important;
   }
 
   .ui01b-composer {
     gap: 7px !important;
   }
+
+  .ui01b-composer button:first-child,
+  .ui01b-composer-wrap button:first-child {
+    width: 38px !important;
+    min-width: 38px !important;
+    flex-basis: 38px !important;
+  }
+
+  .ui01b-composer button:last-child,
+  .ui01b-composer-wrap button:last-child {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    flex-basis: 44px !important;
+  }
 }
 
+
+/* --------------------------------------------------------------------------
+   PIXEL-01B - Force Composer 10px Lower Only
+   Do not change anything else.
+-------------------------------------------------------------------------- */
+@media (max-width: 760px) {
+  .ui01b-composer-wrap {
+    transform: translateY(10px) !important;
+  }
+}

@@ -1,30 +1,25 @@
 {
-  "phase": "PIXEL-01",
-  "name": "Chat Screen Pixel Mapping Agent",
-  "reference_image": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
-  "reference_size": {
-    "width": 853,
-    "height": 1844
+  "phase": "PIXEL-02",
+  "name": "Single Source Composer Layout Lock",
+  "updated_at": "2026-07-05T09:44:26",
+  "status": "composer visual source of truth consolidated",
+  "reference_rule": "screenshot is reference only; not used as background",
+  "composer": {
+    "bottom_mobile": "calc(env(safe-area-inset-bottom, 0px) + 34px)",
+    "bottom_small": "calc(env(safe-area-inset-bottom, 0px) + 30px)",
+    "height": "68px",
+    "input_height": "48px",
+    "send_button_size": "46px",
+    "mic_button_size": "34px",
+    "plus_width": "40px",
+    "submit_color": "linear-gradient(135deg, #6f55ff, #2f7bff)",
+    "typing_behavior": "body.ifai-pixel02-typing hides mic and expands input"
   },
-  "rule": "Do not use screenshot as background. Convert screenshot into real CSS/JS layout.",
-  "target_screen": "IdeasForgeAI chat home screen",
-  "measured_layout_intent": {
-    "header": "preserve current header",
-    "hero": "preserve current headline/subtitle/cards",
-    "composer": {
-      "shift_down_px": 10,
-      "submit_button_color": "IdeasForgeAI purple-blue brand color",
-      "plus_button": "no extra circular patch",
-      "input": "maximum width possible",
-      "typing_behavior": "hide mic while typing and let input expand toward submit button"
-    }
-  },
-  "css_variables": {
-    "--pm-composer-bottom-mobile": "calc(env(safe-area-inset-bottom, 0px) + 74px)",
-    "--pm-composer-bottom-small": "calc(env(safe-area-inset-bottom, 0px) + 70px)",
-    "--pm-brand-1": "#6f55ff",
-    "--pm-brand-2": "#2f7bff",
-    "--pm-composer-height": "72px",
-    "--pm-input-height": "50px"
-  }
+  "removed_conflicts": [
+    "AI-02C composer visual/runtime block",
+    "AI-02D composer visual/runtime block",
+    "AI-02E composer visual/runtime block",
+    "PIXEL-01 composer visual/runtime block",
+    "PIXEL-01B transform runtime block"
+  ]
 }

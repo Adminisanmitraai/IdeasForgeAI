@@ -1,3 +1,24 @@
+## PIXEL-02 - Single Source Composer Layout Lock
+
+Status: Completed locally, validation required before deploy.
+
+- Backed up coding-agent CSS and JS before consolidation.
+- Removed old competing composer blocks from AI-02C, AI-02D, AI-02E, PIXEL-01, and PIXEL-01B.
+- Added one final composer CSS source of truth.
+- Composer is positioned from one variable only.
+- Submit button uses IdeasForgeAI purple-blue brand gradient.
+- Plus icon has no extra circular patch.
+- Input has maximum width.
+- Mic hides while typing and input expands toward submit button.
+- JS only handles typing/textarea behavior and removes old inline transform.
+- No backend, ForgeWork gateway, Studio V4, package-lock, or unrelated files changed.
+
+Validation commands:
+node --check frontend/pages/coding-agent.js
+node --check frontend/pages/studio-v4.js
+node --check frontend/pages/app-shell.js
+
+
 ## PIXEL-01 - Chat Screen Pixel Mapping Agent
 
 Status: Completed locally, validation required before deploy.
