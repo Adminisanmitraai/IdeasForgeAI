@@ -36,10 +36,13 @@
       "write_agent_report"
     ],
     "blocked_actions": [
+      "apply_pixel_patch_without_frontend_file_mapping",
       "apply_ui_patch_without_pixel_debug_report",
       "blind_file_patch",
       "ignore_browser_chrome_check",
       "ignore_low_pixel_confidence",
+      "patch_css_without_dom_mapping",
+      "patch_unknown_selector",
       "stage_unrelated_files",
       "unapproved_live_execution",
       "use_screenshot_as_background"
@@ -65,5 +68,16 @@
     "status": "wired_to_real_pixel_benchmark",
     "root_path_rule": "pixel benchmark scripts must resolve ROOT to IdeasForgeAI project root, not backend folder",
     "required_command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_real_accuracy.py"
+  },
+  "dom_mapping_gate": {
+    "phase": "PIXEL-AGENT-08",
+    "required_before_css_patch": true,
+    "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_dom_mapper.py",
+    "minimum_confidence": 60,
+    "required_regions": [
+      "composer",
+      "cards"
+    ],
+    "output": "backend/agent_audit_reports/pixel_dom_maps/pixel-dom-map-*.json"
   }
 }
