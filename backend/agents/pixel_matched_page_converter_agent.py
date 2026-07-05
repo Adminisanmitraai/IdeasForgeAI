@@ -256,63 +256,121 @@ class PixelMatchedPageConverterAgent(BaseAgent):
 
         return bands[:20]
 
-    def _detect_light_regions(self, image) -> List[Dict[str, int]]:
-        width, height = image.size
-        px = image.load()
+    def _detect_light_regions(self, image, threshold=238, min_area=120, *args, **kwargs):
+        """
+        Detect real light UI blocks from a screenshot.
 
-        # Scan horizontal slices for bright rounded-card/composer-like areas.
-        rows = []
-        step_y = max(2, height // 500)
-        step_x = max(2, width // 220)
+        PIXEL-AGENT-02:
+        - Uses Pillow pixel sampling.
+        - Produces bounded connected components.
+        - Keeps browser/chrome regions available for filtering, but marks edge/full-width regions.
+        """
+        from pathlib import Path
+        from collections import deque
+        from PIL import Image
 
-        for y in range(0, height, step_y):
-            bright_count = 0
-            left = None
-            right = None
+        if isinstance(image, (str, Path)):
+            image = Image.open(image)
 
-            for x in range(0, width, step_x):
+        img = image.convert("RGB")
+        width, height = img.size
+
+        scale = max(1, int(max(width, height) / 720))
+        small_w = max(1, width // scale)
+        small_h = max(1, height // scale)
+        small = img.resize((small_w, small_h))
+        px = small.load()
+
+        mask = bytearray(small_w * small_h)
+
+        def is_light_pixel(r, g, b):
+            mx = max(r, g, b)
+            mn = min(r, g, b)
+            luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
+
+            return (
+                (r >= threshold and g >= threshold and b >= threshold)
+                or (luma >= threshold and (mx - mn) <= 34)
+                or (r >= 232 and g >= 232 and b >= 232 and (mx - mn) <= 42)
+            )
+
+        for y in range(small_h):
+            row = y * small_w
+            for x in range(small_w):
                 r, g, b = px[x, y]
-                brightness = (r + g + b) / 3
+                if is_light_pixel(r, g, b):
+                    mask[row + x] = 1
 
-                # very light surfaces, but avoid pure background by requiring nearby structure later
-                if brightness > 238:
-                    bright_count += 1
-                    if left is None:
-                        left = x
-                    right = x
-
-            coverage = bright_count / max(1, width // step_x)
-
-            if coverage > 0.38 and left is not None and right is not None:
-                rows.append((y, left, right, coverage))
-
+        visited = bytearray(small_w * small_h)
         regions = []
-        if not rows:
-            return regions
 
-        current = [rows[0]]
-        for row in rows[1:]:
-            if row[0] - current[-1][0] <= step_y * 2:
-                current.append(row)
-            else:
-                region = self._rows_to_region(current)
-                if region:
-                    regions.append(region)
-                current = [row]
+        for y in range(small_h):
+            for x in range(small_w):
+                idx = y * small_w + x
+                if not mask[idx] or visited[idx]:
+                    continue
 
-        region = self._rows_to_region(current)
-        if region:
-            regions.append(region)
+                q = deque([(x, y)])
+                visited[idx] = 1
 
-        # Filter realistic UI panels.
-        filtered = []
-        for r in regions:
-            rw = r["x2"] - r["x1"]
-            rh = r["y2"] - r["y1"]
-            if rw > width * 0.45 and rh > 28:
-                filtered.append(r)
+                min_x = max_x = x
+                min_y = max_y = y
+                count = 0
 
-        return filtered
+                while q:
+                    cx, cy = q.popleft()
+                    count += 1
+
+                    if cx < min_x:
+                        min_x = cx
+                    if cx > max_x:
+                        max_x = cx
+                    if cy < min_y:
+                        min_y = cy
+                    if cy > max_y:
+                        max_y = cy
+
+                    for nx, ny in ((cx + 1, cy), (cx - 1, cy), (cx, cy + 1), (cx, cy - 1)):
+                        if nx < 0 or ny < 0 or nx >= small_w or ny >= small_h:
+                            continue
+
+                        nidx = ny * small_w + nx
+                        if mask[nidx] and not visited[nidx]:
+                            visited[nidx] = 1
+                            q.append((nx, ny))
+
+                x1 = max(0, min_x * scale)
+                y1 = max(0, min_y * scale)
+                x2 = min(width, (max_x + 1) * scale)
+                y2 = min(height, (max_y + 1) * scale)
+
+                rw = x2 - x1
+                rh = y2 - y1
+                area = rw * rh
+
+                if area < min_area or rw < 8 or rh < 8:
+                    continue
+
+                regions.append({
+                    "x1": int(x1),
+                    "y1": int(y1),
+                    "x2": int(x2),
+                    "y2": int(y2),
+                    "width": int(rw),
+                    "height": int(rh),
+                    "area": int(area),
+                    "center_x": int((x1 + x2) / 2),
+                    "center_y": int((y1 + y2) / 2),
+                    "touches_left": x1 <= 3,
+                    "touches_right": x2 >= width - 3,
+                    "touches_top": y1 <= 3,
+                    "touches_bottom": y2 >= height - 3,
+                    "is_full_width": rw >= width * 0.975,
+                    "is_lower_browser_like": y1 >= height * 0.90 and y2 >= height * 0.965,
+                })
+
+        regions.sort(key=lambda r: (r["y1"], r["x1"], -r["area"]))
+        return regions
 
     def _rows_to_region(self, rows: List[Tuple[int, int, int, float]]) -> Optional[Dict[str, int]]:
         if not rows:
@@ -334,51 +392,353 @@ class PixelMatchedPageConverterAgent(BaseAgent):
             "center_y": int((y1 + y2) / 2),
         }
 
-    def _estimate_composer_region(
-        self,
-        width: int,
-        height: int,
-        regions: List[Dict[str, int]],
-    ) -> Optional[Dict[str, int]]:
-        candidates = []
+    def _estimate_composer_region(self, *args, **kwargs):
+        """
+        Detect only the real chat composer tray above browser chrome.
 
-        for r in regions:
-            cy = r["center_y"]
-            rw = r["width"]
-            rh = r["height"]
+        PIXEL-AGENT-02:
+        - Ignores the bottom browser/Safari chrome region.
+        - Prefers the lowest rounded/light tray above the browser bar.
+        - Avoids returning x1=0/y1=bottom full-width white regions.
+        """
+        from pathlib import Path
+        from PIL import Image
 
-            if cy > height * 0.62 and cy < height * 0.93 and rw > width * 0.55 and rh < height * 0.12:
-                candidates.append(r)
+        image = kwargs.get("image") or kwargs.get("screenshot")
+        light_regions = kwargs.get("light_regions") or kwargs.get("regions")
+        width = kwargs.get("width")
+        height = kwargs.get("height")
 
-        if not candidates:
+        for arg in args:
+            if hasattr(arg, "size") and image is None:
+                image = arg
+            elif isinstance(arg, (str, Path)) and image is None:
+                image = Image.open(arg)
+            elif isinstance(arg, list) and light_regions is None:
+                light_regions = arg
+            elif isinstance(arg, tuple) and len(arg) == 2 and width is None and height is None:
+                width, height = arg
+            elif isinstance(arg, int):
+                if width is None:
+                    width = arg
+                elif height is None:
+                    height = arg
+
+        if image is not None:
+            img = image.convert("RGB")
+            width, height = img.size
+        elif light_regions:
+            width = width or max(r.get("x2", 0) for r in light_regions)
+            height = height or max(r.get("y2", 0) for r in light_regions)
+            img = None
+        else:
             return None
 
-        # Composer is usually the large bright rounded region above browser bar.
-        candidates.sort(key=lambda r: (r["center_y"], r["width"]), reverse=True)
-        return candidates[0]
+        if light_regions is None:
+            light_regions = self._detect_light_regions(img)
 
-    def _estimate_card_regions(
-        self,
-        width: int,
-        height: int,
-        regions: List[Dict[str, int]],
-        composer: Optional[Dict[str, int]],
-    ) -> List[Dict[str, int]]:
-        cards = []
+        def normalize_region(r, source, score=0.0):
+            x1 = int(max(0, r["x1"]))
+            y1 = int(max(0, r["y1"]))
+            x2 = int(min(width, r["x2"]))
+            y2 = int(min(height, r["y2"]))
 
-        for r in regions:
-            cy = r["center_y"]
-            rw = r["width"]
-            rh = r["height"]
+            return {
+                "x1": x1,
+                "y1": y1,
+                "x2": x2,
+                "y2": y2,
+                "width": int(x2 - x1),
+                "height": int(y2 - y1),
+                "confidence": round(min(0.95, max(0.55, score)), 2),
+                "source": source,
+            }
 
-            if composer and abs(r["center_y"] - composer["center_y"]) < 40:
+        candidates = []
+
+        browser_cutoff = min(int(height * 0.925), max(0, height - 105))
+        search_top = int(height * 0.70)
+
+        # Region-based candidates.
+        for r in light_regions:
+            x1 = int(r.get("x1", 0))
+            y1 = int(r.get("y1", 0))
+            x2 = int(r.get("x2", 0))
+            y2 = int(r.get("y2", 0))
+
+            rw = x2 - x1
+            rh = y2 - y1
+
+            if y1 < search_top:
+                continue
+            if y2 > browser_cutoff:
+                continue
+            if rh < 34 or rh > 210:
+                continue
+            if rw < width * 0.50:
+                continue
+            if rw > width * 0.995 and y1 > height * 0.86:
+                continue
+            if x1 <= 2 and x2 >= width - 2 and y2 > height * 0.86:
                 continue
 
-            if cy > height * 0.30 and cy < height * 0.75 and rw > width * 0.60 and rh > 50:
-                cards.append(r)
+            vertical_score = y2 / max(1, browser_cutoff)
+            size_score = min(1.0, rw / max(1, width * 0.86))
+            inset_bonus = 0.12 if x1 > width * 0.015 and x2 < width * 0.985 else 0.0
+            score = 0.62 + (vertical_score * 0.18) + (size_score * 0.10) + inset_bonus
 
-        cards.sort(key=lambda r: r["y1"])
-        return cards[:6]
+            candidates.append(normalize_region(
+                {"x1": x1, "y1": y1, "x2": x2, "y2": y2},
+                "light_region_candidate",
+                score,
+            ))
+
+        # Row-scan candidate: catches rounded composer trays even when connected components merge.
+        if img is not None:
+            px = img.load()
+            left = int(width * 0.035)
+            right = int(width * 0.965)
+
+            def is_light(r, g, b):
+                mx = max(r, g, b)
+                mn = min(r, g, b)
+                luma = (0.2126 * r) + (0.7152 * g) + (0.0722 * b)
+                return (
+                    (r >= 236 and g >= 236 and b >= 236)
+                    or (luma >= 236 and (mx - mn) <= 38)
+                )
+
+            row_hits = []
+            step_x = 3
+
+            for y in range(search_top, browser_cutoff):
+                total = 0
+                light = 0
+
+                for x in range(left, right, step_x):
+                    total += 1
+                    r, g, b = px[x, y]
+                    if is_light(r, g, b):
+                        light += 1
+
+                ratio = light / max(1, total)
+                row_hits.append((y, ratio))
+
+            threshold = 0.24
+            bands = []
+            current = None
+
+            for y, ratio in row_hits:
+                if ratio >= threshold:
+                    if current is None:
+                        current = [y, y, ratio]
+                    else:
+                        current[1] = y
+                        current[2] += ratio
+                else:
+                    if current is not None:
+                        bands.append(current)
+                        current = None
+
+            if current is not None:
+                bands.append(current)
+
+            for y1, y2, ratio_sum in bands:
+                bh = y2 - y1 + 1
+                if bh < 30 or bh > 210:
+                    continue
+
+                xs = []
+                sample_step_y = max(1, bh // 12)
+
+                for yy in range(y1, y2 + 1, sample_step_y):
+                    for xx in range(left, right, 3):
+                        r, g, b = px[xx, yy]
+                        if is_light(r, g, b):
+                            xs.append(xx)
+
+                if not xs:
+                    continue
+
+                xs.sort()
+                p05 = xs[int(len(xs) * 0.05)]
+                p95 = xs[int(len(xs) * 0.95)]
+
+                x1 = max(0, p05 - 8)
+                x2 = min(width, p95 + 8)
+
+                rw = x2 - x1
+                if rw < width * 0.50:
+                    continue
+
+                # If row scan still catches a full-width browser-like white strip, tighten to expected tray inset.
+                if rw >= width * 0.985:
+                    x1 = int(width * 0.035)
+                    x2 = int(width * 0.965)
+
+                score = 0.82 + min(0.08, (y2 / max(1, browser_cutoff)) * 0.08)
+
+                candidates.append(normalize_region(
+                    {"x1": x1, "y1": y1, "x2": x2, "y2": y2 + 1},
+                    "row_scan_composer_tray",
+                    score,
+                ))
+
+        if not candidates:
+            fallback_y2 = int(height * 0.915)
+            fallback_y1 = max(search_top, fallback_y2 - 120)
+            return normalize_region(
+                {
+                    "x1": int(width * 0.035),
+                    "y1": fallback_y1,
+                    "x2": int(width * 0.965),
+                    "y2": fallback_y2,
+                },
+                "safe_ratio_fallback",
+                0.58,
+            )
+
+        # Prefer lowest valid candidate above browser chrome, with reasonable tray height.
+        candidates = [
+            c for c in candidates
+            if c["y2"] <= browser_cutoff
+            and 34 <= c["height"] <= 210
+            and not (c["x1"] <= 2 and c["x2"] >= width - 2 and c["y1"] > height * 0.86)
+        ]
+
+        candidates.sort(key=lambda c: (c["confidence"], c["y2"], -abs(c["height"] - 105)), reverse=True)
+        return candidates[0] if candidates else None
+
+    def _estimate_card_regions(self, *args, **kwargs):
+        """
+        Estimate card regions while excluding header, hero, composer, and browser chrome.
+
+        PIXEL-AGENT-02:
+        - Uses composer y1 as lower boundary.
+        - Removes oversized hero/background white blocks.
+        - Returns the strongest card-like regions, normally around 3.
+        """
+        from pathlib import Path
+        from PIL import Image
+
+        image = kwargs.get("image") or kwargs.get("screenshot")
+        light_regions = kwargs.get("light_regions") or kwargs.get("regions")
+        composer = kwargs.get("composer") or kwargs.get("composer_region")
+        width = kwargs.get("width")
+        height = kwargs.get("height")
+
+        for arg in args:
+            if hasattr(arg, "size") and image is None:
+                image = arg
+            elif isinstance(arg, (str, Path)) and image is None:
+                image = Image.open(arg)
+            elif isinstance(arg, list) and light_regions is None:
+                light_regions = arg
+            elif isinstance(arg, dict) and composer is None and "y1" in arg and "y2" in arg:
+                composer = arg
+            elif isinstance(arg, tuple) and len(arg) == 2 and width is None and height is None:
+                width, height = arg
+            elif isinstance(arg, int):
+                if width is None:
+                    width = arg
+                elif height is None:
+                    height = arg
+
+        if image is not None:
+            img = image.convert("RGB")
+            width, height = img.size
+        elif light_regions:
+            img = None
+            width = width or max(r.get("x2", 0) for r in light_regions)
+            height = height or max(r.get("y2", 0) for r in light_regions)
+        else:
+            return []
+
+        if light_regions is None:
+            light_regions = self._detect_light_regions(img)
+
+        if composer is None:
+            composer = self._estimate_composer_region(img if image is not None else light_regions, light_regions)
+
+        lower_limit = int(composer["y1"] - 18) if composer else int(height * 0.78)
+        upper_limit = int(height * 0.18)
+
+        candidates = []
+
+        for r in light_regions:
+            x1 = int(r.get("x1", 0))
+            y1 = int(r.get("y1", 0))
+            x2 = int(r.get("x2", 0))
+            y2 = int(r.get("y2", 0))
+
+            rw = x2 - x1
+            rh = y2 - y1
+
+            if y2 <= upper_limit:
+                continue
+            if y1 >= lower_limit:
+                continue
+            if rh < 36 or rw < width * 0.22:
+                continue
+            if rh > height * 0.24:
+                continue
+            if rw > width * 0.985 and rh > 90:
+                continue
+            if y1 < height * 0.25 and rw > width * 0.78 and rh > 110:
+                continue
+
+            area = rw * rh
+            score = area
+            score += y1 * 2
+
+            if width * 0.35 <= rw <= width * 0.96:
+                score += 5000
+            if 44 <= rh <= 180:
+                score += 4000
+            if x1 > width * 0.015 and x2 < width * 0.985:
+                score += 2500
+
+            candidates.append({
+                "x1": x1,
+                "y1": y1,
+                "x2": x2,
+                "y2": y2,
+                "width": int(rw),
+                "height": int(rh),
+                "area": int(area),
+                "confidence": 0.78,
+                "source": "card_light_region",
+                "_score": score,
+            })
+
+        def overlaps(a, b):
+            ix1 = max(a["x1"], b["x1"])
+            iy1 = max(a["y1"], b["y1"])
+            ix2 = min(a["x2"], b["x2"])
+            iy2 = min(a["y2"], b["y2"])
+
+            if ix2 <= ix1 or iy2 <= iy1:
+                return False
+
+            inter = (ix2 - ix1) * (iy2 - iy1)
+            smaller = min(a["area"], b["area"])
+            return inter / max(1, smaller) > 0.45
+
+        candidates.sort(key=lambda c: c["_score"], reverse=True)
+
+        selected = []
+        for c in candidates:
+            if any(overlaps(c, s) for s in selected):
+                continue
+
+            c.pop("_score", None)
+            selected.append(c)
+
+            if len(selected) >= 3:
+                break
+
+        selected.sort(key=lambda c: (c["y1"], c["x1"]))
+        return selected
 
     def _estimate_header(self, width: int, height: int, bands: List[Dict[str, int]]) -> Dict[str, int]:
         header_end = round(height * 0.16)
@@ -533,241 +893,3 @@ class PixelMatchedPageConverterAgent(BaseAgent):
             "--pixel-agent-composer-height": f"{comp_h}px",
             "--pixel-agent-correction-y": f"{shift_y}px",
         }
-
-
-# ---------------------------------------------------------------------------
-# PIXEL-AGENT-02 - Exact Composer Region Detector
-# Fixes broad bottom-region detection by separating real rounded panels from
-# browser chrome and choosing the chat composer tray above the browser bar.
-# ---------------------------------------------------------------------------
-
-def _pixel02_detect_light_regions(self, image):
-    width, height = image.size
-    px = image.load()
-
-    # Scan rows and find long bright rounded-panel runs.
-    row_runs = []
-    step_y = max(2, height // 700)
-    step_x = max(1, width // 420)
-
-    for y in range(0, height, step_y):
-        runs = []
-        in_run = False
-        start_x = 0
-        last_x = 0
-
-        for x in range(0, width, step_x):
-            r, g, b = px[x, y]
-            brightness = (r + g + b) / 3
-            spread = max(r, g, b) - min(r, g, b)
-
-            # White / near-white UI surface.
-            is_panel_pixel = brightness >= 235 and spread <= 28
-
-            if is_panel_pixel and not in_run:
-                in_run = True
-                start_x = x
-                last_x = x
-            elif is_panel_pixel and in_run:
-                last_x = x
-            elif not is_panel_pixel and in_run:
-                if last_x - start_x > width * 0.35:
-                    runs.append((start_x, last_x))
-                in_run = False
-
-        if in_run and last_x - start_x > width * 0.35:
-            runs.append((start_x, last_x))
-
-        if not runs:
-            continue
-
-        # Pick widest non-full-width run.
-        runs.sort(key=lambda item: item[1] - item[0], reverse=True)
-
-        for x1, x2 in runs:
-            run_w = x2 - x1
-
-            # Reject full background/header strips.
-            if x1 <= width * 0.01 and x2 >= width * 0.985:
-                continue
-
-            # Real cards/composer are wide but not the entire screen.
-            if width * 0.45 <= run_w <= width * 0.94:
-                row_runs.append(
-                    {
-                        "y": y,
-                        "x1": int(x1),
-                        "x2": int(x2),
-                        "width": int(run_w),
-                    }
-                )
-                break
-
-    if not row_runs:
-        return []
-
-    # Group nearby rows into panel boxes.
-    regions = []
-    current = [row_runs[0]]
-
-    for row in row_runs[1:]:
-        prev = current[-1]
-        vertical_close = row["y"] - prev["y"] <= step_y * 3
-
-        overlap = min(prev["x2"], row["x2"]) - max(prev["x1"], row["x1"])
-        min_width = min(prev["width"], row["width"])
-        overlaps_enough = overlap > min_width * 0.42
-
-        if vertical_close and overlaps_enough:
-            current.append(row)
-        else:
-            region = _pixel02_rows_to_region(current)
-            if region:
-                regions.append(region)
-            current = [row]
-
-    region = _pixel02_rows_to_region(current)
-    if region:
-        regions.append(region)
-
-    # Filter realistic rounded panels.
-    filtered = []
-    for r in regions:
-        rw = r["width"]
-        rh = r["height"]
-
-        if rw < width * 0.42:
-            continue
-
-        if rh < 32:
-            continue
-
-        # Avoid very tall merged background areas.
-        if rh > height * 0.22:
-            continue
-
-        filtered.append(r)
-
-    return filtered
-
-
-def _pixel02_rows_to_region(rows):
-    if not rows:
-        return None
-
-    x1 = min(r["x1"] for r in rows)
-    x2 = max(r["x2"] for r in rows)
-    y1 = min(r["y"] for r in rows)
-    y2 = max(r["y"] for r in rows)
-
-    return {
-        "x1": int(x1),
-        "y1": int(y1),
-        "x2": int(x2),
-        "y2": int(y2),
-        "width": int(x2 - x1),
-        "height": int(y2 - y1),
-        "center_x": int((x1 + x2) / 2),
-        "center_y": int((y1 + y2) / 2),
-    }
-
-
-def _pixel02_estimate_composer_region(self, width, height, regions):
-    candidates = []
-
-    for r in regions:
-        cy = r["center_y"]
-        rw = r["width"]
-        rh = r["height"]
-
-        # Composer is below cards but above browser address bar.
-        if not (height * 0.66 <= cy <= height * 0.86):
-            continue
-
-        # Browser address bar is usually lower than this, so exclude very bottom.
-        if cy > height * 0.875:
-            continue
-
-        # Composer is wide, shallow, rounded.
-        if rw < width * 0.62:
-            continue
-
-        if not (42 <= rh <= height * 0.12):
-            continue
-
-        score = 0
-
-        # Prefer large but not full width.
-        score += min(rw / width, 0.92) * 40
-
-        # Prefer y around 0.78-0.83 screen height.
-        target_y = height * 0.80
-        score -= abs(cy - target_y) / height * 60
-
-        # Prefer reasonable height.
-        target_h = height * 0.055
-        score -= abs(rh - target_h) / height * 40
-
-        candidates.append((score, r))
-
-    if not candidates:
-        # Fallback: choose highest wide shallow region below cards but above browser chrome.
-        fallback = [
-            r for r in regions
-            if height * 0.62 <= r["center_y"] <= height * 0.86
-            and r["width"] >= width * 0.55
-            and r["height"] <= height * 0.14
-        ]
-        if fallback:
-            fallback.sort(key=lambda r: r["center_y"], reverse=True)
-            return fallback[0]
-        return None
-
-    candidates.sort(key=lambda item: item[0], reverse=True)
-    return candidates[0][1]
-
-
-def _pixel02_estimate_card_regions(self, width, height, regions, composer):
-    cards = []
-
-    for r in regions:
-        cy = r["center_y"]
-        rw = r["width"]
-        rh = r["height"]
-
-        if composer and abs(cy - composer["center_y"]) < 80:
-            continue
-
-        if not (height * 0.28 <= cy <= height * 0.70):
-            continue
-
-        if rw < width * 0.55:
-            continue
-
-        if not (45 <= rh <= height * 0.14):
-            continue
-
-        cards.append(r)
-
-    cards.sort(key=lambda r: r["y1"])
-
-    # De-duplicate regions that overlap heavily.
-    unique = []
-    for card in cards:
-        duplicate = False
-        for existing in unique:
-            overlap_y = min(card["y2"], existing["y2"]) - max(card["y1"], existing["y1"])
-            if overlap_y > min(card["height"], existing["height"]) * 0.55:
-                duplicate = True
-                break
-        if not duplicate:
-            unique.append(card)
-
-    return unique[:6]
-
-
-# Override class methods.
-PixelMatchedPageConverterAgent._detect_light_regions = _pixel02_detect_light_regions
-PixelMatchedPageConverterAgent._estimate_composer_region = _pixel02_estimate_composer_region
-PixelMatchedPageConverterAgent._estimate_card_regions = _pixel02_estimate_card_regions
-
