@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "name": "chat-mobile-current",
+      "name": "mobile-landing-current",
       "image": "chat-mobile-current.png",
       "expected": {
         "composer": {
@@ -30,7 +30,118 @@
           "cards_detected between 2 and 4",
           "not_browser_region == true"
         ]
+      },
+      "required": true,
+      "profile": "mobile_landing",
+      "description": "Current IdeasForgeAI mobile landing screen with 3 mode cards and bottom composer."
+    },
+    {
+      "name": "mobile-chat-after-message",
+      "required": false,
+      "profile": "mobile_chat",
+      "image": "chat-mobile-after-message.png",
+      "description": "Future benchmark: mobile chat screen after user sends a message.",
+      "expected": {
+        "composer": {
+          "x1": 38,
+          "y1": 1538,
+          "x2": 814,
+          "y2": 1658
+        },
+        "cards_count_range": [
+          0,
+          4
+        ],
+        "browser_bad_region": {
+          "x1": 0,
+          "y1": 1644,
+          "x2": 852,
+          "y2": 1767
+        }
+      }
+    },
+    {
+      "name": "mobile-keyboard-composer-active",
+      "required": false,
+      "profile": "mobile_keyboard_active",
+      "image": "chat-mobile-keyboard-active.png",
+      "description": "Future benchmark: composer active with keyboard/browser UI pressure.",
+      "expected": {
+        "composer": {
+          "x1": 38,
+          "y1": 1538,
+          "x2": 814,
+          "y2": 1658
+        },
+        "cards_count_range": [
+          0,
+          4
+        ],
+        "browser_bad_region": {
+          "x1": 0,
+          "y1": 1644,
+          "x2": 852,
+          "y2": 1767
+        }
+      }
+    },
+    {
+      "name": "desktop-browser-chat",
+      "required": false,
+      "profile": "desktop_browser",
+      "image": "chat-desktop-current.png",
+      "description": "Future benchmark: desktop browser layout.",
+      "expected": {
+        "composer": {
+          "x1": 38,
+          "y1": 1538,
+          "x2": 814,
+          "y2": 1658
+        },
+        "cards_count_range": [
+          0,
+          6
+        ],
+        "browser_bad_region": {
+          "x1": 0,
+          "y1": 1644,
+          "x2": 852,
+          "y2": 1767
+        }
+      }
+    },
+    {
+      "name": "small-mobile-viewport",
+      "required": false,
+      "profile": "small_mobile",
+      "image": "chat-small-mobile-current.png",
+      "description": "Future benchmark: smaller mobile viewport.",
+      "expected": {
+        "composer": {
+          "x1": 38,
+          "y1": 1538,
+          "x2": 814,
+          "y2": 1658
+        },
+        "cards_count_range": [
+          0,
+          4
+        ],
+        "browser_bad_region": {
+          "x1": 0,
+          "y1": 1644,
+          "x2": 852,
+          "y2": 1767
+        }
       }
     }
-  ]
+  ],
+  "benchmark_version": "pixel_real_iou_v2_multi_screenshot",
+  "minimum_required_cases": 1,
+  "policy": {
+    "required_cases_must_pass": true,
+    "optional_missing_cases_are_skipped": true,
+    "minimum_score_to_pass": 80,
+    "target_future_required_cases": 4
+  }
 }

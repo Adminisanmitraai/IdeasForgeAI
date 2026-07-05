@@ -62,9 +62,13 @@ def audit_case(agent, case: Dict[str, Any]) -> Dict[str, Any]:
     image_path = SCREENSHOT_DIR / case["image"]
 
     if not image_path.exists():
+        required = bool(case.get("required", True))
+
         return {
             "name": case["name"],
-            "ok": False,
+            "ok": not required,
+            "skipped": not required,
+            "required": required,
             "score": 0,
             "error": f"Missing screenshot: {image_path}",
         }
@@ -166,13 +170,28 @@ def main() -> int:
     for case in cases:
         results.append(audit_case(agent, case))
 
-    avg_score = round(sum(item["score"] for item in results) / max(1, len(results)), 2)
+    scored_results = [item for item in results if not item.get("skipped")]
+    required_results = [item for item in results if item.get("required", True)]
+
+    avg_score = round(
+        sum(item["score"] for item in scored_results) / max(1, len(scored_results)),
+        2
+    )
+
+    required_ok = all(item.get("ok") for item in required_results)
+    scored_count = len(scored_results)
+
+    min_required_cases = int(expected.get("minimum_required_cases", 1))
 
     report = {
-        "ok": avg_score >= 80 and all(item["ok"] for item in results),
+        "ok": avg_score >= 80 and required_ok and scored_count >= min_required_cases,
         "overall_score": avg_score,
         "accuracy_score": avg_score,
-        "benchmark": "pixel_real_iou_v1",
+        "benchmark": "pixel_real_iou_v2_multi_screenshot",
+        "scored_cases": scored_count,
+        "required_cases": len(required_results),
+        "minimum_required_cases": min_required_cases,
+        "skipped_optional_cases": len([item for item in results if item.get("skipped")]),
         "cases": results,
     }
 
