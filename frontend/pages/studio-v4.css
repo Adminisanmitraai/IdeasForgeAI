@@ -1053,3 +1053,242 @@ button {
 .if-browserbar {
   bottom: calc(env(safe-area-inset-bottom) + 32px);
 }
+
+
+/* PIXEL-MAP-PERFECT-17J outer-card-box-02 */
+section.if-card-list {
+  gap: 21px !important;
+}
+
+button.if-card {
+  min-height: 118px !important;
+  height: 118px !important;
+}
+/* END PIXEL-MAP-PERFECT-17J */
+
+
+
+
+
+/* PIXEL-MAP-PERFECT-17L hero-fine-01 */
+section.if-hero {
+  margin-top: 44px !important;
+  padding-top: 0 !important;
+}
+
+section.if-hero h1 {
+  line-height: 1.035 !important;
+}
+
+section.if-hero p {
+  margin-top: 12px !important;
+}
+/* END PIXEL-MAP-PERFECT-17L */
+
+
+
+/* PIXEL-MAP-PERFECT-17R card-visual-fit-01 */
+section.if-card-list {
+  transform: translateY(-8px) !important;
+}
+
+button.if-card .if-card-icon {
+  transform: scale(0.94) !important;
+}
+
+button.if-card .if-card-copy > *:first-child {
+  font-size: 96% !important;
+}
+
+button.if-card .if-card-copy > *:last-child {
+  font-size: 96% !important;
+  line-height: 1.28 !important;
+}
+/* END PIXEL-MAP-PERFECT-17R */
+
+
+/* PIXEL-MAP-PERFECT-17S icon-light-02 */
+button.if-card .if-card-icon {
+  transform: scale(0.84) !important;
+  opacity: 0.92 !important;
+  filter: saturate(0.88) brightness(1.08) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.065) !important;
+}
+
+button.if-card .if-card-icon img,
+button.if-card .if-card-icon svg {
+  transform: scale(0.90) !important;
+}
+
+button.if-card .if-card-copy > *:first-child {
+  font-size: 92% !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.032em !important;
+}
+
+button.if-card .if-card-copy > *:last-child {
+  font-size: 92% !important;
+  line-height: 1.25 !important;
+  opacity: 0.78 !important;
+}
+/* END PIXEL-MAP-PERFECT-17S */
+
+
+/* PIXEL-MAP-PERFECT-17V css-icon-fit-02 */
+button.if-card .if-studio-icon,
+button.if-card .if-code-icon,
+button.if-card .if-work-icon {
+  transform: scale(0.78) !important;
+  opacity: 0.88 !important;
+  filter: saturate(0.82) brightness(1.10) !important;
+}
+
+button.if-card .if-work-icon::after {
+  opacity: 0.66 !important;
+  transform: scale(0.82) !important;
+}
+
+button.if-card .if-card-arrow {
+  transform: scale(0.88) !important;
+  opacity: 0.82 !important;
+}
+/* END PIXEL-MAP-PERFECT-17V */
+
+
+/* PIXEL-MAP-PERFECT-18X card-height-left-polish */
+section.if-card-list {
+  gap: 17px !important;
+}
+
+button.if-card {
+  min-height: 132px !important;
+  height: 132px !important;
+  border-radius: 27px !important;
+  grid-template-columns: 72px minmax(0, 1fr) 40px !important;
+  column-gap: 3px !important;
+  padding: 0 18px 0 18px !important;
+}
+
+button.if-card .if-card-icon {
+  width: 58px !important;
+  height: 58px !important;
+  transform: scale(0.88) !important;
+  justify-self: center !important;
+}
+
+button.if-card .if-card-copy {
+  max-width: 252px !important;
+  transform: translateX(-4px) !important;
+}
+
+button.if-card .if-card-copy strong {
+  font-size: 18px !important;
+  line-height: 1.18 !important;
+  letter-spacing: -0.42px !important;
+  font-weight: 850 !important;
+  margin-right: 6px !important;
+}
+
+button.if-card .if-card-copy em {
+  font-size: 15.8px !important;
+  line-height: 1.42 !important;
+  letter-spacing: -0.14px !important;
+  color: rgba(72, 82, 100, 0.76) !important;
+}
+
+button.if-card .if-card-arrow {
+  transform: scale(0.92) !important;
+}
+/* END PIXEL-MAP-PERFECT-18X */
+
+
+/* PIXEL-MAP-PERFECT-18Y final-card-compact-polish */
+section.if-card-list {
+  gap: 15px !important;
+}
+
+button.if-card {
+  min-height: 124px !important;
+  height: 124px !important;
+  border-radius: 25px !important;
+  grid-template-columns: 68px minmax(0, 1fr) 38px !important;
+  column-gap: 0px !important;
+  padding: 0 16px 0 16px !important;
+}
+
+button.if-card .if-card-icon {
+  width: 54px !important;
+  height: 54px !important;
+  transform: scale(0.84) !important;
+}
+
+button.if-card .if-card-copy {
+  max-width: 260px !important;
+  transform: translateX(-8px) !important;
+}
+
+button.if-card .if-card-copy strong {
+  font-size: 17.5px !important;
+  line-height: 1.16 !important;
+  letter-spacing: -0.42px !important;
+  font-weight: 850 !important;
+}
+
+button.if-card .if-card-copy em {
+  font-size: 15.4px !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.12px !important;
+  color: rgba(72, 82, 100, 0.76) !important;
+}
+
+button.if-card .if-card-arrow {
+  transform: scale(0.90) !important;
+}
+/* END PIXEL-MAP-PERFECT-18Y */
+
+
+/* PIXEL-MAP-PERFECT-18Z final-text-wrap-polish */
+section.if-card-list {
+  gap: 15px !important;
+}
+
+button.if-card {
+  min-height: 124px !important;
+  height: 124px !important;
+  border-radius: 25px !important;
+  grid-template-columns: 68px minmax(0, 1fr) 38px !important;
+  column-gap: 0px !important;
+  padding: 0 16px 0 16px !important;
+}
+
+button.if-card .if-card-icon {
+  width: 54px !important;
+  height: 54px !important;
+  transform: scale(0.84) !important;
+}
+
+button.if-card .if-card-copy {
+  max-width: 224px !important;
+  transform: translateX(-8px) !important;
+}
+
+button.if-card .if-card-copy strong {
+  font-size: 17.5px !important;
+  line-height: 1.16 !important;
+  letter-spacing: -0.42px !important;
+  font-weight: 850 !important;
+  margin-right: 5px !important;
+  white-space: nowrap !important;
+}
+
+button.if-card .if-card-copy em {
+  font-size: 15.25px !important;
+  line-height: 1.38 !important;
+  letter-spacing: -0.12px !important;
+  color: rgba(72, 82, 100, 0.76) !important;
+}
+
+button.if-card .if-card-arrow {
+  transform: scale(0.90) !important;
+}
+/* END PIXEL-MAP-PERFECT-18Z */
