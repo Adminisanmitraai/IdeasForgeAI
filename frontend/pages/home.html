@@ -1,0 +1,302 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>IdeasForgeAI</title>
+  <meta name="description" content="IdeasForgeAI helps you create, code, and work with AI more easily." />
+  <link rel="stylesheet" href="./home.css" />
+</head>
+
+<body>
+  <div class="app-shell" data-view="home">
+    <aside class="rail" aria-label="Collapsed sidebar">
+      <button class="rail-btn rail-logo" type="button" data-open-sidebar aria-label="Open sidebar">
+        <span class="if-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
+            <circle cx="13" cy="17" r="3" />
+            <circle cx="51" cy="19" r="3" />
+            <circle cx="16" cy="49" r="3" />
+          </svg>
+        </span>
+      </button>
+
+      <button class="rail-btn" type="button" aria-label="New chat">+</button>
+      <button class="rail-btn" type="button" aria-label="Search">
+        <span class="line-search"></span>
+      </button>
+      <button class="rail-btn" type="button" aria-label="Library">
+        <span class="line-doc"></span>
+      </button>
+      <button class="rail-btn" type="button" aria-label="Pinned">
+        <span class="line-pin"></span>
+      </button>
+      <button class="rail-btn" type="button" aria-label="Chat">
+        <span class="line-chat"></span>
+      </button>
+
+      <div class="rail-bottom">
+        <div class="rail-avatar">IF</div>
+      </div>
+    </aside>
+
+    <aside class="sidebar" aria-label="IdeasForgeAI sidebar">
+      <div class="sidebar-top">
+        <button class="sidebar-brand" type="button" data-close-sidebar aria-label="Close sidebar">
+          <span class="if-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" focusable="false">
+              <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
+              <circle cx="13" cy="17" r="3" />
+              <circle cx="51" cy="19" r="3" />
+              <circle cx="16" cy="49" r="3" />
+            </svg>
+          </span>
+          <span class="brand-name">IdeasForge<span>AI</span></span>
+        </button>
+
+        <button class="sidebar-collapse" type="button" data-close-sidebar aria-label="Collapse sidebar">
+          <span></span>
+        </button>
+      </div>
+
+      <button class="new-chat-button" type="button" data-new-chat>
+        <span class="new-chat-plus">+</span>
+        <span>New chat</span>
+        <span class="new-chat-spark">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <path d="M32 8 C35 24 40 29 56 32 C40 35 35 40 32 56 C29 40 24 35 8 32 C24 29 29 24 32 8Z" />
+          </svg>
+        </span>
+      </button>
+
+      <div class="sidebar-scroll-panel">
+        <nav class="sidebar-nav" aria-label="Main menu">
+          <a href="#" class="nav-item">
+            <span class="nav-icon line-search"></span>
+            <span>Search chats</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon line-book"></span>
+            <span>Library</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon line-grid"></span>
+            <span>Templates</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon line-stack"></span>
+            <span>Knowledge</span>
+          </a>
+        </nav>
+
+        <section class="sidebar-section">
+          <h2>Pinned</h2>
+          <a href="#" class="history-item">
+            <span class="line-pin"></span>
+            <span>Marketing campaign ideas</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-pin"></span>
+            <span>Product roadmap Q2</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-pin"></span>
+            <span>AI code assistant plan</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-pin"></span>
+            <span>Investor pitch outline</span>
+          </a>
+        </section>
+
+        <section class="sidebar-section projects-section">
+          <h2>Projects</h2>
+          <a href="#" class="history-item">
+            <span class="line-folder"></span>
+            <span>Acme Startup</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-folder"></span>
+            <span>Website Redesign</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-folder"></span>
+            <span>Q2 Product Launch</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-folder"></span>
+            <span>Personal Workspace</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-folder"></span>
+            <span>Landing Page Drafts</span>
+          </a>
+          <a href="#" class="history-item">
+            <span class="line-folder"></span>
+            <span>ForgeCode Experiments</span>
+          </a>
+        </section>
+      </div>
+
+      <div class="sidebar-profile">
+        <div class="profile-avatar">IF</div>
+        <div class="profile-copy">
+          <strong>Personal Workspace</strong>
+          <span>IdeasForgeAI</span>
+        </div>
+        <button class="profile-settings" type="button" aria-label="Settings">
+          <span></span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-surface">
+      <header class="mobile-header">
+        <button class="mobile-menu" type="button" data-mobile-menu aria-label="Open menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <div class="mobile-brand">
+          <span class="if-mark" aria-hidden="true">
+            <svg viewBox="0 0 64 64" focusable="false">
+              <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
+              <circle cx="13" cy="17" r="3" />
+              <circle cx="51" cy="19" r="3" />
+              <circle cx="16" cy="49" r="3" />
+            </svg>
+          </span>
+          <span>IdeasForge<span>AI</span></span>
+        </div>
+
+        <button class="mobile-plus" type="button" data-new-chat aria-label="New chat">+</button>
+      </header>
+
+      <section class="home-view" data-home-view>
+        <div class="brand-watermark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
+            <circle cx="13" cy="17" r="3" />
+            <circle cx="51" cy="19" r="3" />
+            <circle cx="16" cy="49" r="3" />
+          </svg>
+        </div>
+
+        <div class="hero-content">
+          <h1>
+            AI is <span>essential now.</span><br />
+            You don't need to learn<br />
+            it to work with it.
+          </h1>
+
+          <p>
+            Start with a thought. IdeasForgeAI helps you create, code, and work with AI more easily.
+          </p>
+
+          <form class="composer hero-composer" data-home-form autocomplete="off">
+            <button class="composer-plus" type="button" aria-label="Add">+</button>
+
+            <textarea
+              name="thought"
+              rows="1"
+              placeholder="Start writing your thought here..."
+              aria-label="Start writing your thought here"
+              data-home-input
+            ></textarea>
+
+            <button class="composer-mode" type="button" aria-label="Quality">
+              <span>High</span>
+              <span class="chevron"></span>
+            </button>
+
+            <button class="composer-mic" type="button" aria-label="Voice">
+              <span></span>
+            </button>
+
+            <button class="composer-send" type="submit" aria-label="Send">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </form>
+
+          <div class="quick-chips" aria-label="IdeasForgeAI pillars">
+            <button class="quick-chip" type="button" data-chip="ForgeStudio">
+              <span class="product-icon studio-product-icon">
+                <span class="icon-window"></span>
+                <span class="icon-cursor"></span>
+              </span>
+              <span>ForgeStudio</span>
+            </button>
+
+            <button class="quick-chip" type="button" data-chip="ForgeCode">
+              <span class="product-icon code-product-icon">
+                <span class="icon-code-screen"></span>
+                <span class="icon-code-text">&lt;/&gt;</span>
+              </span>
+              <span>ForgeCode</span>
+            </button>
+
+            <button class="quick-chip" type="button" data-chip="ForgeWork">
+              <span class="product-icon work-product-icon">
+                <span class="icon-chat-orb"></span>
+                <span class="icon-orbit"></span>
+              </span>
+              <span>ForgeWork</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="chat-view" data-chat-view hidden>
+        <div class="chat-topbar">
+          <button class="chat-new" type="button" data-new-chat>New</button>
+        </div>
+
+        <div class="chat-scroll" data-chat-scroll>
+          <article class="chat-message user-message">
+            <p data-user-message>Help me plan an AI-powered landing page for my startup.</p>
+          </article>
+
+          <article class="chat-message assistant-message">
+            <div class="assistant-mark">
+              <span class="if-mark" aria-hidden="true">
+                <svg viewBox="0 0 64 64" focusable="false">
+                  <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
+                  <circle cx="13" cy="17" r="3" />
+                  <circle cx="51" cy="19" r="3" />
+                  <circle cx="16" cy="49" r="3" />
+                </svg>
+              </span>
+            </div>
+            <div class="assistant-card">
+              <p>Here is a clear starting plan. I can help you turn this thought into a polished design, code plan, or professional workflow.</p>
+            </div>
+          </article>
+        </div>
+
+        <form class="composer chat-composer" data-chat-form autocomplete="off">
+          <button class="composer-plus" type="button" aria-label="Add">+</button>
+          <textarea name="message" rows="1" placeholder="Start writing your thought here..." data-chat-input></textarea>
+          <button class="composer-mode" type="button" aria-label="Quality">
+            <span>High</span>
+            <span class="chevron"></span>
+          </button>
+          <button class="composer-mic" type="button" aria-label="Voice">
+            <span></span>
+          </button>
+          <button class="composer-send" type="submit" aria-label="Send">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="./home.js"></script>
+</body>
+</html>
