@@ -7342,3 +7342,92 @@ async def ideasforgeai_get_admin_system_summary():
     }
 # ADM-4C-13 ADMIN SYSTEM SUMMARY ENDPOINT END
 
+
+# ADM-4D-1 SAFE WORKER APPLY BRIDGE PLAN
+def _ideasforgeai_safe_apply_bridge_plan():
+    return {
+        "ok": True,
+        "phase": "ADM-4D-1",
+        "name": "Safe Worker Apply Bridge",
+        "status": "planning",
+        "execution": "locked",
+        "safe_to_execute": False,
+        "purpose": "Allow IdeasForgeAI Founder Office to move from manual PowerShell work toward approval-gated worker actions.",
+        "current_state": {
+            "worker_registry": "active",
+            "job_queue": "active",
+            "audit_logs": "active",
+            "persistence": "active",
+            "real_file_apply": "locked",
+            "deploy_commit_delete": "locked"
+        },
+        "required_flow": [
+            "Founder asks for a change inside Founder Office.",
+            "Admin brain classifies the request.",
+            "Worker creates a dry-run plan only.",
+            "Worker identifies target files and risk level.",
+            "Founder reviews the dry-run plan.",
+            "Founder approves or rejects.",
+            "Approved job moves to apply-request state.",
+            "Future ADM-4D worker bridge applies only the approved patch.",
+            "Audit Logs record every step.",
+            "Rollback snapshot is kept before any file write."
+        ],
+        "approval_gates": {
+            "file_change": "founder_approval_required",
+            "backend_change": "founder_approval_required",
+            "frontend_change": "founder_approval_required",
+            "commit": "founder_approval_required",
+            "deploy": "founder_approval_required",
+            "delete": "blocked_until_explicit_approval",
+            "secrets": "never_exposed_to_frontend"
+        },
+        "allowed_now": [
+            "read worker registry",
+            "read job queue",
+            "read audit logs",
+            "read persistence state",
+            "create dry-run job records",
+            "approve or reject queued dry-runs",
+            "record apply request"
+        ],
+        "blocked_now": [
+            "automatic file modification",
+            "automatic git commit",
+            "automatic deploy",
+            "automatic delete",
+            "frontend OpenAI calls",
+            "secret exposure",
+            "unapproved worker execution"
+        ],
+        "next_phases": [
+            {
+                "phase": "ADM-4D-2",
+                "name": "Dry-run diff generator",
+                "goal": "Worker generates proposed file diffs without applying them."
+            },
+            {
+                "phase": "ADM-4D-3",
+                "name": "Founder approval for generated diff",
+                "goal": "Founder reviews exact planned changes before apply."
+            },
+            {
+                "phase": "ADM-4D-4",
+                "name": "Apply approved patch safely",
+                "goal": "Only approved patch is written to disk with audit trail."
+            },
+            {
+                "phase": "ADM-4D-5",
+                "name": "Rollback snapshot and safety test",
+                "goal": "Rollback file state if patch fails or founder rejects result."
+            }
+        ],
+        "source": "admin-safe-worker-apply-bridge-plan"
+    }
+
+
+@app.get("/api/admin/safe-apply-plan")
+async def ideasforgeai_get_safe_apply_plan():
+    return _ideasforgeai_safe_apply_bridge_plan()
+# ADM-4D-1 SAFE WORKER APPLY BRIDGE PLAN END
+
