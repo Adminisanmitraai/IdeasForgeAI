@@ -3623,3 +3623,216 @@ ul.if-rich-list > li::before {
 }
 
 /* CHAT-FORMAT-PHASE2C-CLEANUP-END */
+
+
+/* CHAT-ONLY-FINAL-POLISH-START */
+
+@media (max-width: 760px) {
+  /*
+    CHAT MODE ONLY.
+    Landing page / hero composer remains untouched.
+  */
+
+  body.if-original-chat-live .composer.hero-composer {
+    display: none !important;
+  }
+
+  body.if-original-chat-live form.composer.chat-composer,
+  body.if-original-chat-live .composer.chat-composer {
+    position: fixed !important;
+
+    left: 22px !important;
+    right: auto !important;
+    width: calc(100vw - 44px) !important;
+    max-width: calc(100vw - 44px) !important;
+
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 18px) !important;
+
+    height: 64px !important;
+    min-height: 64px !important;
+    max-height: 64px !important;
+
+    padding: 6px 8px !important;
+    border-radius: 999px !important;
+
+    display: grid !important;
+    grid-template-columns: 46px minmax(0, 1fr) 40px 48px !important;
+    gap: 6px !important;
+    align-items: center !important;
+
+    box-sizing: border-box !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    z-index: 999 !important;
+
+    background: linear-gradient(180deg, rgba(78,80,88,0.64), rgba(58,60,68,0.57)) !important;
+    box-shadow:
+      0 10px 24px rgba(0,0,0,0.30),
+      inset 0 0 0 1px rgba(255,255,255,0.12) !important;
+
+    backdrop-filter: blur(22px) !important;
+    -webkit-backdrop-filter: blur(22px) !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-mode {
+    display: none !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-plus {
+    width: 46px !important;
+    height: 52px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 0 !important;
+
+    font-size: 0 !important;
+    line-height: 0 !important;
+    transform: none !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-plus svg.if-chat-plus-final {
+    width: 25px !important;
+    height: 25px !important;
+    display: block !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer textarea,
+  body.if-original-chat-live .composer.chat-composer input,
+  body.if-original-chat-live .composer.chat-composer .composer-input {
+    height: 52px !important;
+    min-height: 52px !important;
+    max-height: 52px !important;
+
+    line-height: 52px !important;
+    padding: 0 4px !important;
+    margin: 0 !important;
+
+    font-size: 18px !important;
+    align-self: center !important;
+
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-mic {
+    width: 40px !important;
+    height: 52px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-mic svg.if-chat-mic-final {
+    width: 25px !important;
+    height: 25px !important;
+    display: block !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-send {
+    width: 46px !important;
+    height: 46px !important;
+    min-width: 46px !important;
+    max-width: 46px !important;
+    min-height: 46px !important;
+    max-height: 46px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+    border-radius: 999px !important;
+
+    display: grid !important;
+    place-items: center !important;
+
+    overflow: hidden !important;
+    transform: none !important;
+    color: #050507 !important;
+
+    box-shadow: 0 7px 18px rgba(180,170,255,0.14) !important;
+  }
+
+  body.if-original-chat-live .composer.chat-composer .composer-send svg.if-chat-send-final {
+    width: 25px !important;
+    height: 25px !important;
+    display: block !important;
+    margin: 0 !important;
+    transform: translateX(1px) translateY(0) !important;
+  }
+
+  body.if-original-chat-live {
+    padding-bottom: 78px !important;
+  }
+}
+
+/* CHAT-ONLY-FINAL-POLISH-END */
+
+
+/* TOP-LEFT-DOWN-10PX-START */
+@media (max-width: 760px) {
+  body.if-original-chat-live button[aria-label="Menu"],
+  body.if-original-chat-live .menu-button,
+  body.if-original-chat-live .mobile-menu-button,
+  body.if-original-chat-live .hamburger,
+  body.if-original-chat-live .sidebar-toggle {
+    transform: translateY(10px) !important;
+  }
+
+  body.if-original-chat-live .brand,
+  body.if-original-chat-live .brand-wrap,
+  body.if-original-chat-live .logo-wrap,
+  body.if-original-chat-live .home-brand,
+  body.if-original-chat-live .mobile-brand {
+    transform: translateY(10px) !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+}
+/* TOP-LEFT-DOWN-10PX-END */
+
+
+/* MENU-DOWN-10PX-ONLY-START */
+@media (max-width: 760px) {
+  body.if-original-chat-live button[aria-label="Menu"],
+  body.if-original-chat-live .menu-button,
+  body.if-original-chat-live .mobile-menu-button,
+  body.if-original-chat-live .hamburger,
+  body.if-original-chat-live .sidebar-toggle {
+    transform: translateY(10px) !important;
+  }
+}
+/* MENU-DOWN-10PX-ONLY-END */
+
+
+/* MENU-DOWN-5PX-MORE-START */
+@media (max-width: 760px) {
+  body.if-original-chat-live button[aria-label="Menu"],
+  body.if-original-chat-live .menu-button,
+  body.if-original-chat-live .mobile-menu-button,
+  body.if-original-chat-live .hamburger,
+  body.if-original-chat-live .sidebar-toggle {
+    transform: translateY(15px) !important;
+  }
+}
+/* MENU-DOWN-5PX-MORE-END */
+

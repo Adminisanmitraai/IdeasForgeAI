@@ -1359,3 +1359,67 @@
   console.log("IdeasForgeAI Chat Format Phase 2C cleanup active");
 })();
 // CHAT-FORMAT-PHASE2C-CLEANUP-END
+
+
+// CHAT-ONLY-FINAL-POLISH-START
+(function () {
+  if (window.__IF_CHAT_ONLY_FINAL_POLISH__) return;
+  window.__IF_CHAT_ONLY_FINAL_POLISH__ = true;
+
+  function isChatMode() {
+    return (
+      window.location.search.indexOf("chat=1") !== -1 ||
+      document.body.classList.contains("if-original-chat-live")
+    );
+  }
+
+  function renderChatComposerIcons() {
+    if (!isChatMode()) return;
+
+    document.querySelectorAll(".composer.chat-composer").forEach(function (composer) {
+      var plus = composer.querySelector(".composer-plus");
+      var mic = composer.querySelector(".composer-mic");
+      var send = composer.querySelector(".composer-send");
+
+      if (plus) {
+        plus.innerHTML =
+          '<svg class="if-chat-plus-final" viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M12 5.6v12.8M5.6 12h12.8" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>' +
+          '</svg>';
+      }
+
+      if (mic) {
+        mic.innerHTML =
+          '<svg class="if-chat-mic-final" viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M12 4.4a3.2 3.2 0 0 0-3.2 3.2v4.2a3.2 3.2 0 0 0 6.4 0V7.6A3.2 3.2 0 0 0 12 4.4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+            '<path d="M5.8 11.4c0 3.45 2.6 6.1 6.2 6.1s6.2-2.65 6.2-6.1M12 17.5v3.1" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' +
+          '</svg>';
+      }
+
+      if (send) {
+        send.innerHTML =
+          '<svg class="if-chat-send-final" viewBox="0 0 24 24" aria-hidden="true">' +
+            '<rect x="5.0" y="9.4" width="2.65" height="5.2" rx="1.32" fill="currentColor"/>' +
+            '<rect x="9.1" y="6.7" width="2.65" height="10.6" rx="1.32" fill="currentColor"/>' +
+            '<rect x="13.2" y="5.2" width="2.65" height="13.6" rx="1.32" fill="currentColor"/>' +
+            '<rect x="17.3" y="8.0" width="2.65" height="8.0" rx="1.32" fill="currentColor"/>' +
+          '</svg>';
+      }
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", renderChatComposerIcons);
+  } else {
+    renderChatComposerIcons();
+  }
+
+  window.addEventListener("pageshow", renderChatComposerIcons);
+  window.addEventListener("resize", renderChatComposerIcons);
+
+  setTimeout(renderChatComposerIcons, 80);
+  setTimeout(renderChatComposerIcons, 350);
+  setTimeout(renderChatComposerIcons, 900);
+  setTimeout(renderChatComposerIcons, 1600);
+})();
+// CHAT-ONLY-FINAL-POLISH-END
