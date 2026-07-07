@@ -5857,26 +5857,27 @@ async def ideasforgeai_chat(payload: _IdeasForgeAIChatRequest):
 # CHAT-BRAIN-2B-END
 
 
-# HOME-CHAT-BRAIN-PASS1-START
+# HOME-CHAT-BRAIN-PASS2-START
 # Dedicated IdeasForgeAI homepage chat brain endpoint.
-# This avoids touching the existing /api/chat route used by Studio/ForgeCode.
+# Uses OpenAI Responses API with retry + safe local fallback.
 
-import os as _home_os
-import json as _home_json
-import urllib.request as _home_urllib_request
-import urllib.error as _home_urllib_error
-from typing import Any as _HomeAny, Dict as _HomeDict, List as _HomeList, Optional as _HomeOptional
-from pydantic import BaseModel as _HomeBaseModel
+import os as _home2_os
+import json as _home2_json
+import time as _home2_time
+import urllib.request as _home2_urllib_request
+import urllib.error as _home2_urllib_error
+from typing import Any as _Home2Any, Dict as _Home2Dict, List as _Home2List, Optional as _Home2Optional
+from pydantic import BaseModel as _Home2BaseModel
 
 
-class _IdeasForgeHomeChatRequest(_HomeBaseModel):
+class _IdeasForgeHomeChatRequest2(_Home2BaseModel):
     message: str
-    page: _HomeOptional[str] = "home"
-    mode: _HomeOptional[str] = "main"
-    history: _HomeOptional[_HomeList[_HomeDict[str, _HomeAny]]] = None
+    page: _Home2Optional[str] = "home"
+    mode: _Home2Optional[str] = "main"
+    history: _Home2Optional[_Home2List[_Home2Dict[str, _Home2Any]]] = None
 
 
-_IDEASFORGE_HOME_SYSTEM_PROMPT = """
+_IDEASFORGE_HOME_SYSTEM_PROMPT_2 = """
 You are the official IdeasForgeAI homepage assistant.
 
 IdeasForgeAI is an AI creation, coding, and professional work platform.
@@ -5904,12 +5905,32 @@ Your job:
 """
 
 
-def _ideasforge_home_extract_text(data: _HomeDict[str, _HomeAny]) -> str:
+def _ideasforge_home_build_input_2(payload: _IdeasForgeHomeChatRequest2) -> str:
+    lines: _Home2List[str] = []
+
+    history = payload.history or []
+    for item in history[-8:]:
+        if not isinstance(item, dict):
+            continue
+        role = str(item.get("role", "")).strip().lower()
+        content = str(item.get("content", "")).strip()
+        if role in ("user", "assistant") and content:
+            label = "User" if role == "user" else "Assistant"
+            lines.append(f"{label}: {content[:1600]}")
+
+    user_message = (payload.message or "").strip()
+    lines.append(f"User: {user_message}")
+    lines.append("Assistant:")
+
+    return "\n".join(lines)
+
+
+def _ideasforge_home_extract_text_2(data: _Home2Dict[str, _Home2Any]) -> str:
     direct = data.get("output_text")
     if isinstance(direct, str) and direct.strip():
         return direct.strip()
 
-    parts: _HomeList[str] = []
+    parts: _Home2List[str] = []
     output = data.get("output")
     if isinstance(output, list):
         for item in output:
@@ -5928,11 +5949,60 @@ def _ideasforge_home_extract_text(data: _HomeDict[str, _HomeAny]) -> str:
     if parts:
         return "\n".join(parts).strip()
 
-    return "I received a response, but could not read the answer text."
+    return ""
+
+
+def _ideasforge_home_local_fallback_2(user_message: str) -> str:
+    text = user_message.lower()
+
+    if "ideasforge" in text or "what is this app" in text or "how can it help" in text:
+        return (
+            "IdeasForgeAI is an AI creation, coding, and professional work platform. "
+            "It helps users start with a normal idea, problem, or task and turn it into useful output with AI.\n\n"
+            "ForgeStudio helps create apps, websites, UI screens, images, logos, documents, presentations, "
+            "dashboards, and prototypes.\n\n"
+            "ForgeCode helps analyze projects, write code, fix bugs, test, review changes, and plan deployment.\n\n"
+            "ForgeWork helps professionals with research, documents, reports, workflows, templates, tasks, "
+            "dashboards, and role-specific work support.\n\n"
+            "In simple words: IdeasForgeAI is designed to help users create, code, and work with AI without needing "
+            "to become AI experts first."
+        )
+
+    return (
+        "IdeasForgeAI Home Chat Brain is installed, but the AI model response is temporarily unavailable. "
+        "Please try again in a moment."
+    )
+
+
+def _ideasforge_home_call_openai_2(api_key: str, model: str, prompt_input: str) -> _Home2Dict[str, _Home2Any]:
+    body: _Home2Dict[str, _Home2Any] = {
+        "model": model,
+        "instructions": _IDEASFORGE_HOME_SYSTEM_PROMPT_2,
+        "input": prompt_input,
+        "max_output_tokens": 800
+    }
+
+    # Some model families may not accept temperature. Keep it conservative.
+    if not model.startswith("gpt-5"):
+        body["temperature"] = 0.35
+
+    req = _home2_urllib_request.Request(
+        "https://api.openai.com/v1/responses",
+        data=_home2_json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": "Bearer " + api_key,
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+
+    with _home2_urllib_request.urlopen(req, timeout=45) as res:
+        raw = res.read().decode("utf-8")
+        return _home2_json.loads(raw)
 
 
 @app.post("/api/home-chat")
-async def ideasforge_home_chat(payload: _IdeasForgeHomeChatRequest):
+async def ideasforge_home_chat_2(payload: _IdeasForgeHomeChatRequest2):
     user_message = (payload.message or "").strip()
 
     if not user_message:
@@ -5942,92 +6012,84 @@ async def ideasforge_home_chat(payload: _IdeasForgeHomeChatRequest):
             "source": "ideasforgeai-home-chat"
         }
 
-    api_key = _home_os.getenv("OPENAI_API_KEY", "").strip()
-    model = _home_os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
+    api_key = _home2_os.getenv("OPENAI_API_KEY", "").strip()
+    primary_model = _home2_os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
 
     if not api_key:
         return {
-            "ok": False,
+            "ok": True,
             "configured": False,
-            "answer": (
-                "IdeasForgeAI Home Chat Brain is installed, but OPENAI_API_KEY "
-                "is not set on the backend yet."
-            ),
-            "source": "ideasforgeai-home-chat"
+            "answer": _ideasforge_home_local_fallback_2(user_message),
+            "source": "local-home-product-fallback"
         }
 
-    history = payload.history or []
-    clean_history: _HomeList[_HomeDict[str, str]] = []
+    prompt_input = _ideasforge_home_build_input_2(payload)
 
-    for item in history[-8:]:
-        if not isinstance(item, dict):
-            continue
-        role = str(item.get("role", "")).strip().lower()
-        content = str(item.get("content", "")).strip()
-        if role in ("user", "assistant") and content:
-            clean_history.append({
-                "role": role,
-                "content": content[:2000]
-            })
+    model_candidates: _Home2List[str] = []
+    for m in [primary_model, "gpt-4.1-mini", "gpt-4o-mini"]:
+        if m and m not in model_candidates:
+            model_candidates.append(m)
 
-    openai_input: _HomeList[_HomeDict[str, str]] = [
-        {
-            "role": "system",
-            "content": _IDEASFORGE_HOME_SYSTEM_PROMPT
-        }
-    ]
-    openai_input.extend(clean_history)
-    openai_input.append({
-        "role": "user",
-        "content": user_message
-    })
+    last_error: _Home2Dict[str, _Home2Any] = {}
 
-    body = {
-        "model": model,
-        "input": openai_input,
-        "temperature": 0.35,
-        "max_output_tokens": 900
+    for model in model_candidates:
+        for attempt in range(1, 3):
+            try:
+                data = _ideasforge_home_call_openai_2(api_key, model, prompt_input)
+                answer = _ideasforge_home_extract_text_2(data)
+
+                if answer:
+                    return {
+                        "ok": True,
+                        "answer": answer,
+                        "model": model,
+                        "source": "openai-home-chat"
+                    }
+
+                last_error = {
+                    "status": "empty_response",
+                    "model": model,
+                    "attempt": attempt
+                }
+
+            except _home2_urllib_error.HTTPError as e:
+                detail = e.read().decode("utf-8", errors="replace")
+                last_error = {
+                    "status": e.code,
+                    "model": model,
+                    "attempt": attempt,
+                    "detail": detail[:1200]
+                }
+
+                # Auth/permission errors will not be fixed by retrying.
+                if e.code in (401, 403):
+                    return {
+                        "ok": False,
+                        "answer": "The OpenAI API key is missing, invalid, or not allowed to use this model.",
+                        "error_status": e.code,
+                        "error_detail": detail[:1200],
+                        "source": "ideasforgeai-home-chat"
+                    }
+
+                _home2_time.sleep(0.8 * attempt)
+
+            except Exception as e:
+                last_error = {
+                    "status": "exception",
+                    "model": model,
+                    "attempt": attempt,
+                    "detail": str(e)[:1200]
+                }
+                _home2_time.sleep(0.8 * attempt)
+
+    fallback = _ideasforge_home_local_fallback_2(user_message)
+
+    return {
+        "ok": True,
+        "fallback": True,
+        "answer": fallback,
+        "error_detail": last_error,
+        "source": "local-home-product-fallback"
     }
 
-    req = _home_urllib_request.Request(
-        "https://api.openai.com/v1/responses",
-        data=_home_json.dumps(body).encode("utf-8"),
-        headers={
-            "Authorization": "Bearer " + api_key,
-            "Content-Type": "application/json"
-        },
-        method="POST"
-    )
-
-    try:
-        with _home_urllib_request.urlopen(req, timeout=45) as res:
-            raw = res.read().decode("utf-8")
-            data = _home_json.loads(raw)
-            answer = _ideasforge_home_extract_text(data)
-
-            return {
-                "ok": True,
-                "answer": answer,
-                "model": model,
-                "source": "openai-home-chat"
-            }
-
-    except _home_urllib_error.HTTPError as e:
-        detail = e.read().decode("utf-8", errors="replace")
-        return {
-            "ok": False,
-            "answer": "The IdeasForgeAI Home Chat Brain could not get a model response.",
-            "error_status": e.code,
-            "error_detail": detail[:1200],
-            "source": "ideasforgeai-home-chat"
-        }
-
-    except Exception as e:
-        return {
-            "ok": False,
-            "answer": "The IdeasForgeAI Home Chat Brain had an error while generating the answer.",
-            "error_detail": str(e)[:1200],
-            "source": "ideasforgeai-home-chat"
-        }
-
-# HOME-CHAT-BRAIN-PASS1-END
+# HOME-CHAT-BRAIN-PASS2-END

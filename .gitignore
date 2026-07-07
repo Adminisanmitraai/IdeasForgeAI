@@ -78,3 +78,11 @@ __pycache__/
 # Local secrets
 .env
 backend/.env
+
+# Local patch backups
+frontend/pages/_*/
+backend/_*/
+_deployment/
+*.bak
+*.tmp
+
