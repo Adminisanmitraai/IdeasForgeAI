@@ -7431,3 +7431,341 @@ async def ideasforgeai_get_safe_apply_plan():
     return _ideasforgeai_safe_apply_bridge_plan()
 # ADM-4D-1 SAFE WORKER APPLY BRIDGE PLAN END
 
+
+# ADM-4D-2 DRY-RUN DIFF GENERATOR
+def _ifai_adm4d_now_iso():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
+def _ifai_adm4d_id(prefix):
+    from datetime import datetime, timezone
+    return prefix + "-" + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")
+
+
+def _ifai_adm4d_root():
+    from pathlib import Path
+    return Path(__file__).resolve().parents[1]
+
+
+def _ifai_adm4d_safe_target(relative_path):
+    from pathlib import Path
+
+    root = _ifai_adm4d_root()
+    rel = str(relative_path or "").replace("\\", "/").strip().lstrip("/")
+
+    if not rel:
+        rel = "frontend/admin/founder-office.html"
+
+    blocked_fragments = [
+        ".env",
+        "secret",
+        "secrets",
+        "private",
+        "credential",
+        "credentials",
+        "token",
+        "apikey",
+        "api_key",
+        "service-role",
+        "service_role"
+    ]
+
+    lower = rel.lower()
+
+    if any(part in lower for part in blocked_fragments):
+        return None, rel, "blocked_secret_or_sensitive_path"
+
+    if rel.startswith("../") or "/../" in rel or rel == "..":
+        return None, rel, "blocked_path_traversal"
+
+    allowed = (
+        rel.startswith("frontend/admin/") or
+        rel.startswith("frontend/pages/") or
+        rel == "backend/main.py"
+    )
+
+    if not allowed:
+        return None, rel, "blocked_target_not_in_allowlist"
+
+    path = (root / rel).resolve()
+
+    try:
+        path.relative_to(root)
+    except Exception:
+        return None, rel, "blocked_outside_project_root"
+
+    if not path.exists():
+        return None, rel, "target_file_missing"
+
+    if not path.is_file():
+        return None, rel, "target_not_file"
+
+    return path, rel, None
+
+
+def _ifai_adm4d_comment_block(relative_path, request_text):
+    safe_request = str(request_text or "").strip()
+    if len(safe_request) > 500:
+        safe_request = safe_request[:500] + "..."
+
+    lower = str(relative_path or "").lower()
+
+    if lower.endswith(".html"):
+        return (
+            "\n\n<!-- ADM-4D-2 DRY-RUN PROPOSAL\n"
+            "Request: " + safe_request + "\n"
+            "Safety: This is a generated diff preview only. No file was changed.\n"
+            "Apply requires founder approval in ADM-4D.\n"
+            "-->\n"
+        )
+
+    if lower.endswith(".css"):
+        return (
+            "\n\n/* ADM-4D-2 DRY-RUN PROPOSAL\n"
+            "Request: " + safe_request + "\n"
+            "Safety: This is a generated diff preview only. No file was changed.\n"
+            "Apply requires founder approval in ADM-4D.\n"
+            "*/\n"
+        )
+
+    if lower.endswith(".js") or lower.endswith(".ts"):
+        return (
+            "\n\n// ADM-4D-2 DRY-RUN PROPOSAL\n"
+            "// Request: " + safe_request + "\n"
+            "// Safety: This is a generated diff preview only. No file was changed.\n"
+            "// Apply requires founder approval in ADM-4D.\n"
+        )
+
+    if lower.endswith(".py"):
+        return (
+            "\n\n# ADM-4D-2 DRY-RUN PROPOSAL\n"
+            "# Request: " + safe_request + "\n"
+            "# Safety: This is a generated diff preview only. No file was changed.\n"
+            "# Apply requires founder approval in ADM-4D.\n"
+        )
+
+    return (
+        "\n\nADM-4D-2 DRY-RUN PROPOSAL\n"
+        "Request: " + safe_request + "\n"
+        "Safety: This is a generated diff preview only. No file was changed.\n"
+        "Apply requires founder approval in ADM-4D.\n"
+    )
+
+
+def _ifai_adm4d_generate_diff(relative_path, original_text, request_text):
+    import difflib
+
+    original_lines = original_text.splitlines(keepends=True)
+    proposal = original_text.rstrip() + _ifai_adm4d_comment_block(relative_path, request_text)
+    proposed_lines = proposal.splitlines(keepends=True)
+
+    diff_lines = list(difflib.unified_diff(
+        original_lines,
+        proposed_lines,
+        fromfile="a/" + relative_path,
+        tofile="b/" + relative_path,
+        lineterm=""
+    ))
+
+    diff_text = "\n".join(diff_lines)
+
+    return {
+        "diff": diff_text,
+        "diff_preview": "\n".join(diff_lines[:160]),
+        "diff_lines": len(diff_lines),
+        "original_lines": len(original_lines),
+        "proposed_lines": len(proposed_lines),
+        "summary": "Dry-run diff generated. No file was changed."
+    }
+
+
+def _ifai_adm4d_data_path(filename):
+    from pathlib import Path
+    root = _ifai_adm4d_root()
+    data_dir = root / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir / filename
+
+
+def _ifai_adm4d_read_list(filename):
+    import json
+    path = _ifai_adm4d_data_path(filename)
+
+    if not path.exists():
+        return []
+
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+
+def _ifai_adm4d_write_list(filename, items):
+    import json
+    path = _ifai_adm4d_data_path(filename)
+    path.write_text(json.dumps(items, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _ifai_adm4d_add_job(job):
+    jobs = _ifai_adm4d_read_list("admin_job_queue.json")
+    jobs.insert(0, job)
+    _ifai_adm4d_write_list("admin_job_queue.json", jobs)
+
+
+def _ifai_adm4d_add_audit_event(title, status, payload):
+    event = {
+        "id": _ifai_adm4d_id("AUD"),
+        "title": title,
+        "status": status,
+        "area": payload.get("target_area") or payload.get("area") or "Safe Worker Apply",
+        "risk": payload.get("risk", "Low"),
+        "actor": "founder_admin",
+        "time": _ifai_adm4d_now_iso(),
+        "payload": payload
+    }
+
+    audit = _ifai_adm4d_read_list("admin_audit_logs.json")
+    audit.insert(0, event)
+    _ifai_adm4d_write_list("admin_audit_logs.json", audit)
+
+    return event
+
+
+@app.post("/api/admin/dry-run-diff")
+async def ideasforgeai_create_dry_run_diff(request: Request):
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+
+    request_text = str(payload.get("request") or payload.get("message") or "").strip()
+    target_file = str(payload.get("target_file") or payload.get("file") or "frontend/admin/founder-office.html").strip()
+    target_area = str(payload.get("target_area") or payload.get("area") or "Founder Office").strip()
+    risk = str(payload.get("risk") or "Low").strip()
+
+    if not request_text:
+        return {
+            "ok": False,
+            "error": "missing_request",
+            "message": "A dry-run request is required.",
+            "execution": "locked"
+        }
+
+    path, rel, block_reason = _ifai_adm4d_safe_target(target_file)
+
+    if block_reason:
+        audit = _ifai_adm4d_add_audit_event(
+            "Dry-run diff request blocked",
+            "blocked",
+            {
+                "phase": "ADM-4D-2",
+                "request": request_text,
+                "target_area": target_area,
+                "target_file": rel,
+                "risk": risk,
+                "block_reason": block_reason,
+                "execution": "locked"
+            }
+        )
+
+        return {
+            "ok": False,
+            "error": block_reason,
+            "message": "Dry-run diff was blocked by safe target validation.",
+            "audit": audit,
+            "execution": "locked"
+        }
+
+    try:
+        original = path.read_text(encoding="utf-8", errors="replace")
+    except Exception as exc:
+        return {
+            "ok": False,
+            "error": "read_failed",
+            "message": str(exc),
+            "execution": "locked"
+        }
+
+    diff = _ifai_adm4d_generate_diff(rel, original, request_text)
+
+    job = {
+        "id": _ifai_adm4d_id("DRY"),
+        "status": "waiting_approval",
+        "execution": "locked",
+        "phase": "ADM-4D-2",
+        "request": request_text,
+        "target_area": target_area,
+        "target_file": rel,
+        "risk": risk,
+        "created_at": _ifai_adm4d_now_iso(),
+        "approved_at": None,
+        "rejected_at": None,
+        "apply_requested_at": None,
+        "actor": "founder_admin",
+        "notes": "Dry-run diff generated. No file was changed. Founder approval required before apply.",
+        "dry_run": {
+            "kind": "diff_preview",
+            "summary": diff["summary"],
+            "diff_lines": diff["diff_lines"],
+            "original_lines": diff["original_lines"],
+            "proposed_lines": diff["proposed_lines"],
+            "diff_preview": diff["diff_preview"],
+            "diff": diff["diff"]
+        }
+    }
+
+    _ifai_adm4d_add_job(job)
+
+    audit = _ifai_adm4d_add_audit_event(
+        "Dry-run diff generated",
+        "waiting_approval",
+        {
+            "phase": "ADM-4D-2",
+            "job_id": job["id"],
+            "request": request_text,
+            "target_area": target_area,
+            "target_file": rel,
+            "risk": risk,
+            "diff_lines": diff["diff_lines"],
+            "execution": "locked"
+        }
+    )
+
+    return {
+        "ok": True,
+        "phase": "ADM-4D-2",
+        "job": job,
+        "audit": audit,
+        "diff_preview": diff["diff_preview"],
+        "message": "Dry-run diff generated. No file was changed. Founder approval required.",
+        "execution": "locked",
+        "safe_to_execute": False,
+        "source": "admin-dry-run-diff-generator"
+    }
+
+
+@app.get("/api/admin/dry-run-diff/{job_id}")
+async def ideasforgeai_get_dry_run_diff(job_id: str):
+    jobs = _ifai_adm4d_read_list("admin_job_queue.json")
+
+    for job in jobs:
+        if str(job.get("id")) == str(job_id):
+            return {
+                "ok": True,
+                "phase": "ADM-4D-2",
+                "job": job,
+                "diff_preview": job.get("dry_run", {}).get("diff_preview", ""),
+                "execution": job.get("execution", "locked"),
+                "safe_to_execute": False
+            }
+
+    return {
+        "ok": False,
+        "error": "job_not_found",
+        "job_id": job_id,
+        "execution": "locked"
+    }
+# ADM-4D-2 DRY-RUN DIFF GENERATOR END
+
