@@ -669,3 +669,116 @@
   setTimeout(applySubmitWaveExactCenterPass47, 900);
 })();
 // HOME-SUBMIT-WAVE-EXACT-CENTER-PASS47-END
+
+
+// MOBILE-CHAT-1-FIXED-COMPOSER-SCROLL-START
+(function () {
+  function isMobileChat() {
+    return window.matchMedia("(max-width: 760px)").matches &&
+      new URLSearchParams(window.location.search).get("chat") === "1";
+  }
+
+  function lockMobileChatPage() {
+    if (!isMobileChat()) return;
+
+    document.documentElement.classList.add("if-original-chat-live", "if-mobile-chat-fixed");
+    document.body.classList.add("if-original-chat-live", "if-mobile-chat-fixed");
+
+    const thread =
+      document.querySelector(".if-original-live-thread") ||
+      document.querySelector(".if-live-chat-thread") ||
+      document.querySelector(".chat-messages") ||
+      document.querySelector(".messages") ||
+      document.querySelector(".conversation") ||
+      document.querySelector(".thread");
+
+    if (thread) {
+      thread.style.overflowY = "auto";
+      thread.style.webkitOverflowScrolling = "touch";
+      thread.style.touchAction = "pan-y";
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    window.scrollTo(0, 0);
+  }
+
+  function preventBodyDrag(event) {
+    if (!isMobileChat()) return;
+
+    const scrollTarget = event.target.closest(
+      ".if-original-live-thread, .if-live-chat-thread, .chat-messages, .messages, .conversation, .thread, textarea"
+    );
+
+    if (scrollTarget) return;
+
+    event.preventDefault();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", lockMobileChatPage);
+  } else {
+    lockMobileChatPage();
+  }
+
+  window.addEventListener("pageshow", lockMobileChatPage);
+  window.addEventListener("resize", lockMobileChatPage);
+  window.addEventListener("orientationchange", function () {
+    setTimeout(lockMobileChatPage, 250);
+  });
+
+  document.addEventListener("touchmove", preventBodyDrag, { passive: false });
+
+  setTimeout(lockMobileChatPage, 100);
+  setTimeout(lockMobileChatPage, 500);
+  setTimeout(lockMobileChatPage, 1200);
+})();
+// MOBILE-CHAT-1-FIXED-COMPOSER-SCROLL-END
+
+
+// MOBILE-COMPOSER-ICON-SAFE-FINAL-START
+(function () {
+  function restoreMobileSendIcon() {
+    if (!window.matchMedia("(max-width: 760px)").matches) return;
+
+    document.querySelectorAll("body.if-original-chat-live .composer").forEach(function (composer) {
+      /* Remove only stray direct waveform icons that got detached from the send button */
+      Array.from(composer.children).forEach(function (child) {
+        if (!child) return;
+        if (child.classList && (
+          child.className.toString().indexOf("wave") !== -1 ||
+          child.className.toString().indexOf("send") !== -1
+        ) && !child.classList.contains("composer-send")) {
+          child.remove();
+        }
+
+        if (child.tagName && child.tagName.toLowerCase() === "svg") {
+          child.remove();
+        }
+      });
+    });
+
+    document.querySelectorAll("body.if-original-chat-live .composer-send").forEach(function (button) {
+      button.innerHTML =
+        '<svg class="if-mobile-send-wave-fixed" viewBox="0 0 24 24" aria-hidden="true">' +
+          '<rect x="5.6" y="10.2" width="2.2" height="3.6" rx="1.1"></rect>' +
+          '<rect x="9.5" y="7.2" width="2.2" height="9.6" rx="1.1"></rect>' +
+          '<rect x="13.4" y="8.8" width="2.2" height="6.4" rx="1.1"></rect>' +
+          '<rect x="17.3" y="6.4" width="2.2" height="11.2" rx="1.1"></rect>' +
+        '</svg>';
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", restoreMobileSendIcon);
+  } else {
+    restoreMobileSendIcon();
+  }
+
+  window.addEventListener("pageshow", restoreMobileSendIcon);
+  window.addEventListener("resize", restoreMobileSendIcon);
+
+  setTimeout(restoreMobileSendIcon, 100);
+  setTimeout(restoreMobileSendIcon, 500);
+  setTimeout(restoreMobileSendIcon, 1200);
+})();
+// MOBILE-COMPOSER-ICON-SAFE-FINAL-END
