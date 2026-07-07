@@ -3296,3 +3296,121 @@ body.sidebar-open .chat-composer {
 }
 
 /* MOBILE-COMPOSER-LOWEST-SAFE-END */
+
+
+/* CHAT-THINKING-FORMAT-FINAL-START */
+
+.if-final-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.if-final-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.if-final-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(168,128,255,0.98);
+  animation: ifFinalDotBlink 1.05s infinite ease-in-out;
+}
+
+.if-final-dots i:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.if-final-dots i:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.if-final-time {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 520;
+}
+
+@keyframes ifFinalDotBlink {
+  0%, 80%, 100% {
+    opacity: 0.25;
+    transform: translateY(0) scale(0.82);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+}
+
+.if-final-p {
+  margin: 0 0 12px;
+  line-height: 1.55;
+}
+
+.if-final-heading {
+  margin: 18px 0 10px;
+  font-size: 20px;
+  font-weight: 760;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.if-final-list {
+  margin: 10px 0 16px 22px;
+  padding: 0;
+}
+
+.if-final-list li {
+  margin: 7px 0;
+  padding-left: 4px;
+  line-height: 1.5;
+}
+
+.if-final-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 14px 0 18px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.045);
+}
+
+.if-final-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.if-final-table th,
+.if-final-table td {
+  padding: 12px 14px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.if-final-table th {
+  font-weight: 760;
+  color: rgba(255,255,255,0.96);
+  background: rgba(255,255,255,0.06);
+}
+
+.if-final-table td {
+  color: rgba(255,255,255,0.88);
+}
+
+.if-final-table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* CHAT-THINKING-FORMAT-FINAL-END */

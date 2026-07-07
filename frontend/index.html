@@ -1,6 +1,289 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
+<!-- IF-LIVE-BRAIN-HARD-OVERRIDE-START -->
+<script>
+(function () {
+  if (window.__IF_LIVE_BRAIN_HARD_OVERRIDE__) return;
+  window.__IF_LIVE_BRAIN_HARD_OVERRIDE__ = true;
+
+  const API_URL = "https://ideasforgeai-api.onrender.com/api/home-chat";
+  const PENDING_KEY = "ideasforgeai.livebrain.pending";
+
+  function esc(v) {
+    return String(v || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function formatAnswer(text) {
+    return esc(text || "")
+      .replace(/\*\*(.*?)\*\*/g, "<strong></strong>")
+      .split(/\n{2,}/)
+      .map(p => "<p>" + p.replace(/\n/g, "<br>") + "</p>")
+      .join("");
+  }
+
+  function box() {
+    return document.querySelector(".composer textarea") ||
+           document.querySelector(".home-composer textarea") ||
+           document.querySelector(".hero-composer textarea") ||
+           document.querySelector("textarea");
+  }
+
+  function thread() {
+    return document.querySelector(".if-original-live-thread") ||
+           document.querySelector(".if-live-chat-thread") ||
+           document.querySelector(".chat-messages") ||
+           document.querySelector(".messages") ||
+           document.querySelector(".conversation") ||
+           document.querySelector(".thread");
+  }
+
+  function scrollDown() {
+    const t = thread();
+    if (!t) return;
+    requestAnimationFrame(() => { t.scrollTop = t.scrollHeight; });
+  }
+
+  function addMsg(role, content, html) {
+    const t = thread();
+    if (!t) return null;
+
+    const row = document.createElement("div");
+    row.className = "if-original-msg-row " + (role === "user" ? "is-user" : "is-assistant");
+
+    const msg = document.createElement("div");
+    msg.className = "if-original-msg";
+
+    if (html) msg.innerHTML = content || "";
+    else msg.textContent = content || "";
+
+    row.appendChild(msg);
+    t.appendChild(row);
+    scrollDown();
+    return msg;
+  }
+
+  async function callBrain(message) {
+    const t = thread();
+
+    if (!t) {
+      sessionStorage.setItem(PENDING_KEY, message);
+      const url = new URL(location.href);
+      url.searchParams.set("chat", "1");
+      url.searchParams.set("v", "livebrainhard");
+      location.href = url.toString();
+      return;
+    }
+
+    addMsg("user", message, false);
+    const thinking = addMsg("assistant", "Thinking...", false);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: message,
+          page: "home",
+          mode: "main"
+        })
+      });
+
+      const data = await res.json();
+      const answer = data.answer || data.reply || "IdeasForgeAI could not get a proper answer.";
+
+      if (thinking) thinking.innerHTML = formatAnswer(answer);
+      scrollDown();
+    } catch (err) {
+      if (thinking) thinking.textContent = "IdeasForgeAI could not reach the live chat brain right now.";
+      console.error("IdeasForgeAI live brain failed:", err);
+    }
+  }
+
+  function submitNow(e) {
+    const input = box();
+    if (!input) return;
+
+    const sendClick =
+      e.type === "click" &&
+      e.target &&
+      e.target.closest &&
+      e.target.closest(".composer-send, .send-button, button[type='submit'], [data-send]");
+
+    const enterSend =
+      e.type === "keydown" &&
+      e.key === "Enter" &&
+      !e.shiftKey &&
+      e.target === input;
+
+    const formSubmit = e.type === "submit";
+
+    if (!sendClick && !enterSend && !formSubmit) return;
+
+    const message = (input.value || "").trim();
+    if (!message) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    input.value = "";
+    callBrain(message);
+  }
+
+  window.addEventListener("click", submitNow, true);
+  window.addEventListener("keydown", submitNow, true);
+  window.addEventListener("submit", submitNow, true);
+
+  function sendPending() {
+    const pending = sessionStorage.getItem(PENDING_KEY);
+    if (!pending) return;
+
+    sessionStorage.removeItem(PENDING_KEY);
+    setTimeout(() => callBrain(pending), 350);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", sendPending);
+  } else {
+    sendPending();
+  }
+
+  window.addEventListener("pageshow", sendPending);
+
+  console.log("IdeasForgeAI hard live brain override active:", API_URL);
+})();
+</script>
+<!-- IF-LIVE-BRAIN-HARD-OVERRIDE-END -->
+<!-- IF-UNIVERSAL-LIVE-BRAIN-ADAPTER-START -->
+<script>
+(function () {
+  if (window.__IF_UNIVERSAL_LIVE_BRAIN__) return;
+  window.__IF_UNIVERSAL_LIVE_BRAIN__ = true;
+
+  const API_URL = "https://ideasforgeai-api.onrender.com/api/home-chat";
+
+  function esc(v) {
+    return String(v || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function formatAnswer(text) {
+    return esc(text || "")
+      .replace(/\*\*(.*?)\*\*/g, "<strong></strong>")
+      .split(/\n{2,}/)
+      .map(function (p) {
+        return "<p>" + p.replace(/\n/g, "<br>") + "</p>";
+      })
+      .join("");
+  }
+
+  function getTextarea() {
+    return document.querySelector(".composer textarea") ||
+           document.querySelector(".home-composer textarea") ||
+           document.querySelector(".hero-composer textarea") ||
+           document.querySelector("textarea");
+  }
+
+  function getThread() {
+    return document.querySelector(".if-original-live-thread") ||
+           document.querySelector(".if-live-chat-thread") ||
+           document.querySelector(".chat-messages") ||
+           document.querySelector(".messages") ||
+           document.querySelector(".conversation") ||
+           document.querySelector(".thread") ||
+           document.querySelector("[data-chat-thread]");
+  }
+
+  function scrollThread() {
+    const t = getThread();
+    if (!t) return;
+    requestAnimationFrame(function () {
+      t.scrollTop = t.scrollHeight;
+    });
+  }
+
+  function addMessage(role, content, isHtml) {
+    const t = getThread();
+    if (!t) return null;
+
+    const row = document.createElement("div");
+    row.className = "if-original-msg-row " + (role === "user" ? "is-user" : "is-assistant");
+
+    const msg = document.createElement("div");
+    msg.className = "if-original-msg";
+
+    if (isHtml) msg.innerHTML = content || "";
+    else msg.textContent = content || "";
+
+    row.appendChild(msg);
+    t.appendChild(row);
+    scrollThread();
+
+    return msg;
+  }
+
+  async function callBrain(message) {
+    addMessage("user", message, false);
+    const thinking = addMessage("assistant", "Thinking...", false);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: message,
+          page: "home",
+          mode: "main"
+        })
+      });
+
+      const data = await res.json();
+      const answer = data.answer || data.reply || "IdeasForgeAI could not get a proper answer.";
+
+      if (thinking) thinking.innerHTML = formatAnswer(answer);
+      scrollThread();
+    } catch (err) {
+      if (thinking) {
+        thinking.textContent = "IdeasForgeAI could not reach the live chat brain right now.";
+      }
+      console.error("IdeasForgeAI live brain error:", err);
+    }
+  }
+
+  function submitLive(e) {
+    const sendButton = e.target && e.target.closest && e.target.closest(".composer-send, [data-send], button[type='submit']");
+    const box = getTextarea();
+
+    const enterSubmit = e.type === "keydown" && e.key === "Enter" && !e.shiftKey && box && e.target === box;
+    const clickSubmit = e.type === "click" && sendButton;
+
+    if (!enterSubmit && !clickSubmit) return;
+    if (!box) return;
+
+    const message = (box.value || "").trim();
+    if (!message) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+
+    box.value = "";
+    callBrain(message);
+  }
+
+  document.addEventListener("click", submitLive, true);
+  document.addEventListener("keydown", submitLive, true);
+
+  console.log("IdeasForgeAI universal live brain adapter active:", API_URL);
+})();
+</script>
+<!-- IF-UNIVERSAL-LIVE-BRAIN-ADAPTER-END -->
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>IdeasForgeAI</title>
@@ -17,3 +300,5 @@
   </noscript>
 </body>
 </html>
+
+

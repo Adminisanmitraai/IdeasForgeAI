@@ -221,7 +221,18 @@
     resizeTextarea(chatInput);
 
     setTimeout(() => {
-      appendAssistantMessage("I can help you turn this into a clear plan, polished design, production code, or a custom AI tool. Choose ForgeStudio, ForgeCode, or ForgeWork depending on what you want to create next.");
+      ideasForgeAIReplyFromLiveBrainPhase2A(
+  (
+    typeof userMessage !== "undefined" ? userMessage :
+    typeof message !== "undefined" ? message :
+    typeof text !== "undefined" ? text :
+    typeof userText !== "undefined" ? userText :
+    typeof inputValue !== "undefined" ? inputValue :
+    typeof value !== "undefined" ? value :
+    ""
+  ),
+  appendAssistantMessage
+);
       scrollToBottom();
     }, 180);
 
@@ -782,3 +793,305 @@
   setTimeout(restoreMobileSendIcon, 1200);
 })();
 // MOBILE-COMPOSER-ICON-SAFE-FINAL-END
+
+
+// CHAT-THINKING-FORMAT-FINAL-START
+(function () {
+  const API_URL = "https://ideasforgeai-api.onrender.com/api/home-chat";
+
+  function esc(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function normalizeAnswer(text) {
+    return String(text || "")
+      .replace(/\r/g, "")
+      .replace(/\s+(#{1,4}\s+)/g, "\n\n$1")
+      .replace(/\s+(\d+\.\s+\*\*)/g, "\n\n$1")
+      .replace(/\s+(\d+\.\s+[A-Z])/g, "\n\n$1")
+      .replace(/\s+(-\s+\*\*)/g, "\n$1")
+      .replace(/\s+(-\s+[A-Z])/g, "\n$1")
+      .trim();
+  }
+
+  function inlineFormat(text) {
+    return esc(text || "")
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/`([^`]+)`/g, "<code>$1</code>");
+  }
+
+  function isSeparator(line) {
+    return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line || "");
+  }
+
+  function splitCells(line) {
+    return String(line || "")
+      .trim()
+      .replace(/^\|/, "")
+      .replace(/\|$/, "")
+      .split("|")
+      .map(function (cell) { return cell.trim(); });
+  }
+
+  function buildTable(rows) {
+    if (!rows || rows.length < 2) return "";
+
+    let html = '<div class="if-final-table-wrap"><table class="if-final-table">';
+
+    rows.forEach(function (row, index) {
+      if (index === 0) {
+        html += "<thead><tr>";
+        row.forEach(function (cell) {
+          html += "<th>" + inlineFormat(cell) + "</th>";
+        });
+        html += "</tr></thead><tbody>";
+      } else {
+        html += "<tr>";
+        row.forEach(function (cell) {
+          html += "<td>" + inlineFormat(cell) + "</td>";
+        });
+        html += "</tr>";
+      }
+    });
+
+    html += "</tbody></table></div>";
+    return html;
+  }
+
+  function formatAnswer(text) {
+    const raw = normalizeAnswer(text);
+    if (!raw) return "";
+
+    const lines = raw.split("\n");
+    let html = "";
+    let paragraph = [];
+
+    function flushParagraph() {
+      if (!paragraph.length) return;
+      html += '<p class="if-final-p">' + inlineFormat(paragraph.join(" ")) + "</p>";
+      paragraph = [];
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (!line) {
+        flushParagraph();
+        continue;
+      }
+
+      if (line.indexOf("|") !== -1 && lines[i + 1] && isSeparator(lines[i + 1])) {
+        flushParagraph();
+
+        const rows = [];
+        rows.push(splitCells(line));
+        i += 2;
+
+        while (i < lines.length && lines[i].indexOf("|") !== -1) {
+          const current = lines[i].trim();
+          if (!isSeparator(current)) rows.push(splitCells(current));
+          i++;
+        }
+
+        i--;
+        html += buildTable(rows);
+        continue;
+      }
+
+      if (/^#{1,4}\s+/.test(line)) {
+        flushParagraph();
+        html += '<h3 class="if-final-heading">' + inlineFormat(line.replace(/^#{1,4}\s+/, "")) + "</h3>";
+        continue;
+      }
+
+      if (/^[-*•]\s+/.test(line)) {
+        flushParagraph();
+        html += '<ul class="if-final-list">';
+        while (i < lines.length && /^[-*•]\s+/.test(lines[i].trim())) {
+          html += "<li>" + inlineFormat(lines[i].trim().replace(/^[-*•]\s+/, "")) + "</li>";
+          i++;
+        }
+        i--;
+        html += "</ul>";
+        continue;
+      }
+
+      if (/^\d+\.\s+/.test(line)) {
+        flushParagraph();
+        html += '<ol class="if-final-list">';
+        while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
+          html += "<li>" + inlineFormat(lines[i].trim().replace(/^\d+\.\s+/, "")) + "</li>";
+          i++;
+        }
+        i--;
+        html += "</ol>";
+        continue;
+      }
+
+      paragraph.push(line);
+    }
+
+    flushParagraph();
+    return html;
+  }
+
+  function getThread() {
+    return (
+      document.querySelector(".if-original-live-thread") ||
+      document.querySelector(".if-live-chat-thread") ||
+      document.querySelector(".chat-messages") ||
+      document.querySelector(".messages") ||
+      document.querySelector(".conversation") ||
+      document.querySelector(".thread")
+    );
+  }
+
+  function scrollThread() {
+    const thread = getThread();
+    if (!thread) return;
+    requestAnimationFrame(function () {
+      thread.scrollTop = thread.scrollHeight;
+    });
+  }
+
+  function findLastUserMessage() {
+    const selectors = [
+      ".if-original-msg-row.is-user .if-original-msg",
+      ".if-live-msg-row.is-user .if-live-msg",
+      ".is-user .if-original-msg",
+      ".is-user",
+      "[data-role='user']"
+    ];
+
+    for (const selector of selectors) {
+      const items = Array.from(document.querySelectorAll(selector));
+      for (let i = items.length - 1; i >= 0; i--) {
+        const text = (items[i].textContent || "").trim();
+        if (text) return text;
+      }
+    }
+
+    return "";
+  }
+
+  function findNewestThinkingElement() {
+    const all = Array.from(document.querySelectorAll("div, p, span"));
+    for (let i = all.length - 1; i >= 0; i--) {
+      const text = (all[i].textContent || "").trim();
+      if (text.indexOf("Thinking") === 0) return all[i];
+    }
+    return null;
+  }
+
+  function appendAssistantDirect(html) {
+    const thread = getThread();
+    if (!thread) return null;
+
+    const row = document.createElement("div");
+    row.className = "if-original-msg-row is-assistant";
+
+    const msg = document.createElement("div");
+    msg.className = "if-original-msg";
+    msg.innerHTML = html || "";
+
+    row.appendChild(msg);
+    thread.appendChild(row);
+    scrollThread();
+    return msg;
+  }
+
+  function renderThinking(el, seconds) {
+    if (!el) return;
+
+    el.innerHTML =
+      '<span class="if-final-thinking">' +
+        '<span>Thinking</span>' +
+        '<span class="if-final-dots"><i></i><i></i><i></i></span>' +
+        '<span class="if-final-time">' + seconds.toFixed(1) + 's</span>' +
+      '</span>';
+  }
+
+  window.ideasForgeAIFormatLiveBrainAnswer = formatAnswer;
+
+  window.ideasForgeAIReplyFromLiveBrainPhase2A = async function (userMessage, appendFn) {
+    const finalMessage = String(userMessage || findLastUserMessage() || "").trim();
+
+    if (!finalMessage) {
+      if (typeof appendFn === "function") {
+        appendFn("Tell me what you want to create, code, research, or organize with IdeasForgeAI.");
+      }
+      return;
+    }
+
+    let thinkingEl = null;
+
+    if (typeof appendFn === "function") {
+      appendFn("Thinking 0.0s");
+      thinkingEl = findNewestThinkingElement();
+    }
+
+    if (!thinkingEl) {
+      thinkingEl = appendAssistantDirect("");
+    }
+
+    const startedAt = performance.now();
+    renderThinking(thinkingEl, 0);
+
+    const timer = setInterval(function () {
+      const seconds = (performance.now() - startedAt) / 1000;
+      renderThinking(thinkingEl, seconds);
+    }, 100);
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: finalMessage,
+          page: "home",
+          mode: "main"
+        })
+      });
+
+      if (!res.ok) throw new Error("HTTP " + res.status);
+
+      const data = await res.json();
+      const answer = data.answer || data.reply || "IdeasForgeAI could not get a proper answer.";
+
+      const elapsed = performance.now() - startedAt;
+      if (elapsed < 750) {
+        await new Promise(function (resolve) {
+          setTimeout(resolve, 750 - elapsed);
+        });
+      }
+
+      clearInterval(timer);
+
+      if (thinkingEl) {
+        thinkingEl.innerHTML = formatAnswer(answer);
+        thinkingEl.dataset.ifFinalFormatted = "1";
+      } else if (typeof appendFn === "function") {
+        appendFn(answer);
+      }
+
+      scrollThread();
+    } catch (error) {
+      clearInterval(timer);
+      console.error("IdeasForgeAI live brain final failed:", error);
+
+      if (thinkingEl) {
+        thinkingEl.textContent = "IdeasForgeAI could not reach the live chat brain right now. Please try again.";
+      } else if (typeof appendFn === "function") {
+        appendFn("IdeasForgeAI could not reach the live chat brain right now. Please try again.");
+      }
+    }
+  };
+
+  console.log("IdeasForgeAI final thinking + format helper active");
+})();
+// CHAT-THINKING-FORMAT-FINAL-END
