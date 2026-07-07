@@ -1,0 +1,96 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Approval Detail</title>
+  <link rel="stylesheet" href="./admin-mobile-core.css?v=adm3d-f7" />
+</head>
+<body data-page="approval-detail">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <button class="icon-btn" onclick="history.back()">‹</button>
+      <h1 class="admin-title">Approval Detail</h1>
+      <button class="icon-btn" data-dots>•••</button>
+    </header>
+
+    <main>
+      <div class="status-strip">
+        <div class="status-chip"><i class="dot"></i> Backend <span id="backendState">Checking</span></div>
+        <div class="status-chip"><i class="dot"></i> Worker <span id="workerState">0 registered</span></div>
+      </div>
+
+      <section class="hero-card">
+        <h1>Approval Detail</h1>
+        <p>Review the decision, job status, safe actions, and worker timeline.</p>
+      </section>
+
+      <section class="assistant-wrap">
+        <div class="assistant-avatar">✳</div>
+        <div class="assistant-row">
+          <h2>ChatGPT Assistant</h2>
+          <p id="summaryText">Loading approval detail...</p>
+          <div class="updated" id="updatedAt">Updating</div>
+          <div class="stats">
+            <div class="stat"><strong id="pendingCount">0</strong><span>Pending</span></div>
+            <div class="stat"><strong id="queuedCount">0</strong><span>Queued</span></div>
+            <div class="stat"><strong id="dryCount">0</strong><span>Dry-run done</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Decision sheet</h2>
+
+      <section class="detail-card">
+        <div class="detail-title-row">
+          <h2 id="detailTitle">Loading</h2>
+          <div id="detailStatus" class="badge pending">Pending</div>
+        </div>
+
+        <div class="meta-row">
+          <span class="meta" id="detailRisk">Risk: medium</span>
+          <span class="meta" id="detailJobId">Job: loading</span>
+          <span class="meta">Approval: required</span>
+          <span class="meta">Execution: disabled</span>
+        </div>
+
+        <div class="command-box">
+          <b>Requested command</b>
+          <div id="detailCommand">Loading command...</div>
+        </div>
+
+        <label class="reason-label">Decision reason</label>
+        <textarea id="reasonInput" placeholder="Write why you are approving, rejecting, or holding this request."></textarea>
+
+        <div class="action-row">
+          <button id="approveBtn" class="btn primary">Approve</button>
+          <button id="rejectBtn" class="btn reject">Reject</button>
+          <button id="holdBtn" class="btn hold">Hold</button>
+        </div>
+      </section>
+
+      <section class="timeline-card">
+        <h2>Live job timeline</h2>
+        <div id="timeline">
+          <div class="timeline-row"><div class="timeline-time">Now</div><div>Loading timeline...</div></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="composer">
+    <button type="button">⌕</button>
+    <input id="composerInput" placeholder="Ask about this approval..." />
+    <button id="composerSend" class="send" type="button">↑</button>
+  </div>
+
+  <div id="dotsMenu" class="dots-menu">
+    <button id="refreshBtn">Refresh this approval</button>
+    <button id="createTestBtn">Create safe pending test</button>
+    <button onclick="location.href='approvals-office.html?v=dots'">Open Approval Office</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="./admin-mobile-core.js?v=adm3d-f7"></script>
+</body>
+</html>

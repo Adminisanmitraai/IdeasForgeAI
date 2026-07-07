@@ -1,0 +1,127 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Deployment Readiness</title>
+  <link rel="stylesheet" href="./admin-mobile-core.css?v=adm3l-fix" />
+</head>
+
+<body data-page="deployment">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <button class="icon-btn" data-menu>☰</button>
+      <h1 class="admin-title">Deployment</h1>
+      <button class="icon-btn" data-dots>•••</button>
+    </header>
+
+    <main>
+      <div class="status-strip">
+        <div class="status-chip"><i class="dot"></i> Backend <span id="backendState">Checking</span></div>
+        <div class="status-chip"><i class="dot"></i> Deploy <span>ADM-3L</span></div>
+        <div class="status-chip"><i class="dot amber"></i> Mode <span>Safe</span></div>
+      </div>
+
+      <section class="hero-card">
+        <h1>Deployment Readiness</h1>
+        <p>Prepare production route cleanup, GitHub push readiness, Render checks, PWA readiness, environment safety, and final deployment approval.</p>
+      </section>
+
+      <section class="assistant-wrap">
+        <div class="assistant-avatar">✳</div>
+        <div class="assistant-row">
+          <h2>ChatGPT Assistant</h2>
+          <p id="summaryText">Deployment Readiness page is now available. Backend check is running and production deployment remains founder-gated.</p>
+          <div class="updated" id="updatedAt">Updated now</div>
+
+          <div class="composer">
+            <button type="button">⌕</button>
+            <input id="composerInput" placeholder="Ask about deployment..." />
+            <button id="composerSend" class="send" type="button">↑</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><strong>Safe</strong><span>Mode</span></div>
+            <div class="stat"><strong>10</strong><span>Admin modules</span></div>
+            <div class="stat"><strong id="workerMetricTop">0</strong><span>Workers</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Deployment checklist</h2>
+
+      <section class="hero-card">
+        <h1>Local frontend</h1>
+        <p>Admin mobile pages should open from the local mobile URL before GitHub or Render deployment.</p>
+      </section>
+
+      <section class="hero-card">
+        <h1>Backend health</h1>
+        <p id="backendNote">Checking backend on port 5051.</p>
+      </section>
+
+      <section class="hero-card">
+        <h1>Secrets safety</h1>
+        <p>No OpenAI, Supabase service role, GitHub, Render, or provider secret should be exposed in frontend files.</p>
+      </section>
+
+      <section class="hero-card">
+        <h1>GitHub readiness</h1>
+        <p>Review changed files, remove unnecessary backups, then commit ADM-3 as one clean milestone.</p>
+      </section>
+
+      <section class="hero-card">
+        <h1>Render readiness</h1>
+        <p>After GitHub is clean, configure frontend/backend services, environment variables, health checks, and live mobile admin route.</p>
+      </section>
+
+      <section class="hero-card" style="margin-bottom:140px;">
+        <h1>Final deploy gate</h1>
+        <p>Deployment should proceed only after local review, backend health, route cleanup, secrets safety, GitHub review, and founder approval.</p>
+      </section>
+    </main>
+  </div>
+
+  <div id="dotsMenu" class="dots-menu">
+    <button onclick="location.reload()">Refresh deployment</button>
+    <button onclick="location.href='founder-office.html?v=deploy-menu'">Open Founder Office</button>
+    <button onclick="location.href='settings-office.html?v=deploy-menu'">Open Settings Office</button>
+    <button onclick="location.href='projects-office.html?v=deploy-menu'">Open Projects Office</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="./admin-mobile-core.js?v=adm3l-fix"></script>
+
+  <script>
+    (async function () {
+      const API = location.protocol + "//" + location.hostname + ":5051";
+
+      function set(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function timeNow() {
+        return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      }
+
+      try {
+        const res = await fetch(API + "/health", { cache: "no-store" });
+        const health = await res.json();
+        const workers = health.workers || 0;
+
+        set("backendState", health.phase || "Connected");
+        set("workerMetricTop", String(workers));
+        set("backendNote", "Backend is reachable on port 5051. Deployment readiness can continue.");
+        set("summaryText", "Deployment Readiness is ready. Backend connected, " + workers + " worker registered, and production push is still founder-gated.");
+        set("updatedAt", "Updated " + timeNow());
+      } catch (err) {
+        set("backendState", "Offline");
+        set("backendNote", "Backend is not reachable. Start ADM backend on port 5051 before deployment review.");
+        set("summaryText", "Deployment Readiness page is available, but backend is not reachable yet.");
+        set("updatedAt", "Check backend");
+      }
+    })();
+  </script>
+</body>
+</html>

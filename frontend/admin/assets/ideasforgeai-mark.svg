@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="IdeasForgeAI mark">
+  <defs>
+    <linearGradient id="g" x1="18" y1="28" x2="110" y2="104" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#39a7ff"/>
+      <stop offset=".55" stop-color="#6655ff"/>
+      <stop offset="1" stop-color="#8e3dff"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#ffd568"/>
+      <stop offset="1" stop-color="#ffaf1a"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="30" fill="#121216"/>
+  <path d="M64 15c6.8 30.2 18.8 42.2 49 49-30.2 6.8-42.2 18.8-49 49-6.8-30.2-18.8-42.2-49-49 30.2-6.8 42.2-18.8 49-49Z" fill="url(#g)"/>
+  <path d="M64 39c3.5 15.8 8.7 21 24.5 24.5C72.7 67 67.5 72.2 64 88c-3.5-15.8-8.7-21-24.5-24.5C55.3 60 60.5 54.8 64 39Z" fill="#fff"/>
+  <circle cx="35" cy="39" r="6" fill="#3d8cff"/>
+  <circle cx="95" cy="35" r="5" fill="url(#gold)"/>
+  <circle cx="91" cy="92" r="5" fill="#8b45ff"/>
+</svg>

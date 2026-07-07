@@ -1,0 +1,294 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <title>IdeasForgeAI Founder AI</title>
+  <link rel="icon" href="./assets/ideasforgeai-mark.svg" />
+  <link rel="stylesheet" href="./admin-founder-hq.css?v=adm2e-job-history-1" />
+  <link rel="stylesheet" href="./adm-2f-mobile-cleanup.css?v=adm2f">
+  <link rel="stylesheet" href="./adm-2f-mobile-viewport-hotfix.css?v=adm2f-hotfix-1">
+  <link rel="stylesheet" href="./adm-2f3-mobile-hard-viewport-lock.css?v=adm2f3-1">
+  <link rel="stylesheet" href="./adm-2f4-mobile-drawer-composer-fix.css?v=adm2f4">
+  <link rel="stylesheet" href="./adm-2f5-mobile-final-fit.css?v=adm2f5" />
+<style id="ADM-2F7-MOBILE-HARD-FIX">
+@media (max-width: 768px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #1f1f1f !important;
+  }
+
+  body * {
+    box-sizing: border-box !important;
+  }
+
+  .app-shell,
+  .admin-shell,
+  .founder-shell,
+  .main-shell,
+  .main,
+  .workspace,
+  .chat-area,
+  .content,
+  .center,
+  .page,
+  .admin-main {
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  aside,
+  .sidebar,
+  .left-sidebar,
+  .nav-sidebar {
+    position: fixed !important;
+    left: -100vw !important;
+    top: 0 !important;
+    width: min(84vw, 340px) !important;
+    max-width: 84vw !important;
+    height: 100dvh !important;
+    z-index: 50 !important;
+    transform: none !important;
+  }
+
+  aside.open,
+  .sidebar.open,
+  .left-sidebar.open,
+  .nav-sidebar.open,
+  body.drawer-open aside,
+  body.drawer-open .sidebar {
+    left: 0 !important;
+  }
+
+  header,
+  .topbar,
+  .app-header,
+  .founder-header {
+    width: 100% !important;
+    max-width: 100vw !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+  }
+
+  .live-status,
+  .status-strip,
+  .worker-strip,
+  .job-status-strip,
+  .chips,
+  .chip-row {
+    width: 100% !important;
+    max-width: 100vw !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    white-space: nowrap !important;
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .job-history,
+  .jobs-history,
+  .job-history-panel,
+  .job-list,
+  .job-card,
+  .approval-card,
+  .message-card,
+  .timeline,
+  .timeline-card,
+  .worker-logs {
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    min-width: 0 !important;
+    margin-left: 16px !important;
+    margin-right: 16px !important;
+    overflow: hidden !important;
+  }
+
+  .prompt-grid,
+  .quick-actions,
+  .cards-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .composer,
+  .chat-composer,
+  .message-composer,
+  .input-bar {
+    position: fixed !important;
+    left: 16px !important;
+    right: 16px !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 82px) !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    min-width: 0 !important;
+    z-index: 80 !important;
+    transform: none !important;
+  }
+
+  main,
+  .main-content,
+  .messages,
+  .scroll-area {
+    padding-bottom: 220px !important;
+    overflow-x: hidden !important;
+  }
+
+  img, svg, canvas, video {
+    max-width: 100% !important;
+  }
+}
+</style>
+<script id="ADM-2G-MOBILE-REDIRECT">
+(function(){
+  try {
+    var isMobile = window.matchMedia && window.matchMedia("(max-width: 768px)").matches;
+    var path = location.pathname.toLowerCase();
+    var isAdminIndex = path.endsWith("/frontend/admin/") || path.endsWith("/frontend/admin/index.html") || path.endsWith("/admin/") || path.endsWith("/admin/index.html");
+    if (isMobile && isAdminIndex && !path.endsWith("mobile.html")) {
+      location.replace("mobile.html?v=adm2g-mobile-shell");
+    }
+  } catch(e) {}
+})();
+</script>
+</head>
+<body>
+  <div class="app-shell" data-sidebar-open="false">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-top">
+        <button class="icon-btn menu-close" id="mobileClose" aria-label="Close menu">
+          <span></span><span></span><span></span>
+        </button>
+        <button class="new-chat" id="newChatBtn"><span>+</span> New chat</button>
+      </div>
+
+      <nav class="nav-scroll" aria-label="IdeasForgeAI departments">
+        <p class="nav-kicker">Company</p>
+        <button class="nav-item active" data-dept="founder-hq"><span class="nav-icon icon-founder"></span><span>Founder HQ</span></button>
+        <button class="nav-item" data-dept="control-room"><span class="nav-icon icon-control"></span><span>Control Room</span></button>
+        <button class="nav-item" data-dept="code-room"><span class="nav-icon icon-code"></span><span>Code Room</span></button>
+        <button class="nav-item" data-dept="agents-room"><span class="nav-icon icon-agents"></span><span>Agents Room</span></button>
+        <button class="nav-item" data-dept="training-academy"><span class="nav-icon icon-training"></span><span>Training Academy</span></button>
+        <button class="nav-item" data-dept="forgepilot-room"><span class="nav-icon icon-pilot"></span><span>ForgePilot Room</span></button>
+        <button class="nav-item" data-dept="audit-room"><span class="nav-icon icon-audit"></span><span>Audit Room</span></button>
+        <button class="nav-item" data-dept="risk-room"><span class="nav-icon icon-risk"></span><span>Risk Management Room</span></button>
+        <button class="nav-item" data-dept="frontend-office"><span class="nav-icon icon-frontend"></span><span>Frontend Office</span></button>
+        <button class="nav-item" data-dept="backend-office"><span class="nav-icon icon-backend"></span><span>Backend Office</span></button>
+        <button class="nav-item" data-dept="forgestudio"><span class="nav-icon icon-studio"></span><span>ForgeStudio</span></button>
+        <button class="nav-item" data-dept="forgecode"><span class="nav-icon icon-forgecode"></span><span>ForgeCode</span></button>
+        <button class="nav-item" data-dept="forgework"><span class="nav-icon icon-work"></span><span>ForgeWork</span></button>
+      </nav>
+
+      <div class="chats-block">
+        <p class="nav-kicker">Chats</p>
+        <button class="chat-link active">Founder command center</button>
+        <button class="chat-link">Train AutoCAD layer</button>
+        <button class="chat-link">ForgePilot live test</button>
+      </div>
+
+      <div class="brand-card">
+        <div class="brand-avatar">IF</div>
+        <div>
+          <strong>IdeasForgeAI</strong>
+          <span>Founder mode</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="topbar">
+        <button class="hamburger" id="menuBtn" aria-label="Open menu"><span></span><span></span><span></span></button>
+        <div class="assistant-title">
+          <img src="./assets/ideasforgeai-mark.svg" alt="" />
+          <span>Founder AI</span>
+          <small class="chevron-down" aria-hidden="true"></small>
+        </div>
+        <div class="top-actions">
+          <span class="backend-badge" id="backendBadge"><i></i> Checking backend</span>
+          <button class="share-btn">Share</button>
+          <button class="dots-btn" aria-label="More"><span></span><span></span><span></span></button>
+        </div>
+      </header>
+      <section class="live-status-strip" id="liveStatusStrip" aria-label="Live Founder HQ status">
+        <div class="live-chip worker-chip"><span class="status-dot" id="workerDot"></span><strong>Worker</strong><span id="workerStatusText">Checking</span></div>
+        <div class="live-chip"><strong>Queue</strong><span id="queueStatusText">0 waiting</span></div>
+        <div class="live-chip"><strong>Latest</strong><span id="latestJobText">No jobs yet</span></div>
+        <button class="live-refresh" type="button" id="refreshStatusBtn">Refresh</button>
+      </section>
+
+
+      <section class="job-control-panel" id="jobControlPanel" aria-label="Job History and Worker Control Panel">
+        <div class="job-panel-head">
+          <div>
+            <strong>Job History</strong>
+            <span id="jobPanelSummary">Waiting for live status</span>
+          </div>
+          <div class="job-panel-actions">
+            <button type="button" class="filter-btn active" data-job-filter="all">All</button>
+            <button type="button" class="filter-btn" data-job-filter="approved_waiting_for_worker">Waiting</button>
+            <button type="button" class="filter-btn" data-job-filter="running">Running</button>
+            <button type="button" class="filter-btn" data-job-filter="dry_run_completed">Dry-run done</button>
+            <button type="button" class="panel-btn" id="clearTestJobsBtn">Clear completed tests</button>
+          </div>
+        </div>
+        <div class="job-panel-body">
+          <div class="job-list" id="jobList">No jobs loaded yet.</div>
+          <div class="job-detail" id="jobDetail">Select a job to view timeline, logs, and safe controls.</div>
+        </div>
+      </section>
+
+      <section class="chat-stage" id="chatStage">
+        <div class="empty-state" id="emptyState">
+          <img class="hero-logo" src="./assets/ideasforgeai-logo.svg" alt="IdeasForgeAI" />
+          <h1>What can I help you run today?</h1>
+          <p>Ask Founder AI to route work, prepare plans, assess risk, request approval, and coordinate every IdeasForgeAI department.</p>
+          <div class="suggestions">
+            <button data-prompt="Train AutoCAD software layer">Train AutoCAD software layer</button>
+            <button data-prompt="Open Founder HQ dashboard">Open Founder HQ dashboard</button>
+            <button data-prompt="Create ForgePilot live test">Create ForgePilot live test</button>
+            <button data-prompt="Polish Admin dashboard UI">Polish Admin dashboard UI</button>
+          </div>
+        </div>
+        <div class="messages" id="messages"></div>
+      </section>
+
+      <form class="composer-wrap" id="chatForm">
+        <div class="composer">
+          <button type="button" class="composer-icon" aria-label="Attach">+</button>
+          <textarea id="messageInput" rows="1" placeholder="Message IdeasForgeAI..."></textarea>
+          <button type="button" class="wave-btn" aria-label="Voice"><span></span><span></span><span></span></button>
+          <button type="submit" class="send-btn" aria-label="Send"><span></span></button>
+        </div>
+        <p class="phase-note">Founder AI can plan, route, and request approval. ADM-2E shows worker status, job history, worker logs, and safe job controls. Execution remains disabled.</p>
+      </form>
+    </main>
+  </div>
+  <div class="overlay" id="overlay"></div>
+  <script charset="utf-8" src="./admin-founder-hq.js?v=adm2e-job-history-1"></script>
+  <script src="./adm-2f-mobile-cleanup.js?v=adm2f" defer></script>
+  <script src="./adm-2f-mobile-viewport-hotfix.js?v=adm2f-hotfix-1"></script>
+  <script src="./adm-2f3-mobile-hard-viewport-lock.js?v=adm2f3-1"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+

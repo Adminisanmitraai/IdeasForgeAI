@@ -1,0 +1,426 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Founder Office</title>
+  <link rel="stylesheet" href="./admin-mobile-core.css?v=adm3k" />
+
+  <style>
+    .home-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 140px;
+    }
+
+    .home-card {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .home-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .home-title {
+      font-size: 24px;
+      line-height: 1.08;
+      font-weight: 850;
+      letter-spacing: -.055em;
+    }
+
+    .home-sub {
+      margin-top: 4px;
+      font-size: 16px;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .home-note {
+      font-size: 16px;
+      line-height: 1.28;
+      color: #111;
+      margin: 12px 0 0;
+    }
+
+    .home-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #128343;
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .home-pill.now {
+      background: #eaf2ff;
+      color: #2563eb;
+    }
+
+    .home-pill.warn {
+      background: #fff7ed;
+      color: #b45309;
+    }
+
+    .home-pill.grey {
+      background: #f4f5f6;
+      color: #8b929b;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .quick-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: #fff;
+      padding: 15px;
+      min-height: 112px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-decoration: none;
+      color: #111;
+      box-shadow: 0 10px 24px rgba(0,0,0,.035);
+    }
+
+    .quick-card strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.05;
+      font-weight: 850;
+      letter-spacing: -.045em;
+    }
+
+    .quick-card span {
+      display: block;
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.1;
+      color: var(--muted);
+      font-weight: 760;
+    }
+
+    .quick-status {
+      align-self: flex-start;
+      margin-top: 12px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #ecfdf3;
+      color: #128343;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .quick-status.priority {
+      background: #eaf2ff;
+      color: #2563eb;
+    }
+
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .home-metric {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .home-metric strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .home-metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: 760;
+    }
+
+    @media (max-width: 820px) {
+      body[data-page="founder"] .hero-card {
+        padding: 20px 19px !important;
+        margin-top: 10px !important;
+        margin-bottom: 12px !important;
+      }
+
+      body[data-page="founder"] .hero-card h1 {
+        font-size: 30px !important;
+      }
+
+      body[data-page="founder"] .hero-card p,
+      body[data-page="founder"] .assistant-row p {
+        font-size: 16.5px !important;
+        line-height: 1.24 !important;
+      }
+
+      body[data-page="founder"] .assistant-row {
+        padding: 18px !important;
+      }
+
+      body[data-page="founder"] .assistant-row h2 {
+        font-size: 25px !important;
+      }
+
+      body[data-page="founder"] .section-title {
+        margin-top: 24px !important;
+        margin-bottom: 12px !important;
+        font-size: 27px !important;
+      }
+    }
+  </style>
+  <style id="adm4c-logo-canonical-fix">
+    .logo,
+    .brand-icon,
+    .adm-drawer-logo,
+    .assistant-logo,
+    .chat-avatar,
+    .ifai-logo,
+    .brand-logo {
+      background: rgba(255,255,255,.92) !important;
+      overflow: hidden !important;
+      display: grid !important;
+      place-items: center !important;
+      color: transparent !important;
+      text-indent: -9999px !important;
+      background-image: url("assets/ideasforgeai-mark.png") !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    .logo *,
+    .brand-icon *,
+    .adm-drawer-logo *,
+    .assistant-logo *,
+    .chat-avatar *,
+    .ifai-logo *,
+    .brand-logo * {
+      display: none !important;
+    }
+
+    .adm-exact-logo-img {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body data-page="founder">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <button class="icon-btn" data-menu>☰</button>
+      <h1 class="admin-title">Founder Office</h1>
+      <button class="icon-btn" data-dots>•••</button>
+    </header>
+
+    <main>
+      <div class="status-strip">
+        <div class="status-chip"><i class="dot"></i> Backend <span id="backendState">Checking</span></div>
+        <div class="status-chip"><i class="dot"></i> Admin <span>ADM-3K</span></div>
+        <div class="status-chip"><i class="dot amber"></i> Mode <span>Safe</span></div>
+      </div>
+
+      <section class="hero-card">
+        <h1>Founder Office</h1>
+        <p>Final mobile admin control center for company status, approvals, teams, operations, finance, projects, reports, settings, and safe execution.</p>
+      </section>
+
+      <section class="assistant-wrap">
+        <div class="assistant-avatar">✳</div>
+        <div class="assistant-row">
+          <h2>ChatGPT Assistant</h2>
+          <p id="summaryText">Founder Office is ready. Admin modules are completed, safety mode is locked, and backend health is being checked.</p>
+          <div class="updated" id="updatedAt">Updated now</div>
+
+          <div class="composer">
+            <button type="button">⌕</button>
+            <input id="composerInput" placeholder="Ask Founder Office..." />
+            <button id="composerSend" class="send" type="button">↑</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><strong>10</strong><span>Admin modules</span></div>
+            <div class="stat"><strong>4</strong><span>Core products</span></div>
+            <div class="stat"><strong>Safe</strong><span>Execution</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Quick access</h2>
+
+      <div class="quick-grid">
+        <a class="quick-card" href="company-status.html?v=adm3k">
+          <strong>Company Status</strong><span>Daily company snapshot</span><em class="quick-status">Done</em>
+        </a>
+        <a class="quick-card" href="approvals-office.html?v=adm3k">
+          <strong>Approvals</strong><span>Founder decisions</span><em class="quick-status">Done</em>
+        </a>
+        <a class="quick-card" href="teams-office.html?v=adm3k">
+          <strong>Teams</strong><span>People and AI workers</span><em class="quick-status">Done</em>
+        </a>
+        <a class="quick-card" href="operations-office.html?v=adm3k">
+          <strong>Operations</strong><span>Backend and worker flow</span><em class="quick-status">Done</em>
+        </a>
+        <a class="quick-card" href="finance-office.html?v=adm3k">
+          <strong>Finance</strong><span>Cash, runway, costs</span><em class="quick-status">Done</em>
+        </a>
+        <a class="quick-card" href="projects-office.html?v=adm3k">
+          <strong>Projects</strong><span>Products and phases</span><em class="quick-status priority">Priority</em>
+        </a>
+        <a class="quick-card" href="reports-office.html?v=adm3k">
+          <strong>Reports</strong><span>Founder-readable reports</span><em class="quick-status">Done</em>
+        </a>
+        <a class="quick-card" href="settings-office.html?v=adm3k">
+          <strong>Settings</strong><span>Safety and preferences</span><em class="quick-status">Done</em>
+        </a>
+      </div>
+
+      <h2 class="section-title">Founder control</h2>
+
+      <div class="home-list">
+        <article class="home-card">
+          <div class="home-top">
+            <div>
+              <div class="home-title">Admin build progress</div>
+              <div class="home-sub">Completed mobile admin control layer</div>
+            </div>
+            <span class="home-pill now">ADM-3K</span>
+          </div>
+          <div class="home-note">Founder Office, Company Status, Approvals, Approval Detail, Teams, Operations, Finance, Projects, Reports, and Settings are now created as one polished admin module set.</div>
+          <div class="home-grid">
+            <div class="home-metric"><strong>10/10</strong><span>Admin modules</span></div>
+            <div class="home-metric"><strong>Safe</strong><span>Execution mode</span></div>
+          </div>
+        </article>
+
+        <article class="home-card">
+          <div class="home-top">
+            <div>
+              <div class="home-title">Core products</div>
+              <div class="home-sub">IdeasForgeAI product pillars</div>
+            </div>
+            <span class="home-pill">Mapped</span>
+          </div>
+          <div class="home-note">ForgeStudio, ForgeCode, ForgeWork, and Founder Office are visible in the project layer. ForgeLang remains the blueprint language direction for safer AI coding.</div>
+        </article>
+
+        <article class="home-card">
+          <div class="home-top">
+            <div>
+              <div class="home-title">Backend and workers</div>
+              <div class="home-sub">Admin backend health</div>
+            </div>
+            <span class="home-pill grey" id="backendPill">Checking</span>
+          </div>
+          <div class="home-note" id="backendNote">Checking backend on port 5051.</div>
+          <div class="home-grid">
+            <div class="home-metric"><strong id="phaseMetric">ADM</strong><span>Backend phase</span></div>
+            <div class="home-metric"><strong id="workerMetric">0</strong><span>Workers</span></div>
+          </div>
+        </article>
+
+        <article class="home-card">
+          <div class="home-top">
+            <div>
+              <div class="home-title">Approval safety</div>
+              <div class="home-sub">Execution remains founder-gated</div>
+            </div>
+            <span class="home-pill">Locked</span>
+          </div>
+          <div class="home-note">Real execution is still locked. Workers should only execute after safe review and founder approval.</div>
+          <div class="home-grid">
+            <div class="home-metric"><strong id="queuedMetric">0</strong><span>Queued jobs</span></div>
+            <div class="home-metric"><strong id="dryMetric">0</strong><span>Dry-run done</span></div>
+          </div>
+        </article>
+
+        <article class="home-card">
+          <div class="home-top">
+            <div>
+              <div class="home-title">Next production path</div>
+              <div class="home-sub">After ADM-3K freeze</div>
+            </div>
+            <span class="home-pill warn">Next</span>
+          </div>
+          <div class="home-note">Next: deployment readiness, data persistence, GitHub push, Render health checks, PWA polish, and production route cleanup.</div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <div id="dotsMenu" class="dots-menu">
+    <button onclick="location.reload()">Refresh Founder Office</button>
+    <button onclick="location.href='reports-office.html?v=adm3k-menu'">Open Reports Office</button>
+    <button onclick="location.href='projects-office.html?v=adm3k-menu'">Open Projects Office</button>
+    <button onclick="location.href='settings-office.html?v=adm3k-menu'">Open Settings Office</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="./admin-mobile-core.js?v=adm3k"></script>
+
+  <script>
+    (async function () {
+      const API = location.protocol + "//" + location.hostname + ":5051";
+
+      function set(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function timeNow() {
+        return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      }
+
+      try {
+        const res = await fetch(API + "/health", { cache: "no-store" });
+        const health = await res.json();
+
+        const workers = health.workers || 0;
+        const queued = health.queuedJobs || 0;
+        const dry = health.dryRunCompletedJobs || 0;
+
+        set("backendState", health.phase || "Connected");
+        set("backendPill", "Connected");
+        set("backendNote", "Backend is reachable. Founder Office can read admin health, worker status, and job safety.");
+        set("phaseMetric", health.phase || "ADM");
+        set("workerMetric", String(workers));
+        set("queuedMetric", String(queued));
+        set("dryMetric", String(dry));
+
+        set("summaryText", "Founder Office is ready. Backend connected, " + workers + " worker registered, " + queued + " queued job, " + dry + " dry-run completed job, and safe execution is locked.");
+        set("updatedAt", "Updated " + timeNow());
+      } catch (err) {
+        set("backendState", "Offline");
+        set("backendPill", "Offline");
+        set("backendNote", "Backend is not reachable. Start ADM backend on port 5051.");
+        set("summaryText", "Founder Office is visible, but backend is not reachable yet.");
+        set("updatedAt", "Check backend");
+      }
+    })();
+  </script>
+</body>
+</html>
+

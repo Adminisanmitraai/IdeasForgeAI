@@ -1,0 +1,703 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Company Status · IdeasForgeAI Admin</title>
+
+  <style>
+    :root {
+      --bg: #f7f7f8;
+      --card: #ffffff;
+      --text: #080808;
+      --muted: #7f858d;
+      --line: #e1e2e5;
+      --soft: #f3f4f6;
+      --blue: #2563eb;
+      --blueSoft: #eaf2ff;
+      --green: #128343;
+      --greenSoft: #e9f8ef;
+      --shadow: 0 18px 42px rgba(0,0,0,.055);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", Inter, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .page {
+      width: min(100%, 430px);
+      margin: 0 auto;
+      padding: calc(env(safe-area-inset-top) + 24px) 20px calc(env(safe-area-inset-bottom) + 120px);
+    }
+
+    .topbar {
+      height: 64px;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      margin: 0 -2px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      text-align: center;
+      font-size: 26px;
+      line-height: 1;
+      letter-spacing: -0.055em;
+      font-weight: 760;
+      white-space: nowrap;
+    }
+
+    .iconBtn {
+      width: 42px;
+      height: 42px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: #111;
+      font-size: 25px;
+      font-weight: 650;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+    }
+
+    .statusRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 0 0 22px;
+    }
+
+    .pill {
+      min-width: 0;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 8px 22px rgba(0,0,0,.035);
+      overflow: hidden;
+    }
+
+    .dot {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: #22c55e;
+      box-shadow: 0 0 0 7px var(--greenSoft);
+    }
+
+    .pill strong {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 15px;
+      font-weight: 730;
+      letter-spacing: -0.035em;
+    }
+
+    .pill span {
+      flex: 0 0 auto;
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 650;
+      letter-spacing: -0.025em;
+    }
+
+    .hero,
+    .assistant,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      padding: 26px 24px;
+      margin-bottom: 22px;
+    }
+
+    .hero h2,
+    .assistant h2,
+    .sectionTitle,
+    .card h3 {
+      margin: 0;
+      letter-spacing: -0.065em;
+      font-weight: 760;
+    }
+
+    .hero h2 {
+      font-size: 34px;
+      line-height: .98;
+      margin-bottom: 14px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 21px;
+      line-height: 1.24;
+      letter-spacing: -0.04em;
+      font-weight: 420;
+    }
+
+    .assistantWrap {
+      position: relative;
+      margin: 0 0 30px 54px;
+    }
+
+    .assistantIcon {
+      position: absolute;
+      left: -54px;
+      top: 32px;
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: #16b51f;
+      color: #fff;
+      border: 1px solid #109118;
+      font-size: 23px;
+      font-weight: 750;
+      box-shadow: 0 10px 22px rgba(0,0,0,.08);
+    }
+
+    .assistant {
+      padding: 24px 22px;
+    }
+
+    .assistant h2 {
+      font-size: 30px;
+      line-height: 1;
+      margin-bottom: 14px;
+      white-space: nowrap;
+    }
+
+    .assistant p {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.28;
+      letter-spacing: -0.035em;
+      font-weight: 400;
+    }
+
+    .updated {
+      margin-top: 16px !important;
+      color: var(--muted);
+      font-size: 16px !important;
+    }
+
+    .miniComposer {
+      height: 50px;
+      margin: 18px 0;
+      display: grid;
+      grid-template-columns: 42px 1fr 42px;
+      align-items: center;
+      padding: 0 7px 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 8px 22px rgba(0,0,0,.03);
+    }
+
+    .miniComposer span {
+      display: grid;
+      place-items: center;
+      font-size: 20px;
+      color: #111;
+    }
+
+    .miniComposer input {
+      min-width: 0;
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      font-size: 16px;
+      color: #111;
+    }
+
+    .miniComposer input::placeholder {
+      color: #a9aeb6;
+    }
+
+    .miniComposer button {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 50%;
+      background: #aeb4bd;
+      color: #fff;
+      font-size: 22px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+    }
+
+    .metrics,
+    .two {
+      display: grid;
+      gap: 10px;
+    }
+
+    .metrics {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .two {
+      grid-template-columns: 1fr 1fr;
+      margin-top: 16px;
+    }
+
+    .metric {
+      min-height: 78px;
+      padding: 14px 10px;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: #fff;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 30px;
+      line-height: .95;
+      letter-spacing: -0.055em;
+      font-weight: 760;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.08;
+      font-weight: 650;
+    }
+
+    .sectionTitle {
+      font-size: 29px;
+      line-height: 1;
+      margin: 0 0 14px;
+    }
+
+    .card {
+      padding: 23px 22px;
+      margin-bottom: 14px;
+    }
+
+    .cardHead {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .card p {
+      margin: 12px 0 0;
+      font-size: 18px;
+      line-height: 1.28;
+      letter-spacing: -0.035em;
+      font-weight: 400;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .badge {
+      flex: 0 0 auto;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.blue {
+      background: var(--blueSoft);
+      color: var(--blue);
+    }
+
+    .badge.green {
+      background: var(--greenSoft);
+      color: var(--green);
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 17px;
+    }
+
+    .action {
+      min-height: 50px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      color: #111;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 720;
+      letter-spacing: -0.025em;
+    }
+
+    .drawer {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      pointer-events: none;
+    }
+
+    .drawerShade {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,.28);
+      opacity: 0;
+      transition: .2s ease;
+    }
+
+    .drawerPanel {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: min(84vw, 360px);
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      transform: translateX(-100%);
+      transition: .24s ease;
+      overflow-y: auto;
+      padding: calc(env(safe-area-inset-top) + 48px) 20px calc(env(safe-area-inset-bottom) + 90px);
+      box-shadow: 28px 0 60px rgba(0,0,0,.16);
+    }
+
+    .drawer.open {
+      pointer-events: auto;
+    }
+
+    .drawer.open .drawerShade {
+      opacity: 1;
+    }
+
+    .drawer.open .drawerPanel {
+      transform: translateX(0);
+    }
+
+    .drawerHead {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .drawerHead h2 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      font-weight: 760;
+    }
+
+    .drawerHead p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.3;
+      letter-spacing: -0.025em;
+    }
+
+    .closeBtn {
+      width: 50px;
+      height: 50px;
+      border: 0;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: var(--blue);
+      font-size: 27px;
+      font-weight: 720;
+    }
+
+    .drawerLabel {
+      margin: 22px 0 12px;
+      color: #a4abb4;
+      font-size: 12px;
+      letter-spacing: .34em;
+      font-weight: 760;
+    }
+
+    .navItem {
+      min-height: 52px;
+      display: grid;
+      grid-template-columns: 42px 1fr auto;
+      align-items: center;
+      gap: 13px;
+      padding: 7px 10px;
+      border-radius: 17px;
+      color: #111;
+      text-decoration: none;
+      margin-bottom: 7px;
+      font-size: 18px;
+      font-weight: 720;
+      letter-spacing: -0.035em;
+    }
+
+    .abbr {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      border-radius: 13px;
+      background: #f3f4f6;
+      color: #6f7783;
+      font-size: 13px;
+      font-weight: 760;
+      letter-spacing: 0;
+    }
+
+    .state {
+      font-size: 14px;
+      font-weight: 720;
+      letter-spacing: -0.02em;
+    }
+
+    .navItem.now {
+      background: var(--blueSoft);
+    }
+
+    .navItem.now .abbr {
+      background: #d8eaff;
+      color: var(--blue);
+    }
+
+    .navItem.now .state {
+      color: var(--blue);
+    }
+
+    .drawerFoot {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 22px;
+      background: #f5f5f6;
+    }
+
+    .drawerFoot strong {
+      font-size: 18px;
+      font-weight: 720;
+      letter-spacing: -0.03em;
+    }
+
+    .drawerFoot p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.28;
+      letter-spacing: -0.025em;
+    }
+
+    @media (max-width: 390px) {
+      .topbar h1 { font-size: 24px; }
+      .hero h2 { font-size: 31px; }
+      .hero p { font-size: 19px; }
+      .assistant h2 { font-size: 27px; }
+      .assistant p { font-size: 17px; }
+      .card h3 { font-size: 24px; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header class="topbar">
+      <button class="iconBtn" id="openMenu" aria-label="Open menu">☰</button>
+      <h1>Company Status</h1>
+      <button class="iconBtn" aria-label="More">•••</button>
+    </header>
+
+    <section class="statusRow">
+      <div class="pill">
+        <i class="dot"></i>
+        <strong>Backend</strong>
+        <span id="backendState">ADM-3C</span>
+      </div>
+      <div class="pill">
+        <i class="dot"></i>
+        <strong>Company</strong>
+        <span>ADM-3M</span>
+      </div>
+    </section>
+
+    <section class="hero">
+      <h2>Company Status</h2>
+      <p>See IdeasForgeAI company health, product pillars, admin modules, safe execution state, and founder control in one clean view.</p>
+    </section>
+
+    <section class="assistantWrap">
+      <div class="assistantIcon">✳</div>
+      <article class="assistant">
+        <h2>ChatGPT Assistant</h2>
+        <p id="summaryText">Company Status is ready. Backend connected, Founder Office is active, all admin modules are visible, and safe execution mode is active.</p>
+        <p class="updated" id="updatedAt">Updated now</p>
+
+        <div class="miniComposer">
+          <span>⌕</span>
+          <input placeholder="Ask about company status..." />
+          <button>↑</button>
+        </div>
+
+        <div class="metrics">
+          <div class="metric"><strong>4</strong><span>Products</span></div>
+          <div class="metric"><strong>11</strong><span>Modules</span></div>
+          <div class="metric"><strong>Safe</strong><span>Mode</span></div>
+        </div>
+      </article>
+    </section>
+
+    <h2 class="sectionTitle">Company control</h2>
+
+    <article class="card">
+      <div class="cardHead">
+        <h3>Core products</h3>
+        <span class="badge blue">Active</span>
+      </div>
+      <p class="muted">IdeasForgeAI product structure</p>
+      <p>ForgeStudio, ForgeCode, ForgeWork, and Founder Office are the four visible company pillars.</p>
+      <div class="two">
+        <div class="metric"><strong>4</strong><span>Products</span></div>
+        <div class="metric"><strong>11</strong><span>Admin modules</span></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="cardHead">
+        <h3>Execution safety</h3>
+        <span class="badge green">Safe</span>
+      </div>
+      <p class="muted">Founder approval gate</p>
+      <p>Real execution remains locked. Risky jobs must pass founder approval before any worker action.</p>
+      <div class="two">
+        <div class="metric"><strong>On</strong><span>Approval required</span></div>
+        <div class="metric"><strong>Zero</strong><span>Auto execution</span></div>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="cardHead">
+        <h3>Production readiness</h3>
+        <span class="badge blue">ADM-3M</span>
+      </div>
+      <p class="muted">Route cleanup and GitHub preparation</p>
+      <p>Company Status is restored into a clean, sleek admin shell and ready for route review.</p>
+      <div class="actions">
+        <a class="action" href="./deployment-readiness.html?v=adm3m-sleek">Open deployment</a>
+        <a class="action" href="./reports-office.html?v=adm3m-sleek">Open reports</a>
+      </div>
+    </article>
+  </main>
+
+  <aside class="drawer" id="drawer">
+    <div class="drawerShade" id="closeShade"></div>
+    <nav class="drawerPanel">
+      <div class="drawerHead">
+        <div>
+          <h2>Founder Office</h2>
+          <p>Dark is complete. Blue is active. Grey is planned.</p>
+        </div>
+        <button class="closeBtn" id="closeMenu">×</button>
+      </div>
+
+      <div class="drawerLabel">COMPANY CONTROL</div>
+      <a class="navItem" href="./founder-office.html?v=adm3m-sleek"><span class="abbr">FO</span><span>Founder Office</span><span class="state">Done</span></a>
+      <a class="navItem now" href="./company-status.html?v=adm3m-sleek"><span class="abbr">CS</span><span>Company Status</span><span class="state">Now</span></a>
+      <a class="navItem" href="./approvals-office.html?v=adm3m-sleek"><span class="abbr">AP</span><span>Approvals</span><span class="state">Done</span></a>
+      <a class="navItem" href="./approval-detail.html?v=adm3m-sleek"><span class="abbr">AD</span><span>Approval Detail</span><span class="state">Done</span></a>
+      <a class="navItem" href="./teams-office.html?v=adm3m-sleek"><span class="abbr">TM</span><span>Teams</span><span class="state">Done</span></a>
+      <a class="navItem" href="./operations-office.html?v=adm3m-sleek"><span class="abbr">OP</span><span>Operations</span><span class="state">Done</span></a>
+      <a class="navItem" href="./finance-office.html?v=adm3m-sleek"><span class="abbr">₹</span><span>Finance</span><span class="state">Done</span></a>
+      <a class="navItem" href="./projects-office.html?v=adm3m-sleek"><span class="abbr">PR</span><span>Projects</span><span class="state">Done</span></a>
+      <a class="navItem" href="./reports-office.html?v=adm3m-sleek"><span class="abbr">RP</span><span>Reports</span><span class="state">Done</span></a>
+      <a class="navItem" href="./settings-office.html?v=adm3m-sleek"><span class="abbr">ST</span><span>Settings</span><span class="state">Done</span></a>
+      <a class="navItem" href="./deployment-readiness.html?v=adm3m-sleek"><span class="abbr">DP</span><span>Deployment Readiness</span><span class="state">Done</span></a>
+
+      <div class="drawerLabel">ADMIN SYSTEM</div>
+      <a class="navItem" href="#"><span class="abbr">BH</span><span>Backend Health</span><span class="state">Done</span></a>
+      <a class="navItem" href="#"><span class="abbr">JQ</span><span>Job Queue</span><span class="state">Done</span></a>
+      <a class="navItem" href="#"><span class="abbr">WK</span><span>Workers</span><span class="state">Done</span></a>
+      <a class="navItem" href="#"><span class="abbr">PS</span><span>Persistence</span><span class="state">Done</span></a>
+      <a class="navItem" href="#"><span class="abbr">AL</span><span>Audit Logs</span><span class="state">Next</span></a>
+
+      <div class="drawerFoot">
+        <strong>IdeasForgeAI Admin</strong>
+        <p>ADM-3M is active. Company Status is restored. Real execution remains disabled.</p>
+      </div>
+    </nav>
+  </aside>
+
+  <script>
+    const drawer = document.getElementById("drawer");
+    document.getElementById("openMenu").addEventListener("click", () => drawer.classList.add("open"));
+    document.getElementById("closeMenu").addEventListener("click", () => drawer.classList.remove("open"));
+    document.getElementById("closeShade").addEventListener("click", () => drawer.classList.remove("open"));
+
+    function setText(id, value) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    }
+
+    function timeNow() {
+      return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    }
+
+    async function checkBackend() {
+      const API = location.protocol + "//" + location.hostname + ":5051";
+      try {
+        const res = await fetch(API + "/health", { cache: "no-store" });
+        const health = await res.json();
+        setText("backendState", health.phase || "ADM-3C");
+        setText("summaryText", "Company Status is ready. Backend connected, Founder Office is active, all admin modules are visible, and safe execution mode is active.");
+        setText("updatedAt", "Updated " + timeNow());
+      } catch (err) {
+        setText("backendState", "Checking");
+        setText("summaryText", "Company Status is ready. Backend check is running, and real execution remains founder-gated.");
+        setText("updatedAt", "Updated " + timeNow());
+      }
+    }
+
+    checkBackend();
+  </script>
+</body>
+</html>

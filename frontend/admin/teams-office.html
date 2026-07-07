@@ -1,0 +1,246 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Teams Office</title>
+  <link rel="stylesheet" href="./admin-mobile-core.css?v=adm3e" />
+  <style>
+    .team-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 80px;
+    }
+
+    .team-card {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .team-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .team-name {
+      font-size: 24px;
+      line-height: 1.08;
+      font-weight: 850;
+      letter-spacing: -.055em;
+    }
+
+    .team-role {
+      margin-top: 4px;
+      font-size: 17px;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .team-note {
+      font-size: 17px;
+      line-height: 1.28;
+      color: #111;
+      margin: 12px 0;
+    }
+
+    .team-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .small-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f2f5f6;
+      color: #747b84;
+      font-size: 14px;
+      font-weight: 780;
+    }
+
+    .small-pill.online {
+      background: #ecfdf3;
+      color: #128343;
+    }
+
+    .small-pill.planned {
+      background: #f4f5f6;
+      color: #9aa1aa;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .team-metric {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .team-metric strong {
+      display: block;
+      font-size: 25px;
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .team-metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: 760;
+    }
+  </style>
+</head>
+
+<body data-page="teams">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <button class="icon-btn" data-menu>☰</button>
+      <h1 class="admin-title">Teams</h1>
+      <button class="icon-btn" data-dots>•••</button>
+    </header>
+
+    <main>
+      <div class="status-strip">
+        <div class="status-chip"><i class="dot"></i> Backend <span id="backendState">Checking</span></div>
+        <div class="status-chip"><i class="dot"></i> Team <span>ADM-3E</span></div>
+        <div class="status-chip"><i class="dot amber"></i> Pending <span id="pendingChip">0</span></div>
+      </div>
+
+      <section class="hero-card">
+        <h1>Teams Office</h1>
+        <p>See people, AI workers, roles, responsibilities, risks, and founder approval status in one simple office.</p>
+      </section>
+
+      <section class="assistant-wrap">
+        <div class="assistant-avatar">✳</div>
+        <div class="assistant-row">
+          <h2>ChatGPT Assistant</h2>
+          <p id="summaryText">Your company team layer is ready. 1 founder, 1 assistant, 1 AI worker, and planned departments are visible.</p>
+          <div class="updated" id="updatedAt">Updated now</div>
+
+          <div class="composer">
+            <button type="button">⌕</button>
+            <input id="composerInput" placeholder="Ask about teams..." />
+            <button id="composerSend" class="send" type="button">↑</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><strong>1</strong><span>Founder</span></div>
+            <div class="stat"><strong>1</strong><span>AI worker</span></div>
+            <div class="stat"><strong>4</strong><span>Planned roles</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Team control</h2>
+
+      <div class="team-list">
+        <article class="team-card">
+          <div class="team-top">
+            <div>
+              <div class="team-name">Founder</div>
+              <div class="team-role">Final decision maker</div>
+            </div>
+            <span class="small-pill online">Active</span>
+          </div>
+          <div class="team-note">Controls approvals, company direction, team access, and execution decisions.</div>
+          <div class="team-grid">
+            <div class="team-metric"><strong>Owner</strong><span>Authority</span></div>
+            <div class="team-metric"><strong>High</strong><span>Control level</span></div>
+          </div>
+        </article>
+
+        <article class="team-card">
+          <div class="team-top">
+            <div>
+              <div class="team-name">ChatGPT Assistant</div>
+              <div class="team-role">Founder subordinate and company intelligence layer</div>
+            </div>
+            <span class="small-pill online">Active</span>
+          </div>
+          <div class="team-note">Summarizes company status, explains approvals, tracks work, and helps the founder decide safely.</div>
+          <div class="team-grid">
+            <div class="team-metric"><strong>ADM</strong><span>Module</span></div>
+            <div class="team-metric"><strong>Safe</strong><span>Decision mode</span></div>
+          </div>
+        </article>
+
+        <article class="team-card">
+          <div class="team-top">
+            <div>
+              <div class="team-name">Training Director AI</div>
+              <div class="team-role">Software layer training worker</div>
+            </div>
+            <span class="small-pill online">Connected</span>
+          </div>
+          <div class="team-note">Handles training-plan jobs only after approval. Execution remains disabled until founder allows it.</div>
+          <div class="team-actions">
+            <button class="btn">Open status</button>
+            <button class="btn">Assign work</button>
+          </div>
+        </article>
+
+        <article class="team-card">
+          <div class="team-top">
+            <div>
+              <div class="team-name">Operations Lead</div>
+              <div class="team-role">Planned role</div>
+            </div>
+            <span class="small-pill planned">Planned</span>
+          </div>
+          <div class="team-note">Will manage running jobs, errors, worker health, and operational issues.</div>
+        </article>
+
+        <article class="team-card">
+          <div class="team-top">
+            <div>
+              <div class="team-name">Finance Lead</div>
+              <div class="team-role">Planned role</div>
+            </div>
+            <span class="small-pill planned">Planned</span>
+          </div>
+          <div class="team-note">Will track income, expenses, runway, invoices, subscriptions, and payment decisions.</div>
+        </article>
+
+        <article class="team-card">
+          <div class="team-top">
+            <div>
+              <div class="team-name">Project Lead</div>
+              <div class="team-role">Planned role</div>
+            </div>
+            <span class="small-pill planned">Planned</span>
+          </div>
+          <div class="team-note">Will organize IdeasForgeAI products: ForgeStudio, ForgeCode, ForgeWork, and admin modules.</div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <div id="dotsMenu" class="dots-menu">
+    <button onclick="location.reload()">Refresh teams</button>
+    <button onclick="location.href='approvals-office.html?v=teams-menu'">Open Approval Office</button>
+    <button onclick="location.href='founder-office.html?v=teams-menu'">Open Founder Office</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="./admin-mobile-core.js?v=adm3e"></script>
+</body>
+</html>

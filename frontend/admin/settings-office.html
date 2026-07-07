@@ -1,0 +1,378 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Settings Office</title>
+  <link rel="stylesheet" href="./admin-mobile-core.css?v=adm3j" />
+
+  <style>
+    .settings-list {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 140px;
+    }
+
+    .setting-card {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: #fff;
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+
+    .setting-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .setting-title {
+      font-size: 24px;
+      line-height: 1.08;
+      font-weight: 850;
+      letter-spacing: -.055em;
+    }
+
+    .setting-sub {
+      margin-top: 4px;
+      font-size: 16px;
+      line-height: 1.25;
+      color: var(--muted);
+    }
+
+    .setting-note {
+      font-size: 16px;
+      line-height: 1.28;
+      color: #111;
+      margin: 12px 0 0;
+    }
+
+    .setting-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f4f5f6;
+      color: #8b929b;
+      font-size: 14px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .setting-pill.ready {
+      background: #ecfdf3;
+      color: #128343;
+    }
+
+    .setting-pill.now {
+      background: #eaf2ff;
+      color: #2563eb;
+    }
+
+    .setting-pill.warn {
+      background: #fff7ed;
+      color: #b45309;
+    }
+
+    .setting-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .setting-metric {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 12px;
+    }
+
+    .setting-metric strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1;
+      font-weight: 850;
+    }
+
+    .setting-metric span {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: 760;
+    }
+
+    .setting-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 820px) {
+      body[data-page="settings"] .hero-card {
+        padding: 20px 19px !important;
+        margin-top: 10px !important;
+        margin-bottom: 12px !important;
+      }
+
+      body[data-page="settings"] .hero-card h1 {
+        font-size: 30px !important;
+      }
+
+      body[data-page="settings"] .hero-card p,
+      body[data-page="settings"] .assistant-row p {
+        font-size: 16.5px !important;
+        line-height: 1.24 !important;
+      }
+
+      body[data-page="settings"] .assistant-row {
+        padding: 18px !important;
+      }
+
+      body[data-page="settings"] .assistant-row h2 {
+        font-size: 25px !important;
+      }
+
+      body[data-page="settings"] .section-title {
+        margin-top: 24px !important;
+        margin-bottom: 12px !important;
+        font-size: 27px !important;
+      }
+    }
+  </style>
+</head>
+
+<body data-page="settings">
+  <div class="admin-shell">
+    <header class="admin-header">
+      <button class="icon-btn" data-menu>☰</button>
+      <h1 class="admin-title">Settings</h1>
+      <button class="icon-btn" data-dots>•••</button>
+    </header>
+
+    <main>
+      <div class="status-strip">
+        <div class="status-chip"><i class="dot"></i> Backend <span id="backendState">Checking</span></div>
+        <div class="status-chip"><i class="dot"></i> Settings <span>ADM-3J</span></div>
+        <div class="status-chip"><i class="dot amber"></i> Safety <span>Locked</span></div>
+      </div>
+
+      <section class="hero-card">
+        <h1>Settings Office</h1>
+        <p>Control founder profile, company settings, app mode, approval safety, backend view, workers, API setup, deployment, and admin preferences.</p>
+      </section>
+
+      <section class="assistant-wrap">
+        <div class="assistant-avatar">✳</div>
+        <div class="assistant-row">
+          <h2>ChatGPT Assistant</h2>
+          <p id="summaryText">Settings Office is ready. Safety mode is locked, founder approval is required, and backend configuration is visible.</p>
+          <div class="updated" id="updatedAt">Updated now</div>
+
+          <div class="composer">
+            <button type="button">⌕</button>
+            <input id="composerInput" placeholder="Ask about settings..." />
+            <button id="composerSend" class="send" type="button">↑</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><strong>Safe</strong><span>Mode</span></div>
+            <div class="stat"><strong>On</strong><span>Approval</span></div>
+            <div class="stat"><strong id="workerMetricTop">0</strong><span>Workers</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Settings control</h2>
+
+      <div class="settings-list">
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Founder profile</div>
+              <div class="setting-sub">Owner identity and control role</div>
+            </div>
+            <span class="setting-pill ready">Active</span>
+          </div>
+          <div class="setting-note">Founder profile controls final approvals, company direction, admin access, and execution decisions.</div>
+          <div class="setting-grid">
+            <div class="setting-metric"><strong>Founder</strong><span>Role</span></div>
+            <div class="setting-metric"><strong>Full</strong><span>Control</span></div>
+          </div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Company settings</div>
+              <div class="setting-sub">IdeasForgeAI workspace identity</div>
+            </div>
+            <span class="setting-pill now">Current</span>
+          </div>
+          <div class="setting-note">Company name, product pillars, admin modules, and internal workspace settings will be controlled here.</div>
+          <div class="setting-grid">
+            <div class="setting-metric"><strong>4</strong><span>Core products</span></div>
+            <div class="setting-metric"><strong>ADM</strong><span>Admin layer</span></div>
+          </div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">App mode</div>
+              <div class="setting-sub">Demo, dry-run, safe, or live mode</div>
+            </div>
+            <span class="setting-pill warn">Safe</span>
+          </div>
+          <div class="setting-note">Current mode should stay safe. Real execution should remain locked until approval gates are complete.</div>
+          <div class="setting-grid">
+            <div class="setting-metric"><strong>Safe</strong><span>Current mode</span></div>
+            <div class="setting-metric"><strong>Dry-run</strong><span>Worker test</span></div>
+          </div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Approval safety</div>
+              <div class="setting-sub">Founder approval gate</div>
+            </div>
+            <span class="setting-pill ready">Locked</span>
+          </div>
+          <div class="setting-note">Workers must not execute risky jobs unless the founder approves the decision first.</div>
+          <div class="setting-grid">
+            <div class="setting-metric"><strong>On</strong><span>Approval required</span></div>
+            <div class="setting-metric"><strong>Zero</strong><span>Auto execution</span></div>
+          </div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Backend configuration</div>
+              <div class="setting-sub">Admin backend health and port</div>
+            </div>
+            <span class="setting-pill" id="backendPill">Checking</span>
+          </div>
+          <div class="setting-note" id="backendNote">Checking backend on port 5051.</div>
+          <div class="setting-grid">
+            <div class="setting-metric"><strong id="phaseMetric">ADM</strong><span>Backend phase</span></div>
+            <div class="setting-metric"><strong>5051</strong><span>Port</span></div>
+          </div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Worker control</div>
+              <div class="setting-sub">AI worker registration and status</div>
+            </div>
+            <span class="setting-pill grey" id="workerPill">Checking</span>
+          </div>
+          <div class="setting-note" id="workerNote">Checking worker registration status.</div>
+          <div class="setting-grid">
+            <div class="setting-metric"><strong id="workerMetric">0</strong><span>Registered</span></div>
+            <div class="setting-metric"><strong id="onlineMetric">0</strong><span>Online</span></div>
+          </div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">API and providers</div>
+              <div class="setting-sub">OpenAI, Supabase, GitHub, Render, storage</div>
+            </div>
+            <span class="setting-pill warn">Placeholder</span>
+          </div>
+          <div class="setting-note">Provider credentials should be shown as connected/not connected only. Secret values must never be displayed in the frontend.</div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Deployment settings</div>
+              <div class="setting-sub">Live service and production readiness</div>
+            </div>
+            <span class="setting-pill grey">Planned</span>
+          </div>
+          <div class="setting-note">Later this will control live website checks, backend deployment, GitHub status, Render service status, and DNS readiness.</div>
+        </article>
+
+        <article class="setting-card">
+          <div class="setting-top">
+            <div>
+              <div class="setting-title">Admin preferences</div>
+              <div class="setting-sub">Mobile UI, menu progress, and report style</div>
+            </div>
+            <span class="setting-pill now">Next polish</span>
+          </div>
+          <div class="setting-note">This will control founder dashboard style, compact mode, menu visibility, progress colors, and default admin landing screen.</div>
+          <div class="setting-actions">
+            <button class="btn" onclick="location.href='reports-office.html?v=settings-next'">Open reports</button>
+            <button class="btn" onclick="location.href='projects-office.html?v=settings-next'">Open projects</button>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>
+
+  <div id="dotsMenu" class="dots-menu">
+    <button onclick="location.reload()">Refresh settings</button>
+    <button onclick="location.href='reports-office.html?v=settings-menu'">Open Reports Office</button>
+    <button onclick="location.href='projects-office.html?v=settings-menu'">Open Projects Office</button>
+    <button onclick="location.href='founder-office.html?v=settings-menu'">Open Founder Office</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <script src="./admin-mobile-core.js?v=adm3j"></script>
+
+  <script>
+    (async function () {
+      const API = location.protocol + "//" + location.hostname + ":5051";
+
+      function set(id, value) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      function timeNow() {
+        return new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      }
+
+      try {
+        const res = await fetch(API + "/health", { cache: "no-store" });
+        const health = await res.json();
+
+        const workers = health.workers || 0;
+        const online = health.onlineWorkers || 0;
+
+        set("backendState", health.phase || "Connected");
+        set("backendPill", "Connected");
+        set("backendNote", "Backend is reachable. Admin settings can read health and worker status.");
+        set("phaseMetric", health.phase || "ADM");
+
+        set("workerMetricTop", String(workers));
+        set("workerMetric", String(workers));
+        set("onlineMetric", String(online));
+        set("workerPill", workers > 0 ? "Registered" : "No worker");
+        set("workerNote", workers + " worker registered, " + online + " online.");
+
+        set("summaryText", "Settings Office is ready. Backend connected, safety mode locked, founder approval required, and " + workers + " worker registered.");
+        set("updatedAt", "Updated " + timeNow());
+      } catch (err) {
+        set("backendState", "Offline");
+        set("backendPill", "Offline");
+        set("backendNote", "Backend is not reachable. Start ADM backend on port 5051.");
+        set("summaryText", "Settings Office is visible, but backend is not reachable yet.");
+        set("updatedAt", "Check backend");
+      }
+    })();
+  </script>
+</body>
+</html>
