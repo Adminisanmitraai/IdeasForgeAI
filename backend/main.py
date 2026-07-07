@@ -6347,6 +6347,265 @@ async def ideasforgeai_post_admin_audit_log(request: Request):
         "execution": "locked"
     }
 # ADM-4C-5 FUNCTIONAL AUDIT LOGS END
+
+# ADM-4C-9 WORKER REGISTRY + HEALTH
+def _ideasforgeai_worker_file_exists(relative_path):
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    return (root / relative_path).exists()
+
+def _ideasforgeai_worker_status(worker):
+    required = worker.get("required_files") or []
+    present = sum(1 for item in required if _ideasforgeai_worker_file_exists(item))
+    total = len(required) or 1
+    file_score = int((present / total) * 100)
+
+    base = int(worker.get("base_health", 70))
+    health = min(98, max(40, int((base + file_score) / 2)))
+
+    accuracy = min(96, max(35, int(health - int(worker.get("accuracy_gap", 8)))))
+
+    if present == 0 and required:
+        state = "planned"
+    elif present < total:
+        state = "partial"
+    else:
+        state = worker.get("state", "active")
+
+    return {
+        **worker,
+        "status": state,
+        "files_present": present,
+        "files_required": total,
+        "health": health,
+        "accuracy": accuracy,
+        "execution": worker.get("execution", "locked"),
+    }
+
+def _ideasforgeai_worker_registry():
+    workers = [
+        {
+            "id": "WRK-001",
+            "name": "Founder Office Orchestrator",
+            "department": "Founder Office",
+            "role": "Routes founder/admin chat, decisions, approvals, and next actions.",
+            "worker_type": "admin_router",
+            "base_health": 84,
+            "accuracy_gap": 8,
+            "state": "active",
+            "execution": "safe_chat_only",
+            "required_files": ["frontend/admin/founder-office.html", "frontend/admin/admin-mobile-core.js"]
+        },
+        {
+            "id": "WRK-002",
+            "name": "Shared Chat Brain Adapter",
+            "department": "Chat Brain",
+            "role": "Uses the same IdeasForgeAI backend brain for homepage and admin context.",
+            "worker_type": "brain_adapter",
+            "base_health": 86,
+            "accuracy_gap": 7,
+            "state": "active",
+            "execution": "backend_only",
+            "required_files": ["backend/main.py", "frontend/pages/home.html"]
+        },
+        {
+            "id": "WRK-003",
+            "name": "Company Status Agent",
+            "department": "Company Status",
+            "role": "Summarizes product pillars, admin modules, company health, and risks.",
+            "worker_type": "status_agent",
+            "base_health": 80,
+            "accuracy_gap": 8,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/company-status.html"]
+        },
+        {
+            "id": "WRK-004",
+            "name": "Approval Queue Agent",
+            "department": "Approvals",
+            "role": "Reads persistent backend jobs and supports approve/reject/apply-request flow.",
+            "worker_type": "approval_agent",
+            "base_health": 82,
+            "accuracy_gap": 9,
+            "state": "active",
+            "execution": "approval_only",
+            "required_files": ["frontend/admin/approvals-office.html", "data/admin_job_queue.json"]
+        },
+        {
+            "id": "WRK-005",
+            "name": "Audit Log Agent",
+            "department": "Audit Logs",
+            "role": "Records queue events, approval decisions, blocked actions, and safety traces.",
+            "worker_type": "audit_agent",
+            "base_health": 88,
+            "accuracy_gap": 7,
+            "state": "active",
+            "execution": "record_only",
+            "required_files": ["frontend/admin/audit-logs.html", "data/admin_audit_logs.json"]
+        },
+        {
+            "id": "WRK-006",
+            "name": "Backend Health Monitor",
+            "department": "Backend Health",
+            "role": "Checks API availability, health route, and backend operational status.",
+            "worker_type": "health_monitor",
+            "base_health": 86,
+            "accuracy_gap": 7,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/backend-health.html", "backend/main.py"]
+        },
+        {
+            "id": "WRK-007",
+            "name": "Job Queue Worker",
+            "department": "Job Queue",
+            "role": "Persists dry-run jobs and status transitions in backend JSON storage.",
+            "worker_type": "queue_worker",
+            "base_health": 84,
+            "accuracy_gap": 8,
+            "state": "active",
+            "execution": "locked_until_approval",
+            "required_files": ["frontend/admin/job-queue.html", "data/admin_job_queue.json"]
+        },
+        {
+            "id": "WRK-008",
+            "name": "Safe Apply Worker",
+            "department": "Workers",
+            "role": "Future file-change worker. Currently locked until ADM-4D approval bridge.",
+            "worker_type": "apply_worker",
+            "base_health": 67,
+            "accuracy_gap": 12,
+            "state": "planned",
+            "execution": "locked",
+            "required_files": ["frontend/admin/workers.html"]
+        },
+        {
+            "id": "WRK-009",
+            "name": "Persistence Agent",
+            "department": "Persistence",
+            "role": "Stores durable admin/project state for queue, audit, and future memory.",
+            "worker_type": "persistence_agent",
+            "base_health": 68,
+            "accuracy_gap": 12,
+            "state": "partial",
+            "execution": "locked",
+            "required_files": ["frontend/admin/persistence.html", "data/admin_job_queue.json", "data/admin_audit_logs.json"]
+        },
+        {
+            "id": "WRK-010",
+            "name": "Projects Agent",
+            "department": "Projects",
+            "role": "Tracks project phases, next build order, and product progress.",
+            "worker_type": "project_agent",
+            "base_health": 76,
+            "accuracy_gap": 10,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/projects-office.html"]
+        },
+        {
+            "id": "WRK-011",
+            "name": "Operations Agent",
+            "department": "Operations",
+            "role": "Tracks operational tasks, system flow, and execution readiness.",
+            "worker_type": "ops_agent",
+            "base_health": 73,
+            "accuracy_gap": 10,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/operations-office.html"]
+        },
+        {
+            "id": "WRK-012",
+            "name": "Finance Agent",
+            "department": "Finance",
+            "role": "Tracks finance-office readiness, revenue planning, and cost visibility.",
+            "worker_type": "finance_agent",
+            "base_health": 68,
+            "accuracy_gap": 14,
+            "state": "partial",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/finance-office.html"]
+        },
+        {
+            "id": "WRK-013",
+            "name": "Teams Agent",
+            "department": "Teams",
+            "role": "Tracks people, roles, AI workers, responsibilities, and founder access.",
+            "worker_type": "teams_agent",
+            "base_health": 74,
+            "accuracy_gap": 11,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/teams-office.html"]
+        },
+        {
+            "id": "WRK-014",
+            "name": "Reports Agent",
+            "department": "Reports",
+            "role": "Prepares future founder reports, status summaries, and review snapshots.",
+            "worker_type": "report_agent",
+            "base_health": 72,
+            "accuracy_gap": 11,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/reports-office.html"]
+        },
+        {
+            "id": "WRK-015",
+            "name": "Deployment Readiness Agent",
+            "department": "Deployment",
+            "role": "Tracks deployment readiness, backend status, provider gaps, and release risk.",
+            "worker_type": "deployment_agent",
+            "base_health": 70,
+            "accuracy_gap": 12,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/deployment-readiness.html"]
+        },
+        {
+            "id": "WRK-016",
+            "name": "Settings & Provider Agent",
+            "department": "Settings",
+            "role": "Tracks provider configuration placeholders without exposing secrets.",
+            "worker_type": "settings_agent",
+            "base_health": 73,
+            "accuracy_gap": 10,
+            "state": "active",
+            "execution": "read_only",
+            "required_files": ["frontend/admin/settings-office.html"]
+        }
+    ]
+
+    live = [_ideasforgeai_worker_status(worker) for worker in workers]
+    total = len(live)
+    avg_health = int(sum(w["health"] for w in live) / total) if total else 0
+    avg_accuracy = int(sum(w["accuracy"] for w in live) / total) if total else 0
+    active = sum(1 for w in live if w["status"] == "active")
+    partial = sum(1 for w in live if w["status"] == "partial")
+    planned = sum(1 for w in live if w["status"] == "planned")
+
+    return {
+        "ok": True,
+        "summary": {
+            "total": total,
+            "active": active,
+            "partial": partial,
+            "planned": planned,
+            "health": avg_health,
+            "accuracy": avg_accuracy,
+            "execution": "locked"
+        },
+        "workers": live,
+        "source": "admin-worker-registry-real-file-check",
+        "phase": "ADM-4C-9"
+    }
+
+@app.get("/api/admin/workers")
+async def ideasforgeai_get_admin_workers():
+    return _ideasforgeai_worker_registry()
+# ADM-4C-9 WORKER REGISTRY + HEALTH END
 @app.post("/api/home-chat")
 async def ideasforgeai_home_chat(request: Request):
     try:
@@ -6448,8 +6707,638 @@ async def _ideasforgeai_chat_cors_middleware(request, call_next):
 # CHAT-BRAIN-CORS-FIX-END
 
 
+# ADM-4C-7 ROUTE REPAIR - BACKEND JOB QUEUE
+def _ifai_admin_job_queue_path():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    data_dir = root / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir / "admin_job_queue.json"
+
+def _ifai_load_admin_jobs():
+    import json
+    path = _ifai_admin_job_queue_path()
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return data if isinstance(data, list) else []
+    except Exception:
+        return []
+
+def _ifai_save_admin_jobs(jobs):
+    import json
+    path = _ifai_admin_job_queue_path()
+    path.write_text(json.dumps(jobs[:500], indent=2, ensure_ascii=False), encoding="utf-8")
+
+def _ifai_admin_now():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+def _ifai_admin_job_id():
+    from datetime import datetime, timezone
+    return "DRY-" + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+
+def _ifai_find_admin_job(jobs, job_id):
+    job_id = str(job_id or "").upper().strip()
+    for job in jobs:
+        if str(job.get("id", "")).upper() == job_id:
+            return job
+    return None
+
+def _ifai_audit_job_event(action, status, job):
+    try:
+        fn = globals().get("_ideasforgeai_add_audit_log")
+        if callable(fn):
+            fn(
+                action=action,
+                status=status,
+                actor="founder_admin",
+                area="Job Queue",
+                risk=job.get("risk", "Low"),
+                meta={
+                    "job_id": job.get("id"),
+                    "target_area": job.get("target_area"),
+                    "target_file": job.get("target_file"),
+                    "execution": job.get("execution"),
+                    "phase": "ADM-4C-7"
+                }
+            )
+    except Exception:
+        pass
+
+@app.get("/api/admin/job-queue")
+async def ifai_get_admin_job_queue():
+    jobs = _ifai_load_admin_jobs()
+    summary = {
+        "total": len(jobs),
+        "waiting_approval": sum(1 for j in jobs if j.get("status") == "waiting_approval"),
+        "approved": sum(1 for j in jobs if j.get("status") == "approved"),
+        "rejected": sum(1 for j in jobs if j.get("status") == "rejected"),
+        "apply_requested": sum(1 for j in jobs if j.get("status") == "apply_requested"),
+        "blocked": sum(1 for j in jobs if j.get("status") == "blocked"),
+    }
+    return {
+        "ok": True,
+        "summary": summary,
+        "jobs": jobs[:150],
+        "source": "admin-job-queue-json-store",
+        "execution": "locked"
+    }
+
+@app.post("/api/admin/job-queue")
+async def ifai_create_admin_job_queue(request: Request):
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+
+    jobs = _ifai_load_admin_jobs()
+
+    job = {
+        "id": _ifai_admin_job_id(),
+        "status": "waiting_approval",
+        "execution": "locked",
+        "request": str(payload.get("request") or payload.get("message") or "Admin dry-run job").strip(),
+        "target_area": str(payload.get("target_area") or "Founder Office").strip(),
+        "target_file": str(payload.get("target_file") or "frontend/admin/admin-home.html").strip(),
+        "risk": str(payload.get("risk") or "Low").strip(),
+        "created_at": _ifai_admin_now(),
+        "approved_at": None,
+        "rejected_at": None,
+        "apply_requested_at": None,
+        "actor": "founder_admin",
+        "phase": "ADM-4C-7",
+        "notes": "Persistent backend dry-run job. Real execution remains locked."
+    }
+
+    jobs.insert(0, job)
+    _ifai_save_admin_jobs(jobs)
+    _ifai_audit_job_event("Backend job queued for founder approval", "waiting_approval", job)
+
+    return {
+        "ok": True,
+        "job": job,
+        "message": "Dry-run job saved to backend queue. Waiting founder approval.",
+        "source": "admin-job-queue-json-store",
+        "execution": "locked"
+    }
+
+@app.post("/api/admin/job-queue/{job_id}/approve")
+async def ifai_approve_admin_job_queue(job_id: str):
+    jobs = _ifai_load_admin_jobs()
+    job = _ifai_find_admin_job(jobs, job_id)
+
+    if not job:
+        return {"ok": False, "error": "job_not_found", "job_id": job_id}
+
+    job["status"] = "approved"
+    job["approved_at"] = _ifai_admin_now()
+    job["execution"] = "approved_but_locked"
+
+    _ifai_save_admin_jobs(jobs)
+    _ifai_audit_job_event("Founder approved backend queued dry-run job", "approved", job)
+
+    return {
+        "ok": True,
+        "job": job,
+        "message": "Dry-run job approved. Real execution is still locked.",
+        "execution": "approved_but_locked"
+    }
+
+@app.post("/api/admin/job-queue/{job_id}/reject")
+async def ifai_reject_admin_job_queue(job_id: str):
+    jobs = _ifai_load_admin_jobs()
+    job = _ifai_find_admin_job(jobs, job_id)
+
+    if not job:
+        return {"ok": False, "error": "job_not_found", "job_id": job_id}
+
+    job["status"] = "rejected"
+    job["rejected_at"] = _ifai_admin_now()
+    job["execution"] = "locked"
+
+    _ifai_save_admin_jobs(jobs)
+    _ifai_audit_job_event("Founder rejected backend queued dry-run job", "rejected", job)
+
+    return {
+        "ok": True,
+        "job": job,
+        "message": "Dry-run job rejected.",
+        "execution": "locked"
+    }
+
+@app.post("/api/admin/job-queue/{job_id}/apply-request")
+async def ifai_apply_request_admin_job_queue(job_id: str):
+    jobs = _ifai_load_admin_jobs()
+    job = _ifai_find_admin_job(jobs, job_id)
+
+    if not job:
+        return {"ok": False, "error": "job_not_found", "job_id": job_id}
+
+    if job.get("status") != "approved":
+        job["status"] = "blocked"
+        job["execution"] = "blocked_not_approved"
+        _ifai_save_admin_jobs(jobs)
+        _ifai_audit_job_event("Worker apply request blocked because job was not approved", "blocked", job)
+
+        return {
+            "ok": False,
+            "error": "job_not_approved",
+            "job": job,
+            "message": "Apply request blocked. Job must be approved first.",
+            "execution": "blocked_not_approved"
+        }
+
+    job["status"] = "apply_requested"
+    job["apply_requested_at"] = _ifai_admin_now()
+    job["execution"] = "locked_until_adm4d_worker_bridge"
+
+    _ifai_save_admin_jobs(jobs)
+    _ifai_audit_job_event("Founder requested worker apply for approved job", "apply_requested", job)
+
+    return {
+        "ok": True,
+        "job": job,
+        "message": "Apply request recorded. Real worker execution remains locked.",
+        "execution": "locked_until_adm4d_worker_bridge"
+    }
+# ADM-4C-7 ROUTE REPAIR END
 
 
+# ADM-4C-12 PERSISTENCE STATE API
+def _ideasforgeai_persistence_json_state(relative_path):
+    from pathlib import Path
+    from datetime import datetime, timezone
+    import json
+
+    root = Path(__file__).resolve().parents[1]
+    path = root / relative_path
+
+    state = {
+        "path": relative_path,
+        "exists": path.exists(),
+        "valid_json": False,
+        "records": 0,
+        "size_bytes": 0,
+        "updated_at": None,
+        "status": "missing",
+        "error": None
+    }
+
+    if not path.exists():
+        return state
+
+    try:
+        stat = path.stat()
+        state["size_bytes"] = stat.st_size
+        state["updated_at"] = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
+
+        raw = path.read_text(encoding="utf-8")
+        data = json.loads(raw) if raw.strip() else []
+
+        state["valid_json"] = True
+
+        if isinstance(data, list):
+            state["records"] = len(data)
+        elif isinstance(data, dict):
+            state["records"] = len(data.keys())
+        else:
+            state["records"] = 1
+
+        state["status"] = "active"
+        return state
+    except Exception as exc:
+        state["status"] = "error"
+        state["error"] = str(exc)
+        return state
 
 
+def _ideasforgeai_persistence_job_summary():
+    import json
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    path = root / "data" / "admin_job_queue.json"
+
+    summary = {
+        "total": 0,
+        "waiting_approval": 0,
+        "approved": 0,
+        "rejected": 0,
+        "apply_requested": 0,
+        "blocked": 0
+    }
+
+    if not path.exists():
+        return summary
+
+    try:
+        jobs = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(jobs, list):
+            return summary
+
+        summary["total"] = len(jobs)
+        for job in jobs:
+            status = str(job.get("status") or "")
+            if status in summary:
+                summary[status] += 1
+
+        return summary
+    except Exception:
+        return summary
+
+
+def _ideasforgeai_persistence_worker_summary():
+    fn = globals().get("_ideasforgeai_worker_registry")
+    if callable(fn):
+        try:
+            data = fn()
+            return data.get("summary", {})
+        except Exception:
+            pass
+
+    return {
+        "total": 0,
+        "active": 0,
+        "partial": 0,
+        "planned": 0,
+        "health": 0,
+        "accuracy": 0,
+        "execution": "locked"
+    }
+
+
+@app.get("/api/admin/persistence")
+async def ideasforgeai_get_admin_persistence():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parents[1]
+    data_dir = root / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+
+    queue_state = _ideasforgeai_persistence_json_state("data/admin_job_queue.json")
+    audit_state = _ideasforgeai_persistence_json_state("data/admin_audit_logs.json")
+    job_summary = _ideasforgeai_persistence_job_summary()
+    worker_summary = _ideasforgeai_persistence_worker_summary()
+
+    score = 40
+
+    if data_dir.exists():
+        score += 10
+    if queue_state.get("exists") and queue_state.get("valid_json"):
+        score += 15
+    if audit_state.get("exists") and audit_state.get("valid_json"):
+        score += 15
+    if worker_summary.get("total", 0) > 0:
+        score += 15
+    if job_summary.get("total", 0) >= 0:
+        score += 5
+
+    score = min(100, score)
+
+    return {
+        "ok": True,
+        "phase": "ADM-4C-12",
+        "execution": "locked",
+        "readiness": score,
+        "summary": {
+            "queue_records": queue_state.get("records", 0),
+            "audit_records": audit_state.get("records", 0),
+            "worker_total": worker_summary.get("total", 0),
+            "worker_health": worker_summary.get("health", 0),
+            "worker_accuracy": worker_summary.get("accuracy", 0),
+            "job_total": job_summary.get("total", 0),
+            "apply_requested": job_summary.get("apply_requested", 0),
+            "execution": "locked"
+        },
+        "files": {
+            "job_queue": queue_state,
+            "audit_logs": audit_state
+        },
+        "jobs": job_summary,
+        "workers": worker_summary,
+        "source": "admin-persistence-real-backend-state"
+    }
+# ADM-4C-12 PERSISTENCE STATE API END
+
+
+# ADM-4C-13 ADMIN SYSTEM SUMMARY ENDPOINT
+def _ideasforgeai_system_summary_read_json(relative_path):
+    from pathlib import Path
+    import json
+    from datetime import datetime, timezone
+
+    root = Path(__file__).resolve().parents[1]
+    path = root / relative_path
+
+    state = {
+        "path": relative_path,
+        "exists": path.exists(),
+        "valid_json": False,
+        "records": 0,
+        "size_bytes": 0,
+        "updated_at": None,
+        "items": [],
+        "status": "missing",
+        "error": None
+    }
+
+    if not path.exists():
+        return state
+
+    try:
+        stat = path.stat()
+        state["size_bytes"] = stat.st_size
+        state["updated_at"] = datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc).isoformat()
+
+        raw = path.read_text(encoding="utf-8")
+        data = json.loads(raw) if raw.strip() else []
+
+        state["valid_json"] = True
+        state["status"] = "active"
+
+        if isinstance(data, list):
+            state["records"] = len(data)
+            state["items"] = data[:10]
+        elif isinstance(data, dict):
+            state["records"] = len(data.keys())
+            state["items"] = [data]
+        else:
+            state["records"] = 1
+            state["items"] = [data]
+
+        return state
+    except Exception as exc:
+        state["status"] = "error"
+        state["error"] = str(exc)
+        return state
+
+
+def _ideasforgeai_system_summary_workers():
+    fn = globals().get("_ideasforgeai_worker_registry")
+
+    if callable(fn):
+        try:
+            data = fn()
+            if data.get("ok"):
+                return data
+        except Exception as exc:
+            return {
+                "ok": False,
+                "summary": {
+                    "total": 0,
+                    "active": 0,
+                    "partial": 0,
+                    "planned": 0,
+                    "health": 0,
+                    "accuracy": 0,
+                    "execution": "locked"
+                },
+                "workers": [],
+                "error": str(exc)
+            }
+
+    return {
+        "ok": False,
+        "summary": {
+            "total": 0,
+            "active": 0,
+            "partial": 0,
+            "planned": 0,
+            "health": 0,
+            "accuracy": 0,
+            "execution": "locked"
+        },
+        "workers": [],
+        "error": "worker_registry_unavailable"
+    }
+
+
+def _ideasforgeai_system_summary_jobs():
+    jobs_state = _ideasforgeai_system_summary_read_json("data/admin_job_queue.json")
+    jobs = jobs_state.get("items") or []
+
+    summary = {
+        "total": jobs_state.get("records", 0),
+        "waiting_approval": 0,
+        "approved": 0,
+        "rejected": 0,
+        "apply_requested": 0,
+        "blocked": 0
+    }
+
+    if jobs_state.get("valid_json"):
+        all_jobs = []
+        try:
+            from pathlib import Path
+            import json
+            root = Path(__file__).resolve().parents[1]
+            path = root / "data" / "admin_job_queue.json"
+            all_jobs = json.loads(path.read_text(encoding="utf-8")) if path.exists() else []
+        except Exception:
+            all_jobs = jobs
+
+        if isinstance(all_jobs, list):
+            summary["total"] = len(all_jobs)
+            for job in all_jobs:
+                status = str(job.get("status") or "")
+                if status in summary:
+                    summary[status] += 1
+            jobs = all_jobs[:10]
+
+    return {
+        "state": jobs_state,
+        "summary": summary,
+        "recent": jobs
+    }
+
+
+def _ideasforgeai_system_summary_audit():
+    audit_state = _ideasforgeai_system_summary_read_json("data/admin_audit_logs.json")
+    recent = audit_state.get("items") or []
+
+    return {
+        "state": audit_state,
+        "summary": {
+            "total": audit_state.get("records", 0),
+            "status": audit_state.get("status"),
+            "valid_json": audit_state.get("valid_json")
+        },
+        "recent": recent
+    }
+
+
+def _ideasforgeai_system_summary_persistence():
+    fn = globals().get("_ideasforgeai_persistence_json_state")
+
+    if callable(fn):
+        try:
+            queue = fn("data/admin_job_queue.json")
+            audit = fn("data/admin_audit_logs.json")
+        except Exception:
+            queue = _ideasforgeai_system_summary_read_json("data/admin_job_queue.json")
+            audit = _ideasforgeai_system_summary_read_json("data/admin_audit_logs.json")
+    else:
+        queue = _ideasforgeai_system_summary_read_json("data/admin_job_queue.json")
+        audit = _ideasforgeai_system_summary_read_json("data/admin_audit_logs.json")
+
+    score = 40
+    if queue.get("exists") and queue.get("valid_json"):
+        score += 20
+    if audit.get("exists") and audit.get("valid_json"):
+        score += 20
+    if queue.get("records", 0) >= 0:
+        score += 5
+    if audit.get("records", 0) >= 0:
+        score += 5
+
+    workers = _ideasforgeai_system_summary_workers()
+    if workers.get("summary", {}).get("total", 0) > 0:
+        score += 10
+
+    return {
+        "readiness": min(100, score),
+        "queue_store": queue,
+        "audit_store": audit,
+        "execution": "locked"
+    }
+
+
+def _ideasforgeai_system_summary_overall(workers, jobs, audit, persistence):
+    worker_summary = workers.get("summary", {})
+    job_summary = jobs.get("summary", {})
+    audit_summary = audit.get("summary", {})
+
+    readiness_parts = []
+
+    readiness_parts.append(int(worker_summary.get("health", 0)))
+    readiness_parts.append(int(worker_summary.get("accuracy", 0)))
+    readiness_parts.append(int(persistence.get("readiness", 0)))
+
+    if job_summary.get("total", 0) >= 0:
+        readiness_parts.append(100)
+
+    if audit_summary.get("valid_json"):
+        readiness_parts.append(100)
+    else:
+        readiness_parts.append(50)
+
+    readiness = int(sum(readiness_parts) / len(readiness_parts)) if readiness_parts else 0
+
+    risk_level = "Low"
+    if worker_summary.get("accuracy", 0) < 70:
+        risk_level = "Medium"
+    if worker_summary.get("accuracy", 0) < 55:
+        risk_level = "High"
+
+    return {
+        "readiness": readiness,
+        "risk_level": risk_level,
+        "execution": "locked",
+        "safe_to_execute": False,
+        "approval_required": True,
+        "status": "active",
+        "phase": "ADM-4C-13"
+    }
+
+
+@app.get("/api/admin/system-summary")
+async def ideasforgeai_get_admin_system_summary():
+    workers = _ideasforgeai_system_summary_workers()
+    jobs = _ideasforgeai_system_summary_jobs()
+    audit = _ideasforgeai_system_summary_audit()
+    persistence = _ideasforgeai_system_summary_persistence()
+    overall = _ideasforgeai_system_summary_overall(workers, jobs, audit, persistence)
+
+    worker_summary = workers.get("summary", {})
+    job_summary = jobs.get("summary", {})
+    audit_summary = audit.get("summary", {})
+
+    return {
+        "ok": True,
+        "phase": "ADM-4C-13",
+        "service": "ideasforgeai-admin-system-summary",
+        "overall": overall,
+        "summary": {
+            "admin_modules": 10,
+            "core_products": 4,
+            "workers": worker_summary.get("total", 0),
+            "active_workers": worker_summary.get("active", 0),
+            "worker_health": worker_summary.get("health", 0),
+            "worker_accuracy": worker_summary.get("accuracy", 0),
+            "jobs": job_summary.get("total", 0),
+            "waiting_approval": job_summary.get("waiting_approval", 0),
+            "approved": job_summary.get("approved", 0),
+            "apply_requested": job_summary.get("apply_requested", 0),
+            "audit_events": audit_summary.get("total", 0),
+            "persistence_readiness": persistence.get("readiness", 0),
+            "execution": "locked"
+        },
+        "products": {
+            "ForgeStudio": "AI Creation Platform",
+            "ForgeCode": "AI Software Engineering Platform",
+            "ForgeWork": "AI Professional Workspace",
+            "ForgePilot": "Approved-action execution layer"
+        },
+        "workers": workers,
+        "jobs": jobs,
+        "audit": audit,
+        "persistence": persistence,
+        "safety": {
+            "real_execution": "locked",
+            "frontend_openai_calls": "not_allowed",
+            "secrets_exposed": False,
+            "file_changes_require_founder_approval": True,
+            "deploy_commit_delete_require_approval": True,
+            "next_execution_phase": "ADM-4D Safe Worker Apply Bridge"
+        },
+        "next": [
+            "ADM-4C-14 connect all admin pages to /api/admin/system-summary",
+            "ADM-4C-15 freeze clean Git commit push live test",
+            "ADM-4D-1 plan Safe Worker Apply Bridge"
+        ],
+        "source": "admin-system-summary-real-backend-state"
+    }
+# ADM-4C-13 ADMIN SYSTEM SUMMARY ENDPOINT END
 

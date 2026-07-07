@@ -3176,8 +3176,249 @@ http://${location.hostname}:5051/health`;
       };
     })();
   </script>
+<style id="adm4c10-worker-chat-style">
+  .adm4c10-worker-report {
+    white-space: pre-line !important;
+  }
+</style>
+
+<script id="adm4c10-worker-chat-registry-route">
+(function () {
+  const ADM4C10_API = location.protocol + "//" + location.hostname + ":5051";
+
+  function adm4c10IsWorkerQuestion(text) {
+    const q = String(text || "").toLowerCase();
+    return (
+      q.includes("worker status") ||
+      q.includes("worker health") ||
+      q.includes("workers health") ||
+      q.includes("show workers") ||
+      q.includes("show all workers") ||
+      q.includes("show all agents") ||
+      q.includes("agent status") ||
+      q.includes("agent health") ||
+      q.includes("all agents health") ||
+      q.includes("execution status") ||
+      q.includes("which workers are active") ||
+      q.includes("which agents are active")
+    );
+  }
+
+  function adm4c10Escape(value) {
+    return String(value ?? "").replace(/[&<>"']/g, s => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    }[s]));
+  }
+
+  function adm4c10BuildWorkerReport(data) {
+    const summary = data.summary || {};
+    const workers = Array.isArray(data.workers) ? data.workers : [];
+
+    const active = workers.filter(w => w.status === "active");
+    const partial = workers.filter(w => w.status === "partial");
+    const planned = workers.filter(w => w.status === "planned");
+
+    const lines = [];
+
+    lines.push("IdeasForgeAI Worker Registry");
+    lines.push("");
+    lines.push(`Overall: ${summary.total ?? workers.length} workers`);
+    lines.push(`Health: ${summary.health ?? 0}%`);
+    lines.push(`Accuracy: ${summary.accuracy ?? 0}%`);
+    lines.push(`Execution: ${summary.execution || "locked"}`);
+    lines.push("");
+    lines.push(`Active: ${active.length}`);
+    lines.push(`Partial: ${partial.length}`);
+    lines.push(`Planned: ${planned.length}`);
+    lines.push("");
+    lines.push("Active workers:");
+
+    workers.forEach((w, index) => {
+      lines.push("");
+      lines.push(`${index + 1}. ${w.name}`);
+      lines.push(`Department: ${w.department}`);
+      lines.push(`Status: ${w.status}`);
+      lines.push(`Health: ${w.health}% · Accuracy: ${w.accuracy}%`);
+      lines.push(`Files: ${w.files_present}/${w.files_required}`);
+      lines.push(`Execution: ${w.execution}`);
+      lines.push(`Role: ${w.role}`);
+    });
+
+    lines.push("");
+    lines.push("Safety:");
+    lines.push("Real file execution is still locked until ADM-4D Safe Worker Apply Bridge.");
+    lines.push("Workers can report, route, queue, approve, and audit, but cannot modify files automatically yet.");
+
+    return lines.join("\n");
+  }
+
+  function adm4c10FindChatList() {
+    return (
+      document.querySelector("#chatMessages") ||
+      document.querySelector(".chat-messages") ||
+      document.querySelector(".messages") ||
+      document.querySelector(".chat-list") ||
+      document.querySelector("main") ||
+      document.body
+    );
+  }
+
+  function adm4c10AddMessage(role, text) {
+    const list = adm4c10FindChatList();
+    const isUser = role === "user";
+
+    const wrapper = document.createElement("section");
+    wrapper.className = "adm4c10-message " + (isUser ? "user" : "assistant");
+
+    wrapper.innerHTML = `
+      <div style="display:grid;grid-template-columns:58px 1fr;gap:16px;margin:28px 0;">
+        <div style="
+          width:52px;height:52px;border-radius:18px;
+          display:grid;place-items:center;
+          background:${isUser ? "#111" : "rgba(255,255,255,.9)"};
+          color:${isUser ? "#fff" : "#111"};
+          box-shadow:0 14px 36px rgba(0,0,0,.06);
+          font-weight:600;
+          ${isUser ? "" : "background-image:url('assets/ideasforgeai-mark.png');background-size:cover;background-position:center;color:transparent;"}
+        ">${isUser ? "You" : "AI"}</div>
+
+        <div>
+          <h2 style="
+            margin:0 0 12px;
+            font-size:32px;
+            line-height:1.05;
+            letter-spacing:-.055em;
+            font-weight:610;
+          ">${isUser ? "You" : "ChatGPT Assistant"}</h2>
+
+          <div class="adm4c10-worker-report" style="
+            color:#737c86;
+            font-size:22px;
+            line-height:1.35;
+            font-weight:380;
+          ">${adm4c10Escape(text)}</div>
+
+          <div style="
+            margin-top:22px;
+            color:#8a929b;
+            font-size:18px;
+            font-weight:380;
+          ">Updated ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+        </div>
+      </div>
+    `;
+
+    list.appendChild(wrapper);
+    setTimeout(() => wrapper.scrollIntoView({ behavior: "smooth", block: "end" }), 60);
+  }
+
+  function adm4c10GetInput() {
+    return (
+      document.querySelector("textarea") ||
+      document.querySelector("input[type='text']") ||
+      document.querySelector("[contenteditable='true']")
+    );
+  }
+
+  function adm4c10InputValue(input) {
+    if (!input) return "";
+    if (input.matches && input.matches("[contenteditable='true']")) return input.textContent || "";
+    return input.value || "";
+  }
+
+  function adm4c10ClearInput(input) {
+    if (!input) return;
+    if (input.matches && input.matches("[contenteditable='true']")) input.textContent = "";
+    else input.value = "";
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  async function adm4c10AnswerWorkerQuestion(message) {
+    adm4c10AddMessage("user", message);
+
+    try {
+      const res = await fetch(ADM4C10_API + "/api/admin/workers", { cache: "no-store" });
+      const data = await res.json();
+
+      if (!data.ok) {
+        throw new Error(data.error || "Worker registry returned an error");
+      }
+
+      adm4c10AddMessage("assistant", adm4c10BuildWorkerReport(data));
+    } catch (err) {
+      adm4c10AddMessage(
+        "assistant",
+        [
+          "Worker Registry unavailable",
+          "",
+          "Tried:",
+          "GET /api/admin/workers",
+          "",
+          "Error:",
+          err.message,
+          "",
+          "Safety:",
+          "No command was executed.",
+          "No file was changed."
+        ].join("\n")
+      );
+    }
+  }
+
+  function adm4c10ShouldHandleSubmit(event) {
+    const input = adm4c10GetInput();
+    const message = adm4c10InputValue(input).trim();
+
+    if (!message || !adm4c10IsWorkerQuestion(message)) return false;
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    adm4c10ClearInput(input);
+    adm4c10AnswerWorkerQuestion(message);
+
+    return true;
+  }
+
+  document.addEventListener("submit", function (event) {
+    adm4c10ShouldHandleSubmit(event);
+  }, true);
+
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("button");
+    if (!button) return;
+
+    const label = (
+      button.getAttribute("aria-label") ||
+      button.textContent ||
+      button.className ||
+      ""
+    ).toLowerCase();
+
+    if (
+      label.includes("send") ||
+      label.includes("submit") ||
+      label.includes("arrow") ||
+      button.className.toString().includes("send")
+    ) {
+      adm4c10ShouldHandleSubmit(event);
+    }
+  }, true);
+
+  window.ADM4C10WorkerChat = {
+    ask: adm4c10AnswerWorkerQuestion,
+    isWorkerQuestion: adm4c10IsWorkerQuestion
+  };
+})();
+</script>
 </body>
 </html>
+
 
 
 

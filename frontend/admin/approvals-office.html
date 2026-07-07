@@ -5,6 +5,228 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Approvals</title>
   <link rel="stylesheet" href="./admin-mobile-core.css?v=adm3d-f7" />
+  <style id="adm4c8-backend-approval-queue-style">
+    .adm4c8-panel {
+      margin: 22px 0 120px;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 34px;
+      background: rgba(255,255,255,.82);
+      box-shadow: 0 18px 54px rgba(0,0,0,.06);
+      padding: 22px;
+    }
+
+    .adm4c8-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .adm4c8-title {
+      margin: 0;
+      font-size: 30px;
+      line-height: 1.04;
+      letter-spacing: -.06em;
+      font-weight: 610;
+    }
+
+    .adm4c8-sub {
+      margin: 7px 0 0;
+      color: #7a828b;
+      font-size: 16px;
+      line-height: 1.32;
+      font-weight: 390;
+    }
+
+    .adm4c8-refresh {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 999px;
+      background: rgba(255,255,255,.9);
+      min-height: 44px;
+      padding: 0 15px;
+      font-size: 14px;
+      font-weight: 520;
+      color: #111;
+      white-space: nowrap;
+    }
+
+    .adm4c8-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .adm4c8-stat {
+      border: 1px solid rgba(0,0,0,.07);
+      border-radius: 22px;
+      background: rgba(255,255,255,.74);
+      padding: 14px;
+      min-height: 88px;
+    }
+
+    .adm4c8-stat strong {
+      display: block;
+      font-size: 26px;
+      line-height: 1;
+      letter-spacing: -.05em;
+      font-weight: 610;
+      color: #080808;
+    }
+
+    .adm4c8-stat span {
+      display: block;
+      margin-top: 7px;
+      color: #7d858d;
+      font-size: 13px;
+      line-height: 1.15;
+      font-weight: 520;
+    }
+
+    .adm4c8-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .adm4c8-empty {
+      border: 1px dashed rgba(0,0,0,.12);
+      border-radius: 24px;
+      padding: 20px;
+      color: #7a828b;
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .adm4c8-job {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 28px;
+      background: rgba(255,255,255,.9);
+      box-shadow: 0 14px 42px rgba(0,0,0,.045);
+      padding: 18px;
+    }
+
+    .adm4c8-job-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .adm4c8-job-title {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.12;
+      letter-spacing: -.045em;
+      font-weight: 600;
+      color: #080808;
+    }
+
+    .adm4c8-badge {
+      border-radius: 999px;
+      padding: 7px 10px;
+      background: #eef3f6;
+      color: #6f7882;
+      font-size: 12px;
+      font-weight: 650;
+      white-space: nowrap;
+      text-transform: lowercase;
+    }
+
+    .adm4c8-badge.waiting_approval {
+      background: #fff7df;
+      color: #9a6800;
+    }
+
+    .adm4c8-badge.approved {
+      background: #eaf6ef;
+      color: #108446;
+    }
+
+    .adm4c8-badge.rejected,
+    .adm4c8-badge.blocked {
+      background: #fff0ef;
+      color: #a5342a;
+    }
+
+    .adm4c8-badge.apply_requested {
+      background: #edf3ff;
+      color: #2563eb;
+    }
+
+    .adm4c8-meta {
+      color: #747d86;
+      font-size: 14px;
+      line-height: 1.42;
+      margin-bottom: 14px;
+      word-break: break-word;
+    }
+
+    .adm4c8-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .adm4c8-action {
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 999px;
+      min-height: 42px;
+      padding: 0 14px;
+      background: #fff;
+      color: #111;
+      font-size: 14px;
+      font-weight: 540;
+    }
+
+    .adm4c8-action.primary {
+      background: #111;
+      color: #fff;
+    }
+
+    .adm4c8-action.warn {
+      background: #fff4f2;
+      color: #9b2f24;
+    }
+
+    .adm4c8-action:disabled {
+      opacity: .45;
+    }
+
+    @media (max-width: 520px) {
+      .adm4c8-panel {
+        border-radius: 30px;
+        padding: 18px;
+        margin-bottom: 160px;
+      }
+
+      .adm4c8-title {
+        font-size: 28px;
+      }
+
+      .adm4c8-summary {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .adm4c8-stat {
+        padding: 12px;
+        min-height: 78px;
+      }
+
+      .adm4c8-stat strong {
+        font-size: 24px;
+      }
+
+      .adm4c8-stat span {
+        font-size: 12px;
+      }
+
+      .adm4c8-job-title {
+        font-size: 20px;
+      }
+    }
+  </style>
 </head>
 <body data-page="approvals">
   <div class="admin-shell">
@@ -46,7 +268,26 @@
           <div class="job-command">Loading approval records...</div>
         </article>
       </div>
-    </main>
+      <section id="adm4c8QueuePanel" class="adm4c8-panel">
+      <div class="adm4c8-head">
+        <div>
+          <h2 class="adm4c8-title">Backend Approval Queue</h2>
+          <p class="adm4c8-sub">Persistent dry-run jobs from the backend queue. Approval is allowed, but real execution remains locked.</p>
+        </div>
+        <button class="adm4c8-refresh" type="button" onclick="adm4c8LoadQueue()">Refresh</button>
+      </div>
+
+      <div class="adm4c8-summary">
+        <div class="adm4c8-stat"><strong id="adm4c8Waiting">0</strong><span>Waiting</span></div>
+        <div class="adm4c8-stat"><strong id="adm4c8Approved">0</strong><span>Approved</span></div>
+        <div class="adm4c8-stat"><strong id="adm4c8Total">0</strong><span>Total Jobs</span></div>
+      </div>
+
+      <div id="adm4c8JobList" class="adm4c8-list">
+        <div class="adm4c8-empty">Loading backend approval queue…</div>
+      </div>
+    </section>
+  </main>
   </div>
 
   <div class="composer">
@@ -63,5 +304,508 @@
 
   <div id="toast" class="toast"></div>
   <script src="./admin-mobile-core.js?v=adm3d-f7"></script>
+  <script id="adm4c8-backend-approval-queue-script">
+    const ADM4C8_API = location.protocol + "//" + location.hostname + ":5051";
+
+    function adm4c8Escape(value) {
+      return String(value ?? "").replace(/[&<>"']/g, s => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;"
+      }[s]));
+    }
+
+    function adm4c8Time(value) {
+      if (!value) return "Not recorded";
+      try {
+        return new Date(value).toLocaleString([], {
+          month: "short",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+      } catch {
+        return value;
+      }
+    }
+
+    function adm4c8SetSummary(summary) {
+      document.getElementById("adm4c8Waiting").textContent = summary?.waiting_approval ?? 0;
+      document.getElementById("adm4c8Approved").textContent = summary?.approved ?? 0;
+      document.getElementById("adm4c8Total").textContent = summary?.total ?? 0;
+    }
+
+    function adm4c8Buttons(job) {
+      const id = adm4c8Escape(job.id);
+      const status = String(job.status || "");
+
+      if (status === "waiting_approval") {
+        return `
+          <button class="adm4c8-action primary" data-adm4c8-action="approve" data-job-id="${id}">Approve</button>
+          <button class="adm4c8-action warn" data-adm4c8-action="reject" data-job-id="${id}">Reject</button>
+        `;
+      }
+
+      if (status === "approved") {
+        return `
+          <button class="adm4c8-action primary" data-adm4c8-action="apply-request" data-job-id="${id}">Request apply</button>
+          <button class="adm4c8-action warn" data-adm4c8-action="reject" data-job-id="${id}">Reject</button>
+        `;
+      }
+
+      if (status === "apply_requested") {
+        return `<button class="adm4c8-action" disabled>Apply requested · execution locked</button>`;
+      }
+
+      if (status === "rejected") {
+        return `<button class="adm4c8-action" disabled>Rejected</button>`;
+      }
+
+      if (status === "blocked") {
+        return `<button class="adm4c8-action" disabled>Blocked</button>`;
+      }
+
+      return `<button class="adm4c8-action" disabled>${adm4c8Escape(status || "recorded")}</button>`;
+    }
+
+    function adm4c8RenderJobs(jobs) {
+      const list = document.getElementById("adm4c8JobList");
+
+      if (!Array.isArray(jobs) || !jobs.length) {
+        list.innerHTML = `
+          <div class="adm4c8-empty">
+            No backend jobs yet.<br>
+            Create one from Founder Office or POST to <strong>/api/admin/job-queue</strong>.
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = jobs.map(job => `
+        <article class="adm4c8-job">
+          <div class="adm4c8-job-top">
+            <h3 class="adm4c8-job-title">${adm4c8Escape(job.request || "Admin dry-run job")}</h3>
+            <span class="adm4c8-badge ${adm4c8Escape(job.status)}">${adm4c8Escape(job.status)}</span>
+          </div>
+
+          <div class="adm4c8-meta">
+            <strong>${adm4c8Escape(job.id)}</strong><br>
+            Area: ${adm4c8Escape(job.target_area)}<br>
+            Target: ${adm4c8Escape(job.target_file)}<br>
+            Risk: ${adm4c8Escape(job.risk)} · Execution: ${adm4c8Escape(job.execution)}<br>
+            Created: ${adm4c8Escape(adm4c8Time(job.created_at))}
+          </div>
+
+          <div class="adm4c8-actions">
+            ${adm4c8Buttons(job)}
+          </div>
+        </article>
+      `).join("");
+    }
+
+    async function adm4c8LoadQueue() {
+      const list = document.getElementById("adm4c8JobList");
+      list.innerHTML = `<div class="adm4c8-empty">Loading backend approval queue…</div>`;
+
+      try {
+        const res = await fetch(ADM4C8_API + "/api/admin/job-queue", { cache: "no-store" });
+        const data = await res.json();
+
+        if (!data.ok) {
+          throw new Error(data.error || "Queue API returned error");
+        }
+
+        adm4c8SetSummary(data.summary || {});
+        adm4c8RenderJobs(data.jobs || []);
+      } catch (err) {
+        list.innerHTML = `
+          <div class="adm4c8-empty">
+            Backend job queue unavailable.<br>
+            ${adm4c8Escape(err.message)}<br><br>
+            Check backend on port 5051.
+          </div>
+        `;
+      }
+    }
+
+    async function adm4c8QueueAction(action, jobId) {
+      const endpoint = action === "apply-request"
+        ? `/api/admin/job-queue/${encodeURIComponent(jobId)}/apply-request`
+        : `/api/admin/job-queue/${encodeURIComponent(jobId)}/${action}`;
+
+      try {
+        const res = await fetch(ADM4C8_API + endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await res.json();
+
+        if (!data.ok && data.error) {
+          alert(data.message || data.error);
+        }
+
+        await adm4c8LoadQueue();
+      } catch (err) {
+        alert("Queue action failed: " + err.message);
+      }
+    }
+
+    document.addEventListener("click", event => {
+      const button = event.target.closest("[data-adm4c8-action]");
+      if (!button) return;
+
+      const action = button.getAttribute("data-adm4c8-action");
+      const jobId = button.getAttribute("data-job-id");
+
+      if (!action || !jobId) return;
+
+      adm4c8QueueAction(action, jobId);
+    });
+
+    adm4c8LoadQueue();
+  </script>
+<style id="adm4c8a-visible-queue-style">
+  #adm4c8VisibleQueue {
+    margin: 24px 18px 160px;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 32px;
+    background: rgba(255,255,255,.88);
+    box-shadow: 0 18px 54px rgba(0,0,0,.06);
+    padding: 20px;
+  }
+
+  .adm4c8a-head {
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:16px;
+  }
+
+  .adm4c8a-title {
+    margin:0;
+    font-size:30px;
+    line-height:1.04;
+    letter-spacing:-.06em;
+    font-weight:610;
+  }
+
+  .adm4c8a-sub {
+    margin:7px 0 0;
+    color:#7b838c;
+    font-size:16px;
+    line-height:1.32;
+    font-weight:390;
+  }
+
+  .adm4c8a-refresh {
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:999px;
+    background:#fff;
+    padding:0 14px;
+    min-height:42px;
+    font-size:14px;
+    font-weight:520;
+  }
+
+  .adm4c8a-summary {
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin:16px 0;
+  }
+
+  .adm4c8a-stat {
+    border:1px solid rgba(0,0,0,.07);
+    border-radius:22px;
+    background:rgba(255,255,255,.78);
+    padding:13px;
+  }
+
+  .adm4c8a-stat strong {
+    display:block;
+    font-size:25px;
+    line-height:1;
+    font-weight:610;
+    letter-spacing:-.05em;
+  }
+
+  .adm4c8a-stat span {
+    display:block;
+    margin-top:7px;
+    color:#7d858d;
+    font-size:12px;
+    font-weight:520;
+  }
+
+  .adm4c8a-list {
+    display:grid;
+    gap:12px;
+  }
+
+  .adm4c8a-empty {
+    border:1px dashed rgba(0,0,0,.12);
+    border-radius:24px;
+    padding:18px;
+    color:#7b838c;
+    font-size:16px;
+    line-height:1.35;
+  }
+
+  .adm4c8a-job {
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:26px;
+    background:#fff;
+    padding:17px;
+    box-shadow:0 12px 36px rgba(0,0,0,.045);
+  }
+
+  .adm4c8a-job-top {
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:10px;
+  }
+
+  .adm4c8a-job h3 {
+    margin:0;
+    font-size:21px;
+    line-height:1.12;
+    letter-spacing:-.045em;
+    font-weight:600;
+  }
+
+  .adm4c8a-badge {
+    border-radius:999px;
+    padding:7px 10px;
+    font-size:12px;
+    font-weight:650;
+    background:#eef3f6;
+    color:#6f7882;
+    white-space:nowrap;
+  }
+
+  .adm4c8a-badge.waiting_approval { background:#fff7df; color:#9a6800; }
+  .adm4c8a-badge.approved { background:#eaf6ef; color:#108446; }
+  .adm4c8a-badge.rejected,
+  .adm4c8a-badge.blocked { background:#fff0ef; color:#a5342a; }
+  .adm4c8a-badge.apply_requested { background:#edf3ff; color:#2563eb; }
+
+  .adm4c8a-meta {
+    color:#747d86;
+    font-size:14px;
+    line-height:1.42;
+    word-break:break-word;
+    margin-bottom:13px;
+  }
+
+  .adm4c8a-actions {
+    display:flex;
+    flex-wrap:wrap;
+    gap:9px;
+  }
+
+  .adm4c8a-action {
+    border:1px solid rgba(0,0,0,.08);
+    border-radius:999px;
+    min-height:40px;
+    padding:0 13px;
+    background:#fff;
+    color:#111;
+    font-size:14px;
+    font-weight:540;
+  }
+
+  .adm4c8a-action.primary {
+    background:#111;
+    color:#fff;
+  }
+
+  .adm4c8a-action.warn {
+    background:#fff4f2;
+    color:#9b2f24;
+  }
+
+  .adm4c8a-action:disabled {
+    opacity:.48;
+  }
+</style>
+
+<script id="adm4c8a-visible-queue-script">
+(function () {
+  const API = location.protocol + "//" + location.hostname + ":5051";
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, s => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[s]));
+  }
+
+  function shortTime(value) {
+    if (!value) return "Not recorded";
+    try {
+      return new Date(value).toLocaleString([], {
+        month:"short",
+        day:"2-digit",
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+    } catch {
+      return value;
+    }
+  }
+
+  function ensurePanel() {
+    if (document.getElementById("adm4c8VisibleQueue")) return;
+
+    const panel = document.createElement("section");
+    panel.id = "adm4c8VisibleQueue";
+    panel.innerHTML = `
+      <div class="adm4c8a-head">
+        <div>
+          <h2 class="adm4c8a-title">Backend Approval Queue</h2>
+          <p class="adm4c8a-sub">Persistent dry-run jobs. Founder approval is active. Real execution remains locked.</p>
+        </div>
+        <button class="adm4c8a-refresh" type="button" id="adm4c8aRefresh">Refresh</button>
+      </div>
+
+      <div class="adm4c8a-summary">
+        <div class="adm4c8a-stat"><strong id="adm4c8aWaiting">0</strong><span>Waiting</span></div>
+        <div class="adm4c8a-stat"><strong id="adm4c8aApproved">0</strong><span>Approved</span></div>
+        <div class="adm4c8a-stat"><strong id="adm4c8aTotal">0</strong><span>Total</span></div>
+      </div>
+
+      <div id="adm4c8aList" class="adm4c8a-list">
+        <div class="adm4c8a-empty">Loading backend queue…</div>
+      </div>
+    `;
+
+    const headings = Array.from(document.querySelectorAll("h1,h2,h3"));
+    const inboxHeading = headings.find(h => /approval inbox/i.test(h.textContent || ""));
+
+    if (inboxHeading && inboxHeading.parentElement) {
+      inboxHeading.parentElement.insertBefore(panel, inboxHeading);
+    } else {
+      document.body.appendChild(panel);
+    }
+
+    document.getElementById("adm4c8aRefresh").addEventListener("click", loadQueue);
+  }
+
+  function buttons(job) {
+    const id = escapeHtml(job.id);
+    const status = String(job.status || "");
+
+    if (status === "waiting_approval") {
+      return `
+        <button class="adm4c8a-action primary" data-adm4c8a-action="approve" data-job-id="${id}">Approve</button>
+        <button class="adm4c8a-action warn" data-adm4c8a-action="reject" data-job-id="${id}">Reject</button>
+      `;
+    }
+
+    if (status === "approved") {
+      return `
+        <button class="adm4c8a-action primary" data-adm4c8a-action="apply-request" data-job-id="${id}">Request apply</button>
+        <button class="adm4c8a-action warn" data-adm4c8a-action="reject" data-job-id="${id}">Reject</button>
+      `;
+    }
+
+    if (status === "apply_requested") {
+      return `<button class="adm4c8a-action" disabled>Apply requested · locked</button>`;
+    }
+
+    return `<button class="adm4c8a-action" disabled>${escapeHtml(status || "recorded")}</button>`;
+  }
+
+  function render(data) {
+    document.getElementById("adm4c8aWaiting").textContent = data.summary?.waiting_approval ?? 0;
+    document.getElementById("adm4c8aApproved").textContent = data.summary?.approved ?? 0;
+    document.getElementById("adm4c8aTotal").textContent = data.summary?.total ?? 0;
+
+    const list = document.getElementById("adm4c8aList");
+    const jobs = Array.isArray(data.jobs) ? data.jobs : [];
+
+    if (!jobs.length) {
+      list.innerHTML = `
+        <div class="adm4c8a-empty">
+          No backend jobs yet.<br>
+          Create a dry-run from Founder Office, then refresh this page.
+        </div>
+      `;
+      return;
+    }
+
+    list.innerHTML = jobs.map(job => `
+      <article class="adm4c8a-job">
+        <div class="adm4c8a-job-top">
+          <h3>${escapeHtml(job.request || "Admin dry-run job")}</h3>
+          <span class="adm4c8a-badge ${escapeHtml(job.status)}">${escapeHtml(job.status)}</span>
+        </div>
+        <div class="adm4c8a-meta">
+          <strong>${escapeHtml(job.id)}</strong><br>
+          Area: ${escapeHtml(job.target_area)}<br>
+          Target: ${escapeHtml(job.target_file)}<br>
+          Risk: ${escapeHtml(job.risk)} · Execution: ${escapeHtml(job.execution)}<br>
+          Created: ${escapeHtml(shortTime(job.created_at))}
+        </div>
+        <div class="adm4c8a-actions">${buttons(job)}</div>
+      </article>
+    `).join("");
+  }
+
+  async function loadQueue() {
+    ensurePanel();
+    const list = document.getElementById("adm4c8aList");
+    list.innerHTML = `<div class="adm4c8a-empty">Loading backend queue…</div>`;
+
+    try {
+      const res = await fetch(API + "/api/admin/job-queue", { cache:"no-store" });
+      const data = await res.json();
+      if (!data.ok) throw new Error(data.error || "Queue API error");
+      render(data);
+    } catch (err) {
+      list.innerHTML = `
+        <div class="adm4c8a-empty">
+          Backend job queue unavailable.<br>
+          ${escapeHtml(err.message)}<br><br>
+          Check backend on port 5051.
+        </div>
+      `;
+    }
+  }
+
+  async function queueAction(action, jobId) {
+    const endpoint = action === "apply-request"
+      ? `/api/admin/job-queue/${encodeURIComponent(jobId)}/apply-request`
+      : `/api/admin/job-queue/${encodeURIComponent(jobId)}/${action}`;
+
+    await fetch(API + endpoint, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" }
+    });
+
+    await loadQueue();
+  }
+
+  document.addEventListener("click", function (event) {
+    const button = event.target.closest("[data-adm4c8a-action]");
+    if (!button) return;
+
+    queueAction(
+      button.getAttribute("data-adm4c8a-action"),
+      button.getAttribute("data-job-id")
+    );
+  });
+
+  ensurePanel();
+  loadQueue();
+})();
+</script>
 </body>
 </html>
+
+
+
