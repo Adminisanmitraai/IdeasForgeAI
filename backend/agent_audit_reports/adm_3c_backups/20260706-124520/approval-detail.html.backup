@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Approval Detail</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --text: #0f0f10;
+      --muted: #7a7f8a;
+      --line: #e7e8ed;
+      --soft: #f4f6f7;
+      --success: #22c55e;
+      --warn: #d99b1f;
+      --blue: #2f80ed;
+      --shadow: 0 16px 42px rgba(0,0,0,.055);
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      width: 100%;
+      overflow-x: hidden;
+      background: #fff;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Arial, sans-serif;
+    }
+    body { padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+    .page { width: 100%; max-width: 480px; min-height: 100dvh; margin: 0 auto; background: #fff; }
+    .topbar {
+      height: 86px;
+      padding: 8px 24px 0;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(18px);
+    }
+    .title { text-align: center; font-size: 25px; font-weight: 850; letter-spacing: -.7px; }
+    .icon-btn, .plain-btn {
+      border: 0;
+      background: transparent;
+      color: #111;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      padding: 0;
+    }
+    .icon-btn { width: 44px; height: 44px; border-radius: 14px; }
+    .icon { width: 26px; height: 26px; stroke: currentColor; stroke-width: 2.35; stroke-linecap: round; stroke-linejoin: round; fill: none; display: block; }
+    .content { padding: 22px 16px 136px; }
+    .status-row { display: flex; gap: 10px; overflow-x: auto; padding: 0 0 14px; scrollbar-width: none; }
+    .status-row::-webkit-scrollbar { display: none; }
+    .pill { flex: 0 0 auto; height: 44px; border: 1px solid var(--line); border-radius: 999px; background: #fff; display: flex; align-items: center; gap: 9px; padding: 0 15px; box-shadow: 0 8px 20px rgba(0,0,0,.035); font-size: 15px; white-space: nowrap; }
+    .dot { width: 15px; height: 15px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 0 9px rgba(217,155,31,.13); }
+    .dot.green { background: var(--success); box-shadow: 0 0 0 9px rgba(34,197,94,.13); }
+    .dot.blue { background: var(--blue); box-shadow: 0 0 0 9px rgba(47,128,237,.11); }
+    h1 { margin: 18px 0 8px; font-size: 36px; line-height: .98; letter-spacing: -1.4px; }
+    .sub { margin: 0 0 22px; color: var(--muted); font-size: 20px; line-height: 1.3; letter-spacing: -.25px; }
+    .assistant-wrap { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: flex-start; }
+    .avatar { width: 44px; height: 44px; margin-top: 18px; border: 1px solid var(--line); border-radius: 50%; display: grid; place-items: center; background: #fff; box-shadow: 0 12px 26px rgba(0,0,0,.05); }
+    .card { border: 1px solid var(--line); border-radius: 26px; background: #fff; box-shadow: var(--shadow); padding: 18px 14px 14px; overflow: hidden; }
+    .card h2 { margin: 0 0 10px; font-size: 25px; font-weight: 850; letter-spacing: -.55px; }
+    .card p { margin: 0 0 14px; font-size: 18px; line-height: 1.35; }
+    .muted { color: var(--muted); }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 16px 0 4px; }
+    .metric { min-height: 88px; border: 1px solid var(--line); border-radius: 18px; background: #fff; padding: 13px 12px; }
+    .metric b { display: block; font-size: 30px; line-height: 1; margin-bottom: 8px; }
+    .metric span { color: var(--muted); font-size: 14px; line-height: 1.15; font-weight: 750; }
+    .section-title { margin: 28px 0 13px; font-size: 27px; line-height: 1; font-weight: 850; letter-spacing: -.8px; }
+    .detail-card { border: 1px solid var(--line); border-radius: 24px; padding: 18px; box-shadow: var(--shadow); background: #fff; }
+    .job-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+    .job-title { font-size: 23px; font-weight: 850; letter-spacing: -.4px; }
+    .badge { border-radius: 999px; background: #e9f9ef; color: #168545; font-size: 14px; font-weight: 820; padding: 9px 12px; white-space: nowrap; }
+    .badge.wait { background: #fff6df; color: #946311; }
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+    .chip { border-radius: 999px; background: #f2f5f6; color: #717783; padding: 8px 11px; font-size: 14px; font-weight: 750; }
+    .command-box { border: 1px solid var(--line); border-radius: 18px; background: #fafafa; padding: 14px; font-size: 16px; line-height: 1.35; margin: 14px 0; }
+    .action-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+    .action-row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .btn { height: 52px; border-radius: 18px; border: 1px solid var(--line); background: #fff; font-size: 16px; font-weight: 820; cursor: pointer; color: #111; }
+    .btn.primary { background: #111; color: #fff; border-color: #111; }
+    .btn.disabled { color: #a2a5ad; background: #f7f7f8; }
+    .timeline { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 14px; }
+    .event { display: grid; grid-template-columns: 78px 1fr; gap: 12px; padding: 8px 0; font-size: 15px; line-height: 1.35; }
+    .event time { color: #676b75; white-space: nowrap; }
+    .empty { border: 1px solid var(--line); border-radius: 22px; padding: 22px; background: #fff; color: var(--muted); font-size: 17px; line-height: 1.35; }
+    .composer { position: fixed; left: 16px; right: 16px; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); max-width: 448px; height: 60px; margin: 0 auto; border: 1px solid #dcdee4; border-radius: 999px; background: rgba(255,255,255,.96); backdrop-filter: blur(18px); display: grid; grid-template-columns: 48px 1fr 46px; align-items: center; padding: 0 8px 0 12px; box-shadow: 0 14px 34px rgba(0,0,0,.09); z-index: 40; }
+    .composer input { width: 100%; border: 0; outline: 0; background: transparent; font-size: 17px; color: #111; }
+    .composer input::placeholder { color: #a1a6af; }
+    .send { width: 40px; height: 40px; border: 0; border-radius: 50%; background: #a8adb7; color: #fff; display: grid; place-items: center; }
+    .menu { position: fixed; top: 82px; right: 18px; width: 260px; background: #fff; border: 1px solid var(--line); border-radius: 22px; box-shadow: 0 20px 50px rgba(0,0,0,.12); padding: 12px; display: none; z-index: 70; }
+    .menu.open { display: block; }
+    .menu button { width: 100%; height: 48px; border: 0; background: transparent; text-align: left; padding: 0 14px; font-size: 16px; font-weight: 800; border-radius: 14px; }
+    .menu button:active { background: #f4f6f7; }
+    @media (min-width: 481px) { .composer { left: 50%; right: auto; width: calc(480px - 32px); transform: translateX(-50%); } }
+    @media (max-width: 390px) { h1 { font-size: 32px; } .sub { font-size: 18px; } .assistant-wrap { grid-template-columns: 38px 1fr; gap: 9px; } .avatar { width: 38px; height: 38px; } .grid3 { gap: 7px; } .metric { padding: 12px 10px; } .metric b { font-size: 27px; } .action-row.three { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <button class="icon-btn" id="backBtn" aria-label="Back to approvals">
+        <svg class="icon" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"></path></svg>
+      </button>
+      <div class="title">Approval Detail</div>
+      <button class="icon-btn" id="moreBtn" aria-label="More options">
+        <svg class="icon" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="18" cy="12" r="1.5" fill="currentColor" stroke="none"></circle></svg>
+      </button>
+    </header>
+
+    <main class="content">
+      <div class="status-row">
+        <div class="pill"><span class="dot green" id="backendDot"></span><b>Backend</b><span id="backendText" class="muted">Checking</span></div>
+        <div class="pill"><span class="dot" id="workerDot"></span><b>Worker</b><span id="workerText" class="muted">Checking</span></div>
+      </div>
+
+      <h1>Approval Detail</h1>
+      <p class="sub">Review the decision, job status, safe actions, and worker timeline.</p>
+
+      <section class="assistant-wrap">
+        <div class="avatar" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M12 3.5c2.2 0 4.1 1.1 5.2 2.9 2.2.4 3.8 2.3 3.8 4.6 0 1.9-1.1 3.6-2.7 4.3-.4 2.9-2.8 5.2-5.8 5.2-1.2 0-2.3-.3-3.2-.9-2.4.6-4.9-.7-5.9-3-.7-1.7-.4-3.6.7-5C3.4 9.4 4.2 7 6.2 5.8c1.2-.8 2.7-.9 4-.4.5-1.1 1.1-1.9 1.8-1.9Z"></path><path d="M8.3 8.4 16 12l-7.7 3.6"></path><path d="M15.7 8.4 8 12l7.7 3.6"></path></svg>
+        </div>
+        <div class="card">
+          <h2>ChatGPT Assistant</h2>
+          <p id="summaryText">Loading the approval status from the backend.</p>
+          <div class="muted" id="updatedText">Updated just now</div>
+          <div class="grid3">
+            <div class="metric"><b id="pendingCount">0</b><span>Pending</span></div>
+            <div class="metric"><b id="runningCount">0</b><span>Running</span></div>
+            <div class="metric"><b id="doneCount">0</b><span>Dry-run done</span></div>
+          </div>
+        </div>
+      </section>
+
+      <h2 class="section-title">Decision sheet</h2>
+      <section class="detail-card" id="detailCard">
+        <div class="empty">Loading approval job...</div>
+      </section>
+    </main>
+
+    <form class="composer" id="composer">
+      <button type="button" class="icon-btn" aria-label="Attach"><svg class="icon" viewBox="0 0 24 24"><path d="M21 12.5 12 21a6 6 0 0 1-8.5-8.5l10-10a4 4 0 0 1 5.7 5.7l-10 10a2 2 0 0 1-2.8-2.8l9-9"></path></svg></button>
+      <input id="messageInput" placeholder="Ask about this approval..." autocomplete="off" />
+      <button class="send" type="submit" aria-label="Send"><svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg></button>
+    </form>
+  </div>
+
+  <div class="menu" id="menu">
+    <button id="refreshBtn">Refresh approval</button>
+    <button id="openApprovalsBtn">Back to Approval Office</button>
+    <button id="openQueueBtn">Open backend jobs</button>
+    <button id="openWorkersBtn">Open workers</button>
+  </div>
+
+  <script>
+    const API = location.protocol + '//' + location.hostname + ':5051';
+    const qs = new URLSearchParams(location.search);
+    const requestedJobId = qs.get('jobId');
+    const detailCard = document.getElementById('detailCard');
+    const menu = document.getElementById('menu');
+    let latestJob = null;
+
+    function esc(value) {
+      return String(value ?? '').replace(/[&<>"]/g, function (ch) {
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]);
+      });
+    }
+    function fmtTime(value) {
+      if (!value) return '';
+      const d = new Date(value);
+      if (Number.isNaN(d.getTime())) return '';
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+    function statusLabel(job) {
+      const s = String(job?.status || '').replaceAll('_', ' ');
+      return s ? s.charAt(0).toUpperCase() + s.slice(1) : 'No status';
+    }
+    async function getJson(path) {
+      const res = await fetch(API + path, { cache: 'no-store' });
+      if (!res.ok) throw new Error(path + ' failed');
+      return res.json();
+    }
+    async function load() {
+      try {
+        const [health, workersData, jobsData] = await Promise.all([
+          getJson('/health'),
+          getJson('/api/admin/workers').catch(() => ({ workers: [] })),
+          getJson('/api/admin/jobs').catch(() => ({ jobs: [] }))
+        ]);
+        document.getElementById('backendDot').className = 'dot green';
+        document.getElementById('backendText').textContent = health.phase || 'Connected';
+
+        const workers = Array.isArray(workersData.workers) ? workersData.workers : [];
+        const online = workers.filter(w => w.status === 'online').length;
+        document.getElementById('workerDot').className = 'dot ' + (online > 0 ? 'green' : '');
+        document.getElementById('workerText').textContent = workers.length + ' registered, ' + online + ' online';
+
+        const jobs = Array.isArray(jobsData.jobs) ? jobsData.jobs : [];
+        const pending = jobs.filter(j => j.status === 'pending' || j.status === 'approved_waiting_for_worker').length;
+        const running = jobs.filter(j => j.status === 'running').length;
+        const done = jobs.filter(j => String(j.status || '').includes('dry_run_completed')).length;
+        document.getElementById('pendingCount').textContent = pending;
+        document.getElementById('runningCount').textContent = running;
+        document.getElementById('doneCount').textContent = done;
+        document.getElementById('updatedText').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('summaryText').textContent = 'I found ' + pending + ' pending approval, ' + running + ' running job, ' + done + ' dry-run completed job, and ' + online + ' online worker.';
+
+        latestJob = requestedJobId ? jobs.find(j => j.jobId === requestedJobId) : jobs[0];
+        renderJob(latestJob);
+      } catch (err) {
+        document.getElementById('backendDot').className = 'dot';
+        document.getElementById('backendText').textContent = 'Offline';
+        document.getElementById('summaryText').textContent = 'Backend is not reachable on port 5051. Start the admin backend and refresh.';
+        detailCard.innerHTML = '<div class="empty">Backend connection failed. Check http://' + location.hostname + ':5051/health</div>';
+      }
+    }
+    function renderJob(job) {
+      if (!job) {
+        detailCard.innerHTML = '<div class="empty">No approval job was found. Go back to Approval Office and create or approve a request.</div>';
+        return;
+      }
+      const logs = Array.isArray(job.logs) ? job.logs.slice().reverse() : [];
+      const done = String(job.status || '').includes('dry_run_completed');
+      const wait = String(job.status || '').includes('waiting');
+      const badgeClass = wait ? 'badge wait' : 'badge';
+      detailCard.innerHTML = `
+        <div class="job-head">
+          <div>
+            <div class="job-title">${esc(job.taskType || job.requestedCommand || 'Approval job')}</div>
+            <div class="muted" style="margin-top:6px;line-height:1.35;">${esc(job.department || 'Admin')} - ${esc(job.manager || 'Manager')}</div>
+          </div>
+          <span class="${badgeClass}">${esc(statusLabel(job))}</span>
+        </div>
+        <div class="chips">
+          <span class="chip">Risk: ${esc(job.risk || 'unknown')}</span>
+          <span class="chip">Job: ${esc(job.jobId || 'unknown')}</span>
+          <span class="chip">Approval: ${job.approvalRequired ? 'required' : 'not required'}</span>
+        </div>
+        <div class="command-box"><b>Requested command</b><br>${esc(job.requestedCommand || 'No command found')}</div>
+        <div class="action-row three">
+          <button class="btn ${done ? 'disabled' : 'primary'}" ${done ? 'disabled' : ''}>Approve</button>
+          <button class="btn ${done ? 'disabled' : ''}" ${done ? 'disabled' : ''}>Reject</button>
+          <button class="btn" onclick="load()">Refresh</button>
+        </div>
+        <div class="timeline">
+          <b>Live job timeline</b>
+          ${logs.length ? logs.map(l => '<div class="event"><time>' + esc(fmtTime(l.at)) + '</time><div>' + esc(l.message || '') + '</div></div>').join('') : '<div class="empty" style="margin-top:12px;">No logs yet.</div>'}
+        </div>
+      `;
+    }
+    document.getElementById('backBtn').onclick = () => location.href = 'approvals-office.html?v=adm3b-back';
+    document.getElementById('moreBtn').onclick = () => menu.classList.toggle('open');
+    document.getElementById('refreshBtn').onclick = () => { menu.classList.remove('open'); load(); };
+    document.getElementById('openApprovalsBtn').onclick = () => location.href = 'approvals-office.html?v=adm3b-back';
+    document.getElementById('openQueueBtn').onclick = () => location.href = API + '/api/admin/jobs';
+    document.getElementById('openWorkersBtn').onclick = () => location.href = API + '/api/admin/workers';
+    document.getElementById('composer').onsubmit = (e) => { e.preventDefault(); const v = document.getElementById('messageInput').value.trim(); if (!v) return; alert('Approval note: ' + v); document.getElementById('messageInput').value = ''; };
+    document.addEventListener('click', (e) => { if (!menu.contains(e.target) && !document.getElementById('moreBtn').contains(e.target)) menu.classList.remove('open'); });
+    load();
+  </script>
+</body>
+</html>

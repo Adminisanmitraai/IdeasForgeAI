@@ -1,0 +1,69 @@
+{
+  "ok": false,
+  "phase": "PIXEL-MAP-PERFECT-02",
+  "created_at": "20260705-164156",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "actual_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_captures\\live-ui-capture-20260705-164152.png",
+  "reference_original_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "actual_original_size": {
+    "width": 860,
+    "height": 1864
+  },
+  "comparison_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "minimum_score": 86.0,
+  "overall_ui_match_score": 58.47,
+  "verdict": "FAIL_LAYOUT_MISMATCH",
+  "region_scores": {
+    "status_header": {
+      "pixel_similarity": 56.97,
+      "edge_similarity": 61.84,
+      "color_similarity": 96.81,
+      "score": 64.41
+    },
+    "top_nav": {
+      "pixel_similarity": 53.39,
+      "edge_similarity": 58.32,
+      "color_similarity": 97.44,
+      "score": 61.48
+    },
+    "hero": {
+      "pixel_similarity": 49.21,
+      "edge_similarity": 45.76,
+      "color_similarity": 98.4,
+      "score": 55.55
+    },
+    "cards": {
+      "pixel_similarity": 42.72,
+      "edge_similarity": 53.96,
+      "color_similarity": 94.28,
+      "score": 53.83
+    },
+    "composer": {
+      "pixel_similarity": 49.39,
+      "edge_similarity": 62.62,
+      "color_similarity": 84.9,
+      "score": 58.69
+    },
+    "browser_safe_area": {
+      "pixel_similarity": 61.84,
+      "edge_similarity": 65.67,
+      "color_similarity": 95.74,
+      "score": 68.07
+    }
+  },
+  "observations": [
+    "Composer area does not match reference. Check vertical position, height, and overlap with cards.",
+    "Cards area does not match reference. Check card height, spacing, font size, and visibility of all 3 cards.",
+    "Hero area does not match reference. Check heading size, line wrapping, and vertical spacing.",
+    "Header/top nav does not match reference. Check icon size, logo spacing, and header height.",
+    "Bottom browser/safe area differs from reference. Ensure composer does not enter browser chrome area."
+  ],
+  "overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_match\\pixel-live-match-overlay-20260705-164156.png",
+  "next_step": "Use low-scoring regions to generate exact repair instructions."
+}

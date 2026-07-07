@@ -1,0 +1,3291 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-16E",
+  "created_at": "20260705-200840",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "output_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840",
+  "assets": {
+    "header_logo": {
+      "center_px": [
+        152,
+        175
+      ],
+      "candidate_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_candidate_sheet.png",
+      "candidate_count": 45,
+      "candidates": {
+        "header_logo_c01_s72_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c01_s72_ox0_oy0.png",
+          "box_px": [
+            116,
+            139,
+            188,
+            211
+          ],
+          "size": 72,
+          "center_px": [
+            152,
+            175
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "header_logo_c02_s72_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c02_s72_ox-8_oy0.png",
+          "box_px": [
+            108,
+            139,
+            180,
+            211
+          ],
+          "size": 72,
+          "center_px": [
+            144,
+            175
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "header_logo_c03_s72_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c03_s72_ox8_oy0.png",
+          "box_px": [
+            124,
+            139,
+            196,
+            211
+          ],
+          "size": 72,
+          "center_px": [
+            160,
+            175
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "header_logo_c04_s72_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c04_s72_ox0_oy-8.png",
+          "box_px": [
+            116,
+            131,
+            188,
+            203
+          ],
+          "size": 72,
+          "center_px": [
+            152,
+            167
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "header_logo_c05_s72_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c05_s72_ox0_oy8.png",
+          "box_px": [
+            116,
+            147,
+            188,
+            219
+          ],
+          "size": 72,
+          "center_px": [
+            152,
+            183
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "header_logo_c06_s72_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c06_s72_ox-8_oy-8.png",
+          "box_px": [
+            108,
+            131,
+            180,
+            203
+          ],
+          "size": 72,
+          "center_px": [
+            144,
+            167
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "header_logo_c07_s72_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c07_s72_ox8_oy-8.png",
+          "box_px": [
+            124,
+            131,
+            196,
+            203
+          ],
+          "size": 72,
+          "center_px": [
+            160,
+            167
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "header_logo_c08_s72_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c08_s72_ox-8_oy8.png",
+          "box_px": [
+            108,
+            147,
+            180,
+            219
+          ],
+          "size": 72,
+          "center_px": [
+            144,
+            183
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "header_logo_c09_s72_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c09_s72_ox8_oy8.png",
+          "box_px": [
+            124,
+            147,
+            196,
+            219
+          ],
+          "size": 72,
+          "center_px": [
+            160,
+            183
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "header_logo_c10_s82_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c10_s82_ox0_oy0.png",
+          "box_px": [
+            111,
+            134,
+            193,
+            216
+          ],
+          "size": 82,
+          "center_px": [
+            152,
+            175
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "header_logo_c11_s82_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c11_s82_ox-8_oy0.png",
+          "box_px": [
+            103,
+            134,
+            185,
+            216
+          ],
+          "size": 82,
+          "center_px": [
+            144,
+            175
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "header_logo_c12_s82_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c12_s82_ox8_oy0.png",
+          "box_px": [
+            119,
+            134,
+            201,
+            216
+          ],
+          "size": 82,
+          "center_px": [
+            160,
+            175
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "header_logo_c13_s82_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c13_s82_ox0_oy-8.png",
+          "box_px": [
+            111,
+            126,
+            193,
+            208
+          ],
+          "size": 82,
+          "center_px": [
+            152,
+            167
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "header_logo_c14_s82_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c14_s82_ox0_oy8.png",
+          "box_px": [
+            111,
+            142,
+            193,
+            224
+          ],
+          "size": 82,
+          "center_px": [
+            152,
+            183
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "header_logo_c15_s82_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c15_s82_ox-8_oy-8.png",
+          "box_px": [
+            103,
+            126,
+            185,
+            208
+          ],
+          "size": 82,
+          "center_px": [
+            144,
+            167
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "header_logo_c16_s82_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c16_s82_ox8_oy-8.png",
+          "box_px": [
+            119,
+            126,
+            201,
+            208
+          ],
+          "size": 82,
+          "center_px": [
+            160,
+            167
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "header_logo_c17_s82_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c17_s82_ox-8_oy8.png",
+          "box_px": [
+            103,
+            142,
+            185,
+            224
+          ],
+          "size": 82,
+          "center_px": [
+            144,
+            183
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "header_logo_c18_s82_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c18_s82_ox8_oy8.png",
+          "box_px": [
+            119,
+            142,
+            201,
+            224
+          ],
+          "size": 82,
+          "center_px": [
+            160,
+            183
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "header_logo_c19_s92_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c19_s92_ox0_oy0.png",
+          "box_px": [
+            106,
+            129,
+            198,
+            221
+          ],
+          "size": 92,
+          "center_px": [
+            152,
+            175
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "header_logo_c20_s92_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c20_s92_ox-8_oy0.png",
+          "box_px": [
+            98,
+            129,
+            190,
+            221
+          ],
+          "size": 92,
+          "center_px": [
+            144,
+            175
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "header_logo_c21_s92_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c21_s92_ox8_oy0.png",
+          "box_px": [
+            114,
+            129,
+            206,
+            221
+          ],
+          "size": 92,
+          "center_px": [
+            160,
+            175
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "header_logo_c22_s92_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c22_s92_ox0_oy-8.png",
+          "box_px": [
+            106,
+            121,
+            198,
+            213
+          ],
+          "size": 92,
+          "center_px": [
+            152,
+            167
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "header_logo_c23_s92_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c23_s92_ox0_oy8.png",
+          "box_px": [
+            106,
+            137,
+            198,
+            229
+          ],
+          "size": 92,
+          "center_px": [
+            152,
+            183
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "header_logo_c24_s92_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c24_s92_ox-8_oy-8.png",
+          "box_px": [
+            98,
+            121,
+            190,
+            213
+          ],
+          "size": 92,
+          "center_px": [
+            144,
+            167
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "header_logo_c25_s92_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c25_s92_ox8_oy-8.png",
+          "box_px": [
+            114,
+            121,
+            206,
+            213
+          ],
+          "size": 92,
+          "center_px": [
+            160,
+            167
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "header_logo_c26_s92_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c26_s92_ox-8_oy8.png",
+          "box_px": [
+            98,
+            137,
+            190,
+            229
+          ],
+          "size": 92,
+          "center_px": [
+            144,
+            183
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "header_logo_c27_s92_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c27_s92_ox8_oy8.png",
+          "box_px": [
+            114,
+            137,
+            206,
+            229
+          ],
+          "size": 92,
+          "center_px": [
+            160,
+            183
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "header_logo_c28_s104_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c28_s104_ox0_oy0.png",
+          "box_px": [
+            100,
+            123,
+            204,
+            227
+          ],
+          "size": 104,
+          "center_px": [
+            152,
+            175
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "header_logo_c29_s104_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c29_s104_ox-8_oy0.png",
+          "box_px": [
+            92,
+            123,
+            196,
+            227
+          ],
+          "size": 104,
+          "center_px": [
+            144,
+            175
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "header_logo_c30_s104_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c30_s104_ox8_oy0.png",
+          "box_px": [
+            108,
+            123,
+            212,
+            227
+          ],
+          "size": 104,
+          "center_px": [
+            160,
+            175
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "header_logo_c31_s104_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c31_s104_ox0_oy-8.png",
+          "box_px": [
+            100,
+            115,
+            204,
+            219
+          ],
+          "size": 104,
+          "center_px": [
+            152,
+            167
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "header_logo_c32_s104_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c32_s104_ox0_oy8.png",
+          "box_px": [
+            100,
+            131,
+            204,
+            235
+          ],
+          "size": 104,
+          "center_px": [
+            152,
+            183
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "header_logo_c33_s104_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c33_s104_ox-8_oy-8.png",
+          "box_px": [
+            92,
+            115,
+            196,
+            219
+          ],
+          "size": 104,
+          "center_px": [
+            144,
+            167
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "header_logo_c34_s104_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c34_s104_ox8_oy-8.png",
+          "box_px": [
+            108,
+            115,
+            212,
+            219
+          ],
+          "size": 104,
+          "center_px": [
+            160,
+            167
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "header_logo_c35_s104_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c35_s104_ox-8_oy8.png",
+          "box_px": [
+            92,
+            131,
+            196,
+            235
+          ],
+          "size": 104,
+          "center_px": [
+            144,
+            183
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "header_logo_c36_s104_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c36_s104_ox8_oy8.png",
+          "box_px": [
+            108,
+            131,
+            212,
+            235
+          ],
+          "size": 104,
+          "center_px": [
+            160,
+            183
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "header_logo_c37_s116_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c37_s116_ox0_oy0.png",
+          "box_px": [
+            94,
+            117,
+            210,
+            233
+          ],
+          "size": 116,
+          "center_px": [
+            152,
+            175
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "header_logo_c38_s116_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c38_s116_ox-8_oy0.png",
+          "box_px": [
+            86,
+            117,
+            202,
+            233
+          ],
+          "size": 116,
+          "center_px": [
+            144,
+            175
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "header_logo_c39_s116_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c39_s116_ox8_oy0.png",
+          "box_px": [
+            102,
+            117,
+            218,
+            233
+          ],
+          "size": 116,
+          "center_px": [
+            160,
+            175
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "header_logo_c40_s116_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c40_s116_ox0_oy-8.png",
+          "box_px": [
+            94,
+            109,
+            210,
+            225
+          ],
+          "size": 116,
+          "center_px": [
+            152,
+            167
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "header_logo_c41_s116_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c41_s116_ox0_oy8.png",
+          "box_px": [
+            94,
+            125,
+            210,
+            241
+          ],
+          "size": 116,
+          "center_px": [
+            152,
+            183
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "header_logo_c42_s116_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c42_s116_ox-8_oy-8.png",
+          "box_px": [
+            86,
+            109,
+            202,
+            225
+          ],
+          "size": 116,
+          "center_px": [
+            144,
+            167
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "header_logo_c43_s116_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c43_s116_ox8_oy-8.png",
+          "box_px": [
+            102,
+            109,
+            218,
+            225
+          ],
+          "size": 116,
+          "center_px": [
+            160,
+            167
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "header_logo_c44_s116_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c44_s116_ox-8_oy8.png",
+          "box_px": [
+            86,
+            125,
+            202,
+            241
+          ],
+          "size": 116,
+          "center_px": [
+            144,
+            183
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "header_logo_c45_s116_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\header_logo\\header_logo_c45_s116_ox8_oy8.png",
+          "box_px": [
+            102,
+            125,
+            218,
+            241
+          ],
+          "size": 116,
+          "center_px": [
+            160,
+            183
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        }
+      }
+    },
+    "forge_studio": {
+      "center_px": [
+        130,
+        758
+      ],
+      "candidate_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_candidate_sheet.png",
+      "candidate_count": 45,
+      "candidates": {
+        "forge_studio_c01_s72_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c01_s72_ox0_oy0.png",
+          "box_px": [
+            94,
+            722,
+            166,
+            794
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            758
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_studio_c02_s72_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c02_s72_ox-8_oy0.png",
+          "box_px": [
+            86,
+            722,
+            158,
+            794
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            758
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_studio_c03_s72_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c03_s72_ox8_oy0.png",
+          "box_px": [
+            102,
+            722,
+            174,
+            794
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            758
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_studio_c04_s72_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c04_s72_ox0_oy-8.png",
+          "box_px": [
+            94,
+            714,
+            166,
+            786
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            750
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_studio_c05_s72_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c05_s72_ox0_oy8.png",
+          "box_px": [
+            94,
+            730,
+            166,
+            802
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            766
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_studio_c06_s72_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c06_s72_ox-8_oy-8.png",
+          "box_px": [
+            86,
+            714,
+            158,
+            786
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            750
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_studio_c07_s72_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c07_s72_ox8_oy-8.png",
+          "box_px": [
+            102,
+            714,
+            174,
+            786
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            750
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_studio_c08_s72_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c08_s72_ox-8_oy8.png",
+          "box_px": [
+            86,
+            730,
+            158,
+            802
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            766
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_studio_c09_s72_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c09_s72_ox8_oy8.png",
+          "box_px": [
+            102,
+            730,
+            174,
+            802
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            766
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_studio_c10_s82_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c10_s82_ox0_oy0.png",
+          "box_px": [
+            89,
+            717,
+            171,
+            799
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            758
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_studio_c11_s82_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c11_s82_ox-8_oy0.png",
+          "box_px": [
+            81,
+            717,
+            163,
+            799
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            758
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_studio_c12_s82_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c12_s82_ox8_oy0.png",
+          "box_px": [
+            97,
+            717,
+            179,
+            799
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            758
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_studio_c13_s82_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c13_s82_ox0_oy-8.png",
+          "box_px": [
+            89,
+            709,
+            171,
+            791
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            750
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_studio_c14_s82_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c14_s82_ox0_oy8.png",
+          "box_px": [
+            89,
+            725,
+            171,
+            807
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            766
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_studio_c15_s82_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c15_s82_ox-8_oy-8.png",
+          "box_px": [
+            81,
+            709,
+            163,
+            791
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            750
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_studio_c16_s82_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c16_s82_ox8_oy-8.png",
+          "box_px": [
+            97,
+            709,
+            179,
+            791
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            750
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_studio_c17_s82_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c17_s82_ox-8_oy8.png",
+          "box_px": [
+            81,
+            725,
+            163,
+            807
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            766
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_studio_c18_s82_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c18_s82_ox8_oy8.png",
+          "box_px": [
+            97,
+            725,
+            179,
+            807
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            766
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_studio_c19_s92_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c19_s92_ox0_oy0.png",
+          "box_px": [
+            84,
+            712,
+            176,
+            804
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            758
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_studio_c20_s92_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c20_s92_ox-8_oy0.png",
+          "box_px": [
+            76,
+            712,
+            168,
+            804
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            758
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_studio_c21_s92_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c21_s92_ox8_oy0.png",
+          "box_px": [
+            92,
+            712,
+            184,
+            804
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            758
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_studio_c22_s92_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c22_s92_ox0_oy-8.png",
+          "box_px": [
+            84,
+            704,
+            176,
+            796
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            750
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_studio_c23_s92_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c23_s92_ox0_oy8.png",
+          "box_px": [
+            84,
+            720,
+            176,
+            812
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            766
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_studio_c24_s92_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c24_s92_ox-8_oy-8.png",
+          "box_px": [
+            76,
+            704,
+            168,
+            796
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            750
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_studio_c25_s92_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c25_s92_ox8_oy-8.png",
+          "box_px": [
+            92,
+            704,
+            184,
+            796
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            750
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_studio_c26_s92_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c26_s92_ox-8_oy8.png",
+          "box_px": [
+            76,
+            720,
+            168,
+            812
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            766
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_studio_c27_s92_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c27_s92_ox8_oy8.png",
+          "box_px": [
+            92,
+            720,
+            184,
+            812
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            766
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_studio_c28_s104_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c28_s104_ox0_oy0.png",
+          "box_px": [
+            78,
+            706,
+            182,
+            810
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            758
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_studio_c29_s104_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c29_s104_ox-8_oy0.png",
+          "box_px": [
+            70,
+            706,
+            174,
+            810
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            758
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_studio_c30_s104_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c30_s104_ox8_oy0.png",
+          "box_px": [
+            86,
+            706,
+            190,
+            810
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            758
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_studio_c31_s104_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c31_s104_ox0_oy-8.png",
+          "box_px": [
+            78,
+            698,
+            182,
+            802
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            750
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_studio_c32_s104_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c32_s104_ox0_oy8.png",
+          "box_px": [
+            78,
+            714,
+            182,
+            818
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            766
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_studio_c33_s104_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c33_s104_ox-8_oy-8.png",
+          "box_px": [
+            70,
+            698,
+            174,
+            802
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            750
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_studio_c34_s104_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c34_s104_ox8_oy-8.png",
+          "box_px": [
+            86,
+            698,
+            190,
+            802
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            750
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_studio_c35_s104_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c35_s104_ox-8_oy8.png",
+          "box_px": [
+            70,
+            714,
+            174,
+            818
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            766
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_studio_c36_s104_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c36_s104_ox8_oy8.png",
+          "box_px": [
+            86,
+            714,
+            190,
+            818
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            766
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_studio_c37_s116_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c37_s116_ox0_oy0.png",
+          "box_px": [
+            72,
+            700,
+            188,
+            816
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            758
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_studio_c38_s116_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c38_s116_ox-8_oy0.png",
+          "box_px": [
+            64,
+            700,
+            180,
+            816
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            758
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_studio_c39_s116_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c39_s116_ox8_oy0.png",
+          "box_px": [
+            80,
+            700,
+            196,
+            816
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            758
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_studio_c40_s116_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c40_s116_ox0_oy-8.png",
+          "box_px": [
+            72,
+            692,
+            188,
+            808
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            750
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_studio_c41_s116_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c41_s116_ox0_oy8.png",
+          "box_px": [
+            72,
+            708,
+            188,
+            824
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            766
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_studio_c42_s116_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c42_s116_ox-8_oy-8.png",
+          "box_px": [
+            64,
+            692,
+            180,
+            808
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            750
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_studio_c43_s116_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c43_s116_ox8_oy-8.png",
+          "box_px": [
+            80,
+            692,
+            196,
+            808
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            750
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_studio_c44_s116_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c44_s116_ox-8_oy8.png",
+          "box_px": [
+            64,
+            708,
+            180,
+            824
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            766
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_studio_c45_s116_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_studio\\forge_studio_c45_s116_ox8_oy8.png",
+          "box_px": [
+            80,
+            708,
+            196,
+            824
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            766
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        }
+      }
+    },
+    "forge_code": {
+      "center_px": [
+        130,
+        1016
+      ],
+      "candidate_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_candidate_sheet.png",
+      "candidate_count": 45,
+      "candidates": {
+        "forge_code_c01_s72_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c01_s72_ox0_oy0.png",
+          "box_px": [
+            94,
+            980,
+            166,
+            1052
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            1016
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_code_c02_s72_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c02_s72_ox-8_oy0.png",
+          "box_px": [
+            86,
+            980,
+            158,
+            1052
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            1016
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_code_c03_s72_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c03_s72_ox8_oy0.png",
+          "box_px": [
+            102,
+            980,
+            174,
+            1052
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            1016
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_code_c04_s72_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c04_s72_ox0_oy-8.png",
+          "box_px": [
+            94,
+            972,
+            166,
+            1044
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            1008
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_code_c05_s72_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c05_s72_ox0_oy8.png",
+          "box_px": [
+            94,
+            988,
+            166,
+            1060
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            1024
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_code_c06_s72_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c06_s72_ox-8_oy-8.png",
+          "box_px": [
+            86,
+            972,
+            158,
+            1044
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            1008
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_code_c07_s72_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c07_s72_ox8_oy-8.png",
+          "box_px": [
+            102,
+            972,
+            174,
+            1044
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            1008
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_code_c08_s72_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c08_s72_ox-8_oy8.png",
+          "box_px": [
+            86,
+            988,
+            158,
+            1060
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            1024
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_code_c09_s72_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c09_s72_ox8_oy8.png",
+          "box_px": [
+            102,
+            988,
+            174,
+            1060
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            1024
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_code_c10_s82_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c10_s82_ox0_oy0.png",
+          "box_px": [
+            89,
+            975,
+            171,
+            1057
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            1016
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_code_c11_s82_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c11_s82_ox-8_oy0.png",
+          "box_px": [
+            81,
+            975,
+            163,
+            1057
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            1016
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_code_c12_s82_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c12_s82_ox8_oy0.png",
+          "box_px": [
+            97,
+            975,
+            179,
+            1057
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            1016
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_code_c13_s82_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c13_s82_ox0_oy-8.png",
+          "box_px": [
+            89,
+            967,
+            171,
+            1049
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            1008
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_code_c14_s82_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c14_s82_ox0_oy8.png",
+          "box_px": [
+            89,
+            983,
+            171,
+            1065
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            1024
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_code_c15_s82_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c15_s82_ox-8_oy-8.png",
+          "box_px": [
+            81,
+            967,
+            163,
+            1049
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            1008
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_code_c16_s82_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c16_s82_ox8_oy-8.png",
+          "box_px": [
+            97,
+            967,
+            179,
+            1049
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            1008
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_code_c17_s82_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c17_s82_ox-8_oy8.png",
+          "box_px": [
+            81,
+            983,
+            163,
+            1065
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            1024
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_code_c18_s82_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c18_s82_ox8_oy8.png",
+          "box_px": [
+            97,
+            983,
+            179,
+            1065
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            1024
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_code_c19_s92_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c19_s92_ox0_oy0.png",
+          "box_px": [
+            84,
+            970,
+            176,
+            1062
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            1016
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_code_c20_s92_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c20_s92_ox-8_oy0.png",
+          "box_px": [
+            76,
+            970,
+            168,
+            1062
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            1016
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_code_c21_s92_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c21_s92_ox8_oy0.png",
+          "box_px": [
+            92,
+            970,
+            184,
+            1062
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            1016
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_code_c22_s92_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c22_s92_ox0_oy-8.png",
+          "box_px": [
+            84,
+            962,
+            176,
+            1054
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            1008
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_code_c23_s92_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c23_s92_ox0_oy8.png",
+          "box_px": [
+            84,
+            978,
+            176,
+            1070
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            1024
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_code_c24_s92_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c24_s92_ox-8_oy-8.png",
+          "box_px": [
+            76,
+            962,
+            168,
+            1054
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            1008
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_code_c25_s92_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c25_s92_ox8_oy-8.png",
+          "box_px": [
+            92,
+            962,
+            184,
+            1054
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            1008
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_code_c26_s92_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c26_s92_ox-8_oy8.png",
+          "box_px": [
+            76,
+            978,
+            168,
+            1070
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            1024
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_code_c27_s92_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c27_s92_ox8_oy8.png",
+          "box_px": [
+            92,
+            978,
+            184,
+            1070
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            1024
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_code_c28_s104_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c28_s104_ox0_oy0.png",
+          "box_px": [
+            78,
+            964,
+            182,
+            1068
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            1016
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_code_c29_s104_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c29_s104_ox-8_oy0.png",
+          "box_px": [
+            70,
+            964,
+            174,
+            1068
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            1016
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_code_c30_s104_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c30_s104_ox8_oy0.png",
+          "box_px": [
+            86,
+            964,
+            190,
+            1068
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            1016
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_code_c31_s104_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c31_s104_ox0_oy-8.png",
+          "box_px": [
+            78,
+            956,
+            182,
+            1060
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            1008
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_code_c32_s104_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c32_s104_ox0_oy8.png",
+          "box_px": [
+            78,
+            972,
+            182,
+            1076
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            1024
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_code_c33_s104_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c33_s104_ox-8_oy-8.png",
+          "box_px": [
+            70,
+            956,
+            174,
+            1060
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            1008
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_code_c34_s104_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c34_s104_ox8_oy-8.png",
+          "box_px": [
+            86,
+            956,
+            190,
+            1060
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            1008
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_code_c35_s104_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c35_s104_ox-8_oy8.png",
+          "box_px": [
+            70,
+            972,
+            174,
+            1076
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            1024
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_code_c36_s104_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c36_s104_ox8_oy8.png",
+          "box_px": [
+            86,
+            972,
+            190,
+            1076
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            1024
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_code_c37_s116_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c37_s116_ox0_oy0.png",
+          "box_px": [
+            72,
+            958,
+            188,
+            1074
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            1016
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_code_c38_s116_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c38_s116_ox-8_oy0.png",
+          "box_px": [
+            64,
+            958,
+            180,
+            1074
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            1016
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_code_c39_s116_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c39_s116_ox8_oy0.png",
+          "box_px": [
+            80,
+            958,
+            196,
+            1074
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            1016
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_code_c40_s116_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c40_s116_ox0_oy-8.png",
+          "box_px": [
+            72,
+            950,
+            188,
+            1066
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            1008
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_code_c41_s116_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c41_s116_ox0_oy8.png",
+          "box_px": [
+            72,
+            966,
+            188,
+            1082
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            1024
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_code_c42_s116_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c42_s116_ox-8_oy-8.png",
+          "box_px": [
+            64,
+            950,
+            180,
+            1066
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            1008
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_code_c43_s116_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c43_s116_ox8_oy-8.png",
+          "box_px": [
+            80,
+            950,
+            196,
+            1066
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            1008
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_code_c44_s116_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c44_s116_ox-8_oy8.png",
+          "box_px": [
+            64,
+            966,
+            180,
+            1082
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            1024
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_code_c45_s116_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_code\\forge_code_c45_s116_ox8_oy8.png",
+          "box_px": [
+            80,
+            966,
+            196,
+            1082
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            1024
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        }
+      }
+    },
+    "forge_work": {
+      "center_px": [
+        130,
+        1274
+      ],
+      "candidate_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_candidate_sheet.png",
+      "candidate_count": 45,
+      "candidates": {
+        "forge_work_c01_s72_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c01_s72_ox0_oy0.png",
+          "box_px": [
+            94,
+            1238,
+            166,
+            1310
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            1274
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_work_c02_s72_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c02_s72_ox-8_oy0.png",
+          "box_px": [
+            86,
+            1238,
+            158,
+            1310
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            1274
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_work_c03_s72_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c03_s72_ox8_oy0.png",
+          "box_px": [
+            102,
+            1238,
+            174,
+            1310
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            1274
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_work_c04_s72_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c04_s72_ox0_oy-8.png",
+          "box_px": [
+            94,
+            1230,
+            166,
+            1302
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            1266
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_work_c05_s72_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c05_s72_ox0_oy8.png",
+          "box_px": [
+            94,
+            1246,
+            166,
+            1318
+          ],
+          "size": 72,
+          "center_px": [
+            130,
+            1282
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_work_c06_s72_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c06_s72_ox-8_oy-8.png",
+          "box_px": [
+            86,
+            1230,
+            158,
+            1302
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            1266
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_work_c07_s72_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c07_s72_ox8_oy-8.png",
+          "box_px": [
+            102,
+            1230,
+            174,
+            1302
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            1266
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_work_c08_s72_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c08_s72_ox-8_oy8.png",
+          "box_px": [
+            86,
+            1246,
+            158,
+            1318
+          ],
+          "size": 72,
+          "center_px": [
+            122,
+            1282
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_work_c09_s72_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c09_s72_ox8_oy8.png",
+          "box_px": [
+            102,
+            1246,
+            174,
+            1318
+          ],
+          "size": 72,
+          "center_px": [
+            138,
+            1282
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_work_c10_s82_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c10_s82_ox0_oy0.png",
+          "box_px": [
+            89,
+            1233,
+            171,
+            1315
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            1274
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_work_c11_s82_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c11_s82_ox-8_oy0.png",
+          "box_px": [
+            81,
+            1233,
+            163,
+            1315
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            1274
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_work_c12_s82_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c12_s82_ox8_oy0.png",
+          "box_px": [
+            97,
+            1233,
+            179,
+            1315
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            1274
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_work_c13_s82_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c13_s82_ox0_oy-8.png",
+          "box_px": [
+            89,
+            1225,
+            171,
+            1307
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            1266
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_work_c14_s82_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c14_s82_ox0_oy8.png",
+          "box_px": [
+            89,
+            1241,
+            171,
+            1323
+          ],
+          "size": 82,
+          "center_px": [
+            130,
+            1282
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_work_c15_s82_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c15_s82_ox-8_oy-8.png",
+          "box_px": [
+            81,
+            1225,
+            163,
+            1307
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            1266
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_work_c16_s82_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c16_s82_ox8_oy-8.png",
+          "box_px": [
+            97,
+            1225,
+            179,
+            1307
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            1266
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_work_c17_s82_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c17_s82_ox-8_oy8.png",
+          "box_px": [
+            81,
+            1241,
+            163,
+            1323
+          ],
+          "size": 82,
+          "center_px": [
+            122,
+            1282
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_work_c18_s82_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c18_s82_ox8_oy8.png",
+          "box_px": [
+            97,
+            1241,
+            179,
+            1323
+          ],
+          "size": 82,
+          "center_px": [
+            138,
+            1282
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_work_c19_s92_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c19_s92_ox0_oy0.png",
+          "box_px": [
+            84,
+            1228,
+            176,
+            1320
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            1274
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_work_c20_s92_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c20_s92_ox-8_oy0.png",
+          "box_px": [
+            76,
+            1228,
+            168,
+            1320
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            1274
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_work_c21_s92_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c21_s92_ox8_oy0.png",
+          "box_px": [
+            92,
+            1228,
+            184,
+            1320
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            1274
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_work_c22_s92_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c22_s92_ox0_oy-8.png",
+          "box_px": [
+            84,
+            1220,
+            176,
+            1312
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            1266
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_work_c23_s92_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c23_s92_ox0_oy8.png",
+          "box_px": [
+            84,
+            1236,
+            176,
+            1328
+          ],
+          "size": 92,
+          "center_px": [
+            130,
+            1282
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_work_c24_s92_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c24_s92_ox-8_oy-8.png",
+          "box_px": [
+            76,
+            1220,
+            168,
+            1312
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            1266
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_work_c25_s92_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c25_s92_ox8_oy-8.png",
+          "box_px": [
+            92,
+            1220,
+            184,
+            1312
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            1266
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_work_c26_s92_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c26_s92_ox-8_oy8.png",
+          "box_px": [
+            76,
+            1236,
+            168,
+            1328
+          ],
+          "size": 92,
+          "center_px": [
+            122,
+            1282
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_work_c27_s92_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c27_s92_ox8_oy8.png",
+          "box_px": [
+            92,
+            1236,
+            184,
+            1328
+          ],
+          "size": 92,
+          "center_px": [
+            138,
+            1282
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_work_c28_s104_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c28_s104_ox0_oy0.png",
+          "box_px": [
+            78,
+            1222,
+            182,
+            1326
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            1274
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_work_c29_s104_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c29_s104_ox-8_oy0.png",
+          "box_px": [
+            70,
+            1222,
+            174,
+            1326
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            1274
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_work_c30_s104_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c30_s104_ox8_oy0.png",
+          "box_px": [
+            86,
+            1222,
+            190,
+            1326
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            1274
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_work_c31_s104_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c31_s104_ox0_oy-8.png",
+          "box_px": [
+            78,
+            1214,
+            182,
+            1318
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            1266
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_work_c32_s104_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c32_s104_ox0_oy8.png",
+          "box_px": [
+            78,
+            1230,
+            182,
+            1334
+          ],
+          "size": 104,
+          "center_px": [
+            130,
+            1282
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_work_c33_s104_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c33_s104_ox-8_oy-8.png",
+          "box_px": [
+            70,
+            1214,
+            174,
+            1318
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            1266
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_work_c34_s104_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c34_s104_ox8_oy-8.png",
+          "box_px": [
+            86,
+            1214,
+            190,
+            1318
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            1266
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_work_c35_s104_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c35_s104_ox-8_oy8.png",
+          "box_px": [
+            70,
+            1230,
+            174,
+            1334
+          ],
+          "size": 104,
+          "center_px": [
+            122,
+            1282
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_work_c36_s104_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c36_s104_ox8_oy8.png",
+          "box_px": [
+            86,
+            1230,
+            190,
+            1334
+          ],
+          "size": 104,
+          "center_px": [
+            138,
+            1282
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        },
+        "forge_work_c37_s116_ox0_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c37_s116_ox0_oy0.png",
+          "box_px": [
+            72,
+            1216,
+            188,
+            1332
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            1274
+          ],
+          "offset": [
+            0,
+            0
+          ]
+        },
+        "forge_work_c38_s116_ox-8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c38_s116_ox-8_oy0.png",
+          "box_px": [
+            64,
+            1216,
+            180,
+            1332
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            1274
+          ],
+          "offset": [
+            -8,
+            0
+          ]
+        },
+        "forge_work_c39_s116_ox8_oy0": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c39_s116_ox8_oy0.png",
+          "box_px": [
+            80,
+            1216,
+            196,
+            1332
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            1274
+          ],
+          "offset": [
+            8,
+            0
+          ]
+        },
+        "forge_work_c40_s116_ox0_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c40_s116_ox0_oy-8.png",
+          "box_px": [
+            72,
+            1208,
+            188,
+            1324
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            1266
+          ],
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        "forge_work_c41_s116_ox0_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c41_s116_ox0_oy8.png",
+          "box_px": [
+            72,
+            1224,
+            188,
+            1340
+          ],
+          "size": 116,
+          "center_px": [
+            130,
+            1282
+          ],
+          "offset": [
+            0,
+            8
+          ]
+        },
+        "forge_work_c42_s116_ox-8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c42_s116_ox-8_oy-8.png",
+          "box_px": [
+            64,
+            1208,
+            180,
+            1324
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            1266
+          ],
+          "offset": [
+            -8,
+            -8
+          ]
+        },
+        "forge_work_c43_s116_ox8_oy-8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c43_s116_ox8_oy-8.png",
+          "box_px": [
+            80,
+            1208,
+            196,
+            1324
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            1266
+          ],
+          "offset": [
+            8,
+            -8
+          ]
+        },
+        "forge_work_c44_s116_ox-8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c44_s116_ox-8_oy8.png",
+          "box_px": [
+            64,
+            1224,
+            180,
+            1340
+          ],
+          "size": 116,
+          "center_px": [
+            122,
+            1282
+          ],
+          "offset": [
+            -8,
+            8
+          ]
+        },
+        "forge_work_c45_s116_ox8_oy8": {
+          "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-icon-candidates-20260705-200840\\forge_work\\forge_work_c45_s116_ox8_oy8.png",
+          "box_px": [
+            80,
+            1224,
+            196,
+            1340
+          ],
+          "size": 116,
+          "center_px": [
+            138,
+            1282
+          ],
+          "offset": [
+            8,
+            8
+          ]
+        }
+      }
+    }
+  },
+  "rule": "Candidate crops only. User must visually choose best candidates before frontend use.",
+  "next_step": "Open each candidate sheet and choose the best crop name for header_logo, forge_studio, forge_code, and forge_work."
+}

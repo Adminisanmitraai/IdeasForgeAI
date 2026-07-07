@@ -1,0 +1,2643 @@
+{
+  "report_name": "IdeasForgeAI Agent Health Audit",
+  "generated_at": "2026-07-05T22:45:14+0530",
+  "mode": "all",
+  "agents_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agents",
+  "total_agents": 21,
+  "approved_agents": 21,
+  "blocked_agents": 0,
+  "average_health_score": 97.07,
+  "system_grade": "Excellent",
+  "agents": [
+    {
+      "agent_id": "backend_api_agent",
+      "name": "Backend Api Agent",
+      "file": "backend\\agents\\backend_api_agent.py",
+      "status": "approved",
+      "health_score": 98.0,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.backend_api_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_api_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\backend_api_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"BackendAPIAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 24,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\backend_api_agent.py --contract backend\\agent_auditor\\contracts\\backend_api_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\backend_api_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\backend_api_agent.contract.json\",\n  \"overall_score\": 100.0,\n  \"accuracy_score\": 100.0,\n  \"grade\": \"Excellent\",\n  \"category\": \"general_agent\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 30,\n    \"max_score\": 30,\n    \"category\": \"general_agent\",\n    \"keyword_hits\": [\n      \"agent\",\n      \"task\",\n      \"result\",\n      \"confidence\",\n      \"output\"\n    ],\n    \"keyword_expected\": [\n      \"agent\",\n      \"task\",\n      \"result\",\n      \"confidence\",\n      \"output\"\n    ],\n    \"capability_hits\": [\n      \"task\",\n      \"output\"\n    ],\n    \"capability_expected\": [\n      \"task\",\n      \"output\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"BackendAPIAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 100.0
+            }
+          ],
+          "accuracy_score": 100.0
+        }
+      },
+      "contract": {
+        "agent_id": "backend_api_agent",
+        "name": "Backend Api Agent",
+        "version": "0.1.0",
+        "purpose": "Backend Api Agent supports the IdeasForgeAI general agent workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "general_agent",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "task_requirement"
+        ],
+        "required_outputs": [
+          "agent_result",
+          "confidence",
+          "notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_api_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\backend_api_agent.py --contract backend\\agent_auditor\\contracts\\backend_api_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_api_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "backend_code_generator_agent",
+      "name": "Backend Code Generator Agent",
+      "file": "backend\\agents\\backend_code_generator_agent.py",
+      "status": "approved",
+      "health_score": 97.02,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.backend_code_generator_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_code_generator_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\backend_code_generator_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"BackendCodeGeneratorAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 261,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\backend_code_generator_agent.py --contract backend\\agent_auditor\\contracts\\backend_code_generator_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\backend_code_generator_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\backend_code_generator_agent.contract.json\",\n  \"overall_score\": 93.44,\n  \"accuracy_score\": 93.44,\n  \"grade\": \"Excellent\",\n  \"category\": \"software_engineering\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 21.14,\n    \"max_score\": 30,\n    \"category\": \"software_engineering\",\n    \"keyword_hits\": [\n      \"code\",\n      \"patch\",\n      \"file\",\n      \"test\",\n      \"project\",\n      \"implementation\"\n    ],\n    \"keyword_expected\": [\n      \"code\",\n      \"patch\",\n      \"file\",\n      \"diff\",\n      \"test\",\n      \"project\",\n      \"implementation\"\n    ],\n    \"capability_hits\": [\n      \"code\",\n      \"patch\"\n    ],\n    \"capability_expected\": [\n      \"code\",\n      \"workflow\",\n      \"engineering\",\n      \"patch\",\n      \"git\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"BackendCodeGeneratorAgent\"\n      ],\n      \"functions\": [\n        \"_base_lines\",\n        \"_crm_backend\",\n        \"_env_example\",\n        \"_generic_backend\",\n        \"_main_py\",\n        \"_readme\",\n        \"_requirements\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_base_lines\",\n        \"_crm_backend\",\n        \"_env_example\",\n        \"_generic_backend\",\n        \"_main_py\",\n        \"_readme\",\n        \"_requirements\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 93.44
+            }
+          ],
+          "accuracy_score": 93.44
+        }
+      },
+      "contract": {
+        "agent_id": "backend_code_generator_agent",
+        "name": "Backend Code Generator Agent",
+        "version": "0.1.0",
+        "purpose": "Backend Code Generator Agent supports the IdeasForgeAI software engineering workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "software_engineering",
+        "capabilities": [
+          "code_generation",
+          "code_patch_planning"
+        ],
+        "required_inputs": [
+          "project_context",
+          "user_requirement"
+        ],
+        "required_outputs": [
+          "implementation_plan",
+          "code_changes",
+          "validation_notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_code_generator_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\backend_code_generator_agent.py --contract backend\\agent_auditor\\contracts\\backend_code_generator_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\backend_code_generator_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "database_persistence_agent",
+      "name": "Database Persistence Agent",
+      "file": "backend\\agents\\database_persistence_agent.py",
+      "status": "approved",
+      "health_score": 97.72,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.database_persistence_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\database_persistence_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\database_persistence_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"DatabasePersistenceAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 73,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\database_persistence_agent.py --contract backend\\agent_auditor\\contracts\\database_persistence_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\database_persistence_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\database_persistence_agent.contract.json\",\n  \"overall_score\": 98.15,\n  \"accuracy_score\": 98.15,\n  \"grade\": \"Excellent\",\n  \"category\": \"data_persistence\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 27.5,\n    \"max_score\": 30,\n    \"category\": \"data_persistence\",\n    \"keyword_hits\": [\n      \"data\",\n      \"database\",\n      \"schema\",\n      \"storage\",\n      \"persist\",\n      \"record\"\n    ],\n    \"keyword_expected\": [\n      \"data\",\n      \"database\",\n      \"schema\",\n      \"storage\",\n      \"persist\",\n      \"record\"\n    ],\n    \"capability_hits\": [\n      \"data\",\n      \"storage\",\n      \"persistence\"\n    ],\n    \"capability_expected\": [\n      \"data\",\n      \"storage\",\n      \"persistence\",\n      \"schema\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"DatabasePersistenceAgent\"\n      ],\n      \"functions\": [\n        \"_default_leads\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_default_leads\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 98.15
+            }
+          ],
+          "accuracy_score": 98.15
+        }
+      },
+      "contract": {
+        "agent_id": "database_persistence_agent",
+        "name": "Database Persistence Agent",
+        "version": "0.1.0",
+        "purpose": "Database Persistence Agent supports the IdeasForgeAI data persistence workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "data_persistence",
+        "capabilities": [
+          "data_storage_planning",
+          "persistence_validation"
+        ],
+        "required_inputs": [
+          "data_model",
+          "storage_requirement"
+        ],
+        "required_outputs": [
+          "persistence_plan",
+          "schema_or_storage_result"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\database_persistence_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\database_persistence_agent.py --contract backend\\agent_auditor\\contracts\\database_persistence_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\database_persistence_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "deployment_readiness_agent",
+      "name": "Deployment Readiness Agent",
+      "file": "backend\\agents\\deployment_readiness_agent.py",
+      "status": "approved",
+      "health_score": 96.81,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.deployment_readiness_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\deployment_readiness_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\deployment_readiness_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"DeploymentReadinessAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 38,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\deployment_readiness_agent.py --contract backend\\agent_auditor\\contracts\\deployment_readiness_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\deployment_readiness_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\deployment_readiness_agent.contract.json\",\n  \"overall_score\": 92.07,\n  \"accuracy_score\": 92.07,\n  \"grade\": \"Excellent\",\n  \"category\": \"deployment_and_integration\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 19.29,\n    \"max_score\": 30,\n    \"category\": \"deployment_and_integration\",\n    \"keyword_hits\": [\n      \"deploy\",\n      \"frontend\",\n      \"backend\",\n      \"readiness\",\n      \"release\"\n    ],\n    \"keyword_expected\": [\n      \"deploy\",\n      \"api\",\n      \"frontend\",\n      \"backend\",\n      \"connector\",\n      \"readiness\",\n      \"release\"\n    ],\n    \"capability_hits\": [\n      \"deployment\",\n      \"release\"\n    ],\n    \"capability_expected\": [\n      \"deployment\",\n      \"integration\",\n      \"api\",\n      \"release\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"DeploymentReadinessAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 92.07
+            }
+          ],
+          "accuracy_score": 92.07
+        }
+      },
+      "contract": {
+        "agent_id": "deployment_readiness_agent",
+        "name": "Deployment Readiness Agent",
+        "version": "0.1.0",
+        "purpose": "Deployment Readiness Agent supports the IdeasForgeAI deployment and integration workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "deployment_and_integration",
+        "capabilities": [
+          "deployment_readiness_check",
+          "release_validation"
+        ],
+        "required_inputs": [
+          "project_status",
+          "deployment_target"
+        ],
+        "required_outputs": [
+          "readiness_report",
+          "blocking_issues",
+          "release_recommendation"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\deployment_readiness_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\deployment_readiness_agent.py --contract backend\\agent_auditor\\contracts\\deployment_readiness_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\deployment_readiness_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "frontend_api_connector_agent",
+      "name": "Frontend Api Connector Agent",
+      "file": "backend\\agents\\frontend_api_connector_agent.py",
+      "status": "approved",
+      "health_score": 96.25,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.frontend_api_connector_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\frontend_api_connector_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\frontend_api_connector_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"FrontendAPIConnectorAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 32,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\frontend_api_connector_agent.py --contract backend\\agent_auditor\\contracts\\frontend_api_connector_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\frontend_api_connector_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\frontend_api_connector_agent.contract.json\",\n  \"overall_score\": 88.36,\n  \"accuracy_score\": 88.36,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"deployment_and_integration\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 14.29,\n    \"max_score\": 30,\n    \"category\": \"deployment_and_integration\",\n    \"keyword_hits\": [\n      \"deploy\",\n      \"api\",\n      \"frontend\",\n      \"backend\",\n      \"connector\"\n    ],\n    \"keyword_expected\": [\n      \"deploy\",\n      \"api\",\n      \"frontend\",\n      \"backend\",\n      \"connector\",\n      \"readiness\",\n      \"release\"\n    ],\n    \"capability_hits\": [],\n    \"capability_expected\": [\n      \"deployment\",\n      \"integration\",\n      \"api\",\n      \"release\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"FrontendAPIConnectorAgent\"\n      ],\n      \"functions\": [\n        \"_crm_js\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_crm_js\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 88.36
+            }
+          ],
+          "accuracy_score": 88.36
+        }
+      },
+      "contract": {
+        "agent_id": "frontend_api_connector_agent",
+        "name": "Frontend Api Connector Agent",
+        "version": "0.1.0",
+        "purpose": "Frontend Api Connector Agent supports the IdeasForgeAI deployment and integration workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "deployment_and_integration",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "task_requirement"
+        ],
+        "required_outputs": [
+          "agent_result",
+          "confidence",
+          "notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\frontend_api_connector_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\frontend_api_connector_agent.py --contract backend\\agent_auditor\\contracts\\frontend_api_connector_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\frontend_api_connector_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "generated_app_export_agent",
+      "name": "Generated App Export Agent",
+      "file": "backend\\agents\\generated_app_export_agent.py",
+      "status": "approved",
+      "health_score": 98.0,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.generated_app_export_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\generated_app_export_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\generated_app_export_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"GeneratedAppExportAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 158,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\generated_app_export_agent.py --contract backend\\agent_auditor\\contracts\\generated_app_export_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\generated_app_export_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\generated_app_export_agent.contract.json\",\n  \"overall_score\": 100.0,\n  \"accuracy_score\": 100.0,\n  \"grade\": \"Excellent\",\n  \"category\": \"general_agent\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 30,\n    \"max_score\": 30,\n    \"category\": \"general_agent\",\n    \"keyword_hits\": [\n      \"agent\",\n      \"task\",\n      \"result\",\n      \"confidence\",\n      \"output\"\n    ],\n    \"keyword_expected\": [\n      \"agent\",\n      \"task\",\n      \"result\",\n      \"confidence\",\n      \"output\"\n    ],\n    \"capability_hits\": [\n      \"task\",\n      \"output\"\n    ],\n    \"capability_expected\": [\n      \"task\",\n      \"output\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"GeneratedAppExportAgent\"\n      ],\n      \"functions\": [\n        \"_normalize\",\n        \"_readme\",\n        \"_slugify\",\n        \"_write\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_normalize\",\n        \"_readme\",\n        \"_slugify\",\n        \"_write\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 100.0
+            }
+          ],
+          "accuracy_score": 100.0
+        }
+      },
+      "contract": {
+        "agent_id": "generated_app_export_agent",
+        "name": "Generated App Export Agent",
+        "version": "0.1.0",
+        "purpose": "Generated App Export Agent supports the IdeasForgeAI general agent workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "general_agent",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "task_requirement"
+        ],
+        "required_outputs": [
+          "agent_result",
+          "confidence",
+          "notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\generated_app_export_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\generated_app_export_agent.py --contract backend\\agent_auditor\\contracts\\generated_app_export_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\generated_app_export_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "git_versioning_agent",
+      "name": "Git Versioning Agent",
+      "file": "backend\\agents\\git_versioning_agent.py",
+      "status": "approved",
+      "health_score": 96.48,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.git_versioning_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\git_versioning_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\git_versioning_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"GitVersioningAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 73,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\git_versioning_agent.py --contract backend\\agent_auditor\\contracts\\git_versioning_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\git_versioning_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\git_versioning_agent.contract.json\",\n  \"overall_score\": 89.84,\n  \"accuracy_score\": 89.84,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"software_engineering\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 16.29,\n    \"max_score\": 30,\n    \"category\": \"software_engineering\",\n    \"keyword_hits\": [\n      \"patch\",\n      \"file\",\n      \"diff\",\n      \"test\",\n      \"project\"\n    ],\n    \"keyword_expected\": [\n      \"code\",\n      \"patch\",\n      \"file\",\n      \"diff\",\n      \"test\",\n      \"project\",\n      \"implementation\"\n    ],\n    \"capability_hits\": [\n      \"git\"\n    ],\n    \"capability_expected\": [\n      \"code\",\n      \"workflow\",\n      \"engineering\",\n      \"patch\",\n      \"git\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"GitVersioningAgent\"\n      ],\n      \"functions\": [\n        \"_find_risky_files\",\n        \"_git\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_find_risky_files\",\n        \"_git\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 89.84
+            }
+          ],
+          "accuracy_score": 89.84
+        }
+      },
+      "contract": {
+        "agent_id": "git_versioning_agent",
+        "name": "Git Versioning Agent",
+        "version": "0.1.0",
+        "purpose": "Git Versioning Agent supports the IdeasForgeAI software engineering workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "software_engineering",
+        "capabilities": [
+          "git_status_review",
+          "version_control_analysis"
+        ],
+        "required_inputs": [
+          "repository_path"
+        ],
+        "required_outputs": [
+          "git_status_summary",
+          "safe_commit_guidance"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\git_versioning_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\git_versioning_agent.py --contract backend\\agent_auditor\\contracts\\git_versioning_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\git_versioning_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "html_builder_agent",
+      "name": "Html Builder Agent",
+      "file": "backend\\agents\\html_builder_agent.py",
+      "status": "approved",
+      "health_score": 97.44,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.html_builder_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\html_builder_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\html_builder_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"HTMLBuilderAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 66,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\html_builder_agent.py --contract backend\\agent_auditor\\contracts\\html_builder_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\html_builder_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\html_builder_agent.contract.json\",\n  \"overall_score\": 96.3,\n  \"accuracy_score\": 96.3,\n  \"grade\": \"Excellent\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 25.0,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"ui\",\n      \"layout\",\n      \"visual\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"HTMLBuilderAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 96.3
+            }
+          ],
+          "accuracy_score": 96.3
+        }
+      },
+      "contract": {
+        "agent_id": "html_builder_agent",
+        "name": "Html Builder Agent",
+        "version": "0.1.0",
+        "purpose": "Html Builder Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "ui_generation",
+          "visual_layout_planning"
+        ],
+        "required_inputs": [
+          "brand_context",
+          "screen_requirement"
+        ],
+        "required_outputs": [
+          "ui_plan",
+          "layout_structure",
+          "style_guidance"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\html_builder_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\html_builder_agent.py --contract backend\\agent_auditor\\contracts\\html_builder_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\html_builder_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "idea_intake_agent",
+      "name": "Idea Intake Agent",
+      "file": "backend\\agents\\idea_intake_agent.py",
+      "status": "approved",
+      "health_score": 96.15,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.idea_intake_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\idea_intake_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\idea_intake_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"IdeaIntakeAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 48,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\idea_intake_agent.py --contract backend\\agent_auditor\\contracts\\idea_intake_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\idea_intake_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\idea_intake_agent.contract.json\",\n  \"overall_score\": 87.65,\n  \"accuracy_score\": 87.65,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"requirement_intake\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 13.33,\n    \"max_score\": 30,\n    \"category\": \"requirement_intake\",\n    \"keyword_hits\": [\n      \"idea\",\n      \"requirement\",\n      \"intake\",\n      \"scope\"\n    ],\n    \"keyword_expected\": [\n      \"idea\",\n      \"prompt\",\n      \"requirement\",\n      \"intake\",\n      \"scope\",\n      \"clarify\"\n    ],\n    \"capability_hits\": [],\n    \"capability_expected\": [\n      \"prompt\",\n      \"requirement\",\n      \"intake\",\n      \"routing\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"IdeaIntakeAgent\"\n      ],\n      \"functions\": [\n        \"_guess_project_name\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_guess_project_name\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 87.65
+            }
+          ],
+          "accuracy_score": 87.65
+        }
+      },
+      "contract": {
+        "agent_id": "idea_intake_agent",
+        "name": "Idea Intake Agent",
+        "version": "0.1.0",
+        "purpose": "Idea Intake Agent supports the IdeasForgeAI requirement intake workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "requirement_intake",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "raw_user_idea"
+        ],
+        "required_outputs": [
+          "structured_requirement",
+          "clarified_scope",
+          "agent_routing_plan"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\idea_intake_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\idea_intake_agent.py --contract backend\\agent_auditor\\contracts\\idea_intake_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\idea_intake_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "IdeasForgeAI_landing_template_agent",
+      "name": "Ideasforgeai Landing Template Agent",
+      "file": "backend\\agents\\IdeasForgeAI_landing_template_agent.py",
+      "status": "approved",
+      "health_score": 96.33,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.IdeasForgeAI_landing_template_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\IdeasForgeAI_landing_template_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\IdeasForgeAI_landing_template_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"IdeasForgeAILandingTemplateAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 22,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\IdeasForgeAI_landing_template_agent.py --contract backend\\agent_auditor\\contracts\\IdeasForgeAI_landing_template_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\IdeasForgeAI_landing_template_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\IdeasForgeAI_landing_template_agent.contract.json\",\n  \"overall_score\": 88.89,\n  \"accuracy_score\": 88.89,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 15.0,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"template\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"template\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"IdeasForgeAILandingTemplateAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 88.89
+            }
+          ],
+          "accuracy_score": 88.89
+        }
+      },
+      "contract": {
+        "agent_id": "IdeasForgeAI_landing_template_agent",
+        "name": "Ideasforgeai Landing Template Agent",
+        "version": "0.1.0",
+        "purpose": "Ideasforgeai Landing Template Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "page_structure_generation",
+          "template_selection"
+        ],
+        "required_inputs": [
+          "page_type",
+          "brand_context",
+          "layout_requirement"
+        ],
+        "required_outputs": [
+          "selected_template",
+          "layout_plan",
+          "implementation_notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\IdeasForgeAI_landing_template_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\IdeasForgeAI_landing_template_agent.py --contract backend\\agent_auditor\\contracts\\IdeasForgeAI_landing_template_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\IdeasForgeAI_landing_template_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "ideasforgeai_product_template_template",
+      "name": "Ideasforgeai Product Template Template",
+      "file": "backend\\agents\\ideasforgeai_product_template_template.py",
+      "status": "approved",
+      "health_score": 94.67,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.ideasforgeai_product_template_template",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\ideasforgeai_product_template_template.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\ideasforgeai_product_template_template.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [],\n  \"functions\": [\n    \"html_page\",\n    \"frontend_files\",\n    \"styles_css\",\n    \"app_js\",\n    \"backend_main_py\",\n    \"crud_routes\",\n    \"backend_code\",\n    \"default_data\",\n    \"data_files\",\n    \"env_example\",\n    \"supabase_schema\",\n    \"supabase_plan\"\n  ],\n  \"assignments\": [\n    \"PAGES\"\n  ],\n  \"has_agent_contract\": false,\n  \"source_lines\": 720,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\ideasforgeai_product_template_template.py --contract backend\\agent_auditor\\contracts\\ideasforgeai_product_template_template.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\ideasforgeai_product_template_template.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\ideasforgeai_product_template_template.contract.json\",\n  \"overall_score\": 77.78,\n  \"accuracy_score\": 77.78,\n  \"grade\": \"Acceptable baseline\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 20.0,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"template\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 15,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [],\n      \"functions\": [\n        \"app_js\",\n        \"backend_code\",\n        \"backend_main_py\",\n        \"crud_routes\",\n        \"data_files\",\n        \"default_data\",\n        \"env_example\",\n        \"frontend_files\",\n        \"html_page\",\n        \"styles_css\",\n        \"supabase_plan\",\n        \"supabase_schema\"\n      ],\n      \"methods\": []\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 77.78
+            }
+          ],
+          "accuracy_score": 77.78
+        }
+      },
+      "contract": {
+        "agent_id": "ideasforgeai_product_template_template",
+        "name": "Ideasforgeai Product Template Template",
+        "version": "0.1.0",
+        "purpose": "Ideasforgeai Product Template Template supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "page_structure_generation",
+          "template_selection"
+        ],
+        "required_inputs": [
+          "page_type",
+          "brand_context",
+          "layout_requirement"
+        ],
+        "required_outputs": [
+          "selected_template",
+          "layout_plan",
+          "implementation_notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\ideasforgeai_product_template_template.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\ideasforgeai_product_template_template.py --contract backend\\agent_auditor\\contracts\\ideasforgeai_product_template_template.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\ideasforgeai_product_template_template.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "IdeasForgeAI_production_sync_agent",
+      "name": "Ideasforgeai Production Sync Agent",
+      "file": "backend\\agents\\IdeasForgeAI_production_sync_agent.py",
+      "status": "approved",
+      "health_score": 96.15,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.IdeasForgeAI_production_sync_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\IdeasForgeAI_production_sync_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\IdeasForgeAI_production_sync_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"IdeasForgeAIProductionSyncAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 23,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\IdeasForgeAI_production_sync_agent.py --contract backend\\agent_auditor\\contracts\\IdeasForgeAI_production_sync_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\IdeasForgeAI_production_sync_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\IdeasForgeAI_production_sync_agent.contract.json\",\n  \"overall_score\": 87.65,\n  \"accuracy_score\": 87.65,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"requirement_intake\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 13.33,\n    \"max_score\": 30,\n    \"category\": \"requirement_intake\",\n    \"keyword_hits\": [\n      \"idea\",\n      \"requirement\",\n      \"intake\",\n      \"scope\"\n    ],\n    \"keyword_expected\": [\n      \"idea\",\n      \"prompt\",\n      \"requirement\",\n      \"intake\",\n      \"scope\",\n      \"clarify\"\n    ],\n    \"capability_hits\": [],\n    \"capability_expected\": [\n      \"prompt\",\n      \"requirement\",\n      \"intake\",\n      \"routing\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"IdeasForgeAIProductionSyncAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 87.65
+            }
+          ],
+          "accuracy_score": 87.65
+        }
+      },
+      "contract": {
+        "agent_id": "IdeasForgeAI_production_sync_agent",
+        "name": "Ideasforgeai Production Sync Agent",
+        "version": "0.1.0",
+        "purpose": "Ideasforgeai Production Sync Agent supports the IdeasForgeAI requirement intake workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "requirement_intake",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "raw_user_idea"
+        ],
+        "required_outputs": [
+          "structured_requirement",
+          "clarified_scope",
+          "agent_routing_plan"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\IdeasForgeAI_production_sync_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\IdeasForgeAI_production_sync_agent.py --contract backend\\agent_auditor\\contracts\\IdeasForgeAI_production_sync_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\IdeasForgeAI_production_sync_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "lead_crud_agent",
+      "name": "Lead Crud Agent",
+      "file": "backend\\agents\\lead_crud_agent.py",
+      "status": "approved",
+      "health_score": 98.0,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.lead_crud_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\lead_crud_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\lead_crud_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"LeadCRUDAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 32,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\lead_crud_agent.py --contract backend\\agent_auditor\\contracts\\lead_crud_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\lead_crud_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\lead_crud_agent.contract.json\",\n  \"overall_score\": 100.0,\n  \"accuracy_score\": 100.0,\n  \"grade\": \"Excellent\",\n  \"category\": \"general_agent\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 30,\n    \"max_score\": 30,\n    \"category\": \"general_agent\",\n    \"keyword_hits\": [\n      \"agent\",\n      \"task\",\n      \"result\",\n      \"confidence\",\n      \"output\"\n    ],\n    \"keyword_expected\": [\n      \"agent\",\n      \"task\",\n      \"result\",\n      \"confidence\",\n      \"output\"\n    ],\n    \"capability_hits\": [\n      \"task\",\n      \"output\"\n    ],\n    \"capability_expected\": [\n      \"task\",\n      \"output\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"LeadCRUDAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 100.0
+            }
+          ],
+          "accuracy_score": 100.0
+        }
+      },
+      "contract": {
+        "agent_id": "lead_crud_agent",
+        "name": "Lead Crud Agent",
+        "version": "0.1.0",
+        "purpose": "Lead Crud Agent supports the IdeasForgeAI general agent workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "general_agent",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "task_requirement"
+        ],
+        "required_outputs": [
+          "agent_result",
+          "confidence",
+          "notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\lead_crud_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\lead_crud_agent.py --contract backend\\agent_auditor\\contracts\\lead_crud_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\lead_crud_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "mobile_packager_agent",
+      "name": "Mobile Packager Agent",
+      "file": "backend\\agents\\mobile_packager_agent.py",
+      "status": "approved",
+      "health_score": 97.11,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.mobile_packager_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\mobile_packager_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\mobile_packager_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"MobilePackagerAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 28,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\mobile_packager_agent.py --contract backend\\agent_auditor\\contracts\\mobile_packager_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\mobile_packager_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\mobile_packager_agent.contract.json\",\n  \"overall_score\": 94.07,\n  \"accuracy_score\": 94.07,\n  \"grade\": \"Excellent\",\n  \"category\": \"packaging\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 22.0,\n    \"max_score\": 30,\n    \"category\": \"packaging\",\n    \"keyword_hits\": [\n      \"package\",\n      \"mobile\",\n      \"build\"\n    ],\n    \"keyword_expected\": [\n      \"package\",\n      \"mobile\",\n      \"bundle\",\n      \"export\",\n      \"build\"\n    ],\n    \"capability_hits\": [\n      \"package\",\n      \"mobile\",\n      \"build\"\n    ],\n    \"capability_expected\": [\n      \"package\",\n      \"mobile\",\n      \"build\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"MobilePackagerAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 94.07
+            }
+          ],
+          "accuracy_score": 94.07
+        }
+      },
+      "contract": {
+        "agent_id": "mobile_packager_agent",
+        "name": "Mobile Packager Agent",
+        "version": "0.1.0",
+        "purpose": "Mobile Packager Agent supports the IdeasForgeAI packaging workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "packaging",
+        "capabilities": [
+          "app_build_preparation",
+          "mobile_package_planning"
+        ],
+        "required_inputs": [
+          "task_requirement"
+        ],
+        "required_outputs": [
+          "agent_result",
+          "confidence",
+          "notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\mobile_packager_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\mobile_packager_agent.py --contract backend\\agent_auditor\\contracts\\mobile_packager_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\mobile_packager_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "orchestrator_agent",
+      "name": "Orchestrator Agent",
+      "file": "backend\\agents\\orchestrator_agent.py",
+      "status": "approved",
+      "health_score": 98.5,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.orchestrator_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 20,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\orchestrator_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\orchestrator_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [],\n  \"functions\": [\n    \"create_default_builder_pipeline\",\n    \"create_IdeasForgeAI_production_roadmap_agents\"\n  ],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 50,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\orchestrator_agent.py --contract backend\\agent_auditor\\contracts\\orchestrator_agent.contract.json --fail-under 90",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\orchestrator_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\orchestrator_agent.contract.json\",\n  \"overall_score\": 90.0,\n  \"accuracy_score\": 90.0,\n  \"grade\": \"Excellent\",\n  \"category\": \"orchestration\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 30,\n    \"max_score\": 30,\n    \"category\": \"orchestration\",\n    \"keyword_hits\": [\n      \"orchestrator\",\n      \"route\",\n      \"agent\",\n      \"registry\",\n      \"workflow\",\n      \"approval\",\n      \"health\",\n      \"plan\"\n    ],\n    \"keyword_expected\": [\n      \"orchestrator\",\n      \"route\",\n      \"agent\",\n      \"registry\",\n      \"workflow\",\n      \"approval\",\n      \"health\",\n      \"plan\"\n    ],\n    \"capability_hits\": [\n      \"orchestration\",\n      \"routing\",\n      \"registry\",\n      \"approval\",\n      \"health\"\n    ],\n    \"capability_expected\": [\n      \"orchestration\",\n      \"routing\",\n      \"registry\",\n      \"approval\",\n      \"health\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 80,\n    \"max_score\": 100,\n    \"category_scores\": {\n      \"agent_routing\": {\n        \"score\": 10,\n        \"hits\": [\n          \"route\",\n          \"routing\",\n          \"select\",\n          \"selected_agent\",\n          \"agent\"\n        ],\n        \"expected\": [\n          \"route\",\n          \"routing\",\n          \"select\",\n          \"selected_agent\",\n          \"agent\"\n        ]\n      },\n      \"registry_awareness\": {\n        \"score\": 10,\n        \"hits\": [\n          \"registry\",\n          \"available_agents\",\n          \"agent_registry\"\n        ],\n        \"expected\": [\n          \"registry\",\n          \"available_agents\",\n          \"agent_registry\",\n          \"allowlist\"\n        ]\n      },\n      \"health_gate\": {\n        \"score\": 10,\n        \"hits\": [\n          \"health\",\n          \"score\",\n          \"approved\",\n          \"blocked\"\n        ],\n        \"expected\": [\n          \"health\",\n          \"score\",\n          \"can_load\",\n          \"approved\",\n          \"blocked\"\n        ]\n      },\n      \"execution_plan\": {\n        \"score\": 10,\n        \"hits\": [\n          \"plan\",\n          \"step\",\n          \"workflow\",\n          \"execution\"\n        ],\n        \"expected\": [\n          \"plan\",\n          \"step\",\n          \"workflow\",\n          \"execution\"\n        ]\n      },\n      \"approval_gate\": {\n        \"score\": 10,\n        \"hits\": [\n          \"approval\",\n          \"approve\",\n          \"requires_approval\"\n        ],\n        \"expected\": [\n          \"approval\",\n          \"approve\",\n          \"requires_approval\",\n          \"confirm\"\n        ]\n      },\n      \"fallback_handling\": {\n        \"score\": 10,\n        \"hits\": [\n          \"fallback\",\n          \"safe\"\n        ],\n        \"expected\": [\n          \"fallback\",\n          \"error\",\n          \"failed\",\n          \"retry\",\n          \"safe\"\n        ]\n      },\n      \"structured_output\": {\n        \"score\": 10,\n        \"hits\": [\n          \"status\",\n          \"confidence\",\n          \"result\",\n          \"output\"\n        ],\n        \"expected\": [\n          \"status\",\n          \"confidence\",\n          \"result\",\n          \"output\"\n        ]\n      },\n      \"task_requirement\": {\n        \"score\": 10,\n        \"hits\": [\n          \"requirement\",\n          \"user_request\"\n        ],\n        \"expected\": [\n          \"requirement\",\n          \"user_request\",\n          \"intent\",\n          \"task\"\n        ]\n      }\n    },\n    \"symbol_hits\": [],\n    \"symbol_expected\": [\n      \"orchestrate\",\n      \"route\",\n      \"select\",\n      \"plan\",\n      \"execute\",\n      \"validate\",\n      \"approve\"\n    ]\n  }\n}\n",
+              "stderr": "",
+              "name": "orchestrator-routing-health-approval-benchmark",
+              "parsed_score": 90.0
+            }
+          ],
+          "accuracy_score": 90.0
+        }
+      },
+      "contract": {
+        "agent_id": "orchestrator_agent",
+        "name": "Orchestrator Agent",
+        "version": "0.2.0",
+        "purpose": "Route user requests to the correct IdeasForgeAI agent, validate agent health before execution, create a safe execution plan, require approval for risky actions, and return structured status, confidence, fallback, and next-step output.",
+        "registry_category": "orchestration",
+        "capabilities": [
+          "agent_orchestration",
+          "agent_routing",
+          "registry_awareness",
+          "health_score_gate",
+          "approval_gate",
+          "workflow_planning",
+          "fallback_handling",
+          "structured_execution_output"
+        ],
+        "required_inputs": [
+          "user_request",
+          "available_agents",
+          "agent_health_report",
+          "project_context"
+        ],
+        "required_outputs": [
+          "selected_agent",
+          "routing_reason",
+          "execution_plan",
+          "approval_required",
+          "blocked_agents",
+          "fallback_plan",
+          "confidence",
+          "status"
+        ],
+        "accuracy_method": "orchestrator_requirement_alignment",
+        "minimum_health_score": 75,
+        "minimum_accuracy_score": 90,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\orchestrator_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "accuracy_tests": [
+          {
+            "name": "orchestrator-routing-health-approval-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\orchestrator_agent.py --contract backend\\agent_auditor\\contracts\\orchestrator_agent.contract.json --fail-under 90",
+            "timeout_seconds": 30
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "read_agent_registry",
+            "read_agent_health_report",
+            "select_agent",
+            "create_execution_plan",
+            "return_structured_routing_result"
+          ],
+          "blocked_actions": [
+            "load_blocked_agent",
+            "execute_unapproved_risky_action",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "ignore_agent_health_score"
+          ]
+        },
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\orchestrator_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "pixel_matched_page_converter_agent",
+      "name": "Pixel Matched Page Converter Agent",
+      "file": "backend\\agents\\pixel_matched_page_converter_agent.py",
+      "status": "approved",
+      "health_score": 100.0,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.pixel_matched_page_converter_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 20,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\pixel_matched_page_converter_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\pixel_matched_page_converter_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"PixelMatchedPageConverterAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 920,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_real_accuracy.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"overall_score\": 100.0,\n  \"accuracy_score\": 100.0,\n  \"benchmark\": \"pixel_real_iou_v2_multi_screenshot\",\n  \"scored_cases\": 1,\n  \"required_cases\": 1,\n  \"minimum_required_cases\": 1,\n  \"skipped_optional_cases\": 4,\n  \"cases\": [\n    {\n      \"name\": \"mobile-landing-current\",\n      \"ok\": true,\n      \"score\": 100,\n      \"image_size\": {\n        \"width\": 853,\n        \"height\": 1844\n      },\n      \"detected\": {\n        \"composer\": {\n          \"x1\": 38,\n          \"y1\": 1538,\n          \"x2\": 814,\n          \"y2\": 1658,\n          \"width\": 776,\n          \"height\": 120,\n          \"confidence\": 0.66,\n          \"source\": \"safe_mobile_composer_fallback_above_browser\"\n        },\n        \"cards_count\": 3,\n        \"cards\": [\n          {\n            \"x1\": 51,\n            \"y1\": 617,\n            \"x2\": 801,\n            \"y2\": 802,\n            \"width\": 750,\n            \"height\": 184,\n            \"area\": 138418,\n            \"confidence\": 0.68,\n            \"source\": \"safe_landing_card_fallback_1\"\n          },\n          {\n            \"x1\": 51,\n            \"y1\": 857,\n            \"x2\": 801,\n            \"y2\": 1023,\n            \"width\": 750,\n            \"height\": 165,\n            \"area\": 124576,\n            \"confidence\": 0.68,\n            \"source\": \"safe_landing_card_fallback_2\"\n          },\n          {\n            \"x1\": 51,\n            \"y1\": 1097,\n            \"x2\": 801,\n            \"y2\": 1263,\n            \"width\": 750,\n            \"height\": 165,\n            \"area\": 124576,\n            \"confidence\": 0.68,\n            \"source\": \"safe_landing_card_fallback_3\"\n          }\n        ],\n        \"light_regions_count\": 29\n      },\n      \"expected\": {\n        \"composer\": {\n          \"x1\": 38,\n          \"y1\": 1538,\n          \"x2\": 814,\n          \"y2\": 1658\n        },\n        \"cards_count_range\": [\n          2,\n          4\n        ],\n        \"browser_bad_region\": {\n          \"x1\": 0,\n          \"y1\": 1644,\n          \"x2\": 852,\n          \"y2\": 1767\n        }\n      },\n      \"checks\": {\n        \"composer_detected\": true,\n        \"composer_iou\": 1.0,\n        \"composer_center_score\": 1.0,\n        \"composer_above_browser_chrome\": true,\n        \"composer_tray_like_height\": true,\n        \"bad_browser_region_iou\": 0.0581,\n        \"not_browser_region\": true,\n        \"cards_detected\": 3,\n        \"cards_count_ok\": true\n      }\n    },\n    {\n      \"name\": \"mobile-chat-after-message\",\n      \"ok\": true,\n      \"skipped\": true,\n      \"required\": false,\n      \"score\": 0,\n      \"error\": \"Missing screenshot: D:\\\\APPS\\\\IdeasForgeAI\\\\backend\\\\agent_auditor\\\\pixel_benchmarks\\\\screenshots\\\\chat-mobile-after-message.png\"\n    },\n    {\n      \"name\": \"mobile-keyboard-composer-active\",\n      \"ok\": true,\n      \"skipped\": true,\n      \"required\": false,\n      \"score\": 0,\n      \"error\": \"Missing screenshot: D:\\\\APPS\\\\IdeasForgeAI\\\\backend\\\\agent_auditor\\\\pixel_benchmarks\\\\screenshots\\\\chat-mobile-keyboard-active.png\"\n    },\n    {\n      \"name\": \"desktop-browser-chat\",\n      \"ok\": true,\n      \"skipped\": true,\n      \"required\": false,\n      \"score\": 0,\n      \"error\": \"Missing screenshot: D:\\\\APPS\\\\IdeasForgeAI\\\\backend\\\\agent_auditor\\\\pixel_benchmarks\\\\screenshots\\\\chat-desktop-current.png\"\n    },\n    {\n      \"name\": \"small-mobile-viewport\",\n      \"ok\": true,\n      \"skipped\": true,\n      \"required\": false,\n      \"score\": 0,\n      \"error\": \"Missing screenshot: D:\\\\APPS\\\\IdeasForgeAI\\\\backend\\\\agent_auditor\\\\pixel_benchmarks\\\\screenshots\\\\chat-small-mobile-current.png\"\n    }\n  ]\n}\n",
+              "stderr": "",
+              "name": "real-pixel-composer-card-iou-benchmark",
+              "parsed_score": 100.0
+            }
+          ],
+          "accuracy_score": 100.0
+        }
+      },
+      "contract": {
+        "agent_id": "pixel_matched_page_converter_agent",
+        "name": "Pixel Matched Page Converter Agent",
+        "version": "0.1.0",
+        "purpose": "Pixel Matched Page Converter Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "layout_mapping",
+          "pixel_region_detection",
+          "screenshot_analysis"
+        ],
+        "required_inputs": [
+          "screenshot",
+          "target_ui_requirement"
+        ],
+        "required_outputs": [
+          "detected_regions",
+          "composer_region",
+          "card_regions",
+          "css_variables",
+          "confidence"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\pixel_matched_page_converter_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "accept_failed_visual_regression_without_repair_plan",
+            "accept_ui_patch_when_cards_break",
+            "accept_ui_patch_when_composer_enters_browser_chrome",
+            "accept_ui_patch_when_pixel_score_regresses",
+            "accept_ui_patch_without_visual_regression",
+            "apply_css_without_human_approval",
+            "apply_css_without_safe_css_patch_plan",
+            "apply_pixel_patch_without_frontend_file_mapping",
+            "apply_ui_patch_without_pixel_debug_report",
+            "auto_apply_css_repair_without_approval",
+            "blind_css_override_after_pixel_detection",
+            "blind_file_patch",
+            "ignore_browser_chrome_check",
+            "ignore_low_pixel_confidence",
+            "ignore_pixel_auto_repair_critical_issue",
+            "patch_css_without_dom_mapping",
+            "patch_unknown_selector",
+            "patch_unmapped_selector",
+            "repair_unmapped_selector",
+            "stage_unrelated_files",
+            "unapproved_live_execution",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_method": "real_pixel_iou_composer_card_detection",
+        "minimum_accuracy_score": 80,
+        "accuracy_tests": [
+          {
+            "name": "real-pixel-composer-card-iou-benchmark",
+            "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_real_accuracy.py",
+            "timeout_seconds": 45
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "debug_outputs": {
+          "json_report": "backend/agent_audit_reports/pixel_debug/pixel-debug-report-*.json",
+          "visual_overlay": "backend/agent_audit_reports/pixel_debug/pixel-debug-overlay-*.png",
+          "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_debug_report.py"
+        },
+        "pixel_accuracy_wiring": {
+          "phase": "PIXEL-AGENT-06",
+          "status": "wired_to_real_pixel_benchmark",
+          "root_path_rule": "pixel benchmark scripts must resolve ROOT to IdeasForgeAI project root, not backend folder",
+          "required_command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_real_accuracy.py"
+        },
+        "dom_mapping_gate": {
+          "phase": "PIXEL-AGENT-08",
+          "required_before_css_patch": true,
+          "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_dom_mapper.py",
+          "minimum_confidence": 60,
+          "required_regions": [
+            "composer",
+            "cards"
+          ],
+          "output": "backend/agent_audit_reports/pixel_dom_maps/pixel-dom-map-*.json"
+        },
+        "safe_css_patch_planner": {
+          "phase": "PIXEL-AGENT-09",
+          "required_before_css_patch": true,
+          "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_safe_css_patch_planner.py",
+          "approval_required": true,
+          "frontend_write_status": "planner_only_no_frontend_write"
+        },
+        "visual_regression_test": {
+          "phase": "PIXEL-AGENT-10",
+          "required_after_css_patch": true,
+          "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_visual_regression.py --fail-if-regressed",
+          "before_after_command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_visual_regression.py --before <before.png> --after <after.png> --fail-if-regressed",
+          "output": "backend/agent_audit_reports/pixel_visual_regression/pixel-visual-regression-*.json",
+          "required_checks": [
+            "after score must not regress",
+            "composer must not include browser chrome",
+            "cards count must remain valid",
+            "composer IoU must not regress",
+            "browser region overlap must not regress"
+          ]
+        },
+        "auto_repair_loop": {
+          "phase": "PIXEL-AGENT-11",
+          "required_when_visual_regression_fails": true,
+          "command": "python backend\\agent_auditor\\pixel_benchmarks\\pixel_auto_repair.py",
+          "output": "backend/agent_audit_reports/pixel_auto_repairs/pixel-auto-repair-*.json",
+          "approval_required": true,
+          "frontend_write_status": "suggestion_only_no_frontend_write",
+          "repair_types": [
+            "composer_position_repair",
+            "browser_chrome_overlap_repair",
+            "cards_detection_repair",
+            "score_regression_repair",
+            "screenshot_quality_repair"
+          ]
+        },
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\pixel_matched_page_converter_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "runtime_config_agent",
+      "name": "Runtime Config Agent",
+      "file": "backend\\agents\\runtime_config_agent.py",
+      "status": "approved",
+      "health_score": 95.94,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.runtime_config_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\runtime_config_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\runtime_config_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"RuntimeConfigAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 82,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\runtime_config_agent.py --contract backend\\agent_auditor\\contracts\\runtime_config_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\runtime_config_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\runtime_config_agent.contract.json\",\n  \"overall_score\": 86.24,\n  \"accuracy_score\": 86.24,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"software_engineering\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 11.43,\n    \"max_score\": 30,\n    \"category\": \"software_engineering\",\n    \"keyword_hits\": [\n      \"patch\",\n      \"file\",\n      \"test\",\n      \"project\"\n    ],\n    \"keyword_expected\": [\n      \"code\",\n      \"patch\",\n      \"file\",\n      \"diff\",\n      \"test\",\n      \"project\",\n      \"implementation\"\n    ],\n    \"capability_hits\": [],\n    \"capability_expected\": [\n      \"code\",\n      \"workflow\",\n      \"engineering\",\n      \"patch\",\n      \"git\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"RuntimeConfigAgent\"\n      ],\n      \"functions\": [\n        \"_app_config\",\n        \"_backend_run_script\",\n        \"_slugify\",\n        \"_start_script\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_app_config\",\n        \"_backend_run_script\",\n        \"_slugify\",\n        \"_start_script\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 86.24
+            }
+          ],
+          "accuracy_score": 86.24
+        }
+      },
+      "contract": {
+        "agent_id": "runtime_config_agent",
+        "name": "Runtime Config Agent",
+        "version": "0.1.0",
+        "purpose": "Runtime Config Agent supports the IdeasForgeAI software engineering workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "software_engineering",
+        "capabilities": [
+          "structured_output_generation",
+          "task_execution"
+        ],
+        "required_inputs": [
+          "task_requirement"
+        ],
+        "required_outputs": [
+          "agent_result",
+          "confidence",
+          "notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\runtime_config_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\runtime_config_agent.py --contract backend\\agent_auditor\\contracts\\runtime_config_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\runtime_config_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "template_selection_agent",
+      "name": "Template Selection Agent",
+      "file": "backend\\agents\\template_selection_agent.py",
+      "status": "approved",
+      "health_score": 96.33,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.template_selection_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\template_selection_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\template_selection_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"TemplateSelectionAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 104,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\template_selection_agent.py --contract backend\\agent_auditor\\contracts\\template_selection_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\template_selection_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\template_selection_agent.contract.json\",\n  \"overall_score\": 88.89,\n  \"accuracy_score\": 88.89,\n  \"grade\": \"Accurate baseline\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 15.0,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"template\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"template\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"TemplateSelectionAgent\"\n      ],\n      \"functions\": [\n        \"_select_template\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_select_template\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 88.89
+            }
+          ],
+          "accuracy_score": 88.89
+        }
+      },
+      "contract": {
+        "agent_id": "template_selection_agent",
+        "name": "Template Selection Agent",
+        "version": "0.1.0",
+        "purpose": "Template Selection Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "page_structure_generation",
+          "template_selection"
+        ],
+        "required_inputs": [
+          "page_type",
+          "brand_context",
+          "layout_requirement"
+        ],
+        "required_outputs": [
+          "selected_template",
+          "layout_plan",
+          "implementation_notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\template_selection_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\template_selection_agent.py --contract backend\\agent_auditor\\contracts\\template_selection_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\template_selection_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "template_ui_renderer_agent",
+      "name": "Template Ui Renderer Agent",
+      "file": "backend\\agents\\template_ui_renderer_agent.py",
+      "status": "approved",
+      "health_score": 97.44,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.template_ui_renderer_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\template_ui_renderer_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\template_ui_renderer_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"TemplateUIRendererAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 658,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\template_ui_renderer_agent.py --contract backend\\agent_auditor\\contracts\\template_ui_renderer_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\template_ui_renderer_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\template_ui_renderer_agent.contract.json\",\n  \"overall_score\": 96.3,\n  \"accuracy_score\": 96.3,\n  \"grade\": \"Excellent\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 25.0,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"template\",\n      \"html\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"TemplateUIRendererAgent\"\n      ],\n      \"functions\": [\n        \"_base_css\",\n        \"_logo_text\",\n        \"_render_ai_chat\",\n        \"_render_crm\",\n        \"_render_default\",\n        \"_render_ecommerce\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"_base_css\",\n        \"_logo_text\",\n        \"_render_ai_chat\",\n        \"_render_crm\",\n        \"_render_default\",\n        \"_render_ecommerce\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 96.3
+            }
+          ],
+          "accuracy_score": 96.3
+        }
+      },
+      "contract": {
+        "agent_id": "template_ui_renderer_agent",
+        "name": "Template Ui Renderer Agent",
+        "version": "0.1.0",
+        "purpose": "Template Ui Renderer Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "page_structure_generation",
+          "template_selection",
+          "ui_generation",
+          "visual_layout_planning"
+        ],
+        "required_inputs": [
+          "page_type",
+          "brand_context",
+          "layout_requirement"
+        ],
+        "required_outputs": [
+          "selected_template",
+          "layout_plan",
+          "implementation_notes"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\template_ui_renderer_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\template_ui_renderer_agent.py --contract backend\\agent_auditor\\contracts\\template_ui_renderer_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\template_ui_renderer_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "ui_blueprint_agent",
+      "name": "Ui Blueprint Agent",
+      "file": "backend\\agents\\ui_blueprint_agent.py",
+      "status": "approved",
+      "health_score": 97.17,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.ui_blueprint_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\ui_blueprint_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\ui_blueprint_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"UIBlueprintAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 34,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\ui_blueprint_agent.py --contract backend\\agent_auditor\\contracts\\ui_blueprint_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\ui_blueprint_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\ui_blueprint_agent.contract.json\",\n  \"overall_score\": 94.44,\n  \"accuracy_score\": 94.44,\n  \"grade\": \"Excellent\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 22.5,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"ui\",\n      \"layout\",\n      \"visual\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"UIBlueprintAgent\"\n      ],\n      \"functions\": [\n        \"run\"\n      ],\n      \"methods\": [\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 94.44
+            }
+          ],
+          "accuracy_score": 94.44
+        }
+      },
+      "contract": {
+        "agent_id": "ui_blueprint_agent",
+        "name": "Ui Blueprint Agent",
+        "version": "0.1.0",
+        "purpose": "Ui Blueprint Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "ui_generation",
+          "visual_layout_planning"
+        ],
+        "required_inputs": [
+          "brand_context",
+          "screen_requirement"
+        ],
+        "required_outputs": [
+          "ui_plan",
+          "layout_structure",
+          "style_guidance"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\ui_blueprint_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\ui_blueprint_agent.py --contract backend\\agent_auditor\\contracts\\ui_blueprint_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\ui_blueprint_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    },
+    {
+      "agent_id": "visual_design_engine_agent",
+      "name": "Visual Design Engine Agent",
+      "file": "backend\\agents\\visual_design_engine_agent.py",
+      "status": "approved",
+      "health_score": 96.89,
+      "grade": "Excellent",
+      "can_load": true,
+      "critical_errors": [],
+      "warnings": [],
+      "checks": {
+        "compile": {
+          "ok": true,
+          "error": null
+        },
+        "import": {
+          "ok": true,
+          "module": "backend.agents.visual_design_engine_agent",
+          "stdout": "IMPORT_OK\n",
+          "stderr": ""
+        },
+        "contract": {
+          "missing_required": [],
+          "missing_optional": [
+            "accuracy_method"
+          ],
+          "metadata_score": 10.0,
+          "io_score": 10,
+          "requirement_score": 18,
+          "safety_score": 5,
+          "registry_score": 5
+        },
+        "smoke": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\visual_design_engine_agent.py",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\visual_design_engine_agent.py\",\n  \"compile_ok\": true,\n  \"ast_ok\": true,\n  \"classes\": [\n    \"VisualDesignEngineAgent\"\n  ],\n  \"functions\": [],\n  \"assignments\": [],\n  \"has_agent_contract\": false,\n  \"source_lines\": 21,\n  \"error\": null\n}\n",
+              "stderr": "",
+              "name": "forced-static-agent-structure-smoke-test"
+            }
+          ]
+        },
+        "accuracy": {
+          "ok": true,
+          "tests": [
+            {
+              "ok": true,
+              "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\visual_design_engine_agent.py --contract backend\\agent_auditor\\contracts\\visual_design_engine_agent.contract.json --fail-under 70",
+              "returncode": 0,
+              "stdout": "{\n  \"ok\": true,\n  \"agent_file\": \"backend\\\\agents\\\\visual_design_engine_agent.py\",\n  \"contract_file\": \"backend\\\\agent_auditor\\\\contracts\\\\visual_design_engine_agent.contract.json\",\n  \"overall_score\": 92.59,\n  \"accuracy_score\": 92.59,\n  \"grade\": \"Excellent\",\n  \"category\": \"ui_and_visual_generation\",\n  \"contract_quality\": {\n    \"score\": 70,\n    \"max_score\": 70,\n    \"checks\": {\n      \"purpose_good\": true,\n      \"capabilities_good\": true,\n      \"inputs_good\": true,\n      \"outputs_good\": true,\n      \"category_present\": true,\n      \"safety_present\": true\n    }\n  },\n  \"category_alignment\": {\n    \"score\": 20.0,\n    \"max_score\": 30,\n    \"category\": \"ui_and_visual_generation\",\n    \"keyword_hits\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"visual\"\n    ],\n    \"keyword_expected\": [\n      \"ui\",\n      \"layout\",\n      \"screen\",\n      \"style\",\n      \"template\",\n      \"html\",\n      \"visual\",\n      \"component\"\n    ],\n    \"capability_hits\": [\n      \"ui\",\n      \"layout\",\n      \"visual\"\n    ],\n    \"capability_expected\": [\n      \"ui\",\n      \"layout\",\n      \"visual\",\n      \"template\"\n    ]\n  },\n  \"type_specific\": {\n    \"score\": 35,\n    \"max_score\": 35,\n    \"symbols\": {\n      \"classes\": [\n        \"VisualDesignEngineAgent\"\n      ],\n      \"functions\": [\n        \"__init__\",\n        \"run\"\n      ],\n      \"methods\": [\n        \"__init__\",\n        \"run\"\n      ]\n    }\n  }\n}\n",
+              "stderr": "",
+              "name": "agent-type-requirement-alignment-benchmark",
+              "parsed_score": 92.59
+            }
+          ],
+          "accuracy_score": 92.59
+        }
+      },
+      "contract": {
+        "agent_id": "visual_design_engine_agent",
+        "name": "Visual Design Engine Agent",
+        "version": "0.1.0",
+        "purpose": "Visual Design Engine Agent supports the IdeasForgeAI ui and visual generation workflow by accepting structured task requirements, performing the agent-specific operation, and returning safe, reviewable, production-oriented output.",
+        "registry_category": "ui_and_visual_generation",
+        "capabilities": [
+          "ui_generation",
+          "visual_layout_planning"
+        ],
+        "required_inputs": [
+          "brand_context",
+          "screen_requirement"
+        ],
+        "required_outputs": [
+          "ui_plan",
+          "layout_structure",
+          "style_guidance"
+        ],
+        "minimum_health_score": 75,
+        "smoke_tests": [
+          {
+            "name": "forced-static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\visual_design_engine_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "safety": {
+          "requires_approval": true,
+          "allowed_actions": [
+            "analyze_input",
+            "generate_structured_output",
+            "write_agent_report"
+          ],
+          "blocked_actions": [
+            "unapproved_live_execution",
+            "blind_file_patch",
+            "stage_unrelated_files",
+            "use_screenshot_as_background"
+          ]
+        },
+        "accuracy_tests": [
+          {
+            "name": "agent-type-requirement-alignment-benchmark",
+            "command": "python backend\\agent_auditor\\accuracy_benchmarks.py --agent backend\\agents\\visual_design_engine_agent.py --contract backend\\agent_auditor\\contracts\\visual_design_engine_agent.contract.json --fail-under 70",
+            "timeout_seconds": 30
+          }
+        ],
+        "accuracy_benchmark_level": "type_requirement_baseline_v1",
+        "contract_source": "external_json_contract_plus_forced_static_baseline",
+        "deep_smoke_tests": [
+          {
+            "name": "static-agent-structure-smoke-test",
+            "command": "python backend\\agent_auditor\\smoke_static_agent.py --agent backend\\agents\\visual_design_engine_agent.py",
+            "timeout_seconds": 20
+          }
+        ],
+        "baseline_smoke_mode": "forced_static_structure"
+      }
+    }
+  ]
+}

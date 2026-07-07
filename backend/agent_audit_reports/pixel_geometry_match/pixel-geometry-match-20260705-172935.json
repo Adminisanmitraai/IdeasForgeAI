@@ -1,0 +1,99 @@
+{
+  "ok": false,
+  "phase": "PIXEL-MAP-PERFECT-11",
+  "created_at": "20260705-172935",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "actual_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_captures\\live-ui-capture-20260705-172655.png",
+  "overall_geometry_match_score": 69.8,
+  "verdict": "NEEDS_REPAIR",
+  "component_scores": {
+    "status_header": {
+      "visual_similarity": 70.57,
+      "geometry_iou": 1.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": 0
+      },
+      "geometry_score": 100.0,
+      "score": 82.34
+    },
+    "top_nav": {
+      "visual_similarity": 58.12,
+      "geometry_iou": 1.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": 0
+      },
+      "geometry_score": 100.0,
+      "score": 74.87
+    },
+    "hero": {
+      "visual_similarity": 30.85,
+      "geometry_iou": 0.9348,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -9
+      },
+      "geometry_score": 97.3,
+      "score": 57.43
+    },
+    "card_1": {
+      "visual_similarity": 59.89,
+      "geometry_iou": 0.8417,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -19
+      },
+      "geometry_score": 94.3,
+      "score": 73.65
+    },
+    "card_2": {
+      "visual_similarity": 43.22,
+      "geometry_iou": 0.8458,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -18
+      },
+      "geometry_score": 94.6,
+      "score": 63.77
+    },
+    "card_3": {
+      "visual_similarity": 46.27,
+      "geometry_iou": 0.8458,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -18
+      },
+      "geometry_score": 94.6,
+      "score": 65.6
+    },
+    "composer": {
+      "visual_similarity": 73.77,
+      "geometry_iou": 1.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": 0
+      },
+      "geometry_score": 100.0,
+      "score": 84.26
+    },
+    "browser_safe_area": {
+      "visual_similarity": 60.78,
+      "geometry_iou": 1.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": 0
+      },
+      "geometry_score": 100.0,
+      "score": 76.47
+    }
+  },
+  "observations": [
+    "Hero block still needs alignment. Tune h1 width/font and hero vertical spacing.",
+    "card_1 vertical center differs by -19px.",
+    "card_2 needs alignment. Tune card height, title/description size, or vertical rhythm.",
+    "card_3 needs alignment. Tune card height, title/description size, or vertical rhythm."
+  ],
+  "overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_geometry_match\\pixel-geometry-match-overlay-20260705-172935.png",
+  "next_step": "Use component deltas to repair exact layout alignment instead of fixed-region guessing."
+}

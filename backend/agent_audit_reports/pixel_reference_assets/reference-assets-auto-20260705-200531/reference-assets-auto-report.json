@@ -1,0 +1,161 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-16D",
+  "created_at": "20260705-200531",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "reference_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "output_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531",
+  "contact_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\reference-asset-contact-sheet-auto.png",
+  "box_overlay": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\auto-asset-box-overlay.png",
+  "assets": {
+    "header_logo_spark_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\header_logo_spark_auto.png",
+      "search_zone_px": [
+        120,
+        120,
+        260,
+        260
+      ],
+      "final_box_px": [
+        106,
+        106,
+        274,
+        274
+      ],
+      "width": 168,
+      "height": 168,
+      "status": "auto_located"
+    },
+    "header_share_button_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\header_share_button_auto.png",
+      "search_zone_px": [
+        600,
+        120,
+        725,
+        250
+      ],
+      "final_box_px": [
+        583,
+        106,
+        741,
+        264
+      ],
+      "width": 158,
+      "height": 158,
+      "status": "auto_located"
+    },
+    "header_primary_button_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\header_primary_button_auto.png",
+      "search_zone_px": [
+        705,
+        120,
+        835,
+        255
+      ],
+      "final_box_px": [
+        689,
+        106,
+        852,
+        269
+      ],
+      "width": 163,
+      "height": 163,
+      "status": "auto_located"
+    },
+    "forge_studio_icon_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\forge_studio_icon_auto.png",
+      "search_zone_px": [
+        55,
+        660,
+        220,
+        850
+      ],
+      "final_box_px": [
+        28,
+        646,
+        246,
+        864
+      ],
+      "width": 218,
+      "height": 218,
+      "status": "auto_located"
+    },
+    "forge_code_icon_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\forge_code_icon_auto.png",
+      "search_zone_px": [
+        55,
+        910,
+        220,
+        1110
+      ],
+      "final_box_px": [
+        23,
+        896,
+        251,
+        1124
+      ],
+      "width": 228,
+      "height": 228,
+      "status": "auto_located"
+    },
+    "forge_work_icon_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\forge_work_icon_auto.png",
+      "search_zone_px": [
+        55,
+        1160,
+        220,
+        1500
+      ],
+      "final_box_px": [
+        0,
+        1146,
+        368,
+        1514
+      ],
+      "width": 368,
+      "height": 368,
+      "status": "auto_located"
+    },
+    "composer_full_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\composer_full_auto.png",
+      "search_zone_px": [
+        25,
+        1480,
+        830,
+        1660
+      ],
+      "final_box_px": [
+        11,
+        1466,
+        844,
+        1674
+      ],
+      "width": 833,
+      "height": 208,
+      "status": "auto_located"
+    },
+    "browser_bar_full_auto": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-auto-20260705-200531\\browser_bar_full_auto.png",
+      "search_zone_px": [
+        25,
+        1630,
+        830,
+        1815
+      ],
+      "final_box_px": [
+        11,
+        1616,
+        844,
+        1829
+      ],
+      "width": 833,
+      "height": 213,
+      "status": "auto_located"
+    }
+  },
+  "rule": "Inspection only. Auto-located assets must be approved before frontend use.",
+  "next_step": "Inspect contact sheet and overlay. If assets look correct, create an asset fit plan without UI apply."
+}

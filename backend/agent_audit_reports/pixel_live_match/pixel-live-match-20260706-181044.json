@@ -1,0 +1,68 @@
+{
+  "ok": false,
+  "phase": "PIXEL-MAP-PERFECT-18S-DPR2-REGION-RECALIBRATION",
+  "created_at": "20260706-181044",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "actual_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_captures\\pixel-live-capture-studio-dpr2-fresh-20260706-181041-019.png",
+  "reference_original_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "actual_original_size": {
+    "width": 860,
+    "height": 1864
+  },
+  "comparison_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "minimum_score": 86.0,
+  "overall_ui_match_score": 69.69,
+  "verdict": "FAIL_LAYOUT_MISMATCH",
+  "region_scores": {
+    "status_header": {
+      "pixel_similarity": 68.32,
+      "edge_similarity": 72.61,
+      "color_similarity": 95.8,
+      "score": 73.73
+    },
+    "top_nav": {
+      "pixel_similarity": 54.63,
+      "edge_similarity": 59.4,
+      "color_similarity": 97.32,
+      "score": 62.46
+    },
+    "hero": {
+      "pixel_similarity": 23.86,
+      "edge_similarity": 41.24,
+      "color_similarity": 97.58,
+      "score": 40.13
+    },
+    "cards": {
+      "pixel_similarity": 60.68,
+      "edge_similarity": 63.54,
+      "color_similarity": 97.44,
+      "score": 67.05
+    },
+    "composer": {
+      "pixel_similarity": 75.9,
+      "edge_similarity": 79.93,
+      "color_similarity": 95.99,
+      "score": 80.12
+    },
+    "browser_safe_area": {
+      "pixel_similarity": 44.97,
+      "edge_similarity": 59.31,
+      "color_similarity": 99.09,
+      "score": 57.39
+    }
+  },
+  "observations": [
+    "Cards area does not match reference. Check card height, spacing, font size, and visibility of all 3 cards.",
+    "Hero area does not match reference. Check heading size, line wrapping, and vertical spacing.",
+    "Header/top nav does not match reference. Check icon size, logo spacing, and header height.",
+    "Bottom browser/safe area differs from reference. Ensure composer does not enter browser chrome area."
+  ],
+  "overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_match\\pixel-live-match-overlay-20260706-181044.png",
+  "next_step": "Use Studio v3 score for stable areas only: nav and composer. Treat hero/cards/safe as diagnostic until polarity/reference calibration is fixed."
+}

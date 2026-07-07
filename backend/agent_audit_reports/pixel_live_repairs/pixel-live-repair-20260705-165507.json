@@ -1,0 +1,138 @@
+{
+  "ok": false,
+  "phase": "PIXEL-MAP-PERFECT-10",
+  "created_at": "20260705-165507",
+  "source_match_report": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_match\\pixel-live-match-20260705-165201.json",
+  "overall_ui_match_score": 61.84,
+  "verdict": "FAIL_LAYOUT_MISMATCH",
+  "repair_strategy": "Do not guess large CSS changes. Repair highest-impact regions first and preserve already-good composer.",
+  "repairs": [
+    {
+      "region": "hero",
+      "score": 44.38,
+      "status": "critical_repair",
+      "priority": "high",
+      "touch_files": [
+        "frontend/pages/studio-v4.css"
+      ],
+      "safe_to_auto_patch": false,
+      "instructions": [
+        "Tune .if-hero vertical padding, .if-hero h1 max-width, font-size, line-height, and letter-spacing.",
+        "Target: heading should remain two lines and align closer to reference block.",
+        "Do not make hero taller if it pushes cards into composer.",
+        "Use small changes only: font-size \u00b11px, padding \u00b14px, max-width \u00b110px."
+      ]
+    },
+    {
+      "region": "cards",
+      "score": 58.17,
+      "status": "critical_repair",
+      "priority": "high",
+      "touch_files": [
+        "frontend/pages/studio-v4.css"
+      ],
+      "safe_to_auto_patch": false,
+      "instructions": [
+        "Tune .if-card-list gap and .if-card min-height/padding.",
+        "Target: all three cards visible above composer with same rhythm as reference.",
+        "Do not increase card height if third card enters composer zone.",
+        "Improve title/description alignment before changing global scale."
+      ]
+    },
+    {
+      "region": "top_nav",
+      "score": 61.63,
+      "status": "major_repair",
+      "priority": "medium",
+      "touch_files": [
+        "frontend/pages/studio-v4.css"
+      ],
+      "safe_to_auto_patch": false,
+      "instructions": [
+        "Tune .if-header height, logo size, menu spacing, brand text size, and action button size.",
+        "Header should match reference without consuming extra vertical height.",
+        "Do not change page flow until hero/cards are stable."
+      ]
+    },
+    {
+      "region": "browser_safe_area",
+      "score": 67.98,
+      "status": "major_repair",
+      "priority": "medium",
+      "touch_files": [
+        "frontend/pages/studio-v4.css"
+      ],
+      "safe_to_auto_patch": false,
+      "instructions": [
+        "Bottom safe area still differs.",
+        "Keep browser bar below composer and prevent overlap with third card.",
+        "Only tune .if-browserbar bottom after composer/card layout is stable."
+      ]
+    },
+    {
+      "region": "status_header",
+      "score": 64.52,
+      "status": "major_repair",
+      "priority": "low",
+      "touch_files": [
+        "frontend/pages/studio-v4.css"
+      ],
+      "safe_to_auto_patch": false,
+      "instructions": [
+        "Region is not a primary blocker."
+      ]
+    },
+    {
+      "region": "composer",
+      "score": 82.9,
+      "status": "minor_repair",
+      "priority": "low",
+      "touch_files": [
+        "frontend/pages/studio-v4.css"
+      ],
+      "safe_to_auto_patch": false,
+      "instructions": [
+        "Composer is close. Avoid major changes.",
+        "Only tune bottom offset \u00b14px and height \u00b12px if needed after cards are stable."
+      ]
+    }
+  ],
+  "css_patch_plan": [
+    {
+      "target": ".if-hero h1",
+      "intent": "Improve hero region match without changing card flow.",
+      "suggested_change": {
+        "font-size": "increase_or_decrease_by_1px_after_visual_check",
+        "max-width": "adjust_by_8_to_12px",
+        "line-height": "keep_between_1.14_and_1.18"
+      },
+      "approval_required": true
+    },
+    {
+      "target": ".if-card / .if-card-copy",
+      "intent": "Improve card rhythm and content alignment.",
+      "suggested_change": {
+        "min-height": "keep_between_112px_and_122px",
+        "title_font_size": "keep_between_22px_and_24px",
+        "description_font_size": "keep_between_15.5px_and_16.5px",
+        "gap": "keep_between_13px_and_15px"
+      },
+      "approval_required": true
+    },
+    {
+      "target": ".if-composer",
+      "intent": "Composer is acceptable. Freeze major composer changes.",
+      "suggested_change": {
+        "allowed_change": "bottom_offset_only_plus_minus_4px"
+      },
+      "approval_required": true
+    }
+  ],
+  "blocked_actions": [
+    "commit_ui_when_live_match_score_is_below_threshold",
+    "make_large_css_changes_without_new_live_capture",
+    "keep_appending_css_overrides_without_cleanup",
+    "change_composer_majorly_when_composer_score_is_already_good"
+  ],
+  "next_step": "Apply a small hero/cards-only patch, capture again, and verify score improvement."
+}

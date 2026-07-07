@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Approvals Office</title>
+  <style>
+    :root{
+      --bg:#fff;--text:#0b0b0d;--muted:#777b85;--line:#e7e8ee;--soft:#f4f6f7;--blue:#2f7df6;--green:#22c55e;--amber:#d49a1f;--red:#ef4444;--shadow:0 18px 45px rgba(0,0,0,.06);
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    html,body{margin:0;min-height:100%;background:#fff;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Arial,sans-serif;overflow-x:hidden}
+    body{padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+    .page{max-width:480px;margin:0 auto;min-height:100dvh;background:#fff;position:relative;overflow-x:hidden}
+    .topbar{height:86px;padding:8px 26px 0;display:grid;grid-template-columns:44px 1fr 44px;align-items:center;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);position:sticky;top:0;z-index:30;backdrop-filter:blur(18px)}
+    .title{text-align:center;font-size:26px;font-weight:840;letter-spacing:-.75px;line-height:1}.icon-btn{width:44px;height:44px;border:0;border-radius:14px;background:transparent;display:grid;place-items:center;color:#111;padding:0;cursor:pointer}.icon{width:26px;height:26px;display:block;stroke:currentColor;stroke-width:2.35;stroke-linecap:round;stroke-linejoin:round;fill:none}
+    .content{padding:22px 16px 136px}.status-strip{display:flex;gap:12px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}.status-strip::-webkit-scrollbar{display:none}.pill{height:44px;display:flex;align-items:center;gap:9px;padding:0 18px;border:1px solid var(--line);border-radius:999px;background:#fff;box-shadow:0 9px 22px rgba(0,0,0,.035);white-space:nowrap;font-size:16px;color:var(--muted)}.pill b{color:#111}.dot{width:13px;height:13px;border-radius:50%;background:#c7ccd4;box-shadow:0 0 0 7px rgba(0,0,0,.035)}.dot.green{background:var(--green);box-shadow:0 0 0 7px rgba(34,197,94,.12)}.dot.amber{background:var(--amber);box-shadow:0 0 0 7px rgba(212,154,31,.13)}.hero{padding:32px 4px 22px}.hero h1{margin:0 0 10px;font-size:34px;line-height:1.05;letter-spacing:-1.2px}.hero p{margin:0;color:var(--muted);font-size:19px;line-height:1.34}.assistant-wrap{display:grid;grid-template-columns:44px 1fr;gap:12px;align-items:flex-start}.avatar{width:44px;height:44px;border:1px solid var(--line);border-radius:50%;display:grid;place-items:center;background:#fff;margin-top:16px;box-shadow:0 12px 26px rgba(0,0,0,.05)}.card{border:1px solid var(--line);border-radius:26px;background:#fff;padding:18px 12px 12px;box-shadow:var(--shadow);overflow:hidden}.card h2{margin:0 12px 8px;font-size:23px;font-weight:830;letter-spacing:-.45px}.card p{margin:0 12px 14px;font-size:18px;line-height:1.36}.time{margin:0 12px 16px;color:var(--muted);font-size:14px}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 0 12px}.metric{border:1px solid var(--line);border-radius:18px;padding:13px 10px;background:#fafafa}.metric strong{display:block;font-size:22px;letter-spacing:-.5px}.metric span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:700}.section-title{margin:30px 4px 13px;font-size:25px;font-weight:860;letter-spacing:-.7px}.approval-list{display:flex;flex-direction:column;gap:14px}.approval{border:1px solid var(--line);border-radius:24px;background:#fff;box-shadow:0 13px 32px rgba(0,0,0,.045);padding:16px}.approval-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.approval h3{font-size:20px;line-height:1.12;margin:0 0 8px;letter-spacing:-.45px}.badge{height:30px;display:inline-flex;align-items:center;gap:6px;padding:0 11px;border-radius:999px;background:#f4f6f7;color:#6f7480;font-size:13px;font-weight:750;white-space:nowrap}.badge.blue{background:#edf4ff;color:#2f7df6}.badge.green{background:#eafaf1;color:#17864a}.badge.amber{background:#fff7e6;color:#9b6b10}.meta{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.text{font-size:16px;color:#333;line-height:1.38;margin:0 0 12px}.actions{display:flex;gap:10px;margin-top:14px}.btn{height:44px;border:1px solid var(--line);border-radius:14px;padding:0 17px;background:#fff;font-size:15px;font-weight:800;color:#111;cursor:pointer}.btn.primary{background:#111;color:#fff;border-color:#111}.btn.disabled{opacity:.45}.logs{border-top:1px solid var(--line);margin-top:14px;padding-top:12px;color:#555;font-size:14px;line-height:1.35}.logline{display:grid;grid-template-columns:72px 1fr;gap:8px;margin:7px 0}.empty{border:1px dashed #d6d9df;border-radius:24px;padding:28px 18px;text-align:center;color:#757b86;background:#fbfbfc}.composer{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 18px);height:58px;max-width:448px;margin:0 auto;border:1px solid #dcdee4;border-radius:999px;background:rgba(255,255,255,.96);backdrop-filter:blur(18px);display:grid;grid-template-columns:48px 1fr 46px;align-items:center;padding:0 8px 0 12px;box-shadow:0 14px 34px rgba(0,0,0,.09);z-index:50}.composer input{width:100%;border:0;outline:0;background:transparent;font-size:17px;color:#111}.composer input::placeholder{color:#9da3ad}.send{width:40px;height:40px;border:0;border-radius:50%;background:#a8adb7;color:#fff;display:grid;place-items:center}.drawer{position:fixed;top:0;left:-88%;width:88%;max-width:370px;height:100dvh;background:#fff;border-right:1px solid var(--line);box-shadow:22px 0 58px rgba(0,0,0,.12);z-index:80;transition:left .22s ease;padding:calc(env(safe-area-inset-top,0px) + 28px) 20px 28px;overflow:auto}.drawer.open{left:0}.drawer h2{font-size:30px;line-height:1.05;margin:0 0 8px;letter-spacing:-.9px}.drawer p{margin:0 0 18px;color:#8b9098;font-size:16px;line-height:1.3}.legend{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:26px}.legend span{height:34px;display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:0 12px;font-weight:800;color:#8b9098}.nav-section{margin:24px 0 12px;color:#a0a5ae;font-weight:900;font-size:14px;letter-spacing:6px}.nav-item{height:58px;border-radius:18px;display:grid;grid-template-columns:42px 1fr auto;align-items:center;gap:12px;padding:0 12px;margin:4px 0;text-decoration:none;color:#a4a9b2;font-weight:830;font-size:18px}.nav-item.done{color:#111}.nav-item.now{background:#f0f4f5;color:#111}.nav-item.now .state{color:#2f7df6}.nav-item .state{font-size:13px;color:#a4a9b2}.nav-icon{width:32px;height:32px;border-radius:12px;background:#f4f6f7;display:grid;place-items:center}.nav-icon .icon{width:20px;height:20px;stroke-width:2.35}.shade{position:fixed;inset:0;background:rgba(0,0,0,.14);z-index:70;display:none}.shade.open{display:block}.toast{position:fixed;left:16px;right:16px;bottom:calc(env(safe-area-inset-bottom,0px) + 86px);max-width:448px;margin:0 auto;padding:14px 16px;border-radius:18px;background:#111;color:#fff;font-weight:700;display:none;z-index:100;box-shadow:0 16px 40px rgba(0,0,0,.22)}.toast.show{display:block}@media(min-width:481px){.composer,.toast{left:50%;right:auto;width:calc(480px - 32px);transform:translateX(-50%)}}@media(max-width:390px){.content{padding-left:12px;padding-right:12px}.assistant-wrap{grid-template-columns:38px 1fr;gap:9px}.avatar{width:38px;height:38px}.summary{grid-template-columns:1fr 1fr}.hero h1{font-size:31px}.card h2{font-size:21px}.approval h3{font-size:18px}}
+  </style>
+</head>
+<body>
+<div class="page">
+<header class="topbar">
+<button class="icon-btn" id="menuBtn" aria-label="Open menu"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg></button>
+<div class="title">Approvals</div>
+<button class="icon-btn" id="moreBtn" aria-label="More options"><svg class="icon" viewBox="0 0 24 24"><circle cx="6" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="18" cy="12" r="1.5" fill="currentColor" stroke="none"/></svg></button>
+</header>
+<main class="content">
+<section class="status-strip">
+  <div class="pill"><span id="backendDot" class="dot amber"></span><b>Backend</b><span id="backendText">Checking</span></div>
+  <div class="pill"><span class="dot amber"></span><b>Pending</b><span id="pendingText">0</span></div>
+  <div class="pill"><span class="dot amber"></span><b>Workers</b><span id="workersText">0 online</span></div>
+</section>
+<section class="hero"><h1>Approval Office</h1><p>Review decisions, queue safe jobs, and keep company actions under founder control.</p></section>
+<section class="assistant-wrap">
+ <div class="avatar"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3.5c2.2 0 4.1 1.1 5.2 2.9 2.2.4 3.8 2.3 3.8 4.6 0 1.9-1.1 3.6-2.7 4.3-.4 2.9-2.8 5.2-5.8 5.2-1.2 0-2.3-.3-3.2-.9-2.4.6-4.9-.7-5.9-3-.7-1.7-.4-3.6.7-5C3.4 9.4 4.2 7 6.2 5.8c1.2-.8 2.7-.9 4-.4.5-1.1 1.1-1.9 1.8-1.9Z"/><path d="M8.3 8.4 16 12l-7.7 3.6"/><path d="M15.7 8.4 8 12l7.7 3.6"/></svg></div>
+ <div class="card"><h2>ChatGPT Assistant</h2><p id="assistantText">I am checking approvals, jobs, workers, and queue status.</p><div class="time" id="updatedText">Updating...</div><div class="summary"><div class="metric"><strong id="metricPending">0</strong><span>Pending</span></div><div class="metric"><strong id="metricQueued">0</strong><span>Queued</span></div><div class="metric"><strong id="metricDry">0</strong><span>Dry-run done</span></div></div></div>
+</section>
+<h2 class="section-title">Approval inbox</h2>
+<section class="approval-list" id="approvalList"><div class="empty">Loading approval records...</div></section>
+</main>
+<form class="composer" id="composer"><button type="button" class="icon-btn" aria-label="Attach"><svg class="icon" viewBox="0 0 24 24"><path d="M21 12.5 12 21a6 6 0 0 1-8.5-8.5l10-10a4 4 0 0 1 5.7 5.7l-10 10a2 2 0 0 1-2.8-2.8l9-9"/></svg></button><input id="messageInput" placeholder="Ask about approvals..." autocomplete="off"/><button class="send" type="submit" aria-label="Send"><svg class="icon" viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></button></form>
+</div>
+<div class="shade" id="shade"></div>
+<aside class="drawer" id="drawer">
+  <h2>Founder Office</h2><p>Grey means planned. Dark means completed. Blue means current work.</p>
+  <div class="legend"><span>Dark: complete</span><span>Blue: active</span><span>Grey: planned</span></div>
+  <div class="nav-section">COMPANY CONTROL</div>
+  <a class="nav-item done" href="founder-office.html?v=office-v6"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg></span><span>Founder Office</span><b class="state">Done</b></a>
+  <a class="nav-item done" href="founder-office.html?v=office-v6"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M4 19V9h4v10H4Z"/><path d="M10 19V5h4v14h-4Z"/><path d="M16 19v-7h4v7h-4Z"/></svg></span><span>Company Status</span><b class="state">Done</b></a>
+  <a class="nav-item now" href="approvals-office.html?v=adm3a"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M9 5h6l1 2h3v14H5V7h3l1-2Z"/><path d="m9 14 2 2 4-5"/></svg></span><span>Approvals</span><b class="state">Now</b></a>
+  <a class="nav-item" href="#"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"/><path d="M3 21v-1a6 6 0 0 1 12 0v1"/></svg></span><span>Teams</span><b class="state">Planned</b></a>
+  <a class="nav-item" href="#"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.4"/><path d="M19 12h2M3 12h2M12 3v2M12 19v2"/></svg></span><span>Operations</span><b class="state">Planned</b></a>
+  <a class="nav-item" href="#"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 7h8M8 10h8M9 7c4 0 5 5 0 5h2.6L16 17"/></svg></span><span>Finance</span><b class="state">Planned</b></a>
+  <a class="nav-item" href="#"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3.5 7.5h6.1l2 2H20.5v9H3.5v-11Z"/></svg></span><span>Projects</span><b class="state">Planned</b></a>
+  <div class="nav-section">ADMIN SYSTEM</div>
+  <a class="nav-item done" href="http://localhost:5051/health"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg></span><span>Backend Health</span><b class="state">Done</b></a>
+  <a class="nav-item done" href="http://localhost:5051/api/admin/jobs"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h14"/></svg></span><span>Job Queue</span><b class="state">Done</b></a>
+  <a class="nav-item done" href="http://localhost:5051/api/admin/workers"><span class="nav-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4"/></svg></span><span>Worker Monitor</span><b class="state">Done</b></a>
+</aside>
+<div class="toast" id="toast"></div>
+<script>
+const API = `${location.protocol}//${location.hostname}:5051`;
+const drawer=document.getElementById('drawer'),shade=document.getElementById('shade'),menuBtn=document.getElementById('menuBtn'),toast=document.getElementById('toast');
+menuBtn.onclick=()=>{drawer.classList.add('open');shade.classList.add('open')};shade.onclick=()=>{drawer.classList.remove('open');shade.classList.remove('open')};
+function showToast(t){toast.textContent=t;toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2600)}
+function fmtTime(d=new Date()){return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});} 
+async function fetchJson(path){const r=await fetch(API+path,{cache:'no-store'});if(!r.ok)throw new Error(path+' '+r.status);return r.json()}
+function statusLabel(job){const s=(job.status||'').replaceAll('_',' '); if(s==='dry run completed') return 'Dry-run done'; if(s==='approved waiting for worker') return 'Queued'; if(job.approvalRequired && !job.approvedAt) return 'Pending'; return s || 'Record';}
+function statusClass(job){const s=job.status||''; if(s.includes('dry')) return 'green'; if(s.includes('waiting')||s.includes('queued')) return 'amber'; if(job.approvalRequired&&!job.approvedAt) return 'blue'; return ''}
+function logs(job){return (job.logs||[]).slice(-4).reverse().map(l=>`<div class="logline"><span>${new Date(l.at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span><span>${l.message||''}</span></div>`).join('')}
+function renderJobs(jobs){
+ const list=document.getElementById('approvalList');
+ if(!jobs.length){list.innerHTML='<div class="empty">No approval records yet. New founder approvals will appear here.</div>';return}
+ list.innerHTML=jobs.map(job=>{
+   const title = job.taskType || job.requestedCommand || 'Approval request';
+   const cmd = job.requestedCommand || 'No command text';
+   return `<article class="approval"><div class="approval-top"><div><h3>${title}</h3><div class="text">${cmd}</div></div><span class="badge ${statusClass(job)}">${statusLabel(job)}</span></div><div class="meta"><span class="badge">${job.department||'Admin'}</span><span class="badge">Risk: ${job.risk||'medium'}</span><span class="badge">${job.jobId||job.approvalId||'new'}</span></div><div class="actions"><button class="btn primary disabled" type="button">Approve</button><button class="btn disabled" type="button">Reject</button><button class="btn" type="button" onclick="location.href='founder-office.html?v=office-v6'">Open status</button></div><div class="logs">${logs(job)||'No timeline yet.'}</div></article>`
+ }).join('')
+}
+async function refresh(){
+ try{
+   const [health,workersData,jobsData]=await Promise.all([fetchJson('/health'),fetchJson('/api/admin/workers'),fetchJson('/api/admin/jobs')]);
+   document.getElementById('backendDot').className='dot green';document.getElementById('backendText').textContent='Connected';
+   const workers=workersData.workers||[]; const online=workers.filter(w=>w.status==='online').length;
+   const jobs=jobsData.jobs||[]; const pending=jobs.filter(j=>(j.approvalRequired&&!j.approvedAt)||j.status==='approval_required'||j.status==='pending').length;
+   const queued=jobs.filter(j=>(j.status||'').includes('waiting')||(j.status||'').includes('queued')).length;
+   const dry=jobs.filter(j=>(j.status||'').includes('dry')).length;
+   document.getElementById('pendingText').textContent=String(pending);document.getElementById('workersText').textContent=`${online} online`;
+   document.getElementById('metricPending').textContent=pending;document.getElementById('metricQueued').textContent=queued;document.getElementById('metricDry').textContent=dry;
+   document.getElementById('assistantText').textContent=`I found ${pending} pending approval, ${queued} queued job, ${dry} dry-run completed job, and ${online} online worker.`;
+   document.getElementById('updatedText').textContent='Updated '+fmtTime();
+   renderJobs(jobs);
+ }catch(e){document.getElementById('backendDot').className='dot amber';document.getElementById('backendText').textContent='Offline';document.getElementById('assistantText').textContent='Backend is not reachable yet. Start ADM backend on port 5051.';document.getElementById('updatedText').textContent='Check backend';}
+}
+document.getElementById('moreBtn').onclick=()=>{showToast('Refreshing approvals...');refresh()};
+document.getElementById('composer').onsubmit=e=>{e.preventDefault();const input=document.getElementById('messageInput');if(input.value.trim()){showToast('Founder command noted: '+input.value.trim());input.value=''}};
+refresh();setInterval(refresh,5000);
+</script>
+<script id="ADM-3B-APPROVAL-DETAIL-LINK">
+(function () {
+  function getJobIdFromText(text) {
+    var m = String(text || '').match(/job_[A-Za-z0-9_-]+/);
+    return m ? m[0] : '';
+  }
+  document.addEventListener('click', function (event) {
+    var el = event.target.closest('button,a');
+    if (!el) return;
+    var label = (el.textContent || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    if (label.indexOf('open status') >= 0 || label.indexOf('open detail') >= 0) {
+      event.preventDefault();
+      var card = el.closest('article,section,.job-card,.approval-card,.detail-card,.card,div');
+      var jobId = getJobIdFromText(card ? card.innerText : document.body.innerText);
+      window.location.href = 'approval-detail.html?v=adm3b' + (jobId ? '&jobId=' + encodeURIComponent(jobId) : '');
+    }
+  });
+})();
+</script>
+</body>
+</html>

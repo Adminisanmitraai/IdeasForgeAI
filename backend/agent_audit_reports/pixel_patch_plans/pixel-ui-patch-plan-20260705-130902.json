@@ -1,0 +1,79 @@
+{
+  "ok_to_patch_ui": true,
+  "created_at": "20260705-130902",
+  "rule": "UI patch allowed only when Pixel Debug Report passes.",
+  "validation": {
+    "ok": true,
+    "blockers": [],
+    "confidence_score": 80.0,
+    "browser_chrome_check": {
+      "ok": true,
+      "browser_cutoff_y": 1705,
+      "old_bad_shape": false,
+      "composer_above_browser_chrome": true
+    },
+    "composer": {
+      "x1": 38,
+      "y1": 1538,
+      "x2": 814,
+      "y2": 1658
+    },
+    "cards_count": 3
+  },
+  "pixel_report_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-report-20260705-130901.json",
+  "pixel_overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-overlay-20260705-130901.png",
+  "detected": {
+    "header": null,
+    "hero": null,
+    "cards": [
+      {
+        "x1": 51,
+        "y1": 617,
+        "x2": 801,
+        "y2": 802
+      },
+      {
+        "x1": 51,
+        "y1": 857,
+        "x2": 801,
+        "y2": 1023
+      },
+      {
+        "x1": 51,
+        "y1": 1097,
+        "x2": 801,
+        "y2": 1263
+      }
+    ],
+    "cards_count": 3,
+    "composer": {
+      "x1": 38,
+      "y1": 1538,
+      "x2": 814,
+      "y2": 1658
+    },
+    "light_regions_count": 29
+  },
+  "css_suggestions": {
+    "viewport": {
+      "width": 853,
+      "height": 1844
+    },
+    "css_variables": {
+      "--pixel-composer-x": "38px",
+      "--pixel-composer-y": "1538px",
+      "--pixel-composer-width": "776px",
+      "--pixel-composer-height": "120px",
+      "--pixel-composer-bottom-gap": "186px",
+      "--pixel-card-x": "51px",
+      "--pixel-card-width": "750px",
+      "--pixel-card-count": "3"
+    }
+  },
+  "blocked_actions": [
+    "blind_css_patch",
+    "use_screenshot_as_background",
+    "patch_ui_when_browser_chrome_check_fails",
+    "patch_ui_when_confidence_below_threshold"
+  ]
+}

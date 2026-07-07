@@ -1,0 +1,137 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-16C",
+  "created_at": "20260705-200135",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "reference_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "output_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135",
+  "contact_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\reference-asset-contact-sheet-v2.png",
+  "assets": {
+    "header_logo_spark_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\header_logo_spark_v2.png",
+      "box_px": [
+        156,
+        158,
+        224,
+        226
+      ],
+      "width": 68,
+      "height": 68
+    },
+    "header_share_button_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\header_share_button_v2.png",
+      "box_px": [
+        622,
+        152,
+        704,
+        234
+      ],
+      "width": 82,
+      "height": 82
+    },
+    "header_primary_button_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\header_primary_button_v2.png",
+      "box_px": [
+        724,
+        152,
+        810,
+        238
+      ],
+      "width": 86,
+      "height": 86
+    },
+    "forge_studio_icon_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\forge_studio_icon_v2.png",
+      "box_px": [
+        82,
+        712,
+        184,
+        814
+      ],
+      "width": 102,
+      "height": 102
+    },
+    "forge_code_icon_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\forge_code_icon_v2.png",
+      "box_px": [
+        82,
+        970,
+        184,
+        1072
+      ],
+      "width": 102,
+      "height": 102
+    },
+    "forge_work_icon_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\forge_work_icon_v2.png",
+      "box_px": [
+        82,
+        1230,
+        184,
+        1332
+      ],
+      "width": 102,
+      "height": 102
+    },
+    "card_1_full_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\card_1_full_v2.png",
+      "box_px": [
+        52,
+        684,
+        804,
+        900
+      ],
+      "width": 752,
+      "height": 216
+    },
+    "card_2_full_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\card_2_full_v2.png",
+      "box_px": [
+        52,
+        942,
+        804,
+        1158
+      ],
+      "width": 752,
+      "height": 216
+    },
+    "card_3_full_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\card_3_full_v2.png",
+      "box_px": [
+        52,
+        1200,
+        804,
+        1416
+      ],
+      "width": 752,
+      "height": 216
+    },
+    "composer_full_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\composer_full_v2.png",
+      "box_px": [
+        34,
+        1512,
+        818,
+        1641
+      ],
+      "width": 784,
+      "height": 129
+    },
+    "browser_bar_full_v2": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-v2-20260705-200135\\browser_bar_full_v2.png",
+      "box_px": [
+        34,
+        1650,
+        818,
+        1797
+      ],
+      "width": 784,
+      "height": 147
+    }
+  },
+  "rule": "Inspection only. Do not apply assets to frontend until the contact sheet is approved.",
+  "next_step": "Inspect contact sheet v2. If crops are clean, generate an asset fit plan without UI apply."
+}

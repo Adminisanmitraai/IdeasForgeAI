@@ -1,0 +1,754 @@
+﻿const express = require('express');
+const cors = require('cors');
+const fs = require('fs');
+const path = require('path');
+
+const PORT = Number(process.env.PORT || 5051);
+const DATA_DIR = path.resolve(__dirname, '..', 'data');
+const STORE_PATH = path.join(DATA_DIR, 'store.json');
+const PHASE = "ADM-2G";
+
+const now = () => new Date().toISOString();
+const id = (prefix) => `${prefix}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+
+const departments = [
+  { id: 'founder-hq', name: 'Founder HQ', manager: 'Founder Chief-of-Staff AI', description: 'One command center for company coordination and approval.' },
+  { id: 'control-room', name: 'Control Room', manager: 'Operations Manager AI', description: 'System health, live jobs, incidents, and emergency controls.' },
+  { id: 'code-room', name: 'Code Room', manager: 'Engineering Manager AI', description: 'Code changes, tests, builds, Git, and deployment preparation.' },
+  { id: 'agents-room', name: 'Agents Room', manager: 'Agent Operations Manager AI', description: 'Expert registry, agent health, versions, skills, and permissions.' },
+  { id: 'training-academy', name: 'Training Academy', manager: 'Training Director AI', description: 'Software skill packs, manuals, workflows, and evaluations.' },
+  { id: 'forgepilot-room', name: 'ForgePilot Room', manager: 'Desktop Execution Manager AI', description: 'Desktop pairing, approved jobs, live execution logs, and safety.' },
+  { id: 'audit-room', name: 'Audit Room', manager: 'Audit Officer AI', description: 'Action logs, approval logs, and execution history.' },
+  { id: 'risk-room', name: 'Risk Management Room', manager: 'Risk Officer AI', description: 'Risk review, blocked actions, approval policies, and safety gates.' },
+  { id: 'frontend-office', name: 'Frontend Office', manager: 'Frontend Manager AI', description: 'UI, mobile experience, pages, components, and design implementation.' },
+  { id: 'backend-office', name: 'Backend Office', manager: 'Backend Manager AI', description: 'APIs, auth, queues, webhooks, storage, and server health.' }
+];
+
+function baseStore() {
+  return {
+    createdAt: now(),
+    phase: PHASE,
+    threads: {},
+    approvals: {},
+    jobs: {},
+    workers: {},
+    auditLogs: [
+      { id: id('audit'), at: now(), actor: 'system', type: 'backend_started', message: `${PHASE} Founder HQ backend initialized.`, risk: 'low' }
+    ]
+  };
+}
+
+function ensureStore() {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  if (!fs.existsSync(STORE_PATH)) {
+    fs.writeFileSync(STORE_PATH, JSON.stringify(baseStore(), null, 2), 'utf8');
+    return;
+  }
+  const store = readStoreUnsafe();
+  let changed = false;
+  if (!store.threads) { store.threads = {}; changed = true; }
+  if (!store.approvals) { store.approvals = {}; changed = true; }
+  if (!store.jobs) { store.jobs = {}; changed = true; }
+  if (!store.workers) { store.workers = {}; changed = true; }
+  if (!Array.isArray(store.auditLogs)) { store.auditLogs = []; changed = true; }
+  if (store.phase !== PHASE) { store.phase = PHASE; changed = true; }
+  if (changed) writeStore(store);
+}
+
+function readStoreUnsafe() {
+  try {
+    return JSON.parse(fs.readFileSync(STORE_PATH, 'utf8'));
+  } catch (error) {
+    return baseStore();
+  }
+}
+
+function readStore() {
+  ensureStore();
+  return readStoreUnsafe();
+}
+
+function writeStore(store) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  fs.writeFileSync(STORE_PATH, JSON.stringify(store, null, 2), 'utf8');
+}
+
+function addAudit(store, entry) {
+  store.auditLogs.unshift({ id: id('audit'), at: now(), ...entry });
+  store.auditLogs = store.auditLogs.slice(0, 400);
+}
+
+
+function minutesSince(value) {
+  if (!value) return Infinity;
+  const timestamp = Date.parse(value);
+  if (!Number.isFinite(timestamp)) return Infinity;
+  return (Date.now() - timestamp) / 60000;
+}
+
+function decorateWorker(worker) {
+  const staleMinutes = minutesSince(worker.lastSeenAt || worker.createdAt);
+  const isOnline = worker.status === 'online' && staleMinutes <= 2;
+  return {
+    ...worker,
+    isOnline,
+    heartbeatAgeSeconds: Number.isFinite(staleMinutes) ? Math.max(0, Math.round(staleMinutes * 60)) : null,
+    computedStatus: isOnline ? 'online' : 'offline_or_stale'
+  };
+}
+
+function liveSummary(store) {
+  const jobs = Object.values(store.jobs || {}).sort((a, b) => String(b.updatedAt || b.createdAt).localeCompare(String(a.updatedAt || a.createdAt)));
+  const workers = Object.values(store.workers || {}).map(decorateWorker).sort((a, b) => String(b.lastSeenAt || b.createdAt).localeCompare(String(a.lastSeenAt || a.createdAt)));
+  const queuedJobs = jobs.filter(job => job.status === 'approved_waiting_for_worker').length;
+  const runningJobs = jobs.filter(job => ['worker_seen', 'running'].includes(job.status)).length;
+  const dryRunCompletedJobs = jobs.filter(job => job.status === 'dry_run_completed').length;
+  const failedJobs = jobs.filter(job => job.status === 'failed').length;
+  const onlineWorkers = workers.filter(worker => worker.isOnline).length;
+  const latestJob = jobs[0] || null;
+  const latestWorker = workers[0] || null;
+  return {
+    phase: PHASE,
+    queuedJobs,
+    runningJobs,
+    dryRunCompletedJobs,
+    failedJobs,
+    totalJobs: jobs.length,
+    workers: workers.length,
+    onlineWorkers,
+    latestJob,
+    latestWorker,
+    auditLogs: (store.auditLogs || []).slice(0, 12)
+  };
+}
+
+function getThread(store, threadId) {
+  const tid = threadId || 'founder-main';
+  if (!store.threads[tid]) {
+    store.threads[tid] = {
+      threadId: tid,
+      title: 'Founder command center',
+      createdAt: now(),
+      updatedAt: now(),
+      messages: []
+    };
+  }
+  return store.threads[tid];
+}
+
+function classify(message) {
+  const text = String(message || '').toLowerCase();
+
+  if (text.includes('autocad') || text.includes('train') || text.includes('skill pack') || text.includes('training')) {
+    return {
+      departmentId: 'training-academy',
+      department: 'Training Academy',
+      manager: 'Training Director AI',
+      risk: 'medium',
+      requiresApproval: true,
+      taskType: 'training-plan',
+      plan: [
+        'Read the requested training source or software layer scope.',
+        'Prepare/update the software skill pack safely.',
+        'Run validation tests for commands, workflows and safety rules.',
+        'Report training status and wait before any execution.'
+      ],
+      approvalTitle: 'Approve AutoCAD software-layer training plan'
+    };
+  }
+
+  if (text.includes('notepad') || text.includes('desktop') || text.includes('forgepilot') || text.includes('open software') || text.includes('live test')) {
+    return {
+      departmentId: 'forgepilot-room',
+      department: 'ForgePilot Room',
+      manager: 'Desktop Execution Manager AI',
+      risk: 'medium',
+      requiresApproval: true,
+      taskType: 'notepad-smoke-test',
+      plan: [
+        'Create a safe desktop smoke-test job.',
+        'Require Founder approval from the dashboard.',
+        'Send only the approved allowlisted task to ForgePilot later.',
+        'Log every status update in Audit Room.'
+      ],
+      approvalTitle: 'Approve safe ForgePilot Notepad smoke test'
+    };
+  }
+
+  if (text.includes('code') || text.includes('build') || text.includes('test') || text.includes('github') || text.includes('deploy')) {
+    return {
+      departmentId: 'code-room',
+      department: 'Code Room',
+      manager: 'Engineering Manager AI',
+      risk: text.includes('deploy') || text.includes('push') ? 'high' : 'medium',
+      requiresApproval: true,
+      taskType: 'code-validation',
+      plan: [
+        'Prepare a safe Code Room task.',
+        'Run only allowlisted validation actions after approval.',
+        'Show logs and results before any commit or deploy.',
+        'Record the action in Audit Room.'
+      ],
+      approvalTitle: 'Approve Code Room validation task'
+    };
+  }
+
+  if (text.includes('frontend') || text.includes('ui') || text.includes('mobile') || text.includes('polish') || text.includes('page')) {
+    return {
+      departmentId: 'frontend-office',
+      department: 'Frontend Office',
+      manager: 'Frontend Manager AI',
+      risk: 'medium',
+      requiresApproval: true,
+      taskType: 'frontend-plan',
+      plan: [
+        'Review the requested UI/page change.',
+        'Prepare a small safe implementation plan.',
+        'Ask approval before modifying files.',
+        'Run visual review and record the result.'
+      ],
+      approvalTitle: 'Approve Frontend Office planning task'
+    };
+  }
+
+  if (text.includes('risk') || text.includes('safe') || text.includes('approval')) {
+    return {
+      departmentId: 'risk-room',
+      department: 'Risk Management Room',
+      manager: 'Risk Officer AI',
+      risk: 'low',
+      requiresApproval: false,
+      taskType: 'risk-review',
+      plan: [
+        'Review the requested action category.',
+        'Identify blocked actions and approval level.',
+        'Recommend safe execution boundaries.',
+        'Send critical actions to Founder approval.'
+      ]
+    };
+  }
+
+  return {
+    departmentId: 'founder-hq',
+    department: 'Founder HQ',
+    manager: 'Founder Chief-of-Staff AI',
+    risk: 'low',
+    requiresApproval: false,
+    taskType: 'founder-brief',
+    plan: [
+      'Understand the Founder command.',
+      'Route work to the correct department manager.',
+      'Prepare a plan and risk review.',
+      'Ask approval before any execution.'
+    ]
+  };
+}
+
+function allowedActionsForTask(taskType) {
+  if (taskType === 'notepad-smoke-test') return ['open_notepad', 'type_text', 'create_folder', 'save_txt_file'];
+  if (taskType === 'training-plan') return ['prepare_training_plan', 'validate_skill_pack', 'record_audit_log'];
+  if (taskType === 'code-validation') return ['read_project_status', 'run_npm_test_after_worker_connection', 'run_build_after_worker_connection', 'record_audit_log'];
+  if (taskType === 'frontend-plan') return ['prepare_frontend_plan', 'request_file_patch_approval', 'record_audit_log'];
+  return ['prepare_plan', 'record_audit_log'];
+}
+
+function jobPayloadForApproval(approval) {
+  if (approval.taskType === 'notepad-smoke-test') {
+    return {
+      folderPath: 'D:\\APPS\\IdeasForgeAI\\forgework-live-tests',
+      fileName: 'forgework-notepad-test.txt',
+      text: 'ForgeWork live desktop test prepared by Founder HQ. Execution worker is connected only in ADM-2F dry-run mode.'
+    };
+  }
+  if (approval.taskType === 'training-plan') {
+    return {
+      trainingScope: 'AutoCAD software layer',
+      requestedCommand: approval.requestedCommand,
+      validationRequired: true,
+      executionAllowed: false
+    };
+  }
+  if (approval.taskType === 'code-validation') {
+    return {
+      projectRoot: 'D:\\APPS\\IdeasForgeAI',
+      allowedCommands: ['npm test', 'npm run build'],
+      executionAllowed: false
+    };
+  }
+  return { requestedCommand: approval.requestedCommand, executionAllowed: false };
+}
+
+function createJobFromApproval(store, approval) {
+  if (approval.jobId && store.jobs[approval.jobId]) return store.jobs[approval.jobId];
+  const job = {
+    jobId: id('job'),
+    approvalId: approval.approvalId,
+    threadId: approval.threadId || 'founder-main',
+    departmentId: approval.departmentId,
+    department: approval.department,
+    manager: approval.manager,
+    taskType: approval.taskType,
+    requestedCommand: approval.requestedCommand,
+    risk: approval.risk,
+    status: 'approved_waiting_for_worker',
+    approvalRequired: true,
+    approvedAt: approval.approvedAt || now(),
+    createdAt: now(),
+    updatedAt: now(),
+    allowedActions: approval.allowedActions || allowedActionsForTask(approval.taskType),
+    blockedActions: approval.blockedActions || ['delete_files', 'run_arbitrary_command', 'access_credentials', 'make_payment', 'send_email'],
+    payload: jobPayloadForApproval(approval),
+    logs: [
+      { at: now(), level: 'info', message: 'Job created from Founder approval and placed in ADM-2F control queue.' },
+      { at: now(), level: 'info', message: 'Job is waiting safely for an approved dry-run worker.' }
+    ]
+  };
+  store.jobs[job.jobId] = job;
+  approval.jobId = job.jobId;
+  return job;
+}
+
+function createAssistantMessage(route, userText, store, threadId) {
+  const msgId = id('msg');
+  let approval = null;
+
+  if (route.requiresApproval) {
+    approval = {
+      approvalId: id('approval'),
+      title: route.approvalTitle || 'Approve task',
+      status: 'pending',
+      risk: route.risk,
+      departmentId: route.departmentId,
+      department: route.department,
+      manager: route.manager,
+      taskType: route.taskType,
+      threadId: threadId || 'founder-main',
+      requestedCommand: userText,
+      createdAt: now(),
+      allowedActions: allowedActionsForTask(route.taskType),
+      blockedActions: ['delete_files', 'run_arbitrary_command', 'access_credentials', 'make_payment', 'send_email']
+    };
+    store.approvals[approval.approvalId] = approval;
+  }
+
+  const responseText = route.requiresApproval
+    ? `I'll coordinate this through ${route.department}. ${route.manager} prepared a safe plan and approval is required before queueing a job.`
+    : `I'll coordinate this through ${route.department}. ${route.manager} prepared a safe plan. No execution is triggered in this phase.`;
+
+  return { id: msgId, role: 'assistant', at: now(), text: responseText, route, approval };
+}
+
+const app = express();
+app.use(cors({ origin: true }));
+app.use(express.json({ limit: '1mb' }));
+
+app.get('/health', (req, res) => {
+  const store = readStore();
+  const summary = liveSummary(store);
+  res.json({
+    ok: true,
+    service: 'ideasforgeai-admin-backend',
+    phase: PHASE,
+    queuedJobs: summary.queuedJobs,
+    runningJobs: summary.runningJobs,
+    dryRunCompletedJobs: summary.dryRunCompletedJobs,
+    workers: summary.workers,
+    onlineWorkers: summary.onlineWorkers,
+    at: now()
+  });
+});
+
+app.get('/api/admin/departments', (req, res) => {
+  res.json({ ok: true, departments });
+});
+
+app.get('/api/admin/audit/recent', (req, res) => {
+  const store = readStore();
+  res.json({ ok: true, auditLogs: store.auditLogs.slice(0, Number(req.query.limit || 25)) });
+});
+
+
+app.get('/api/admin/workers', (req, res) => {
+  const store = readStore();
+  const workers = Object.values(store.workers || {})
+    .map(decorateWorker)
+    .sort((a, b) => String(b.lastSeenAt || b.createdAt).localeCompare(String(a.lastSeenAt || a.createdAt)));
+  res.json({ ok: true, workers });
+});
+
+app.get('/api/admin/live-status', (req, res) => {
+  const store = readStore();
+  const summary = liveSummary(store);
+  const workers = Object.values(store.workers || {})
+    .map(decorateWorker)
+    .sort((a, b) => String(b.lastSeenAt || b.createdAt).localeCompare(String(a.lastSeenAt || a.createdAt)))
+    .slice(0, 10);
+  const jobs = Object.values(store.jobs || {})
+    .sort((a, b) => String(b.updatedAt || b.createdAt).localeCompare(String(a.updatedAt || a.createdAt)))
+    .slice(0, 60);
+  res.json({ ok: true, summary, workers, jobs, at: now() });
+});
+
+app.get('/api/admin/job-history', (req, res) => {
+  const store = readStore();
+  const status = String(req.query.status || 'all');
+  const limit = Math.min(Number(req.query.limit || 80), 200);
+  let jobs = Object.values(store.jobs || {})
+    .sort((a, b) => String(b.updatedAt || b.createdAt).localeCompare(String(a.updatedAt || a.createdAt)));
+  if (status && status !== 'all') jobs = jobs.filter(job => job.status === status);
+  res.json({ ok: true, phase: PHASE, jobs: jobs.slice(0, limit), summary: liveSummary(store), at: now() });
+});
+
+app.post('/api/admin/workers/register', (req, res) => {
+  const { workerId, name = 'Founder Worker', type = 'local-dry-run', mode = 'dry-run' } = req.body || {};
+  if (!workerId) return res.status(400).json({ ok: false, error: 'workerId_required' });
+  const store = readStore();
+  const existing = store.workers[workerId] || {};
+  const worker = {
+    workerId,
+    name,
+    type,
+    mode,
+    status: 'online',
+    capabilities: ['poll_queue', 'dry_run_preview', 'post_status_updates'],
+    createdAt: existing.createdAt || now(),
+    lastSeenAt: now(),
+    safetyMode: 'no_execution'
+  };
+  store.workers[workerId] = worker;
+  addAudit(store, { actor: name, type: 'worker_registered', department: 'ForgePilot Room', risk: 'low', message: `Worker ${workerId} registered in dry-run mode.` });
+  writeStore(store);
+  res.json({ ok: true, worker });
+});
+
+app.post('/api/admin/workers/heartbeat', (req, res) => {
+  const { workerId, status = 'online', message = 'Heartbeat received.' } = req.body || {};
+  if (!workerId) return res.status(400).json({ ok: false, error: 'workerId_required' });
+  const store = readStore();
+  const worker = store.workers[workerId] || {
+    workerId,
+    name: 'Founder Worker',
+    type: 'local-dry-run',
+    mode: 'dry-run',
+    capabilities: ['poll_queue', 'dry_run_preview', 'post_status_updates'],
+    safetyMode: 'no_execution',
+    createdAt: now()
+  };
+  worker.status = status;
+  worker.lastSeenAt = now();
+  worker.lastMessage = message;
+  store.workers[workerId] = worker;
+  writeStore(store);
+  res.json({ ok: true, worker });
+});
+
+app.get('/api/admin/jobs', (req, res) => {
+  const store = readStore();
+  const jobs = Object.values(store.jobs || {}).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  res.json({ ok: true, jobs });
+});
+
+app.get('/api/admin/jobs/queue', (req, res) => {
+  const store = readStore();
+  const jobs = Object.values(store.jobs || {})
+    .filter(job => ['approved_waiting_for_worker', 'worker_seen', 'running'].includes(job.status))
+    .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)));
+  res.json({ ok: true, jobs });
+});
+
+app.get('/api/admin/jobs/next', (req, res) => {
+  const store = readStore();
+  const workerId = String(req.query.workerId || 'preview-worker');
+  const job = Object.values(store.jobs || {})
+    .filter(item => item.status === 'approved_waiting_for_worker')
+    .sort((a, b) => String(a.createdAt).localeCompare(String(b.createdAt)))[0] || null;
+  if (!job) return res.json({ ok: true, job: null, message: 'No approved jobs are waiting.' });
+  res.json({
+    ok: true,
+    job,
+    workerId,
+    message: 'ADM-2F job control can preview this job. No desktop or shell execution is allowed in this phase.'
+  });
+});
+
+
+app.post('/api/admin/jobs/:jobId/retry-dry-run', (req, res) => {
+  const store = readStore();
+  const job = store.jobs[req.params.jobId];
+  if (!job) return res.status(404).json({ ok: false, error: 'job_not_found' });
+  if (job.executionAllowed === true) return res.status(400).json({ ok: false, error: 'live_execution_jobs_cannot_be_retried_here' });
+  job.status = 'approved_waiting_for_worker';
+  job.updatedAt = now();
+  job.logs = Array.isArray(job.logs) ? job.logs : [];
+  job.logs.push({ at: now(), level: 'info', message: 'Founder requested dry-run retry from ADM-2F Job History panel.' });
+  addAudit(store, { actor: 'Founder', type: 'job_retry_requested', department: job.department, risk: job.risk, message: `Dry-run retry requested for ${job.jobId}.` });
+  writeStore(store);
+  res.json({ ok: true, job, summary: liveSummary(store) });
+});
+
+app.post('/api/admin/jobs/:jobId/cancel', (req, res) => {
+  const store = readStore();
+  const job = store.jobs[req.params.jobId];
+  if (!job) return res.status(404).json({ ok: false, error: 'job_not_found' });
+  if (job.status === 'dry_run_completed' || job.status === 'completed') {
+    return res.status(400).json({ ok: false, error: 'completed_job_cannot_be_cancelled' });
+  }
+  job.status = 'cancelled';
+  job.updatedAt = now();
+  job.logs = Array.isArray(job.logs) ? job.logs : [];
+  job.logs.push({ at: now(), level: 'info', message: 'Founder cancelled this job from ADM-2F Job History panel.' });
+  addAudit(store, { actor: 'Founder', type: 'job_cancelled', department: job.department, risk: job.risk, message: `Job ${job.jobId} cancelled from Founder HQ.` });
+  writeStore(store);
+  res.json({ ok: true, job, summary: liveSummary(store) });
+});
+
+app.post('/api/admin/jobs/clear-test-jobs', (req, res) => {
+  const store = readStore();
+  const removable = ['dry_run_completed', 'cancelled', 'failed'];
+  const before = Object.keys(store.jobs || {}).length;
+  for (const [jobId, job] of Object.entries(store.jobs || {})) {
+    if (removable.includes(job.status)) delete store.jobs[jobId];
+  }
+  const after = Object.keys(store.jobs || {}).length;
+  const removed = before - after;
+  addAudit(store, { actor: 'Founder', type: 'test_jobs_cleared', department: 'Audit Room', risk: 'low', message: `Cleared ${removed} completed/cancelled/failed dry-run test job(s).` });
+  writeStore(store);
+  res.json({ ok: true, removed, summary: liveSummary(store) });
+});
+
+app.get('/api/admin/jobs/:jobId', (req, res) => {
+  const store = readStore();
+  const job = store.jobs[req.params.jobId];
+  if (!job) return res.status(404).json({ ok: false, error: 'job_not_found' });
+  res.json({ ok: true, job });
+});
+
+app.post('/api/admin/jobs/status', (req, res) => {
+  const { jobId, status, message = '', workerId = '' } = req.body || {};
+  if (!jobId) return res.status(400).json({ ok: false, error: 'jobId_required' });
+  const allowedStatuses = ['approved_waiting_for_worker', 'worker_seen', 'running', 'dry_run_completed', 'completed', 'failed', 'cancelled'];
+  if (!allowedStatuses.includes(status)) return res.status(400).json({ ok: false, error: 'unsupported_status' });
+
+  const store = readStore();
+  const job = store.jobs[jobId];
+  if (!job) return res.status(404).json({ ok: false, error: 'job_not_found' });
+  job.status = status;
+  job.updatedAt = now();
+  if (workerId) job.workerId = workerId;
+  job.logs = Array.isArray(job.logs) ? job.logs : [];
+  job.logs.push({ at: now(), level: status === 'failed' ? 'error' : 'info', workerId: workerId || undefined, message: message || `Job status changed to ${status}.` });
+  addAudit(store, { actor: 'Admin Backend', type: 'job_status_updated', department: job.department, risk: job.risk, message: `Job ${job.jobId} status changed to ${status}.` });
+  writeStore(store);
+  res.json({ ok: true, job });
+});
+
+app.get('/api/founder-chat/thread/:threadId', (req, res) => {
+  const store = readStore();
+  const thread = getThread(store, req.params.threadId);
+  writeStore(store);
+  res.json({ ok: true, thread });
+});
+
+app.post('/api/founder-chat/message', (req, res) => {
+  const { threadId = 'founder-main', message = '' } = req.body || {};
+  const text = String(message || '').trim();
+  if (!text) return res.status(400).json({ ok: false, error: 'message_required' });
+
+  const store = readStore();
+  const thread = getThread(store, threadId);
+
+  const userMessage = { id: id('msg'), role: 'user', at: now(), text };
+  const route = classify(text);
+  const assistantMessage = createAssistantMessage(route, text, store, thread.threadId);
+
+  thread.messages.push(userMessage, assistantMessage);
+  thread.updatedAt = now();
+  addAudit(store, {
+    actor: 'Founder AI',
+    type: 'command_routed',
+    department: route.department,
+    manager: route.manager,
+    risk: route.risk,
+    message: `Command routed to ${route.department}. Approval required: ${route.requiresApproval ? 'yes' : 'no'}.`
+  });
+  writeStore(store);
+
+  res.json({ ok: true, threadId: thread.threadId, userMessage, assistantMessage });
+});
+
+app.post('/api/founder-chat/approve', (req, res) => {
+  const { approvalId } = req.body || {};
+  if (!approvalId) return res.status(400).json({ ok: false, error: 'approvalId_required' });
+
+  const store = readStore();
+  const approval = store.approvals[approvalId];
+  if (!approval) return res.status(404).json({ ok: false, error: 'approval_not_found' });
+
+  approval.status = 'approved';
+  approval.approvedAt = approval.approvedAt || now();
+  const job = createJobFromApproval(store, approval);
+  approval.note = `Approved and queued as ${job.jobId}. Status: ${job.status}. No live execution worker is connected yet.`;
+
+  addAudit(store, {
+    actor: 'Founder',
+    type: 'approval_granted_job_queued',
+    department: approval.department,
+    manager: approval.manager,
+    risk: approval.risk,
+    message: `Approved task ${approval.taskType}. Job queued as ${job.jobId}.`
+  });
+  writeStore(store);
+  res.json({ ok: true, approval, job });
+});
+
+app.post('/api/founder-chat/reject', (req, res) => {
+  const { approvalId, reason = 'Rejected by Founder' } = req.body || {};
+  if (!approvalId) return res.status(400).json({ ok: false, error: 'approvalId_required' });
+
+  const store = readStore();
+  const approval = store.approvals[approvalId];
+  if (!approval) return res.status(404).json({ ok: false, error: 'approval_not_found' });
+
+  approval.status = 'rejected';
+  approval.rejectedAt = now();
+  approval.reason = reason;
+
+  addAudit(store, {
+    actor: 'Founder',
+    type: 'approval_rejected',
+    department: approval.department,
+    manager: approval.manager,
+    risk: approval.risk,
+    message: `Rejected task ${approval.taskType}. Reason: ${reason}`
+  });
+  writeStore(store);
+  res.json({ ok: true, approval });
+});
+
+app.post('/api/admin/reset-demo', (req, res) => {
+  fs.rmSync(STORE_PATH, { force: true });
+  ensureStore();
+  res.json({ ok: true, message: `${PHASE} ADM-2F demo store reset.` });
+});
+
+ensureStore();
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`IdeasForgeAI ${PHASE} backend running on http://0.0.0.0:${PORT}`);
+  console.log(`Health: http://localhost:${PORT}/health`);
+});
+
+
+// ADM-2G mobile Founder HQ API extension - safe queue only, no execution.
+if (typeof app !== "undefined" && typeof store !== "undefined" && !app.locals.adm2gMobileApiInstalled) {
+  app.locals.adm2gMobileApiInstalled = true;
+
+  function adm2gNow() { return new Date().toISOString(); }
+  function adm2gEnsure() {
+    store.threads = store.threads || {};
+    store.approvals = store.approvals || {};
+    store.jobs = store.jobs || {};
+    store.auditLogs = store.auditLogs || [];
+  }
+  function adm2gId(prefix) {
+    return prefix + "_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
+  }
+  function adm2gSave() {
+    try { if (typeof saveStore === "function") saveStore(); } catch (error) {}
+  }
+  function adm2gRoute(command) {
+    const text = String(command || "").toLowerCase();
+    if (text.includes("autocad") || text.includes("train")) return { departmentId: "training-academy", department: "Training Academy", manager: "Training Director AI", taskType: "training-plan", risk: "medium" };
+    if (text.includes("pilot") || text.includes("desktop")) return { departmentId: "forgepilot-room", department: "ForgePilot Room", manager: "Desktop Execution Manager AI", taskType: "dry-run-plan", risk: "high" };
+    if (text.includes("code") || text.includes("backend") || text.includes("frontend")) return { departmentId: "code-room", department: "Code Room", manager: "Code Room Manager AI", taskType: "code-plan", risk: "medium" };
+    return { departmentId: "founder-hq", department: "Founder HQ", manager: "Founder Chief-of-Staff AI", taskType: "founder-plan", risk: "low" };
+  }
+
+  app.post("/api/admin/mobile/command", (req, res) => {
+    adm2gEnsure();
+    const command = String((req.body && (req.body.command || req.body.message || req.body.requestedCommand)) || "").trim();
+    if (!command) return res.status(400).json({ ok: false, error: "command_required" });
+    const route = adm2gRoute(command);
+    const approvalId = adm2gId("approval");
+    const approval = {
+      approvalId,
+      threadId: "founder-mobile",
+      title: route.taskType === "training-plan" ? "Approve AutoCAD software-layer training plan" : "Approve Founder AI task plan",
+      requestedCommand: command,
+      approvalRequired: true,
+      status: "pending",
+      createdAt: adm2gNow(),
+      updatedAt: adm2gNow(),
+      steps: [
+        "Read the requested scope and choose the correct department.",
+        "Prepare a safe plan and wait for Founder approval.",
+        "Queue the approved job for worker dry-run only.",
+        "Report job status and audit logs back to Founder HQ."
+      ],
+      allowedActions: ["prepare_plan", "queue_after_approval", "record_audit_log"],
+      blockedActions: ["run_powershell", "desktop_control", "file_edit", "deploy", "forgepilot_live_action"],
+      ...route
+    };
+    store.approvals[approvalId] = approval;
+    store.auditLogs.push({ at: adm2gNow(), level: "info", message: "ADM-2G mobile command prepared approval.", approvalId, command });
+    adm2gSave();
+    res.json({ ok: true, approval });
+  });
+
+  app.post("/api/admin/mobile/approve", (req, res) => {
+    adm2gEnsure();
+    const body = req.body || {};
+    const approvalId = body.approvalId;
+    let approval = approvalId ? store.approvals[approvalId] : null;
+    if (!approval) {
+      const command = String(body.command || body.requestedCommand || "Founder mobile approved task");
+      approval = { approvalId: adm2gId("approval"), requestedCommand: command, status: "approved", createdAt: adm2gNow(), updatedAt: adm2gNow(), ...adm2gRoute(command) };
+      store.approvals[approval.approvalId] = approval;
+    }
+    approval.status = "approved";
+    approval.updatedAt = adm2gNow();
+    const jobId = approval.jobId || adm2gId("job");
+    const job = store.jobs[jobId] || {
+      jobId,
+      approvalId: approval.approvalId,
+      threadId: approval.threadId || "founder-mobile",
+      departmentId: approval.departmentId,
+      department: approval.department,
+      manager: approval.manager,
+      taskType: approval.taskType || body.taskType || "founder-plan",
+      requestedCommand: approval.requestedCommand || body.command || body.requestedCommand,
+      risk: approval.risk || body.risk || "medium",
+      status: "approved_waiting_for_worker",
+      approvalRequired: true,
+      approvedAt: adm2gNow(),
+      createdAt: adm2gNow(),
+      updatedAt: adm2gNow(),
+      allowedActions: ["prepare_plan", "run_validation_after_approval", "record_audit_log"],
+      blockedActions: ["delete_files", "run_arbitrary_command", "access_credentials", "make_payment", "send_email"],
+      payload: { source: "ADM-2G mobile shell" },
+      executionAllowed: false,
+      logs: []
+    };
+    job.status = "approved_waiting_for_worker";
+    job.updatedAt = adm2gNow();
+    job.logs = job.logs || [];
+    job.logs.push({ at: adm2gNow(), level: "info", message: "Job created from ADM-2G mobile approval and placed in safe queue." });
+    store.jobs[jobId] = job;
+    approval.jobId = jobId;
+    store.auditLogs.push({ at: adm2gNow(), level: "info", message: "ADM-2G mobile approval queued job.", jobId, approvalId: approval.approvalId });
+    adm2gSave();
+    res.json({ ok: true, approval, job });
+  });
+
+  app.post("/api/admin/mobile/reject", (req, res) => {
+    adm2gEnsure();
+    const approvalId = req.body && req.body.approvalId;
+    const approval = approvalId ? store.approvals[approvalId] : null;
+    if (approval) {
+      approval.status = "rejected";
+      approval.updatedAt = adm2gNow();
+    }
+    store.auditLogs.push({ at: adm2gNow(), level: "warn", message: "ADM-2G mobile approval rejected.", approvalId });
+    adm2gSave();
+    res.json({ ok: true, approval });
+  });
+}

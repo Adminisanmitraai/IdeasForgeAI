@@ -1,0 +1,346 @@
+{
+  "phase": "PIXEL-MAP-PERFECT-17T",
+  "screenshot": "backend\\agent_audit_reports\\pixel_asset_check\\asset-check-20260706-133905.png",
+  "data": {
+    "cards": [
+      {
+        "card": {
+          "tag": "button",
+          "className": "if-card",
+          "text": "\u25b8 ForgeStudio Create apps, websites, UI, images, logos, documents. \u203a",
+          "box": {
+            "x": 238,
+            "y": 312,
+            "width": 378,
+            "height": 118
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.92)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "rgba(15, 23, 42, 0.06) 0px 18px 42px 0px",
+            "borderRadius": "24px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "icon": {
+          "tag": "span",
+          "className": "if-card-icon if-studio-icon",
+          "text": "\u25b8",
+          "box": {
+            "x": 264,
+            "y": 343,
+            "width": 55,
+            "height": 55
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "filter": "saturate(0.88) brightness(1.08)",
+            "opacity": "0.92",
+            "transform": "matrix(0.84, 0, 0, 0.84, 0, 0)",
+            "boxShadow": "rgba(15, 23, 42, 0.067) 0px 8px 18px 0px",
+            "borderRadius": "19px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "copy": {
+          "tag": "span",
+          "className": "if-card-copy",
+          "text": "ForgeStudio Create apps, websites, UI, images, logos, documents.",
+          "box": {
+            "x": 355,
+            "y": 339,
+            "width": 180,
+            "height": 63
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "none",
+            "borderRadius": "0px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "arrow": {
+          "tag": "span",
+          "className": "if-card-arrow",
+          "text": "\u203a",
+          "box": {
+            "x": 553,
+            "y": 350,
+            "width": 42,
+            "height": 42
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(247, 248, 251, 0.95)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "none",
+            "borderRadius": "999px"
+          },
+          "imgs": [],
+          "svgs": []
+        }
+      },
+      {
+        "card": {
+          "tag": "button",
+          "className": "if-card",
+          "text": "</> ForgeCode Analyze projects, write code, fix errors, test, deploy. \u203a",
+          "box": {
+            "x": 238,
+            "y": 451,
+            "width": 378,
+            "height": 118
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.92)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "rgba(15, 23, 42, 0.06) 0px 18px 42px 0px",
+            "borderRadius": "24px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "icon": {
+          "tag": "span",
+          "className": "if-card-icon if-code-icon",
+          "text": "</>",
+          "box": {
+            "x": 264,
+            "y": 482,
+            "width": 55,
+            "height": 55
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgb(8, 16, 31)",
+            "filter": "saturate(0.88) brightness(1.08)",
+            "opacity": "0.92",
+            "transform": "matrix(0.84, 0, 0, 0.84, 0, 0)",
+            "boxShadow": "rgba(15, 23, 42, 0.067) 0px 8px 18px 0px",
+            "borderRadius": "19px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "copy": {
+          "tag": "span",
+          "className": "if-card-copy",
+          "text": "ForgeCode Analyze projects, write code, fix errors, test, deploy.",
+          "box": {
+            "x": 355,
+            "y": 478,
+            "width": 180,
+            "height": 63
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "none",
+            "borderRadius": "0px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "arrow": {
+          "tag": "span",
+          "className": "if-card-arrow",
+          "text": "\u203a",
+          "box": {
+            "x": 553,
+            "y": 489,
+            "width": 42,
+            "height": 42
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(247, 248, 251, 0.95)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "none",
+            "borderRadius": "999px"
+          },
+          "imgs": [],
+          "svgs": []
+        }
+      },
+      {
+        "card": {
+          "tag": "button",
+          "className": "if-card",
+          "text": "\u2022\u2022\u2022 ForgeWork AI workspace for documents, research, tasks, reports. \u203a",
+          "box": {
+            "x": 238,
+            "y": 590,
+            "width": 378,
+            "height": 118
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(255, 255, 255, 0.92)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "rgba(15, 23, 42, 0.06) 0px 18px 42px 0px",
+            "borderRadius": "24px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "icon": {
+          "tag": "span",
+          "className": "if-card-icon if-work-icon",
+          "text": "\u2022\u2022\u2022",
+          "box": {
+            "x": 264,
+            "y": 621,
+            "width": 55,
+            "height": 55
+          },
+          "style": {
+            "backgroundImage": "radial-gradient(circle at 40% 38%, rgb(43, 46, 56) 0px, rgb(43, 46, 56) 24%, rgb(9, 11, 17) 55%, rgb(23, 25, 35) 100%)",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "filter": "saturate(0.88) brightness(1.08)",
+            "opacity": "0.92",
+            "transform": "matrix(0.84, 0, 0, 0.84, 0, 0)",
+            "boxShadow": "rgba(15, 23, 42, 0.067) 0px 8px 18px 0px",
+            "borderRadius": "19px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "copy": {
+          "tag": "span",
+          "className": "if-card-copy",
+          "text": "ForgeWork AI workspace for documents, research, tasks, reports.",
+          "box": {
+            "x": 355,
+            "y": 617,
+            "width": 180,
+            "height": 63
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "none",
+            "borderRadius": "0px"
+          },
+          "imgs": [],
+          "svgs": []
+        },
+        "arrow": {
+          "tag": "span",
+          "className": "if-card-arrow",
+          "text": "\u203a",
+          "box": {
+            "x": 553,
+            "y": 628,
+            "width": 42,
+            "height": 42
+          },
+          "style": {
+            "backgroundImage": "none",
+            "backgroundColor": "rgba(247, 248, 251, 0.95)",
+            "filter": "none",
+            "opacity": "1",
+            "transform": "none",
+            "boxShadow": "none",
+            "borderRadius": "999px"
+          },
+          "imgs": [],
+          "svgs": []
+        }
+      }
+    ],
+    "topCandidates": [
+      {
+        "tag": "button",
+        "className": "if-icon-btn if-menu",
+        "text": "",
+        "box": {
+          "x": 234,
+          "y": 81,
+          "width": 40,
+          "height": 40
+        },
+        "style": {
+          "backgroundImage": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "opacity": "1",
+          "transform": "none",
+          "boxShadow": "none",
+          "borderRadius": "0px"
+        },
+        "imgs": [],
+        "svgs": []
+      },
+      {
+        "tag": "div",
+        "className": "",
+        "text": "IdeasForgeAI Create \u00b7 Code \u00b7 Work",
+        "box": {
+          "x": 353,
+          "y": 80,
+          "width": 126,
+          "height": 42
+        },
+        "style": {
+          "backgroundImage": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "opacity": "1",
+          "transform": "none",
+          "boxShadow": "none",
+          "borderRadius": "0px"
+        },
+        "imgs": [],
+        "svgs": []
+      },
+      {
+        "tag": "div",
+        "className": "if-brand-name",
+        "text": "IdeasForgeAI",
+        "box": {
+          "x": 353,
+          "y": 80,
+          "width": 126,
+          "height": 22
+        },
+        "style": {
+          "backgroundImage": "none",
+          "backgroundColor": "rgba(0, 0, 0, 0)",
+          "filter": "none",
+          "opacity": "1",
+          "transform": "none",
+          "boxShadow": "none",
+          "borderRadius": "0px"
+        },
+        "imgs": [],
+        "svgs": []
+      }
+    ]
+  }
+}

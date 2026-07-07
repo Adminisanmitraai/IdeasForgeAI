@@ -1,0 +1,36 @@
+{
+  "ok": true,
+  "phase": "PIXEL-AGENT-11",
+  "created_at": "20260705-135420",
+  "source_visual_regression_report": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_visual_regression\\pixel-visual-regression-20260705-134951.json",
+  "repair_required": false,
+  "approval_required": true,
+  "frontend_write_status": "no_frontend_files_modified",
+  "critical_count": 0,
+  "high_count": 0,
+  "actions": [
+    {
+      "issue": "no_repair_needed",
+      "region": "system",
+      "severity": "low",
+      "recommendation": "Visual regression passed. No repair is needed.",
+      "suggested_delta_px": null,
+      "target_property": null,
+      "approval_required": true,
+      "patch_status": "suggestion_only_not_applied"
+    }
+  ],
+  "context": {
+    "latest_safe_css_plan": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_safe_css_plans\\pixel-safe-css-plan-20260705-130914.json",
+    "latest_dom_map": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_dom_maps\\pixel-dom-map-20260705-130914.json"
+  },
+  "rule": "Auto-repair loop may suggest changes only. It must not apply frontend patches without approval.",
+  "blocked_actions": [
+    "auto_apply_css_repair_without_approval",
+    "repair_unmapped_selector",
+    "ignore_visual_regression_failure",
+    "use_screenshot_as_background",
+    "blind_css_override"
+  ],
+  "output_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_auto_repairs\\pixel-auto-repair-20260705-135420.json"
+}

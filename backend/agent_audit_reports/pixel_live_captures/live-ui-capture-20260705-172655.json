@@ -1,0 +1,16 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-01",
+  "created_at": "20260705-172655",
+  "url": "http://localhost:5173/frontend/pages/studio-v4.html",
+  "browser": "playwright_chromium",
+  "viewport": {
+    "width": 430,
+    "height": 932,
+    "device_scale_factor": 2
+  },
+  "screenshot_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_captures\\live-ui-capture-20260705-172655.png",
+  "report_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_captures\\live-ui-capture-20260705-172655.json",
+  "rule": "This screenshot is the real rendered UI and must be used for live UI match auditing.",
+  "next_step": "Compare this live screenshot against the golden reference image."
+}

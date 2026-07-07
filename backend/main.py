@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 import re
 import subprocess
@@ -2174,14 +2174,14 @@ def _build_deployment_approval_preview(request: DeploymentApprovalPreviewRequest
             "message": "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "Deployment flow preview opened — allowed",
-            "Deployment approval requested — recorded",
-            "Render API call — blocked",
-            "GitHub deploy action — blocked",
-            "Production promotion — blocked",
-            "Rollback — blocked",
-            "DNS change — blocked",
-            "Secrets access — blocked",
+            "Deployment flow preview opened â€” allowed",
+            "Deployment approval requested â€” recorded",
+            "Render API call â€” blocked",
+            "GitHub deploy action â€” blocked",
+            "Production promotion â€” blocked",
+            "Rollback â€” blocked",
+            "DNS change â€” blocked",
+            "Secrets access â€” blocked",
         ],
         "safety": {
             "render_api_calls": False,
@@ -2953,7 +2953,7 @@ def _mask_ca24_line(line: str, role: str) -> str:
     if any(token in stripped.lower() for token in ["key", "token", "secret", "password", "credential"]):
         return "[protected-sensitive-line]"
     if len(line) > 96:
-        return line[:96] + " …"
+        return line[:96] + " â€¦"
     return line
 
 
@@ -5686,3 +5686,172 @@ try:
 except Exception as ideasforge_chat_include_error:
     print("IdeasForgeAI chat router include skipped:", ideasforge_chat_include_error)
 
+
+# CHAT-BRAIN-2B-START
+# IdeasForgeAI real chat brain endpoint.
+# Keeps OpenAI API key on backend only.
+
+import os as _if_os
+import json as _if_json
+import urllib.request as _if_urllib_request
+import urllib.error as _if_urllib_error
+from typing import Any as _IFAny, Dict as _IFDict, List as _IFList, Optional as _IFOptional
+from pydantic import BaseModel as _IFBaseModel
+
+
+class _IdeasForgeAIChatRequest(_IFBaseModel):
+    message: str
+    page: _IFOptional[str] = "home"
+    mode: _IFOptional[str] = "main"
+    history: _IFOptional[_IFList[_IFDict[str, _IFAny]]] = None
+
+
+_IDEASFORGEAI_SYSTEM_PROMPT = """
+You are the official IdeasForgeAI assistant.
+
+IdeasForgeAI is an AI creation, coding, and professional work platform.
+Its purpose is to help users work with AI without needing to learn AI deeply.
+
+Core products:
+1. ForgeStudio: creates apps, websites, UI screens, images, logos, documents,
+   presentations, marketing assets, dashboards, prototypes, and product designs.
+2. ForgeCode: helps with software engineering, existing project analysis,
+   frontend/backend code, bug fixing, tests, Git workflow, deployment planning,
+   and safe code changes.
+3. ForgeWork: professional AI workspace for roles and industries. It helps with
+   documents, research, planning, reports, templates, workflows, dashboards,
+   calculators, tasks, and professional guidance.
+
+How to answer:
+- Be clear, practical, and product-aware.
+- If the user asks what IdeasForgeAI is, explain the app confidently.
+- If the user wants to create something, route them toward ForgeStudio.
+- If the user wants code/project help, route them toward ForgeCode.
+- If the user wants professional work help, route them toward ForgeWork.
+- If the user asks for current internet research, say that live research will be
+  enabled through the upcoming Research Brain using Tavily/Brave unless live
+  search tools are already connected.
+- Do not pretend to browse the internet unless search tools are connected.
+- For potentially sensitive technical topics, give safe high-level educational
+  guidance and avoid harmful or illegal operational details.
+- Keep answers helpful, concise, and easy for normal users to understand.
+"""
+
+
+def _ideasforgeai_extract_openai_text(data: _IFDict[str, _IFAny]) -> str:
+    direct = data.get("output_text")
+    if isinstance(direct, str) and direct.strip():
+        return direct.strip()
+
+    parts: _IFList[str] = []
+    output = data.get("output")
+    if isinstance(output, list):
+        for item in output:
+            if not isinstance(item, dict):
+                continue
+            content = item.get("content")
+            if not isinstance(content, list):
+                continue
+            for c in content:
+                if not isinstance(c, dict):
+                    continue
+                text = c.get("text")
+                if isinstance(text, str) and text.strip():
+                    parts.append(text.strip())
+
+    if parts:
+        return "\n".join(parts).strip()
+
+    return "I received a response, but could not read the answer text."
+
+
+@app.post("/api/chat")
+async def ideasforgeai_chat(payload: _IdeasForgeAIChatRequest):
+    user_message = (payload.message or "").strip()
+
+    if not user_message:
+        return {
+            "ok": False,
+            "answer": "Please type a message first.",
+            "source": "ideasforgeai-chat-brain"
+        }
+
+    api_key = _if_os.getenv("OPENAI_API_KEY", "").strip()
+    model = _if_os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
+
+    if not api_key:
+        return {
+            "ok": False,
+            "configured": False,
+            "answer": (
+                "IdeasForgeAI Chat Brain is installed, but OPENAI_API_KEY is not set "
+                "on the backend yet. Add OPENAI_API_KEY in Render Environment, then redeploy."
+            ),
+            "source": "ideasforgeai-chat-brain"
+        }
+
+    history = payload.history or []
+    clean_history: _IFList[_IFDict[str, str]] = []
+
+    for item in history[-8:]:
+        if not isinstance(item, dict):
+            continue
+        role = str(item.get("role", "")).strip().lower()
+        content = str(item.get("content", "")).strip()
+        if role in ("user", "assistant") and content:
+            clean_history.append({"role": role, "content": content[:2000]})
+
+    openai_input: _IFList[_IFDict[str, str]] = [
+        {"role": "system", "content": _IDEASFORGEAI_SYSTEM_PROMPT}
+    ]
+    openai_input.extend(clean_history)
+    openai_input.append({"role": "user", "content": user_message})
+
+    body = {
+        "model": model,
+        "input": openai_input,
+        "temperature": 0.35,
+        "max_output_tokens": 900
+    }
+
+    req = _if_urllib_request.Request(
+        "https://api.openai.com/v1/responses",
+        data=_if_json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": "Bearer " + api_key,
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+
+    try:
+        with _if_urllib_request.urlopen(req, timeout=45) as res:
+            raw = res.read().decode("utf-8")
+            data = _if_json.loads(raw)
+            answer = _ideasforgeai_extract_openai_text(data)
+            return {
+                "ok": True,
+                "answer": answer,
+                "model": model,
+                "source": "openai-responses-api"
+            }
+
+    except _if_urllib_error.HTTPError as e:
+        detail = e.read().decode("utf-8", errors="replace")
+        return {
+            "ok": False,
+            "answer": "The IdeasForgeAI brain could not get a model response. Check OPENAI_API_KEY, OPENAI_MODEL, and billing.",
+            "error_status": e.code,
+            "error_detail": detail[:1200],
+            "source": "ideasforgeai-chat-brain"
+        }
+
+    except Exception as e:
+        return {
+            "ok": False,
+            "answer": "The IdeasForgeAI chat backend had an error while generating the answer.",
+            "error_detail": str(e)[:1200],
+            "source": "ideasforgeai-chat-brain"
+        }
+
+# CHAT-BRAIN-2B-END

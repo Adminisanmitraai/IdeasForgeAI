@@ -1,0 +1,110 @@
+{
+  "ok": false,
+  "phase": "PIXEL-AGENT-10",
+  "mode": "before_after_regression",
+  "created_at": "20260705-131705",
+  "rule": "After any approved UI patch, after screenshot must not regress composer/card/browser-chrome detection.",
+  "before": {
+    "ok": true,
+    "image": "D:\\APPS\\IdeasForgeAI\\backend\\agent_auditor\\pixel_benchmarks\\screenshots\\chat-mobile-current.png",
+    "image_size": {
+      "width": 853,
+      "height": 1844
+    },
+    "score": 100,
+    "detected": {
+      "composer": {
+        "x1": 38,
+        "y1": 1538,
+        "x2": 814,
+        "y2": 1658,
+        "width": 776,
+        "height": 120,
+        "confidence": 0.66,
+        "source": "safe_mobile_composer_fallback_above_browser"
+      },
+      "cards_count": 3,
+      "cards": [
+        {
+          "x1": 51,
+          "y1": 617,
+          "x2": 801,
+          "y2": 802,
+          "width": 750,
+          "height": 184,
+          "area": 138418,
+          "confidence": 0.68,
+          "source": "safe_landing_card_fallback_1"
+        },
+        {
+          "x1": 51,
+          "y1": 857,
+          "x2": 801,
+          "y2": 1023,
+          "width": 750,
+          "height": 165,
+          "area": 124576,
+          "confidence": 0.68,
+          "source": "safe_landing_card_fallback_2"
+        },
+        {
+          "x1": 51,
+          "y1": 1097,
+          "x2": 801,
+          "y2": 1263,
+          "width": 750,
+          "height": 165,
+          "area": 124576,
+          "confidence": 0.68,
+          "source": "safe_landing_card_fallback_3"
+        }
+      ],
+      "light_regions_count": 29
+    },
+    "checks": {
+      "composer_detected": true,
+      "composer_iou": 1.0,
+      "composer_center_score": 1.0,
+      "composer_above_browser_chrome": true,
+      "composer_tray_like_height": true,
+      "bad_browser_region_iou": 0.0581,
+      "not_browser_region": true,
+      "cards_detected": 3,
+      "cards_count_ok": true
+    }
+  },
+  "after": {
+    "ok": false,
+    "score": 0,
+    "error": "Missing screenshot: D:\\APPS\\IdeasForgeAI\\backend\\agent_auditor\\pixel_benchmarks\\screenshots\\chat-mobile-after-approved-patch.png"
+  },
+  "comparison": {
+    "ok": false,
+    "blockers": [
+      "after_screenshot_failed",
+      "overall_pixel_score_regressed",
+      "after_composer_matches_browser_region",
+      "after_composer_includes_browser_chrome",
+      "after_cards_count_invalid",
+      "composer_iou_regressed"
+    ],
+    "before_score": 100.0,
+    "after_score": 0.0,
+    "score_delta": -100.0,
+    "before_checks": {
+      "composer_detected": true,
+      "composer_iou": 1.0,
+      "composer_center_score": 1.0,
+      "composer_above_browser_chrome": true,
+      "composer_tray_like_height": true,
+      "bad_browser_region_iou": 0.0581,
+      "not_browser_region": true,
+      "cards_detected": 3,
+      "cards_count_ok": true
+    },
+    "after_checks": {}
+  },
+  "approval_status": "visual_regression_required_before_accepting_ui_patch",
+  "frontend_write_status": "no_frontend_files_modified",
+  "output_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_visual_regression\\pixel-visual-regression-20260705-131705.json"
+}

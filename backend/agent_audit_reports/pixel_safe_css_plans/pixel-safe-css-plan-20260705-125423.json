@@ -1,0 +1,78 @@
+{
+  "ok": true,
+  "approval_required": true,
+  "created_at": "20260705-125423",
+  "phase": "PIXEL-AGENT-09",
+  "summary": "Safe CSS patch plan generated from Pixel Debug Report + UI Patch Gate + DOM Mapping Gate.",
+  "blockers": [],
+  "source_reports": {
+    "pixel_ui_patch_plan": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-report-20260705-125409.json",
+    "pixel_overlay": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-overlay-20260705-125409.png",
+    "dom_map": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_dom_maps\\pixel-dom-map-20260705-125423.json"
+  },
+  "gate_scores": {
+    "pixel_confidence_score": 80.0,
+    "dom_mapping_confidence_score": 99.0
+  },
+  "changes": [
+    {
+      "region": "composer",
+      "target_file": "frontend/pages/studio-v4.css",
+      "target_selector_or_symbol": ".composer-button",
+      "mapping_score": 100,
+      "keyword_hits": [
+        "composer",
+        "textarea",
+        "bottom"
+      ],
+      "change_type": "css_variable_or_selector_review",
+      "suggested_css_variables": {
+        "--pixel-composer-x": "38px",
+        "--pixel-composer-y": "1538px",
+        "--pixel-composer-width": "776px",
+        "--pixel-composer-height": "120px",
+        "--pixel-composer-bottom-gap": "186px"
+      },
+      "patch_status": "plan_only_not_applied",
+      "approval_required": true,
+      "reason": "Pixel Agent detected composer region and mapped it to a real frontend selector/file. This is a reviewable patch suggestion only."
+    },
+    {
+      "region": "cards",
+      "target_file": "frontend/pages/forgepilot.html",
+      "target_selector_or_symbol": ".forgepilot-shell",
+      "mapping_score": 100,
+      "keyword_hits": [
+        "card",
+        "forge",
+        "studio",
+        "code",
+        "work"
+      ],
+      "change_type": "css_variable_or_selector_review",
+      "suggested_css_variables": {
+        "--pixel-card-x": "51px",
+        "--pixel-card-width": "750px",
+        "--pixel-card-count": "3"
+      },
+      "patch_status": "plan_only_not_applied",
+      "approval_required": true,
+      "reason": "Pixel Agent detected cards region and mapped it to a real frontend selector/file. This is a reviewable patch suggestion only."
+    }
+  ],
+  "frontend_write_status": "no_frontend_files_modified",
+  "rollback_plan": [
+    "No rollback needed because this planner does not apply changes.",
+    "If a future approved patch is applied, revert only the listed target file/selector changes.",
+    "Run Pixel Debug Report again after any approved UI patch."
+  ],
+  "blocked_actions": [
+    "apply_css_without_approval",
+    "patch_unmapped_selector",
+    "patch_when_pixel_gate_fails",
+    "patch_when_dom_mapping_fails",
+    "use_screenshot_as_background",
+    "blind_css_override"
+  ],
+  "output_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_safe_css_plans\\pixel-safe-css-plan-20260705-125423.json"
+}

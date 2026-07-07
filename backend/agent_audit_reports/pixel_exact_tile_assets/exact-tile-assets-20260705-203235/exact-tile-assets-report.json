@@ -1,0 +1,121 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-16H2",
+  "created_at": "20260705-203235",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "output_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235",
+  "contact_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\exact-tile-assets-contact-sheet.png",
+  "assets": {
+    "header_logo_tile": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\header_logo_tile.png",
+      "box_px": [
+        118,
+        165,
+        210,
+        255
+      ],
+      "width": 92,
+      "height": 90,
+      "status": "exact_reference_crop_review_only"
+    },
+    "header_logo_symbol": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\header_logo_symbol.png",
+      "box_px": [
+        137,
+        183,
+        190,
+        236
+      ],
+      "width": 53,
+      "height": 53,
+      "status": "exact_reference_crop_review_only"
+    },
+    "forge_studio_tile": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\forge_studio_tile.png",
+      "box_px": [
+        80,
+        655,
+        190,
+        765
+      ],
+      "width": 110,
+      "height": 110,
+      "status": "exact_reference_crop_review_only"
+    },
+    "forge_code_tile": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\forge_code_tile.png",
+      "box_px": [
+        80,
+        918,
+        190,
+        1028
+      ],
+      "width": 110,
+      "height": 110,
+      "status": "exact_reference_crop_review_only"
+    },
+    "forge_work_tile": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\forge_work_tile.png",
+      "box_px": [
+        64,
+        1068,
+        204,
+        1208
+      ],
+      "width": 140,
+      "height": 140,
+      "status": "exact_reference_crop_review_only"
+    },
+    "header_share_button_tile": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\header_share_button_tile.png",
+      "box_px": [
+        640,
+        165,
+        720,
+        248
+      ],
+      "width": 80,
+      "height": 83,
+      "status": "exact_reference_crop_review_only"
+    },
+    "header_primary_button_tile": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\header_primary_button_tile.png",
+      "box_px": [
+        738,
+        165,
+        826,
+        252
+      ],
+      "width": 88,
+      "height": 87,
+      "status": "exact_reference_crop_review_only"
+    },
+    "composer_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\composer_full.png",
+      "box_px": [
+        34,
+        1512,
+        818,
+        1641
+      ],
+      "width": 784,
+      "height": 129,
+      "status": "exact_reference_crop_review_only"
+    },
+    "browser_bar_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_exact_tile_assets\\exact-tile-assets-20260705-203235\\browser_bar_full.png",
+      "box_px": [
+        34,
+        1650,
+        818,
+        1797
+      ],
+      "width": 784,
+      "height": 147,
+      "status": "exact_reference_crop_review_only"
+    }
+  },
+  "frontend_write_status": "no_frontend_files_modified",
+  "rule": "Review only. These assets are not applied to frontend yet.",
+  "next_step": "Inspect exact tile contact sheet. If clean, create a safe one-asset-at-a-time apply plan."
+}

@@ -1,0 +1,153 @@
+{
+  "generated_at": "2026-07-05T22:45:14+0530",
+  "minimum_rule": "Only agents with can_load=true should be loaded into active registry.",
+  "approved_agents": [
+    {
+      "agent_id": "backend_api_agent",
+      "name": "Backend Api Agent",
+      "file": "backend\\agents\\backend_api_agent.py",
+      "health_score": 98.0,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "backend_code_generator_agent",
+      "name": "Backend Code Generator Agent",
+      "file": "backend\\agents\\backend_code_generator_agent.py",
+      "health_score": 97.02,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "database_persistence_agent",
+      "name": "Database Persistence Agent",
+      "file": "backend\\agents\\database_persistence_agent.py",
+      "health_score": 97.72,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "deployment_readiness_agent",
+      "name": "Deployment Readiness Agent",
+      "file": "backend\\agents\\deployment_readiness_agent.py",
+      "health_score": 96.81,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "frontend_api_connector_agent",
+      "name": "Frontend Api Connector Agent",
+      "file": "backend\\agents\\frontend_api_connector_agent.py",
+      "health_score": 96.25,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "generated_app_export_agent",
+      "name": "Generated App Export Agent",
+      "file": "backend\\agents\\generated_app_export_agent.py",
+      "health_score": 98.0,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "git_versioning_agent",
+      "name": "Git Versioning Agent",
+      "file": "backend\\agents\\git_versioning_agent.py",
+      "health_score": 96.48,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "html_builder_agent",
+      "name": "Html Builder Agent",
+      "file": "backend\\agents\\html_builder_agent.py",
+      "health_score": 97.44,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "idea_intake_agent",
+      "name": "Idea Intake Agent",
+      "file": "backend\\agents\\idea_intake_agent.py",
+      "health_score": 96.15,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "IdeasForgeAI_landing_template_agent",
+      "name": "Ideasforgeai Landing Template Agent",
+      "file": "backend\\agents\\IdeasForgeAI_landing_template_agent.py",
+      "health_score": 96.33,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "ideasforgeai_product_template_template",
+      "name": "Ideasforgeai Product Template Template",
+      "file": "backend\\agents\\ideasforgeai_product_template_template.py",
+      "health_score": 94.67,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "IdeasForgeAI_production_sync_agent",
+      "name": "Ideasforgeai Production Sync Agent",
+      "file": "backend\\agents\\IdeasForgeAI_production_sync_agent.py",
+      "health_score": 96.15,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "lead_crud_agent",
+      "name": "Lead Crud Agent",
+      "file": "backend\\agents\\lead_crud_agent.py",
+      "health_score": 98.0,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "mobile_packager_agent",
+      "name": "Mobile Packager Agent",
+      "file": "backend\\agents\\mobile_packager_agent.py",
+      "health_score": 97.11,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "orchestrator_agent",
+      "name": "Orchestrator Agent",
+      "file": "backend\\agents\\orchestrator_agent.py",
+      "health_score": 98.5,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "pixel_matched_page_converter_agent",
+      "name": "Pixel Matched Page Converter Agent",
+      "file": "backend\\agents\\pixel_matched_page_converter_agent.py",
+      "health_score": 100.0,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "runtime_config_agent",
+      "name": "Runtime Config Agent",
+      "file": "backend\\agents\\runtime_config_agent.py",
+      "health_score": 95.94,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "template_selection_agent",
+      "name": "Template Selection Agent",
+      "file": "backend\\agents\\template_selection_agent.py",
+      "health_score": 96.33,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "template_ui_renderer_agent",
+      "name": "Template Ui Renderer Agent",
+      "file": "backend\\agents\\template_ui_renderer_agent.py",
+      "health_score": 97.44,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "ui_blueprint_agent",
+      "name": "Ui Blueprint Agent",
+      "file": "backend\\agents\\ui_blueprint_agent.py",
+      "health_score": 97.17,
+      "grade": "Excellent"
+    },
+    {
+      "agent_id": "visual_design_engine_agent",
+      "name": "Visual Design Engine Agent",
+      "file": "backend\\agents\\visual_design_engine_agent.py",
+      "health_score": 96.89,
+      "grade": "Excellent"
+    }
+  ]
+}

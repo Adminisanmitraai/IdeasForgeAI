@@ -1,0 +1,465 @@
+{
+  "ok": true,
+  "created_at": "20260705-144016",
+  "pixel_report_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-report-20260705-144003.json",
+  "dom_mapping": {
+    "ok": true,
+    "confidence_score": 100,
+    "frontend_files_scanned": 236,
+    "regions": {
+      "header": {
+        "detected_pixel_region": null,
+        "candidate_count": 8,
+        "candidates": [
+          {
+            "file": "frontend/pages/forgepilot.css",
+            "selector_or_symbol": ".forgepilot-console__header",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "topbar",
+              "nav",
+              "brand"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.css",
+            "selector_or_symbol": ".forgepilot-console__header strong",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "topbar",
+              "nav",
+              "brand"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-console__header",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "topbar",
+              "nav",
+              "brand"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-header",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "brand",
+              "logo",
+              "menu"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-brand",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "brand",
+              "logo",
+              "menu"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-brand-name",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "brand",
+              "logo",
+              "menu"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-brand-sub",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "brand",
+              "logo",
+              "menu"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.html",
+            "selector_or_symbol": ".if-header",
+            "score": 100,
+            "keyword_hits": [
+              "header",
+              "brand",
+              "logo",
+              "menu"
+            ]
+          }
+        ],
+        "best_candidate": {
+          "file": "frontend/pages/forgepilot.css",
+          "selector_or_symbol": ".forgepilot-console__header",
+          "score": 100,
+          "keyword_hits": [
+            "header",
+            "topbar",
+            "nav",
+            "brand"
+          ]
+        },
+        "mapped": true
+      },
+      "hero": {
+        "detected_pixel_region": null,
+        "candidate_count": 8,
+        "candidates": [
+          {
+            "file": "frontend/pages/studio-v4.html",
+            "selector_or_symbol": ".if-hero",
+            "score": 100,
+            "keyword_hits": [
+              "hero",
+              "title",
+              "main"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero",
+            "score": 96,
+            "keyword_hits": [
+              "hero",
+              "title",
+              "main"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero__copy",
+            "score": 96,
+            "keyword_hits": [
+              "hero",
+              "title",
+              "main"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero__lede",
+            "score": 96,
+            "keyword_hits": [
+              "hero",
+              "title",
+              "main"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero__text",
+            "score": 96,
+            "keyword_hits": [
+              "hero",
+              "title",
+              "main"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero__actions",
+            "score": 96,
+            "keyword_hits": [
+              "hero",
+              "title",
+              "main"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-hero",
+            "score": 90,
+            "keyword_hits": [
+              "hero"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-hero h1",
+            "score": 90,
+            "keyword_hits": [
+              "hero"
+            ]
+          }
+        ],
+        "best_candidate": {
+          "file": "frontend/pages/studio-v4.html",
+          "selector_or_symbol": ".if-hero",
+          "score": 100,
+          "keyword_hits": [
+            "hero",
+            "title",
+            "main"
+          ]
+        },
+        "mapped": true
+      },
+      "cards": {
+        "detected_pixel_region": [
+          {
+            "x1": 51,
+            "y1": 617,
+            "x2": 801,
+            "y2": 802
+          },
+          {
+            "x1": 51,
+            "y1": 857,
+            "x2": 801,
+            "y2": 1023
+          },
+          {
+            "x1": 51,
+            "y1": 1097,
+            "x2": 801,
+            "y2": 1263
+          }
+        ],
+        "candidate_count": 8,
+        "candidates": [
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-shell",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-topbar",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-brand",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-brand__mark",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-brand__copy",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-product-nav",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          },
+          {
+            "file": "frontend/pages/forgepilot.html",
+            "selector_or_symbol": ".forgepilot-hero__copy",
+            "score": 100,
+            "keyword_hits": [
+              "card",
+              "forge",
+              "studio",
+              "code",
+              "work"
+            ]
+          }
+        ],
+        "best_candidate": {
+          "file": "frontend/pages/forgepilot.html",
+          "selector_or_symbol": ".forgepilot-shell",
+          "score": 100,
+          "keyword_hits": [
+            "card",
+            "forge",
+            "studio",
+            "code",
+            "work"
+          ]
+        },
+        "mapped": true
+      },
+      "composer": {
+        "detected_pixel_region": {
+          "x1": 38,
+          "y1": 1538,
+          "x2": 814,
+          "y2": 1658
+        },
+        "candidate_count": 8,
+        "candidates": [
+          {
+            "file": "frontend/pages/studio-v4.css",
+            "selector_or_symbol": ".if-composer",
+            "score": 100,
+            "keyword_hits": [
+              "composer",
+              "input",
+              "bottom"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.html",
+            "selector_or_symbol": ".if-composer",
+            "score": 100,
+            "keyword_hits": [
+              "composer",
+              "input",
+              "ask",
+              "mic"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.html",
+            "selector_or_symbol": ".if-input-wrap",
+            "score": 100,
+            "keyword_hits": [
+              "composer",
+              "input",
+              "ask",
+              "mic"
+            ]
+          },
+          {
+            "file": "frontend/admin/index.html",
+            "selector_or_symbol": ".composer-wrap",
+            "score": 100,
+            "keyword_hits": [
+              "composer",
+              "input",
+              "prompt",
+              "ask",
+              "textarea",
+              "submit"
+            ]
+          },
+          {
+            "file": "frontend/admin/index.html",
+            "selector_or_symbol": ".composer",
+            "score": 100,
+            "keyword_hits": [
+              "composer",
+              "input",
+              "prompt",
+              "ask",
+              "textarea",
+              "submit"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.js",
+            "selector_or_symbol": ".data-mode",
+            "score": 98,
+            "keyword_hits": [
+              "composer",
+              "input",
+              "prompt",
+              "ask",
+              "submit"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.before-pixel-ui-01.css",
+            "selector_or_symbol": ".composer-button",
+            "score": 94,
+            "keyword_hits": [
+              "composer",
+              "textarea",
+              "bottom"
+            ]
+          },
+          {
+            "file": "frontend/pages/studio-v4.before-pixel-ui-01.css",
+            "selector_or_symbol": ".composer",
+            "score": 94,
+            "keyword_hits": [
+              "composer",
+              "textarea",
+              "bottom"
+            ]
+          }
+        ],
+        "best_candidate": {
+          "file": "frontend/pages/studio-v4.css",
+          "selector_or_symbol": ".if-composer",
+          "score": 100,
+          "keyword_hits": [
+            "composer",
+            "input",
+            "bottom"
+          ]
+        },
+        "mapped": true
+      }
+    }
+  },
+  "rule": "Pixel regions must map to frontend selectors before any CSS/UI patch is planned.",
+  "blocked_actions": [
+    "patch_css_without_dom_mapping",
+    "patch_unknown_selector",
+    "blind_ui_patch",
+    "use_screenshot_as_background"
+  ],
+  "output_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_dom_maps\\pixel-dom-map-20260705-144016.json"
+}

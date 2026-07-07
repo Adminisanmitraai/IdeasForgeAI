@@ -1,0 +1,262 @@
+{
+  "ok": false,
+  "phase": "PIXEL-MAP-PERFECT-12",
+  "created_at": "20260705-193929",
+  "url": "http://localhost:5173/frontend/pages/studio-v4.html",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "actual_screenshot_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_dom_geometry\\pixel-dom-live-screenshot-20260705-193929.png",
+  "overall_dom_geometry_score": 50.76,
+  "verdict": "NEEDS_REPAIR",
+  "component_scores": {
+    "status_header": {
+      "ok": true,
+      "selector": ".if-statusbar",
+      "reference_box_px": [
+        0,
+        0,
+        853,
+        129
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 0,
+        "width": 430,
+        "height": 44
+      },
+      "actual_box_projected_px": [
+        0,
+        0,
+        853,
+        87
+      ],
+      "geometry_iou": 0.6744,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -21
+      },
+      "visual_similarity": 65.34,
+      "geometry_score": 95.38,
+      "score": 81.86
+    },
+    "top_nav": {
+      "ok": true,
+      "selector": ".if-header",
+      "reference_box_px": [
+        0,
+        129,
+        853,
+        322
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 44,
+        "width": 430,
+        "height": 109
+      },
+      "actual_box_projected_px": [
+        0,
+        87,
+        853,
+        302
+      ],
+      "geometry_iou": 0.7362,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -31
+      },
+      "visual_similarity": 60.4,
+      "geometry_score": 93.18,
+      "score": 78.43
+    },
+    "hero": {
+      "ok": true,
+      "selector": ".if-hero",
+      "reference_box_px": [
+        34,
+        350,
+        818,
+        617
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 174.4375,
+        "width": 430,
+        "height": 128.4375
+      },
+      "actual_box_projected_px": [
+        0,
+        345,
+        853,
+        599
+      ],
+      "geometry_iou": 0.8459,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -11
+      },
+      "visual_similarity": 18.86,
+      "geometry_score": 97.58,
+      "score": 62.16
+    },
+    "card_1": {
+      "ok": true,
+      "selector": ".if-card:nth-child(1)",
+      "reference_box_px": [
+        51,
+        673,
+        801,
+        894
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 318.875,
+        "width": 430,
+        "height": 46
+      },
+      "actual_box_projected_px": [
+        0,
+        630,
+        853,
+        721
+      ],
+      "geometry_iou": 0.1736,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -108
+      },
+      "visual_similarity": 47.1,
+      "geometry_score": 76.24,
+      "score": 63.13
+    },
+    "card_2": {
+      "ok": true,
+      "selector": ".if-card:nth-child(2)",
+      "reference_box_px": [
+        51,
+        931,
+        801,
+        1152
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 364.875,
+        "width": 430,
+        "height": 44
+      },
+      "actual_box_projected_px": [
+        0,
+        721,
+        853,
+        808
+      ],
+      "geometry_iou": 0.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -277
+      },
+      "visual_similarity": 41.99,
+      "geometry_score": 39.06,
+      "score": 40.38
+    },
+    "card_3": {
+      "ok": true,
+      "selector": ".if-card:nth-child(3)",
+      "reference_box_px": [
+        51,
+        1189,
+        801,
+        1410
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 408.875,
+        "width": 430,
+        "height": 44
+      },
+      "actual_box_projected_px": [
+        0,
+        808,
+        853,
+        896
+      ],
+      "geometry_iou": 0.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -447
+      },
+      "visual_similarity": 49.76,
+      "geometry_score": 1.66,
+      "score": 23.3
+    },
+    "composer": {
+      "ok": true,
+      "selector": ".if-composer",
+      "reference_box_px": [
+        34,
+        1512,
+        818,
+        1641
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 452.875,
+        "width": 430,
+        "height": 24
+      },
+      "actual_box_projected_px": [
+        0,
+        896,
+        853,
+        943
+      ],
+      "geometry_iou": 0.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -657
+      },
+      "visual_similarity": 68.49,
+      "geometry_score": 0.0,
+      "score": 30.82
+    },
+    "browser_safe_area": {
+      "ok": true,
+      "selector": ".if-browserbar",
+      "reference_box_px": [
+        34,
+        1650,
+        818,
+        1797
+      ],
+      "actual_dom_box_css_px": {
+        "x": 0,
+        "y": 476.875,
+        "width": 430,
+        "height": 23
+      },
+      "actual_box_projected_px": [
+        0,
+        943,
+        853,
+        989
+      ],
+      "geometry_iou": 0.0,
+      "center_delta_px": {
+        "dx": 0,
+        "dy": -757
+      },
+      "visual_similarity": 56.99,
+      "geometry_score": 0.0,
+      "score": 25.65
+    }
+  },
+  "observations": [
+    "hero: needs repair, dx=0px, dy=-11px, score=62.16",
+    "card_1: needs repair, dx=0px, dy=-108px, score=63.13",
+    "card_2: needs repair, dx=0px, dy=-277px, score=40.38",
+    "card_3: needs repair, dx=0px, dy=-447px, score=23.3",
+    "composer: needs repair, dx=0px, dy=-657px, score=30.82",
+    "browser_safe_area: needs repair, dx=0px, dy=-757px, score=25.65"
+  ],
+  "overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_dom_geometry\\pixel-dom-geometry-overlay-20260705-193929.png",
+  "next_step": "Use real DOM deltas for exact CSS repair planning."
+}

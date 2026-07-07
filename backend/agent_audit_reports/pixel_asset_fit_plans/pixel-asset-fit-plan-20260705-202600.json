@@ -1,0 +1,126 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-16H",
+  "created_at": "20260705-202600",
+  "selected_report": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_selected_assets\\selected-icon-assets-20260705-202047\\selected-icon-assets-report.json",
+  "selected_assets_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_selected_assets\\selected-icon-assets-20260705-202047\\selected",
+  "frontend_write_status": "no_frontend_files_modified",
+  "asset_fit_plan": [
+    {
+      "icon": "header_logo",
+      "ok": false,
+      "status": "planned_not_applied",
+      "source_asset_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_selected_assets\\selected-icon-assets-20260705-202047\\selected\\header_logo.png",
+      "selection_score": 21.7,
+      "frontend_asset_path": "frontend/assets/pixel-ui-approved/header-logo.png",
+      "target_file": "frontend/pages/studio-v4.html",
+      "target_selector": ".if-logo",
+      "css_target_file": "frontend/pages/studio-v4.css",
+      "expected_css": {
+        "width": "42px",
+        "height": "42px",
+        "border-radius": "14px",
+        "object-fit": "cover"
+      },
+      "risk": "medium",
+      "reason": "Header logo affects brand/nav visual similarity.",
+      "frontend_write_status": "no_frontend_files_modified",
+      "approval_required": true,
+      "verification_after_apply": [
+        "Run pixel_dom_geometry_auditor.py",
+        "Run pixel_live_match_auditor.py",
+        "Reject patch if DOM score drops below current stable baseline",
+        "Reject patch if card/composer geometry shifts unexpectedly"
+      ]
+    },
+    {
+      "icon": "forge_studio",
+      "ok": false,
+      "status": "planned_not_applied",
+      "source_asset_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_selected_assets\\selected-icon-assets-20260705-202047\\selected\\forge_studio.png",
+      "selection_score": 23.77,
+      "frontend_asset_path": "frontend/assets/pixel-ui-approved/forge-studio.png",
+      "target_file": "frontend/pages/studio-v4.html",
+      "target_selector": ".if-studio-icon",
+      "css_target_file": "frontend/pages/studio-v4.css",
+      "expected_css": {
+        "width": "56px",
+        "height": "56px",
+        "border-radius": "18px",
+        "object-fit": "cover"
+      },
+      "risk": "medium",
+      "reason": "Card icon replacement can improve visual similarity but must not move card layout.",
+      "frontend_write_status": "no_frontend_files_modified",
+      "approval_required": true,
+      "verification_after_apply": [
+        "Run pixel_dom_geometry_auditor.py",
+        "Run pixel_live_match_auditor.py",
+        "Reject patch if DOM score drops below current stable baseline",
+        "Reject patch if card/composer geometry shifts unexpectedly"
+      ]
+    },
+    {
+      "icon": "forge_code",
+      "ok": false,
+      "status": "planned_not_applied",
+      "source_asset_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_selected_assets\\selected-icon-assets-20260705-202047\\selected\\forge_code.png",
+      "selection_score": 23.77,
+      "frontend_asset_path": "frontend/assets/pixel-ui-approved/forge-code.png",
+      "target_file": "frontend/pages/studio-v4.html",
+      "target_selector": ".if-code-icon",
+      "css_target_file": "frontend/pages/studio-v4.css",
+      "expected_css": {
+        "width": "56px",
+        "height": "56px",
+        "border-radius": "18px",
+        "object-fit": "cover"
+      },
+      "risk": "medium",
+      "reason": "Card icon replacement can improve visual similarity but must not move card layout.",
+      "frontend_write_status": "no_frontend_files_modified",
+      "approval_required": true,
+      "verification_after_apply": [
+        "Run pixel_dom_geometry_auditor.py",
+        "Run pixel_live_match_auditor.py",
+        "Reject patch if DOM score drops below current stable baseline",
+        "Reject patch if card/composer geometry shifts unexpectedly"
+      ]
+    },
+    {
+      "icon": "forge_work",
+      "ok": false,
+      "status": "planned_not_applied",
+      "source_asset_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_selected_assets\\selected-icon-assets-20260705-202047\\selected\\forge_work.png",
+      "selection_score": 23.77,
+      "frontend_asset_path": "frontend/assets/pixel-ui-approved/forge-work.png",
+      "target_file": "frontend/pages/studio-v4.html",
+      "target_selector": ".if-work-icon",
+      "css_target_file": "frontend/pages/studio-v4.css",
+      "expected_css": {
+        "width": "56px",
+        "height": "56px",
+        "border-radius": "18px",
+        "object-fit": "cover"
+      },
+      "risk": "high",
+      "reason": "ForgeWork crop has been unstable earlier. Must be verified before apply.",
+      "frontend_write_status": "no_frontend_files_modified",
+      "approval_required": true,
+      "verification_after_apply": [
+        "Run pixel_dom_geometry_auditor.py",
+        "Run pixel_live_match_auditor.py",
+        "Reject patch if DOM score drops below current stable baseline",
+        "Reject patch if card/composer geometry shifts unexpectedly"
+      ]
+    }
+  ],
+  "blocked_actions": [
+    "copy_assets_to_frontend_without_approval",
+    "replace_html_icons_without_fit_plan",
+    "change_layout_spacing_during_asset_apply",
+    "commit_generated_audit_reports",
+    "commit_failed_asset_experiments"
+  ],
+  "next_step": "If approved, run PIXEL-MAP-PERFECT-16I to copy selected assets and patch HTML/CSS in one reversible step."
+}

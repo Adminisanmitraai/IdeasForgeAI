@@ -1,0 +1,617 @@
+{
+  "phase": "PIXEL-MAP-PERFECT-17N",
+  "screenshot": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_header_nav_lock\\header-nav-lock-20260706-123346.png",
+  "data": {
+    "viewport": {
+      "width": 853,
+      "height": 1844,
+      "dpr": 1
+    },
+    "nav_candidates": [
+      {
+        "tag": "main",
+        "id": "",
+        "className": "if-shell",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301 \u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f What do you want to create, code, or work on today? Choose a mode or simply describe your task. \u25b8 ForgeStudio",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 853,
+          "height": 1844,
+          "right": 853,
+          "bottom": 1844
+        },
+        "style": {
+          "display": "flex",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "center",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "853px",
+          "height": "1844px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "section",
+        "id": "",
+        "className": "if-phone",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301 \u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f What do you want to create, code, or work on today? Choose a mode or simply describe your task. \u25b8 ForgeStudio",
+        "box": {
+          "x": 212,
+          "y": 0,
+          "width": 430,
+          "height": 1844,
+          "right": 642,
+          "bottom": 1844
+        },
+        "style": {
+          "display": "block",
+          "position": "relative",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px 18px",
+          "margin": "0px",
+          "width": "430px",
+          "height": "1844px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-statusbar",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301",
+        "box": {
+          "x": 230,
+          "y": 0,
+          "width": 394,
+          "height": 58,
+          "right": 624,
+          "bottom": 58
+        },
+        "style": {
+          "display": "flex",
+          "position": "relative",
+          "flexDirection": "row",
+          "alignItems": "flex-start",
+          "justifyContent": "space-between",
+          "gap": "normal",
+          "padding": "17px 42px 0px",
+          "margin": "0px",
+          "width": "394px",
+          "height": "58px",
+          "fontSize": "19px",
+          "fontWeight": "800",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "span",
+        "id": "",
+        "className": "",
+        "text": "9:02",
+        "box": {
+          "x": 272,
+          "y": 17,
+          "width": 39,
+          "height": 26,
+          "right": 310,
+          "bottom": 43
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "38.7188px",
+          "height": "26px",
+          "fontSize": "19px",
+          "fontWeight": "800",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-status-icons",
+        "text": "\u25ae\u25ae\u25ae \u2301",
+        "box": {
+          "x": 483,
+          "y": 17,
+          "width": 99,
+          "height": 21,
+          "right": 582,
+          "bottom": 38
+        },
+        "style": {
+          "display": "flex",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "8px",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "98.5px",
+          "height": "21px",
+          "fontSize": "15px",
+          "fontWeight": "800",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "span",
+        "id": "",
+        "className": "",
+        "text": "\u25ae\u25ae\u25ae",
+        "box": {
+          "x": 483,
+          "y": 17,
+          "width": 47,
+          "height": 21,
+          "right": 530,
+          "bottom": 38
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "46.875px",
+          "height": "21px",
+          "fontSize": "15px",
+          "fontWeight": "800",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "header",
+        "id": "",
+        "className": "if-header",
+        "text": "\u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f",
+        "box": {
+          "x": 212,
+          "y": 58,
+          "width": 430,
+          "height": 86,
+          "right": 642,
+          "bottom": 144
+        },
+        "style": {
+          "display": "grid",
+          "position": "relative",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "14px",
+          "padding": "0px 22px",
+          "margin": "0px -18px",
+          "width": "430px",
+          "height": "86px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "button",
+        "id": "",
+        "className": "if-icon-btn if-menu",
+        "text": "",
+        "box": {
+          "x": 234,
+          "y": 81,
+          "width": 40,
+          "height": 40,
+          "right": 274,
+          "bottom": 121
+        },
+        "style": {
+          "display": "grid",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "5px",
+          "padding": "1px 6px",
+          "margin": "0px",
+          "width": "40px",
+          "height": "40px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-brand",
+        "text": "\u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work",
+        "box": {
+          "x": 292,
+          "y": 77,
+          "width": 216,
+          "height": 48,
+          "right": 508,
+          "bottom": 125
+        },
+        "style": {
+          "display": "flex",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "13px",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "216px",
+          "height": "48px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-logo",
+        "text": "\u2726",
+        "box": {
+          "x": 292,
+          "y": 77,
+          "width": 48,
+          "height": 48,
+          "right": 340,
+          "bottom": 125
+        },
+        "style": {
+          "display": "grid",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "48px",
+          "height": "48px",
+          "fontSize": "28px",
+          "fontWeight": "400",
+          "lineHeight": "28px",
+          "borderRadius": "16px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "",
+        "text": "IdeasForgeAI Create \u00b7 Code \u00b7 Work",
+        "box": {
+          "x": 353,
+          "y": 80,
+          "width": 126,
+          "height": 42,
+          "right": 479,
+          "bottom": 122
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "126.453px",
+          "height": "42px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-brand-name",
+        "text": "IdeasForgeAI",
+        "box": {
+          "x": 353,
+          "y": 80,
+          "width": 126,
+          "height": 22,
+          "right": 479,
+          "bottom": 102
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "126.453px",
+          "height": "22px",
+          "fontSize": "17px",
+          "fontWeight": "850",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-brand-sub",
+        "text": "Create \u00b7 Code \u00b7 Work",
+        "box": {
+          "x": 353,
+          "y": 103,
+          "width": 126,
+          "height": 19,
+          "right": 479,
+          "bottom": 122
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "1px 0px 0px",
+          "width": "126.453px",
+          "height": "19px",
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "div",
+        "id": "",
+        "className": "if-actions",
+        "text": "\u21e7 \u219f",
+        "box": {
+          "x": 522,
+          "y": 79,
+          "width": 98,
+          "height": 44,
+          "right": 620,
+          "bottom": 123
+        },
+        "style": {
+          "display": "flex",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "10px",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "98px",
+          "height": "44px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "button",
+        "id": "",
+        "className": "if-square-btn",
+        "text": "\u21e7",
+        "box": {
+          "x": 522,
+          "y": 79,
+          "width": 44,
+          "height": 44,
+          "right": 566,
+          "bottom": 123
+        },
+        "style": {
+          "display": "grid",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "1px 6px",
+          "margin": "0px",
+          "width": "44px",
+          "height": "44px",
+          "fontSize": "23px",
+          "fontWeight": "800",
+          "lineHeight": "normal",
+          "borderRadius": "15px"
+        }
+      },
+      {
+        "tag": "button",
+        "id": "",
+        "className": "if-primary-btn",
+        "text": "\u219f",
+        "box": {
+          "x": 576,
+          "y": 79,
+          "width": 44,
+          "height": 44,
+          "right": 620,
+          "bottom": 123
+        },
+        "style": {
+          "display": "grid",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "center",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "1px 6px",
+          "margin": "0px",
+          "width": "44px",
+          "height": "44px",
+          "fontSize": "23px",
+          "fontWeight": "800",
+          "lineHeight": "normal",
+          "borderRadius": "15px"
+        }
+      }
+    ],
+    "ideas_chain": [
+      {
+        "tag": "main",
+        "id": "",
+        "className": "if-shell",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301 \u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f What do you want to create, code, or work on today? Choose a mode or simply describe your task. \u25b8 ForgeStudio",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 853,
+          "height": 1844,
+          "right": 853,
+          "bottom": 1844
+        },
+        "style": {
+          "display": "flex",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "center",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "853px",
+          "height": "1844px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "body",
+        "id": "",
+        "className": "",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301 \u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f What do you want to create, code, or work on today? Choose a mode or simply describe your task. \u25b8 ForgeStudio",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 853,
+          "height": 1844,
+          "right": 853,
+          "bottom": 1844
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "853px",
+          "height": "1844px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      }
+    ],
+    "modes_chain": [
+      {
+        "tag": "main",
+        "id": "",
+        "className": "if-shell",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301 \u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f What do you want to create, code, or work on today? Choose a mode or simply describe your task. \u25b8 ForgeStudio",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 853,
+          "height": 1844,
+          "right": 853,
+          "bottom": 1844
+        },
+        "style": {
+          "display": "flex",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "center",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "853px",
+          "height": "1844px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      },
+      {
+        "tag": "body",
+        "id": "",
+        "className": "",
+        "text": "9:02 \u25ae\u25ae\u25ae \u2301 \u2726 IdeasForgeAI Create \u00b7 Code \u00b7 Work \u21e7 \u219f What do you want to create, code, or work on today? Choose a mode or simply describe your task. \u25b8 ForgeStudio",
+        "box": {
+          "x": 0,
+          "y": 0,
+          "width": 853,
+          "height": 1844,
+          "right": 853,
+          "bottom": 1844
+        },
+        "style": {
+          "display": "block",
+          "position": "static",
+          "flexDirection": "row",
+          "alignItems": "normal",
+          "justifyContent": "normal",
+          "gap": "normal",
+          "padding": "0px",
+          "margin": "0px",
+          "width": "853px",
+          "height": "1844px",
+          "fontSize": "16px",
+          "fontWeight": "400",
+          "lineHeight": "normal",
+          "borderRadius": "0px"
+        }
+      }
+    ]
+  }
+}

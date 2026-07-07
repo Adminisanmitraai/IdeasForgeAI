@@ -1,0 +1,137 @@
+{
+  "ok": true,
+  "phase": "PIXEL-MAP-PERFECT-16B",
+  "created_at": "20260705-195507",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "reference_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "output_dir": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507",
+  "contact_sheet": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\reference-asset-contact-sheet.png",
+  "assets": {
+    "header_logo_spark": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\header_logo_spark.png",
+      "box_px": [
+        112,
+        132,
+        194,
+        214
+      ],
+      "width": 82,
+      "height": 82
+    },
+    "header_share_button": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\header_share_button.png",
+      "box_px": [
+        646,
+        132,
+        724,
+        214
+      ],
+      "width": 78,
+      "height": 82
+    },
+    "header_primary_button": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\header_primary_button.png",
+      "box_px": [
+        746,
+        132,
+        824,
+        214
+      ],
+      "width": 78,
+      "height": 82
+    },
+    "forge_studio_icon": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\forge_studio_icon.png",
+      "box_px": [
+        80,
+        705,
+        178,
+        803
+      ],
+      "width": 98,
+      "height": 98
+    },
+    "forge_code_icon": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\forge_code_icon.png",
+      "box_px": [
+        80,
+        963,
+        178,
+        1061
+      ],
+      "width": 98,
+      "height": 98
+    },
+    "forge_work_icon": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\forge_work_icon.png",
+      "box_px": [
+        80,
+        1220,
+        178,
+        1318
+      ],
+      "width": 98,
+      "height": 98
+    },
+    "card_1_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\card_1_full.png",
+      "box_px": [
+        51,
+        673,
+        801,
+        894
+      ],
+      "width": 750,
+      "height": 221
+    },
+    "card_2_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\card_2_full.png",
+      "box_px": [
+        51,
+        931,
+        801,
+        1152
+      ],
+      "width": 750,
+      "height": 221
+    },
+    "card_3_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\card_3_full.png",
+      "box_px": [
+        51,
+        1189,
+        801,
+        1410
+      ],
+      "width": 750,
+      "height": 221
+    },
+    "composer_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\composer_full.png",
+      "box_px": [
+        34,
+        1512,
+        818,
+        1641
+      ],
+      "width": 784,
+      "height": 129
+    },
+    "browser_bar_full": {
+      "path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_reference_assets\\reference-assets-20260705-195507\\browser_bar_full.png",
+      "box_px": [
+        34,
+        1650,
+        818,
+        1797
+      ],
+      "width": 784,
+      "height": 147
+    }
+  },
+  "rule": "Extracted assets are for inspection only. Do not apply to frontend until approved.",
+  "next_step": "Inspect contact sheet and choose exact usable assets for UI patch planning."
+}

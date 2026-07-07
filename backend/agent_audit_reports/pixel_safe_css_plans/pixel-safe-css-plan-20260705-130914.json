@@ -1,0 +1,57 @@
+{
+  "ok": true,
+  "phase": "PIXEL-AGENT-09",
+  "created_at": "20260705-130914",
+  "approval_required": true,
+  "frontend_write_status": "no_frontend_files_modified",
+  "blockers": [],
+  "source_reports": {
+    "pixel_ui_patch_plan": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_patch_plans\\pixel-ui-patch-plan-20260705-130902.json",
+    "pixel_dom_map": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_dom_maps\\pixel-dom-map-20260705-130914.json"
+  },
+  "changes": [
+    {
+      "region": "composer",
+      "target_file": "frontend/pages/studio-v4.css",
+      "target_selector_or_symbol": ".composer-button",
+      "mapping_score": 100,
+      "patch_status": "plan_only_not_applied",
+      "approval_required": true
+    },
+    {
+      "region": "cards",
+      "target_file": "frontend/pages/forgepilot.html",
+      "target_selector_or_symbol": ".forgepilot-shell",
+      "mapping_score": 100,
+      "patch_status": "plan_only_not_applied",
+      "approval_required": true
+    },
+    {
+      "region": "header",
+      "target_file": "frontend/pages/forgepilot.css",
+      "target_selector_or_symbol": ".forgepilot-console__header",
+      "mapping_score": 100,
+      "patch_status": "plan_only_not_applied",
+      "approval_required": true
+    },
+    {
+      "region": "hero",
+      "target_file": "frontend/pages/forgepilot.html",
+      "target_selector_or_symbol": ".forgepilot-hero",
+      "mapping_score": 96,
+      "patch_status": "plan_only_not_applied",
+      "approval_required": true
+    }
+  ],
+  "rollback_plan": [
+    "No rollback needed because this planner does not modify frontend files.",
+    "Any future approved CSS patch must list exact file, selector, before/after intent, and rollback."
+  ],
+  "blocked_actions": [
+    "apply_css_without_safe_css_patch_plan",
+    "apply_css_without_human_approval",
+    "patch_unmapped_selector",
+    "blind_css_override"
+  ],
+  "output_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_safe_css_plans\\pixel-safe-css-plan-20260705-130914.json"
+}

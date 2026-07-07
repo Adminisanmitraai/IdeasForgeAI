@@ -1,0 +1,68 @@
+{
+  "ok": false,
+  "phase": "PIXEL-MAP-PERFECT-02",
+  "created_at": "20260705-165201",
+  "reference_path": "D:\\APPS\\IdeasForgeAI\\frontend\\design-reference\\chat-screen-target.jpeg",
+  "actual_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_captures\\live-ui-capture-20260705-165156.png",
+  "reference_original_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "actual_original_size": {
+    "width": 860,
+    "height": 1864
+  },
+  "comparison_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "minimum_score": 86.0,
+  "overall_ui_match_score": 61.84,
+  "verdict": "FAIL_LAYOUT_MISMATCH",
+  "region_scores": {
+    "status_header": {
+      "pixel_similarity": 57.15,
+      "edge_similarity": 61.83,
+      "color_similarity": 96.92,
+      "score": 64.52
+    },
+    "top_nav": {
+      "pixel_similarity": 53.65,
+      "edge_similarity": 58.32,
+      "color_similarity": 97.5,
+      "score": 61.63
+    },
+    "hero": {
+      "pixel_similarity": 31.12,
+      "edge_similarity": 43.06,
+      "color_similarity": 95.67,
+      "score": 44.38
+    },
+    "cards": {
+      "pixel_similarity": 50.44,
+      "edge_similarity": 55.25,
+      "color_similarity": 92.37,
+      "score": 58.17
+    },
+    "composer": {
+      "pixel_similarity": 79.74,
+      "edge_similarity": 81.21,
+      "color_similarity": 97.85,
+      "score": 82.9
+    },
+    "browser_safe_area": {
+      "pixel_similarity": 61.83,
+      "edge_similarity": 65.72,
+      "color_similarity": 95.04,
+      "score": 67.98
+    }
+  },
+  "observations": [
+    "Cards area does not match reference. Check card height, spacing, font size, and visibility of all 3 cards.",
+    "Hero area does not match reference. Check heading size, line wrapping, and vertical spacing.",
+    "Header/top nav does not match reference. Check icon size, logo spacing, and header height.",
+    "Bottom browser/safe area differs from reference. Ensure composer does not enter browser chrome area."
+  ],
+  "overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_live_match\\pixel-live-match-overlay-20260705-165201.png",
+  "next_step": "Use low-scoring regions to generate exact repair instructions."
+}

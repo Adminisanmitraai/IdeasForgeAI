@@ -1,0 +1,52 @@
+{
+  "ok": true,
+  "created_at": "20260705-125727",
+  "image": "D:\\APPS\\IdeasForgeAI\\backend\\agent_auditor\\pixel_benchmarks\\screenshots\\chat-mobile-current.png",
+  "image_size": {
+    "width": 853,
+    "height": 1844
+  },
+  "confidence_score": 80,
+  "browser_chrome_check": {
+    "ok": true,
+    "browser_cutoff_y": 1705,
+    "old_bad_shape": false,
+    "composer_above_browser_chrome": true
+  },
+  "detected": {
+    "header": null,
+    "hero": null,
+    "cards": [
+      {
+        "x1": 51,
+        "y1": 617,
+        "x2": 801,
+        "y2": 802
+      },
+      {
+        "x1": 51,
+        "y1": 857,
+        "x2": 801,
+        "y2": 1023
+      },
+      {
+        "x1": 51,
+        "y1": 1097,
+        "x2": 801,
+        "y2": 1263
+      }
+    ],
+    "cards_count": 3,
+    "composer": {
+      "x1": 38,
+      "y1": 1538,
+      "x2": 814,
+      "y2": 1658
+    },
+    "light_regions_count": 29
+  },
+  "outputs": {
+    "report_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-report-20260705-125727.json",
+    "overlay_path": "D:\\APPS\\IdeasForgeAI\\backend\\agent_audit_reports\\pixel_debug\\pixel-debug-overlay-20260705-125727.png"
+  }
+}
