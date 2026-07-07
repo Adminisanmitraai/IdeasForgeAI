@@ -12,28 +12,48 @@
   <div class="app-shell" data-view="home">
     <aside class="rail" aria-label="Collapsed sidebar">
       <button class="rail-btn rail-logo" type="button" data-open-sidebar aria-label="Open sidebar">
-        <span class="if-mark" aria-hidden="true">
+        <span class="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 64 64" focusable="false">
-            <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
-            <circle cx="13" cy="17" r="3" />
-            <circle cx="51" cy="19" r="3" />
-            <circle cx="16" cy="49" r="3" />
+            <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+            <circle cx="13" cy="16" r="3"></circle>
+            <circle cx="51" cy="19" r="3"></circle>
+            <circle cx="16" cy="50" r="3"></circle>
           </svg>
         </span>
       </button>
 
-      <button class="rail-btn" type="button" aria-label="New chat">+</button>
-      <button class="rail-btn" type="button" aria-label="Search">
-        <span class="line-search"></span>
+      <button class="rail-btn" type="button" aria-label="New chat">
+        <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
       </button>
+
+      <button class="rail-btn" type="button" aria-label="Search chats">
+        <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="10.8" cy="10.8" r="6.1"></circle>
+          <path d="M15.4 15.4L20 20"></path>
+        </svg>
+      </button>
+
       <button class="rail-btn" type="button" aria-label="Library">
-        <span class="line-doc"></span>
+        <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 4.5h8.5l3.5 3.5v11.5H7z"></path>
+          <path d="M15.5 4.5V8H19"></path>
+          <path d="M10 12h6M10 15h5"></path>
+        </svg>
       </button>
+
       <button class="rail-btn" type="button" aria-label="Pinned">
-        <span class="line-pin"></span>
+        <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M9 4h6l-1 6 3 3v2H7v-2l3-3z"></path>
+          <path d="M12 15v5"></path>
+        </svg>
       </button>
+
       <button class="rail-btn" type="button" aria-label="Chat">
-        <span class="line-chat"></span>
+        <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 6.5h14v9H9l-4 3z"></path>
+        </svg>
       </button>
 
       <div class="rail-bottom">
@@ -44,28 +64,33 @@
     <aside class="sidebar" aria-label="IdeasForgeAI sidebar">
       <div class="sidebar-top">
         <button class="sidebar-brand" type="button" data-close-sidebar aria-label="Close sidebar">
-          <span class="if-mark" aria-hidden="true">
+          <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 64 64" focusable="false">
-              <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
-              <circle cx="13" cy="17" r="3" />
-              <circle cx="51" cy="19" r="3" />
-              <circle cx="16" cy="49" r="3" />
+              <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+              <circle cx="13" cy="16" r="3"></circle>
+              <circle cx="51" cy="19" r="3"></circle>
+              <circle cx="16" cy="50" r="3"></circle>
             </svg>
           </span>
           <span class="brand-name">IdeasForge<span>AI</span></span>
         </button>
 
         <button class="sidebar-collapse" type="button" data-close-sidebar aria-label="Collapse sidebar">
-          <span></span>
+          <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M8 5h8a3 3 0 0 1 3 3v8a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3z"></path>
+            <path d="M10 5v14"></path>
+          </svg>
         </button>
       </div>
 
       <button class="new-chat-button" type="button" data-new-chat>
-        <span class="new-chat-plus">+</span>
+        <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
         <span>New chat</span>
-        <span class="new-chat-spark">
+        <span class="new-chat-spark" aria-hidden="true">
           <svg viewBox="0 0 64 64" focusable="false">
-            <path d="M32 8 C35 24 40 29 56 32 C40 35 35 40 32 56 C29 40 24 35 8 32 C24 29 29 24 32 8Z" />
+            <path d="M32 9 C35.2 24.5 39.5 28.8 55 32 C39.5 35.2 35.2 39.5 32 55 C28.8 39.5 24.5 35.2 9 32 C24.5 28.8 28.8 24.5 32 9Z"></path>
           </svg>
         </span>
       </button>
@@ -73,19 +98,38 @@
       <div class="sidebar-scroll-panel">
         <nav class="sidebar-nav" aria-label="Main menu">
           <a href="#" class="nav-item">
-            <span class="nav-icon line-search"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.8" cy="10.8" r="6.1"></circle>
+              <path d="M15.4 15.4L20 20"></path>
+            </svg>
             <span>Search chats</span>
           </a>
+
           <a href="#" class="nav-item">
-            <span class="nav-icon line-book"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 4.5h8.5l3.5 3.5v11.5H7z"></path>
+              <path d="M15.5 4.5V8H19"></path>
+              <path d="M10 12h6M10 15h5"></path>
+            </svg>
             <span>Library</span>
           </a>
+
           <a href="#" class="nav-item">
-            <span class="nav-icon line-grid"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4.5" y="4.5" width="5" height="5" rx="1.3"></rect>
+              <rect x="14.5" y="4.5" width="5" height="5" rx="1.3"></rect>
+              <rect x="4.5" y="14.5" width="5" height="5" rx="1.3"></rect>
+              <rect x="14.5" y="14.5" width="5" height="5" rx="1.3"></rect>
+            </svg>
             <span>Templates</span>
           </a>
+
           <a href="#" class="nav-item">
-            <span class="nav-icon line-stack"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M4.5 8.5L12 4.8l7.5 3.7-7.5 3.7z"></path>
+              <path d="M4.5 12.2L12 16l7.5-3.8"></path>
+              <path d="M4.5 15.8L12 19.5l7.5-3.7"></path>
+            </svg>
             <span>Knowledge</span>
           </a>
         </nav>
@@ -93,48 +137,71 @@
         <section class="sidebar-section">
           <h2>Pinned</h2>
           <a href="#" class="history-item">
-            <span class="line-pin"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 4h6l-1 6 3 3v2H7v-2l3-3z"></path>
+              <path d="M12 15v5"></path>
+            </svg>
             <span>Marketing campaign ideas</span>
           </a>
           <a href="#" class="history-item">
-            <span class="line-pin"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 4h6l-1 6 3 3v2H7v-2l3-3z"></path>
+              <path d="M12 15v5"></path>
+            </svg>
             <span>Product roadmap Q2</span>
           </a>
           <a href="#" class="history-item">
-            <span class="line-pin"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 4h6l-1 6 3 3v2H7v-2l3-3z"></path>
+              <path d="M12 15v5"></path>
+            </svg>
             <span>AI code assistant plan</span>
           </a>
           <a href="#" class="history-item">
-            <span class="line-pin"></span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M9 4h6l-1 6 3 3v2H7v-2l3-3z"></path>
+              <path d="M12 15v5"></path>
+            </svg>
             <span>Investor pitch outline</span>
           </a>
         </section>
 
         <section class="sidebar-section projects-section">
           <h2>Projects</h2>
-          <a href="#" class="history-item">
-            <span class="line-folder"></span>
-            <span>Acme Startup</span>
-          </a>
-          <a href="#" class="history-item">
-            <span class="line-folder"></span>
-            <span>Website Redesign</span>
-          </a>
-          <a href="#" class="history-item">
-            <span class="line-folder"></span>
-            <span>Q2 Product Launch</span>
-          </a>
-          <a href="#" class="history-item">
-            <span class="line-folder"></span>
+          <a href="#" class="history-item active">
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.8 7.5h6l1.8 2h8.6v9.8H3.8z"></path>
+              <path d="M3.8 7.5v-2h6.5l1.5 2"></path>
+            </svg>
             <span>Personal Workspace</span>
           </a>
           <a href="#" class="history-item">
-            <span class="line-folder"></span>
-            <span>Landing Page Drafts</span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.8 7.5h6l1.8 2h8.6v9.8H3.8z"></path>
+              <path d="M3.8 7.5v-2h6.5l1.5 2"></path>
+            </svg>
+            <span>Work Projects</span>
           </a>
           <a href="#" class="history-item">
-            <span class="line-folder"></span>
-            <span>ForgeCode Experiments</span>
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.8 7.5h6l1.8 2h8.6v9.8H3.8z"></path>
+              <path d="M3.8 7.5v-2h6.5l1.5 2"></path>
+            </svg>
+            <span>AI Research</span>
+          </a>
+          <a href="#" class="history-item">
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.8 7.5h6l1.8 2h8.6v9.8H3.8z"></path>
+              <path d="M3.8 7.5v-2h6.5l1.5 2"></path>
+            </svg>
+            <span>Client Work</span>
+          </a>
+          <a href="#" class="history-item">
+            <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M3.8 7.5h6l1.8 2h8.6v9.8H3.8z"></path>
+              <path d="M3.8 7.5v-2h6.5l1.5 2"></path>
+            </svg>
+            <span>Archive</span>
           </a>
         </section>
       </div>
@@ -146,26 +213,45 @@
           <span>IdeasForgeAI</span>
         </div>
         <button class="profile-settings" type="button" aria-label="Settings">
-          <span></span>
+          <svg class="svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3.2"></circle>
+            <path d="M12 3.8v2M12 18.2v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M3.8 12h2M18.2 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path>
+          </svg>
         </button>
       </div>
     </aside>
 
     <main class="main-surface">
+      <div class="top-actions" aria-label="Top actions">
+        <button class="top-action-btn" type="button" aria-label="Language" title="Language">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5"></circle>
+            <path d="M3.8 12h16.4"></path>
+            <path d="M12 3.5c2.15 2.25 3.25 5.05 3.25 8.5S14.15 18.25 12 20.5c-2.15-2.25-3.25-5.05-3.25-8.5S9.85 5.75 12 3.5Z"></path>
+          </svg>
+        </button>
+
+        <button class="top-action-btn auth-action" type="button" aria-label="Login" title="Login" data-auth-action>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.4"></circle>
+            <path d="M5.2 20c.85-3.25 3.25-5.1 6.8-5.1s5.95 1.85 6.8 5.1"></path>
+          </svg>
+        </button>
+      </div>
       <header class="mobile-header">
-        <button class="mobile-menu" type="button" data-mobile-menu aria-label="Open menu">
+        <button class="mobile-menu" type="button" data-open-sidebar aria-label="Open menu">
           <span></span>
           <span></span>
           <span></span>
         </button>
 
         <div class="mobile-brand">
-          <span class="if-mark" aria-hidden="true">
+          <span class="brand-mark" aria-hidden="true">
             <svg viewBox="0 0 64 64" focusable="false">
-              <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
-              <circle cx="13" cy="17" r="3" />
-              <circle cx="51" cy="19" r="3" />
-              <circle cx="16" cy="49" r="3" />
+              <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+              <circle cx="13" cy="16" r="3"></circle>
+              <circle cx="51" cy="19" r="3"></circle>
+              <circle cx="16" cy="50" r="3"></circle>
             </svg>
           </span>
           <span>IdeasForge<span>AI</span></span>
@@ -177,23 +263,17 @@
       <section class="home-view" data-home-view>
         <div class="brand-watermark" aria-hidden="true">
           <svg viewBox="0 0 64 64" focusable="false">
-            <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
-            <circle cx="13" cy="17" r="3" />
-            <circle cx="51" cy="19" r="3" />
-            <circle cx="16" cy="49" r="3" />
+            <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+            <circle cx="13" cy="16" r="3"></circle>
+            <circle cx="51" cy="19" r="3"></circle>
+            <circle cx="16" cy="50" r="3"></circle>
           </svg>
         </div>
 
         <div class="hero-content">
-          <h1>
-            AI is <span>essential now.</span><br />
-            You don't need to learn<br />
-            it to work with it.
-          </h1>
+          <h1>You don't need to learn AI.<br /><span>You need to work with it.</span></h1>
 
-          <p>
-            Start with a thought. IdeasForgeAI helps you create, code, and work with AI more easily.
-          </p>
+          <p>Start with your problem. IdeasForgeAI helps you create your own tools, apps, code, documents, and workflows with AI - no AI expertise required.</p>
 
           <form class="composer hero-composer" data-home-form autocomplete="off">
             <button class="composer-plus" type="button" aria-label="Add">+</button>
@@ -224,25 +304,36 @@
 
           <div class="quick-chips" aria-label="IdeasForgeAI pillars">
             <button class="quick-chip" type="button" data-chip="ForgeStudio">
-              <span class="product-icon studio-product-icon">
-                <span class="icon-window"></span>
-                <span class="icon-cursor"></span>
+              <span class="product-icon studio-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="4.2" y="5.5" width="13.8" height="10" rx="2.1"></rect>
+                  <path d="M7.2 8.6h7.8M7.2 11.2h5.2"></path>
+                  <path class="icon-fill" d="M15.2 14.2l5 2.1-2.6 1.1-1.1 2.6z"></path>
+                </svg>
               </span>
               <span>ForgeStudio</span>
             </button>
 
             <button class="quick-chip" type="button" data-chip="ForgeCode">
-              <span class="product-icon code-product-icon">
-                <span class="icon-code-screen"></span>
-                <span class="icon-code-text">&lt;/&gt;</span>
+              <span class="product-icon code-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <rect x="4" y="4.8" width="16" height="14.4" rx="3"></rect>
+                  <path d="M10 9l-3 3 3 3M14 9l3 3-3 3"></path>
+                  <path d="M12.8 7.9l-1.6 8.2"></path>
+                </svg>
               </span>
               <span>ForgeCode</span>
             </button>
 
             <button class="quick-chip" type="button" data-chip="ForgeWork">
-              <span class="product-icon work-product-icon">
-                <span class="icon-chat-orb"></span>
-                <span class="icon-orbit"></span>
+              <span class="product-icon work-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" focusable="false">
+                  <path d="M5 6.8h14v8.6H9.3L5 18.8z"></path>
+                  <circle class="icon-fill" cx="9.4" cy="11" r="1"></circle>
+                  <circle class="icon-fill" cx="12" cy="11" r="1"></circle>
+                  <circle class="icon-fill" cx="14.6" cy="11" r="1"></circle>
+                  <path d="M17.2 5.2c1.4.8 2.4 2 2.9 3.5"></path>
+                </svg>
               </span>
               <span>ForgeWork</span>
             </button>
@@ -262,12 +353,12 @@
 
           <article class="chat-message assistant-message">
             <div class="assistant-mark">
-              <span class="if-mark" aria-hidden="true">
+              <span class="brand-mark" aria-hidden="true">
                 <svg viewBox="0 0 64 64" focusable="false">
-                  <path d="M32 4 C36 22 42 28 60 32 C42 36 36 42 32 60 C28 42 22 36 4 32 C22 28 28 22 32 4Z" />
-                  <circle cx="13" cy="17" r="3" />
-                  <circle cx="51" cy="19" r="3" />
-                  <circle cx="16" cy="49" r="3" />
+                  <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+                  <circle cx="13" cy="16" r="3"></circle>
+                  <circle cx="51" cy="19" r="3"></circle>
+                  <circle cx="16" cy="50" r="3"></circle>
                 </svg>
               </span>
             </div>
@@ -300,3 +391,4 @@
   <script src="./home.js"></script>
 </body>
 </html>
+

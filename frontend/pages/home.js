@@ -140,3 +140,15 @@
     showHome();
   }
 })();
+// HOME-PASS-28-HERO-ACTIONS-START
+(() => {
+  const authButton = document.querySelector("[data-auth-action]");
+  if (!authButton) return;
+
+  authButton.addEventListener("click", () => {
+    const isLoggedIn = document.body.classList.toggle("is-logged-in");
+    authButton.setAttribute("aria-label", isLoggedIn ? "Logout" : "Login");
+    authButton.setAttribute("title", isLoggedIn ? "Logout" : "Login");
+  });
+})();
+// HOME-PASS-28-HERO-ACTIONS-END
