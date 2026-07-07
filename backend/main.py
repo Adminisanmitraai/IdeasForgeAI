@@ -6093,3 +6093,40 @@ async def ideasforge_home_chat_2(payload: _IdeasForgeHomeChatRequest2):
     }
 
 # HOME-CHAT-BRAIN-PASS2-END
+
+
+# CHAT-BRAIN-CORS-FIX-START
+# Browser CORS unlock for IdeasForgeAI homepage chat.
+# Needed because PowerShell can call /api/home-chat, but browser fetch needs CORS/preflight approval.
+
+from starlette.responses import Response as _IFChatCorsResponse
+
+_IF_ALLOWED_CHAT_ORIGINS = {
+    "https://ideasforgeai.com",
+    "https://www.ideasforgeai.com",
+    "https://ideasforgeai-web.onrender.com",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://192.168.1.7:5173",
+    "http://192.168.1.7"
+}
+
+@app.middleware("http")
+async def _ideasforgeai_chat_cors_middleware(request, call_next):
+    origin = request.headers.get("origin", "")
+
+    allow_origin = origin if origin in _IF_ALLOWED_CHAT_ORIGINS else "*"
+
+    if request.method == "OPTIONS":
+        response = _IFChatCorsResponse(status_code=204)
+    else:
+        response = await call_next(request)
+
+    response.headers["Access-Control-Allow-Origin"] = allow_origin
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin"
+    response.headers["Access-Control-Max-Age"] = "86400"
+
+    return response
+
+# CHAT-BRAIN-CORS-FIX-END
