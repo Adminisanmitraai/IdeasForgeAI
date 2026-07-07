@@ -1049,3 +1049,1914 @@ body.is-logged-in .auth-action::after {
   }
 }
 /* HOME-PASS-28-HERO-ACTIONS-END */
+/* HOME-CHAT-POLISH-PASS-29-START */
+
+/* Chat page polish only. Keeps sidebar, rail, hero, chips, and composer architecture unchanged. */
+.chat-view {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding: 0 24px 22px;
+  background:
+    radial-gradient(circle at 55% 0%, rgba(156, 124, 255, 0.075), transparent 34rem),
+    radial-gradient(circle at 82% 32%, rgba(92, 62, 190, 0.08), transparent 26rem),
+    rgba(0, 0, 0, 0.0);
+}
+
+.chat-view[hidden] {
+  display: none !important;
+}
+
+.chat-view .chat-topbar {
+  display: none !important;
+}
+
+.chat-scroll {
+  width: min(100%, 860px);
+  min-height: 0;
+  margin: 0 auto;
+  padding: clamp(84px, 14vh, 136px) 0 124px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.20) transparent;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+}
+
+.chat-message {
+  margin-bottom: 18px;
+}
+
+.chat-message p {
+  margin: 0;
+}
+
+.user-message {
+  width: fit-content;
+  max-width: min(640px, 78%);
+  margin-left: auto;
+  padding: 12px 17px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px 18px 6px 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.070), rgba(255, 255, 255, 0.040)),
+    #202126;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 10px 24px rgba(0, 0, 0, 0.18);
+}
+
+.user-message p {
+  color: rgba(255, 255, 255, 0.96);
+  font-size: 15px;
+  line-height: 1.52;
+  font-weight: 520;
+}
+
+.assistant-message {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 13px;
+  max-width: min(760px, 94%);
+  margin-right: auto;
+}
+
+.assistant-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  padding-top: 3px;
+}
+
+.assistant-mark .if-mark {
+  width: 28px;
+  height: 28px;
+}
+
+.assistant-card {
+  position: relative;
+  padding: 23px 24px;
+  border: 1px solid rgba(255, 255, 255, 0.105);
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.94);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.030)),
+    #15161b;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.assistant-card::before {
+  content: "IdeasForgeAI";
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(169, 140, 255, 0.94);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 780;
+  letter-spacing: 0.03em;
+}
+
+.assistant-card p {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  line-height: 1.58;
+  font-weight: 450;
+}
+
+.chat-composer {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  z-index: 12;
+  transform: translateX(-50%);
+  width: min(calc(100% - 48px), 870px);
+  margin: 0;
+}
+
+.chat-view .composer {
+  border-color: rgba(255, 255, 255, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.115), rgba(255, 255, 255, 0.060)),
+    #1d1e22;
+}
+
+.chat-view .composer textarea {
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.chat-view .composer textarea::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.chat-view .composer-send {
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(0, 0, 0, 0.16),
+    0 0 0 4px rgba(156, 124, 255, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.30);
+}
+
+body.sidebar-open .chat-scroll,
+body.sidebar-open .chat-composer {
+  transition: width 160ms ease;
+}
+
+.chat-empty-hint {
+  width: fit-content;
+  max-width: min(680px, 92%);
+  margin: 0 auto 22px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .chat-view {
+    grid-template-rows: minmax(0, 1fr) auto;
+    padding: 0 14px 12px;
+  }
+
+  .chat-scroll {
+    width: 100%;
+    padding: 88px 0 104px;
+  }
+
+  .user-message {
+    max-width: 86%;
+    padding: 11px 15px;
+    border-radius: 17px 17px 6px 17px;
+  }
+
+  .assistant-message {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .assistant-mark {
+    width: 30px;
+    height: 30px;
+  }
+
+  .assistant-mark .if-mark {
+    width: 24px;
+    height: 24px;
+  }
+
+  .assistant-card {
+    padding: 18px 17px;
+    border-radius: 18px;
+  }
+
+  .chat-composer {
+    bottom: 12px;
+    width: calc(100% - 22px);
+  }
+}
+
+/* HOME-CHAT-POLISH-PASS-29-END */
+/* HOME-CHAT-PASS30-POLISH-START */
+
+/* Chat page final polish only */
+.chat-view {
+  grid-template-rows: 74px minmax(0, 1fr) auto !important;
+  padding: 0 22px 34px !important;
+}
+
+.chat-topbar {
+  min-height: 74px !important;
+  pointer-events: none;
+}
+
+.chat-scroll {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 72px 0 130px !important;
+}
+
+.chat-message {
+  width: min(100%, 720px) !important;
+  max-width: 720px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.user-message {
+  width: fit-content !important;
+  max-width: min(520px, 76%) !important;
+  margin: 0 auto 18px !important;
+  padding: 12px 18px !important;
+  border-radius: 16px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04)),
+    #1f2025 !important;
+  border: 1px solid rgba(255,255,255,.08) !important;
+  box-shadow: 0 12px 30px rgba(0,0,0,.22) !important;
+}
+
+.user-message p {
+  font-size: 15px !important;
+  line-height: 1.45 !important;
+}
+
+.assistant-message {
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  gap: 14px !important;
+  align-items: start !important;
+}
+
+.assistant-message .assistant-mark {
+  display: grid !important;
+  width: 32px !important;
+  height: 32px !important;
+  place-items: center !important;
+  margin-top: 10px !important;
+}
+
+.assistant-card {
+  padding: 22px 24px !important;
+  border-radius: 18px !important;
+  border: 1px solid rgba(255,255,255,.12) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.032)),
+    #17181d !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.055),
+    0 20px 50px rgba(0,0,0,.28) !important;
+}
+
+.assistant-card::before {
+  content: "IdeasForgeAI";
+  display: block;
+  margin-bottom: 8px;
+  color: #a98cff;
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: .01em;
+}
+
+.assistant-card p {
+  font-size: 15px !important;
+  line-height: 1.62 !important;
+  color: rgba(255,255,255,.94) !important;
+}
+
+.chat-composer {
+  position: relative !important;
+  z-index: 30 !important;
+  width: min(100%, 870px) !important;
+  margin: 0 auto !important;
+  transform: none !important;
+}
+
+.chat-view .composer {
+  min-height: 58px !important;
+}
+
+/* Keep top-right actions clean above chat */
+.chat-view ~ .top-actions,
+.top-actions {
+  z-index: 40 !important;
+}
+
+/* Mobile chat polish */
+@media (max-width: 760px) {
+  .chat-view {
+    grid-template-rows: 68px minmax(0, 1fr) auto !important;
+    padding: 0 14px 18px !important;
+  }
+
+  .chat-scroll {
+    padding: 44px 0 108px !important;
+  }
+
+  .chat-message {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .user-message {
+    max-width: 82% !important;
+  }
+
+  .assistant-message {
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .assistant-card {
+    padding: 18px 16px !important;
+    border-radius: 16px !important;
+  }
+
+  .chat-composer {
+    width: 100% !important;
+  }
+}
+
+/* HOME-CHAT-PASS30-POLISH-END */
+/* HOME-CHAT-PASS30B-COMPOSER-FIX-START */
+
+/* Fix chat composer only. Do not affect landing composer/sidebar. */
+.chat-view {
+  display: grid !important;
+  grid-template-rows: 76px minmax(0, 1fr) 86px !important;
+  height: 100dvh !important;
+  min-height: 0 !important;
+  padding: 0 22px 18px !important;
+  overflow: hidden !important;
+}
+
+.chat-scroll {
+  grid-row: 2 !important;
+  display: block !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding: 56px 0 34px !important;
+}
+
+.chat-composer,
+.chat-view .chat-composer,
+.chat-view form.chat-composer.composer {
+  grid-row: 3 !important;
+  position: static !important;
+  inset: auto !important;
+  left: auto !important;
+  right: auto !important;
+  top: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+
+  width: min(100%, 870px) !important;
+  max-width: 870px !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 58px !important;
+  max-height: none !important;
+
+  margin: 0 auto !important;
+  align-self: end !important;
+  justify-self: center !important;
+
+  border-radius: 999px !important;
+  overflow: visible !important;
+}
+
+.chat-view .composer::before,
+.chat-view .composer::after,
+.chat-composer::before,
+.chat-composer::after {
+  display: none !important;
+  content: none !important;
+}
+
+.chat-message {
+  width: min(100%, 720px) !important;
+  max-width: 720px !important;
+}
+
+.user-message {
+  margin: 0 auto 18px !important;
+}
+
+.assistant-message {
+  margin: 0 auto !important;
+}
+
+/* Keep top-right buttons visible but not interfering */
+.top-actions {
+  z-index: 50 !important;
+}
+
+@media (max-width: 760px) {
+  .chat-view {
+    grid-template-rows: 74px minmax(0, 1fr) 78px !important;
+    padding: 0 14px 12px !important;
+  }
+
+  .chat-scroll {
+    padding: 38px 0 28px !important;
+  }
+
+  .chat-composer,
+  .chat-view .chat-composer,
+  .chat-view form.chat-composer.composer {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 56px !important;
+  }
+}
+
+/* HOME-CHAT-PASS30B-COMPOSER-FIX-END */
+/* HOME-CHAT-LEFT-RIGHT-DISCLAIMER-START */
+
+/* Chat page only: align user message right, assistant message left */
+.chat-view {
+  padding-bottom: 42px !important;
+}
+
+.chat-scroll {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  overflow-y: auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 120px !important;
+}
+
+.chat-view .chat-message {
+  width: min(100%, 800px) !important;
+  max-width: 800px !important;
+}
+
+/* User message to the right, like ChatGPT */
+.chat-view .user-message {
+  align-self: center !important;
+  width: fit-content !important;
+  max-width: min(520px, 68vw) !important;
+  margin: 0 calc((100% - min(800px, 100%)) / 2) 18px auto !important;
+  padding: 13px 18px !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.04)),
+    #202126 !important;
+}
+
+/* Assistant message to the left */
+.chat-view .assistant-message {
+  align-self: center !important;
+  width: min(100%, 800px) !important;
+  max-width: 800px !important;
+  margin: 0 auto 18px !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+}
+
+/* Keep assistant card compact and left-readable */
+.chat-view .assistant-card {
+  width: min(100%, 680px) !important;
+  margin-right: auto !important;
+}
+
+/* Composer line below tray */
+.chat-view .chat-composer {
+  position: relative !important;
+  margin-bottom: 24px !important;
+}
+
+.chat-view .chat-composer::after {
+  content: "IdeasForgeAI can make mistakes. Check important info.";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 10px);
+  text-align: center;
+  color: rgba(255,255,255,.58);
+  font-size: 12px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Mobile: keep left/right natural and disclaimer visible */
+@media (max-width: 760px) {
+  .chat-view {
+    padding-bottom: 34px !important;
+  }
+
+  .chat-scroll {
+    padding-bottom: 110px !important;
+  }
+
+  .chat-view .chat-message,
+  .chat-view .assistant-message {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .chat-view .user-message {
+    max-width: 82% !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  .chat-view .assistant-card {
+    width: 100% !important;
+  }
+
+  .chat-view .chat-composer::after {
+    font-size: 11px;
+    top: calc(100% + 8px);
+  }
+}
+
+/* HOME-CHAT-LEFT-RIGHT-DISCLAIMER-END */
+/* HOME-CHAT-MESSAGE-CLEANUP-START */
+
+/* Chat page only: remove assistant bubble/card background */
+.chat-view .assistant-card {
+  width: min(100%, 680px) !important;
+  margin-right: auto !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Remove the IdeasForgeAI label/tag above assistant message */
+.chat-view .assistant-card::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Keep assistant text clean like ChatGPT */
+.chat-view .assistant-card p {
+  margin: 0 !important;
+  color: rgba(255,255,255,.96) !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  font-weight: 430 !important;
+}
+
+/* Keep assistant message aligned left inside the main chat column */
+.chat-view .assistant-message {
+  width: min(100%, 800px) !important;
+  max-width: 800px !important;
+  margin: 0 auto 22px !important;
+  display: grid !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  gap: 14px !important;
+  align-items: start !important;
+}
+
+/* More room for the line below composer */
+.chat-view {
+  grid-template-rows: 76px minmax(0, 1fr) 106px !important;
+  padding-bottom: 8px !important;
+  overflow: hidden !important;
+}
+
+.chat-scroll {
+  padding-bottom: 44px !important;
+}
+
+/* Composer line below tray */
+.chat-view .chat-composer {
+  position: relative !important;
+  margin: 0 auto 24px !important;
+  overflow: visible !important;
+}
+
+.chat-view .chat-composer::after {
+  content: "IdeasForgeAI can make mistakes. Check important info.";
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  top: calc(100% + 11px) !important;
+  display: block !important;
+  text-align: center !important;
+  color: rgba(255,255,255,.58) !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  font-weight: 400 !important;
+  pointer-events: none !important;
+  white-space: nowrap !important;
+  z-index: 50 !important;
+}
+
+/* Mobile safe spacing */
+@media (max-width: 760px) {
+  .chat-view {
+    grid-template-rows: 72px minmax(0, 1fr) 96px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .chat-view .assistant-message {
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  .chat-view .assistant-card p {
+    font-size: 15px !important;
+  }
+
+  .chat-view .chat-composer::after {
+    top: calc(100% + 8px) !important;
+    font-size: 11px !important;
+  }
+}
+
+/* HOME-CHAT-MESSAGE-CLEANUP-END */
+/* HOME-MOBILE-CHAT-PASS31-START */
+
+/* Mobile only: 390 x 844 ChatGPT-style chat screen */
+@media (max-width: 760px) {
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden !important;
+    background: #000 !important;
+  }
+
+  .app-shell {
+    display: block !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .rail,
+  .sidebar {
+    display: none !important;
+  }
+
+  .main-surface {
+    position: relative !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+    background:
+      radial-gradient(circle at 72% 22%, rgba(130, 92, 255, 0.10), transparent 18rem),
+      #000 !important;
+  }
+
+  .top-actions {
+    top: max(14px, env(safe-area-inset-top)) !important;
+    right: 14px !important;
+    z-index: 60 !important;
+    gap: 8px !important;
+  }
+
+  .top-action-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 14px !important;
+  }
+
+  .mobile-header {
+    display: none !important;
+  }
+
+  .chat-view {
+    display: grid !important;
+    grid-template-rows: minmax(0, 1fr) 92px !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    padding: 0 14px 10px !important;
+    overflow: hidden !important;
+  }
+
+  .chat-view[hidden] {
+    display: none !important;
+  }
+
+  .chat-topbar {
+    display: none !important;
+  }
+
+  .chat-scroll {
+    grid-row: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 92px 0 34px !important;
+    scrollbar-width: none !important;
+  }
+
+  .chat-scroll::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  .chat-view .chat-message {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  /* User message: right side */
+  .chat-view .user-message {
+    align-self: flex-end !important;
+    width: fit-content !important;
+    max-width: 78% !important;
+    margin: 0 0 20px auto !important;
+    padding: 11px 16px !important;
+    border-radius: 18px !important;
+    color: #fff !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.045)),
+      #202126 !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    box-shadow: none !important;
+  }
+
+  .chat-view .user-message p {
+    margin: 0 !important;
+    font-size: 15px !important;
+    line-height: 1.42 !important;
+  }
+
+  /* Assistant message: left side, no bubble/card background */
+  .chat-view .assistant-message {
+    align-self: stretch !important;
+    display: grid !important;
+    grid-template-columns: 30px minmax(0, 1fr) !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 22px 0 !important;
+  }
+
+  .chat-view .assistant-message .assistant-mark {
+    width: 28px !important;
+    height: 28px !important;
+    margin-top: 1px !important;
+  }
+
+  .chat-view .assistant-message .assistant-mark .if-mark {
+    width: 28px !important;
+    height: 28px !important;
+  }
+
+  .chat-view .assistant-card {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .chat-view .assistant-card::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  .chat-view .assistant-card p {
+    margin: 0 !important;
+    color: rgba(255,255,255,.96) !important;
+    font-size: 15.5px !important;
+    line-height: 1.62 !important;
+    font-weight: 430 !important;
+  }
+
+  /* Composer fixed visually at bottom, same style as desktop */
+  .chat-composer,
+  .chat-view .chat-composer,
+  .chat-view form.chat-composer.composer {
+    grid-row: 2 !important;
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 58px !important;
+    height: 58px !important;
+    margin: 0 auto 22px !important;
+    padding: 6px 7px !important;
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto auto !important;
+    gap: 7px !important;
+    align-items: center !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.105), rgba(255,255,255,.055)),
+      #202126 !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 18px 44px rgba(0,0,0,.36) !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  .chat-view .composer-plus {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 29px !important;
+  }
+
+  .chat-view .composer textarea {
+    min-height: 26px !important;
+    max-height: 84px !important;
+    font-size: 15.5px !important;
+    line-height: 1.45 !important;
+    color: rgba(255,255,255,.94) !important;
+  }
+
+  .chat-view .composer textarea::placeholder {
+    color: rgba(255,255,255,.58) !important;
+  }
+
+  .chat-view .composer-mode {
+    display: none !important;
+  }
+
+  .chat-view .composer-mic {
+    width: 34px !important;
+    height: 42px !important;
+    border-left: 0 !important;
+  }
+
+  .chat-view .composer-send {
+    width: 44px !important;
+    height: 44px !important;
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -1px 0 rgba(0,0,0,.14),
+      0 0 20px rgba(156,124,255,.22) !important;
+  }
+
+  .chat-view .chat-composer::after {
+    content: "IdeasForgeAI can make mistakes. Check important info.";
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: calc(100% + 8px) !important;
+    display: block !important;
+    text-align: center !important;
+    color: rgba(255,255,255,.52) !important;
+    font-size: 10.5px !important;
+    line-height: 1.2 !important;
+    font-weight: 400 !important;
+    white-space: nowrap !important;
+    pointer-events: none !important;
+  }
+
+  /* Mobile landing screen */
+  .home-view {
+    display: block !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    padding: 0 16px !important;
+    overflow: hidden !important;
+  }
+
+  .home-view[hidden] {
+    display: none !important;
+  }
+
+  .hero-content {
+    width: 100% !important;
+    padding-top: 86px !important;
+    transform: none !important;
+    text-align: center !important;
+  }
+
+  .hero-content h1 {
+    margin: 0 0 18px !important;
+    font-size: clamp(38px, 10vw, 47px) !important;
+    line-height: 1.03 !important;
+    letter-spacing: -0.07em !important;
+  }
+
+  .hero-content p {
+    max-width: 350px !important;
+    margin: 0 auto 46px !important;
+    font-size: 14.5px !important;
+    line-height: 1.45 !important;
+  }
+
+  .hero-composer {
+    width: 100% !important;
+    min-height: 58px !important;
+    height: 58px !important;
+    grid-template-columns: auto minmax(0, 1fr) auto auto !important;
+    margin-bottom: 18px !important;
+  }
+
+  .hero-composer .composer-mode {
+    display: none !important;
+  }
+
+  .quick-chips {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+
+  .quick-chip {
+    min-height: 104px !important;
+    flex-direction: column !important;
+    gap: 9px !important;
+    border-radius: 18px !important;
+    font-size: 13.5px !important;
+  }
+
+  .brand-watermark {
+    top: 31% !important;
+    right: -92px !important;
+    width: 230px !important;
+    height: 230px !important;
+    opacity: .11 !important;
+  }
+}
+
+/* HOME-MOBILE-CHAT-PASS31-END */
+/* HOME-MOBILE-LANDING-POLISH-PASS32-START */
+
+/* Mobile landing polish only. Desktop and chat remain untouched. */
+@media (max-width: 760px) {
+  .home-view {
+    width: 100vw !important;
+    height: 100svh !important;
+    min-height: 0 !important;
+    padding: 0 18px !important;
+    overflow: hidden !important;
+    background:
+      radial-gradient(circle at 72% 22%, rgba(132, 96, 255, 0.11), transparent 15rem),
+      radial-gradient(circle at 52% 46%, rgba(132, 96, 255, 0.07), transparent 18rem),
+      #000 !important;
+  }
+
+  .hero-content {
+    width: 100% !important;
+    max-width: 390px !important;
+    margin: 0 auto !important;
+    padding-top: clamp(82px, 12svh, 108px) !important;
+    transform: none !important;
+    text-align: center !important;
+  }
+
+  .hero-content h1 {
+    margin: 0 auto 18px !important;
+    max-width: 360px !important;
+    font-size: clamp(35px, 8.8vw, 41px) !important;
+    line-height: 1.05 !important;
+    font-weight: 720 !important;
+    letter-spacing: -0.058em !important;
+    text-wrap: balance !important;
+  }
+
+  .hero-content h1 span {
+    color: #a98cff !important;
+  }
+
+  .hero-content p {
+    max-width: 342px !important;
+    margin: 0 auto 34px !important;
+    color: rgba(255,255,255,.76) !important;
+    font-size: 14.5px !important;
+    line-height: 1.48 !important;
+    font-weight: 430 !important;
+    text-wrap: balance !important;
+  }
+
+  .top-actions {
+    top: max(18px, env(safe-area-inset-top)) !important;
+    right: 18px !important;
+    gap: 8px !important;
+  }
+
+  .top-action-btn {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 14px !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+      rgba(18,19,24,.72) !important;
+    backdrop-filter: blur(18px) !important;
+  }
+
+  .hero-composer,
+  .home-view .hero-composer {
+    width: 100% !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    margin: 0 auto 16px !important;
+    padding: 5px 7px !important;
+    grid-template-columns: auto minmax(0, 1fr) auto auto !important;
+    gap: 7px !important;
+    border-radius: 999px !important;
+    border-color: rgba(255,255,255,.18) !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.115), rgba(255,255,255,.058)),
+      #202126 !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.09),
+      0 16px 38px rgba(0,0,0,.34),
+      0 0 0 1px rgba(156,124,255,.06) !important;
+  }
+
+  .home-view .composer-plus {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 30px !important;
+    background: rgba(255,255,255,.075) !important;
+  }
+
+  .home-view .composer textarea {
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    font-size: 16px !important;
+    line-height: 26px !important;
+    color: rgba(255,255,255,.94) !important;
+  }
+
+  .home-view .composer textarea::placeholder {
+    color: rgba(255,255,255,.54) !important;
+  }
+
+  .home-view .composer-mic {
+    width: 32px !important;
+    height: 42px !important;
+    border-left: 1px solid rgba(255,255,255,.14) !important;
+  }
+
+  .home-view .composer-send {
+    width: 44px !important;
+    height: 44px !important;
+    box-shadow:
+      inset 0 1px 0 #fff,
+      inset 0 -1px 0 rgba(0,0,0,.16),
+      0 0 20px rgba(156,124,255,.22) !important;
+  }
+
+  .quick-chips {
+    width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+    margin: 0 auto !important;
+  }
+
+  .quick-chip {
+    min-height: 86px !important;
+    padding: 12px 6px !important;
+    flex-direction: column !important;
+    gap: 9px !important;
+    border-radius: 20px !important;
+    font-size: 14.5px !important;
+    font-weight: 760 !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.035)),
+      #191a1f !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.06),
+      0 14px 32px rgba(0,0,0,.28) !important;
+  }
+
+  .quick-chip .product-icon {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border-radius: 11px !important;
+  }
+
+  .brand-watermark {
+    top: 38% !important;
+    right: -104px !important;
+    width: 230px !important;
+    height: 230px !important;
+    opacity: .10 !important;
+  }
+}
+
+/* HOME-MOBILE-LANDING-POLISH-PASS32-END */
+/* HOME-MOBILE-LANDING-SHIFT-DOWN-START */
+
+/* Mobile landing only: shift main content slightly down, keep top icons untouched */
+@media (max-width: 760px) {
+  .home-view:not([hidden]) .hero-content {
+    padding-top: clamp(112px, 15svh, 136px) !important;
+  }
+
+  .home-view:not([hidden]) .hero-content h1 {
+    margin-bottom: 19px !important;
+  }
+
+  .home-view:not([hidden]) .hero-content p {
+    margin-bottom: 38px !important;
+  }
+
+  .home-view:not([hidden]) .hero-composer {
+    margin-bottom: 18px !important;
+  }
+
+  .home-view:not([hidden]) .quick-chips {
+    margin-top: 2px !important;
+  }
+
+  .home-view:not([hidden]) .brand-watermark {
+    top: 42% !important;
+  }
+}
+
+/* HOME-MOBILE-LANDING-SHIFT-DOWN-END */
+/* HOME-MOBILE-LANDING-SHIFT-DOWN-MORE-START */
+
+/* Mobile landing only: shift content slightly more down, top icons untouched */
+@media (max-width: 760px) {
+  .home-view:not([hidden]) .hero-content {
+    padding-top: clamp(138px, 17svh, 158px) !important;
+  }
+
+  .home-view:not([hidden]) .hero-content h1 {
+    margin-bottom: 20px !important;
+  }
+
+  .home-view:not([hidden]) .hero-content p {
+    margin-bottom: 40px !important;
+  }
+
+  .home-view:not([hidden]) .hero-composer {
+    margin-bottom: 20px !important;
+  }
+
+  .home-view:not([hidden]) .quick-chips {
+    margin-top: 4px !important;
+  }
+
+  .home-view:not([hidden]) .brand-watermark {
+    top: 45% !important;
+  }
+}
+
+/* HOME-MOBILE-LANDING-SHIFT-DOWN-MORE-END */
+/* HOME-MOBILE-MENU-DRAWER-PASS33-START */
+
+/* Mobile only: ChatGPT-style top menu + slide drawer */
+@media (max-width: 760px) {
+  .mobile-header {
+    position: fixed !important;
+    top: max(12px, env(safe-area-inset-top)) !important;
+    left: 14px !important;
+    right: 112px !important;
+    z-index: 80 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-height: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-menu {
+    display: grid !important;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    place-items: center !important;
+    border: 1px solid rgba(255,255,255,.10) !important;
+    border-radius: 14px !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.025)),
+      rgba(18,19,24,.72) !important;
+    color: #fff !important;
+    backdrop-filter: blur(18px) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 12px 26px rgba(0,0,0,.22) !important;
+  }
+
+  .mobile-menu span {
+    display: block !important;
+    width: 17px !important;
+    height: 1.25px !important;
+    margin: 2px 0 !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,.92) !important;
+  }
+
+  .mobile-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    margin-left: 9px !important;
+    min-width: 0 !important;
+    color: #fff !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+    font-weight: 760 !important;
+    letter-spacing: -0.045em !important;
+    white-space: nowrap !important;
+  }
+
+  .mobile-brand .if-mark {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .mobile-brand > span:last-child {
+    display: inline-block !important;
+  }
+
+  .mobile-brand > span:last-child span {
+    color: #a98cff !important;
+  }
+
+  .mobile-plus {
+    display: none !important;
+  }
+
+  .top-actions {
+    top: max(14px, env(safe-area-inset-top)) !important;
+    right: 16px !important;
+    z-index: 82 !important;
+  }
+
+  /* Mobile drawer uses the existing sidebar, but only when opened */
+  .sidebar {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    z-index: 120 !important;
+    display: grid !important;
+    grid-template-rows: auto auto minmax(0, 1fr) auto !important;
+    width: min(86vw, 318px) !important;
+    max-width: 318px !important;
+    height: 100dvh !important;
+    min-height: 0 !important;
+    padding: max(16px, env(safe-area-inset-top)) 7px max(14px, env(safe-area-inset-bottom)) 14px !important;
+    border-right: 1px solid rgba(255,255,255,.10) !important;
+    background:
+      linear-gradient(180deg, rgba(18,19,24,.98), rgba(10,11,15,.98)),
+      #0b0c10 !important;
+    box-shadow: 28px 0 70px rgba(0,0,0,.52) !important;
+    transform: translateX(-104%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition:
+      transform 260ms cubic-bezier(.2,.82,.2,1),
+      opacity 180ms ease !important;
+    overflow: hidden !important;
+  }
+
+  body.mobile-sidebar-open .sidebar {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  body.mobile-sidebar-open .mobile-drawer-backdrop {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-drawer-backdrop {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 110 !important;
+    background: rgba(0,0,0,.48) !important;
+    backdrop-filter: blur(5px) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 220ms ease !important;
+  }
+
+  body.mobile-sidebar-open {
+    overflow: hidden !important;
+  }
+
+  body.mobile-sidebar-open .main-surface {
+    pointer-events: none !important;
+  }
+
+  body.mobile-sidebar-open .sidebar {
+    pointer-events: auto !important;
+  }
+
+  .sidebar-scroll-panel {
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    padding-bottom: 92px !important;
+  }
+
+  .sidebar-profile {
+    min-height: 58px !important;
+  }
+
+  /* Keep landing/chat content clear below the mobile header */
+  .home-view:not([hidden]) .hero-content {
+    padding-top: clamp(144px, 18svh, 164px) !important;
+  }
+
+  .chat-scroll {
+    padding-top: 104px !important;
+  }
+}
+
+/* HOME-MOBILE-MENU-DRAWER-PASS33-END */
+
+
+/* HOME-MOBILE-MENU-POLISH-PASS34-START */
+@media (max-width: 760px) {
+  .mobile-menu {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,.11) !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02)),
+      rgba(18,19,24,.78) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.06),
+      0 10px 26px rgba(0,0,0,.24) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    backdrop-filter: blur(18px) !important;
+    cursor: pointer !important;
+    transition:
+      transform .18s ease,
+      background .18s ease,
+      border-color .18s ease,
+      box-shadow .18s ease !important;
+  }
+
+  .mobile-menu:active {
+    transform: scale(.97) !important;
+  }
+
+  .mobile-menu:hover {
+    border-color: rgba(255,255,255,.18) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 12px 30px rgba(0,0,0,.28) !important;
+  }
+
+  .mobile-menu-icon {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    gap: 3px !important; /* reduced gap */
+    pointer-events: none !important;
+  }
+
+  .mobile-menu span,
+  .mobile-menu .line {
+    display: block !important;
+    width: 18px !important;
+    height: 1.25px !important;
+    margin: 0 !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,.96) !important;
+    transform-origin: center !important;
+    transition:
+      transform .22s ease,
+      opacity .22s ease,
+      width .22s ease !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu {
+    border-color: rgba(169,140,255,.35) !important;
+    background:
+      linear-gradient(180deg, rgba(169,140,255,.14), rgba(255,255,255,.03)),
+      rgba(20,21,28,.88) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      0 0 0 1px rgba(169,140,255,.14),
+      0 12px 28px rgba(70,40,155,.24) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu span:nth-child(1),
+  body.mobile-sidebar-open .mobile-menu .line:nth-child(1) {
+    transform: translateY(5px) rotate(45deg) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu span:nth-child(2),
+  body.mobile-sidebar-open .mobile-menu .line:nth-child(2) {
+    opacity: 0 !important;
+    transform: scaleX(.6) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu span:nth-child(3),
+  body.mobile-sidebar-open .mobile-menu .line:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg) !important;
+  }
+}
+/* HOME-MOBILE-MENU-POLISH-PASS34-END */
+
+
+/* HOME-MOBILE-MENU-ICON-PERFECT-PASS35-START */
+@media (max-width: 760px) {
+  .mobile-menu {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)),
+      rgba(16,17,22,.84) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.075),
+      inset 0 -1px 0 rgba(0,0,0,.22),
+      0 12px 28px rgba(0,0,0,.26) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    backdrop-filter: blur(18px) !important;
+    cursor: pointer !important;
+    transition:
+      transform .18s ease,
+      border-color .18s ease,
+      background .18s ease,
+      box-shadow .18s ease !important;
+  }
+
+  .mobile-menu:active {
+    transform: scale(.96) !important;
+  }
+
+  .mobile-menu .mobile-menu-icon,
+  .mobile-menu .if-menu-lines {
+    width: 18px !important;
+    height: 14px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 3px !important;
+    pointer-events: none !important;
+  }
+
+  .mobile-menu .if-menu-lines i {
+    display: block !important;
+    width: 18px !important;
+    height: 1.25px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 999px !important;
+    background: rgba(255,255,255,.94) !important;
+    box-shadow: 0 0 6px rgba(255,255,255,.05) !important;
+    transform-origin: center !important;
+    transition:
+      transform .22s cubic-bezier(.2,.82,.2,1),
+      opacity .16s ease,
+      width .18s ease,
+      background .18s ease !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu {
+    border-color: rgba(169,140,255,.42) !important;
+    background:
+      linear-gradient(180deg, rgba(169,140,255,.18), rgba(255,255,255,.035)),
+      rgba(22,22,30,.92) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.09),
+      0 0 0 1px rgba(169,140,255,.12),
+      0 14px 30px rgba(80,50,170,.26) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .if-menu-lines i:nth-child(1) {
+    transform: translateY(6px) rotate(45deg) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .if-menu-lines i:nth-child(2) {
+    opacity: 0 !important;
+    width: 6px !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .if-menu-lines i:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg) !important;
+  }
+}
+/* HOME-MOBILE-MENU-ICON-PERFECT-PASS35-END */
+
+
+/* HOME-MOBILE-MENU-ICON-FINAL-PASS36-START */
+@media (max-width: 760px) {
+  .mobile-menu {
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.026)),
+      rgba(16,17,22,.86) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.08),
+      inset 0 -1px 0 rgba(0,0,0,.24),
+      0 12px 28px rgba(0,0,0,.28) !important;
+    -webkit-backdrop-filter: blur(18px) !important;
+    backdrop-filter: blur(18px) !important;
+    cursor: pointer !important;
+    transition:
+      transform .16s ease,
+      border-color .18s ease,
+      background .18s ease,
+      box-shadow .18s ease !important;
+  }
+
+  .mobile-menu:active {
+    transform: scale(.965) !important;
+  }
+
+  /* Hide any previous span/pseudo hamburger systems */
+  .mobile-menu span,
+  .mobile-menu i,
+  .mobile-menu .mobile-menu-icon,
+  .mobile-menu .if-menu-lines {
+    display: none !important;
+  }
+
+  .mobile-menu::before,
+  .mobile-menu::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  .mobile-menu .menu-svg {
+    display: block !important;
+    width: 21px !important;
+    height: 21px !important;
+    overflow: visible !important;
+    color: rgba(255,255,255,.94) !important;
+    pointer-events: none !important;
+  }
+
+  .mobile-menu .menu-svg path {
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.65 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    vector-effect: non-scaling-stroke !important;
+    transform-box: fill-box !important;
+    transform-origin: center !important;
+    transition:
+      transform .22s cubic-bezier(.2,.82,.2,1),
+      opacity .16s ease,
+      stroke .18s ease !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu {
+    border-color: rgba(169,140,255,.40) !important;
+    background:
+      linear-gradient(180deg, rgba(169,140,255,.16), rgba(255,255,255,.032)),
+      rgba(22,22,30,.92) !important;
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.09),
+      0 0 0 1px rgba(169,140,255,.12),
+      0 14px 30px rgba(80,50,170,.26) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .menu-svg {
+    color: #ffffff !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .menu-line-1 {
+    transform: translateY(5px) rotate(45deg) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .menu-line-2 {
+    opacity: 0 !important;
+    transform: scaleX(.35) !important;
+  }
+
+  body.mobile-sidebar-open .mobile-menu .menu-line-3 {
+    transform: translateY(-5px) rotate(-45deg) !important;
+  }
+}
+/* HOME-MOBILE-MENU-ICON-FINAL-PASS36-END */
+
+
+/* HOME-COMPOSER-ICONS-CLEAN-LOCK-PASS45-START */
+
+/* Final single source of truth for composer icons */
+.composer {
+  overflow: visible !important;
+}
+
+.composer-plus,
+.composer-mic,
+.composer-send {
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  outline: none !important;
+  border: 0 !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+.composer-plus {
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.075) !important;
+  color: rgba(255,255,255,.93) !important;
+  font-size: 0 !important;
+  line-height: 0 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -1px 0 rgba(0,0,0,.18) !important;
+}
+
+.composer-plus svg {
+  width: 22px !important;
+  height: 22px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.85 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.composer-mic {
+  width: 36px !important;
+  height: 44px !important;
+  min-width: 36px !important;
+  border-left: 1px solid rgba(255,255,255,.13) !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: rgba(255,255,255,.94) !important;
+}
+
+.composer-mic svg {
+  width: 23px !important;
+  height: 23px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.9 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+/* Final polished submit button */
+.composer-send {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  border-radius: 999px !important;
+  background:
+    radial-gradient(circle at 34% 28%, #ffffff 0 38%, #f7f6ff 66%, #eeeaff 100%) !important;
+  color: #07070a !important;
+  overflow: hidden !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,1),
+    inset 0 -1px 0 rgba(0,0,0,.08),
+    0 0 0 1px rgba(255,255,255,.72),
+    0 7px 17px rgba(0,0,0,.25),
+    0 0 16px rgba(165,136,255,.18) !important;
+}
+
+.composer-send::before,
+.composer-send::after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Kill any old hiding rule and force final icon visible */
+.composer-send svg,
+.composer-send svg * {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.composer-send svg.submit-wave-final-lock {
+  width: 18px !important;
+  height: 18px !important;
+  fill: none !important;
+  stroke: #08080b !important;
+  stroke-width: 2.35 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  margin: 0 !important;
+  transform: translateX(.25px) !important;
+}
+
+.composer-plus:active,
+.composer-mic:active,
+.composer-send:active {
+  transform: scale(.965) !important;
+}
+
+@media (max-width: 760px) {
+  .hero-composer,
+  .chat-composer,
+  .home-view .hero-composer,
+  .chat-view .chat-composer {
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 5px 6px !important;
+    gap: 6px !important;
+    grid-template-columns: 42px minmax(0, 1fr) 36px 44px !important;
+  }
+
+  .home-view .composer textarea,
+  .chat-view .composer textarea {
+    min-width: 0 !important;
+    padding-right: 2px !important;
+  }
+}
+
+/* HOME-COMPOSER-ICONS-CLEAN-LOCK-PASS45-END */
+
+
+/* HOME-SUBMIT-WAVE-CENTER-FINAL-PASS46-START */
+
+/* Final submit icon micro-polish: larger centered waveform */
+.composer-send {
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+}
+
+.composer-send svg.submit-wave-final-lock,
+.composer-send svg.submit-wave-center-final {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 22px !important;
+  height: 22px !important;
+  margin: 0 !important;
+  transform: translateX(0px) translateY(0px) !important;
+  color: #08080b !important;
+  fill: none !important;
+  stroke: #08080b !important;
+  stroke-width: 2.7 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.composer-send svg.submit-wave-final-lock path,
+.composer-send svg.submit-wave-center-final path {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  stroke: #08080b !important;
+  fill: none !important;
+}
+
+@media (max-width: 760px) {
+  .composer-send {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .composer-send svg.submit-wave-final-lock,
+  .composer-send svg.submit-wave-center-final {
+    width: 22px !important;
+    height: 22px !important;
+    stroke-width: 2.75 !important;
+  }
+}
+
+/* HOME-SUBMIT-WAVE-CENTER-FINAL-PASS46-END */
+
+
+/* HOME-SUBMIT-WAVE-EXACT-CENTER-PASS47-START */
+
+/* Final submit waveform: larger, thin, sleek, exact center */
+.composer-send {
+  position: relative !important;
+  display: grid !important;
+  place-items: center !important;
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+}
+
+.composer-send svg {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.composer-send svg.submit-wave-exact-center {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin: 0 !important;
+  transform: translate(-50%, -50%) !important;
+  color: #07070a !important;
+  fill: none !important;
+  stroke: #07070a !important;
+  stroke-width: 2.15 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+  overflow: visible !important;
+}
+
+.composer-send svg.submit-wave-exact-center path {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  fill: none !important;
+  stroke: #07070a !important;
+  stroke-width: 2.15 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+@media (max-width: 760px) {
+  .composer-send {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+
+  .composer-send svg.submit-wave-exact-center {
+    width: 24px !important;
+    height: 24px !important;
+    stroke-width: 2.15 !important;
+  }
+}
+
+/* HOME-SUBMIT-WAVE-EXACT-CENTER-PASS47-END */
