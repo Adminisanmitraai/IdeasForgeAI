@@ -5998,9 +5998,7 @@ def _ideasforgeai_call_openai(message: str, page: str, mode: str, route: str) ->
     payload = {
         "model": model,
         "messages": messages,
-        "temperature": 0.35,
-        "max_tokens": 1000
-    }
+        "max_completion_tokens": 1000,}
 
     req = urllib.request.Request(
         "https://api.openai.com/v1/chat/completions",
@@ -6025,6 +6023,330 @@ def _ideasforgeai_call_openai(message: str, page: str, mode: str, route: str) ->
 
     return answer
 
+
+
+# ADM-4C-3 ADMIN STATUS CONTEXT SOURCE
+# Reads actual Admin Module files and builds compact status context for the shared Chat Brain.
+def _ideasforgeai_admin_status_context() -> str:
+    try:
+        from pathlib import Path
+        import re
+
+        root = Path(__file__).resolve().parents[1]
+        admin_dir = root / "frontend" / "admin"
+
+        if not admin_dir.exists():
+            return "Admin status source unavailable: frontend/admin folder not found."
+
+        preferred_files = [
+            ("admin-home.html", "Founder Office"),
+            ("company-status.html", "Company Status"),
+            ("approvals-office.html", "Approvals"),
+            ("approval-detail.html", "Approval Detail"),
+            ("teams-office.html", "Teams"),
+            ("operations-office.html", "Operations"),
+            ("finance-office.html", "Finance"),
+            ("projects-office.html", "Projects"),
+            ("reports-office.html", "Reports"),
+            ("settings-office.html", "Settings"),
+            ("deployment-readiness.html", "Deployment Readiness"),
+            ("backend-health.html", "Backend Health"),
+            ("job-queue.html", "Job Queue"),
+            ("workers.html", "Workers"),
+            ("persistence.html", "Persistence"),
+            ("audit-logs.html", "Audit Logs"),
+        ]
+
+        def clean(value: str) -> str:
+            value = re.sub(r"<[^>]+>", " ", value or "")
+            value = re.sub(r"\s+", " ", value).strip()
+            return value
+
+        def detect_status(raw: str) -> str:
+            checks = [
+                "Now",
+                "Done",
+                "Active",
+                "Connected",
+                "Safe",
+                "Ready",
+                "Registered",
+                "Locked",
+                "Planned",
+                "Pending",
+                "Next",
+                "Waiting approval",
+                "Applied",
+                "Blocked",
+            ]
+            found = []
+            for item in checks:
+                if re.search(r"\b" + re.escape(item) + r"\b", raw, re.I):
+                    found.append(item)
+            return ", ".join(found[:4]) if found else "Not declared"
+
+        def detect_phase(raw: str) -> str:
+            phases = sorted(set(re.findall(r"ADM-\d+[A-Z]?(?:-\d+)?", raw or "")))
+            return ", ".join(phases[:4]) if phases else "Not declared"
+
+        def detect_title(raw: str, fallback: str) -> str:
+            h1 = re.search(r"<h1[^>]*>(.*?)</h1>", raw or "", re.I | re.S)
+            if h1:
+                return clean(h1.group(1)) or fallback
+
+            title = re.search(r"<title[^>]*>(.*?)</title>", raw or "", re.I | re.S)
+            if title:
+                title_text = clean(title.group(1))
+                title_text = title_text.replace("IdeasForgeAI Admin", "").replace("·", "").strip()
+                return title_text or fallback
+
+            return fallback
+
+        def detect_summary(raw: str) -> str:
+            patterns = [
+                r'<p[^>]*>(.*?)</p>',
+                r'<div[^>]+class="[^"]*(?:team-note|project-note|setting-sub|hero-sub|office-sub|note)[^"]*"[^>]*>(.*?)</div>',
+            ]
+
+            for pattern in patterns:
+                match = re.search(pattern, raw or "", re.I | re.S)
+                if match:
+                    text = clean(match.group(1) or match.group(2) if len(match.groups()) > 1 else match.group(1))
+                    if text and len(text) > 12:
+                        return text[:180]
+
+            return "No summary declared."
+
+        modules = []
+        existing_files = set()
+
+        for filename, fallback in preferred_files:
+            path = admin_dir / filename
+            if not path.exists():
+                modules.append({
+                    "name": fallback,
+                    "file": f"frontend/admin/{filename}",
+                    "phase": "Missing file",
+                    "status": "Missing",
+                    "summary": "Expected admin module file is not present yet.",
+                })
+                continue
+
+            raw = path.read_text(encoding="utf-8", errors="ignore")
+            existing_files.add(path.name)
+
+            modules.append({
+                "name": detect_title(raw, fallback),
+                "file": f"frontend/admin/{filename}",
+                "phase": detect_phase(raw),
+                "status": detect_status(raw),
+                "summary": detect_summary(raw),
+            })
+
+        for path in sorted(admin_dir.glob("*.html")):
+            if path.name in existing_files:
+                continue
+            if "backup" in path.name.lower():
+                continue
+
+            raw = path.read_text(encoding="utf-8", errors="ignore")
+            modules.append({
+                "name": detect_title(raw, path.stem.replace("-", " ").title()),
+                "file": f"frontend/admin/{path.name}",
+                "phase": detect_phase(raw),
+                "status": detect_status(raw),
+                "summary": detect_summary(raw),
+            })
+
+        done_count = sum(1 for m in modules if "Done" in m["status"] or "Active" in m["status"] or "Connected" in m["status"])
+        missing_count = sum(1 for m in modules if m["status"] == "Missing")
+        planned_count = sum(1 for m in modules if "Planned" in m["status"] or "Pending" in m["status"] or "Next" in m["status"])
+
+        home_path = admin_dir / "admin-home.html"
+        metrics_text = "Agent metrics: not declared in source files."
+        if home_path.exists():
+            home_raw = home_path.read_text(encoding="utf-8", errors="ignore")
+            home_plain = clean(home_raw)
+
+            agents = re.search(r"(\d+)\s+Agents", home_plain, re.I)
+            health = re.search(r"(\d+%)\s+Health", home_plain, re.I)
+            accuracy = re.search(r"(\d+%)\s+Accuracy", home_plain, re.I)
+
+            parts = []
+            if agents:
+                parts.append(f"{agents.group(1)} agents")
+            if health:
+                parts.append(f"{health.group(1)} health")
+            if accuracy:
+                parts.append(f"{accuracy.group(1)} accuracy")
+
+            if parts:
+                metrics_text = "Agent metrics: " + " · ".join(parts)
+
+        lines = []
+        lines.append("Admin status source: frontend/admin/*.html")
+        lines.append(f"Admin modules detected: {len(modules)}")
+        lines.append(f"Working/active/done modules: {done_count}")
+        lines.append(f"Planned/pending/next modules: {planned_count}")
+        lines.append(f"Missing expected module files: {missing_count}")
+        lines.append(metrics_text)
+        lines.append("")
+        lines.append("Detected admin modules:")
+
+        for module in modules[:24]:
+            lines.append(
+                f"- {module['name']} | Status: {module['status']} | Phase: {module['phase']} | File: {module['file']} | Summary: {module['summary']}"
+            )
+
+        lines.append("")
+        lines.append("Execution policy: real execution remains locked; deploy, commit, delete, backend modification, and worker execution require founder approval.")
+
+        return "\n".join(lines)
+
+    except Exception as exc:
+        return f"Admin status source error: {exc}"
+# ADM-4C-3 ADMIN STATUS CONTEXT SOURCE END
+# ADM-4C-1 ADMIN CONTEXT BRAIN UPGRADE
+# Same shared Chat Brain. Admin requests only receive stronger Founder Office context.
+def _ideasforgeai_admin_context_message(message: str) -> str:
+    return f"""ADMIN MODULE CONTEXT:
+This request is coming from the IdeasForgeAI Founder Office Admin Module.
+
+Answer as the founder/admin command brain, not as a generic homepage assistant.
+
+IdeasForgeAI structure:
+- ForgeStudio: AI creation platform for apps, websites, UI screens, logos, images, documents, presentations, dashboards, prototypes, and visual assets.
+- ForgeCode: AI software engineering platform for project reading, architecture understanding, safe code edits, tests, diffs, approval-gated commits, and deployment support.
+- ForgeWork: AI professional workspace for role-based work, documents, research, reports, workflows, templates, calculators, dashboards, and expert assistants.
+- Founder Office: private admin command center for company status, approvals, teams, operations, finance, projects, reports, settings, deployment readiness, workers, and safe execution.
+- ForgeLang: planned AI-native blueprint layer that converts natural ideas into validated internal project blueprints before ForgeCode creates production code.
+
+Current admin safety rules:
+- Real execution remains locked unless founder/admin approval is given.
+- Do not recommend automatic deploy, delete, commit, backend modification, or command execution without approval.
+- Do not expose API keys, provider keys, tokens, or secrets.
+- If action is risky, recommend dry-run, approval queue, and worker-gated execution.
+
+Preferred admin answer format:
+1. IdeasForgeAI Summary
+2. Current Admin Status
+3. Completed / Working
+4. Pending / Next Build
+5. Risks / Blockers
+6. Founder Approval Needed
+7. Recommended Next Action
+
+CURRENT ADMIN STATUS FROM PROJECT FILES:
+{_ideasforgeai_admin_status_context()}
+
+User request:
+{message}
+"""
+# ADM-4C-1 ADMIN CONTEXT BRAIN UPGRADE END
+
+# ADM-4C-5 FUNCTIONAL AUDIT LOGS
+def _ideasforgeai_audit_path():
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[1]
+    data_dir = root / "data"
+    data_dir.mkdir(parents=True, exist_ok=True)
+    return data_dir / "admin_audit_logs.json"
+
+def _ideasforgeai_redact_audit_value(key, value):
+    sensitive = ("key", "token", "secret", "password", "authorization", "credential")
+    if any(s in str(key).lower() for s in sensitive):
+        return "[redacted]"
+    return value
+
+def _ideasforgeai_sanitize_audit_meta(meta):
+    if not isinstance(meta, dict):
+        return {}
+    safe = {}
+    for k, v in meta.items():
+        if isinstance(v, dict):
+            safe[k] = _ideasforgeai_sanitize_audit_meta(v)
+        else:
+            safe[k] = _ideasforgeai_redact_audit_value(k, v)
+    return safe
+
+def _ideasforgeai_load_audit_logs():
+    import json
+    path = _ideasforgeai_audit_path()
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if isinstance(data, list):
+            return data
+    except Exception:
+        pass
+    return []
+
+def _ideasforgeai_save_audit_logs(logs):
+    import json
+    path = _ideasforgeai_audit_path()
+    path.write_text(json.dumps(logs[:300], indent=2, ensure_ascii=False), encoding="utf-8")
+
+def _ideasforgeai_add_audit_log(action, status="recorded", actor="founder_admin", area="Founder Office", risk="Low", meta=None):
+    from datetime import datetime, timezone
+    logs = _ideasforgeai_load_audit_logs()
+    entry = {
+        "id": "AUD-" + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:18],
+        "time": datetime.now(timezone.utc).isoformat(),
+        "actor": actor or "founder_admin",
+        "area": area or "Founder Office",
+        "action": action or "Admin action",
+        "status": status or "recorded",
+        "risk": risk or "Low",
+        "meta": _ideasforgeai_sanitize_audit_meta(meta or {}),
+    }
+    logs.insert(0, entry)
+    _ideasforgeai_save_audit_logs(logs)
+    return entry
+
+@app.get("/api/admin/audit-logs")
+async def ideasforgeai_get_admin_audit_logs():
+    logs = _ideasforgeai_load_audit_logs()
+    if not logs:
+        seed = _ideasforgeai_add_audit_log(
+            action="Audit Logs module initialized",
+            status="active",
+            area="Audit Logs",
+            risk="Low",
+            meta={"phase": "ADM-4C-5", "execution": "locked"}
+        )
+        logs = [seed]
+    return {
+        "ok": True,
+        "count": len(logs),
+        "logs": logs[:100],
+        "source": "admin-audit-json-store",
+        "execution": "locked"
+    }
+
+@app.post("/api/admin/audit-logs")
+async def ideasforgeai_post_admin_audit_log(request: Request):
+    try:
+        payload = await request.json()
+    except Exception:
+        payload = {}
+
+    entry = _ideasforgeai_add_audit_log(
+        action=str(payload.get("action") or "Admin event"),
+        status=str(payload.get("status") or "recorded"),
+        actor=str(payload.get("actor") or "founder_admin"),
+        area=str(payload.get("area") or "Founder Office"),
+        risk=str(payload.get("risk") or "Low"),
+        meta=payload.get("meta") if isinstance(payload.get("meta"), dict) else {}
+    )
+
+    return {
+        "ok": True,
+        "entry": entry,
+        "source": "admin-audit-json-store",
+        "execution": "locked"
+    }
+# ADM-4C-5 FUNCTIONAL AUDIT LOGS END
 @app.post("/api/home-chat")
 async def ideasforgeai_home_chat(request: Request):
     try:
@@ -6035,7 +6357,14 @@ async def ideasforgeai_home_chat(request: Request):
     message = str(payload.get("message") or payload.get("prompt") or "").strip()
     page = str(payload.get("page") or "home").strip()
     mode = str(payload.get("mode") or "main").strip()
-
+    role = str(payload.get("role") or "").strip()
+    source = str(payload.get("source") or "").strip()
+    is_admin_context = (
+        page.lower() == "admin"
+        or mode.lower() == "admin"
+        or role.lower() in ("founder_admin", "admin", "founder")
+        or source.lower() in ("founder_office_admin", "admin_module")
+    )
     if not message:
         return {
             "ok": True,
@@ -6046,6 +6375,14 @@ async def ideasforgeai_home_chat(request: Request):
 
     route = _ideasforgeai_detect_route(message)
 
+    # ADM-4C-2 ADMIN ROUTE FIX
+    # Route detection still reads the original user request first.
+    # Admin requests then use the shared brain with Founder Office route context.
+    if is_admin_context:
+        original_route = route
+        route = "admin"
+        message = _ideasforgeai_admin_context_message(message)
+    # ADM-4C-2 ADMIN ROUTE FIX END
     try:
         answer = _ideasforgeai_call_openai(message, page, mode, route)
         ok = True
@@ -6109,5 +6446,10 @@ async def _ideasforgeai_chat_cors_middleware(request, call_next):
     return response
 
 # CHAT-BRAIN-CORS-FIX-END
+
+
+
+
+
 
 

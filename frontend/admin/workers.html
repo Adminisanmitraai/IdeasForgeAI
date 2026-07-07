@@ -1,0 +1,895 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Workers · IdeasForgeAI Admin</title>
+  <style>
+    :root {
+      --bg: #f6f7f8;
+      --card: rgba(255,255,255,.88);
+      --text: #070707;
+      --muted: #7d858d;
+      --line: rgba(0,0,0,.08);
+      --shadow: 0 18px 50px rgba(0,0,0,.06);
+      --blue: #2563eb;
+      --green: #18b95c;
+      --amber: #dda115;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at 10% 20%, rgba(37,99,235,.08), transparent 32%),
+        radial-gradient(circle at 80% 12%, rgba(24,185,92,.06), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .screen {
+      min-height: 100svh;
+      padding: calc(env(safe-area-inset-top) + 36px) 18px calc(env(safe-area-inset-bottom) + 130px);
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .icon-btn {
+      width: 58px;
+      height: 58px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.72);
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      font-size: 25px;
+      color: #111;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      background: rgba(255,255,255,.86);
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+      font-size: 28px;
+    }
+
+    .title-wrap {
+      flex: 1;
+      min-width: 0;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      line-height: 1.02;
+      letter-spacing: -.06em;
+      font-weight: 620;
+    }
+
+    .subtitle {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.25;
+      font-weight: 390;
+    }
+
+    .chips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 58px;
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 10px rgba(24,185,92,.11);
+      flex: 0 0 auto;
+    }
+
+    .dot.amber {
+      background: var(--amber);
+      box-shadow: 0 0 0 10px rgba(221,161,21,.12);
+    }
+
+    .chip strong {
+      font-size: 18px;
+      font-weight: 560;
+      letter-spacing: -.035em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chip span {
+      margin-left: auto;
+      color: var(--muted);
+      font-size: 16px;
+      font-weight: 520;
+      white-space: nowrap;
+    }
+
+    .hero {
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 28px;
+      margin-bottom: 18px;
+    }
+
+    .hero h2 {
+      margin: 0 0 12px;
+      font-size: 39px;
+      line-height: 1.02;
+      letter-spacing: -.07em;
+      font-weight: 620;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 22px;
+      line-height: 1.28;
+      font-weight: 380;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 13px;
+      margin-top: 18px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      background: rgba(255,255,255,.78);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      min-height: 145px;
+    }
+
+    .card-value {
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -.05em;
+      font-weight: 620;
+      margin-bottom: 7px;
+    }
+
+    .card-title {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 560;
+      margin-bottom: 12px;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.28;
+      color: #34383d;
+      font-weight: 380;
+    }
+
+    .next {
+      margin-top: 18px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 20px;
+      background: rgba(255,255,255,.72);
+      color: #202327;
+      font-size: 17px;
+      line-height: 1.35;
+      font-weight: 420;
+    }
+
+    .actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.84);
+      color: #111;
+      min-height: 52px;
+      font-size: 16px;
+      font-weight: 520;
+      text-decoration: none;
+      display: grid;
+      place-items: center;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 520px) {
+      .screen { padding-left: 18px; padding-right: 18px; }
+      h1 { font-size: 30px; }
+      .hero h2 { font-size: 34px; }
+      .hero p { font-size: 20px; }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+  <style id="adm4c6a-system-drawer-style">
+    .adm-drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.28);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .28s ease;
+      z-index: 9000;
+    }
+
+    .adm-drawer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: min(86vw, 390px);
+      height: 100svh;
+      padding: calc(env(safe-area-inset-top) + 28px) 22px calc(env(safe-area-inset-bottom) + 28px);
+      background: rgba(255,255,255,.96);
+      box-shadow: 24px 0 80px rgba(0,0,0,.18);
+      transform: translateX(-104%);
+      transition: transform .32s cubic-bezier(.22, 1, .36, 1);
+      z-index: 9001;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    body.adm-drawer-open .adm-drawer-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.adm-drawer-open .adm-drawer {
+      transform: translateX(0);
+    }
+
+    .adm-drawer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .adm-drawer-brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .adm-drawer-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 18px 48px rgba(0,0,0,.07);
+      font-size: 28px;
+      flex: 0 0 auto;
+    }
+
+    .adm-drawer-title {
+      min-width: 0;
+    }
+
+    .adm-drawer-title strong {
+      display: block;
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: -.06em;
+      font-weight: 620;
+      color: #080808;
+    }
+
+    .adm-drawer-title span {
+      display: block;
+      margin-top: 6px;
+      color: #7a828b;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+
+    .adm-drawer-close {
+      width: 52px;
+      height: 52px;
+      border: 0;
+      border-radius: 50%;
+      background: #eef3f6;
+      color: #2563eb;
+      font-size: 30px;
+      font-weight: 500;
+      display: grid;
+      place-items: center;
+    }
+
+    .adm-drawer-section {
+      margin: 24px 0 12px;
+      color: #a0a7ae;
+      font-size: 13px;
+      font-weight: 680;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+    }
+
+    .adm-menu-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .adm-menu-item {
+      display: grid;
+      grid-template-columns: 50px 1fr auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 62px;
+      padding: 8px 14px;
+      border-radius: 22px;
+      color: #111;
+      text-decoration: none;
+      transition: background .18s ease, transform .18s ease;
+    }
+
+    .adm-menu-item:active {
+      transform: scale(.985);
+    }
+
+    .adm-menu-item.active {
+      background: #eaf2ff;
+    }
+
+    .adm-menu-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      background: #f1f4f5;
+      display: grid;
+      place-items: center;
+      color: #69727d;
+      font-size: 21px;
+      font-weight: 600;
+    }
+
+    .adm-menu-item.active .adm-menu-icon {
+      background: #dcecff;
+      color: #2563eb;
+    }
+
+    .adm-menu-text {
+      min-width: 0;
+    }
+
+    .adm-menu-text strong {
+      display: block;
+      font-size: 20px;
+      line-height: 1.05;
+      letter-spacing: -.04em;
+      font-weight: 540;
+    }
+
+    .adm-menu-text span {
+      display: block;
+      margin-top: 4px;
+      color: #8a929b;
+      font-size: 14px;
+      line-height: 1.15;
+    }
+
+    .adm-menu-state {
+      color: #8a929b;
+      font-size: 14px;
+      font-weight: 560;
+    }
+
+    .adm-drawer-foot {
+      margin-top: 26px;
+      border-radius: 24px;
+      background: #f4f5f6;
+      padding: 18px;
+      color: #7a828b;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+  </style>
+  <style id="adm4c-logo-canonical-fix">
+    .logo,
+    .brand-icon,
+    .adm-drawer-logo,
+    .assistant-logo,
+    .chat-avatar,
+    .ifai-logo,
+    .brand-logo {
+      background: rgba(255,255,255,.92) !important;
+      overflow: hidden !important;
+      display: grid !important;
+      place-items: center !important;
+      color: transparent !important;
+      text-indent: -9999px !important;
+      background-image: url("assets/ideasforgeai-mark.png") !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    .logo *,
+    .brand-icon *,
+    .adm-drawer-logo *,
+    .assistant-logo *,
+    .chat-avatar *,
+    .ifai-logo *,
+    .brand-logo * {
+      display: none !important;
+    }
+
+    .adm-exact-logo-img {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <header class="topbar">
+      <a class="icon-btn" href="admin-home.html">☰</a>
+      <div class="brand-icon" aria-label="IdeasForgeAI"></div>
+      <div class="title-wrap">
+        <h1>Workers</h1>
+        <p class="subtitle">IdeasForgeAI Admin System</p>
+      </div>
+      <a class="icon-btn" href="admin-home.html">•••</a>
+    </header>
+
+    <section class="chips">
+      <div class="chip"><i class="dot"></i><strong>Workers</strong><span>ADM-4C</span></div>
+      <div class="chip"><i class="dot amber"></i><strong>Status</strong><span>Registered</span></div>
+    </section>
+
+    <section class="hero">
+      <h2>Workers</h2>
+      <p>AI worker registry, health, responsibilities, and safe execution readiness.</p>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="card-value">Available</div>
+        <div class="card-title">Worker Bridge</div>
+        <p>Safe local worker bridge can apply approved patches.</p>
+      </article>
+      <article class="card">
+        <div class="card-value">Safe</div>
+        <div class="card-title">Execution Mode</div>
+        <p>No automatic execution.</p>
+      </article>
+      <article class="card">
+        <div class="card-value">On</div>
+        <div class="card-title">Approval Required</div>
+        <p>Founder approval required before worker apply.</p>
+      </article>
+      <article class="card">
+        <div class="card-value">Planned</div>
+        <div class="card-title">Health View</div>
+        <p>Worker health and accuracy will become live metrics.</p>
+      </article>
+
+    </section>
+
+    <section class="next">
+      Next: connect worker registry, active worker status, and execution logs.
+    </section>
+
+    <section class="actions">
+      <a class="btn" href="admin-home.html">Open Founder Office</a>
+      <a class="btn" href="company-status.html">Open Company Status</a>
+    </section>
+  </main>
+  <div class="adm-drawer-backdrop" data-adm-drawer-close></div>
+
+  <aside class="adm-drawer" aria-hidden="true">
+    <div class="adm-drawer-head">
+      <div class="adm-drawer-brand">
+        <div class="adm-drawer-logo" aria-label="IdeasForgeAI"></div>
+        <div class="adm-drawer-title">
+          <strong>IdeasForgeAI</strong>
+          <span>Choose a workspace or department.</span>
+        </div>
+      </div>
+      <button class="adm-drawer-close" type="button" data-adm-drawer-close>×</button>
+    </div>
+
+    <div class="adm-drawer-section">Company Control</div>
+    <nav class="adm-menu-list">
+      <a class="adm-menu-item" href="admin-home.html" data-page="admin-home.html">
+        <span class="adm-menu-icon">⌂</span>
+        <span class="adm-menu-text"><strong>Founder Office</strong><span>Command center</span></span>
+        <span class="adm-menu-state">Now</span>
+      </a>
+
+      <a class="adm-menu-item" href="company-status.html" data-page="company-status.html">
+        <span class="adm-menu-icon">▥</span>
+        <span class="adm-menu-text"><strong>Company Status</strong><span>Company health</span></span>
+        <span class="adm-menu-state">Done</span>
+      </a>
+
+      <a class="adm-menu-item" href="approvals-office.html" data-page="approvals-office.html">
+        <span class="adm-menu-icon">✓</span>
+        <span class="adm-menu-text"><strong>Approvals</strong><span>Founder decisions</span></span>
+        <span class="adm-menu-state">Done</span>
+      </a>
+
+      <a class="adm-menu-item" href="projects-office.html" data-page="projects-office.html">
+        <span class="adm-menu-icon">□</span>
+        <span class="adm-menu-text"><strong>Projects</strong><span>Phases</span></span>
+        <span class="adm-menu-state">Done</span>
+      </a>
+    </nav>
+
+    <div class="adm-drawer-section">Admin System</div>
+    <nav class="adm-menu-list">
+      <a class="adm-menu-item" href="backend-health.html" data-page="backend-health.html">
+        <span class="adm-menu-icon">●</span>
+        <span class="adm-menu-text"><strong>Backend Health</strong><span>API status</span></span>
+        <span class="adm-menu-state">Active</span>
+      </a>
+
+      <a class="adm-menu-item" href="job-queue.html" data-page="job-queue.html">
+        <span class="adm-menu-icon">↳</span>
+        <span class="adm-menu-text"><strong>Job Queue</strong><span>Dry-runs</span></span>
+        <span class="adm-menu-state">Ready</span>
+      </a>
+
+      <a class="adm-menu-item" href="workers.html" data-page="workers.html">
+        <span class="adm-menu-icon">⚙</span>
+        <span class="adm-menu-text"><strong>Workers</strong><span>Safe execution</span></span>
+        <span class="adm-menu-state">Safe</span>
+      </a>
+
+      <a class="adm-menu-item" href="persistence.html" data-page="persistence.html">
+        <span class="adm-menu-icon">▣</span>
+        <span class="adm-menu-text"><strong>Persistence</strong><span>Project state</span></span>
+        <span class="adm-menu-state">Planned</span>
+      </a>
+
+      <a class="adm-menu-item" href="audit-logs.html" data-page="audit-logs.html">
+        <span class="adm-menu-icon">≡</span>
+        <span class="adm-menu-text"><strong>Audit Logs</strong><span>Traceability</span></span>
+        <span class="adm-menu-state">Active</span>
+      </a>
+    </nav>
+
+    <div class="adm-drawer-foot">
+      Real execution remains locked. Deploy, commit, delete, backend modification, and worker execution require founder approval.
+    </div>
+  </aside>
+  <style id="adm4c6b-sticky-menu-repair-style">
+    @media (max-width: 720px) {
+      .top,
+      .topbar {
+        position: sticky !important;
+        top: calc(env(safe-area-inset-top) + 8px) !important;
+        z-index: 8500 !important;
+        margin-top: 0 !important;
+        padding: 8px 0 !important;
+        background: rgba(246,247,248,.78) !important;
+        backdrop-filter: blur(18px) !important;
+        -webkit-backdrop-filter: blur(18px) !important;
+        border-radius: 28px !important;
+      }
+
+      .screen {
+        padding-top: calc(env(safe-area-inset-top) + 18px) !important;
+      }
+
+      .hero {
+        margin-top: 12px !important;
+      }
+    }
+  </style>
+  <style id="adm4c6c-separated-menus-style">
+    .adm-action-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.20);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .24s ease;
+      z-index: 9100;
+    }
+
+    .adm-action-sheet {
+      position: fixed;
+      right: 18px;
+      top: calc(env(safe-area-inset-top) + 94px);
+      width: min(78vw, 310px);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 28px;
+      background: rgba(255,255,255,.96);
+      box-shadow: 0 24px 80px rgba(0,0,0,.16);
+      padding: 10px;
+      opacity: 0;
+      transform: translateY(-8px) scale(.98);
+      pointer-events: none;
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 9101;
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+    }
+
+    body.adm-actions-open .adm-action-backdrop {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    body.adm-actions-open .adm-action-sheet {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .adm-action-title {
+      padding: 12px 14px 8px;
+      color: #7b838c;
+      font-size: 13px;
+      font-weight: 650;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+    }
+
+    .adm-action-item {
+      width: 100%;
+      min-height: 52px;
+      border: 0;
+      border-radius: 18px;
+      background: transparent;
+      color: #101010;
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      text-align: left;
+      font: inherit;
+      text-decoration: none;
+    }
+
+    .adm-action-item:active {
+      background: #f1f3f5;
+      transform: scale(.99);
+    }
+
+    .adm-action-item i {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      background: #f2f4f5;
+      display: grid;
+      place-items: center;
+      color: #6b747e;
+      font-style: normal;
+      font-size: 17px;
+    }
+
+    .adm-action-item strong {
+      display: block;
+      font-size: 17px;
+      line-height: 1.05;
+      font-weight: 540;
+      letter-spacing: -.035em;
+    }
+
+    .adm-action-item span {
+      display: block;
+      margin-top: 3px;
+      color: #828a93;
+      font-size: 13px;
+      line-height: 1.15;
+      font-weight: 400;
+    }
+  </style>
+
+  <script id="adm4c6c-separated-menus-script">
+    (function () {
+      function ensureActionMenu() {
+        if (document.querySelector(".adm-action-sheet")) return;
+
+        document.body.insertAdjacentHTML("beforeend", `
+          <div class="adm-action-backdrop" data-adm-action-close></div>
+
+          <aside class="adm-action-sheet" aria-hidden="true">
+            <div class="adm-action-title">Page actions</div>
+
+            <button class="adm-action-item" type="button" data-adm-action="refresh">
+              <i>↻</i>
+              <span><strong>Refresh page</strong><span>Reload latest admin state</span></span>
+            </button>
+
+            <a class="adm-action-item" href="admin-home.html">
+              <i>⌂</i>
+              <span><strong>Founder Office</strong><span>Return to command center</span></span>
+            </a>
+
+            <a class="adm-action-item" href="audit-logs.html">
+              <i>≡</i>
+              <span><strong>Audit Logs</strong><span>Open trace history</span></span>
+            </a>
+
+            <button class="adm-action-item" type="button" data-adm-action="close">
+              <i>×</i>
+              <span><strong>Close menu</strong><span>Dismiss actions</span></span>
+            </button>
+          </aside>
+        `);
+      }
+
+      function openDrawer(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+        }
+
+        document.body.classList.remove("adm-actions-open");
+        document.body.classList.add("adm-drawer-open");
+
+        const drawer = document.querySelector(".adm-drawer");
+        if (drawer) drawer.setAttribute("aria-hidden", "false");
+      }
+
+      function closeDrawer(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        document.body.classList.remove("adm-drawer-open");
+
+        const drawer = document.querySelector(".adm-drawer");
+        if (drawer) drawer.setAttribute("aria-hidden", "true");
+      }
+
+      function openActions(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+        }
+
+        ensureActionMenu();
+        document.body.classList.remove("adm-drawer-open");
+        document.body.classList.add("adm-actions-open");
+
+        const sheet = document.querySelector(".adm-action-sheet");
+        if (sheet) sheet.setAttribute("aria-hidden", "false");
+      }
+
+      function closeActions(event) {
+        if (event) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        document.body.classList.remove("adm-actions-open");
+
+        const sheet = document.querySelector(".adm-action-sheet");
+        if (sheet) sheet.setAttribute("aria-hidden", "true");
+      }
+
+      function getHeaderButtons() {
+        const header = document.querySelector(".top, .topbar");
+        if (!header) return [];
+        return Array.from(header.querySelectorAll(".btn, .icon-btn"));
+      }
+
+      function bindSeparatedMenus() {
+        const buttons = getHeaderButtons();
+        if (!buttons.length) return;
+
+        const hamburger = buttons[0];
+        const dots = buttons[buttons.length - 1];
+
+        hamburger.onclick = openDrawer;
+        hamburger.setAttribute("aria-label", "Open workspace menu");
+
+        dots.onclick = openActions;
+        dots.setAttribute("aria-label", "Open page actions");
+      }
+
+      document.addEventListener("click", function (event) {
+        const buttons = getHeaderButtons();
+        const hamburger = buttons[0];
+        const dots = buttons[buttons.length - 1];
+
+        if (hamburger && event.target.closest(".btn, .icon-btn") === hamburger) {
+          openDrawer(event);
+          return;
+        }
+
+        if (dots && event.target.closest(".btn, .icon-btn") === dots) {
+          openActions(event);
+          return;
+        }
+
+        if (event.target.closest("[data-adm-drawer-close]")) {
+          closeDrawer(event);
+          return;
+        }
+
+        if (event.target.closest("[data-adm-action-close]")) {
+          closeActions(event);
+          return;
+        }
+
+        const action = event.target.closest("[data-adm-action]");
+        if (action) {
+          const type = action.getAttribute("data-adm-action");
+
+          if (type === "refresh") {
+            closeActions(event);
+            location.reload();
+            return;
+          }
+
+          if (type === "close") {
+            closeActions(event);
+            return;
+          }
+        }
+      }, true);
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeDrawer(event);
+          closeActions(event);
+        }
+      });
+
+      ensureActionMenu();
+      bindSeparatedMenus();
+
+      setTimeout(bindSeparatedMenus, 250);
+    })();
+  </script>
+</body>
+</html>
+
+
+
+

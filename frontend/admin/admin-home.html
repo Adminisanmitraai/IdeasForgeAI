@@ -928,6 +928,40 @@
       color: #b45309 !important;
     }
   </style>
+  <style id="adm4c-logo-canonical-fix">
+    .logo,
+    .brand-icon,
+    .adm-drawer-logo,
+    .assistant-logo,
+    .chat-avatar,
+    .ifai-logo,
+    .brand-logo {
+      background: rgba(255,255,255,.92) !important;
+      overflow: hidden !important;
+      display: grid !important;
+      place-items: center !important;
+      color: transparent !important;
+      text-indent: -9999px !important;
+      background-image: url("assets/ideasforgeai-mark.png") !important;
+      background-size: cover !important;
+      background-position: center !important;
+      background-repeat: no-repeat !important;
+    }
+
+    .logo *,
+    .brand-icon *,
+    .adm-drawer-logo *,
+    .assistant-logo *,
+    .chat-avatar *,
+    .ifai-logo *,
+    .brand-logo * {
+      display: none !important;
+    }
+
+    .adm-exact-logo-img {
+      display: none !important;
+    }
+  </style>
 </head>
 
 <body>
@@ -2655,8 +2689,501 @@ Check:
       };
     })();
   </script>
+  <script id="adm4b-shared-brain-intent-classifier-fix">
+    (function () {
+      const previousSendToAdminChat = window.sendToAdminChat;
+
+      const BRAIN_API =
+        typeof API !== "undefined"
+          ? API
+          : location.protocol + "//" + location.hostname + ":5051";
+
+      function isQuestionForBrain(text) {
+        const q = String(text || "").trim().toLowerCase();
+
+        return (
+          q.endsWith("?") ||
+          q.startsWith("what ") ||
+          q.startsWith("why ") ||
+          q.startsWith("how ") ||
+          q.startsWith("when ") ||
+          q.startsWith("where ") ||
+          q.startsWith("who ") ||
+          q.startsWith("which ") ||
+          q.startsWith("tell me ") ||
+          q.startsWith("explain ") ||
+          q.startsWith("describe ") ||
+          q.startsWith("summarize ") ||
+          q.includes("what is ideasforgeai") ||
+          q.includes("what should we build") ||
+          q.includes("what should i build") ||
+          q.includes("what is next") ||
+          q.includes("what should be next")
+        );
+      }
+
+      function isLocalAdminWorkflowCommand(text) {
+        const q = String(text || "").trim().toLowerCase();
+
+        return (
+          q === "show approval queue" ||
+          q === "approval queue" ||
+          /^approve\s+(dry-run|dry run)\s+[a-z0-9-]+$/i.test(text) ||
+          /^apply\s+(dry-run|dry run)\s+[a-z0-9-]+$/i.test(text) ||
+          /^reject\s+(dry-run|dry run)\s+[a-z0-9-]+$/i.test(text)
+        );
+      }
+
+      function isDirectPatchCommand(text) {
+        const q = String(text || "").trim().toLowerCase();
+
+        if (isQuestionForBrain(text)) return false;
+
+        return /^(make|fix|change|update|create|add|remove|reduce|increase|shift|move|polish|connect|build)\b/i.test(q);
+      }
+
+      function extractBrainReply(data) {
+        return (
+          data?.reply ||
+          data?.answer ||
+          data?.message ||
+          data?.response ||
+          data?.content ||
+          data?.text ||
+          ""
+        );
+      }
+
+      async function callSharedBrain(text) {
+        const res = await fetch(BRAIN_API + "/api/home-chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            message: text,
+            page: "admin",
+            mode: "admin",
+            role: "founder_admin",
+            source: "founder_office_admin",
+            safety: {
+              execution_enabled: false,
+              founder_approval_required: true,
+              frontend_openai_call: false
+            }
+          })
+        });
+
+        if (!res.ok) {
+          throw new Error("/api/home-chat returned " + res.status);
+        }
+
+        const data = await res.json();
+        const reply = extractBrainReply(data);
+
+        if (!reply) {
+          throw new Error("Shared Chat Brain returned an empty response.");
+        }
+
+        return reply;
+      }
+
+      window.sendToAdminChat = async function (text) {
+        const message = String(text || "").trim();
+        if (!message) return "";
+
+        // Questions always go to the real shared IdeasForgeAI brain.
+        if (isQuestionForBrain(message)) {
+          try {
+            return await callSharedBrain(message);
+          } catch (err) {
+            return `Shared Chat Brain unavailable
+
+Tried:
+POST /api/home-chat
+
+Error:
+${err.message}
+
+Safety:
+No frontend OpenAI call was made.
+No admin action was executed.`;
+          }
+        }
+
+        // Approval/apply/reject commands stay local and founder-gated.
+        if (isLocalAdminWorkflowCommand(message) && typeof previousSendToAdminChat === "function") {
+          return await previousSendToAdminChat(message);
+        }
+
+        // Direct change commands become dry-run jobs.
+        if (isDirectPatchCommand(message) && typeof previousSendToAdminChat === "function") {
+          return await previousSendToAdminChat(message);
+        }
+
+        // Everything else goes to shared brain.
+        try {
+          return await callSharedBrain(message);
+        } catch (err) {
+          if (typeof previousSendToAdminChat === "function") {
+            return await previousSendToAdminChat(message);
+          }
+
+          return "Founder Office is ready, but the shared Chat Brain is not reachable.";
+        }
+      };
+    })();
+  </script>
+  <script id="adm4b-admin-brain-api-base-fix">
+    (function () {
+      const previousSendToAdminChat = window.sendToAdminChat;
+
+      function cleanBase(url) {
+        return String(url || "").replace(/\/$/, "");
+      }
+
+      function getBrainBases() {
+        const host = location.hostname;
+        const protocol = location.protocol;
+        const bases = [];
+
+        // Correct LAN backend for mobile testing.
+        bases.push(cleanBase(protocol + "//" + host + ":5051"));
+
+        // Use global API only if it is not localhost from a phone.
+        if (typeof API !== "undefined") {
+          const api = cleanBase(API);
+          const isPhoneLan = host !== "localhost" && host !== "127.0.0.1";
+          const apiIsLocalhost = api.includes("localhost") || api.includes("127.0.0.1");
+
+          if (!(isPhoneLan && apiIsLocalhost)) {
+            bases.push(api);
+          }
+        }
+
+        // Last fallback: same origin, useful later on production.
+        bases.push(cleanBase(location.origin));
+
+        return [...new Set(bases.filter(Boolean))];
+      }
+
+      function isBrainQuestion(text) {
+        const q = String(text || "").trim().toLowerCase();
+
+        return (
+          q.endsWith("?") ||
+          q.startsWith("what ") ||
+          q.startsWith("why ") ||
+          q.startsWith("how ") ||
+          q.startsWith("when ") ||
+          q.startsWith("where ") ||
+          q.startsWith("who ") ||
+          q.startsWith("which ") ||
+          q.startsWith("tell me ") ||
+          q.startsWith("explain ") ||
+          q.startsWith("describe ") ||
+          q.startsWith("summarize ") ||
+          q.includes("what is ideasforgeai") ||
+          q.includes("what should we build") ||
+          q.includes("what should i build") ||
+          q.includes("what is next") ||
+          q.includes("what should be next")
+        );
+      }
+
+      function isAdminWorkflowCommand(text) {
+        const q = String(text || "").trim().toLowerCase();
+
+        return (
+          q === "show approval queue" ||
+          q === "approval queue" ||
+          /^approve\s+(dry-run|dry run)\s+[a-z0-9-]+$/i.test(text) ||
+          /^apply\s+(dry-run|dry run)\s+[a-z0-9-]+$/i.test(text) ||
+          /^reject\s+(dry-run|dry run)\s+[a-z0-9-]+$/i.test(text)
+        );
+      }
+
+      function isDirectPatchCommand(text) {
+        const q = String(text || "").trim().toLowerCase();
+        if (isBrainQuestion(text)) return false;
+        return /^(make|fix|change|update|create|add|remove|reduce|increase|shift|move|polish|connect|build)\b/i.test(q);
+      }
+
+      function extractBrainReply(data) {
+        return (
+          data?.reply ||
+          data?.answer ||
+          data?.message ||
+          data?.response ||
+          data?.content ||
+          data?.text ||
+          ""
+        );
+      }
+
+      async function callSharedBrain(text) {
+        const bases = getBrainBases();
+        const errors = [];
+
+        for (const base of bases) {
+          try {
+            const res = await fetch(base + "/api/home-chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                message: text,
+                page: "admin",
+                mode: "admin",
+                role: "founder_admin",
+                source: "founder_office_admin",
+                safety: {
+                  execution_enabled: false,
+                  founder_approval_required: true,
+                  frontend_openai_call: false
+                }
+              })
+            });
+
+            if (!res.ok) {
+              errors.push(base + " returned " + res.status);
+              continue;
+            }
+
+            const data = await res.json();
+            const reply = extractBrainReply(data);
+
+            if (reply) return reply;
+
+            errors.push(base + " returned empty reply");
+          } catch (err) {
+            errors.push(base + " failed: " + err.message);
+          }
+        }
+
+        throw new Error(errors.join("\n"));
+      }
+
+      window.sendToAdminChat = async function (text) {
+        const message = String(text || "").trim();
+        if (!message) return "";
+
+        if ((isAdminWorkflowCommand(message) || isDirectPatchCommand(message)) && typeof previousSendToAdminChat === "function") {
+          return await previousSendToAdminChat(message);
+        }
+
+        try {
+          return await callSharedBrain(message);
+        } catch (err) {
+          return `Shared Chat Brain unavailable
+
+Tried backend routes:
+${getBrainBases().map(base => base + "/api/home-chat").join("\n")}
+
+Error:
+${err.message}
+
+Safety:
+No frontend OpenAI call was made.
+No admin action was executed.
+
+Check:
+1. backend/main.py is running on port 5051.
+2. Phone and laptop are on the same Wi-Fi.
+3. Open this on phone:
+http://${location.hostname}:5051/health`;
+        }
+      };
+    })();
+  </script>
+  <script id="adm4c6-audit-event-bridge">
+    (function () {
+      const previousSendToAdminChat = window.sendToAdminChat;
+
+      if (typeof previousSendToAdminChat !== "function") {
+        return;
+      }
+
+      const AUDIT_API = location.protocol + "//" + location.hostname + ":5051/api/admin/audit-logs";
+
+      function nowIdFromText(text) {
+        const match = String(text || "").match(/DRY-\d+/i);
+        return match ? match[0].toUpperCase() : "";
+      }
+
+      function idFromResponse(text) {
+        const match = String(text || "").match(/DRY-\d+/i);
+        return match ? match[0].toUpperCase() : "";
+      }
+
+      function isApprovalQueueView(text) {
+        return /^(show\s+approval\s+queue|approval\s+queue)$/i.test(String(text || "").trim());
+      }
+
+      function isApprove(text) {
+        return /^approve\s+(dry-run|dry run)\s+DRY-\d+/i.test(String(text || "").trim());
+      }
+
+      function isApply(text) {
+        return /^apply\s+(dry-run|dry run)\s+DRY-\d+/i.test(String(text || "").trim());
+      }
+
+      function isReject(text) {
+        return /^reject\s+(dry-run|dry run)\s+DRY-\d+/i.test(String(text || "").trim());
+      }
+
+      function isQuestion(text) {
+        const q = String(text || "").trim().toLowerCase();
+        return (
+          q.endsWith("?") ||
+          q.startsWith("what ") ||
+          q.startsWith("why ") ||
+          q.startsWith("how ") ||
+          q.startsWith("when ") ||
+          q.startsWith("where ") ||
+          q.startsWith("who ") ||
+          q.startsWith("which ") ||
+          q.startsWith("tell me ") ||
+          q.startsWith("explain ") ||
+          q.startsWith("describe ") ||
+          q.startsWith("summarize ")
+        );
+      }
+
+      function isDryRunCreateIntent(text) {
+        const q = String(text || "").trim().toLowerCase();
+        if (isQuestion(text)) return false;
+        return /^(make|fix|change|update|create|add|remove|reduce|increase|shift|move|polish|connect|build)\b/i.test(q);
+      }
+
+      function statusFromResponse(responseText) {
+        const r = String(responseText || "").toLowerCase();
+
+        if (r.includes("approved patch applied") || r.includes("patch applied safely")) return "applied";
+        if (r.includes("dry-run approved") || r.includes("approved dry-run")) return "approved";
+        if (r.includes("dry-run rejected")) return "rejected";
+        if (r.includes("worker unavailable")) return "worker_unavailable";
+        if (r.includes("apply blocked") || r.includes("worker blocked")) return "blocked";
+        if (r.includes("waiting founder approval") || r.includes("waiting approval")) return "waiting_approval";
+        if (r.includes("approval queue")) return "viewed";
+        return "recorded";
+      }
+
+      async function writeAudit(action, status, area, risk, meta) {
+        try {
+          await fetch(AUDIT_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              actor: "founder_admin",
+              action,
+              status,
+              area: area || "Founder Office",
+              risk: risk || "Low",
+              meta: meta || {}
+            })
+          });
+        } catch (err) {
+          console.warn("Audit log write failed", err);
+        }
+      }
+
+      window.sendToAdminChat = async function (text) {
+        const userText = String(text || "").trim();
+
+        const response = await previousSendToAdminChat(text);
+        const responseText = String(response || "");
+        const status = statusFromResponse(responseText);
+        const jobId = nowIdFromText(userText) || idFromResponse(responseText);
+
+        if (isApprovalQueueView(userText)) {
+          await writeAudit(
+            "Founder viewed approval queue",
+            "viewed",
+            "Approval Queue",
+            "Low",
+            {
+              phase: "ADM-4C-6",
+              command: userText,
+              execution: "locked"
+            }
+          );
+          return response;
+        }
+
+        if (isApprove(userText)) {
+          await writeAudit(
+            "Founder approved dry-run job",
+            status,
+            "Approval Queue",
+            "Low",
+            {
+              phase: "ADM-4C-6",
+              job_id: jobId,
+              command: userText,
+              execution: "approval_only"
+            }
+          );
+          return response;
+        }
+
+        if (isApply(userText)) {
+          await writeAudit(
+            status === "applied" ? "Founder applied approved dry-run job" : "Founder attempted to apply approved dry-run job",
+            status,
+            "Worker Execution",
+            status === "applied" ? "Medium" : "Low",
+            {
+              phase: "ADM-4C-6",
+              job_id: jobId,
+              command: userText,
+              execution: status
+            }
+          );
+          return response;
+        }
+
+        if (isReject(userText)) {
+          await writeAudit(
+            "Founder rejected dry-run job",
+            status,
+            "Approval Queue",
+            "Low",
+            {
+              phase: "ADM-4C-6",
+              job_id: jobId,
+              command: userText,
+              execution: "locked"
+            }
+          );
+          return response;
+        }
+
+        if (isDryRunCreateIntent(userText) && jobId) {
+          await writeAudit(
+            "Dry-run job created from Founder Office command",
+            status,
+            "Founder Office",
+            "Low",
+            {
+              phase: "ADM-4C-6",
+              job_id: jobId,
+              request: userText,
+              execution: "locked_until_approval"
+            }
+          );
+          return response;
+        }
+
+        return response;
+      };
+    })();
+  </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 
