@@ -1095,3 +1095,267 @@
   console.log("IdeasForgeAI final thinking + format helper active");
 })();
 // CHAT-THINKING-FORMAT-FINAL-END
+
+
+// CHAT-FORMAT-PHASE2C-CLEANUP-START
+(function () {
+  if (window.__IF_CHAT_FORMAT_PHASE2C__) return;
+  window.__IF_CHAT_FORMAT_PHASE2C__ = true;
+
+  const thinkingTimers = new WeakMap();
+
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function inlineFormat(text) {
+    return escapeHtml(text || "")
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+      .replace(/`([^`]+)`/g, "<code>$1</code>");
+  }
+
+  function normalizeText(text) {
+    return String(text || "")
+      .replace(/\r/g, "")
+      .replace(/\s+(#{1,4}\s+)/g, "\n\n$1")
+      .replace(/\s+(\d+\.\s+\*\*)/g, "\n\n$1")
+      .replace(/\s+(\d+\.\s+[A-Z])/g, "\n\n$1")
+      .replace(/\s+(-\s+\*\*)/g, "\n$1")
+      .replace(/\s+(-\s+[A-Z])/g, "\n$1")
+      .trim();
+  }
+
+  function isSeparator(line) {
+    return /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(line || "");
+  }
+
+  function splitCells(line) {
+    return String(line || "")
+      .trim()
+      .replace(/^\|/, "")
+      .replace(/\|$/, "")
+      .split("|")
+      .map(function (cell) { return cell.trim(); })
+      .filter(Boolean);
+  }
+
+  function buildTable(rows) {
+    if (!rows || rows.length < 2) return "";
+
+    let html = '<div class="if-phase2c-table-wrap"><table class="if-phase2c-table">';
+
+    rows.forEach(function (row, index) {
+      if (index === 0) {
+        html += "<thead><tr>";
+        row.forEach(function (cell) {
+          html += "<th>" + inlineFormat(cell) + "</th>";
+        });
+        html += "</tr></thead><tbody>";
+      } else {
+        html += "<tr>";
+        row.forEach(function (cell) {
+          html += "<td>" + inlineFormat(cell) + "</td>";
+        });
+        html += "</tr>";
+      }
+    });
+
+    html += "</tbody></table></div>";
+    return html;
+  }
+
+  function formatMarkdown(text) {
+    const raw = normalizeText(text);
+    if (!raw) return "";
+
+    const lines = raw.split("\n");
+    let html = "";
+    let paragraph = [];
+
+    function flushParagraph() {
+      if (!paragraph.length) return;
+      html += '<p class="if-phase2c-p">' + inlineFormat(paragraph.join(" ")) + "</p>";
+      paragraph = [];
+    }
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i].trim();
+
+      if (!line) {
+        flushParagraph();
+        continue;
+      }
+
+      if (line.indexOf("|") !== -1 && lines[i + 1] && isSeparator(lines[i + 1])) {
+        flushParagraph();
+
+        const rows = [];
+        rows.push(splitCells(line));
+        i += 2;
+
+        while (i < lines.length && lines[i].indexOf("|") !== -1) {
+          const current = lines[i].trim();
+          if (!isSeparator(current)) rows.push(splitCells(current));
+          i++;
+        }
+
+        i--;
+        html += buildTable(rows);
+        continue;
+      }
+
+      if (/^#{1,4}\s+/.test(line)) {
+        flushParagraph();
+        html += '<h3 class="if-phase2c-heading">' + inlineFormat(line.replace(/^#{1,4}\s+/, "")) + "</h3>";
+        continue;
+      }
+
+      if (/^[-*•]\s+/.test(line)) {
+        flushParagraph();
+
+        html += '<ul class="if-phase2c-list">';
+        while (i < lines.length && /^[-*•]\s+/.test(lines[i].trim())) {
+          html += "<li>" + inlineFormat(lines[i].trim().replace(/^[-*•]\s+/, "")) + "</li>";
+          i++;
+        }
+        i--;
+
+        html += "</ul>";
+        continue;
+      }
+
+      if (/^\d+\.\s+/.test(line)) {
+        flushParagraph();
+
+        html += '<ol class="if-phase2c-list">';
+        while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
+          html += "<li>" + inlineFormat(lines[i].trim().replace(/^\d+\.\s+/, "")) + "</li>";
+          i++;
+        }
+        i--;
+
+        html += "</ol>";
+        continue;
+      }
+
+      paragraph.push(line);
+    }
+
+    flushParagraph();
+    return html;
+  }
+
+  function assistantMessages() {
+    return Array.from(document.querySelectorAll(
+      ".if-original-msg-row.is-assistant .if-original-msg, " +
+      ".if-live-msg-row.is-assistant .if-live-msg, " +
+      ".is-assistant .if-original-msg, " +
+      ".is-assistant .message, " +
+      ".message.assistant, " +
+      "[data-role='assistant']"
+    ));
+  }
+
+  function renderThinking(el) {
+    if (!el) return;
+    if (el.querySelector(".if-phase2c-thinking")) return;
+
+    const start = performance.now();
+
+    function tick() {
+      if (!document.documentElement.contains(el)) {
+        clearInterval(thinkingTimers.get(el));
+        thinkingTimers.delete(el);
+        return;
+      }
+
+      if (!el.querySelector(".if-phase2c-thinking")) {
+        clearInterval(thinkingTimers.get(el));
+        thinkingTimers.delete(el);
+        return;
+      }
+
+      const seconds = ((performance.now() - start) / 1000).toFixed(1);
+
+      el.innerHTML =
+        '<span class="if-phase2c-thinking">' +
+          '<span>Thinking</span>' +
+          '<span class="if-phase2c-dots" aria-hidden="true"><i></i><i></i><i></i></span>' +
+          '<span class="if-phase2c-time">' + seconds + 's</span>' +
+        '</span>';
+    }
+
+    tick();
+    const timer = setInterval(tick, 100);
+    thinkingTimers.set(el, timer);
+  }
+
+  function repairMessage(el) {
+    if (!el) return;
+
+    const text = (el.textContent || "").trim();
+    if (!text) return;
+
+    if (/^Thinking/i.test(text) && !el.querySelector(".if-phase2c-thinking")) {
+      renderThinking(el);
+      return;
+    }
+
+    if (el.dataset.ifPhase2cFormatted === "1") return;
+
+    const shouldFormat =
+      text.indexOf("|") !== -1 ||
+      text.indexOf("**") !== -1 ||
+      /^#{1,4}\s+/m.test(text) ||
+      /^[-*•]\s+/m.test(text) ||
+      /^\d+\.\s+/m.test(text);
+
+    if (!shouldFormat) {
+      el.classList.add("if-phase2c-answer");
+      return;
+    }
+
+    const html = formatMarkdown(text);
+    if (!html) return;
+
+    el.innerHTML = html;
+    el.dataset.ifPhase2cFormatted = "1";
+    el.classList.add("if-phase2c-answer");
+  }
+
+  function scan() {
+    assistantMessages().forEach(repairMessage);
+  }
+
+  const observer = new MutationObserver(function () {
+    scan();
+  });
+
+  function start() {
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      characterData: true
+    });
+
+    scan();
+    setTimeout(scan, 250);
+    setTimeout(scan, 900);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+
+  window.addEventListener("pageshow", scan);
+
+  window.ideasForgeAIFormatLiveBrainAnswer = formatMarkdown;
+
+  console.log("IdeasForgeAI Chat Format Phase 2C cleanup active");
+})();
+// CHAT-FORMAT-PHASE2C-CLEANUP-END

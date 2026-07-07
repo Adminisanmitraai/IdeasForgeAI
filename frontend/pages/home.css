@@ -3414,3 +3414,212 @@ body.sidebar-open .chat-composer {
 }
 
 /* CHAT-THINKING-FORMAT-FINAL-END */
+
+
+/* CHAT-FORMAT-PHASE2C-CLEANUP-START */
+
+.if-original-msg,
+.if-live-msg,
+.message.assistant,
+[data-role='assistant'] {
+  counter-reset: ifPhase2cStep;
+}
+
+.if-phase2c-answer,
+.if-original-msg,
+.if-live-msg {
+  font-size: 16px;
+  line-height: 1.52;
+}
+
+.if-phase2c-p,
+.if-final-p,
+.if-rich-p {
+  margin: 0 0 10px !important;
+  line-height: 1.52 !important;
+}
+
+.if-phase2c-heading,
+.if-final-heading,
+.if-rich-heading {
+  margin: 16px 0 8px !important;
+  font-size: 19px !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.24 !important;
+}
+
+ol.if-phase2c-list,
+ol.if-final-list,
+ol.if-rich-list {
+  list-style: none !important;
+  margin: 8px 0 14px 0 !important;
+  padding: 0 !important;
+}
+
+ol.if-phase2c-list > li,
+ol.if-final-list > li,
+ol.if-rich-list > li {
+  counter-increment: ifPhase2cStep;
+  position: relative;
+  margin: 7px 0 10px !important;
+  padding-left: 30px !important;
+  line-height: 1.48 !important;
+}
+
+ol.if-phase2c-list > li::before,
+ol.if-final-list > li::before,
+ol.if-rich-list > li::before {
+  content: counter(ifPhase2cStep) ".";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 22px;
+  color: rgba(255,255,255,0.92);
+  font-weight: 760;
+}
+
+ul.if-phase2c-list,
+ul.if-final-list,
+ul.if-rich-list {
+  list-style: none !important;
+  margin: 8px 0 14px 0 !important;
+  padding: 0 !important;
+}
+
+ul.if-phase2c-list > li,
+ul.if-final-list > li,
+ul.if-rich-list > li {
+  position: relative;
+  margin: 7px 0 10px !important;
+  padding-left: 24px !important;
+  line-height: 1.48 !important;
+}
+
+ul.if-phase2c-list > li::before,
+ul.if-final-list > li::before,
+ul.if-rich-list > li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.68em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(168,128,255,0.9);
+}
+
+.if-phase2c-table-wrap,
+.if-final-table-wrap,
+.if-rich-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 12px 0 16px !important;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.045);
+}
+
+.if-phase2c-table,
+.if-final-table,
+.if-rich-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.42;
+}
+
+.if-phase2c-table th,
+.if-phase2c-table td,
+.if-final-table th,
+.if-final-table td,
+.if-rich-table th,
+.if-rich-table td {
+  padding: 11px 13px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.if-phase2c-table th,
+.if-final-table th,
+.if-rich-table th {
+  font-weight: 760;
+  color: rgba(255,255,255,0.96);
+  background: rgba(255,255,255,0.06);
+}
+
+.if-phase2c-table td,
+.if-final-table td,
+.if-rich-table td {
+  color: rgba(255,255,255,0.88);
+}
+
+.if-phase2c-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+  color: rgba(255,255,255,0.9);
+  font-weight: 560;
+  letter-spacing: -0.01em;
+}
+
+.if-phase2c-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.if-phase2c-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(168,128,255,0.98);
+  animation: ifPhase2cDotBlink 1.05s infinite ease-in-out;
+}
+
+.if-phase2c-dots i:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.if-phase2c-dots i:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.if-phase2c-time {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  font-weight: 520;
+}
+
+@keyframes ifPhase2cDotBlink {
+  0%, 80%, 100% {
+    opacity: 0.25;
+    transform: translateY(0) scale(0.82);
+  }
+
+  40% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+}
+
+@media (max-width: 760px) {
+  .if-phase2c-answer,
+  .if-original-msg,
+  .if-live-msg {
+    font-size: 17px;
+    line-height: 1.5;
+  }
+
+  .if-phase2c-table,
+  .if-final-table,
+  .if-rich-table {
+    min-width: 620px;
+    font-size: 14px;
+  }
+}
+
+/* CHAT-FORMAT-PHASE2C-CLEANUP-END */
