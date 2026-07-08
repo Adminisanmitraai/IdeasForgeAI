@@ -1,0 +1,2607 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>IdeasForgeAI Founder Office</title>
+
+  <style>
+    :root {
+      --page-max: 760px;
+      --bg: #f3f5f8;
+      --card: rgba(255,255,255,0.92);
+      --card-solid: #ffffff;
+      --text: #050505;
+      --muted: #6b7280;
+      --line: rgba(15,23,42,0.08);
+      --brand: #5b7cff;
+      --brand-soft: #eef2ff;
+      --shadow: 0 22px 70px rgba(15,23,42,0.12);
+      --header-top: 28px;
+      --header-h: 72px;
+      --status-top: 112px;
+      --status-h: 72px;
+      --composer-h: 68px;
+      --composer-bottom: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-width: 100%;
+      height: 100%;
+      overflow: hidden;
+      overscroll-behavior: none;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255,255,255,0.96), transparent 34%),
+        radial-gradient(circle at 80% 10%, rgba(221,228,240,0.9), transparent 32%),
+        linear-gradient(145deg, #eef1f6 0%, #ffffff 48%, #edf1f7 100%);
+    }
+
+    body {
+      position: fixed;
+      inset: 0;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .screen {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100dvh;
+      overflow: hidden;
+    }
+
+    .center {
+      width: min(var(--page-max), calc(100vw - 20px));
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .topbar {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 0px) + var(--header-top));
+      left: 50%;
+      transform: translateX(-50%);
+      height: var(--header-h);
+      width: min(var(--page-max), calc(100vw - 20px));
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border-radius: 30px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.90);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(22px);
+    }
+
+    .top-left {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .icon-btn,
+    .logo-box,
+    .dots-btn {
+      width: 48px;
+      height: 48px;
+      border: 0;
+      border-radius: 18px;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      box-shadow: inset 0 0 0 1px var(--line), 0 12px 28px rgba(15,23,42,0.08);
+      cursor: pointer;
+    }
+
+    .burger {
+      width: 18px;
+      display: grid;
+      gap: 4px;
+    }
+
+    .burger span {
+      height: 2.5px;
+      border-radius: 999px;
+      background: #111827;
+    }
+
+    .logo-box img {
+      width: 27px;
+      height: 27px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .title-wrap {
+      min-width: 0;
+    }
+
+    .title-wrap h1 {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.02;
+      letter-spacing: -0.055em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .title-wrap p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dots {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--brand);
+    }
+
+    .menu-wrap {
+      position: relative;
+      flex: 0 0 auto;
+    }
+
+    .menu {
+      position: absolute;
+      top: 58px;
+      right: 0;
+      width: 220px;
+      padding: 8px;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 70px rgba(15,23,42,0.18);
+      display: none;
+      z-index: 120;
+    }
+
+    .menu.open {
+      display: block;
+    }
+
+    .menu a,
+    .menu button {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      text-decoration: none;
+      color: var(--text);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      font-weight: 850;
+      cursor: pointer;
+    }
+
+    .menu a:hover,
+    .menu button:hover {
+      background: #f4f5f7;
+    }
+
+    .status-row {
+      position: fixed;
+      top: calc(env(safe-area-inset-top, 0px) + var(--status-top));
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(var(--page-max), calc(100vw - 20px));
+      height: var(--status-h);
+      z-index: 90;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .status-card {
+      min-width: 0;
+      height: 100%;
+      border-radius: 23px;
+      padding: 12px 10px;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid var(--line);
+      box-shadow: 0 16px 42px rgba(15,23,42,0.09);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 7px;
+      overflow: hidden;
+    }
+
+    .label {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-size: 9px;
+      line-height: 1;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #16c172;
+      box-shadow: 0 0 0 7px rgba(22,193,114,0.12);
+      flex: 0 0 auto;
+    }
+
+    .dot.amber {
+      background: #dca32a;
+      box-shadow: 0 0 0 7px rgba(220,163,42,0.16);
+    }
+
+    .dot.dark {
+      background: #111827;
+      box-shadow: 0 0 0 7px rgba(17,24,39,0.10);
+    }
+
+    .status-card strong {
+      font-size: 17px;
+      line-height: 1;
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .content {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      top: calc(env(safe-area-inset-top, 0px) + 198px);
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+      width: min(var(--page-max), calc(100vw - 20px));
+      z-index: 1;
+      overflow: hidden;
+      border-radius: 34px;
+    }
+
+    .home-panel,
+    .chat-panel {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 34px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.90), rgba(255,255,255,0.68));
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .home-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      padding: 24px 18px;
+    }
+
+    body.chat-active .home-panel {
+      display: none;
+    }
+
+    .home-badge {
+      align-self: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 850;
+      margin-bottom: 20px;
+    }
+
+    .home-panel h2 {
+      margin: 0 auto;
+      max-width: 620px;
+      font-size: clamp(36px, 7.8vw, 68px);
+      line-height: 0.92;
+      letter-spacing: -0.085em;
+    }
+
+    .home-panel p {
+      margin: 20px auto 0;
+      max-width: 560px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .home-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+
+    .home-actions a,
+    .home-actions button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #050505;
+      color: #fff;
+    }
+
+    .secondary {
+      background: #fff;
+      color: #111;
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+
+    .chat-panel {
+      display: none;
+      overflow: hidden;
+    }
+
+    body.chat-active .chat-panel {
+      display: block;
+    }
+
+    .chat-panel::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      height: 84px;
+      z-index: 5;
+      pointer-events: none;
+      border-radius: 34px 34px 0 0;
+      background: linear-gradient(
+        180deg,
+        rgba(255,255,255,0.98) 0%,
+        rgba(255,255,255,0.86) 38%,
+        rgba(255,255,255,0) 100%
+      );
+    }
+
+    .messages {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      overscroll-behavior: contain;
+      padding: 88px 14px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      scrollbar-width: none;
+    }
+
+    .messages::-webkit-scrollbar {
+      display: none;
+    }
+
+    .msg {
+      max-width: 84%;
+      padding: 12px 14px;
+      border-radius: 20px;
+      font-size: 14.5px;
+      line-height: 1.42;
+      letter-spacing: -0.02em;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+      box-shadow: 0 12px 34px rgba(15,23,42,0.08);
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      color: #fff;
+      background: #050505;
+      border-bottom-right-radius: 7px;
+    }
+
+    .msg.ai {
+      align-self: flex-start;
+      color: #111827;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(15,23,42,0.08);
+      border-bottom-left-radius: 7px;
+    }
+
+    .msg.system {
+      align-self: center;
+      max-width: 92%;
+      color: #6b7280;
+      background: rgba(255,255,255,0.76);
+      border: 1px solid rgba(15,23,42,0.06);
+      font-size: 12px;
+      font-weight: 850;
+      box-shadow: none;
+    }
+
+    .composer-wrap {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + var(--composer-bottom));
+      z-index: 200;
+      padding: 0 10px;
+      pointer-events: none;
+    }
+
+    .composer-wrap::before {
+      content: "";
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 106px;
+      background: linear-gradient(
+        180deg,
+        rgba(243,245,248,0) 0%,
+        rgba(243,245,248,0.88) 38%,
+        rgba(243,245,248,0.98) 100%
+      );
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .composer {
+      width: min(var(--page-max), calc(100vw - 20px));
+      margin: 0 auto;
+      min-height: 58px;
+      max-height: 154px;
+      display: grid;
+      grid-template-columns: 34px 1fr 38px 38px;
+      align-items: end;
+      gap: 7px;
+      padding: 8px;
+      border-radius: 31px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 34px rgba(15,23,42,0.14), inset 0 0 0 1px rgba(255,255,255,0.72);
+      backdrop-filter: blur(24px);
+      pointer-events: auto;
+    }
+
+    .composer-btn {
+      width: 38px;
+      height: 38px;
+      border: 0;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      text-decoration: none;
+      cursor: pointer;
+      flex: 0 0 auto;
+    }
+
+    .composer-btn.attach {
+      width: 34px;
+      background: transparent;
+      color: #0f172a;
+      font-size: 31px;
+      line-height: 1;
+      font-weight: 300;
+      box-shadow: none;
+      transform: translateY(-1px);
+    }
+
+    .input-shell {
+      min-width: 0;
+      min-height: 42px;
+      max-height: 138px;
+      display: flex;
+      align-items: center;
+      border-radius: 24px;
+      background: #f4f6f7;
+      overflow: hidden;
+    }
+
+    textarea {
+      width: 100%;
+      min-width: 0;
+      min-height: 42px;
+      max-height: 138px;
+      resize: none;
+      overflow-y: auto;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: #111827;
+      padding: 10px 14px 9px;
+      font-size: 15.5px;
+      line-height: 21px;
+      letter-spacing: -0.02em;
+      scrollbar-width: none;
+    }
+
+    textarea::-webkit-scrollbar {
+      display: none;
+    }
+
+    textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    .worker-link {
+      background: var(--brand-soft);
+      color: var(--brand);
+    }
+
+    .worker-link svg {
+      width: 19px;
+      height: 19px;
+      fill: currentColor;
+    }
+
+    .send {
+      background: var(--brand);
+      color: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 8px 22px rgba(91,124,255,0.26);
+    }
+
+    .send:active {
+      transform: scale(0.97);
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
+      transform: translateX(-50%);
+      z-index: 250;
+      max-width: calc(100vw - 32px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: #050505;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 850;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    @media (max-width: 520px) {
+      :root {
+        --header-top: 28px;
+        --header-h: 72px;
+        --status-top: 112px;
+        --status-h: 72px;
+      }
+
+      .center,
+      .topbar,
+      .status-row,
+      .content,
+      .composer {
+        width: calc(100vw - 20px);
+      }
+
+      .topbar {
+        padding: 10px;
+      }
+
+      .icon-btn,
+      .logo-box,
+      .dots-btn {
+        width: 46px;
+        height: 46px;
+        border-radius: 17px;
+      }
+
+      .logo-box img {
+        width: 25px;
+        height: 25px;
+      }
+
+      .title-wrap h1 {
+        font-size: 19px;
+      }
+
+      .title-wrap p {
+        font-size: 11.5px;
+        max-width: 190px;
+      }
+
+      .status-row {
+        gap: 8px;
+      }
+
+      .status-card {
+        border-radius: 22px;
+        padding: 11px 10px;
+      }
+
+      .label {
+        font-size: 8.5px;
+        gap: 7px;
+      }
+
+      .status-card strong {
+        font-size: 16px;
+      }
+
+      .content {
+        top: calc(env(safe-area-inset-top, 0px) + 198px);
+        bottom: calc(env(safe-area-inset-bottom, 0px) + 92px);
+      }
+
+      .home-panel {
+        padding: 22px 14px;
+      }
+
+      .home-panel h2 {
+        font-size: clamp(35px, 8.2vw, 56px);
+      }
+
+      .home-panel p {
+        font-size: 13.5px;
+        max-width: 92%;
+      }
+
+      .home-actions a,
+      .home-actions button {
+        min-height: 47px;
+        padding: 0 18px;
+        font-size: 13.5px;
+      }
+
+      .messages {
+        padding: 78px 12px 18px;
+      }
+
+      .msg {
+        max-width: 86%;
+        font-size: 14px;
+      }
+
+      .composer {
+        grid-template-columns: 32px 1fr 36px 36px;
+        min-height: 56px;
+        padding: 7px 8px;
+        gap: 6px;
+      }
+
+      .composer-btn {
+        width: 36px;
+        height: 36px;
+      }
+
+      .composer-btn.attach {
+        width: 32px;
+        font-size: 30px;
+      }
+
+      .input-shell {
+        min-height: 40px;
+      }
+
+      textarea {
+        min-height: 40px;
+        padding: 9px 13px 8px;
+        font-size: 15px;
+        line-height: 20px;
+      }
+
+      .worker-link svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .send {
+        font-size: 19px;
+      }
+    }
+  
+  /* ADM-5A: polished chat message layout + grey founder/user bubble */
+  .content {
+    border-radius: 32px !important;
+    box-shadow:
+      0 22px 70px rgba(15,23,42,0.10),
+      inset 0 0 0 1px rgba(255,255,255,0.55) !important;
+  }
+
+  .chat-panel {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.74)) !important;
+  }
+
+  .messages {
+    padding: 78px 18px 24px !important;
+    gap: 12px !important;
+    justify-content: flex-end !important;
+  }
+
+  .msg {
+    max-width: 78% !important;
+    padding: 12px 15px !important;
+    border-radius: 22px !important;
+    font-size: 15px !important;
+    line-height: 1.42 !important;
+    letter-spacing: -0.025em !important;
+    box-shadow: 0 10px 28px rgba(15,23,42,0.07) !important;
+  }
+
+  .msg.user {
+    align-self: flex-end !important;
+    background: #eef1f4 !important;
+    color: #111827 !important;
+    border: 1px solid rgba(15,23,42,0.06) !important;
+    border-bottom-right-radius: 8px !important;
+    margin-right: 2px !important;
+    box-shadow: none !important;
+  }
+
+  .msg.ai {
+    align-self: flex-start !important;
+    background: rgba(255,255,255,0.98) !important;
+    color: #111827 !important;
+    border: 1px solid rgba(15,23,42,0.08) !important;
+    border-bottom-left-radius: 8px !important;
+    margin-left: 2px !important;
+  }
+
+  .msg.system {
+    align-self: center !important;
+    max-width: 92% !important;
+    background: rgba(245,247,250,0.86) !important;
+    color: #6b7280 !important;
+    border: 1px solid rgba(15,23,42,0.06) !important;
+    box-shadow: none !important;
+  }
+
+  .chat-panel::before {
+    height: 92px !important;
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.99) 0%,
+      rgba(255,255,255,0.88) 42%,
+      rgba(255,255,255,0) 100%
+    ) !important;
+  }
+
+  .composer {
+    box-shadow:
+      0 10px 34px rgba(15,23,42,0.12),
+      inset 0 0 0 1px rgba(255,255,255,0.75) !important;
+  }
+
+  .input-shell {
+    background: #f2f5f6 !important;
+  }
+
+  textarea {
+    color: #111827 !important;
+  }
+
+  textarea::placeholder {
+    color: #a0a7b2 !important;
+  }
+
+  @media (max-width: 520px) {
+    .messages {
+      padding: 76px 16px 22px !important;
+      gap: 11px !important;
+    }
+
+    .msg {
+      max-width: 80% !important;
+      font-size: 14.5px !important;
+      padding: 11px 14px !important;
+    }
+
+    .msg.user {
+      margin-right: 0 !important;
+    }
+
+    .msg.ai {
+      margin-left: 0 !important;
+    }
+  }
+
+
+  /* ADM-5A: exact center alignment lock */
+  html,
+  body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    position: fixed !important;
+    inset: 0 !important;
+  }
+
+  .screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+
+  .topbar,
+  .status-row,
+  .content {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(760px, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .composer-wrap {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  .composer {
+    width: min(760px, calc(100vw - 20px)) !important;
+    max-width: calc(100vw - 20px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    transform: none !important;
+  }
+
+  .input-shell {
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  textarea#founderInput {
+    text-align: left !important;
+    display: block !important;
+    margin: 0 !important;
+  }
+
+  @media (max-width: 520px) {
+    .topbar,
+    .status-row,
+    .content,
+    .composer {
+      width: calc(100vw - 20px) !important;
+      max-width: calc(100vw - 20px) !important;
+    }
+
+    .composer-wrap {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+    }
+  }
+
+
+  /* ADM-5A: final center alignment lock */
+  html, body {
+    overflow-x: hidden !important;
+  }
+
+  .screen {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  .topbar,
+  .status-row,
+  .content {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: min(760px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .composer-wrap {
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  .composer {
+    width: min(760px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .home-panel,
+  .chat-panel {
+    width: 100% !important;
+  }
+
+  .messages {
+    width: 100% !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+    align-items: stretch !important;
+  }
+
+  .msg {
+    max-width: 78% !important;
+  }
+
+  .msg.user {
+    align-self: flex-end !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+  }
+
+  .msg.ai {
+    align-self: flex-start !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+  }
+
+  .msg.system {
+    align-self: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .home-panel h2,
+  .home-panel p,
+  .home-actions,
+  .home-badge {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  @media (max-width: 520px) {
+    .topbar,
+    .status-row,
+    .content,
+    .composer {
+      width: calc(100vw - 24px) !important;
+      max-width: calc(100vw - 24px) !important;
+    }
+
+    .messages {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+
+    .msg {
+      max-width: 80% !important;
+    }
+  }
+
+
+  /* ADM-5A: stop iPhone focus zoom / layout distraction */
+  html {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  body,
+  .screen {
+    touch-action: manipulation !important;
+  }
+
+  textarea#founderInput {
+    font-size: 16px !important;
+    line-height: 21px !important;
+    transform: none !important;
+    -webkit-transform: none !important;
+  }
+
+  textarea#founderInput:focus {
+    font-size: 16px !important;
+    outline: none !important;
+  }
+
+  .topbar,
+  .status-row,
+  .content,
+  .composer-wrap,
+  .composer {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .composer-wrap {
+    will-change: auto !important;
+  }
+
+  body.input-active .topbar,
+  body.input-active .status-row,
+  body.input-active .content {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  body.input-active .composer-wrap {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+
+  @media (max-width: 520px) {
+    textarea#founderInput {
+      font-size: 16px !important;
+      line-height: 21px !important;
+    }
+
+    textarea#founderInput:focus {
+      font-size: 16px !important;
+    }
+  }
+
+
+  /* ADM-5A: keyboard-safe composer */
+  .composer-wrap {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 10px) !important;
+    transition: bottom 0.18s ease !important;
+  }
+
+  body.keyboard-open .composer-wrap {
+    bottom: var(--keyboard-offset, 10px) !important;
+  }
+
+  body.keyboard-open .content {
+    bottom: calc(var(--keyboard-offset, 10px) + 78px) !important;
+  }
+
+  @media (max-width: 520px) {
+    body.keyboard-open .composer-wrap {
+      bottom: var(--keyboard-offset, 8px) !important;
+    }
+
+    body.keyboard-open .content {
+      bottom: calc(var(--keyboard-offset, 8px) + 76px) !important;
+    }
+  }
+
+
+  /* ADM-5A: in-place Worker Page panel */
+  .worker-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    overflow: hidden;
+    border-radius: 34px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.74));
+    border: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 22px 70px rgba(15,23,42,0.10);
+  }
+
+  body.worker-active .home-panel,
+  body.worker-active .chat-panel {
+    display: none !important;
+  }
+
+  body.worker-active .worker-panel {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .worker-panel::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 84px;
+    z-index: 3;
+    pointer-events: none;
+    border-radius: 34px 34px 0 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255,255,255,0.98) 0%,
+      rgba(255,255,255,0.86) 42%,
+      rgba(255,255,255,0) 100%
+    );
+  }
+
+  .worker-inner {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    overflow-y: auto;
+    padding: 26px 18px 24px;
+    scrollbar-width: none;
+  }
+
+  .worker-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  .worker-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .worker-title h2 {
+    margin: 0;
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: -0.07em;
+  }
+
+  .worker-title p {
+    margin: 7px 0 0;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+
+  .worker-close {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 16px;
+    background: #f3f5f7;
+    color: #111827;
+    font-size: 22px;
+    cursor: pointer;
+  }
+
+  .worker-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .worker-mini {
+    min-height: 76px;
+    border-radius: 22px;
+    padding: 12px;
+    background: rgba(255,255,255,0.88);
+    border: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 14px 36px rgba(15,23,42,0.07);
+  }
+
+  .worker-mini span {
+    display: block;
+    color: #6b7280;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .worker-mini strong {
+    display: block;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .worker-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0;
+  }
+
+  .worker-action {
+    min-height: 46px;
+    border: 0;
+    border-radius: 999px;
+    padding: 0 14px;
+    font-size: 13px;
+    font-weight: 900;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .worker-action.primary {
+    background: #050505;
+    color: #ffffff;
+  }
+
+  .worker-action.secondary {
+    background: #ffffff;
+    color: #111827;
+    border: 1px solid rgba(15,23,42,0.08);
+  }
+
+  .worker-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .worker-job {
+    border-radius: 22px;
+    padding: 14px;
+    background: rgba(255,255,255,0.90);
+    border: 1px solid rgba(15,23,42,0.08);
+    box-shadow: 0 14px 36px rgba(15,23,42,0.06);
+  }
+
+  .worker-job-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+
+  .worker-job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    color: #6b7280;
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .worker-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 8px;
+    border-radius: 999px;
+    background: #f3f5f7;
+    font-weight: 800;
+  }
+
+  .worker-empty {
+    border-radius: 22px;
+    padding: 18px;
+    text-align: center;
+    background: rgba(255,255,255,0.72);
+    border: 1px solid rgba(15,23,42,0.06);
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  body.worker-active .worker-link {
+    background: #5b7cff !important;
+    color: #ffffff !important;
+  }
+
+  @media (max-width: 520px) {
+    .worker-inner {
+      padding: 24px 14px 22px;
+    }
+
+    .worker-title h2 {
+      font-size: 25px;
+    }
+
+    .worker-grid {
+      gap: 8px;
+    }
+
+    .worker-mini {
+      min-height: 68px;
+      padding: 11px 10px;
+      border-radius: 20px;
+    }
+
+    .worker-mini span {
+      font-size: 8.5px;
+      letter-spacing: 0.12em;
+    }
+
+    .worker-mini strong {
+      font-size: 21px;
+    }
+
+    .worker-actions {
+      grid-template-columns: 1fr;
+    }
+  }
+
+
+  /* ADM-5A: PowerShell-style full Worker Console */
+  body.worker-active .topbar,
+  body.worker-active .status-row {
+    display: none !important;
+  }
+
+  body.worker-active .content {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 86px) !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    transform: none !important;
+    border-radius: 0 !important;
+    overflow: hidden !important;
+    z-index: 20 !important;
+  }
+
+  body.worker-active .worker-panel {
+    display: flex !important;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    background: #012456 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    color: #ffffff !important;
+    font-family: Consolas, "Cascadia Mono", "Courier New", monospace !important;
+  }
+
+  body.worker-active .worker-panel::before {
+    display: none !important;
+  }
+
+  body.worker-active .home-panel,
+  body.worker-active .chat-panel {
+    display: none !important;
+  }
+
+  .worker-terminal-shell {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr;
+    background: #012456;
+    color: #ffffff;
+  }
+
+  .worker-terminal-top {
+    padding: calc(env(safe-area-inset-top, 0px) + 12px) 10px 8px;
+    background: #012456;
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+  }
+
+  .worker-terminal-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .worker-terminal-title strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0;
+  }
+
+  .worker-terminal-title span {
+    color: rgba(255,255,255,0.68);
+    font-size: 11px;
+  }
+
+  .worker-terminal-close {
+    width: 34px;
+    height: 30px;
+    border: 1px solid rgba(255,255,255,0.24);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.08);
+    color: #ffffff;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .worker-tabs {
+    display: flex;
+    gap: 7px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .worker-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .worker-tab {
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: 999px;
+    padding: 7px 11px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.86);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .worker-tab.active {
+    background: rgba(255,255,255,0.94);
+    color: #012456;
+    border-color: rgba(255,255,255,0.94);
+  }
+
+  .worker-terminal-body {
+    position: relative;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px 10px 22px;
+    background: #012456;
+    color: #ffffff;
+    font-size: 12.5px;
+    line-height: 1.42;
+    white-space: pre-wrap;
+    word-break: break-word;
+    scrollbar-width: none;
+  }
+
+  .worker-terminal-body::-webkit-scrollbar {
+    display: none;
+  }
+
+  .worker-terminal-body::before {
+    content: "";
+    position: sticky;
+    top: 0;
+    display: block;
+    height: 26px;
+    margin: -12px -10px 0;
+    background: linear-gradient(180deg, #012456 0%, rgba(1,36,86,0) 100%);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .ps-line {
+    color: #ffffff;
+    margin: 0 0 5px;
+  }
+
+  .ps-muted {
+    color: rgba(255,255,255,0.68);
+  }
+
+  .ps-success {
+    color: #7fffb0;
+  }
+
+  .ps-warn {
+    color: #ffd166;
+  }
+
+  .ps-error {
+    color: #ff9aa2;
+  }
+
+  .ps-command {
+    color: #ffffff;
+  }
+
+  .ps-prompt {
+    color: #ffffff;
+    font-weight: 700;
+  }
+
+  body.worker-active .composer {
+    background: rgba(255,255,255,0.98) !important;
+  }
+
+  body.worker-active .input-shell {
+    background: #f4f6f7 !important;
+  }
+
+  body.worker-active textarea#founderInput::placeholder {
+    color: #9ca3af !important;
+  }
+
+
+  /* ADM-5A: remove bottom white gradient shade */
+  .composer-wrap::before {
+    display: none !important;
+    opacity: 0 !important;
+    background: transparent !important;
+  }
+
+  body.worker-active .composer-wrap::before {
+    display: none !important;
+    opacity: 0 !important;
+    background: transparent !important;
+  }
+
+  body.worker-active .content {
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 86px) !important;
+  }
+
+  body.worker-active .worker-terminal-body::after {
+    display: none !important;
+    opacity: 0 !important;
+    background: transparent !important;
+  }
+
+</style>
+</head>
+
+<body>
+  <div class="screen">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="icon-btn" type="button" onclick="showToast('Main admin menu')">
+          <span class="burger">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
+        </button>
+
+        <div class="logo-box" aria-hidden="true">
+          <img src="/frontend/assets/ideasforgeai-mark.png" alt="" />
+        </div>
+
+        <div class="title-wrap">
+          <h1>Founder Office</h1>
+          <p>IdeasForgeAI Admin Control</p>
+        </div>
+      </div>
+
+      <div class="menu-wrap">
+        <button class="dots-btn" id="menuButton" type="button" aria-label="Open menu">
+          <span class="dots"><span></span><span></span><span></span></span>
+        </button>
+
+        <nav class="menu" id="adminMenu">
+          <button type="button" onclick="showToast('Quick Access ready')">
+            Quick Access <span>⌘</span>
+          </button>
+          <button type="button" onclick="showToast('Founder Control locked')">
+            Founder Control <span>●</span>
+          </button>
+          <button type="button" onclick="openWorkerPanel()">
+            Worker Link <span>↔</span>
+          </button>
+        </nav>
+      </div>
+    </header>
+
+    <section class="status-row" aria-label="Admin status">
+      <div class="status-card">
+        <div class="label"><span class="dot"></span>Backend</div>
+        <strong>Safe</strong>
+      </div>
+
+      <div class="status-card">
+        <div class="label"><span class="dot amber"></span>Admin</div>
+        <strong>Founder</strong>
+      </div>
+
+      <div class="status-card">
+        <div class="label"><span class="dot dark"></span>Mode</div>
+        <strong>Locked</strong>
+      </div>
+    </section>
+
+    <main class="content">
+      <section class="home-panel" id="homePanel">
+        <div class="home-badge">Founder-gated workspace</div>
+        <h2>Command center for IdeasForgeAI.</h2>
+        <p>
+          Review workers, approve safe actions, control execution, and keep every admin operation locked behind founder approval.
+        </p>
+
+        <div class="home-actions">
+          <a class="primary" href="/frontend/admin/job-queue.html">Open Worker Queue</a>
+          <button class="secondary" type="button" onclick="showToast('Founder approval required')">Founder Control</button>
+        </div>
+      </section>
+
+      <section class="chat-panel" id="chatPanel" aria-label="Founder Office chat">
+        <div class="messages" id="brainLog"></div>
+      </section>
+
+      <section class="worker-panel" id="workerPanel" aria-label="Founder Office Worker Console">
+        <div class="worker-terminal-shell">
+          <div class="worker-terminal-top">
+            <div class="worker-terminal-title">
+              <div>
+                <strong>Windows PowerShell — IdeasForgeAI Worker</strong><br />
+                <span>D:\APPS\IdeasForgeAI · Founder-gated console</span>
+              </div>
+              <button class="worker-terminal-close" type="button" onclick="closeWorkerPanel()" aria-label="Close Worker Console">×</button>
+            </div>
+
+            <div class="worker-tabs" role="tablist">
+              <button class="worker-tab active" type="button" onclick="switchWorkerTab('console')">Console</button>
+              <button class="worker-tab" type="button" onclick="switchWorkerTab('jobs')">Jobs</button>
+              <button class="worker-tab" type="button" onclick="switchWorkerTab('executions')">Executions</button>
+              <button class="worker-tab" type="button" onclick="switchWorkerTab('audit')">Audit</button>
+            </div>
+          </div>
+
+          <div class="worker-terminal-body" id="workerTerminal">
+            <div class="ps-line ps-muted">Windows PowerShell</div>
+            <div class="ps-line ps-muted">Copyright (C) Microsoft Corporation. All rights reserved.</div>
+            <div class="ps-line"></div>
+            <div class="ps-line ps-success">IdeasForgeAI Founder Worker Console ready.</div>
+            <div class="ps-line ps-muted">Type help, jobs, executions, audit, clear, approve &lt;job_id&gt;, request-apply &lt;job_id&gt;, or safe-apply &lt;job_id&gt;.</div>
+            <div class="ps-line"></div>
+            <div class="ps-line"><span class="ps-prompt">PS D:\APPS\IdeasForgeAI&gt;</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <div class="composer-wrap">
+      <footer class="composer" aria-label="Founder Office message composer">
+        <button class="composer-btn attach" type="button" onclick="showToast('Attach disabled in this shell')" aria-label="Attach">+</button>
+
+        <div class="input-shell">
+          <textarea id="founderInput" rows="1" placeholder="Message Founder Office"></textarea>
+        </div>
+
+        <button class="composer-btn worker-link" type="button" onclick="toggleWorkerPanel()" aria-label="Toggle Worker Page">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 4h10a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H9.6L5 20.5V17H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3Zm0 2a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2v1.4L8.9 17H17a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1H7Zm2.2 3.1h5.6v1.8H9.2V9.1Zm0 3h3.9v1.8H9.2v-1.8Z"/>
+          </svg>
+        </button>
+
+        <button class="composer-btn send" type="button" onclick="sendFounderMessage()" aria-label="Send">↑</button>
+      </footer>
+    </div>
+
+    <div class="toast" id="toast">Ready</div>
+  </div>
+
+  <script>
+    const menuButton = document.getElementById("menuButton");
+    const adminMenu = document.getElementById("adminMenu");
+    const toast = document.getElementById("toast");
+    const founderInput = document.getElementById("founderInput");
+    const brainLog = document.getElementById("brainLog");
+
+    menuButton.addEventListener("click", () => {
+      adminMenu.classList.toggle("open");
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!event.target.closest(".menu-wrap")) {
+        adminMenu.classList.remove("open");
+      }
+    });
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1500);
+    }
+
+    function getBrainApiBase() {
+      const host = window.location.hostname;
+
+      if (host === "localhost" || host === "127.0.0.1") {
+        return "http://127.0.0.1:5051";
+      }
+
+      return "http://" + host + ":5051";
+    }
+
+    function resizeFounderInput() {
+      if (!founderInput) return;
+
+      founderInput.style.height = "auto";
+      const nextHeight = Math.min(founderInput.scrollHeight, 138);
+      founderInput.style.height = nextHeight + "px";
+    }
+
+    function activateChat() {
+      document.body.classList.add("chat-active");
+    }
+
+    function addBrainMessage(type, text) {
+      activateChat();
+
+      const item = document.createElement("div");
+      item.className = "msg " + type;
+      item.textContent = text;
+      brainLog.appendChild(item);
+
+      requestAnimationFrame(() => {
+        brainLog.scrollTop = brainLog.scrollHeight;
+      });
+
+      return item;
+    }
+
+    async function sendFounderMessage() {
+      const value = founderInput.value.trim();
+
+      if (document.body.classList.contains("worker-active")) {
+        await sendWorkerCommand(value);
+        return;
+      }
+
+      if (!value) {
+        showToast("Write a command first");
+        return;
+      }
+
+      addBrainMessage("user", value);
+
+      founderInput.value = "";
+      resizeFounderInput();
+
+      const thinking = addBrainMessage("system", "Founder brain is thinking...");
+
+      try {
+        const response = await fetch(getBrainApiBase() + "/api/ideasforge/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: value,
+            mode: "founder_office",
+            source: "forgeadmin"
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Brain route returned " + response.status);
+        }
+
+        const data = await response.json();
+        thinking.remove();
+
+        const reply =
+          data.reply ||
+          data.message ||
+          data.answer ||
+          data.output ||
+          data.result ||
+          "Founder brain responded, but no readable reply field was returned.";
+
+        addBrainMessage("ai", reply);
+        maybeAutoHandoffToWorker(value, reply);
+      } catch (error) {
+        thinking.remove();
+        addBrainMessage("system", "Founder brain connection failed. Backend must run on port 5051.");
+        console.error(error);
+      }
+    }
+
+    if (founderInput) {
+      founderInput.addEventListener("input", resizeFounderInput);
+
+      founderInput.addEventListener("keydown", function(event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendFounderMessage();
+        }
+      });
+
+      resizeFounderInput();
+    }
+  
+    /* ADM-5A: keep screen stable when mobile keyboard opens */
+    function lockViewportCenter() {
+      document.body.classList.add("input-active");
+
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollLeft = 0;
+        document.body.scrollLeft = 0;
+      });
+
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        document.documentElement.scrollLeft = 0;
+        document.body.scrollLeft = 0;
+      }, 120);
+    }
+
+    function unlockViewportCenter() {
+      document.body.classList.remove("input-active");
+      window.scrollTo(0, 0);
+    }
+
+    if (founderInput) {
+      founderInput.addEventListener("focus", lockViewportCenter);
+      founderInput.addEventListener("blur", unlockViewportCenter);
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", () => {
+        if (document.activeElement === founderInput) {
+          lockViewportCenter();
+        }
+      });
+    }
+
+
+    /* ADM-5A: move composer above iPhone keyboard */
+    function updateKeyboardOffset() {
+      if (!window.visualViewport) return;
+
+      const vv = window.visualViewport;
+      const keyboardHeight = Math.max(0, window.innerHeight - (vv.height + vv.offsetTop));
+      const offset = keyboardHeight > 0 ? (keyboardHeight + 8) : 10;
+
+      document.body.style.setProperty("--keyboard-offset", offset + "px");
+
+      if (keyboardHeight > 80) {
+        document.body.classList.add("keyboard-open");
+      } else {
+        document.body.classList.remove("keyboard-open");
+      }
+    }
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", updateKeyboardOffset);
+      window.visualViewport.addEventListener("scroll", updateKeyboardOffset);
+    }
+
+    window.addEventListener("resize", updateKeyboardOffset);
+
+    if (founderInput) {
+      founderInput.addEventListener("focus", () => {
+        setTimeout(updateKeyboardOffset, 50);
+        setTimeout(updateKeyboardOffset, 180);
+        setTimeout(updateKeyboardOffset, 320);
+      });
+
+      founderInput.addEventListener("blur", () => {
+        setTimeout(() => {
+          document.body.classList.remove("keyboard-open");
+          document.body.style.setProperty("--keyboard-offset", "10px");
+        }, 120);
+      });
+    }
+
+    updateKeyboardOffset();
+
+
+    
+
+
+    /* ADM-5A: PowerShell-style Worker Console logic */
+    let previousPanelBeforeWorker = "home";
+    let workerTab = "console";
+
+    function currentVisiblePanel() {
+      if (document.body.classList.contains("chat-active")) return "chat";
+      return "home";
+    }
+
+    function openWorkerPanel() {
+      if (!document.body.classList.contains("worker-active")) {
+        previousPanelBeforeWorker = currentVisiblePanel();
+      }
+
+      document.body.classList.add("worker-active");
+      if (founderInput) {
+        founderInput.placeholder = "PS command or worker instruction";
+      }
+
+      appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> open-worker", "ps-command");
+      appendWorkerLine("Worker console opened. Type help to see commands.", "ps-success");
+      scrollWorkerTerminal();
+    }
+
+    function closeWorkerPanel() {
+      document.body.classList.remove("worker-active");
+
+      if (founderInput) {
+        founderInput.placeholder = "Message Founder Office";
+      }
+
+      if (previousPanelBeforeWorker === "chat") {
+        document.body.classList.add("chat-active");
+      } else {
+        document.body.classList.remove("chat-active");
+      }
+    }
+
+    function toggleWorkerPanel() {
+      if (document.body.classList.contains("worker-active")) {
+        closeWorkerPanel();
+      } else {
+        openWorkerPanel();
+      }
+    }
+
+    function switchWorkerTab(tab) {
+      workerTab = tab;
+
+      document.querySelectorAll(".worker-tab").forEach(button => {
+        button.classList.toggle("active", button.textContent.trim().toLowerCase() === tab);
+      });
+
+      if (tab === "console") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> console", "ps-command");
+        appendWorkerLine("Console ready.", "ps-success");
+      }
+
+      if (tab === "jobs") {
+        runWorkerCommand("jobs");
+      }
+
+      if (tab === "executions") {
+        runWorkerCommand("executions");
+      }
+
+      if (tab === "audit") {
+        runWorkerCommand("audit");
+      }
+    }
+
+    async function sendWorkerCommand(value) {
+      if (!value) {
+        showToast("Write a worker command first");
+        return;
+      }
+
+      appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + value, "ps-command");
+      founderInput.value = "";
+      resizeFounderInput();
+
+      await runWorkerCommand(value);
+    }
+
+    async function runWorkerCommand(rawCommand) {
+      const command = String(rawCommand || "").trim();
+      const lower = command.toLowerCase();
+      const parts = command.split(/\s+/);
+      const action = (parts[0] || "").toLowerCase();
+      const jobId = parts.slice(1).join(" ");
+
+      try {
+        if (!command) return;
+
+        if (action === "help") {
+          appendWorkerLine("Available commands:", "ps-success");
+          appendWorkerLine("  help                         Show commands", "ps-muted");
+          appendWorkerLine("  clear                        Clear console", "ps-muted");
+          appendWorkerLine("  jobs                         Show job queue summary", "ps-muted");
+          appendWorkerLine("  executions                   Show execution-focused jobs", "ps-muted");
+          appendWorkerLine("  audit                        Show recent audit logs", "ps-muted");
+          appendWorkerLine("  workers                      Show worker health/status", "ps-muted");
+          appendWorkerLine("  approve <job_id>             Approve a queued job", "ps-muted");
+          appendWorkerLine("  request-apply <job_id>       Request safe apply", "ps-muted");
+          appendWorkerLine("  safe-apply <job_id>          Run backend safe apply route", "ps-warn");
+          appendWorkerLine("  chat <message>               Ask Founder brain", "ps-muted");
+          return;
+        }
+
+        if (action === "clear") {
+          const terminal = document.getElementById("workerTerminal");
+          if (terminal) {
+            terminal.innerHTML = '<div class="ps-line ps-success">Console cleared.</div><div class="ps-line"><span class="ps-prompt">PS D:\\APPS\\IdeasForgeAI&gt;</span></div>';
+          }
+          return;
+        }
+
+        if (action === "jobs") {
+          await showWorkerJobs();
+          return;
+        }
+
+        if (action === "executions") {
+          await showWorkerExecutions();
+          return;
+        }
+
+        if (action === "audit") {
+          await showAuditLogs();
+          return;
+        }
+
+        if (action === "workers") {
+          await showWorkers();
+          return;
+        }
+
+        if (action === "approve") {
+          if (!jobId) {
+            appendWorkerLine("Missing job id. Usage: approve <job_id>", "ps-error");
+            return;
+          }
+          await postWorkerRoute("/api/admin/job-queue/" + encodeURIComponent(jobId) + "/approve", "Approved " + jobId);
+          return;
+        }
+
+        if (action === "request-apply") {
+          if (!jobId) {
+            appendWorkerLine("Missing job id. Usage: request-apply <job_id>", "ps-error");
+            return;
+          }
+          await postWorkerRoute("/api/admin/job-queue/" + encodeURIComponent(jobId) + "/apply-request", "Apply requested for " + jobId);
+          return;
+        }
+
+        if (action === "safe-apply") {
+          if (!jobId) {
+            appendWorkerLine("Missing job id. Usage: safe-apply <job_id>", "ps-error");
+            return;
+          }
+          appendWorkerLine("Founder-gated safe apply requested for " + jobId, "ps-warn");
+          await postWorkerRoute("/api/admin/job-queue/" + encodeURIComponent(jobId) + "/safe-apply", "Safe apply completed for " + jobId);
+          return;
+        }
+
+        if (action === "chat") {
+          const message = parts.slice(1).join(" ");
+          if (!message) {
+            appendWorkerLine("Missing message. Usage: chat <message>", "ps-error");
+            return;
+          }
+          await askFounderBrain(message);
+          return;
+        }
+
+        await askFounderBrain(command);
+      } catch (error) {
+        appendWorkerLine("ERROR: " + error.message, "ps-error");
+        console.error(error);
+      }
+    }
+
+    async function showWorkerJobs() {
+      appendWorkerLine("Loading job queue...", "ps-muted");
+
+      const data = await getJson("/api/admin/job-queue");
+      const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+      appendWorkerLine("Jobs found: " + jobs.length, "ps-success");
+
+      if (!jobs.length) {
+        appendWorkerLine("No jobs found.", "ps-muted");
+        return;
+      }
+
+      jobs.slice(0, 12).forEach((job, index) => {
+        const id = job.job_id || job.id || "unknown";
+        const status = job.status || "unknown";
+        const title = job.title || job.name || job.summary || "Worker job";
+        appendWorkerLine((index + 1) + ". " + id + " | " + status + " | " + title, "ps-line");
+      });
+    }
+
+    async function showWorkerExecutions() {
+      appendWorkerLine("Loading execution jobs...", "ps-muted");
+
+      const data = await getJson("/api/admin/job-queue");
+      const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+      const executionJobs = jobs.filter(job => {
+        const status = String(job.status || "").toLowerCase();
+        return status.includes("approved") || status.includes("apply") || status.includes("applied") || status.includes("execution");
+      });
+
+      appendWorkerLine("Execution jobs: " + executionJobs.length, "ps-success");
+
+      if (!executionJobs.length) {
+        appendWorkerLine("No execution-ready jobs found.", "ps-muted");
+        return;
+      }
+
+      executionJobs.slice(0, 12).forEach((job, index) => {
+        const id = job.job_id || job.id || "unknown";
+        const status = job.status || "unknown";
+        const title = job.title || job.name || job.summary || "Worker job";
+        appendWorkerLine((index + 1) + ". " + id + " | " + status + " | " + title, "ps-line");
+      });
+    }
+
+    async function showAuditLogs() {
+      appendWorkerLine("Loading audit logs...", "ps-muted");
+
+      const data = await getJson("/api/admin/audit-logs");
+      const logs = Array.isArray(data) ? data : (data.logs || data.audit_logs || data.items || []);
+
+      appendWorkerLine("Audit entries: " + logs.length, "ps-success");
+
+      if (!logs.length) {
+        appendWorkerLine("No audit logs found.", "ps-muted");
+        return;
+      }
+
+      logs.slice(-10).reverse().forEach((log, index) => {
+        const action = log.action || log.event || log.type || "audit";
+        const job = log.job_id || log.id || "";
+        const time = log.created_at || log.timestamp || log.time || "";
+        appendWorkerLine((index + 1) + ". " + action + " " + job + " " + time, "ps-line");
+      });
+    }
+
+    async function showWorkers() {
+      appendWorkerLine("Loading workers...", "ps-muted");
+
+      const data = await getJson("/api/admin/workers");
+      appendWorkerLine(JSON.stringify(data, null, 2), "ps-success");
+    }
+
+    async function postWorkerRoute(route, successMessage) {
+      const response = await fetch(getBrainApiBase() + route, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        appendWorkerLine("Route failed: " + route, "ps-error");
+        appendWorkerLine(JSON.stringify(data, null, 2), "ps-error");
+        return;
+      }
+
+      appendWorkerLine(successMessage, "ps-success");
+      appendWorkerLine(JSON.stringify(data, null, 2), "ps-muted");
+    }
+
+    async function askFounderBrain(message) {
+      appendWorkerLine("Sending to Founder brain...", "ps-muted");
+
+      const response = await fetch(getBrainApiBase() + "/api/ideasforge/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message,
+          mode: "founder_office_worker_console",
+          source: "forgeadmin_worker"
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        appendWorkerLine(JSON.stringify(data, null, 2), "ps-error");
+        return;
+      }
+
+      appendWorkerLine(data.reply || data.message || data.answer || JSON.stringify(data, null, 2), "ps-success");
+    }
+
+    async function getJson(route) {
+      const response = await fetch(getBrainApiBase() + route);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(route + " returned " + response.status + ": " + JSON.stringify(data));
+      }
+
+      return data;
+    }
+
+    function appendWorkerLine(text, className) {
+      const terminal = document.getElementById("workerTerminal");
+      if (!terminal) return;
+
+      const line = document.createElement("div");
+      line.className = "ps-line " + (className || "");
+      line.textContent = text;
+      terminal.appendChild(line);
+      scrollWorkerTerminal();
+    }
+
+    function scrollWorkerTerminal() {
+      const terminal = document.getElementById("workerTerminal");
+      if (!terminal) return;
+
+      requestAnimationFrame(() => {
+        terminal.scrollTop = terminal.scrollHeight;
+      });
+    }
+
+
+    /* ADM-5B: Chat -> Worker automatic handoff */
+    function shouldAutoHandoffToWorker(reply) {
+      const text = String(reply || "");
+
+      return (
+        text.includes("```") ||
+        /\bPATCH\b/i.test(text) ||
+        /\bADM-\d+/i.test(text) ||
+        /\bworker task\b/i.test(text) ||
+        /\bsafe apply\b/i.test(text) ||
+        /\bdry-run\b/i.test(text) ||
+        /backend\/main\.py/i.test(text) ||
+        /frontend\//i.test(text) ||
+        /\.html\b/i.test(text) ||
+        /\.css\b/i.test(text) ||
+        /\.js\b/i.test(text) ||
+        /PowerShell/i.test(text)
+      );
+    }
+
+    async function maybeAutoHandoffToWorker(userMessage, brainReply) {
+      if (!shouldAutoHandoffToWorker(brainReply)) return;
+
+      addBrainMessage("system", "Sending final task to Worker Queue...");
+
+      try {
+        const response = await fetch(getBrainApiBase() + "/api/admin/chat-worker-handoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: userMessage,
+            brain_reply: brainReply,
+            source: "forgeadmin_chat",
+            mode: "founder_office"
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          addBrainMessage("system", "Worker handoff failed: " + JSON.stringify(data));
+          return;
+        }
+
+        addBrainMessage("system", data.report || ("Worker job created: " + data.job_id));
+
+        openWorkerPanel();
+
+        if (typeof appendWorkerLine === "function") {
+          appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> received-chat-handoff", "ps-command");
+          appendWorkerLine("Job created: " + data.job_id, "ps-success");
+          appendWorkerLine("Status: " + data.status, "ps-warn");
+          appendWorkerLine("Next: run jobs, dry-run, approve, request-apply, then safe-apply.", "ps-muted");
+        }
+      } catch (error) {
+        addBrainMessage("system", "Worker handoff route is not reachable.");
+        console.error(error);
+      }
+    }
+
+
+    /* ADM-5B: FORCE chat -> worker auto-open override */
+    window.shouldAutoHandoffToWorker = function(userMessage, brainReply) {
+      const text = String(userMessage || "") + "\n" + String(brainReply || "");
+
+      return (
+        text.includes("```") ||
+        /\bPATCH\b/i.test(text) ||
+        /\bADM-\d+/i.test(text) ||
+        /\bworker task\b/i.test(text) ||
+        /\bsend to worker\b/i.test(text) ||
+        /\bworker\b/i.test(text) ||
+        /\bsafe apply\b/i.test(text) ||
+        /\bdry-run\b/i.test(text) ||
+        /backend\/main\.py/i.test(text) ||
+        /frontend\//i.test(text) ||
+        /\.html\b/i.test(text) ||
+        /\.css\b/i.test(text) ||
+        /\.js\b/i.test(text) ||
+        /PowerShell/i.test(text)
+      );
+    };
+
+    window.createWorkerHandoffAndOpen = async function(userMessage, brainReply) {
+      if (!window.shouldAutoHandoffToWorker(userMessage, brainReply)) {
+        return;
+      }
+
+      addBrainMessage("system", "Sending final task to Worker Queue...");
+
+      try {
+        const response = await fetch(getBrainApiBase() + "/api/admin/chat-worker-handoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: userMessage,
+            brain_reply: brainReply,
+            source: "forgeadmin_chat",
+            mode: "founder_office"
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          addBrainMessage("system", "Worker handoff failed: " + JSON.stringify(data));
+          return;
+        }
+
+        addBrainMessage("system", data.report || ("Worker job created: " + data.job_id));
+
+        if (typeof openWorkerPanel === "function") {
+          openWorkerPanel();
+        } else {
+          document.body.classList.add("worker-active");
+        }
+
+        setTimeout(() => {
+          if (typeof appendWorkerLine === "function") {
+            appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> received-chat-handoff", "ps-command");
+            appendWorkerLine("Job created: " + data.job_id, "ps-success");
+            appendWorkerLine("Status: " + data.status, "ps-warn");
+            appendWorkerLine("Next: run jobs, approve, request-apply, then safe-apply after dry-run review.", "ps-muted");
+          }
+        }, 120);
+      } catch (error) {
+        addBrainMessage("system", "Worker handoff route is not reachable.");
+        console.error(error);
+      }
+    };
+
+    window.sendFounderMessage = async function() {
+      const input = document.getElementById("founderInput");
+      const value = input.value.trim();
+
+      if (!value) {
+        showToast("Write a command first");
+        return;
+      }
+
+      if (document.body.classList.contains("worker-active")) {
+        if (typeof sendWorkerCommand === "function") {
+          await sendWorkerCommand(value);
+          return;
+        }
+      }
+
+      addBrainMessage("user", value);
+
+      input.value = "";
+      resizeFounderInput();
+
+      const thinking = addBrainMessage("system", "Founder brain is thinking...");
+
+      try {
+        const response = await fetch(getBrainApiBase() + "/api/ideasforge/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            message: value,
+            mode: "founder_office",
+            source: "forgeadmin"
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Brain route returned " + response.status);
+        }
+
+        const data = await response.json();
+
+        if (thinking) {
+          thinking.remove();
+        }
+
+        const reply =
+          data.reply ||
+          data.message ||
+          data.answer ||
+          data.output ||
+          data.result ||
+          "Founder brain responded, but no readable reply field was returned.";
+
+        addBrainMessage("ai", reply);
+
+        await window.createWorkerHandoffAndOpen(value, reply);
+      } catch (error) {
+        if (thinking) {
+          thinking.remove();
+        }
+
+        addBrainMessage("system", "Founder brain connection failed. Backend must run on port 5051.");
+        console.error(error);
+      }
+    };
+
+
+    /* ADM-5C-1: Worker Health + Agent Task commands */
+    window.__adm5cPreviousRunWorkerCommand = window.runWorkerCommand;
+
+    window.runWorkerCommand = async function(rawCommand) {
+      const command = String(rawCommand || "").trim();
+      const lower = command.toLowerCase();
+
+      if (!command) return;
+
+      if (lower === "health" || lower === "self-check") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        appendWorkerLine("Checking worker health...", "ps-muted");
+
+        try {
+          const data = await getJson("/api/admin/worker-health");
+          appendWorkerLine("Worker Health Score: " + data.worker_health_score + "/100", "ps-success");
+          appendWorkerLine("Status: " + data.status, "ps-success");
+          appendWorkerLine("Queue total: " + data.queue.total, "ps-muted");
+          appendWorkerLine("Capabilities: " + data.capabilities.join(", "), "ps-muted");
+          appendWorkerLine("Next: " + data.next_recommended_phase, "ps-warn");
+        } catch (error) {
+          appendWorkerLine("Health check failed: " + error.message, "ps-error");
+        }
+
+        return;
+      }
+
+      if (lower.startsWith("improve-worker ")) {
+        const instruction = command.slice("improve-worker ".length).trim();
+        await createAdm5cAgentTask("Worker Health Agent", instruction, ["forgeadmin/index.html", "backend/main.py"]);
+        return;
+      }
+
+      if (lower.startsWith("frontend-task ")) {
+        const instruction = command.slice("frontend-task ".length).trim();
+        await createAdm5cAgentTask("Frontend Agent", instruction, ["forgeadmin/index.html", "frontend/admin/*", "frontend/pages/*"]);
+        return;
+      }
+
+      if (lower.startsWith("admin-task ")) {
+        const instruction = command.slice("admin-task ".length).trim();
+        await createAdm5cAgentTask("ForgeAdmin Agent", instruction, ["forgeadmin/index.html", "frontend/admin/*"]);
+        return;
+      }
+
+      if (lower.startsWith("agent ")) {
+        const body = command.slice("agent ".length).trim();
+        const splitIndex = body.indexOf(":");
+
+        let agentName = "Worker Agent";
+        let instruction = body;
+
+        if (splitIndex > -1) {
+          agentName = body.slice(0, splitIndex).trim() || "Worker Agent";
+          instruction = body.slice(splitIndex + 1).trim();
+        }
+
+        await createAdm5cAgentTask(agentName, instruction, ["forgeadmin/index.html"]);
+        return;
+      }
+
+      if (typeof window.__adm5cPreviousRunWorkerCommand === "function") {
+        return window.__adm5cPreviousRunWorkerCommand(rawCommand);
+      }
+
+      appendWorkerLine("Unknown command. Type help or health.", "ps-error");
+    };
+
+    async function createAdm5cAgentTask(agentName, instruction, allowedFiles) {
+      if (!instruction) {
+        appendWorkerLine("Missing instruction.", "ps-error");
+        return;
+      }
+
+      appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> create-agent-task", "ps-command");
+      appendWorkerLine("Agent: " + agentName, "ps-muted");
+      appendWorkerLine("Creating founder-gated worker job...", "ps-muted");
+
+      try {
+        const response = await fetch(getBrainApiBase() + "/api/admin/worker-agent-task", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            agent_name: agentName,
+            instruction,
+            allowed_files: allowedFiles || [],
+            source: "forgeadmin_worker_console",
+            mode: "agent_task"
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          appendWorkerLine("Agent task failed: " + JSON.stringify(data), "ps-error");
+          return;
+        }
+
+        appendWorkerLine(data.report || ("Created job " + data.job_id), "ps-success");
+        appendWorkerLine("Next: jobs → approve → dry-run → request-apply → safe-apply", "ps-warn");
+      } catch (error) {
+        appendWorkerLine("Agent task route not reachable: " + error.message, "ps-error");
+      }
+    }
+
+
+    /* DEPLOY: production backend API resolver */
+    window.IF_PROD_API_BASE = "https://ideasforgeai-web.onrender.com";
+
+    window.getBrainApiBase = function() {
+      const host = window.location.hostname;
+
+      if (host === "localhost" || host === "127.0.0.1") {
+        return "http://127.0.0.1:5051";
+      }
+
+      if (
+        host.startsWith("192.168.") ||
+        host.startsWith("10.") ||
+        host.startsWith("172.")
+      ) {
+        return "http://" + host + ":5051";
+      }
+
+      return window.IF_PROD_API_BASE;
+    };
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
