@@ -7769,3 +7769,696 @@ async def ideasforgeai_get_dry_run_diff(job_id: str):
     }
 # ADM-4D-2 DRY-RUN DIFF GENERATOR END
 
+
+# ADM-4D-4 SAFE APPLY ROUTE ONLY
+def _ifai_adm4d4_backup_file(path, relative_path, job_id):
+    import shutil
+
+    root = _ifai_adm4d_root()
+    stamp = _ifai_adm4d_now_iso().replace(":", "").replace(".", "-")
+    backup_dir = root / "_BACKUPS" / "adm4d4-safe-apply" / str(job_id)
+    backup_dir.mkdir(parents=True, exist_ok=True)
+
+    safe_name = str(relative_path).replace("/", "__").replace("\\", "__")
+    backup_path = backup_dir / (stamp + "__" + safe_name)
+
+    shutil.copy2(path, backup_path)
+
+    return str(backup_path.relative_to(root))
+
+
+def _ifai_adm4d4_build_proposed_content(job, original_text, relative_path):
+    request_text = str(job.get("request") or "").strip()
+    marker = "ADM-4D-2 DRY-RUN PROPOSAL"
+
+    if marker in original_text and request_text and request_text in original_text:
+        return None, "proposal_already_applied"
+
+    proposed = original_text.rstrip() + _ifai_adm4d_comment_block(relative_path, request_text)
+    return proposed, None
+
+
+@app.post("/api/admin/job-queue/{job_id}/safe-apply")
+async def ideasforgeai_safe_apply_job(job_id: str):
+    jobs = _ifai_adm4d_read_list("admin_job_queue.json")
+
+    target_index = None
+    target_job = None
+
+    for idx, job in enumerate(jobs):
+        if str(job.get("id")) == str(job_id):
+            target_index = idx
+            target_job = job
+            break
+
+    if target_job is None:
+        return {
+            "ok": False,
+            "error": "job_not_found",
+            "job_id": job_id,
+            "execution": "locked"
+        }
+
+    status = str(target_job.get("status") or "")
+    if status not in ("approved", "apply_requested"):
+        _ifai_adm4d_add_audit_event(
+            "Safe apply blocked",
+            "blocked",
+            {
+                "phase": "ADM-4D-4",
+                "job_id": job_id,
+                "reason": "job_not_approved",
+                "target_area": target_job.get("target_area"),
+                "target_file": target_job.get("target_file"),
+                "risk": target_job.get("risk", "Low"),
+                "execution": "locked"
+            }
+        )
+
+        return {
+            "ok": False,
+            "error": "job_not_approved",
+            "message": "Safe apply blocked. Job must be approved or apply_requested first.",
+            "job": target_job,
+            "execution": "locked"
+        }
+
+    dry = target_job.get("dry_run") or {}
+    if not dry:
+        _ifai_adm4d_add_audit_event(
+            "Safe apply blocked",
+            "blocked",
+            {
+                "phase": "ADM-4D-4",
+                "job_id": job_id,
+                "reason": "missing_dry_run_payload",
+                "target_area": target_job.get("target_area"),
+                "target_file": target_job.get("target_file"),
+                "risk": target_job.get("risk", "Low"),
+                "execution": "locked"
+            }
+        )
+
+        return {
+            "ok": False,
+            "error": "missing_dry_run_payload",
+            "message": "Safe apply blocked. This job has no dry-run diff attached.",
+            "job": target_job,
+            "execution": "locked"
+        }
+
+    path, rel, block_reason = _ifai_adm4d_safe_target(target_job.get("target_file"))
+
+    if block_reason:
+        _ifai_adm4d_add_audit_event(
+            "Safe apply target blocked",
+            "blocked",
+            {
+                "phase": "ADM-4D-4",
+                "job_id": job_id,
+                "reason": block_reason,
+                "target_area": target_job.get("target_area"),
+                "target_file": target_job.get("target_file"),
+                "risk": target_job.get("risk", "Low"),
+                "execution": "locked"
+            }
+        )
+
+        return {
+            "ok": False,
+            "error": block_reason,
+            "message": "Safe apply target was blocked by allowlist/safety validation.",
+            "execution": "locked"
+        }
+
+    try:
+        original = path.read_text(encoding="utf-8", errors="replace")
+    except Exception as exc:
+        return {
+            "ok": False,
+            "error": "read_failed",
+            "message": str(exc),
+            "execution": "locked"
+        }
+
+    proposed, build_error = _ifai_adm4d4_build_proposed_content(target_job, original, rel)
+
+    if build_error:
+        _ifai_adm4d_add_audit_event(
+            "Safe apply skipped",
+            "skipped",
+            {
+                "phase": "ADM-4D-4",
+                "job_id": job_id,
+                "reason": build_error,
+                "target_area": target_job.get("target_area"),
+                "target_file": rel,
+                "risk": target_job.get("risk", "Low"),
+                "execution": "locked"
+            }
+        )
+
+        return {
+            "ok": False,
+            "error": build_error,
+            "message": "Safe apply skipped because this proposal already appears applied.",
+            "job": target_job,
+            "execution": "locked"
+        }
+
+    try:
+        backup_path = _ifai_adm4d4_backup_file(path, rel, job_id)
+        path.write_text(proposed, encoding="utf-8")
+    except Exception as exc:
+        _ifai_adm4d_add_audit_event(
+            "Safe apply failed",
+            "failed",
+            {
+                "phase": "ADM-4D-4",
+                "job_id": job_id,
+                "error": str(exc),
+                "target_area": target_job.get("target_area"),
+                "target_file": rel,
+                "risk": target_job.get("risk", "Low"),
+                "execution": "locked"
+            }
+        )
+
+        return {
+            "ok": False,
+            "error": "write_failed",
+            "message": str(exc),
+            "execution": "locked"
+        }
+
+    target_job["status"] = "applied"
+    target_job["execution"] = "applied_safe_approved"
+    target_job["applied_at"] = _ifai_adm4d_now_iso()
+    target_job["backup_path"] = backup_path
+    target_job["notes"] = "Safe apply completed after founder approval. Backup was created before write."
+
+    jobs[target_index] = target_job
+    _ifai_adm4d_write_list("admin_job_queue.json", jobs)
+
+    audit = _ifai_adm4d_add_audit_event(
+        "Safe approved patch applied",
+        "applied",
+        {
+            "phase": "ADM-4D-4",
+            "job_id": job_id,
+            "target_area": target_job.get("target_area"),
+            "target_file": rel,
+            "risk": target_job.get("risk", "Low"),
+            "backup_path": backup_path,
+            "execution": "applied_safe_approved"
+        }
+    )
+
+    return {
+        "ok": True,
+        "phase": "ADM-4D-4",
+        "message": "Safe approved patch applied. Backup created before write.",
+        "job": target_job,
+        "audit": audit,
+        "backup_path": backup_path,
+        "execution": "applied_safe_approved",
+        "source": "admin-safe-approved-patch-apply"
+    }
+# ADM-4D-4 SAFE APPLY ROUTE ONLY END
+
+
+# ADM-5B-1: Founder Chat -> Worker Queue Handoff
+from fastapi import Body as _IF_ADM5B_Body, HTTPException as _IF_ADM5B_HTTPException
+from pathlib import Path as _IF_ADM5B_Path
+from datetime import datetime as _IF_ADM5B_datetime, timezone as _IF_ADM5B_timezone
+import json as _IF_ADM5B_json
+import re as _IF_ADM5B_re
+
+
+def _if_adm5b_now_iso():
+    return _IF_ADM5B_datetime.now(_IF_ADM5B_timezone.utc).isoformat()
+
+
+def _if_adm5b_project_root():
+    return _IF_ADM5B_Path(__file__).resolve().parents[1]
+
+
+def _if_adm5b_data_path(filename: str):
+    return _if_adm5b_project_root() / "data" / filename
+
+
+def _if_adm5b_read_json(path, default_value):
+    try:
+        if not path.exists():
+            return default_value
+        with path.open("r", encoding="utf-8") as handle:
+            return _IF_ADM5B_json.load(handle)
+    except Exception:
+        return default_value
+
+
+def _if_adm5b_write_json(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        _IF_ADM5B_json.dump(value, handle, indent=2, ensure_ascii=False)
+
+
+def _if_adm5b_get_jobs_container():
+    path = _if_adm5b_data_path("admin_job_queue.json")
+    raw = _if_adm5b_read_json(path, [])
+
+    if isinstance(raw, list):
+        return path, raw, raw
+
+    if isinstance(raw, dict):
+        for key in ("jobs", "queue", "items"):
+            if isinstance(raw.get(key), list):
+                return path, raw, raw[key]
+
+        raw["jobs"] = []
+        return path, raw, raw["jobs"]
+
+    return path, [], []
+
+
+def _if_adm5b_save_jobs(path, raw, jobs):
+    if isinstance(raw, list):
+        _if_adm5b_write_json(path, jobs)
+        return
+
+    if isinstance(raw, dict):
+        if isinstance(raw.get("jobs"), list):
+            raw["jobs"] = jobs
+        elif isinstance(raw.get("queue"), list):
+            raw["queue"] = jobs
+        elif isinstance(raw.get("items"), list):
+            raw["items"] = jobs
+        else:
+            raw["jobs"] = jobs
+
+        _if_adm5b_write_json(path, raw)
+        return
+
+    _if_adm5b_write_json(path, jobs)
+
+
+def _if_adm5b_append_audit(entry):
+    path = _if_adm5b_data_path("admin_audit_logs.json")
+    raw = _if_adm5b_read_json(path, [])
+
+    if isinstance(raw, list):
+        raw.append(entry)
+        _if_adm5b_write_json(path, raw)
+        return
+
+    if isinstance(raw, dict):
+        for key in ("logs", "audit_logs", "items"):
+            if isinstance(raw.get(key), list):
+                raw[key].append(entry)
+                _if_adm5b_write_json(path, raw)
+                return
+
+        raw["logs"] = [entry]
+        _if_adm5b_write_json(path, raw)
+        return
+
+    _if_adm5b_write_json(path, [entry])
+
+
+def _if_adm5b_looks_like_secret(text: str) -> bool:
+    value = str(text or "")
+    secret_patterns = [
+        r"sk-[A-Za-z0-9_\-]{20,}",
+        r"OPENAI_API_KEY\s*=\s*['\"]?[^'\"\s]+",
+        r"SUPABASE_SERVICE_ROLE_KEY\s*=\s*['\"]?[^'\"\s]+",
+        r"service_role\s*[:=]\s*['\"]?[^'\"\s]+",
+        r"PRIVATE_KEY\s*=\s*['\"]?[^'\"]+",
+    ]
+
+    return any(_IF_ADM5B_re.search(pattern, value, _IF_ADM5B_re.IGNORECASE) for pattern in secret_patterns)
+
+
+@app.post("/api/admin/chat-worker-handoff")
+async def adm5b_chat_worker_handoff(body: dict = _IF_ADM5B_Body(...)):
+    message = str(body.get("message") or "").strip()
+    brain_reply = str(
+        body.get("brain_reply")
+        or body.get("worker_task")
+        or body.get("task")
+        or body.get("code")
+        or ""
+    ).strip()
+
+    source = str(body.get("source") or "forgeadmin_chat").strip()
+    mode = str(body.get("mode") or "founder_office").strip()
+
+    if not message and not brain_reply:
+        raise _IF_ADM5B_HTTPException(status_code=400, detail="message or brain_reply is required")
+
+    if not brain_reply:
+        raise _IF_ADM5B_HTTPException(status_code=400, detail="brain_reply / worker task is required")
+
+    if _if_adm5b_looks_like_secret(message) or _if_adm5b_looks_like_secret(brain_reply):
+        raise _IF_ADM5B_HTTPException(
+            status_code=400,
+            detail="handoff blocked because payload appears to contain a secret"
+        )
+
+    now = _if_adm5b_now_iso()
+    compact_time = _IF_ADM5B_datetime.now().strftime("%Y%m%d%H%M%S%f")
+    job_id = f"CHAT-WORKER-{compact_time}"
+
+    title_source = brain_reply or message
+    title = "Chat worker handoff"
+    if title_source:
+        clean_title = " ".join(title_source.replace("\r", " ").replace("\n", " ").split())
+        if clean_title:
+            title = clean_title[:92]
+
+    job = {
+        "job_id": job_id,
+        "id": job_id,
+        "title": title,
+        "summary": "Founder chat generated a worker task. Dry-run and approval required before apply.",
+        "area": "Admin",
+        "module": "ForgeAdmin",
+        "type": "chat_worker_handoff",
+        "status": "waiting_approval",
+        "created_at": now,
+        "updated_at": now,
+        "source": source,
+        "mode": mode,
+        "founder_gated": True,
+        "dry_run_required": True,
+        "safe_apply_required": True,
+        "manual_copy_paste_required": False,
+        "user_message": message,
+        "brain_reply": brain_reply,
+        "task": brain_reply,
+        "worker_task": {
+            "kind": "chat_worker_handoff",
+            "instruction": brain_reply,
+            "source_message": message,
+            "constraints": [
+                "Do not expose secrets",
+                "Do not call OpenAI from frontend",
+                "Backend-only execution",
+                "Dry-run before apply",
+                "Founder approval before safe apply",
+                "Create backups before writes",
+                "Audit all execution actions"
+            ]
+        },
+        "payload": {
+            "message": message,
+            "brain_reply": brain_reply,
+            "source": source,
+            "mode": mode,
+            "handoff_created_at": now
+        }
+    }
+
+    queue_path, raw_queue, jobs = _if_adm5b_get_jobs_container()
+    jobs.append(job)
+    _if_adm5b_save_jobs(queue_path, raw_queue, jobs)
+
+    _if_adm5b_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "chat_worker_handoff",
+        "job_id": job_id,
+        "status": "waiting_approval",
+        "source": source,
+        "mode": mode,
+        "founder_gated": True,
+        "safe_execution": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": "waiting_approval",
+        "next": "open_worker_console",
+        "report": f"Worker job created: {job_id}. Status: waiting_approval. Dry-run and founder approval required before safe apply."
+    }
+
+
+# ADM-5C-1: Worker Health + Agent Execution Bridge
+from fastapi import Body as _IF_ADM5C_Body, HTTPException as _IF_ADM5C_HTTPException
+from pathlib import Path as _IF_ADM5C_Path
+from datetime import datetime as _IF_ADM5C_datetime, timezone as _IF_ADM5C_timezone
+import json as _IF_ADM5C_json
+import re as _IF_ADM5C_re
+
+
+def _if_adm5c_now_iso():
+    return _IF_ADM5C_datetime.now(_IF_ADM5C_timezone.utc).isoformat()
+
+
+def _if_adm5c_root():
+    return _IF_ADM5C_Path(__file__).resolve().parents[1]
+
+
+def _if_adm5c_data_path(filename: str):
+    return _if_adm5c_root() / "data" / filename
+
+
+def _if_adm5c_read_json(path, default_value):
+    try:
+        if not path.exists():
+            return default_value
+        with path.open("r", encoding="utf-8") as handle:
+            return _IF_ADM5C_json.load(handle)
+    except Exception:
+        return default_value
+
+
+def _if_adm5c_write_json(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as handle:
+        _IF_ADM5C_json.dump(value, handle, indent=2, ensure_ascii=False)
+
+
+def _if_adm5c_queue():
+    path = _if_adm5c_data_path("admin_job_queue.json")
+    raw = _if_adm5c_read_json(path, [])
+
+    if isinstance(raw, list):
+        return path, raw, raw
+
+    if isinstance(raw, dict):
+        for key in ("jobs", "queue", "items"):
+            if isinstance(raw.get(key), list):
+                return path, raw, raw[key]
+        raw["jobs"] = []
+        return path, raw, raw["jobs"]
+
+    return path, [], []
+
+
+def _if_adm5c_save_queue(path, raw, jobs):
+    if isinstance(raw, list):
+        _if_adm5c_write_json(path, jobs)
+        return
+
+    if isinstance(raw, dict):
+        if isinstance(raw.get("jobs"), list):
+            raw["jobs"] = jobs
+        elif isinstance(raw.get("queue"), list):
+            raw["queue"] = jobs
+        elif isinstance(raw.get("items"), list):
+            raw["items"] = jobs
+        else:
+            raw["jobs"] = jobs
+        _if_adm5c_write_json(path, raw)
+        return
+
+    _if_adm5c_write_json(path, jobs)
+
+
+def _if_adm5c_append_audit(entry):
+    path = _if_adm5c_data_path("admin_audit_logs.json")
+    raw = _if_adm5c_read_json(path, [])
+
+    if isinstance(raw, list):
+        raw.append(entry)
+        _if_adm5c_write_json(path, raw)
+        return
+
+    if isinstance(raw, dict):
+        for key in ("logs", "audit_logs", "items"):
+            if isinstance(raw.get(key), list):
+                raw[key].append(entry)
+                _if_adm5c_write_json(path, raw)
+                return
+        raw["logs"] = [entry]
+        _if_adm5c_write_json(path, raw)
+        return
+
+    _if_adm5c_write_json(path, [entry])
+
+
+def _if_adm5c_secret_like(text: str) -> bool:
+    value = str(text or "")
+    patterns = [
+        r"sk-[A-Za-z0-9_\-]{20,}",
+        r"OPENAI_API_KEY\s*=",
+        r"SUPABASE_SERVICE_ROLE_KEY\s*=",
+        r"service_role\s*[:=]",
+        r"PRIVATE_KEY\s*=",
+        r"\.env",
+        r"id_rsa",
+        r"id_dsa",
+        r"\.pem",
+        r"\.p12",
+    ]
+    return any(_IF_ADM5C_re.search(p, value, _IF_ADM5C_re.IGNORECASE) for p in patterns)
+
+
+@app.get("/api/admin/worker-health")
+async def adm5c_worker_health():
+    route_paths = {getattr(route, "path", "") for route in app.routes}
+
+    required = {
+        "brain_chat": "/api/ideasforge/chat" in route_paths,
+        "job_queue": "/api/admin/job-queue" in route_paths,
+        "dry_run_diff": "/api/admin/dry-run-diff" in route_paths,
+        "safe_apply": "/api/admin/job-queue/{job_id}/safe-apply" in route_paths,
+        "chat_worker_handoff": "/api/admin/chat-worker-handoff" in route_paths,
+        "worker_health": "/api/admin/worker-health" in route_paths,
+        "agent_task_bridge": "/api/admin/worker-agent-task" in route_paths,
+    }
+
+    queue_path, raw_queue, jobs = _if_adm5c_queue()
+    statuses = {}
+    for job in jobs:
+        status = str(job.get("status") or "unknown")
+        statuses[status] = statuses.get(status, 0) + 1
+
+    base_score = 70
+    route_score = sum(1 for value in required.values() if value) * 4
+    safety_score = 2 if required.get("safe_apply") else 0
+    score = min(100, base_score + route_score + safety_score)
+
+    if not required.get("safe_apply"):
+        score = min(score, 88)
+
+    return {
+        "ok": True,
+        "worker_health_score": score,
+        "status": "healthy" if score >= 90 else "needs_hardening",
+        "routes": required,
+        "queue": {
+            "total": len(jobs),
+            "statuses": statuses
+        },
+        "capabilities": [
+            "chat_to_worker_handoff",
+            "job_queue_review",
+            "agent_task_creation",
+            "dry_run_required",
+            "founder_approval_required",
+            "safe_apply_backend_route",
+            "audit_logging"
+        ],
+        "blocked_by_design": [
+            "raw_browser_shell_execution",
+            "direct_secret_access",
+            "direct_unapproved_file_write",
+            "direct_deploy_without_approval"
+        ],
+        "next_recommended_phase": "ADM-5C-2 dry-run execution bridge for agent-created jobs"
+    }
+
+
+@app.post("/api/admin/worker-agent-task")
+async def adm5c_worker_agent_task(body: dict = _IF_ADM5C_Body(...)):
+    agent_name = str(body.get("agent_name") or "Worker Agent").strip()
+    instruction = str(body.get("instruction") or body.get("task") or "").strip()
+    source = str(body.get("source") or "forgeadmin_worker_console").strip()
+    mode = str(body.get("mode") or "agent_task").strip()
+    allowed_files = body.get("allowed_files") or []
+
+    if not instruction:
+        raise _IF_ADM5C_HTTPException(status_code=400, detail="instruction is required")
+
+    if _if_adm5c_secret_like(agent_name) or _if_adm5c_secret_like(instruction):
+        raise _IF_ADM5C_HTTPException(status_code=400, detail="blocked: payload appears to contain sensitive data")
+
+    if not isinstance(allowed_files, list):
+        allowed_files = []
+
+    now = _if_adm5c_now_iso()
+    compact = _IF_ADM5C_datetime.now().strftime("%Y%m%d%H%M%S%f")
+    job_id = f"AGENT-WORKER-{compact}"
+
+    title = f"{agent_name}: {instruction[:76]}".strip()
+
+    job = {
+        "job_id": job_id,
+        "id": job_id,
+        "title": title,
+        "summary": "Agent task created from ForgeAdmin Worker Console. Dry-run and founder approval required.",
+        "area": "Worker",
+        "module": "ForgeAdmin",
+        "type": "agent_worker_task",
+        "status": "waiting_approval",
+        "created_at": now,
+        "updated_at": now,
+        "agent_name": agent_name,
+        "source": source,
+        "mode": mode,
+        "instruction": instruction,
+        "task": instruction,
+        "allowed_files": allowed_files,
+        "founder_gated": True,
+        "dry_run_required": True,
+        "safe_apply_required": True,
+        "manual_copy_paste_required": False,
+        "payload": {
+            "agent_name": agent_name,
+            "instruction": instruction,
+            "allowed_files": allowed_files,
+            "created_at": now
+        },
+        "worker_task": {
+            "kind": "agent_worker_task",
+            "agent_name": agent_name,
+            "instruction": instruction,
+            "allowed_files": allowed_files,
+            "constraints": [
+                "Do not expose secrets",
+                "Do not call OpenAI from frontend",
+                "Do not write files without dry-run",
+                "Do not apply without founder approval",
+                "Create backups before writes",
+                "Audit all apply actions"
+            ]
+        }
+    }
+
+    queue_path, raw_queue, jobs = _if_adm5c_queue()
+    jobs.append(job)
+    _if_adm5c_save_queue(queue_path, raw_queue, jobs)
+
+    _if_adm5c_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "worker_agent_task_created",
+        "job_id": job_id,
+        "agent_name": agent_name,
+        "status": "waiting_approval",
+        "source": source,
+        "mode": mode,
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": "waiting_approval",
+        "agent_name": agent_name,
+        "next": "review_job_then_dry_run",
+        "report": f"Agent worker task created: {job_id}. Agent: {agent_name}. Status: waiting_approval."
+    }
+
