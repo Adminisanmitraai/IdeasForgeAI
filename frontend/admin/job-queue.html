@@ -512,5 +512,260 @@
 
     loadQueue();
   </script>
+<style id="adm4d3-diff-review-style">
+  .adm4d3-diff-box {
+    margin: 14px 0;
+    border: 1px solid rgba(0,0,0,.08);
+    border-radius: 22px;
+    background: rgba(246,247,248,.92);
+    overflow: hidden;
+  }
+
+  .adm4d3-diff-head {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    padding: 13px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font: inherit;
+    color: #111;
+    text-align: left;
+  }
+
+  .adm4d3-diff-head strong {
+    font-size: 15px;
+    font-weight: 620;
+    letter-spacing: -.025em;
+  }
+
+  .adm4d3-diff-head span {
+    color: #77808a;
+    font-size: 13px;
+  }
+
+  .adm4d3-diff-pre {
+    display: none;
+    margin: 0;
+    padding: 14px;
+    max-height: 320px;
+    overflow: auto;
+    border-top: 1px solid rgba(0,0,0,.06);
+    color: #3f4750;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .adm4d3-diff-box.open .adm4d3-diff-pre {
+    display: block;
+  }
+
+  .adm4d3-safety-note {
+    margin-top: 10px;
+    color: #8a929b;
+    font-size: 13px;
+    line-height: 1.35;
+  }
+</style>
+
+<script id="adm4d3-diff-review-script">
+(function () {
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, s => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[s]));
+  }
+
+  function diffBlock(job) {
+    const dry = job && job.dry_run ? job.dry_run : null;
+    const diff = dry && (dry.diff_preview || dry.diff) ? String(dry.diff_preview || dry.diff) : "";
+
+    if (!diff) {
+      return `
+        <div class="adm4d3-safety-note">
+          No diff preview attached to this job yet.
+        </div>
+      `;
+    }
+
+    return `
+      <div class="adm4d3-diff-box">
+        <button class="adm4d3-diff-head" type="button" onclick="this.closest('.adm4d3-diff-box').classList.toggle('open')">
+          <strong>Review dry-run diff</strong>
+          <span>${esc(dry.diff_lines || 0)} lines · no file changed</span>
+        </button>
+        <pre class="adm4d3-diff-pre">${esc(diff)}</pre>
+      </div>
+      <div class="adm4d3-safety-note">
+        Founder approval is required before apply request. Real execution remains locked until ADM-4D Safe Worker Apply Bridge.
+      </div>
+    `;
+  }
+
+  function patchRenderJobs() {
+    if (typeof window.renderJobs !== "function") return false;
+
+    const originalRenderJobs = window.renderJobs;
+
+    window.renderJobs = function patchedRenderJobs(jobs) {
+      originalRenderJobs(jobs);
+
+      const cards = Array.from(document.querySelectorAll(".job"));
+      const safeJobs = Array.isArray(jobs) ? jobs : [];
+
+      cards.forEach((card, index) => {
+        const job = safeJobs[index];
+        if (!job || card.querySelector(".adm4d3-diff-box")) return;
+
+        const actions = card.querySelector(".actions");
+        const anchor = actions || card;
+
+        const holder = document.createElement("div");
+        holder.innerHTML = diffBlock(job);
+
+        anchor.parentNode.insertBefore(holder, anchor);
+      });
+    };
+
+    return true;
+  }
+
+  function tryPatch() {
+    if (!patchRenderJobs()) {
+      setTimeout(tryPatch, 120);
+      return;
+    }
+
+    if (typeof window.loadQueue === "function") {
+      window.loadQueue();
+    }
+  }
+
+  window.ADM4D3DiffReview = {
+    diffBlock,
+    patchRenderJobs
+  };
+
+  tryPatch();
+})();
+</script>
+<style id="adm4d3a-diff-visible-polish">
+  .adm4d3-diff-box {
+    margin: 12px 0 14px !important;
+  }
+
+  .adm4d3-diff-head {
+    min-height: 48px !important;
+    border-radius: 18px !important;
+    background: rgba(246,247,248,.95) !important;
+  }
+
+  .job {
+    padding-bottom: 26px !important;
+  }
+
+  .list {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 170px) !important;
+  }
+</style>
+
+<script id="adm4d3a-force-diff-visible-top">
+(function () {
+  function esc(value) {
+    return String(value ?? "").replace(/[&<>"']/g, s => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    }[s]));
+  }
+
+  function makeDiff(job) {
+    const dry = job && job.dry_run ? job.dry_run : null;
+    const diff = dry && (dry.diff_preview || dry.diff) ? String(dry.diff_preview || dry.diff) : "";
+
+    if (!diff) return "";
+
+    return `
+      <div class="adm4d3-diff-box">
+        <button class="adm4d3-diff-head" type="button" onclick="this.closest('.adm4d3-diff-box').classList.toggle('open')">
+          <strong>Review dry-run diff</strong>
+          <span>${esc(dry.diff_lines || 0)} lines · locked</span>
+        </button>
+        <pre class="adm4d3-diff-pre">${esc(diff)}</pre>
+      </div>
+    `;
+  }
+
+  function placeDiffs() {
+    const jobs = window.__lastRenderedJobs || [];
+    const cards = Array.from(document.querySelectorAll(".job"));
+
+    cards.forEach((card, index) => {
+      if (card.querySelector(".adm4d3-diff-box")) return;
+
+      const job = jobs[index];
+      if (!job || !job.dry_run) return;
+
+      const html = makeDiff(job);
+      if (!html) return;
+
+      const meta = card.querySelector(".meta");
+      const top = card.querySelector(".job-top");
+
+      const holder = document.createElement("div");
+      holder.innerHTML = html;
+
+      if (top && top.nextSibling) {
+        card.insertBefore(holder, top.nextSibling);
+      } else if (meta) {
+        card.insertBefore(holder, meta);
+      } else {
+        card.appendChild(holder);
+      }
+    });
+  }
+
+  function patchRenderJobsAgain() {
+    if (typeof window.renderJobs !== "function") {
+      setTimeout(patchRenderJobsAgain, 150);
+      return;
+    }
+
+    if (window.renderJobs.__adm4d3aPatched) {
+      placeDiffs();
+      return;
+    }
+
+    const original = window.renderJobs;
+
+    window.renderJobs = function jobsWithVisibleDiff(jobs) {
+      window.__lastRenderedJobs = Array.isArray(jobs) ? jobs : [];
+      original(jobs);
+      setTimeout(placeDiffs, 60);
+    };
+
+    window.renderJobs.__adm4d3aPatched = true;
+
+    if (typeof window.loadQueue === "function") {
+      window.loadQueue();
+    }
+  }
+
+  patchRenderJobsAgain();
+})();
+</script>
 </body>
 </html>
+
+
