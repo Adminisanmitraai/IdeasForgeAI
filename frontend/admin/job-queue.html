@@ -5,322 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Job Queue · IdeasForgeAI Admin</title>
   <style>
-    :root {
-      --bg:#f6f7f8;
-      --card:rgba(255,255,255,.88);
-      --text:#090909;
-      --muted:#77808a;
-      --line:rgba(0,0,0,.08);
-      --shadow:0 18px 48px rgba(0,0,0,.06);
-      --green:#18b95c;
-      --amber:#d89b12;
-      --blue:#2563eb;
-      --red:#a5342a;
-    }
-
-    * { box-sizing:border-box; }
-
-    body {
-      margin:0;
-      background:radial-gradient(circle at 10% 14%,rgba(37,99,235,.08),transparent 34%),var(--bg);
-      color:var(--text);
-      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",sans-serif;
-      -webkit-font-smoothing:antialiased;
-    }
-
-    .screen {
-      max-width:720px;
-      margin:0 auto;
-      min-height:100svh;
-      padding:calc(env(safe-area-inset-top) + 24px) 18px calc(env(safe-area-inset-bottom) + 150px);
-    }
-
-    .top {
-      display:grid;
-      grid-template-columns:58px 52px 1fr 58px;
-      align-items:center;
-      gap:12px;
-      position:sticky;
-      top:calc(env(safe-area-inset-top) + 8px);
-      z-index:8500;
-      padding:8px 0;
-      background:rgba(246,247,248,.78);
-      backdrop-filter:blur(18px);
-      -webkit-backdrop-filter:blur(18px);
-      border-radius:28px;
-      margin-bottom:18px;
-    }
-
-    .top-btn {
-      width:58px;
-      height:58px;
-      border-radius:22px;
-      border:1px solid var(--line);
-      background:rgba(255,255,255,.78);
-      box-shadow:var(--shadow);
-      display:grid;
-      place-items:center;
-      color:#111;
-      font-size:24px;
-    }
-
-    .logo {
-      width:52px;
-      height:52px;
-      border-radius:18px;
-      background:white url("assets/ideasforgeai-mark.png") center/cover no-repeat;
-      box-shadow:var(--shadow);
-    }
-
-    h1 {
-      margin:0;
-      font-size:30px;
-      line-height:1.04;
-      letter-spacing:-.055em;
-      font-weight:610;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-    }
-
-    .sub {
-      margin:5px 0 0;
-      color:var(--muted);
-      font-size:15.5px;
-      line-height:1.22;
-      display:-webkit-box;
-      -webkit-line-clamp:2;
-      -webkit-box-orient:vertical;
-      overflow:hidden;
-    }
-
-    .chips {
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:10px;
-      margin:18px 0 22px;
-    }
-
-    .chip {
-      min-height:54px;
-      border:1px solid var(--line);
-      border-radius:999px;
-      background:rgba(255,255,255,.8);
-      box-shadow:var(--shadow);
-      padding:9px 12px;
-      display:flex;
-      align-items:center;
-      gap:10px;
-    }
-
-    .dot {
-      width:24px;
-      height:24px;
-      border-radius:50%;
-      background:var(--green);
-      box-shadow:0 0 0 9px rgba(24,185,92,.1);
-    }
-
-    .dot.amber {
-      background:var(--amber);
-      box-shadow:0 0 0 9px rgba(216,155,18,.11);
-    }
-
-    .chip strong {
-      font-size:17px;
-      font-weight:560;
-      letter-spacing:-.035em;
-    }
-
-    .chip span {
-      margin-left:auto;
-      color:var(--muted);
-      font-size:15px;
-      font-weight:520;
-    }
-
-    .hero {
-      border:1px solid var(--line);
-      border-radius:30px;
-      background:var(--card);
-      box-shadow:var(--shadow);
-      padding:22px;
-      margin-bottom:18px;
-    }
-
-    .hero h2 {
-      margin:0 0 10px;
-      font-size:34px;
-      line-height:1.02;
-      letter-spacing:-.065em;
-      font-weight:610;
-    }
-
-    .hero p {
-      margin:0;
-      color:var(--muted);
-      font-size:19px;
-      line-height:1.3;
-      font-weight:370;
-    }
-
-    .summary {
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-      margin:18px 0;
-    }
-
-    .stat {
-      border:1px solid var(--line);
-      border-radius:24px;
-      background:rgba(255,255,255,.82);
-      box-shadow:var(--shadow);
-      padding:14px;
-      min-height:86px;
-    }
-
-    .stat strong {
-      display:block;
-      font-size:28px;
-      line-height:1;
-      letter-spacing:-.05em;
-      font-weight:610;
-    }
-
-    .stat span {
-      display:block;
-      margin-top:7px;
-      color:var(--muted);
-      font-size:13px;
-      font-weight:520;
-    }
-
-    .toolbar {
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      margin:18px 0;
-    }
-
-    .pill {
-      border:1px solid var(--line);
-      border-radius:999px;
-      background:#fff;
-      min-height:46px;
-      padding:0 16px;
-      font-size:15px;
-      font-weight:500;
-    }
-
-    .pill.primary {
-      background:#111;
-      color:#fff;
-    }
-
-    .list {
-      display:grid;
-      gap:12px;
-      padding-bottom:80px;
-    }
-
-    .job {
-      border:1px solid var(--line);
-      border-radius:28px;
-      background:rgba(255,255,255,.9);
-      box-shadow:var(--shadow);
-      padding:18px;
-    }
-
-    .job-top {
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      margin-bottom:10px;
-    }
-
-    .job h3 {
-      margin:0;
-      font-size:22px;
-      line-height:1.1;
-      letter-spacing:-.045em;
-      font-weight:610;
-    }
-
-    .badge {
-      border-radius:999px;
-      padding:7px 10px;
-      font-size:12px;
-      font-weight:650;
-      background:#eef3f6;
-      color:#6d7680;
-      white-space:nowrap;
-    }
-
-    .badge.waiting_approval { background:#fff7df; color:#9a6800; }
-    .badge.approved { background:#eaf6ef; color:#108446; }
-    .badge.apply_requested { background:#edf3ff; color:#2563eb; }
-    .badge.rejected, .badge.blocked { background:#fff0ef; color:#a5342a; }
-
-    .meta {
-      color:var(--muted);
-      font-size:15px;
-      line-height:1.38;
-      margin:8px 0 14px;
-      word-break:break-word;
-    }
-
-    .actions {
-      display:flex;
-      gap:9px;
-      flex-wrap:wrap;
-    }
-
-    .action {
-      border:1px solid var(--line);
-      border-radius:999px;
-      background:#fff;
-      min-height:40px;
-      padding:0 13px;
-      font-size:14px;
-      font-weight:540;
-    }
-
-    .action.primary {
-      background:#111;
-      color:#fff;
-    }
-
-    .action.warn {
-      background:#fff4f2;
-      color:var(--red);
-    }
-
-    .action:disabled {
-      opacity:.48;
-    }
-
-    .empty {
-      border:1px dashed rgba(0,0,0,.12);
-      border-radius:26px;
-      padding:22px;
-      color:var(--muted);
-      background:rgba(255,255,255,.65);
-      font-size:17px;
-      line-height:1.35;
-    }
+    :root{--bg:#f6f7f8;--card:rgba(255,255,255,.9);--text:#070707;--muted:#77808a;--line:rgba(0,0,0,.08);--shadow:0 18px 48px rgba(0,0,0,.06);--green:#18b95c;--amber:#d99a0b;--blue:#2563eb;--red:#a5342a}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 12% 12%,rgba(37,99,235,.08),transparent 34%),var(--bg);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Inter","Segoe UI",sans-serif;color:var(--text);-webkit-font-smoothing:antialiased}
+    .screen{max-width:720px;margin:0 auto;min-height:100svh;padding:calc(env(safe-area-inset-top) + 24px) 18px calc(env(safe-area-inset-bottom) + 180px)}
+    .top{display:grid;grid-template-columns:58px 52px 1fr 58px;align-items:center;gap:12px;position:sticky;top:calc(env(safe-area-inset-top) + 8px);z-index:50;padding:8px 0;background:rgba(246,247,248,.78);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-radius:28px;margin-bottom:18px}
+    .top-btn{width:58px;height:58px;border-radius:22px;border:1px solid var(--line);background:rgba(255,255,255,.82);box-shadow:var(--shadow);display:grid;place-items:center;font-size:24px;color:#111;text-decoration:none}
+    .logo{width:52px;height:52px;border-radius:18px;background:white url("assets/ideasforgeai-mark.png") center/cover no-repeat;box-shadow:var(--shadow)}
+    h1{margin:0;font-size:30px;line-height:1.04;letter-spacing:-.055em;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .sub{margin:5px 0 0;color:var(--muted);font-size:15.5px;line-height:1.22;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .chips{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 22px}
+    .chip{min-height:54px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.82);box-shadow:var(--shadow);padding:9px 12px;display:flex;align-items:center;gap:10px}
+    .dot{width:24px;height:24px;border-radius:50%;background:var(--green);box-shadow:0 0 0 9px rgba(24,185,92,.1)}
+    .dot.amber{background:var(--amber);box-shadow:0 0 0 9px rgba(216,155,18,.11)}
+    .chip strong{font-size:17px;font-weight:620;letter-spacing:-.035em}.chip span{margin-left:auto;color:var(--muted);font-size:15px;font-weight:540}
+    .hero{border:1px solid var(--line);border-radius:30px;background:var(--card);box-shadow:var(--shadow);padding:22px;margin-bottom:18px}
+    .hero h2{margin:0 0 10px;font-size:34px;line-height:1.02;letter-spacing:-.065em;font-weight:650}.hero p{margin:0;color:var(--muted);font-size:19px;line-height:1.3;font-weight:380}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0}.stat{border:1px solid var(--line);border-radius:24px;background:rgba(255,255,255,.84);box-shadow:var(--shadow);padding:14px;min-height:86px}.stat strong{display:block;font-size:30px;line-height:1;font-weight:650}.stat span{display:block;margin-top:8px;color:var(--muted);font-size:13px;font-weight:560}
+    .toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}.pill{border:1px solid var(--line);border-radius:999px;background:#fff;min-height:46px;padding:0 16px;font-size:15px;font-weight:560;text-decoration:none;color:var(--blue);display:inline-grid;place-items:center}.pill.primary{background:#111;color:#fff}
+    .list{display:grid;gap:14px;padding-bottom:90px}.empty{border:1px dashed rgba(0,0,0,.12);border-radius:26px;padding:22px;color:var(--muted);background:rgba(255,255,255,.65);font-size:17px;line-height:1.35}
+    .job{border:1px solid var(--line);border-radius:28px;background:rgba(255,255,255,.92);box-shadow:var(--shadow);padding:18px 18px 22px}.job-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}.job h3{margin:0;font-size:25px;line-height:1.08;letter-spacing:-.055em;font-weight:650}
+    .badge{width:auto!important;min-width:0!important;max-width:150px!important;height:auto!important;padding:8px 12px!important;border-radius:999px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;white-space:nowrap!important;line-height:1!important;font-size:12px!important;font-weight:700!important;letter-spacing:-.015em!important}
+    .badge.waiting_approval{background:#fff7df;color:#9a6800}.badge.approved{background:#eaf6ef;color:#108446}.badge.apply_requested{background:#edf3ff;color:#2563eb}.badge.rejected,.badge.blocked{background:#fff0ef;color:#a5342a}
+    .meta{color:var(--muted);font-size:16px;line-height:1.36;margin:8px 0 14px;overflow-wrap:anywhere}.meta strong{color:#6f7883;font-size:17px}
+    .diff{margin:12px 0 14px;border:1px solid rgba(0,0,0,.08);border-radius:20px;background:rgba(246,247,248,.96);overflow:hidden}.diff button{width:100%;min-height:52px;border:0;background:transparent;padding:13px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px;font:inherit;text-align:left}.diff button strong{font-size:15px;font-weight:680}.diff button span{color:var(--muted);font-size:13px}.diff pre{display:none;margin:0;padding:14px;max-height:340px;overflow:auto;border-top:1px solid rgba(0,0,0,.06);color:#3f4750;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;line-height:1.45;white-space:pre-wrap;word-break:break-word}.diff.open pre{display:block}
+    .note{color:#8a929b;font-size:13px;line-height:1.35;margin:8px 0 14px}
+    .actions{display:flex;gap:9px;flex-wrap:wrap}.action{border:1px solid var(--line);border-radius:999px;background:#fff;min-height:42px;padding:0 14px;font-size:14px;font-weight:560}.action.primary{background:#111;color:#fff}.action.warn{background:#fff4f2;color:var(--red)}.action:disabled{background:rgba(246,247,248,.9);color:#a4abb3;opacity:1}
   </style>
 </head>
-
 <body>
   <main class="screen">
     <header class="top">
-      <button class="top-btn" type="button" onclick="location.href='founder-office.html'">☰</button>
+      <a class="top-btn" href="founder-office.html">☰</a>
       <div class="logo"></div>
-      <div>
-        <h1>Job Queue</h1>
-        <p class="sub">Persistent dry-run jobs, approvals, apply requests, and locked execution state.</p>
-      </div>
+      <div><h1>Job Queue</h1><p class="sub">Persistent dry-run jobs, approvals, apply requests, and locked execution state.</p></div>
       <button class="top-btn" type="button" onclick="loadQueue()">•••</button>
     </header>
 
@@ -343,429 +61,76 @@
     <div class="toolbar">
       <button class="pill primary" type="button" onclick="loadQueue()">Refresh queue</button>
       <button class="pill" type="button" onclick="createTestJob()">Create test dry-run</button>
-      <button class="pill" type="button" onclick="location.href='audit-logs.html'">Audit logs</button>
+      <a class="pill" href="audit-logs.html">Audit logs</a>
     </div>
 
-    <section id="jobList" class="list">
-      <div class="empty">Loading backend job queue…</div>
-    </section>
+    <section id="jobList" class="list"><div class="empty">Loading backend job queue…</div></section>
   </main>
 
   <script>
     const API = location.protocol + "//" + location.hostname + ":5051";
 
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>"']/g, s => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[s]));
+    function esc(v){return String(v ?? "").replace(/[&<>"']/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[s]))}
+    function statusLabel(s){return({waiting_approval:"Waiting approval",approved:"Approved",apply_requested:"Apply requested",rejected:"Rejected",blocked:"Blocked"}[s]||s||"Recorded")}
+    function shortTime(v){if(!v)return"Not recorded";try{return new Date(v).toLocaleString([],{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}catch{return v}}
+
+    function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=String(v)}
+
+    function diffBox(job){
+      const dry=job?.dry_run||{};
+      const diff=String(dry.diff_preview||dry.diff||"");
+      if(!diff.trim()) return `<div class="note">No diff preview attached to this job yet.</div>`;
+      return `<div class="diff"><button type="button" onclick="this.closest('.diff').classList.toggle('open')"><strong>Review dry-run diff</strong><span>${esc(dry.diff_lines||0)} lines · no file changed</span></button><pre>${esc(diff)}</pre></div><div class="note">Founder approval is required before apply request. Real execution remains locked.</div>`;
     }
 
-    function shortTime(value) {
-      if (!value) return "Not recorded";
-      try {
-        return new Date(value).toLocaleString([], {
-          month:"short",
-          day:"2-digit",
-          hour:"2-digit",
-          minute:"2-digit"
-        });
-      } catch {
-        return value;
-      }
+    function jobActions(job){
+      const id=esc(job.id), s=String(job.status||"");
+      if(s==="waiting_approval") return `<button class="action primary" onclick="queueAction('approve','${id}')">Approve</button><button class="action warn" onclick="queueAction('reject','${id}')">Reject</button>`;
+      if(s==="approved") return `<button class="action primary" onclick="queueAction('apply-request','${id}')">Request apply</button>`;
+      if(s==="apply_requested") return `<button class="action" disabled>Apply requested · locked</button>`;
+      return `<button class="action" disabled>${esc(statusLabel(s))}</button>`;
     }
 
-    function setSummary(summary) {
-      document.getElementById("qWaiting").textContent = summary?.waiting_approval ?? 0;
-      document.getElementById("qApproved").textContent = summary?.approved ?? 0;
-      document.getElementById("qTotal").textContent = summary?.total ?? 0;
+    function renderJobs(jobs){
+      const list=document.getElementById("jobList");
+      if(!Array.isArray(jobs)||!jobs.length){list.innerHTML=`<div class="empty">No backend jobs found.</div>`;return}
+      list.innerHTML=jobs.map(job=>`<article class="job">
+        <div class="job-top"><h3>${esc(job.request||"Admin dry-run job")}</h3><span class="badge ${esc(job.status)}">${esc(statusLabel(job.status))}</span></div>
+        <div class="meta"><strong>${esc(job.id)}</strong><br>Area: ${esc(job.target_area||"")}<br>Target: ${esc(job.target_file||"")}<br>Risk: ${esc(job.risk||"Low")}<br>Execution: ${esc(job.execution||"locked")}<br>Created: ${esc(shortTime(job.created_at))}</div>
+        ${diffBox(job)}
+        <div class="actions">${jobActions(job)}</div>
+      </article>`).join("");
     }
 
-    function jobButtons(job) {
-      const id = escapeHtml(job.id);
-      const status = String(job.status || "");
-
-      if (status === "waiting_approval") {
-        return `
-          <button class="action primary" onclick="queueAction('approve','${id}')">Approve</button>
-          <button class="action warn" onclick="queueAction('reject','${id}')">Reject</button>
-        `;
-      }
-
-      if (status === "approved") {
-        return `
-          <button class="action primary" onclick="queueAction('apply-request','${id}')">Request apply</button>
-          <button class="action warn" onclick="queueAction('reject','${id}')">Reject</button>
-        `;
-      }
-
-      if (status === "apply_requested") {
-        return `<button class="action" disabled>Apply requested · execution locked</button>`;
-      }
-
-      if (status === "rejected") {
-        return `<button class="action" disabled>Rejected</button>`;
-      }
-
-      if (status === "blocked") {
-        return `<button class="action" disabled>Blocked</button>`;
-      }
-
-      return `<button class="action" disabled>${escapeHtml(status || "recorded")}</button>`;
-    }
-
-    function renderJobs(jobs) {
-      const list = document.getElementById("jobList");
-
-      if (!Array.isArray(jobs) || !jobs.length) {
-        list.innerHTML = `
-          <div class="empty">
-            No backend jobs yet.<br>
-            Create a test dry-run or create a job from Founder Office.
-          </div>
-        `;
-        return;
-      }
-
-      list.innerHTML = jobs.map(job => `
-        <article class="job">
-          <div class="job-top">
-            <h3>${escapeHtml(job.request || "Admin dry-run job")}</h3>
-            <span class="badge ${escapeHtml(job.status)}">${escapeHtml(job.status)}</span>
-          </div>
-
-          <div class="meta">
-            <strong>${escapeHtml(job.id)}</strong><br>
-            Area: ${escapeHtml(job.target_area)}<br>
-            Target: ${escapeHtml(job.target_file)}<br>
-            Risk: ${escapeHtml(job.risk)}<br>
-            Execution: ${escapeHtml(job.execution)}<br>
-            Created: ${escapeHtml(shortTime(job.created_at))}
-          </div>
-
-          <div class="actions">
-            ${jobButtons(job)}
-          </div>
-        </article>
-      `).join("");
-    }
-
-    async function loadQueue() {
-      const list = document.getElementById("jobList");
-      list.innerHTML = `<div class="empty">Loading backend job queue…</div>`;
-
-      try {
-        const res = await fetch(API + "/api/admin/job-queue", { cache:"no-store" });
-        const data = await res.json();
-
-        if (!data.ok) throw new Error(data.error || "Queue API error");
-
-        setSummary(data.summary || {});
-        renderJobs(data.jobs || []);
-      } catch (err) {
-        list.innerHTML = `
-          <div class="empty">
-            Backend job queue unavailable.<br>
-            ${escapeHtml(err.message)}<br><br>
-            Check backend on port 5051.
-          </div>
-        `;
+    async function loadQueue(){
+      const list=document.getElementById("jobList");
+      list.innerHTML=`<div class="empty">Loading backend job queue…</div>`;
+      try{
+        const res=await fetch(API+"/api/admin/job-queue",{cache:"no-store"});
+        const data=await res.json();
+        if(!data.ok) throw new Error(data.error||"Queue API error");
+        const s=data.summary||{};
+        setText("qWaiting",s.waiting_approval??0);
+        setText("qApproved",s.approved??0);
+        setText("qTotal",s.total??0);
+        renderJobs(data.jobs||[]);
+      }catch(err){
+        list.innerHTML=`<div class="empty">Backend job queue unavailable.<br>${esc(err.message)}<br><br>Check backend on port 5051.</div>`;
       }
     }
 
-    async function queueAction(action, jobId) {
-      const endpoint = action === "apply-request"
-        ? `/api/admin/job-queue/${encodeURIComponent(jobId)}/apply-request`
-        : `/api/admin/job-queue/${encodeURIComponent(jobId)}/${action}`;
-
-      try {
-        await fetch(API + endpoint, {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" }
-        });
-        await loadQueue();
-      } catch (err) {
-        alert("Queue action failed: " + err.message);
-      }
+    async function queueAction(action,id){
+      const endpoint=action==="apply-request"?`/api/admin/job-queue/${encodeURIComponent(id)}/apply-request`:`/api/admin/job-queue/${encodeURIComponent(id)}/${action}`;
+      await fetch(API+endpoint,{method:"POST",headers:{"Content-Type":"application/json"}});
+      await loadQueue();
     }
 
-    async function createTestJob() {
-      try {
-        await fetch(API + "/api/admin/job-queue", {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({
-            request:"Test backend job queue from mobile UI",
-            target_area:"Job Queue",
-            target_file:"frontend/admin/job-queue.html",
-            risk:"Low"
-          })
-        });
-        await loadQueue();
-      } catch (err) {
-        alert("Create job failed: " + err.message);
-      }
+    async function createTestJob(){
+      await fetch(API+"/api/admin/job-queue",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({request:"Test backend job queue from mobile UI",target_area:"Job Queue",target_file:"frontend/admin/job-queue.html",risk:"Low"})});
+      await loadQueue();
     }
 
     loadQueue();
   </script>
-<style id="adm4d3-diff-review-style">
-  .adm4d3-diff-box {
-    margin: 14px 0;
-    border: 1px solid rgba(0,0,0,.08);
-    border-radius: 22px;
-    background: rgba(246,247,248,.92);
-    overflow: hidden;
-  }
-
-  .adm4d3-diff-head {
-    width: 100%;
-    border: 0;
-    background: transparent;
-    padding: 13px 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    font: inherit;
-    color: #111;
-    text-align: left;
-  }
-
-  .adm4d3-diff-head strong {
-    font-size: 15px;
-    font-weight: 620;
-    letter-spacing: -.025em;
-  }
-
-  .adm4d3-diff-head span {
-    color: #77808a;
-    font-size: 13px;
-  }
-
-  .adm4d3-diff-pre {
-    display: none;
-    margin: 0;
-    padding: 14px;
-    max-height: 320px;
-    overflow: auto;
-    border-top: 1px solid rgba(0,0,0,.06);
-    color: #3f4750;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-    font-size: 12px;
-    line-height: 1.45;
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  .adm4d3-diff-box.open .adm4d3-diff-pre {
-    display: block;
-  }
-
-  .adm4d3-safety-note {
-    margin-top: 10px;
-    color: #8a929b;
-    font-size: 13px;
-    line-height: 1.35;
-  }
-</style>
-
-<script id="adm4d3-diff-review-script">
-(function () {
-  function esc(value) {
-    return String(value ?? "").replace(/[&<>"']/g, s => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-    }[s]));
-  }
-
-  function diffBlock(job) {
-    const dry = job && job.dry_run ? job.dry_run : null;
-    const diff = dry && (dry.diff_preview || dry.diff) ? String(dry.diff_preview || dry.diff) : "";
-
-    if (!diff) {
-      return `
-        <div class="adm4d3-safety-note">
-          No diff preview attached to this job yet.
-        </div>
-      `;
-    }
-
-    return `
-      <div class="adm4d3-diff-box">
-        <button class="adm4d3-diff-head" type="button" onclick="this.closest('.adm4d3-diff-box').classList.toggle('open')">
-          <strong>Review dry-run diff</strong>
-          <span>${esc(dry.diff_lines || 0)} lines · no file changed</span>
-        </button>
-        <pre class="adm4d3-diff-pre">${esc(diff)}</pre>
-      </div>
-      <div class="adm4d3-safety-note">
-        Founder approval is required before apply request. Real execution remains locked until ADM-4D Safe Worker Apply Bridge.
-      </div>
-    `;
-  }
-
-  function patchRenderJobs() {
-    if (typeof window.renderJobs !== "function") return false;
-
-    const originalRenderJobs = window.renderJobs;
-
-    window.renderJobs = function patchedRenderJobs(jobs) {
-      originalRenderJobs(jobs);
-
-      const cards = Array.from(document.querySelectorAll(".job"));
-      const safeJobs = Array.isArray(jobs) ? jobs : [];
-
-      cards.forEach((card, index) => {
-        const job = safeJobs[index];
-        if (!job || card.querySelector(".adm4d3-diff-box")) return;
-
-        const actions = card.querySelector(".actions");
-        const anchor = actions || card;
-
-        const holder = document.createElement("div");
-        holder.innerHTML = diffBlock(job);
-
-        anchor.parentNode.insertBefore(holder, anchor);
-      });
-    };
-
-    return true;
-  }
-
-  function tryPatch() {
-    if (!patchRenderJobs()) {
-      setTimeout(tryPatch, 120);
-      return;
-    }
-
-    if (typeof window.loadQueue === "function") {
-      window.loadQueue();
-    }
-  }
-
-  window.ADM4D3DiffReview = {
-    diffBlock,
-    patchRenderJobs
-  };
-
-  tryPatch();
-})();
-</script>
-<style id="adm4d3a-diff-visible-polish">
-  .adm4d3-diff-box {
-    margin: 12px 0 14px !important;
-  }
-
-  .adm4d3-diff-head {
-    min-height: 48px !important;
-    border-radius: 18px !important;
-    background: rgba(246,247,248,.95) !important;
-  }
-
-  .job {
-    padding-bottom: 26px !important;
-  }
-
-  .list {
-    padding-bottom: calc(env(safe-area-inset-bottom) + 170px) !important;
-  }
-</style>
-
-<script id="adm4d3a-force-diff-visible-top">
-(function () {
-  function esc(value) {
-    return String(value ?? "").replace(/[&<>"']/g, s => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#039;"
-    }[s]));
-  }
-
-  function makeDiff(job) {
-    const dry = job && job.dry_run ? job.dry_run : null;
-    const diff = dry && (dry.diff_preview || dry.diff) ? String(dry.diff_preview || dry.diff) : "";
-
-    if (!diff) return "";
-
-    return `
-      <div class="adm4d3-diff-box">
-        <button class="adm4d3-diff-head" type="button" onclick="this.closest('.adm4d3-diff-box').classList.toggle('open')">
-          <strong>Review dry-run diff</strong>
-          <span>${esc(dry.diff_lines || 0)} lines · locked</span>
-        </button>
-        <pre class="adm4d3-diff-pre">${esc(diff)}</pre>
-      </div>
-    `;
-  }
-
-  function placeDiffs() {
-    const jobs = window.__lastRenderedJobs || [];
-    const cards = Array.from(document.querySelectorAll(".job"));
-
-    cards.forEach((card, index) => {
-      if (card.querySelector(".adm4d3-diff-box")) return;
-
-      const job = jobs[index];
-      if (!job || !job.dry_run) return;
-
-      const html = makeDiff(job);
-      if (!html) return;
-
-      const meta = card.querySelector(".meta");
-      const top = card.querySelector(".job-top");
-
-      const holder = document.createElement("div");
-      holder.innerHTML = html;
-
-      if (top && top.nextSibling) {
-        card.insertBefore(holder, top.nextSibling);
-      } else if (meta) {
-        card.insertBefore(holder, meta);
-      } else {
-        card.appendChild(holder);
-      }
-    });
-  }
-
-  function patchRenderJobsAgain() {
-    if (typeof window.renderJobs !== "function") {
-      setTimeout(patchRenderJobsAgain, 150);
-      return;
-    }
-
-    if (window.renderJobs.__adm4d3aPatched) {
-      placeDiffs();
-      return;
-    }
-
-    const original = window.renderJobs;
-
-    window.renderJobs = function jobsWithVisibleDiff(jobs) {
-      window.__lastRenderedJobs = Array.isArray(jobs) ? jobs : [];
-      original(jobs);
-      setTimeout(placeDiffs, 60);
-    };
-
-    window.renderJobs.__adm4d3aPatched = true;
-
-    if (typeof window.loadQueue === "function") {
-      window.loadQueue();
-    }
-  }
-
-  patchRenderJobsAgain();
-})();
-</script>
 </body>
 </html>
-
-
