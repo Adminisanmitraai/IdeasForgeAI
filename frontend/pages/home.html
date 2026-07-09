@@ -1737,8 +1737,81 @@
 </script>
 <!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
 
+<!-- IF-CHATKIT-SHELL-V3-CLEAN-START -->
+<script id="if-chatkit-shell-v3-clean">
+(function () {
+  const params = new URLSearchParams(location.search);
+  if (params.get("chatkit") !== "1") return;
+
+  document.documentElement.classList.add("if-chatkit-shell-v3");
+
+  function setGap() {
+    const vv = window.visualViewport;
+    const hidden = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+    const extra = window.innerWidth <= 430 ? 128 : 96;
+    document.documentElement.style.setProperty("--ifck-gap", Math.max(108, Math.ceil(hidden + extra)) + "px");
+  }
+
+  function host() {
+    return document.querySelector("#chatkit-root, [data-chatkit-root], openai-chatkit, chatkit-conversation");
+  }
+
+  function boot() {
+    if (!document.querySelector(".ifck-shell")) {
+      const shell = document.createElement("div");
+      shell.className = "ifck-shell";
+      shell.innerHTML = `
+        <style>
+          html.if-chatkit-shell-v3, html.if-chatkit-shell-v3 body {
+            margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#000!important;
+          }
+          html.if-chatkit-shell-v3 body > *:not(.ifck-shell):not(script):not(style) {display:none!important;}
+          .ifck-shell{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100svh;display:grid;grid-template-rows:118px minmax(0,1fr) var(--ifck-gap,132px);background:#000;color:#fff;z-index:2147483000;overflow:hidden;}
+          .ifck-header{display:flex;align-items:center;justify-content:space-between;padding:max(34px,env(safe-area-inset-top)) 14px 12px;box-sizing:border-box;background:#000;}
+          .ifck-brand{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800;letter-spacing:-.05em;white-space:nowrap;}
+          .ifck-spark{color:#9b78ff;font-size:35px;filter:drop-shadow(0 0 16px rgba(155,120,255,.55));}
+          .ifck-brand b{color:#9b78ff;}
+          .ifck-actions{display:flex;gap:10px;}
+          .ifck-btn{width:50px;height:50px;border-radius:17px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg,#292c32,#14161a);color:#fff;display:grid;place-items:center;font-size:23px;}
+          .ifck-wrap{min-height:0;padding:0 17px;overflow:hidden;box-sizing:border-box;}
+          .ifck-card{width:100%;height:100%;min-height:0;overflow:hidden;border-radius:34px 34px 0 0;background:#fff;color:#111;}
+          .ifck-card>*{width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;display:block!important;overflow:hidden!important;}
+          .ifck-bottom{background:#000;}
+          @media(max-width:390px){.ifck-shell{grid-template-rows:110px minmax(0,1fr) var(--ifck-gap,142px)}.ifck-brand{font-size:21px}.ifck-spark{font-size:32px}.ifck-btn{width:46px;height:46px}}
+        </style>
+        <header class="ifck-header">
+          <button class="ifck-btn" aria-label="New chat">☰</button>
+          <div class="ifck-brand"><span class="ifck-spark">✦</span><span>IdeasForge<b>AI</b></span></div>
+          <div class="ifck-actions"><button class="ifck-btn" aria-label="History">◎</button><button class="ifck-btn" aria-label="Profile">◔</button></div>
+        </header>
+        <main class="ifck-wrap"><div class="ifck-card"></div></main>
+        <div class="ifck-bottom"></div>`;
+      document.body.appendChild(shell);
+    }
+
+    const h = host();
+    const mount = document.querySelector(".ifck-card");
+    if (h && mount && h.parentElement !== mount) mount.appendChild(h);
+  }
+
+  setGap();
+  window.addEventListener("resize", setGap);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", setGap);
+    window.visualViewport.addEventListener("scroll", setGap);
+  }
+
+  new MutationObserver(function () { boot(); setGap(); })
+    .observe(document.documentElement, { childList:true, subtree:true });
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+<!-- IF-CHATKIT-SHELL-V3-CLEAN-END -->
 </body>
 </html>
+
 
 
 
