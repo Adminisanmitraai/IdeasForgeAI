@@ -1176,8 +1176,100 @@
 </script>
 <!-- IF-CHATKIT-HIDE-DEBUG-OVERLAY-END -->
 
+
+<!-- IF-CHATKIT-MOBILE-SAFE-FINAL-START -->
+<style id="if-chatkit-mobile-safe-final-style">
+@media (max-width: 760px) {
+  body:has(openai-chatkit) {
+    overflow: hidden !important;
+    background: #000 !important;
+  }
+
+  .if-chatkit-live-shell {
+    height: var(--if-chatkit-visual-height, 100dvh) !important;
+    min-height: var(--if-chatkit-visual-height, 100dvh) !important;
+
+    padding-top: calc(env(safe-area-inset-top, 0px) + 118px) !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+
+    /* keeps ChatKit composer above iPhone Safari toolbar */
+    padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 98px) !important;
+  }
+
+  .if-chatkit-stage {
+    height: calc(
+      var(--if-chatkit-visual-height, 100dvh)
+      - env(safe-area-inset-top, 0px)
+      - 118px
+      - env(safe-area-inset-bottom, 0px)
+      - 98px
+    ) !important;
+
+    max-height: calc(
+      var(--if-chatkit-visual-height, 100dvh)
+      - env(safe-area-inset-top, 0px)
+      - 118px
+      - env(safe-area-inset-bottom, 0px)
+      - 98px
+    ) !important;
+
+    border-radius: 28px !important;
+    overflow: hidden !important;
+  }
+
+  #if-chatkit-mount,
+  #if-chatkit-mount openai-chatkit {
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    display: block !important;
+    overflow: hidden !important;
+  }
+}
+</style>
+
+<script id="if-chatkit-mobile-safe-final-script">
+(function(){
+  function isChatKitLive(){
+    return new URLSearchParams(location.search).get("chatkit") === "1";
+  }
+
+  function setVisualHeight(){
+    if(!isChatKitLive()) return;
+
+    var height = window.innerHeight;
+
+    if(window.visualViewport && window.visualViewport.height){
+      height = Math.min(window.innerHeight, window.visualViewport.height);
+    }
+
+    document.documentElement.style.setProperty(
+      "--if-chatkit-visual-height",
+      Math.round(height) + "px"
+    );
+  }
+
+  setVisualHeight();
+
+  window.addEventListener("resize", setVisualHeight);
+  window.addEventListener("orientationchange", setVisualHeight);
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize", setVisualHeight);
+    window.visualViewport.addEventListener("scroll", setVisualHeight);
+  }
+
+  setTimeout(setVisualHeight, 300);
+  setTimeout(setVisualHeight, 1000);
+  setTimeout(setVisualHeight, 2500);
+})();
+</script>
+<!-- IF-CHATKIT-MOBILE-SAFE-FINAL-END -->
+
 </body>
 </html>
+
 
 
 
