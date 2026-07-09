@@ -661,7 +661,7 @@ body.theme-dark .icon-button {
 .composer-shell {
   min-height: 58px;
   display: grid;
-  grid-template-columns: 1fr 34px 34px 34px;
+  grid-template-columns: 1fr 34px 34px 34px 34px;
   align-items: center;
   gap: 8px;
   padding: 8px 14px;
@@ -695,6 +695,10 @@ body.theme-dark .icon-button {
 .tool-button.is-recording {
   background: rgba(255, 94, 103, 0.12);
   color: #ff5e67;
+}
+
+.tool-button.ask-ai {
+  color: var(--blue);
 }
 
 .bottom-nav {
@@ -920,6 +924,91 @@ body.theme-dark .icon-button {
   color: var(--text);
   min-height: 82px;
   line-height: 1.5;
+}
+
+.assistant-draft {
+  margin-top: 14px;
+  padding: 14px;
+  border-radius: 18px;
+  background: rgba(77, 94, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(77, 94, 255, 0.12);
+}
+
+.assistant-draft-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.assistant-draft p {
+  margin: 0;
+  color: var(--text);
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.45;
+}
+
+.chatkit-panel {
+  margin-top: 16px;
+  padding: 14px;
+  border-radius: 22px;
+  background: var(--surface-soft);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.chatkit-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.chatkit-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(77, 94, 255, 0.12);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.chatkit-mount {
+  min-height: 320px;
+  max-height: 420px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 0 0 1px rgba(24, 28, 45, 0.08);
+}
+
+.chatkit-mount openai-chatkit {
+  width: 100%;
+  min-height: 320px;
+  height: 420px;
+  display: block;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.chatkit-placeholder {
+  min-height: 320px;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.chatkit-placeholder p,
+.chatkit-placeholder small {
+  display: block;
 }
 
 .route-list {

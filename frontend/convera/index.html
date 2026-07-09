@@ -152,7 +152,7 @@
                   <span class="story-avatar-core">PS</span>
                 </span>
                 <div class="message-card">
-                  <p>Hi Ranjan! 👋</p>
+                  <p>Hi Ranjan! Hello.</p>
                   <p>How is the project coming along?</p>
                   <span class="message-time">10:20 AM</span>
                 </div>
@@ -162,7 +162,7 @@
                 <div class="message-card outgoing-card">
                   <p>Hi Priya! It's coming together well.</p>
                   <p>I'll share the update in a few minutes.</p>
-                  <span class="message-time">10:21 AM <span class="ticks">✓✓</span></span>
+                  <span class="message-time">10:21 AM <span class="ticks">OK</span></span>
                 </div>
               </article>
 
@@ -193,7 +193,7 @@
               <article class="message-row outgoing">
                 <div class="message-card outgoing-card small-reply">
                   <p>Sure, here you go!</p>
-                  <span class="message-time">10:25 AM <span class="ticks">✓✓</span></span>
+                  <span class="message-time">10:25 AM <span class="ticks">OK</span></span>
                 </div>
               </article>
 
@@ -207,7 +207,7 @@
                   <button class="download-button" type="button" data-toast="Mock download started">
                     <span class="icon">⇩</span>
                   </button>
-                  <span class="message-time">10:25 AM <span class="ticks">✓✓</span></span>
+                  <span class="message-time">10:25 AM <span class="ticks">OK</span></span>
                 </div>
               </article>
 
@@ -216,7 +216,7 @@
                   <span class="story-avatar-core">PS</span>
                 </span>
                 <div class="message-card short-bubble">
-                  <p>Thanks! Looks perfect. 👍</p>
+                  <p>Thanks! Looks perfect.</p>
                   <span class="message-time">10:28 AM</span>
                 </div>
               </article>
@@ -233,6 +233,9 @@
                 </button>
                 <button class="tool-button" type="button" id="attachButton" aria-label="Attach file">
                   <span class="icon">⌁</span>
+                </button>
+                <button class="tool-button ask-ai" type="button" id="askAiInlineButton" aria-label="Ask AI about this chat">
+                  <span class="icon">✦</span>
                 </button>
                 <button class="tool-button" type="button" id="micButton" aria-label="Record voice note">
                   <span class="icon">◉</span>
@@ -357,13 +360,31 @@
         <h2>AI Assistant</h2>
         <button type="button" class="icon-button ghost" data-close-modal aria-label="Close">x</button>
       </div>
-      <p class="assistant-copy">Ask ConveraAssistant to summarize chats, suggest replies, or route work to the right IdeasForgeAI agent.</p>
+      <p class="assistant-copy">Convera uses the existing IdeasForgeAI ChatKit flow when a valid domain key is available. Normal person-to-person chat in this page stays local and mocked.</p>
       <textarea id="aiPromptInput" rows="3" placeholder="Ask AI to summarize this conversation or draft a response..."></textarea>
       <div class="modal-actions">
         <button type="button" class="secondary-action" data-open-modal="aiRoutesModal">Routing</button>
         <button type="button" class="primary-action" id="askAiButton">Ask AI</button>
       </div>
-      <div class="assistant-response" id="aiResponseBox">AI responses will appear here. If `/api/convera/chat` is unavailable, the page uses a safe local mock.</div>
+      <div class="assistant-response" id="aiResponseBox">ChatKit status will appear here. If no compatible domain key is present, Convera stays in safe local mock guidance mode.</div>
+      <div class="assistant-draft" id="chatkitDraftBox" hidden>
+        <div class="assistant-draft-head">
+          <strong>Prepared prompt</strong>
+          <button type="button" class="inline-chip" id="copyAiDraftButton">Copy</button>
+        </div>
+        <p id="chatkitDraftText"></p>
+      </div>
+      <div class="chatkit-panel">
+        <div class="chatkit-panel-head">
+          <strong>IdeasForgeAI ChatKit</strong>
+          <span class="chatkit-status-pill" id="chatkitStatusPill">Checking...</span>
+        </div>
+        <div class="chatkit-mount" id="chatkitMount">
+          <div class="chatkit-placeholder">
+            <p>Preparing the shared ChatKit assistant...</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="modal-card" id="aiRoutesModal" hidden>
@@ -376,7 +397,7 @@
         <li><strong>ForgeCode</strong><span>Prepared for implementation tasks</span></li>
         <li><strong>ForgeWork</strong><span>Prepared for execution workflows</span></li>
         <li><strong>ForgePilot</strong><span>Approval required before activation</span></li>
-        <li><strong>ConveraAssistant</strong><span>Lightweight assistant behavior enabled locally</span></li>
+        <li><strong>ConveraAssistant</strong><span>Prepared as a ChatKit-facing shell, not a separate AI backend</span></li>
       </ul>
     </div>
 
@@ -401,13 +422,15 @@
         <h2>Chat Info</h2>
         <button type="button" class="icon-button ghost" data-close-modal aria-label="Close">x</button>
       </div>
-      <p>Priya Sharma • Online now</p>
-      <p>Shared files: 2 • AI summaries: Enabled • Translation: Available</p>
+      <p>Priya Sharma - Online now</p>
+      <p>Shared files: 2 - AI summaries: Enabled - Translation: Available</p>
     </div>
   </div>
 
   <div class="toast" id="toast"></div>
 
+  <script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
+  <script src="./convera-chatkit-adapter.js"></script>
   <script src="./convera.js"></script>
 </body>
 </html>

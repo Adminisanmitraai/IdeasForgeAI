@@ -24,11 +24,17 @@ const el = {
   sendButton: document.getElementById("sendButton"),
   attachButton: document.getElementById("attachButton"),
   micButton: document.getElementById("micButton"),
+  askAiInlineButton: document.getElementById("askAiInlineButton"),
   chatScroll: document.getElementById("chatScroll"),
   toast: document.getElementById("toast"),
   aiPromptInput: document.getElementById("aiPromptInput"),
   askAiButton: document.getElementById("askAiButton"),
   aiResponseBox: document.getElementById("aiResponseBox"),
+  chatkitMount: document.getElementById("chatkitMount"),
+  chatkitStatusPill: document.getElementById("chatkitStatusPill"),
+  chatkitDraftBox: document.getElementById("chatkitDraftBox"),
+  chatkitDraftText: document.getElementById("chatkitDraftText"),
+  copyAiDraftButton: document.getElementById("copyAiDraftButton"),
   themeSelect: document.getElementById("themeSelect"),
   aiModeSelect: document.getElementById("aiModeSelect"),
   translationToggle: document.getElementById("translationToggle"),
@@ -54,6 +60,15 @@ function showToast(message) {
   }, 2200);
 }
 
+function escapeHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 function openSheet() {
   el.sideSheet.classList.add("open");
   el.sideSheet.setAttribute("aria-hidden", "false");
@@ -72,6 +87,10 @@ function openModal(modalId) {
   });
   el.moreMenu.hidden = true;
   el.moreButton.setAttribute("aria-expanded", "false");
+
+  if (modalId === "aiAssistantModal") {
+    void ensureAiAssistantReady();
+  }
 }
 
 function closeModal() {
@@ -85,10 +104,11 @@ function closeModal() {
 function appendMessage(message) {
   const row = document.createElement("article");
   row.className = "message-row outgoing";
+  const safeMessage = escapeHtml(message).replace(/\n/g, "<br>");
   row.innerHTML = `
     <div class="message-card outgoing-card">
-      <p>${message}</p>
-      <span class="message-time">${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} <span class="ticks">✓✓</span></span>
+      <p>${safeMessage}</p>
+      <span class="message-time">${new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })} <span class="ticks">OK</span></span>
     </div>
   `;
   el.chatScroll.appendChild(row);
@@ -120,6 +140,31 @@ function setActiveBottomNav(key) {
   });
 }
 
+async function ensureAiAssistantReady(prompt = "") {
+  if (!window.ConveraChatKitAdapter) {
+    el.aiResponseBox.textContent =
+      "ChatKit adapter is not loaded. Convera stays in safe local guidance mode.";
+    return;
+  }
+
+  const preparedPrompt = prompt || (el.aiPromptInput?.value || "").trim();
+  el.aiResponseBox.textContent = "Preparing the shared IdeasForgeAI assistant...";
+  el.chatkitStatusPill.textContent = "Checking...";
+
+  const result = await window.ConveraChatKitAdapter.preparePrompt({
+    prompt: preparedPrompt,
+    mount: el.chatkitMount,
+    responseNode: el.aiResponseBox,
+    pillNode: el.chatkitStatusPill,
+    draftBox: el.chatkitDraftBox,
+    draftText: el.chatkitDraftText,
+  });
+
+  if (!result.ok && !preparedPrompt) {
+    el.chatkitDraftBox.hidden = true;
+  }
+}
+
 async function askAi() {
   const prompt = (el.aiPromptInput?.value || "").trim();
   if (!prompt) {
@@ -127,39 +172,14 @@ async function askAi() {
     return;
   }
 
-  el.aiResponseBox.textContent = "Thinking...";
+  await ensureAiAssistantReady(prompt);
+}
 
-  try {
-    const response = await fetch("/api/convera/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message: prompt,
-        source: "convera_mobile_frontend",
-        route_preferences: {
-          forgeStudio: true,
-          forgeCode: true,
-          forgeWork: true,
-          forgePilotRequiresApproval: true,
-          converaAssistant: true,
-        },
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`Backend returned ${response.status}`);
-    }
-
-    const payload = await response.json();
-    el.aiResponseBox.textContent =
-      payload.reply ||
-      payload.message ||
-      payload.summary ||
-      "Backend responded, but no reply field was returned.";
-  } catch (error) {
-    el.aiResponseBox.textContent =
-      "Local mock response: ConveraAssistant would summarize this conversation, suggest a reply, and route UI work to ForgeStudio or implementation work to ForgeCode. Backend route `/api/convera/chat` is not active in this temporary build.";
+function openAiAssistantWithDraft(prompt) {
+  if (el.aiPromptInput) {
+    el.aiPromptInput.value = prompt;
   }
+  openModal("aiAssistantModal");
 }
 
 el.menuButton?.addEventListener("click", openSheet);
@@ -196,6 +216,13 @@ document.addEventListener("click", (event) => {
   if (modalTrigger) {
     const modalId = modalTrigger.getAttribute("data-open-modal");
     if (modalId) {
+      if (modalId === "aiAssistantModal" && el.aiPromptInput && !el.aiPromptInput.value.trim()) {
+        const currentDraft = (el.messageInput?.value || "").trim();
+        if (currentDraft) {
+          el.aiPromptInput.value =
+            "Use this message draft as context and suggest a stronger version:\n\n" + currentDraft;
+        }
+      }
       openModal(modalId);
     }
   }
@@ -255,6 +282,18 @@ el.micButton?.addEventListener("click", () => {
 });
 
 el.askAiButton?.addEventListener("click", askAi);
+el.copyAiDraftButton?.addEventListener("click", async () => {
+  const copied = await window.ConveraChatKitAdapter?.copyDraft(el.chatkitDraftText?.textContent || "");
+  showToast(copied ? "Prepared prompt copied." : "Copy permission is unavailable here.");
+});
+
+el.askAiInlineButton?.addEventListener("click", () => {
+  const currentDraft = (el.messageInput?.value || "").trim();
+  const prompt = currentDraft
+    ? "Use this message draft as context and suggest a stronger version:\n\n" + currentDraft
+    : "Summarize the Priya Sharma conversation and suggest the next best reply.";
+  openAiAssistantWithDraft(prompt);
+});
 
 el.themeSelect?.addEventListener("change", (event) => {
   setTheme(event.target.value);
@@ -283,3 +322,4 @@ el.voiceToggle?.addEventListener("change", (event) => {
 
 setTheme("light");
 resizeComposer();
+
