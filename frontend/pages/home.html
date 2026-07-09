@@ -395,8 +395,778 @@
 
   <script src="./home.js"></script>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- REAL-HEADER-CLASS-NUDGE-START -->
+<style id="real-header-class-nudge-style">
+@media (max-width: 760px) {
+  body.if-real-header-class-nudge .mobile-header > .mobile-menu {
+    transform: translate3d(3px, 7px, 0) !important;
+    will-change: transform !important;
+  }
+
+  body.if-real-header-class-nudge .mobile-header > .mobile-brand {
+    transform: translate3d(3px, 7px, 0) !important;
+    will-change: transform !important;
+  }
+}
+</style>
+
+<script id="real-header-class-nudge-script">
+(function(){
+  if(window.__REAL_HEADER_CLASS_NUDGE__) return;
+  window.__REAL_HEADER_CLASS_NUDGE__ = true;
+
+  function isChat(){
+    return window.innerWidth <= 760 && location.search.indexOf("chat=1") !== -1;
+  }
+
+  function apply(){
+    if(!isChat()) return;
+
+    document.body.classList.add("if-real-header-class-nudge");
+
+    var menu = document.querySelector(".mobile-header > .mobile-menu");
+    var brand = document.querySelector(".mobile-header > .mobile-brand");
+
+    if(menu){
+      menu.style.setProperty("transform", "translate3d(3px, 7px, 0)", "important");
+      menu.style.setProperty("will-change", "transform", "important");
+    }
+
+    if(brand){
+      brand.style.setProperty("transform", "translate3d(3px, 7px, 0)", "important");
+      brand.style.setProperty("will-change", "transform", "important");
+    }
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", apply);
+  } else {
+    apply();
+  }
+
+  window.addEventListener("pageshow", apply);
+  window.addEventListener("resize", apply);
+  window.addEventListener("orientationchange", apply);
+
+  setTimeout(apply, 100);
+  setTimeout(apply, 400);
+  setTimeout(apply, 900);
+  setTimeout(apply, 1600);
+  setTimeout(apply, 2600);
+})();
+</script>
+<!-- REAL-HEADER-CLASS-NUDGE-END -->
+
+
+
+<!-- COMPOSER-TRAY-DOWN10-FINAL-START -->
+<style id="composer-tray-down10-final-style">
+@media (max-width: 760px) {
+  body.if-real-header-class-nudge .composer.chat-composer {
+    transform: translate3d(0, 10px, 0) !important;
+    will-change: transform !important;
+  }
+}
+</style>
+<!-- COMPOSER-TRAY-DOWN10-FINAL-END -->
+
+
+
+
+
+<!-- CHATGPT-STYLE-SUBMIT-LINES-START -->
+<style id="chatgpt-style-submit-lines-style">
+@media (max-width: 760px) {
+  .composer.chat-composer .composer-send {
+    background:
+      radial-gradient(circle at 34% 24%, rgba(255,255,255,0.30), rgba(255,255,255,0) 34%),
+      linear-gradient(135deg, #9B7CFF, #7B4DFF) !important;
+
+    color: #000000 !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border: 0 !important;
+    border-radius: 999px !important;
+
+    box-shadow:
+      0 12px 26px rgba(126,87,255,0.42),
+      inset 0 0 0 1px rgba(255,255,255,0.22) !important;
+  }
+
+  .composer.chat-composer .composer-send .if-chatgpt-wave-final {
+    width: 30px !important;
+    height: 30px !important;
+    display: block !important;
+    transform: translateX(1px) !important;
+    transform-origin: center center !important;
+  }
+
+  .composer.chat-composer .composer-send .if-chatgpt-wave-final rect {
+    fill: #050505 !important;
+  }
+}
+</style>
+
+<script id="chatgpt-style-submit-lines-script">
+(function(){
+  if(window.__CHATGPT_STYLE_SUBMIT_LINES__) return;
+  window.__CHATGPT_STYLE_SUBMIT_LINES__ = true;
+
+  function isChat(){
+    return window.innerWidth <= 760 && location.search.indexOf("chat=1") !== -1;
+  }
+
+  function apply(){
+    if(!isChat()) return;
+
+    document.querySelectorAll(".composer.chat-composer .composer-send").forEach(function(btn){
+      btn.style.setProperty(
+        "background",
+        "radial-gradient(circle at 34% 24%, rgba(255,255,255,0.30), rgba(255,255,255,0) 34%), linear-gradient(135deg, #9B7CFF, #7B4DFF)",
+        "important"
+      );
+
+      btn.style.setProperty("color", "#000000", "important");
+      btn.style.setProperty("display", "flex", "important");
+      btn.style.setProperty("align-items", "center", "important");
+      btn.style.setProperty("justify-content", "center", "important");
+
+      btn.innerHTML =
+        '<svg class="if-chatgpt-wave-final" viewBox="0 0 32 32" aria-hidden="true" focusable="false">' +
+          '<rect x="7.0"  y="11.6" width="2.2" height="8.8"  rx="1.1"></rect>' +
+          '<rect x="12.0" y="7.8"  width="2.2" height="16.4" rx="1.1"></rect>' +
+          '<rect x="17.0" y="9.6"  width="2.2" height="12.8" rx="1.1"></rect>' +
+          '<rect x="22.0" y="12.5" width="2.2" height="7.0"  rx="1.1"></rect>' +
+        '</svg>';
+
+      var svg = btn.querySelector(".if-chatgpt-wave-final");
+      if(svg){
+        svg.style.setProperty("width", "30px", "important");
+        svg.style.setProperty("height", "30px", "important");
+        svg.style.setProperty("transform", "translateX(1px)", "important");
+        svg.style.setProperty("transform-origin", "center center", "important");
+      }
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", apply);
+  } else {
+    apply();
+  }
+
+  window.addEventListener("pageshow", apply);
+  window.addEventListener("resize", apply);
+
+  setTimeout(apply, 100);
+  setTimeout(apply, 500);
+  setTimeout(apply, 1200);
+  setTimeout(apply, 2200);
+
+  setInterval(function(){
+    if(isChat()) apply();
+  }, 900);
+})();
+</script>
+<!-- CHATGPT-STYLE-SUBMIT-LINES-END -->
+
+
+<!-- CHAT-INPUT-PERFECT-FINAL-START -->
+<style id="chat-input-perfect-final-style">
+@media (max-width: 760px) {
+  .composer.chat-composer {
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) 42px 52px !important;
+    align-items: center !important;
+    gap: 4px !important;
+
+    min-height: 68px !important;
+    height: 68px !important;
+
+    padding: 8px 9px 8px 8px !important;
+    box-sizing: border-box !important;
+
+    overflow: hidden !important;
+    border-radius: 999px !important;
+  }
+
+  .composer.chat-composer textarea,
+  .composer.chat-composer .composer-input,
+  .composer.chat-composer [contenteditable="true"] {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 78px !important;
+
+    line-height: 24px !important;
+    padding: 10px 6px 10px 4px !important;
+    margin: 0 !important;
+
+    align-self: center !important;
+    justify-self: stretch !important;
+
+    transform: translateY(-1px) !important;
+
+    display: block !important;
+    box-sizing: border-box !important;
+
+    overflow-y: hidden !important;
+    resize: none !important;
+
+    border: 0 !important;
+    outline: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+
+    color: rgba(255,255,255,0.92) !important;
+    caret-color: #ffffff !important;
+
+    font-size: 22px !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .composer.chat-composer textarea::placeholder,
+  .composer.chat-composer .composer-input::placeholder {
+    color: rgba(255,255,255,0.46) !important;
+    opacity: 1 !important;
+  }
+
+  .composer.chat-composer .composer-plus,
+  .composer.chat-composer .composer-mic,
+  .composer.chat-composer .composer-send {
+    align-self: center !important;
+    justify-self: center !important;
+    margin: 0 !important;
+  }
+
+  .composer.chat-composer .composer-plus {
+    width: 48px !important;
+    height: 52px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: translateY(0px) !important;
+  }
+
+  .composer.chat-composer .composer-mic {
+    width: 42px !important;
+    height: 52px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: translateY(0px) !important;
+  }
+
+  .composer.chat-composer .composer-send {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transform: translateY(0px) !important;
+  }
+}
+</style>
+
+<script id="chat-input-perfect-final-script">
+(function(){
+  if(window.__CHAT_INPUT_PERFECT_FINAL__) return;
+  window.__CHAT_INPUT_PERFECT_FINAL__ = true;
+
+  function isChat(){
+    return window.innerWidth <= 760 && location.search.indexOf("chat=1") !== -1;
+  }
+
+  function inputs(){
+    return Array.prototype.slice.call(document.querySelectorAll(
+      ".composer.chat-composer textarea, .composer.chat-composer .composer-input, .composer.chat-composer [contenteditable='true']"
+    ));
+  }
+
+  function valueOf(el){
+    if(!el) return "";
+    if(el.isContentEditable) return el.innerText || "";
+    return el.value || "";
+  }
+
+  function fitInput(el){
+    if(!isChat() || !el) return;
+
+    var composer = el.closest(".composer.chat-composer");
+    if(!composer) return;
+
+    el.style.setProperty("height", "44px", "important");
+    el.style.setProperty("min-height", "44px", "important");
+    el.style.setProperty("max-height", "78px", "important");
+    el.style.setProperty("line-height", "24px", "important");
+    el.style.setProperty("padding", "10px 6px 10px 4px", "important");
+    el.style.setProperty("transform", "translateY(-1px)", "important");
+    el.style.setProperty("overflow-y", "hidden", "important");
+
+    var scrollH = Math.max(44, el.scrollHeight || 44);
+    var nextH = Math.min(scrollH, 78);
+
+    if(valueOf(el).trim() === ""){
+      nextH = 44;
+    }
+
+    el.style.setProperty("height", nextH + "px", "important");
+
+    var composerH = Math.max(68, Math.min(nextH + 24, 104));
+    composer.style.setProperty("height", composerH + "px", "important");
+    composer.style.setProperty("min-height", "68px", "important");
+    composer.style.setProperty("align-items", "center", "important");
+
+    if(scrollH > 78){
+      el.style.setProperty("overflow-y", "auto", "important");
+    }
+  }
+
+  function apply(){
+    if(!isChat()) return;
+
+    var composer = document.querySelector(".composer.chat-composer");
+    if(composer){
+      composer.style.setProperty("display", "grid", "important");
+      composer.style.setProperty("grid-template-columns", "48px minmax(0, 1fr) 42px 52px", "important");
+      composer.style.setProperty("align-items", "center", "important");
+      composer.style.setProperty("height", "68px", "important");
+      composer.style.setProperty("min-height", "68px", "important");
+      composer.style.setProperty("padding", "8px 9px 8px 8px", "important");
+      composer.style.setProperty("overflow", "hidden", "important");
+    }
+
+    inputs().forEach(function(el){
+      if(!el.__CHAT_INPUT_PERFECT_BOUND__){
+        el.__CHAT_INPUT_PERFECT_BOUND__ = true;
+        ["input","keyup","keydown","paste","change","focus"].forEach(function(evt){
+          el.addEventListener(evt, function(){
+            requestAnimationFrame(function(){ fitInput(el); });
+            setTimeout(function(){ fitInput(el); }, 80);
+          });
+        });
+      }
+
+      fitInput(el);
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", apply);
+  } else {
+    apply();
+  }
+
+  window.addEventListener("pageshow", apply);
+  window.addEventListener("resize", apply);
+  setTimeout(apply, 100);
+  setTimeout(apply, 500);
+  setTimeout(apply, 1200);
+})();
+</script>
+<!-- CHAT-INPUT-PERFECT-FINAL-END -->
+
+
+<!-- IF-LIVE-HOME-CHATKIT-QUERY-START -->
+<script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
+
+<script>
+(function(){
+  const params = new URLSearchParams(location.search);
+  const enabled = params.get("chatkit") === "1";
+  if (!enabled) return;
+
+  const domainKey = params.get("domainKey");
+  const apiUrl = "https://ideasforgeai-api.onrender.com/api/chatkit";
+
+  function boot() {
+    document.documentElement.style.background = "#050507";
+    document.body.innerHTML = `
+      <style>
+        * { box-sizing: border-box; }
+
+        html, body {
+          margin: 0;
+          width: 100%;
+          height: 100%;
+          background:
+            radial-gradient(circle at 72% 30%, rgba(93,70,210,0.20), transparent 38%),
+            linear-gradient(180deg, #060609 0%, #020203 100%);
+          color: white;
+          font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", Inter, Arial, sans-serif;
+          overflow: hidden;
+        }
+
+        .if-chatkit-live-shell {
+          width: 100vw;
+          height: 100dvh;
+          min-height: 100vh;
+          position: relative;
+          padding:
+            calc(env(safe-area-inset-top, 0px) + 118px)
+            16px
+            calc(env(safe-area-inset-bottom, 0px) + 14px);
+        }
+
+        .if-chatkit-header {
+          position: fixed;
+          left: 0;
+          right: 0;
+          top: env(safe-area-inset-top, 0px);
+          height: 104px;
+          z-index: 1000;
+          display: flex;
+          align-items: center;
+          padding: 26px 22px 0 3px;
+          pointer-events: none;
+        }
+
+        .if-chatkit-menu {
+          width: 46px;
+          height: 46px;
+          border-radius: 17px;
+          border: 1px solid rgba(255,255,255,0.14);
+          background: linear-gradient(180deg, rgba(42,45,53,0.86), rgba(27,29,36,0.78));
+          box-shadow: 0 10px 28px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.08);
+          color: white;
+          display: grid;
+          place-items: center;
+          pointer-events: auto;
+          transform: translate3d(3px, 11px, 0);
+        }
+
+        .if-chatkit-menu span,
+        .if-chatkit-menu span::before,
+        .if-chatkit-menu span::after {
+          content: "";
+          display: block;
+          width: 15px;
+          height: 2px;
+          border-radius: 999px;
+          background: rgba(255,255,255,0.88);
+        }
+
+        .if-chatkit-menu span::before { transform: translateY(-6px); }
+        .if-chatkit-menu span::after { transform: translateY(4px); }
+
+        .if-chatkit-brand {
+          margin-left: 18px;
+          display: flex;
+          align-items: center;
+          gap: 11px;
+          font-size: 21px;
+          font-weight: 760;
+          letter-spacing: -0.045em;
+          transform: translate3d(3px, 10px, 0);
+          pointer-events: auto;
+        }
+
+        .if-chatkit-brand svg {
+          width: 38px;
+          height: 38px;
+          fill: #9B7CFF;
+          filter: drop-shadow(0 0 12px rgba(155,124,255,0.30));
+        }
+
+        .if-chatkit-brand span span {
+          color: #9B7CFF;
+        }
+
+        .if-chatkit-actions {
+          margin-left: auto;
+          display: flex;
+          gap: 12px;
+          pointer-events: auto;
+          transform: translateY(10px);
+        }
+
+        .if-chatkit-action {
+          width: 46px;
+          height: 46px;
+          border-radius: 17px;
+          border: 1px solid rgba(255,255,255,0.14);
+          background: linear-gradient(180deg, rgba(42,45,53,0.84), rgba(26,28,34,0.76));
+          color: rgba(255,255,255,0.86);
+          display: grid;
+          place-items: center;
+          box-shadow: 0 10px 28px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .if-chatkit-stage {
+          width: 100%;
+          height: 100%;
+          border-radius: 28px;
+          overflow: hidden;
+          background: rgba(255,255,255,0.035);
+          border: 1px solid rgba(255,255,255,0.10);
+          box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 24px 70px rgba(0,0,0,0.30);
+        }
+
+        #if-chatkit-mount,
+        #if-chatkit-mount openai-chatkit {
+          width: 100%;
+          height: 100%;
+          min-height: 100%;
+          display: block;
+          border-radius: 28px;
+          overflow: hidden;
+        }
+
+        .if-chatkit-card {
+          height: 100%;
+          display: grid;
+          place-items: center;
+          padding: 24px;
+          text-align: center;
+        }
+
+        .if-chatkit-card-inner {
+          width: min(86vw, 360px);
+          border: 1px solid rgba(255,255,255,0.14);
+          border-radius: 28px;
+          padding: 22px 18px;
+          background: rgba(18,18,24,0.88);
+          box-shadow: 0 20px 70px rgba(0,0,0,0.40);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+        }
+
+        .if-chatkit-card h1 {
+          margin: 0 0 10px;
+          font-size: 24px;
+          letter-spacing: -0.04em;
+        }
+
+        .if-chatkit-card p {
+          margin: 0;
+          color: rgba(255,255,255,0.62);
+          font-size: 14px;
+          line-height: 1.5;
+        }
+
+        .if-chatkit-card code {
+          display: block;
+          margin-top: 14px;
+          padding: 10px;
+          border-radius: 14px;
+          background: rgba(0,0,0,0.34);
+          color: #9B7CFF;
+          font-size: 12px;
+          word-break: break-word;
+        }
+
+        .if-chatkit-debug {
+          position: fixed;
+          left: 16px;
+          right: 16px;
+          bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+          z-index: 9999;
+          display: none;
+          padding: 12px 14px;
+          border-radius: 16px;
+          background: rgba(12,12,16,0.92);
+          border: 1px solid rgba(255,255,255,0.18);
+          color: rgba(255,255,255,0.92);
+          font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+          white-space: pre-wrap;
+          word-break: break-word;
+          max-height: 210px;
+          overflow: auto;
+        }
+
+        .if-chatkit-debug.show {
+          display: block;
+        }
+      </style>
+
+      <div class="if-chatkit-live-shell">
+        <header class="if-chatkit-header">
+          <button class="if-chatkit-menu" type="button" aria-label="Open menu"><span></span></button>
+
+          <div class="if-chatkit-brand">
+            <svg viewBox="0 0 64 64" aria-hidden="true">
+              <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+              <circle cx="13" cy="16" r="3"></circle>
+              <circle cx="51" cy="19" r="3"></circle>
+              <circle cx="16" cy="50" r="3"></circle>
+            </svg>
+            <span>IdeasForge<span>AI</span></span>
+          </div>
+
+          <div class="if-chatkit-actions">
+            <div class="if-chatkit-action">◎</div>
+            <div class="if-chatkit-action">♙</div>
+          </div>
+        </header>
+
+        <main class="if-chatkit-stage">
+          <div id="if-chatkit-mount"></div>
+        </main>
+      </div>
+
+      <div class="if-chatkit-debug" id="if-chatkit-debug"></div>
+    `;
+
+    const mount = document.getElementById("if-chatkit-mount");
+    const debug = document.getElementById("if-chatkit-debug");
+
+    function showDebug(label, data) {
+      if (!debug) return;
+      let text = "";
+      try {
+        text = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+      } catch (e) {
+        text = String(data);
+      }
+      debug.textContent = label + ":\n" + text;
+      debug.classList.add("show");
+      console.log(label, data);
+    }
+
+    window.addEventListener("chatkit.error", function(event){
+      showDebug("chatkit.error", event.detail || event);
+    });
+
+    if (!domainKey) {
+      mount.innerHTML = `
+        <div class="if-chatkit-card">
+          <div class="if-chatkit-card-inner">
+            <h1>ChatKit live route ready</h1>
+            <p>Add your ChatKit domain key in the URL to mount the live widget.</p>
+            <code>?chatkit=1&domainKey=domain_pk_...</code>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    customElements.whenDefined("openai-chatkit").then(function(){
+      mount.innerHTML = "";
+
+      const chatkit = document.createElement("openai-chatkit");
+
+      chatkit.setOptions({
+        api: {
+          url: apiUrl,
+          domainKey: domainKey,
+          fetch(input, init) {
+            const nextInit = init || {};
+            const headers = new Headers(nextInit.headers || {});
+            headers.set("x-ideasforge-user", "ideasforgeai-live-test");
+            return fetch(input, { ...nextInit, headers });
+          }
+        },
+        composer: {
+          placeholder: "Ask IdeasForgeAI..."
+        },
+        startScreen: {
+          greeting: "How can IdeasForgeAI help you create today?",
+          prompts: [
+            {
+              icon: "sparkles",
+              label: "Create a landing page",
+              prompt: "Help me create a landing page for my startup"
+            },
+            {
+              icon: "code",
+              label: "Build an app idea",
+              prompt: "Help me plan and build an app idea"
+            },
+            {
+              icon: "briefcase",
+              label: "Professional workflow",
+              prompt: "Help me create a professional workflow"
+            }
+          ]
+        },
+        theme: {
+          colorScheme: "dark",
+          radius: "pill",
+          density: "normal",
+          accentColor: "#9B7CFF"
+        }
+      });
+
+      chatkit.style.width = "100%";
+      chatkit.style.height = "100%";
+      chatkit.style.display = "block";
+
+      mount.appendChild(chatkit);
+    }).catch(function(err){
+      showDebug("ChatKit load failed", err && err.message ? err.message : String(err));
+    });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+<!-- IF-LIVE-HOME-CHATKIT-QUERY-END -->
+
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
