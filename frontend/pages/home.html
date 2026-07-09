@@ -1085,16 +1085,7 @@
       const chatkit = document.createElement("openai-chatkit");
 
       chatkit.setOptions({
-        api: {
-          url: apiUrl,
-          domainKey: domainKey,
-          fetch(input, init) {
-            const nextInit = init || {};
-            const headers = new Headers(nextInit.headers || {});
-            headers.set("x-ideasforge-user", "ideasforgeai-live-test");
-            return fetch(input, { ...nextInit, headers });
-          }
-        },
+        api: { url: apiUrl, domainKey: domainKey },
         composer: {
           placeholder: "Ask IdeasForgeAI..."
         },
@@ -1130,7 +1121,33 @@
       chatkit.style.height = "100%";
       chatkit.style.display = "block";
 
+            chatkit.addEventListener("chatkit.error", function(event){
+        showDebug("chatkit.element.error", event.detail || event);
+      });
+
+      chatkit.addEventListener("error", function(event){
+        showDebug("chatkit.element.error", event.message || event);
+      });
+
       mount.appendChild(chatkit);
+
+      setTimeout(function(){
+        var text = (chatkit.innerText || chatkit.textContent || "").trim();
+        var box = chatkit.getBoundingClientRect ? chatkit.getBoundingClientRect() : null;
+
+        if (!text && box && box.width > 100 && box.height > 100) {
+          showDebug(
+            "ChatKit mounted but blank",
+            {
+              apiUrl: apiUrl,
+              hasDomainKey: !!domainKey,
+              domainKeyPrefix: domainKey ? domainKey.slice(0, 14) + "..." : null,
+              host: location.hostname,
+              note: "If this remains blank, the domainKey may not match this domain or the ChatKit API request is failing."
+            }
+          );
+        }
+      }, 5000);
     }).catch(function(err){
       showDebug("ChatKit load failed", err && err.message ? err.message : String(err));
     });
@@ -1147,6 +1164,7 @@
 
 </body>
 </html>
+
 
 
 
