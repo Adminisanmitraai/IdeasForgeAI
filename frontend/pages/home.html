@@ -1267,8 +1267,479 @@
 </script>
 <!-- IF-CHATKIT-MOBILE-SAFE-FINAL-END -->
 
+
+<!-- IF-CHATKIT-FINAL-MOBILE-SHELL-START -->
+<style id="if-chatkit-final-mobile-shell-style">
+@media (max-width: 760px) {
+  html.if-chatkit-live-mode,
+  body.if-chatkit-live-mode {
+    width: 100% !important;
+    height: var(--if-chatkit-vvh, 100svh) !important;
+    min-height: var(--if-chatkit-vvh, 100svh) !important;
+    overflow: hidden !important;
+    background: #000 !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-live-shell {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: var(--if-chatkit-vvh, 100svh) !important;
+    min-height: var(--if-chatkit-vvh, 100svh) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background:
+      radial-gradient(circle at 74% 25%, rgba(104, 82, 230, 0.16), transparent 38%),
+      #000 !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-header {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: var(--if-chatkit-header-top, 38px) !important;
+    height: 76px !important;
+    z-index: 80 !important;
+    padding: 0 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    pointer-events: none !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-menu {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    background: linear-gradient(180deg, rgba(42,45,53,0.90), rgba(23,25,31,0.82)) !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-brand {
+    margin-left: 20px !important;
+    gap: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    font-size: clamp(22px, 6.2vw, 28px) !important;
+    font-weight: 790 !important;
+    letter-spacing: -0.06em !important;
+    transform: none !important;
+    pointer-events: auto !important;
+    white-space: nowrap !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-brand svg {
+    width: clamp(40px, 10.5vw, 49px) !important;
+    height: clamp(40px, 10.5vw, 49px) !important;
+    fill: #9B7CFF !important;
+    filter: drop-shadow(0 0 12px rgba(155,124,255,0.32)) !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-brand span span {
+    color: #9B7CFF !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-actions {
+    margin-left: auto !important;
+    gap: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    transform: none !important;
+    pointer-events: auto !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-action {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 18px !important;
+    border: 1px solid rgba(255,255,255,0.15) !important;
+    background: linear-gradient(180deg, rgba(42,45,53,0.88), rgba(23,25,31,0.80)) !important;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.10) !important;
+    color: rgba(255,255,255,0.86) !important;
+    display: grid !important;
+    place-items: center !important;
+    font-size: 0 !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-action svg {
+    width: 22px !important;
+    height: 22px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+    stroke-width: 1.9 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-stage {
+    position: fixed !important;
+    left: var(--if-chatkit-side-gap, 18px) !important;
+    right: var(--if-chatkit-side-gap, 18px) !important;
+    top: var(--if-chatkit-stage-top, 128px) !important;
+    bottom: var(--if-chatkit-stage-bottom, 174px) !important;
+
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+
+    border-radius: 30px !important;
+    overflow: hidden !important;
+    background: #fff !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    box-shadow: 0 18px 64px rgba(0,0,0,0.42) !important;
+  }
+
+  body.if-chatkit-live-mode #if-chatkit-mount,
+  body.if-chatkit-live-mode #if-chatkit-mount openai-chatkit {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
+    display: block !important;
+    overflow: hidden !important;
+    border-radius: 30px !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-floating-tools {
+    position: fixed !important;
+    z-index: 95 !important;
+    top: calc(var(--if-chatkit-stage-top, 128px) + 16px) !important;
+    right: calc(var(--if-chatkit-side-gap, 18px) + 16px) !important;
+    display: flex !important;
+    gap: 10px !important;
+    pointer-events: auto !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-floating-tool {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    background: rgba(255,255,255,0.88) !important;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.12) !important;
+    color: rgba(32,32,36,0.70) !important;
+    display: grid !important;
+    place-items: center !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    backdrop-filter: blur(16px) !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-floating-tool svg {
+    width: 22px !important;
+    height: 22px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-voice-note {
+    position: fixed !important;
+    z-index: 96 !important;
+    right: calc(var(--if-chatkit-side-gap, 18px) + 86px) !important;
+    bottom: calc(var(--if-chatkit-stage-bottom, 174px) + 22px) !important;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 999px !important;
+    border: 0 !important;
+    background: transparent !important;
+    color: rgba(45,45,48,0.72) !important;
+    display: grid !important;
+    place-items: center !important;
+    pointer-events: auto !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-voice-note svg {
+    width: 24px !important;
+    height: 24px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+    stroke-width: 2.15 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-debug,
+  body.if-chatkit-live-mode .if-chatkit-debug.show {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  body.if-chatkit-live-mode .if-chatkit-header {
+    padding: 0 12px !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-brand {
+    margin-left: 16px !important;
+    gap: 9px !important;
+    font-size: 21px !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-actions {
+    gap: 10px !important;
+  }
+
+  body.if-chatkit-live-mode .if-chatkit-action,
+  body.if-chatkit-live-mode .if-chatkit-menu {
+    width: 46px !important;
+    height: 46px !important;
+  }
+}
+</style>
+
+<script id="if-chatkit-final-mobile-shell-script">
+(function(){
+  function params(){
+    return new URLSearchParams(location.search);
+  }
+
+  function isChatKitMode(){
+    return params().get("chatkit") === "1";
+  }
+
+  function svg(name){
+    if(name === "globe"){
+      return '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M3.8 12h16.4"></path><path d="M12 3.5c2.15 2.25 3.25 5.05 3.25 8.5S14.15 18.25 12 20.5c-2.15-2.25-3.25-5.05-3.25-8.5S9.85 5.75 12 3.5Z"></path></svg>';
+    }
+
+    if(name === "user"){
+      return '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.4 20c.9-3.25 3.2-5.05 6.6-5.05S17.7 16.75 18.6 20"></path></svg>';
+    }
+
+    if(name === "history"){
+      return '<svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.35-5.65"></path><path d="M4 4.8v4.8h4.8"></path><path d="M12 7.7v4.8l3.2 1.9"></path></svg>';
+    }
+
+    if(name === "new"){
+      return '<svg viewBox="0 0 24 24"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>';
+    }
+
+    if(name === "mic"){
+      return '<svg viewBox="0 0 24 24"><path d="M12 4a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V7a3 3 0 0 0-3-3Z"></path><path d="M5.8 11.2a6.2 6.2 0 0 0 12.4 0"></path><path d="M12 17.4V21"></path><path d="M8.6 21h6.8"></path></svg>';
+    }
+
+    return "";
+  }
+
+  function applyHeader(){
+    if(!isChatKitMode()) return;
+
+    var header = document.querySelector(".if-chatkit-header");
+    if(!header || header.__IF_FINAL_HEADER__) return;
+
+    header.__IF_FINAL_HEADER__ = true;
+
+    header.innerHTML =
+      '<button class="if-chatkit-menu" type="button" aria-label="Open menu"><span></span></button>' +
+      '<div class="if-chatkit-brand">' +
+        '<svg viewBox="0 0 64 64" aria-hidden="true">' +
+          '<path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>' +
+          '<circle cx="13" cy="16" r="3"></circle>' +
+          '<circle cx="51" cy="19" r="3"></circle>' +
+          '<circle cx="16" cy="50" r="3"></circle>' +
+        '</svg>' +
+        '<span>IdeasForge<span>AI</span></span>' +
+      '</div>' +
+      '<div class="if-chatkit-actions">' +
+        '<button class="if-chatkit-action" type="button" aria-label="Language">' + svg("globe") + '</button>' +
+        '<button class="if-chatkit-action" type="button" aria-label="Profile">' + svg("user") + '</button>' +
+      '</div>';
+  }
+
+  function applyResponsiveSizing(){
+    if(!isChatKitMode()) return;
+
+    document.documentElement.classList.add("if-chatkit-live-mode");
+    document.body.classList.add("if-chatkit-live-mode");
+
+    var vv = window.visualViewport;
+    var viewportHeight = vv && vv.height ? vv.height : window.innerHeight;
+    var viewportWidth = window.innerWidth || document.documentElement.clientWidth || 390;
+
+    var isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var keyboardOpen = Math.max(0, window.innerHeight - viewportHeight) > 180;
+
+    var headerTop = viewportWidth <= 390 ? 34 : 38;
+    var stageTop = viewportWidth <= 390 ? 128 : 134;
+
+    var bottomGap;
+
+    if(keyboardOpen){
+      bottomGap = 18;
+    } else if(isIOS) {
+      bottomGap = viewportWidth <= 390 ? 174 : 168;
+    } else {
+      bottomGap = viewportWidth <= 390 ? 92 : 82;
+    }
+
+    var sideGap = viewportWidth <= 360 ? 12 : 18;
+
+    document.documentElement.style.setProperty("--if-chatkit-vvh", Math.round(viewportHeight) + "px");
+    document.documentElement.style.setProperty("--if-chatkit-header-top", headerTop + "px");
+    document.documentElement.style.setProperty("--if-chatkit-stage-top", stageTop + "px");
+    document.documentElement.style.setProperty("--if-chatkit-stage-bottom", bottomGap + "px");
+    document.documentElement.style.setProperty("--if-chatkit-side-gap", sideGap + "px");
+  }
+
+  function addFloatingControls(){
+    if(!isChatKitMode()) return;
+
+    var shell = document.querySelector(".if-chatkit-live-shell");
+    if(!shell) return;
+
+    if(!document.getElementById("if-chatkit-floating-tools")){
+      var tools = document.createElement("div");
+      tools.id = "if-chatkit-floating-tools";
+      tools.className = "if-chatkit-floating-tools";
+
+      var history = document.createElement("button");
+      history.type = "button";
+      history.className = "if-chatkit-floating-tool";
+      history.setAttribute("aria-label", "Chat history");
+      history.innerHTML = svg("history");
+      history.addEventListener("click", function(){
+        var ck = document.querySelector("openai-chatkit");
+        var root = ck && ck.shadowRoot;
+        var buttons = root ? Array.prototype.slice.call(root.querySelectorAll("button")) : [];
+        var target = buttons.find(function(btn){
+          var label = (btn.getAttribute("aria-label") || btn.title || btn.textContent || "").toLowerCase();
+          return label.indexOf("history") !== -1 || label.indexOf("thread") !== -1 || label.indexOf("conversation") !== -1;
+        });
+        if(target) target.click();
+      });
+
+      var fresh = document.createElement("button");
+      fresh.type = "button";
+      fresh.className = "if-chatkit-floating-tool";
+      fresh.setAttribute("aria-label", "New chat");
+      fresh.innerHTML = svg("new");
+      fresh.addEventListener("click", function(){
+        var p = params();
+        var key = p.get("domainKey") || "";
+        location.href = location.pathname + "?chatkit=1&domainKey=" + encodeURIComponent(key) + "&new=" + Date.now();
+      });
+
+      tools.appendChild(history);
+      tools.appendChild(fresh);
+      shell.appendChild(tools);
+    }
+
+    if(!document.getElementById("if-chatkit-voice-note")){
+      var mic = document.createElement("button");
+      mic.type = "button";
+      mic.id = "if-chatkit-voice-note";
+      mic.className = "if-chatkit-voice-note";
+      mic.setAttribute("aria-label", "Voice note");
+      mic.innerHTML = svg("mic");
+
+      mic.addEventListener("click", async function(){
+        try {
+          if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia){
+            await navigator.mediaDevices.getUserMedia({ audio: true });
+            mic.style.color = "#9B7CFF";
+          }
+        } catch(e) {
+          mic.style.color = "rgba(45,45,48,0.72)";
+        }
+      });
+
+      shell.appendChild(mic);
+    }
+  }
+
+  function applyChatKitOptions(){
+    if(!isChatKitMode()) return;
+
+    var domainKey = params().get("domainKey");
+    if(!domainKey) return;
+
+    var apiUrl = "https://ideasforgeai-api.onrender.com/api/chatkit";
+
+    customElements.whenDefined("openai-chatkit").then(function(){
+      var chatkit = document.querySelector("openai-chatkit");
+      if(!chatkit || chatkit.__IF_FINAL_OPTIONS__) return;
+
+      chatkit.__IF_FINAL_OPTIONS__ = true;
+
+      try {
+        chatkit.setOptions({
+          api: {
+            url: apiUrl,
+            domainKey: domainKey
+          },
+          theme: {
+            colorScheme: "light",
+            radius: "pill",
+            density: "normal"
+          },
+          composer: {
+            placeholder: "Message IdeasForgeAI",
+            attachments: {
+              enabled: true,
+              maxCount: 5,
+              maxSize: 10485760
+            }
+          }
+        });
+      } catch(err) {
+        console.warn("IdeasForgeAI ChatKit final options skipped:", err);
+      }
+    }).catch(function(){});
+  }
+
+  function hideDebug(){
+    if(!isChatKitMode()) return;
+
+    document.querySelectorAll(".if-chatkit-debug, #if-chatkit-debug").forEach(function(el){
+      el.classList.remove("show");
+      el.style.setProperty("display", "none", "important");
+      el.style.setProperty("visibility", "hidden", "important");
+      el.style.setProperty("opacity", "0", "important");
+      el.style.setProperty("pointer-events", "none", "important");
+    });
+  }
+
+  function run(){
+    applyHeader();
+    applyResponsiveSizing();
+    addFloatingControls();
+    applyChatKitOptions();
+    hideDebug();
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+
+  window.addEventListener("resize", run);
+  window.addEventListener("orientationchange", run);
+
+  if(window.visualViewport){
+    window.visualViewport.addEventListener("resize", run);
+    window.visualViewport.addEventListener("scroll", run);
+  }
+
+  setTimeout(run, 250);
+  setTimeout(run, 900);
+  setTimeout(run, 1800);
+  setTimeout(run, 3200);
+  setTimeout(run, 5200);
+})();
+</script>
+<!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
+
 </body>
 </html>
+
 
 
 
