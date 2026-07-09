@@ -1748,8 +1748,8 @@
   function setGap() {
     const vv = window.visualViewport;
     const hidden = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
-    const extra = window.innerWidth <= 430 ? 128 : 96;
-    document.documentElement.style.setProperty("--ifck-gap", Math.max(108, Math.ceil(hidden + extra)) + "px");
+    const extra = window.innerWidth <= 430 ? 58 : 44;
+    document.documentElement.style.setProperty("--ifck-gap", Math.max(58, Math.ceil(hidden + extra)) + "px");
   }
 
   function host() {
@@ -1766,7 +1766,7 @@
             margin:0!important;width:100%!important;height:100%!important;overflow:hidden!important;background:#000!important;
           }
           html.if-chatkit-shell-v3 body > *:not(.ifck-shell):not(script):not(style) {display:none!important;}
-          .ifck-shell{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100svh;display:grid;grid-template-rows:118px minmax(0,1fr) var(--ifck-gap,132px);background:#000;color:#fff;z-index:2147483000;overflow:hidden;}
+          .ifck-shell{position:fixed;inset:0;width:100vw;height:100dvh;min-height:100svh;display:grid;grid-template-rows:118px minmax(0,1fr) var(--ifck-gap,68px);background:#000;color:#fff;z-index:2147483000;overflow:hidden;}
           .ifck-header{display:flex;align-items:center;justify-content:space-between;padding:max(34px,env(safe-area-inset-top)) 14px 12px;box-sizing:border-box;background:#000;}
           .ifck-brand{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800;letter-spacing:-.05em;white-space:nowrap;}
           .ifck-spark{color:#9b78ff;font-size:35px;filter:drop-shadow(0 0 16px rgba(155,120,255,.55));}
@@ -1777,7 +1777,7 @@
           .ifck-card{width:100%;height:100%;min-height:0;overflow:hidden;border-radius:34px 34px 0 0;background:#fff;color:#111;}
           .ifck-card>*{width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;display:block!important;overflow:hidden!important;}
           .ifck-bottom{background:#000;}
-          @media(max-width:390px){.ifck-shell{grid-template-rows:110px minmax(0,1fr) var(--ifck-gap,142px)}.ifck-brand{font-size:21px}.ifck-spark{font-size:32px}.ifck-btn{width:46px;height:46px}}
+          @media(max-width:390px){.ifck-shell{grid-template-rows:110px minmax(0,1fr) var(--ifck-gap,74px)}.ifck-brand{font-size:21px}.ifck-spark{font-size:32px}.ifck-btn{width:46px;height:46px}}
         </style>
         <header class="ifck-header">
           <button class="ifck-btn" aria-label="New chat">☰</button>
@@ -1811,6 +1811,7 @@
 <!-- IF-CHATKIT-SHELL-V3-CLEAN-END -->
 </body>
 </html>
+
 
 
 
