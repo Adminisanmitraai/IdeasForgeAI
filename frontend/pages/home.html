@@ -1753,7 +1753,19 @@
   }
 
   function host() {
-    return document.querySelector("#chatkit-root, [data-chatkit-root], openai-chatkit, chatkit-conversation");
+    return document.querySelector(
+      "#chatkit-root, " +
+      "#chatkit-container, " +
+      "#openai-chatkit, " +
+      "[data-chatkit-root], " +
+      "[data-openai-chatkit], " +
+      "openai-chatkit, " +
+      "chatkit-conversation, " +
+      "[id*='chatkit' i], " +
+      "[class*='chatkit' i], " +
+      "iframe[src*='chatkit' i], " +
+      "iframe[src*='openai' i]"
+    );
   }
 
   function boot() {
@@ -1775,8 +1787,7 @@
           .ifck-btn{width:50px;height:50px;border-radius:17px;border:1px solid rgba(255,255,255,.18);background:linear-gradient(180deg,#292c32,#14161a);color:#fff;display:grid;place-items:center;font-size:23px;}
           .ifck-wrap{min-height:0;padding:0 17px;overflow:hidden;box-sizing:border-box;}
           .ifck-card{width:100%;height:100%;min-height:0;overflow:hidden;border-radius:34px 34px 0 0;background:#fff;color:#111;}
-          .ifck-card>*{width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;display:block!important;overflow:hidden!important;}
-          .ifck-bottom{background:#000;}
+          .ifck-card>*{width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;display:block!important;overflow:auto!important;}.ifck-bottom{background:#000;}
           @media(max-width:390px){.ifck-shell{grid-template-rows:110px minmax(0,1fr) var(--ifck-gap,74px)}.ifck-brand{font-size:21px}.ifck-spark{font-size:32px}.ifck-btn{width:46px;height:46px}}
         </style>
         <header class="ifck-header">
@@ -1811,6 +1822,7 @@
 <!-- IF-CHATKIT-SHELL-V3-CLEAN-END -->
 </body>
 </html>
+
 
 
 
