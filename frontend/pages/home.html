@@ -1085,35 +1085,9 @@
       const chatkit = document.createElement("openai-chatkit");
 
       chatkit.setOptions({
-        api: { url: apiUrl, domainKey: domainKey },
-        composer: {
-          placeholder: "Ask IdeasForgeAI..."
-        },
-        startScreen: {
-          greeting: "How can IdeasForgeAI help you create today?",
-          prompts: [
-            {
-              icon: "sparkles",
-              label: "Create a landing page",
-              prompt: "Help me create a landing page for my startup"
-            },
-            {
-              icon: "code",
-              label: "Build an app idea",
-              prompt: "Help me plan and build an app idea"
-            },
-            {
-              icon: "briefcase",
-              label: "Professional workflow",
-              prompt: "Help me create a professional workflow"
-            }
-          ]
-        },
-        theme: {
-          colorScheme: "dark",
-          radius: "pill",
-          density: "normal",
-          accentColor: "#9B7CFF"
+        api: {
+          url: apiUrl,
+          domainKey: domainKey
         }
       });
 
@@ -1164,6 +1138,7 @@
 
 </body>
 </html>
+
 
 
 
