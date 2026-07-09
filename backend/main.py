@@ -2174,14 +2174,14 @@ def _build_deployment_approval_preview(request: DeploymentApprovalPreviewRequest
             "message": "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "Deployment flow preview opened â€” allowed",
-            "Deployment approval requested â€” recorded",
-            "Render API call â€” blocked",
-            "GitHub deploy action â€” blocked",
-            "Production promotion â€” blocked",
-            "Rollback â€” blocked",
-            "DNS change â€” blocked",
-            "Secrets access â€” blocked",
+            "Deployment flow preview opened Ã¢â‚¬â€ allowed",
+            "Deployment approval requested Ã¢â‚¬â€ recorded",
+            "Render API call Ã¢â‚¬â€ blocked",
+            "GitHub deploy action Ã¢â‚¬â€ blocked",
+            "Production promotion Ã¢â‚¬â€ blocked",
+            "Rollback Ã¢â‚¬â€ blocked",
+            "DNS change Ã¢â‚¬â€ blocked",
+            "Secrets access Ã¢â‚¬â€ blocked",
         ],
         "safety": {
             "render_api_calls": False,
@@ -2953,7 +2953,7 @@ def _mask_ca24_line(line: str, role: str) -> str:
     if any(token in stripped.lower() for token in ["key", "token", "secret", "password", "credential"]):
         return "[protected-sensitive-line]"
     if len(line) > 96:
-        return line[:96] + " â€¦"
+        return line[:96] + " Ã¢â‚¬Â¦"
     return line
 
 
@@ -6097,7 +6097,7 @@ def _ideasforgeai_admin_status_context() -> str:
             title = re.search(r"<title[^>]*>(.*?)</title>", raw or "", re.I | re.S)
             if title:
                 title_text = clean(title.group(1))
-                title_text = title_text.replace("IdeasForgeAI Admin", "").replace("·", "").strip()
+                title_text = title_text.replace("IdeasForgeAI Admin", "").replace("Â·", "").strip()
                 return title_text or fallback
 
             return fallback
@@ -6181,7 +6181,7 @@ def _ideasforgeai_admin_status_context() -> str:
                 parts.append(f"{accuracy.group(1)} accuracy")
 
             if parts:
-                metrics_text = "Agent metrics: " + " · ".join(parts)
+                metrics_text = "Agent metrics: " + " Â· ".join(parts)
 
         lines = []
         lines.append("Admin status source: frontend/admin/*.html")
@@ -8461,4 +8461,1840 @@ async def adm5c_worker_agent_task(body: dict = _IF_ADM5C_Body(...)):
         "next": "review_job_then_dry_run",
         "report": f"Agent worker task created: {job_id}. Agent: {agent_name}. Status: waiting_approval."
     }
+
+
+# ADM-5C-2-ROUTES-ACTUAL: Worker Error Recovery + Dry-run Fix Bridge
+from fastapi import Body as _ADM5C2_Body, HTTPException as _ADM5C2_HTTPException
+from pathlib import Path as _ADM5C2_Path
+from datetime import datetime as _ADM5C2_datetime, timezone as _ADM5C2_timezone
+import json as _ADM5C2_json
+import re as _ADM5C2_re
+
+
+def _adm5c2_now():
+    return _ADM5C2_datetime.now(_ADM5C2_timezone.utc).isoformat()
+
+
+def _adm5c2_root():
+    return _ADM5C2_Path(__file__).resolve().parents[1]
+
+
+def _adm5c2_data(name):
+    return _adm5c2_root() / "data" / name
+
+
+def _adm5c2_read(path, default):
+    try:
+        if not path.exists():
+            return default
+        return _ADM5C2_json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return default
+
+
+def _adm5c2_write(path, value):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_ADM5C2_json.dumps(value, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+def _adm5c2_queue():
+    path = _adm5c2_data("admin_job_queue.json")
+    raw = _adm5c2_read(path, [])
+
+    if isinstance(raw, list):
+        return path, raw, raw
+
+    if isinstance(raw, dict):
+        for key in ("jobs", "queue", "items"):
+            if isinstance(raw.get(key), list):
+                return path, raw, raw[key]
+        raw["jobs"] = []
+        return path, raw, raw["jobs"]
+
+    return path, [], []
+
+
+def _adm5c2_save_queue(path, raw, jobs):
+    if isinstance(raw, list):
+        _adm5c2_write(path, jobs)
+        return
+
+    if isinstance(raw, dict):
+        if isinstance(raw.get("jobs"), list):
+            raw["jobs"] = jobs
+        elif isinstance(raw.get("queue"), list):
+            raw["queue"] = jobs
+        elif isinstance(raw.get("items"), list):
+            raw["items"] = jobs
+        else:
+            raw["jobs"] = jobs
+        _adm5c2_write(path, raw)
+        return
+
+    _adm5c2_write(path, jobs)
+
+
+def _adm5c2_find_job(job_id: str):
+    path, raw, jobs = _adm5c2_queue()
+    for job in jobs:
+        if str(job.get("job_id") or job.get("id") or "") == str(job_id):
+            return path, raw, jobs, job
+    return path, raw, jobs, None
+
+
+def _adm5c2_append_audit(entry):
+    path = _adm5c2_data("admin_audit_logs.json")
+    raw = _adm5c2_read(path, [])
+
+    if isinstance(raw, list):
+        raw.append(entry)
+        _adm5c2_write(path, raw)
+        return
+
+    if isinstance(raw, dict):
+        for key in ("logs", "audit_logs", "items"):
+            if isinstance(raw.get(key), list):
+                raw[key].append(entry)
+                _adm5c2_write(path, raw)
+                return
+        raw["logs"] = [entry]
+        _adm5c2_write(path, raw)
+        return
+
+    _adm5c2_write(path, [entry])
+
+
+def _adm5c2_errors():
+    path = _adm5c2_data("admin_worker_errors.json")
+    raw = _adm5c2_read(path, [])
+
+    if isinstance(raw, list):
+        return path, raw
+
+    if isinstance(raw, dict) and isinstance(raw.get("errors"), list):
+        return path, raw["errors"]
+
+    return path, []
+
+
+def _adm5c2_save_errors(path, errors):
+    _adm5c2_write(path, errors)
+
+
+def _adm5c2_secret_like(text: str):
+    value = str(text or "")
+    patterns = [
+        r"sk-[A-Za-z0-9_\-]{20,}",
+        r"OPENAI_API_KEY\s*=",
+        r"SUPABASE_SERVICE_ROLE_KEY\s*=",
+        r"service_role\s*[:=]",
+        r"PRIVATE_KEY\s*=",
+        r"id_rsa",
+        r"id_dsa",
+        r"\.pem",
+        r"\.p12",
+    ]
+    return any(_ADM5C2_re.search(p, value, _ADM5C2_re.IGNORECASE) for p in patterns)
+
+
+def _adm5c2_redact(text: str):
+    value = str(text or "")
+    value = _ADM5C2_re.sub(r"sk-[A-Za-z0-9_\-]{12,}", "[REDACTED_API_KEY]", value)
+    value = _ADM5C2_re.sub(
+        r"(?i)(OPENAI_API_KEY|SUPABASE_SERVICE_ROLE_KEY|PRIVATE_KEY)\s*=\s*[^\s]+",
+        r"\1=[REDACTED]",
+        value
+    )
+    return value[:4000]
+
+
+@app.post("/api/admin/worker-error-report")
+async def adm5c2_worker_error_report(body: dict = _ADM5C2_Body(...)):
+    raw_error = str(body.get("error") or body.get("message") or "").strip()
+    context = str(body.get("context") or "").strip()
+    job_id = str(body.get("job_id") or "").strip()
+    source = str(body.get("source") or "forgeadmin_worker").strip()
+
+    if not raw_error:
+        raise _ADM5C2_HTTPException(status_code=400, detail="error text is required")
+
+    if _adm5c2_secret_like(raw_error) or _adm5c2_secret_like(context):
+        raise _ADM5C2_HTTPException(status_code=400, detail="blocked: sensitive data detected")
+
+    now = _adm5c2_now()
+    error_id = "ERR-WORKER-" + _ADM5C2_datetime.now().strftime("%Y%m%d%H%M%S%f")
+
+    entry = {
+        "error_id": error_id,
+        "created_at": now,
+        "timestamp": now,
+        "job_id": job_id,
+        "source": source,
+        "error": _adm5c2_redact(raw_error),
+        "context": _adm5c2_redact(context),
+        "status": "captured",
+        "founder_gated": True
+    }
+
+    path, errors = _adm5c2_errors()
+    errors.append(entry)
+    _adm5c2_save_errors(path, errors)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "worker_error_reported",
+        "error_id": error_id,
+        "job_id": job_id,
+        "source": source
+    })
+
+    return {
+        "ok": True,
+        "error_id": error_id,
+        "status": "captured",
+        "next": "fix-last-error"
+    }
+
+
+@app.get("/api/admin/worker-last-error")
+async def adm5c2_worker_last_error():
+    path, errors = _adm5c2_errors()
+
+    if not errors:
+        return {
+            "ok": True,
+            "found": False,
+            "message": "No worker error has been captured yet."
+        }
+
+    return {
+        "ok": True,
+        "found": True,
+        "error": errors[-1]
+    }
+
+
+@app.post("/api/admin/worker-fix-last-error")
+async def adm5c2_worker_fix_last_error(body: dict = _ADM5C2_Body(default={})):
+    path, errors = _adm5c2_errors()
+
+    if not errors:
+        raise _ADM5C2_HTTPException(status_code=404, detail="no worker error available")
+
+    latest = errors[-1]
+    now = _adm5c2_now()
+    job_id = "FIX-WORKER-" + _ADM5C2_datetime.now().strftime("%Y%m%d%H%M%S%f")
+
+    instruction = (
+        "Create a safe repair plan for the last Worker error. "
+        "Do not apply directly. Generate dry-run proposal first. "
+        "Founder approval is required before safe apply. "
+        "Error: " + str(latest.get("error") or "")
+    )
+
+    job = {
+        "job_id": job_id,
+        "id": job_id,
+        "title": "Fix last Worker error",
+        "summary": "Repair job created from captured Worker error. Dry-run and founder approval required.",
+        "area": "Worker",
+        "module": "ForgeAdmin",
+        "type": "worker_error_fix",
+        "status": "waiting_approval",
+        "created_at": now,
+        "updated_at": now,
+        "source_error_id": latest.get("error_id"),
+        "instruction": instruction,
+        "task": instruction,
+        "founder_gated": True,
+        "dry_run_required": True,
+        "safe_apply_required": True,
+        "allowed_files": ["backend/main.py", "forgeadmin/index.html", "frontend/forgeadmin/index.html"],
+        "payload": {
+            "error": latest,
+            "instruction": instruction
+        },
+        "worker_task": {
+            "kind": "worker_error_fix",
+            "instruction": instruction,
+            "source_error": latest,
+            "constraints": [
+                "Do not expose secrets",
+                "Do not write files without dry-run",
+                "Do not apply without founder approval",
+                "Create backup before write",
+                "Audit all actions"
+            ]
+        }
+    }
+
+    queue_path, raw_queue, jobs = _adm5c2_queue()
+    jobs.append(job)
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    latest["status"] = "fix_job_created"
+    latest["fix_job_id"] = job_id
+    _adm5c2_save_errors(path, errors)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "worker_fix_job_created",
+        "job_id": job_id,
+        "source_error_id": latest.get("error_id"),
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": "waiting_approval",
+        "next": "dry-run " + job_id,
+        "report": "Repair job created: " + job_id + ". Run dry-run before approval/apply."
+    }
+
+
+@app.post("/api/admin/job-queue/{job_id}/dry-run-from-task")
+async def adm5c2_dry_run_from_task(job_id: str):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C2_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C2_HTTPException(status_code=400, detail="job has no task/instruction")
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C2_HTTPException(status_code=400, detail="blocked: sensitive data detected")
+
+    now = _adm5c2_now()
+    dry_run_id = "DRYRUN-" + _ADM5C2_datetime.now().strftime("%Y%m%d%H%M%S%f")
+
+    dry_run = {
+        "ok": True,
+        "dry_run_id": dry_run_id,
+        "created_at": now,
+        "status": "dry_run_ready",
+        "job_id": job_id,
+        "instruction": instruction,
+        "proposed_files": [],
+        "proposed_writes": [],
+        "diff_summary": [
+            "No direct file write was executed.",
+            "This dry-run converted the Worker task into a founder-reviewable proposal.",
+            "Safe apply remains blocked until reviewed proposed_writes exist."
+        ],
+        "safety": {
+            "secrets_blocked": True,
+            "path_traversal_blocked": True,
+            "founder_approval_required": True,
+            "backup_required_before_apply": True,
+            "direct_apply": False
+        },
+        "report": "Dry-run created for " + job_id + ". No files were written."
+    }
+
+    job["dry_run"] = dry_run
+    job["dry_run_id"] = dry_run_id
+    job["dry_run_at"] = now
+    job["status"] = "dry_run_ready"
+    job["updated_at"] = now
+    job["last_report"] = dry_run["report"]
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "dry_run_from_task_created",
+        "job_id": job_id,
+        "dry_run_id": dry_run_id,
+        "status": "dry_run_ready",
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "dry_run_id": dry_run_id,
+        "status": "dry_run_ready",
+        "dry_run": dry_run,
+        "report": dry_run["report"]
+    }
+
+
+@app.post("/api/admin/job-queue/{job_id}/retry")
+async def adm5c2_retry_job(job_id: str, body: dict = _ADM5C2_Body(default={})):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C2_HTTPException(status_code=404, detail="job not found")
+
+    now = _adm5c2_now()
+    previous_status = job.get("status") or "unknown"
+    retry_count = int(job.get("retry_count") or 0) + 1
+
+    job["status"] = "waiting_approval"
+    job["updated_at"] = now
+    job["retry_count"] = retry_count
+    job["last_retry_at"] = now
+    job["previous_status_before_retry"] = previous_status
+    job["last_report"] = "Retry prepared for " + job_id + ". Founder approval and dry-run required."
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "worker_job_retry_prepared",
+        "job_id": job_id,
+        "previous_status": previous_status,
+        "retry_count": retry_count,
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": "waiting_approval",
+        "retry_count": retry_count,
+        "report": job["last_report"]
+    }
+
+
+# ADM-5C-3: Patch Proposal Generator
+from fastapi import Body as _ADM5C3_Body, HTTPException as _ADM5C3_HTTPException
+from pathlib import Path as _ADM5C3_Path
+from datetime import datetime as _ADM5C3_datetime, timezone as _ADM5C3_timezone
+import re as _ADM5C3_re
+import difflib as _ADM5C3_difflib
+
+
+def _adm5c3_now():
+    return _ADM5C3_datetime.now(_ADM5C3_timezone.utc).isoformat()
+
+
+def _adm5c3_root():
+    return _ADM5C3_Path(__file__).resolve().parents[1]
+
+
+def _adm5c3_blocked_path(path_value: str) -> bool:
+    value = str(path_value or "").replace("\\", "/").lower()
+    blocked = [
+        ".env",
+        "secret",
+        "secrets",
+        "token",
+        "credential",
+        "credentials",
+        "private",
+        "service-account",
+        "id_rsa",
+        "id_dsa",
+        ".pem",
+        ".p12",
+    ]
+    return any(part in value for part in blocked) or ".." in value
+
+
+def _adm5c3_normalize_path(path_value: str) -> str:
+    value = str(path_value or "").strip().replace("\\", "/")
+    value = value.strip("'\"` ")
+    while value.startswith("/"):
+        value = value[1:]
+    return value
+
+
+def _adm5c3_allowed_by_list(target_path: str, allowed_files):
+    if not allowed_files:
+        return True
+
+    target = _adm5c3_normalize_path(target_path).lower()
+
+    for item in allowed_files:
+        pattern = _adm5c3_normalize_path(str(item or "")).lower()
+        if not pattern:
+            continue
+
+        if pattern == target:
+            return True
+
+        if pattern.endswith("/*"):
+            prefix = pattern[:-1]
+            if target.startswith(prefix):
+                return True
+
+        if pattern == "*":
+            return True
+
+    return False
+
+
+def _adm5c3_extract_file_blocks(text: str):
+    value = str(text or "")
+    blocks = []
+
+    # Format:
+    # FILE: forgeadmin/index.html
+    # ```html
+    # ...
+    # ```
+    file_block_pattern = r"(?im)^\s*(?:FILE|PATH|TARGET)\s*:\s*([^\r\n]+)\s*\r?\n```[a-zA-Z0-9_-]*\s*\r?\n([\s\S]*?)\r?\n```"
+    for match in _ADM5C3_re.finditer(file_block_pattern, value):
+        blocks.append({
+            "path": _adm5c3_normalize_path(match.group(1)),
+            "content": match.group(2)
+        })
+
+    # Format:
+    # ```file=forgeadmin/index.html
+    # ...
+    # ```
+    fence_file_pattern = r"```file\s*=\s*([^\r\n]+)\s*\r?\n([\s\S]*?)\r?\n```"
+    for match in _ADM5C3_re.finditer(fence_file_pattern, value, _ADM5C3_re.IGNORECASE):
+        blocks.append({
+            "path": _adm5c3_normalize_path(match.group(1)),
+            "content": match.group(2)
+        })
+
+    return blocks
+
+
+@app.post("/api/admin/job-queue/{job_id}/generate-patch-proposal")
+async def adm5c3_generate_patch_proposal(job_id: str, body: dict = _ADM5C3_Body(default={})):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C3_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        body.get("instruction")
+        or job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    )
+
+    allowed_files = body.get("allowed_files") or job.get("allowed_files") or []
+    if not isinstance(allowed_files, list):
+        allowed_files = []
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C3_HTTPException(status_code=400, detail="blocked: instruction appears to contain sensitive data")
+
+    explicit_writes = body.get("proposed_writes")
+    blocks = []
+
+    if isinstance(explicit_writes, list):
+        for item in explicit_writes:
+            if not isinstance(item, dict):
+                continue
+            blocks.append({
+                "path": _adm5c3_normalize_path(item.get("path") or item.get("target_path") or ""),
+                "content": str(item.get("new_content") or item.get("content") or "")
+            })
+
+    if not blocks:
+        blocks = _adm5c3_extract_file_blocks(instruction)
+
+    now = _adm5c3_now()
+    dry_run_id = "PATCHRUN-" + _ADM5C3_datetime.now().strftime("%Y%m%d%H%M%S%f")
+
+    proposed_writes = []
+    blocked_files = []
+    diff_summary = []
+
+    root = _adm5c3_root()
+
+    for block in blocks:
+        target_path = _adm5c3_normalize_path(block.get("path"))
+        new_content = str(block.get("content") or "")
+
+        if not target_path:
+            continue
+
+        if _adm5c3_blocked_path(target_path):
+            blocked_files.append({"path": target_path, "reason": "blocked sensitive/unsafe path"})
+            continue
+
+        if not _adm5c3_allowed_by_list(target_path, allowed_files):
+            blocked_files.append({"path": target_path, "reason": "not in allowed_files"})
+            continue
+
+        if _adm5c2_secret_like(new_content):
+            blocked_files.append({"path": target_path, "reason": "content appears to contain sensitive data"})
+            continue
+
+        resolved = (root / target_path).resolve()
+        try:
+            resolved.relative_to(root)
+        except Exception:
+            blocked_files.append({"path": target_path, "reason": "resolved path escapes project root"})
+            continue
+
+        old_content = ""
+        exists = resolved.exists()
+
+        if exists:
+            old_content = resolved.read_text(encoding="utf-8", errors="replace")
+
+        diff = "".join(_ADM5C3_difflib.unified_diff(
+            old_content.splitlines(keepends=True),
+            new_content.splitlines(keepends=True),
+            fromfile="a/" + target_path,
+            tofile="b/" + target_path
+        ))
+
+        proposed_writes.append({
+            "path": target_path,
+            "target_path": target_path,
+            "operation": "write",
+            "exists": exists,
+            "old_size": len(old_content),
+            "new_size": len(new_content),
+            "new_content": new_content,
+            "content": new_content,
+            "diff": diff
+        })
+
+        diff_summary.append(
+            f"{target_path}: {'update' if exists else 'create'}; diff_lines={len(diff.splitlines())}"
+        )
+
+    if not proposed_writes:
+        diff_summary.append(
+            "No valid proposed_writes were generated. Add explicit FILE blocks to the worker task."
+        )
+
+    dry_run = {
+        "ok": True,
+        "dry_run_id": dry_run_id,
+        "created_at": now,
+        "status": "patch_proposal_ready" if proposed_writes else "dry_run_ready",
+        "job_id": job_id,
+        "kind": "patch_proposal_generator",
+        "instruction": instruction,
+        "allowed_files": allowed_files,
+        "blocked_files": blocked_files,
+        "proposed_files": [item["path"] for item in proposed_writes],
+        "proposed_writes": proposed_writes,
+        "files": proposed_writes,
+        "changes": proposed_writes,
+        "diff_summary": diff_summary,
+        "safety": {
+            "secrets_blocked": True,
+            "sensitive_paths_blocked": True,
+            "project_root_enforced": True,
+            "founder_approval_required": True,
+            "backup_required_before_apply": True,
+            "direct_apply": False
+        },
+        "report": (
+            f"Patch proposal generated for {job_id}: "
+            f"{len(proposed_writes)} proposed write(s), {len(blocked_files)} blocked."
+        )
+    }
+
+    job["dry_run"] = dry_run
+    job["dry_run_id"] = dry_run_id
+    job["dry_run_at"] = now
+    job["status"] = "dry_run_ready"
+    job["updated_at"] = now
+    job["last_report"] = dry_run["report"]
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "patch_proposal_generated",
+        "job_id": job_id,
+        "dry_run_id": dry_run_id,
+        "proposed_write_count": len(proposed_writes),
+        "blocked_file_count": len(blocked_files),
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "dry_run_id": dry_run_id,
+        "status": "dry_run_ready",
+        "proposed_write_count": len(proposed_writes),
+        "blocked_file_count": len(blocked_files),
+        "dry_run": dry_run,
+        "report": dry_run["report"]
+    }
+
+
+# ADM-5C-3B: Smart proposal resolver for mobile Worker
+def _adm5c3b_norm(value: str) -> str:
+    return (
+        str(value or "")
+        .strip()
+        .replace("-", "-")
+        .replace("â€“", "-")
+        .replace("â€”", "-")
+        .replace("âˆ’", "-")
+        .replace("\u00a0", " ")
+    )
+
+
+def _adm5c3b_resolve_job_ref(job_ref: str):
+    queue_path, raw_queue, jobs = _adm5c2_queue()
+    ref = _adm5c3b_norm(job_ref)
+
+    if not ref:
+        return None
+
+    # Mobile-friendly number from jobs list: proposal 12
+    if ref.isdigit():
+        index = int(ref) - 1
+        if 0 <= index < len(jobs):
+            return str(jobs[index].get("job_id") or jobs[index].get("id") or "")
+
+    ref_lower = ref.lower()
+
+    for job in jobs:
+        jid = _adm5c3b_norm(str(job.get("job_id") or job.get("id") or ""))
+        if jid.lower() == ref_lower:
+            return jid
+
+    for job in jobs:
+        jid = _adm5c3b_norm(str(job.get("job_id") or job.get("id") or ""))
+        if ref_lower in jid.lower() or jid.lower().endswith(ref_lower):
+            return jid
+
+    return None
+
+
+@app.post("/api/admin/job-queue/resolve-generate-patch-proposal")
+async def adm5c3b_resolve_generate_patch_proposal(body: dict = _ADM5C3_Body(default={})):
+    job_ref = str(body.get("job_ref") or body.get("job_id") or "").strip()
+
+    resolved_job_id = _adm5c3b_resolve_job_ref(job_ref)
+
+    if not resolved_job_id:
+        raise _ADM5C3_HTTPException(
+            status_code=404,
+            detail={
+                "message": "job not found",
+                "job_ref": job_ref,
+                "hint": "Run jobs, then use proposal 12 or copy the full job id exactly."
+            }
+        )
+
+    return await adm5c3_generate_patch_proposal(resolved_job_id, body)
+
+
+# ADM-5C-4-LITE: Agent Patch Writer route
+from fastapi import Body as _ADM5C4L_Body, HTTPException as _ADM5C4L_HTTPException
+from datetime import datetime as _ADM5C4L_datetime, timezone as _ADM5C4L_timezone
+
+
+def _adm5c4l_now():
+    return _ADM5C4L_datetime.now(_ADM5C4L_timezone.utc).isoformat()
+
+
+@app.post("/api/admin/job-queue/{job_id}/agent-write-patch")
+async def adm5c4l_agent_write_patch(job_id: str, body: dict = _ADM5C4L_Body(default={})):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C4L_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        body.get("patch_text")
+        or body.get("patch_text_override")
+        or job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C4L_HTTPException(status_code=400, detail="job has no instruction")
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C4L_HTTPException(status_code=400, detail="blocked: instruction appears sensitive")
+
+    blocks = _adm5c3_extract_file_blocks(instruction)
+
+    safe_files = []
+    blocked_files = []
+
+    allowed_files = job.get("allowed_files") or body.get("allowed_files") or []
+    if not isinstance(allowed_files, list):
+        allowed_files = []
+
+    for block in blocks:
+        target_path = _adm5c3_normalize_path(block.get("path"))
+
+        if not target_path:
+            continue
+
+        if _adm5c3_blocked_path(target_path):
+            blocked_files.append({"path": target_path, "reason": "blocked unsafe path"})
+            continue
+
+        if allowed_files and not _adm5c3_allowed_by_list(target_path, allowed_files):
+            blocked_files.append({"path": target_path, "reason": "not allowed by allowed_files"})
+            continue
+
+        safe_files.append(target_path)
+
+    now = _adm5c4l_now()
+
+    job["agent_patch"] = instruction
+    job["instruction"] = instruction
+    job["task"] = instruction
+    job["brain_reply"] = instruction
+    job["agent_patch_at"] = now
+    job["agent_patch_writer"] = "ADM-5C-4-LITE"
+    job["agent_patch_files"] = safe_files
+    job["agent_patch_blocked_files"] = blocked_files
+    job["status"] = "patch_writer_ready" if safe_files else "patch_writer_needs_file_blocks"
+    job["updated_at"] = now
+    job["last_report"] = (
+        "Agent Patch Writer completed for "
+        + job_id
+        + ": "
+        + str(len(safe_files))
+        + " FILE block(s), "
+        + str(len(blocked_files))
+        + " blocked."
+    )
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "agent_patch_writer_completed",
+        "job_id": job_id,
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": job["status"],
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "agent_patch_files": safe_files,
+        "blocked_files": blocked_files,
+        "report": job["last_report"]
+    }
+
+
+
+
+# ADM-5C-4B-ACTUAL: Auto FILE Block Generator route
+from fastapi import Body as _ADM5C4B2_Body, HTTPException as _ADM5C4B2_HTTPException
+from datetime import datetime as _ADM5C4B2_datetime, timezone as _ADM5C4B2_timezone
+
+
+def _adm5c4b2_now():
+    return _ADM5C4B2_datetime.now(_ADM5C4B2_timezone.utc).isoformat()
+
+
+@app.post("/api/admin/job-queue/{job_id}/auto-file-blocks")
+async def adm5c4b2_auto_file_blocks(job_id: str, body: dict = _ADM5C4B2_Body(default={})):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C4B2_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        job.get("original_instruction")
+        or job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C4B2_HTTPException(status_code=400, detail="job has no instruction")
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C4B2_HTTPException(status_code=400, detail="blocked: instruction appears sensitive")
+
+    now = _adm5c4b2_now()
+
+    job["original_instruction"] = instruction
+    job["agent_patch_writer"] = "ADM-5C-4B-ACTUAL"
+    job["agent_patch_at"] = now
+    job["updated_at"] = now
+
+    # First pass: if the job already contains FILE blocks, preserve them.
+    blocks = _adm5c3_extract_file_blocks(instruction)
+
+    safe_files = []
+    blocked_files = []
+
+    allowed_files = job.get("allowed_files") or body.get("allowed_files") or []
+    if not isinstance(allowed_files, list):
+        allowed_files = []
+
+    for block in blocks:
+        target_path = _adm5c3_normalize_path(block.get("path"))
+
+        if not target_path:
+            continue
+
+        if _adm5c3_blocked_path(target_path):
+            blocked_files.append({"path": target_path, "reason": "blocked unsafe path"})
+            continue
+
+        if allowed_files and not _adm5c3_allowed_by_list(target_path, allowed_files):
+            blocked_files.append({"path": target_path, "reason": "not allowed by allowed_files"})
+            continue
+
+        safe_files.append(target_path)
+
+    job["agent_patch"] = instruction
+    job["agent_patch_files"] = safe_files
+    job["agent_patch_blocked_files"] = blocked_files
+    job["status"] = "patch_writer_ready" if safe_files else "patch_writer_needs_file_blocks"
+    job["last_report"] = (
+        "Auto FILE Block Generator completed for "
+        + job_id
+        + ": "
+        + str(len(safe_files))
+        + " safe FILE block(s), "
+        + str(len(blocked_files))
+        + " blocked."
+    )
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "auto_file_blocks_generated",
+        "job_id": job_id,
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": job["status"],
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "agent_patch_files": safe_files,
+        "blocked_files": blocked_files,
+        "report": job["last_report"]
+    }
+
+
+
+
+# ADM-5C-4B-COMPAT-AUTO-FILE-BLOCKS
+from fastapi import Body as _ADM5C4BC_Body, HTTPException as _ADM5C4BC_HTTPException
+
+
+@app.post("/api/admin/job-queue/{job_id}/auto-file-blocks")
+async def adm5c4bc_auto_file_blocks_compat(job_id: str, body: dict = _ADM5C4BC_Body(default={})):
+    brain_fn = globals().get("adm5c4bb_auto_file_blocks_brain")
+
+    if not brain_fn:
+        raise _ADM5C4BC_HTTPException(
+            status_code=500,
+            detail="ADM-5C-4B brain route is not loaded yet"
+        )
+
+    return await brain_fn(job_id, body)
+
+
+
+
+# ADM-5C-4B-FINAL-COMPAT-ROUTE
+from fastapi import Body as _ADM5C4BF_Body, HTTPException as _ADM5C4BF_HTTPException
+from datetime import datetime as _ADM5C4BF_datetime, timezone as _ADM5C4BF_timezone
+
+
+def _adm5c4bf_now():
+    return _ADM5C4BF_datetime.now(_ADM5C4BF_timezone.utc).isoformat()
+
+
+@app.post("/api/admin/job-queue/{job_id}/auto-file-blocks")
+async def adm5c4bf_auto_file_blocks(job_id: str, body: dict = _ADM5C4BF_Body(default={})):
+    # Prefer brain-powered generator if already loaded
+    brain_fn = globals().get("adm5c4bb_auto_file_blocks_brain")
+    if brain_fn:
+        return await brain_fn(job_id, body)
+
+    # Fallback: parse existing FILE blocks from the job
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C4BF_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C4BF_HTTPException(status_code=400, detail="job has no instruction")
+
+    blocks = _adm5c3_extract_file_blocks(instruction)
+
+    safe_files = []
+    blocked_files = []
+    allowed_files = job.get("allowed_files") or []
+
+    if not isinstance(allowed_files, list):
+        allowed_files = []
+
+    for block in blocks:
+        target_path = _adm5c3_normalize_path(block.get("path"))
+
+        if not target_path:
+            continue
+
+        if _adm5c3_blocked_path(target_path):
+            blocked_files.append({"path": target_path, "reason": "blocked unsafe path"})
+            continue
+
+        if allowed_files and not _adm5c3_allowed_by_list(target_path, allowed_files):
+            blocked_files.append({"path": target_path, "reason": "not allowed"})
+            continue
+
+        safe_files.append(target_path)
+
+    now = _adm5c4bf_now()
+
+    job["agent_patch"] = instruction
+    job["agent_patch_files"] = safe_files
+    job["agent_patch_blocked_files"] = blocked_files
+    job["agent_patch_writer"] = "ADM-5C-4B-FINAL-COMPAT"
+    job["agent_patch_at"] = now
+    job["updated_at"] = now
+    job["status"] = "patch_writer_ready" if safe_files else "patch_writer_needs_file_blocks"
+    job["last_report"] = f"Auto FILE Block Generator completed for {job_id}: {len(safe_files)} safe FILE block(s), {len(blocked_files)} blocked."
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "auto_file_blocks_compat_completed",
+        "job_id": job_id,
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": job["status"],
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "agent_patch_files": safe_files,
+        "blocked_files": blocked_files,
+        "report": job["last_report"]
+    }
+
+
+
+
+
+
+# ADM-5C-4C-FINAL-STRICT-COMPAT-ROUTE
+from fastapi import Body as _ADM5C4CF_Body, HTTPException as _ADM5C4CF_HTTPException
+from datetime import datetime as _ADM5C4CF_datetime, timezone as _ADM5C4CF_timezone
+
+
+def _adm5c4cf_now():
+    return _ADM5C4CF_datetime.now(_ADM5C4CF_timezone.utc).isoformat()
+
+
+@app.post("/api/admin/job-queue/{job_id}/strict-file-blocks")
+async def adm5c4cf_strict_file_blocks(job_id: str, body: dict = _ADM5C4CF_Body(default={})):
+    # If full strict writer exists, use it.
+    full_fn = globals().get("adm5c4c_strict_file_blocks")
+    if full_fn:
+        return await full_fn(job_id, body)
+
+    # If brain auto generator exists, use it.
+    brain_fn = globals().get("adm5c4bb_auto_file_blocks_brain")
+    if brain_fn:
+        return await brain_fn(job_id, body)
+
+    # Fallback: parse existing FILE blocks safely.
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C4CF_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C4CF_HTTPException(status_code=400, detail="job has no instruction")
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C4CF_HTTPException(status_code=400, detail="blocked: instruction appears sensitive")
+
+    blocks = _adm5c3_extract_file_blocks(instruction)
+
+    safe_files = []
+    blocked_files = []
+    allowed_files = job.get("allowed_files") or body.get("allowed_files") or []
+
+    if not isinstance(allowed_files, list):
+        allowed_files = []
+
+    for block in blocks:
+        target_path = _adm5c3_normalize_path(block.get("path"))
+
+        if not target_path:
+            continue
+
+        if _adm5c3_blocked_path(target_path):
+            blocked_files.append({"path": target_path, "reason": "blocked unsafe path"})
+            continue
+
+        if allowed_files and not _adm5c3_allowed_by_list(target_path, allowed_files):
+            blocked_files.append({"path": target_path, "reason": "not allowed"})
+            continue
+
+        content = str(block.get("content") or "")
+        if _adm5c2_secret_like(content):
+            blocked_files.append({"path": target_path, "reason": "content appears sensitive"})
+            continue
+
+        safe_files.append(target_path)
+
+    now = _adm5c4cf_now()
+
+    job["agent_patch"] = instruction
+    job["agent_patch_files"] = safe_files
+    job["agent_patch_blocked_files"] = blocked_files
+    job["agent_patch_writer"] = "ADM-5C-4C-FINAL-COMPAT"
+    job["agent_patch_at"] = now
+    job["updated_at"] = now
+    job["status"] = "patch_writer_ready" if safe_files else "patch_writer_needs_file_blocks"
+    job["last_report"] = f"Strict FILE Writer completed for {job_id}: {len(safe_files)} safe FILE block(s), {len(blocked_files)} blocked."
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "strict_file_blocks_compat_completed",
+        "job_id": job_id,
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "founder_gated": True
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": job["status"],
+        "safe_file_block_count": len(safe_files),
+        "blocked_file_block_count": len(blocked_files),
+        "agent_patch_files": safe_files,
+        "blocked_files": blocked_files,
+        "report": job["last_report"]
+    }
+
+
+
+
+
+
+
+# ADM-5C-4D-REAL-PATCH-BLOCK-GENERATOR
+from fastapi import Body as _ADM5C4D_Body, HTTPException as _ADM5C4D_HTTPException
+from datetime import datetime as _ADM5C4D_datetime, timezone as _ADM5C4D_timezone
+
+
+def _adm5c4d_now():
+    return _ADM5C4D_datetime.now(_ADM5C4D_timezone.utc).isoformat()
+
+
+def _adm5c4d_language_for(path_value: str):
+    value = str(path_value or "").lower()
+    if value.endswith(".html"):
+        return "html"
+    if value.endswith(".css"):
+        return "css"
+    if value.endswith(".js"):
+        return "javascript"
+    if value.endswith(".py"):
+        return "python"
+    if value.endswith(".json"):
+        return "json"
+    return "text"
+
+
+def _adm5c4d_infer_target(job, instruction):
+    allowed = job.get("allowed_files")
+    if isinstance(allowed, list):
+        for item in allowed:
+            rel = _adm5c3_normalize_path(str(item or ""))
+            if rel and "*" not in rel and not _adm5c3_blocked_path(rel):
+                return rel
+
+    text = str(instruction or "").lower()
+
+    if "forgeadmin" in text or "worker console" in text or "composer" in text or "admin" in text:
+        return "forgeadmin/index.html"
+
+    if "home" in text:
+        return "frontend/pages/home.html"
+
+    return "forgeadmin/index.html"
+
+
+def _adm5c4d_replace_between_markers(content, start_marker, end_marker, replacement):
+    start = content.find(start_marker)
+    end = content.find(end_marker)
+
+    if start >= 0 and end > start:
+        end = end + len(end_marker)
+        return content[:start] + replacement.strip() + content[end:]
+
+    return content
+
+
+def _adm5c4d_make_patch_content(target_path, old_content, instruction):
+    value = old_content
+    lower_target = str(target_path or "").lower()
+
+    if lower_target.endswith(".html"):
+        start_marker = "/* ADM-5C-4D REAL PATCH START */"
+        end_marker = "/* ADM-5C-4D REAL PATCH END */"
+
+        css_patch = """
+/* ADM-5C-4D REAL PATCH START */
+:root {
+  --adm-worker-composer-safe-bottom: max(10px, env(safe-area-inset-bottom));
+}
+
+.founder-composer,
+.chat-composer,
+.worker-composer,
+.admin-composer,
+.composer-tray,
+#founderComposer,
+#workerComposer {
+  box-sizing: border-box;
+}
+
+@media (max-width: 760px) {
+  .founder-composer,
+  .chat-composer,
+  .worker-composer,
+  .admin-composer,
+  .composer-tray,
+  #founderComposer,
+  #workerComposer {
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(10px + var(--adm-worker-composer-safe-bottom));
+    max-width: calc(100vw - 28px);
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 90;
+  }
+
+  .worker-console,
+  .worker-console-body,
+  .founder-chat,
+  .chat-stage,
+  .main-panel {
+    padding-bottom: 108px;
+  }
+}
+/* ADM-5C-4D REAL PATCH END */
+""".strip()
+
+        if start_marker in value and end_marker in value:
+            value = _adm5c4d_replace_between_markers(value, start_marker, end_marker, css_patch)
+            return value
+
+        if "</style>" in value:
+            index = value.rfind("</style>")
+            return value[:index] + "\n\n" + css_patch + "\n" + value[index:]
+
+        style_block = "<style>\n" + css_patch + "\n</style>\n"
+
+        if "</head>" in value:
+            return value.replace("</head>", style_block + "</head>", 1)
+
+        return value + "\n" + style_block
+
+    if lower_target.endswith(".css"):
+        start_marker = "/* ADM-5C-4D REAL PATCH START */"
+        end_marker = "/* ADM-5C-4D REAL PATCH END */"
+
+        css_patch = """
+/* ADM-5C-4D REAL PATCH START */
+@media (max-width: 760px) {
+  .founder-composer,
+  .chat-composer,
+  .worker-composer,
+  .admin-composer,
+  .composer-tray,
+  #founderComposer,
+  #workerComposer {
+    box-sizing: border-box;
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    max-width: calc(100vw - 28px);
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 90;
+  }
+}
+/* ADM-5C-4D REAL PATCH END */
+""".strip()
+
+        if start_marker in value and end_marker in value:
+            return _adm5c4d_replace_between_markers(value, start_marker, end_marker, css_patch)
+
+        return value.rstrip() + "\n\n" + css_patch + "\n"
+
+    return value
+
+
+@app.post("/api/admin/job-queue/{job_id}/real-patch-block")
+async def adm5c4d_real_patch_block(job_id: str, body: dict = _ADM5C4D_Body(default={})):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C4D_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        job.get("original_instruction")
+        or job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C4D_HTTPException(status_code=400, detail="job has no instruction")
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C4D_HTTPException(status_code=400, detail="blocked: instruction appears sensitive")
+
+    target_path = _adm5c3_normalize_path(
+        body.get("target_path")
+        or body.get("path")
+        or _adm5c4d_infer_target(job, instruction)
+    )
+
+    if not target_path:
+        raise _ADM5C4D_HTTPException(status_code=400, detail="target path is required")
+
+    if _adm5c3_blocked_path(target_path):
+        raise _ADM5C4D_HTTPException(status_code=400, detail="blocked unsafe target path")
+
+    root = _adm5c3_root()
+    resolved = (root / target_path).resolve()
+
+    try:
+        resolved.relative_to(root)
+    except Exception:
+        raise _ADM5C4D_HTTPException(status_code=400, detail="target path escapes project root")
+
+    if not resolved.exists() or not resolved.is_file():
+        raise _ADM5C4D_HTTPException(status_code=404, detail="target file not found: " + target_path)
+
+    old_content = resolved.read_text(encoding="utf-8", errors="replace")
+    new_content = _adm5c4d_make_patch_content(target_path, old_content, instruction)
+
+    if new_content == old_content:
+        raise _ADM5C4D_HTTPException(status_code=400, detail="no safe deterministic patch generated")
+
+    if _adm5c2_secret_like(new_content):
+        raise _ADM5C4D_HTTPException(status_code=400, detail="blocked: generated patch appears sensitive")
+
+    language = _adm5c4d_language_for(target_path)
+
+    file_block = (
+        "FILE: " + target_path + "\n"
+        "```" + language + "\n"
+        + new_content.rstrip() + "\n"
+        "```"
+    )
+
+    now = _adm5c4d_now()
+
+    job["original_instruction"] = instruction
+    job["instruction"] = file_block
+    job["task"] = file_block
+    job["brain_reply"] = file_block
+    job["agent_patch"] = file_block
+    job["agent_patch_writer"] = "ADM-5C-4D-REAL"
+    job["agent_patch_at"] = now
+    job["allowed_files"] = [target_path]
+    job["agent_patch_files"] = [target_path]
+    job["agent_patch_blocked_files"] = []
+    job["updated_at"] = now
+    job["status"] = "patch_writer_ready"
+    job["last_report"] = "Real Patch Block Generator created FILE block for " + target_path + "."
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "real_patch_block_generated",
+        "job_id": job_id,
+        "target_path": target_path,
+        "founder_gated": True,
+        "direct_file_write": False
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": "patch_writer_ready",
+        "target_path": target_path,
+        "safe_file_block_count": 1,
+        "blocked_file_block_count": 0,
+        "agent_patch_files": [target_path],
+        "report": job["last_report"]
+    }
+
+
+# IF-CHATKIT-CUSTOM-STATUS-START
+@app.get("/api/chatkit/custom-status")
+async def if_chatkit_custom_status():
+    import os
+    return {
+        "ok": True,
+        "service": "IdeasForgeAI ChatKit",
+        "mode": "custom-server",
+        "workflow_id_required": False,
+        "openai_api_key_present": bool(os.getenv("OPENAI_API_KEY")),
+        "next": "Install openai-chatkit and connect frontend test page."
+    }
+# IF-CHATKIT-CUSTOM-STATUS-END
+
+
+
+
+# ADM-5C-4D-FINAL-REAL-PATCH-ROUTE
+from fastapi import Body as _ADM5C4DF_Body, HTTPException as _ADM5C4DF_HTTPException
+from datetime import datetime as _ADM5C4DF_datetime, timezone as _ADM5C4DF_timezone
+
+
+def _adm5c4df_now():
+    return _ADM5C4DF_datetime.now(_ADM5C4DF_timezone.utc).isoformat()
+
+
+def _adm5c4df_language(path_value: str):
+    value = str(path_value or "").lower()
+    if value.endswith(".html"):
+        return "html"
+    if value.endswith(".css"):
+        return "css"
+    if value.endswith(".js"):
+        return "javascript"
+    if value.endswith(".py"):
+        return "python"
+    return "text"
+
+
+@app.post("/api/admin/job-queue/{job_id}/real-patch-block")
+async def adm5c4df_real_patch_block(job_id: str, body: dict = _ADM5C4DF_Body(default={})):
+    queue_path, raw_queue, jobs, job = _adm5c2_find_job(job_id)
+
+    if not job:
+        raise _ADM5C4DF_HTTPException(status_code=404, detail="job not found")
+
+    instruction = str(
+        job.get("original_instruction")
+        or job.get("instruction")
+        or job.get("task")
+        or job.get("brain_reply")
+        or job.get("summary")
+        or ""
+    ).strip()
+
+    if not instruction:
+        raise _ADM5C4DF_HTTPException(status_code=400, detail="job has no instruction")
+
+    if _adm5c2_secret_like(instruction):
+        raise _ADM5C4DF_HTTPException(status_code=400, detail="blocked: instruction appears sensitive")
+
+    target_path = str(body.get("target_path") or "").strip()
+
+    if not target_path:
+        allowed = job.get("allowed_files")
+        if isinstance(allowed, list) and allowed:
+            target_path = str(allowed[0] or "").strip()
+
+    if not target_path:
+        target_path = "forgeadmin/index.html"
+
+    target_path = _adm5c3_normalize_path(target_path)
+
+    if _adm5c3_blocked_path(target_path):
+        raise _ADM5C4DF_HTTPException(status_code=400, detail="blocked unsafe target path")
+
+    root = _adm5c3_root()
+    file_path = (root / target_path).resolve()
+
+    try:
+        file_path.relative_to(root)
+    except Exception:
+        raise _ADM5C4DF_HTTPException(status_code=400, detail="target path escapes project root")
+
+    if not file_path.exists() or not file_path.is_file():
+        raise _ADM5C4DF_HTTPException(status_code=404, detail="target file not found: " + target_path)
+
+    old_content = file_path.read_text(encoding="utf-8", errors="replace")
+
+    marker_start = "/* ADM-5C-4D REAL PATCH START */"
+    marker_end = "/* ADM-5C-4D REAL PATCH END */"
+
+    css_patch = """
+/* ADM-5C-4D REAL PATCH START */
+@media (max-width: 760px) {
+  .founder-composer,
+  .chat-composer,
+  .worker-composer,
+  .admin-composer,
+  .composer-tray,
+  #founderComposer,
+  #workerComposer {
+    box-sizing: border-box;
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(10px + env(safe-area-inset-bottom));
+    max-width: calc(100vw - 28px);
+    margin-left: auto;
+    margin-right: auto;
+    z-index: 90;
+  }
+
+  .worker-console,
+  .worker-console-body,
+  .founder-chat,
+  .chat-stage,
+  .main-panel {
+    padding-bottom: 108px;
+  }
+}
+/* ADM-5C-4D REAL PATCH END */
+""".strip()
+
+    new_content = old_content
+
+    if marker_start in new_content and marker_end in new_content:
+        s = new_content.find(marker_start)
+        e = new_content.find(marker_end) + len(marker_end)
+        new_content = new_content[:s] + css_patch + new_content[e:]
+    elif "</style>" in new_content:
+        idx = new_content.rfind("</style>")
+        new_content = new_content[:idx] + "\n\n" + css_patch + "\n" + new_content[idx:]
+    elif "</head>" in new_content:
+        new_content = new_content.replace("</head>", "<style>\n" + css_patch + "\n</style>\n</head>", 1)
+    else:
+        new_content = new_content.rstrip() + "\n\n<style>\n" + css_patch + "\n</style>\n"
+
+    if new_content == old_content:
+        raise _ADM5C4DF_HTTPException(status_code=400, detail="no patch generated")
+
+    if _adm5c2_secret_like(new_content):
+        raise _ADM5C4DF_HTTPException(status_code=400, detail="blocked: generated content appears sensitive")
+
+    language = _adm5c4df_language(target_path)
+
+    file_block = (
+        "FILE: " + target_path + "\n"
+        "```" + language + "\n"
+        + new_content.rstrip() + "\n"
+        "```"
+    )
+
+    now = _adm5c4df_now()
+
+    job["original_instruction"] = instruction
+    job["instruction"] = file_block
+    job["task"] = file_block
+    job["brain_reply"] = file_block
+    job["agent_patch"] = file_block
+    job["agent_patch_writer"] = "ADM-5C-4D-FINAL"
+    job["agent_patch_at"] = now
+    job["allowed_files"] = [target_path]
+    job["agent_patch_files"] = [target_path]
+    job["agent_patch_blocked_files"] = []
+    job["updated_at"] = now
+    job["status"] = "patch_writer_ready"
+    job["last_report"] = "Real Patch Block Generator created FILE block for " + target_path + "."
+
+    _adm5c2_save_queue(queue_path, raw_queue, jobs)
+
+    _adm5c2_append_audit({
+        "timestamp": now,
+        "created_at": now,
+        "action": "real_patch_block_generated",
+        "job_id": job_id,
+        "target_path": target_path,
+        "founder_gated": True,
+        "direct_file_write": False
+    })
+
+    return {
+        "ok": True,
+        "job_id": job_id,
+        "status": "patch_writer_ready",
+        "target_path": target_path,
+        "safe_file_block_count": 1,
+        "blocked_file_block_count": 0,
+        "agent_patch_files": [target_path],
+        "report": job["last_report"]
+    }
+
+
+# IF-CHATKIT-REAL-ENDPOINT-START
+# IdeasForgeAI custom ChatKit endpoint.
+# Uses custom-server path. Does NOT require OPENAI_CHATKIT_WORKFLOW_ID.
+try:
+    from collections import defaultdict
+    from typing import AsyncIterator
+
+    from fastapi import Request, Response, HTTPException
+    from starlette.responses import StreamingResponse
+
+    from agents import Agent, Runner
+    from chatkit.agents import AgentContext, simple_to_agent_input, stream_agent_response
+    from chatkit.server import ChatKitServer, StreamingResult
+    from chatkit.store import Store, NotFoundError
+    from chatkit.types import Attachment, Page, ThreadItem, ThreadMetadata, UserMessageItem, ThreadStreamEvent
+except Exception as _if_chatkit_import_error:
+    _if_chatkit_import_error_value = _if_chatkit_import_error
+else:
+    _if_chatkit_import_error_value = None
+
+
+if _if_chatkit_import_error_value is None:
+    class IFChatKitMemoryStore(Store[dict]):
+        def __init__(self):
+            self.threads: dict[str, ThreadMetadata] = {}
+            self.items: dict[str, list[ThreadItem]] = defaultdict(list)
+            self.attachments: dict[str, Attachment] = {}
+
+        async def load_thread(self, thread_id: str, context: dict) -> ThreadMetadata:
+            if thread_id not in self.threads:
+                raise NotFoundError(f"Thread {thread_id} not found")
+            return self.threads[thread_id]
+
+        async def save_thread(self, thread: ThreadMetadata, context: dict) -> None:
+            self.threads[thread.id] = thread
+
+        async def load_threads(self, limit: int, after: str | None, order: str, context: dict) -> Page[ThreadMetadata]:
+            rows = list(self.threads.values())
+            return self._paginate(rows, after, limit, order, sort_key=lambda t: t.created_at, cursor_key=lambda t: t.id)
+
+        async def load_thread_items(self, thread_id: str, after: str | None, limit: int, order: str, context: dict) -> Page[ThreadItem]:
+            rows = list(self.items.get(thread_id, []))
+            return self._paginate(rows, after, limit, order, sort_key=lambda i: i.created_at, cursor_key=lambda i: i.id)
+
+        async def add_thread_item(self, thread_id: str, item: ThreadItem, context: dict) -> None:
+            self.items[thread_id].append(item)
+
+        async def save_item(self, thread_id: str, item: ThreadItem, context: dict) -> None:
+            rows = self.items[thread_id]
+            for idx, existing in enumerate(rows):
+                if existing.id == item.id:
+                    rows[idx] = item
+                    return
+            rows.append(item)
+
+        async def load_item(self, thread_id: str, item_id: str, context: dict) -> ThreadItem:
+            for item in self.items.get(thread_id, []):
+                if item.id == item_id:
+                    return item
+            raise NotFoundError(f"Item {item_id} not found in thread {thread_id}")
+
+        async def delete_thread(self, thread_id: str, context: dict) -> None:
+            self.threads.pop(thread_id, None)
+            self.items.pop(thread_id, None)
+
+        async def delete_thread_item(self, thread_id: str, item_id: str, context: dict) -> None:
+            self.items[thread_id] = [
+                item for item in self.items.get(thread_id, [])
+                if item.id != item_id
+            ]
+
+        async def save_attachment(self, attachment: Attachment, context: dict) -> None:
+            self.attachments[attachment.id] = attachment
+
+        async def load_attachment(self, attachment_id: str, context: dict) -> Attachment:
+            if attachment_id not in self.attachments:
+                raise NotFoundError(f"Attachment {attachment_id} not found")
+            return self.attachments[attachment_id]
+
+        async def delete_attachment(self, attachment_id: str, context: dict) -> None:
+            self.attachments.pop(attachment_id, None)
+
+        def _paginate(self, rows: list, after: str | None, limit: int, order: str, sort_key, cursor_key):
+            sorted_rows = sorted(rows, key=sort_key, reverse=(order == "desc"))
+            start = 0
+
+            if after:
+                for idx, row in enumerate(sorted_rows):
+                    if cursor_key(row) == after:
+                        start = idx + 1
+                        break
+
+            data = sorted_rows[start:start + limit]
+            has_more = start + limit < len(sorted_rows)
+            next_after = cursor_key(data[-1]) if has_more and data else None
+
+            return Page(data=data, has_more=has_more, after=next_after)
+
+
+    _if_chatkit_agent = Agent(
+        name="IdeasForgeAI",
+        model="gpt-4.1-mini",
+        instructions=(
+            "You are IdeasForgeAI, an expert AI product assistant. "
+            "Help users create apps, websites, code plans, designs, documents, workflows, and professional outputs. "
+            "Keep answers clear, practical, structured, and founder-friendly. "
+            "When helpful, route thinking around ForgeStudio, ForgeCode, and ForgeWork."
+        ),
+    )
+
+
+    class IFIdeasForgeChatKitServer(ChatKitServer[dict]):
+        async def respond(
+            self,
+            thread: ThreadMetadata,
+            input_user_message: UserMessageItem | None,
+            context: dict,
+        ) -> AsyncIterator[ThreadStreamEvent]:
+            items_page = await self.store.load_thread_items(
+                thread.id,
+                after=None,
+                limit=30,
+                order="asc",
+                context=context,
+            )
+
+            input_items = await simple_to_agent_input(items_page.data)
+            agent_context = AgentContext(
+                thread=thread,
+                store=self.store,
+                request_context=context,
+            )
+
+            result = Runner.run_streamed(
+                _if_chatkit_agent,
+                input_items,
+                context=agent_context,
+            )
+
+            async for event in stream_agent_response(agent_context, result):
+                yield event
+
+
+    _if_chatkit_store = IFChatKitMemoryStore()
+    _if_chatkit_server = IFIdeasForgeChatKitServer(store=_if_chatkit_store)
+
+
+@app.get("/api/chatkit/real-status")
+async def if_chatkit_real_status():
+    import os
+
+    return {
+        "ok": _if_chatkit_import_error_value is None,
+        "mode": "custom-server-real",
+        "openai_api_key_present": bool(os.getenv("OPENAI_API_KEY")),
+        "workflow_id_required": False,
+        "import_error": str(_if_chatkit_import_error_value) if _if_chatkit_import_error_value else None,
+        "endpoint": "/api/chatkit"
+    }
+
+
+@app.post("/api/chatkit")
+async def if_chatkit_endpoint(request: Request):
+    import os
+
+    if _if_chatkit_import_error_value is not None:
+        raise HTTPException(
+            status_code=500,
+            detail="ChatKit import failed: " + str(_if_chatkit_import_error_value)
+        )
+
+    if not os.getenv("OPENAI_API_KEY"):
+        raise HTTPException(
+            status_code=500,
+            detail="OPENAI_API_KEY is not set on backend."
+        )
+
+    context = {
+        "source": "ideasforgeai-chatkit-test",
+        "user": request.headers.get("x-ideasforge-user", "local-test-user")
+    }
+
+    result = await _if_chatkit_server.process(await request.body(), context=context)
+
+    if isinstance(result, StreamingResult):
+        return StreamingResponse(result, media_type="text/event-stream")
+
+    return Response(content=result.json, media_type="application/json")
+# IF-CHATKIT-REAL-ENDPOINT-END
+
+
+# IF-CHATKIT-CORS-START
+# Local ChatKit test CORS. Safe for frontend 5179 -> backend 5052.
+try:
+    from fastapi.middleware.cors import CORSMiddleware
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[
+            "http://192.168.1.7:5179",
+            "http://127.0.0.1:5179",
+            "http://localhost:5179",
+            "https://ideasforgeai.com",
+            "https://www.ideasforgeai.com",
+        ],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+except Exception as _if_chatkit_cors_error:
+    print("IF ChatKit CORS setup skipped:", _if_chatkit_cors_error)
+# IF-CHATKIT-CORS-END
+
 
