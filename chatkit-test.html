@@ -1,0 +1,515 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>IdeasForgeAI ChatKit Test</title>
+  <style>
+    :root {
+      --brand: #9B7CFF;
+      --brand-2: #7B4DFF;
+      --bg: #050507;
+      --panel: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.14);
+      --text: rgba(255,255,255,0.94);
+      --muted: rgba(255,255,255,0.58);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 74% 30%, rgba(93, 70, 210, 0.20), transparent 38%),
+        linear-gradient(180deg, #060609 0%, #020203 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .chatkit-shell {
+      width: 100vw;
+      height: 100dvh;
+      min-height: 100vh;
+      position: relative;
+      padding:
+        calc(env(safe-area-inset-top, 0px) + 72px)
+        18px
+        calc(env(safe-area-inset-bottom, 0px) + 18px);
+    }
+
+    .mobile-header {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: env(safe-area-inset-top, 0px);
+      height: 98px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      padding: 24px 24px 0 0;
+      pointer-events: none;
+    }
+
+    .mobile-menu {
+      width: 46px;
+      height: 46px;
+      margin-left: 3px;
+      border-radius: 17px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(42,45,53,0.84), rgba(27,29,36,0.78));
+      box-shadow: 0 10px 28px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.08);
+      color: white;
+      display: grid;
+      place-items: center;
+      pointer-events: auto;
+      transform: translate3d(3px, 11px, 0);
+    }
+
+    .mobile-menu span,
+    .mobile-menu span::before,
+    .mobile-menu span::after {
+      content: "";
+      display: block;
+      width: 15px;
+      height: 2px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.88);
+    }
+
+    .mobile-menu span::before { transform: translateY(-6px); }
+    .mobile-menu span::after { transform: translateY(4px); }
+
+    .mobile-brand {
+      margin-left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      font-size: 21px;
+      font-weight: 760;
+      letter-spacing: -0.045em;
+      transform: translate3d(3px, 10px, 0);
+    }
+
+    .brand-mark {
+      width: 38px;
+      height: 38px;
+      display: inline-grid;
+      place-items: center;
+    }
+
+    .brand-mark svg {
+      width: 38px;
+      height: 38px;
+      fill: var(--brand);
+      filter: drop-shadow(0 0 12px rgba(155,124,255,0.28));
+    }
+
+    .mobile-brand strong span { color: var(--brand); }
+
+    .top-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 12px;
+      pointer-events: auto;
+      transform: translateY(10px);
+    }
+
+    .top-action-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 17px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(42,45,53,0.82), rgba(26,28,34,0.76));
+      color: rgba(255,255,255,0.86);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+
+    .top-action-btn svg {
+      width: 22px;
+      height: 22px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .chatkit-stage {
+      width: 100%;
+      height: 100%;
+      border-radius: 28px;
+      overflow: hidden;
+      background: rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    .chatkit-placeholder {
+      height: 100%;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 28px;
+    }
+
+    .chatkit-card {
+      max-width: 330px;
+      border: 1px solid var(--stroke);
+      background: rgba(255,255,255,0.055);
+      border-radius: 26px;
+      padding: 22px;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.28);
+    }
+
+    .chatkit-card h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      letter-spacing: -0.04em;
+    }
+
+    .chatkit-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .chatkit-card code {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 8px 10px;
+      border-radius: 12px;
+      background: rgba(0,0,0,0.28);
+      color: rgba(255,255,255,0.78);
+      font-size: 12px;
+    }
+      .chatkit-stage {
+      padding: 0;
+    }
+
+    #chatkit-mount {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      display: block;
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    #chatkit-mount openai-chatkit {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      display: block;
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    .chatkit-status {
+      position: fixed;
+      left: 18px;
+      right: 18px;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+      z-index: 40;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(15,15,20,0.86);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.78);
+      font-size: 12px;
+      line-height: 1.35;
+      text-align: center;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display: none;
+    }
+
+    .chatkit-status.show {
+      display: block;
+    }
+      .chatkit-stage {
+      padding: 0;
+    }
+
+    #chatkit-mount {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      display: block;
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    #chatkit-mount openai-chatkit {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      display: block;
+      border-radius: 28px;
+      overflow: hidden;
+    }
+
+    .chatkit-status {
+      position: fixed;
+      left: 18px;
+      right: 18px;
+      bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
+      z-index: 40;
+      padding: 10px 12px;
+      border-radius: 16px;
+      background: rgba(15,15,20,0.86);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.78);
+      font-size: 12px;
+      line-height: 1.35;
+      text-align: center;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display: none;
+    }
+
+    .chatkit-status.show {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chatkit-shell">
+    <header class="mobile-header">
+      <button class="mobile-menu" type="button" aria-label="Open menu"><span></span></button>
+
+      <div class="mobile-brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <path d="M32 5 C36.4 22.4 41.6 27.6 59 32 C41.6 36.4 36.4 41.6 32 59 C27.6 41.6 22.4 36.4 5 32 C22.4 27.6 27.6 22.4 32 5Z"></path>
+            <circle cx="13" cy="16" r="3"></circle>
+            <circle cx="51" cy="19" r="3"></circle>
+            <circle cx="16" cy="50" r="3"></circle>
+          </svg>
+        </span>
+        <strong>IdeasForge<span>AI</span></strong>
+      </div>
+
+      <div class="top-actions">
+        <button class="top-action-btn" type="button" aria-label="Language">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M3.8 12h16.4"></path><path d="M12 3.5c2.15 2.25 3.25 5.05 3.25 8.5S14.15 18.25 12 20.5c-2.15-2.25-3.25-5.05-3.25-8.5S9.85 5.75 12 3.5Z"></path></svg>
+        </button>
+        <button class="top-action-btn" type="button" aria-label="Profile">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"></circle><path d="M5.2 20c.85-3.25 3.25-5.1 6.8-5.1s5.95 1.85 6.8 5.1"></path></svg>
+        </button>
+      </div>
+    </header>
+
+            <main class="chatkit-stage" id="chatkit-stage">
+      <div id="chatkit-mount"></div>
+    </main>
+
+    <div class="chatkit-status" id="chatkit-status"></div>
+
+    <div class="chatkit-status" id="chatkit-status"></div>
+  </div>
+
+
+
+
+<!-- IF-CHATKIT-WIDGET-MOUNT-START -->
+<script src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js" async></script>
+
+<script>
+(function(){
+  const CHATKIT_API_URL =
+    (location.hostname === "192.168.1.7" || location.hostname === "127.0.0.1" || location.hostname === "localhost")
+      ? "http://192.168.1.7:5052/api/chatkit"
+      : "https://ideasforgeai-api.onrender.com/api/chatkit";
+
+  // Add your real domain key later as:
+  // ?domainKey=YOUR_DOMAIN_KEY
+  const params = new URLSearchParams(window.location.search);
+  const DOMAIN_KEY = params.get("domainKey") || "local-dev";
+
+  const mount = document.getElementById("chatkit-mount");
+  const status = document.getElementById("chatkit-status");
+
+  function showStatus(message) {
+    if (!status) return;
+    status.textContent = message;
+    status.classList.add("show");
+  }
+
+  function hideStatus() {
+    if (!status) return;
+    status.classList.remove("show");
+  }
+
+  async function mountChatKit() {
+    try {
+      if (!mount) return;
+
+      if (!window.customElements) {
+        showStatus("ChatKit could not load: custom elements unavailable.");
+        return;
+      }
+
+      await customElements.whenDefined("openai-chatkit");
+
+      mount.innerHTML = "";
+
+      const chatkit = document.createElement("openai-chatkit");
+
+      chatkit.setOptions({
+        api: {
+          url: CHATKIT_API_URL,
+          domainKey: DOMAIN_KEY,
+          fetch(input, init) {
+            const nextInit = init || {};
+            const headers = new Headers(nextInit.headers || {});
+            headers.set("x-ideasforge-user", "ideasforgeai-local-test");
+            return fetch(input, {
+              ...nextInit,
+              headers
+            });
+          }
+        },
+        startScreen: {
+          greeting: "How can IdeasForgeAI help you create today?",
+          prompts: [
+            "Create a landing page plan",
+            "Build an app idea",
+            "Help me write code",
+            "Plan a professional workflow"
+          ]
+        },
+        composer: {
+          placeholder: "Ask IdeasForgeAI..."
+        },
+        theme: {
+          colorScheme: "dark",
+          accentColor: "#9B7CFF"
+        }
+      });
+
+      chatkit.style.width = "100%";
+      chatkit.style.height = "100%";
+      chatkit.style.display = "block";
+
+      mount.appendChild(chatkit);
+
+      if (DOMAIN_KEY === "local-dev") {
+        showStatus("ChatKit widget mounted. Add ?domainKey=YOUR_DOMAIN_KEY if the widget asks for a registered domain key.");
+      } else {
+        hideStatus();
+      }
+    } catch (err) {
+      console.error("ChatKit mount failed:", err);
+      showStatus("ChatKit mount failed: " + (err && err.message ? err.message : String(err)));
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", mountChatKit);
+  } else {
+    mountChatKit();
+  }
+
+  setTimeout(mountChatKit, 800);
+  setTimeout(mountChatKit, 1800);
+})();
+</script>
+<!-- IF-CHATKIT-WIDGET-MOUNT-END -->
+
+
+<!-- IF-CHATKIT-BLANK-DEBUG-START -->
+<style id="chatkit-blank-debug-style">
+  .chatkit-debug-panel {
+    position: fixed;
+    left: 16px;
+    right: 16px;
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 88px);
+    z-index: 9999;
+    display: none;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(12,12,16,0.92);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: rgba(255,255,255,0.92);
+    font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 210px;
+    overflow: auto;
+    box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+  }
+
+  .chatkit-debug-panel.show {
+    display: block;
+  }
+</style>
+
+<div class="chatkit-debug-panel" id="chatkit-debug-panel"></div>
+
+<script id="chatkit-blank-debug-script">
+(function(){
+  const panel = document.getElementById("chatkit-debug-panel");
+
+  function showDebug(label, data) {
+    if (!panel) return;
+
+    let text = "";
+    try {
+      text = typeof data === "string" ? data : JSON.stringify(data, null, 2);
+    } catch (e) {
+      text = String(data);
+    }
+
+    panel.textContent = label + ":\n" + text;
+    panel.classList.add("show");
+    console.log(label, data);
+  }
+
+  window.addEventListener("chatkit.error", function(event){
+    showDebug("chatkit.error", event.detail || event);
+  });
+
+  window.addEventListener("chatkit.log", function(event){
+    console.log("chatkit.log", event.detail || event);
+  });
+
+  window.addEventListener("error", function(event){
+    if (String(event.message || "").toLowerCase().includes("chatkit")) {
+      showDebug("window.error", event.message);
+    }
+  });
+
+  window.addEventListener("unhandledrejection", function(event){
+    const reason = event.reason || "";
+    if (String(reason).toLowerCase().includes("chatkit") || String(reason).toLowerCase().includes("cors")) {
+      showDebug("unhandledrejection", String(reason));
+    }
+  });
+})();
+</script>
+<!-- IF-CHATKIT-BLANK-DEBUG-END -->
+
+</body>
+
+<!-- IF-CHATKIT-LIVE-DEPLOY-MARKER-START -->
+<!-- ChatKit live deploy marker: 20260709-173449 -->
+<!-- IF-CHATKIT-LIVE-DEPLOY-MARKER-END -->
+
+<!-- IF-ROOT-CHATKIT-LIVE-MARKER-START -->
+<!-- Root live ChatKit test page deploy marker: 20260709-174454 -->
+<!-- IF-ROOT-CHATKIT-LIVE-MARKER-END -->
+</html>
+
+
+
+
+
+
