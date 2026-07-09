@@ -1136,8 +1136,49 @@
 </script>
 <!-- IF-LIVE-HOME-CHATKIT-QUERY-END -->
 
+
+<!-- IF-CHATKIT-HIDE-DEBUG-OVERLAY-START -->
+<style id="if-chatkit-hide-debug-overlay-style">
+  .if-chatkit-debug,
+  .if-chatkit-debug.show {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+</style>
+
+<script id="if-chatkit-hide-debug-overlay-script">
+(function(){
+  function hideChatKitDebug(){
+    if(new URLSearchParams(location.search).get("chatkit") !== "1") return;
+
+    document.querySelectorAll(".if-chatkit-debug, #if-chatkit-debug").forEach(function(el){
+      el.classList.remove("show");
+      el.style.setProperty("display", "none", "important");
+      el.style.setProperty("visibility", "hidden", "important");
+      el.style.setProperty("opacity", "0", "important");
+      el.style.setProperty("pointer-events", "none", "important");
+    });
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", hideChatKitDebug);
+  } else {
+    hideChatKitDebug();
+  }
+
+  setTimeout(hideChatKitDebug, 500);
+  setTimeout(hideChatKitDebug, 1500);
+  setTimeout(hideChatKitDebug, 3500);
+  setTimeout(hideChatKitDebug, 6000);
+})();
+</script>
+<!-- IF-CHATKIT-HIDE-DEBUG-OVERLAY-END -->
+
 </body>
 </html>
+
 
 
 
