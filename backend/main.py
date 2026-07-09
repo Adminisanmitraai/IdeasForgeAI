@@ -1265,6 +1265,14 @@ if frontend_dir.exists():
         name="frontend",
     )
 
+convera_dir = frontend_dir / "convera"
+if convera_dir.exists():
+    app.mount(
+        "/convera",
+        StaticFiles(directory=str(convera_dir), html=True),
+        name="convera",
+    )
+
 
 @app.get("/coding-agent")
 def coding_agent_workspace():
