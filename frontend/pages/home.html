@@ -1784,8 +1784,105 @@
 </script>
 <!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
 
+<!-- IF-CHATKIT-FINAL-POLISH-START -->
+<style id="if-chatkit-final-polish-style">
+@media (max-width: 768px) {
+  html.if-chatkit-live-mode .if-chatkit-live-shell,
+  html.if-chatkit-mode .if-chatkit-mobile-shell {
+    padding-bottom: 104px !important;
+    box-sizing: border-box !important;
+  }
+
+  html.if-chatkit-live-mode .if-chatkit-panel,
+  html.if-chatkit-mode .if-chatkit-panel {
+    transform: translateY(-24px);
+  }
+
+  .ifck-floating-tools,
+  .ifck-tool-plus,
+  .ifck-tool-mic,
+  button.ifck-tool-plus,
+  button.ifck-tool-mic {
+    display: none !important;
+  }
+
+  .if-chatkit-plus-btn,
+  .if-chatkit-mic-btn {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    color: #111 !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    font-size: 22px !important;
+    line-height: 1 !important;
+    flex: 0 0 auto !important;
+    z-index: 2 !important;
+  }
+
+  .if-chatkit-mic-btn {
+    font-size: 18px !important;
+  }
+}
+</style>
+
+<script id="if-chatkit-final-polish-script">
+(function () {
+  const params = new URLSearchParams(location.search);
+  if (params.get("chatkit") !== "1") return;
+
+  function addComposerButtons() {
+    const input =
+      document.querySelector('textarea[placeholder*="Message" i]') ||
+      document.querySelector('input[placeholder*="Message" i]') ||
+      document.querySelector('[contenteditable="true"]');
+
+    if (!input) return;
+
+    const row = input.closest("form") || input.parentElement;
+    if (!row) return;
+
+    const send =
+      row.querySelector('button[type="submit"]') ||
+      row.querySelector('button[aria-label*="send" i]') ||
+      row.querySelector('button:last-of-type');
+
+    if (!row.querySelector(".if-chatkit-plus-btn")) {
+      const plus = document.createElement("button");
+      plus.type = "button";
+      plus.className = "if-chatkit-plus-btn";
+      plus.setAttribute("aria-label", "Add");
+      plus.textContent = "+";
+      row.insertBefore(plus, row.firstChild);
+    }
+
+    if (send && !row.querySelector(".if-chatkit-mic-btn")) {
+      const mic = document.createElement("button");
+      mic.type = "button";
+      mic.className = "if-chatkit-mic-btn";
+      mic.setAttribute("aria-label", "Voice note");
+      mic.textContent = "🎙";
+      row.insertBefore(mic, send);
+    }
+  }
+
+  const observer = new MutationObserver(addComposerButtons);
+  observer.observe(document.documentElement, { childList: true, subtree: true });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", addComposerButtons);
+  } else {
+    addComposerButtons();
+  }
+})();
+</script>
+<!-- IF-CHATKIT-FINAL-POLISH-END -->
 </body>
 </html>
+
 
 
 
