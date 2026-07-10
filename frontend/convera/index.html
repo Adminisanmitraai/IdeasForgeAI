@@ -2,153 +2,88 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1, viewport-fit=cover" />
-
-  <meta name="theme-color" content="#ffffff" />
-
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+  />
+  <meta name="theme-color" content="#f8faff" />
   <title>Convera</title>
-
-  <link rel="stylesheet" href="./convera.css?v=2" />
+  <link rel="stylesheet" href="./convera.css?v=3" />
 </head>
 
 <body>
   <main class="convera-shell">
-
     <header class="topbar">
-
       <div class="topbar-left">
-
-        <button
-          class="top-icon-button"
-          id="menuBtn"
-          type="button"
-          aria-label="Open menu"
-        >
+        <button class="header-button menu-button" id="menuBtn" type="button" aria-label="Open menu">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="5" r="1.7"></circle>
-            <circle cx="12" cy="12" r="1.7"></circle>
-            <circle cx="12" cy="19" r="1.7"></circle>
+            <circle cx="12" cy="5.5" r="1.45"></circle>
+            <circle cx="12" cy="12" r="1.45"></circle>
+            <circle cx="12" cy="18.5" r="1.45"></circle>
           </svg>
         </button>
 
-        <button
-          class="convera-logo-button"
-          type="button"
-          aria-label="Convera home"
-        >
-          <svg
-            class="convera-symbol"
-            viewBox="0 0 64 64"
-            aria-hidden="true"
-          >
+        <button class="brand-button" type="button" aria-label="Convera">
+          <svg class="convera-symbol" viewBox="0 0 64 64" aria-hidden="true">
             <defs>
-              <linearGradient
-                id="converaGradient"
-                x1="8"
-                y1="6"
-                x2="56"
-                y2="58"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stop-color="#20d8a0"></stop>
-                <stop offset="48%" stop-color="#1688ff"></stop>
-                <stop offset="100%" stop-color="#5025d5"></stop>
+              <linearGradient id="brandGradient" x1="12" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#20D6A2"></stop>
+                <stop offset="0.48" stop-color="#1688FF"></stop>
+                <stop offset="1" stop-color="#5227D8"></stop>
               </linearGradient>
             </defs>
 
             <path
-              fill="url(#converaGradient)"
-              d="M32 6C17.64 6 6 16.75 6 30c0 7.11 3.37 13.5 8.72 17.88L12 58l11.42-5.18A28.17 28.17 0 0 0 32 54c14.36 0 26-10.75 26-24S46.36 6 32 6Zm0 38c-8.84 0-16-6.27-16-14s7.16-14 16-14 16 6.27 16 14-7.16 14-16 14Z"
+              fill="url(#brandGradient)"
+              fill-rule="evenodd"
+              d="M33 5C17.5 5 6 16.2 6 30.1c0 6.4 2.5 12.3 7.1 16.7L10.7 58l11-5.3A29.3 29.3 0 0 0 33 55c7.9 0 14.8-3 19.7-7.8l-7.4-7.4A17.4 17.4 0 0 1 33 44.7c-9.2 0-16.3-6.4-16.3-14.6S23.8 15.5 33 15.5c5 0 9.4 1.9 12.3 5l7.4-7.4C47.8 8 40.8 5 33 5Zm-8.2 25.2a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Z"
             ></path>
-
-            <circle cx="25" cy="30" r="2.6" fill="#ffffff"></circle>
-            <circle cx="32" cy="30" r="2.6" fill="#ffffff"></circle>
-            <circle cx="39" cy="30" r="2.6" fill="#ffffff"></circle>
           </svg>
         </button>
-
       </div>
 
       <div class="topbar-right">
-
-        <button
-          class="top-icon-button"
-          id="cameraBtn"
-          type="button"
-          aria-label="Open camera"
-        >
+        <button class="header-button" id="cameraBtn" type="button" aria-label="Open camera">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M8.5 6.5 10 4.5h4l1.5 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3.5Z"
-            ></path>
-            <circle cx="12" cy="13" r="4"></circle>
+            <path d="M8.8 6.5 10.2 4.8h3.6l1.4 1.7H18a2.2 2.2 0 0 1 2.2 2.2v8.6a2.2 2.2 0 0 1-2.2 2.2H6a2.2 2.2 0 0 1-2.2-2.2V8.7A2.2 2.2 0 0 1 6 6.5h2.8Z"></path>
+            <circle cx="12" cy="13" r="3.6"></circle>
           </svg>
         </button>
 
-        <button
-          class="add-user-button"
-          id="addUserBtn"
-          type="button"
-          aria-label="Add user"
-        >
+        <button class="add-user-button" id="addUserBtn" type="button" aria-label="Add user">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 5v14M5 12h14"></path>
+            <path d="M12 6v12M6 12h12"></path>
           </svg>
         </button>
-
       </div>
-
     </header>
 
     <section class="chat-thread" id="chatThread">
-
       <div class="empty-state" id="emptyState">
-        <svg
-          class="empty-logo"
-          viewBox="0 0 64 64"
-          aria-hidden="true"
-        >
+        <svg class="empty-logo" viewBox="0 0 64 64" aria-hidden="true">
           <defs>
-            <linearGradient
-              id="emptyLogoGradient"
-              x1="8"
-              y1="6"
-              x2="56"
-              y2="58"
-              gradientUnits="userSpaceOnUse"
-            >
-              <stop offset="0%" stop-color="#20d8a0"></stop>
-              <stop offset="48%" stop-color="#1688ff"></stop>
-              <stop offset="100%" stop-color="#5025d5"></stop>
+            <linearGradient id="emptyGradient" x1="12" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stop-color="#20D6A2"></stop>
+              <stop offset="0.48" stop-color="#1688FF"></stop>
+              <stop offset="1" stop-color="#5227D8"></stop>
             </linearGradient>
           </defs>
 
           <path
-            fill="url(#emptyLogoGradient)"
-            d="M32 6C17.64 6 6 16.75 6 30c0 7.11 3.37 13.5 8.72 17.88L12 58l11.42-5.18A28.17 28.17 0 0 0 32 54c14.36 0 26-10.75 26-24S46.36 6 32 6Zm0 38c-8.84 0-16-6.27-16-14s7.16-14 16-14 16 6.27 16 14-7.16 14-16 14Z"
+            fill="url(#emptyGradient)"
+            fill-rule="evenodd"
+            d="M33 5C17.5 5 6 16.2 6 30.1c0 6.4 2.5 12.3 7.1 16.7L10.7 58l11-5.3A29.3 29.3 0 0 0 33 55c7.9 0 14.8-3 19.7-7.8l-7.4-7.4A17.4 17.4 0 0 1 33 44.7c-9.2 0-16.3-6.4-16.3-14.6S23.8 15.5 33 15.5c5 0 9.4 1.9 12.3 5l7.4-7.4C47.8 8 40.8 5 33 5Zm-8.2 25.2a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Z"
           ></path>
-
-          <circle cx="25" cy="30" r="2.6" fill="#ffffff"></circle>
-          <circle cx="32" cy="30" r="2.6" fill="#ffffff"></circle>
-          <circle cx="39" cy="30" r="2.6" fill="#ffffff"></circle>
         </svg>
 
         <p>Start a conversation</p>
       </div>
-
     </section>
 
     <form class="composer" id="composer">
-
-      <button
-        class="composer-icon-button"
-        id="plusBtn"
-        type="button"
-        aria-label="Add attachment"
-      >
+      <button class="composer-side-button" id="plusBtn" type="button" aria-label="Add attachment">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 5v14M5 12h14"></path>
+          <path d="M12 6v12M6 12h12"></path>
         </svg>
       </button>
 
@@ -161,36 +96,25 @@
         aria-label="Message"
       />
 
-      <button
-        class="composer-icon-button"
-        id="micBtn"
-        type="button"
-        aria-label="Record voice note"
-      >
+      <button class="composer-side-button mic-button" id="micBtn" type="button" aria-label="Record voice note">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="8" y="3" width="8" height="12" rx="4"></rect>
-          <path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"></path>
+          <rect x="8.3" y="3" width="7.4" height="11.7" rx="3.7"></rect>
+          <path d="M5.7 11.3a6.3 6.3 0 0 0 12.6 0"></path>
+          <path d="M12 17.6V21"></path>
+          <path d="M9.4 21h5.2"></path>
         </svg>
       </button>
 
-      <button
-        class="send-button"
-        id="sendBtn"
-        type="submit"
-        aria-label="Send message"
-      >
+      <button class="send-button" id="sendBtn" type="submit" aria-label="Send message">
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m4 4 17 8-17 8 3-8-3-8Z"></path>
-          <path d="M7 12h14"></path>
+          <path d="M4.3 5.1 20 12 4.3 18.9l2.1-5.4L14.7 12l-8.3-1.5-2.1-5.4Z"></path>
         </svg>
       </button>
-
     </form>
 
     <div class="toast" id="toast" role="status"></div>
-
   </main>
 
-  <script src="./convera.js?v=2"></script>
+  <script src="./convera.js?v=3"></script>
 </body>
 </html>
