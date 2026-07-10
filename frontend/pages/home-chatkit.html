@@ -5,11 +5,10 @@
 
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
   >
 
   <meta name="theme-color" content="#000000">
-
   <title>IdeasForgeAI Chat</title>
 
   <script
@@ -19,16 +18,12 @@
 
   <style>
     :root {
-      --app-height: 100dvh;
-      --viewport-top: 0px;
-
-      --header-height: 108px;
-      --side-gap: 17px;
-      --bottom-gap: max(14px, env(safe-area-inset-bottom));
-
-      --purple: #9a75ff;
-      --black: #000;
-      --white: #fff;
+      --viewport-height: 100dvh;
+      --viewport-offset-top: 0px;
+      --header-height: 104px;
+      --page-gap: 16px;
+      --bottom-space: max(8px, env(safe-area-inset-bottom));
+      --purple: #9b78ff;
     }
 
     * {
@@ -42,8 +37,8 @@
       margin: 0;
       overflow: hidden;
       overscroll-behavior: none;
-      background: var(--black);
-      color: var(--white);
+      background: #000;
+      color: #fff;
       font-family:
         Inter,
         ui-sans-serif,
@@ -60,56 +55,49 @@
       touch-action: manipulation;
     }
 
-    .chat-page {
+    .page {
       position: fixed;
-      top: var(--viewport-top);
+      top: var(--viewport-offset-top);
       left: 0;
       width: 100vw;
-      height: var(--app-height);
+      height: var(--viewport-height);
       display: grid;
       grid-template-rows:
         var(--header-height)
         minmax(0, 1fr)
-        var(--bottom-gap);
+        var(--bottom-space);
       overflow: hidden;
       background:
         radial-gradient(
-          circle at 56% 15%,
-          rgba(117, 78, 255, 0.14),
-          transparent 29%
+          circle at 56% 16%,
+          rgba(116, 79, 255, 0.15),
+          transparent 31%
         ),
         #000;
     }
 
-    /* ---------- Header ---------- */
-
-    .app-header {
+    .header {
       min-width: 0;
       display: grid;
-      grid-template-columns: 52px minmax(0, 1fr) auto;
+      grid-template-columns: 48px minmax(0, 1fr) auto;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       padding:
         max(16px, env(safe-area-inset-top))
-        14px
+        13px
         8px;
     }
 
     .header-button {
-      width: 48px;
-      height: 48px;
+      width: 46px;
+      height: 46px;
       margin: 0;
       padding: 0;
       display: grid;
       place-items: center;
       border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 17px;
-      background:
-        linear-gradient(
-          180deg,
-          rgba(43, 46, 52, 0.98),
-          rgba(18, 20, 24, 0.98)
-        );
+      border-radius: 16px;
+      background: linear-gradient(180deg, #292c32, #14161a);
       color: #fff;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -143,17 +131,16 @@
     .brand-mark {
       flex: 0 0 auto;
       color: var(--purple);
-      font-size: 34px;
+      font-size: 32px;
       line-height: 1;
-      filter:
-        drop-shadow(0 0 15px rgba(154, 117, 255, 0.55));
+      filter: drop-shadow(0 0 15px rgba(155, 120, 255, 0.55));
     }
 
     .brand-name {
       min-width: 0;
       overflow: hidden;
       color: #fff;
-      font-size: clamp(21px, 5.8vw, 27px);
+      font-size: clamp(20px, 5.5vw, 25px);
       font-weight: 780;
       line-height: 1;
       letter-spacing: -0.055em;
@@ -168,182 +155,65 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 9px;
+      gap: 8px;
     }
-
-    /* ---------- Chat card ---------- */
 
     .chat-region {
       min-height: 0;
-      padding: 0 var(--side-gap);
+      padding: 0 var(--page-gap);
       overflow: hidden;
     }
 
     .chat-card {
-      position: relative;
       width: min(100%, 980px);
       height: 100%;
       min-height: 0;
       margin: 0 auto;
       overflow: hidden;
-      border: 1px solid rgba(0, 0, 0, 0.26);
-      border-radius: 33px 33px 0 0;
+      border: 1px solid rgba(0, 0, 0, 0.22);
+      border-radius: 32px 32px 0 0;
       background: #fff;
       color: #111;
-      isolation: isolate;
     }
 
     openai-chatkit {
-      position: relative;
-      z-index: 1;
       display: block;
       width: 100%;
       height: 100%;
       min-height: 0;
     }
 
-    /* ---------- Composer overlay tools ---------- */
-
-    .composer-overlay {
-      position: absolute;
-      z-index: 30;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 94px;
-      pointer-events: none;
-    }
-
-    .composer-tool {
-      position: absolute;
-      bottom: 22px;
-      width: 38px;
-      height: 38px;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      place-items: center;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(246, 246, 246, 0.98);
-      color: #202124;
-      box-shadow:
-        0 1px 4px rgba(0, 0, 0, 0.08),
-        inset 0 0 0 1px rgba(0, 0, 0, 0.055);
-      pointer-events: auto;
-      cursor: pointer;
-    }
-
-    .composer-tool:active {
-      transform: scale(0.94);
-    }
-
-    .composer-tool svg {
-      width: 21px;
-      height: 21px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .composer-add {
-      left: 25px;
-    }
-
-    .composer-mic {
-      right: 78px;
-    }
-
-    /* ---------- Status message ---------- */
-
-    .status-toast {
+    .toast {
       position: fixed;
-      z-index: 100;
+      z-index: 20;
       left: 50%;
-      bottom: calc(var(--bottom-gap) + 22px);
-      width: max-content;
+      bottom: calc(var(--bottom-space) + 18px);
       max-width: calc(100vw - 40px);
       padding: 10px 14px;
-      border: 1px solid rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 14px;
       background: rgba(20, 20, 23, 0.94);
       color: #fff;
       font-size: 13px;
-      line-height: 1.35;
       text-align: center;
       opacity: 0;
       pointer-events: none;
       transform: translate(-50%, 8px);
-      transition:
-        opacity 160ms ease,
-        transform 160ms ease;
-      backdrop-filter: blur(15px);
+      transition: opacity 160ms ease, transform 160ms ease;
     }
 
-    .status-toast.visible {
+    .toast.visible {
       opacity: 1;
       transform: translate(-50%, 0);
     }
 
-    /* ---------- Mobile tuning ---------- */
-
-    @media (max-width: 430px) {
-      :root {
-        --header-height: 104px;
-        --side-gap: 16px;
-      }
-
-      .app-header {
-        grid-template-columns: 48px minmax(0, 1fr) auto;
-        gap: 9px;
-        padding-left: 12px;
-        padding-right: 12px;
-      }
-
-      .header-button {
-        width: 46px;
-        height: 46px;
-        border-radius: 16px;
-      }
-
-      .header-actions {
-        gap: 8px;
-      }
-
-      .brand {
-        gap: 8px;
-      }
-
-      .brand-mark {
-        font-size: 31px;
-      }
-
-      .brand-name {
-        font-size: clamp(20px, 5.55vw, 24px);
-      }
-
-      .chat-card {
-        border-radius: 31px 31px 0 0;
-      }
-
-      .composer-add {
-        left: 22px;
-      }
-
-      .composer-mic {
-        right: 76px;
-      }
-    }
-
-    @media (max-width: 370px) {
+    @media (max-width: 390px) {
       :root {
         --header-height: 100px;
-        --side-gap: 13px;
+        --page-gap: 13px;
       }
 
-      .app-header {
+      .header {
         grid-template-columns: 44px minmax(0, 1fr) auto;
         gap: 7px;
         padding-left: 10px;
@@ -356,9 +226,8 @@
         border-radius: 15px;
       }
 
-      .header-button svg {
-        width: 21px;
-        height: 21px;
+      .brand {
+        gap: 7px;
       }
 
       .brand-mark {
@@ -372,19 +241,17 @@
       .header-actions {
         gap: 6px;
       }
-    }
 
-    /* ---------- Desktop ---------- */
+      .chat-card {
+        border-radius: 29px 29px 0 0;
+      }
+    }
 
     @media (min-width: 769px) {
       :root {
-        --header-height: 100px;
-        --side-gap: 22px;
-        --bottom-gap: 18px;
-      }
-
-      .app-header {
-        padding-top: 12px;
+        --header-height: 96px;
+        --page-gap: 22px;
+        --bottom-space: 18px;
       }
 
       .brand {
@@ -394,22 +261,18 @@
       .chat-card {
         border-radius: 28px;
       }
-
-      .composer-overlay {
-        display: none;
-      }
     }
   </style>
 </head>
 
 <body>
-  <div class="chat-page">
-    <header class="app-header">
+  <div class="page">
+    <header class="header">
       <button
-        id="menuButton"
+        id="historyButton"
         class="header-button"
         type="button"
-        aria-label="Open menu"
+        aria-label="Chat history"
       >
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M4 6h16"></path>
@@ -420,10 +283,7 @@
 
       <div class="brand" aria-label="IdeasForgeAI">
         <span class="brand-mark" aria-hidden="true">✦</span>
-
-        <div class="brand-name">
-          IdeasForge<span>AI</span>
-        </div>
+        <div class="brand-name">IdeasForge<span>AI</span></div>
       </div>
 
       <div class="header-actions">
@@ -456,40 +316,13 @@
     <main class="chat-region">
       <section class="chat-card">
         <openai-chatkit id="chatkit"></openai-chatkit>
-
-        <div class="composer-overlay" aria-label="Composer controls">
-          <button
-            id="attachButton"
-            class="composer-tool composer-add"
-            type="button"
-            aria-label="Add attachment"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 5v14"></path>
-              <path d="M5 12h14"></path>
-            </svg>
-          </button>
-
-          <button
-            id="micButton"
-            class="composer-tool composer-mic"
-            type="button"
-            aria-label="Voice note"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <rect x="9" y="3" width="6" height="11" rx="3"></rect>
-              <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"></path>
-              <path d="M12 18v3"></path>
-            </svg>
-          </button>
-        </div>
       </section>
     </main>
 
     <div aria-hidden="true"></div>
   </div>
 
-  <div id="statusToast" class="status-toast" role="status"></div>
+  <div id="toast" class="toast" role="status"></div>
 
   <script>
     (() => {
@@ -501,20 +334,20 @@
 
       const root = document.documentElement;
       const chatkit = document.getElementById("chatkit");
-      const statusToast = document.getElementById("statusToast");
+      const toast = document.getElementById("toast");
 
       let toastTimer = 0;
+      let configureAttempts = 0;
 
-      function showStatus(message) {
-        if (!statusToast) return;
+      function showToast(message) {
+        if (!toast) return;
 
-        window.clearTimeout(toastTimer);
+        clearTimeout(toastTimer);
+        toast.textContent = message;
+        toast.classList.add("visible");
 
-        statusToast.textContent = message;
-        statusToast.classList.add("visible");
-
-        toastTimer = window.setTimeout(() => {
-          statusToast.classList.remove("visible");
+        toastTimer = setTimeout(() => {
+          toast.classList.remove("visible");
         }, 3000);
       }
 
@@ -522,31 +355,40 @@
         const viewport = window.visualViewport;
 
         if (!viewport) {
-          root.style.setProperty("--app-height", `${window.innerHeight}px`);
-          root.style.setProperty("--viewport-top", "0px");
+          root.style.setProperty(
+            "--viewport-height",
+            `${window.innerHeight}px`
+          );
+
+          root.style.setProperty("--viewport-offset-top", "0px");
           return;
         }
 
         root.style.setProperty(
-          "--app-height",
+          "--viewport-height",
           `${Math.round(viewport.height)}px`
         );
 
         root.style.setProperty(
-          "--viewport-top",
+          "--viewport-offset-top",
           `${Math.round(viewport.offsetTop)}px`
         );
       }
 
       async function configureChatKit() {
         if (!chatkit || typeof chatkit.setOptions !== "function") {
-          window.setTimeout(configureChatKit, 120);
+          configureAttempts += 1;
+
+          if (configureAttempts < 100) {
+            setTimeout(configureChatKit, 120);
+          }
+
           return;
         }
 
         if (!domainKey) {
-          showStatus("Missing ChatKit domain key.");
-          console.error("Missing ChatKit domain key in URL.");
+          console.error("Missing ChatKit domain key.");
+          showToast("Missing ChatKit domain key.");
           return;
         }
 
@@ -554,7 +396,7 @@
           await chatkit.setOptions({
             api: {
               url: BACKEND_URL,
-              domainKey: domainKey
+              domainKey
             },
 
             theme: {
@@ -566,15 +408,18 @@
             },
 
             composer: {
-              placeholder: "Message the AI"
+              placeholder: "Message the AI",
+              dictation: {
+                enabled: true
+              }
             }
           });
 
-          console.info("IdeasForgeAI ChatKit ready");
+          console.info("IdeasForgeAI native ChatKit ready");
         } catch (error) {
           console.error("ChatKit initialization failed:", error);
 
-          showStatus(
+          showToast(
             error && error.message
               ? error.message
               : "ChatKit could not start."
@@ -582,7 +427,7 @@
         }
       }
 
-      function runFirstAvailable(actions, fallbackMessage) {
+      function runAvailable(actions, fallbackMessage) {
         for (const action of actions) {
           try {
             const result = action();
@@ -590,35 +435,30 @@
             if (result !== undefined) {
               return true;
             }
-          } catch (error) {
-            console.debug(error);
-          }
+          } catch {}
         }
 
-        if (fallbackMessage) {
-          showStatus(fallbackMessage);
-        }
-
+        showToast(fallbackMessage);
         return false;
       }
 
       document
-        .getElementById("menuButton")
+        .getElementById("historyButton")
         .addEventListener("click", () => {
-          runFirstAvailable(
+          runAvailable(
             [
               () => chatkit?.openHistory?.(),
               () => chatkit?.showHistory?.(),
               () => chatkit?.toggleHistory?.()
             ],
-            "Chat history is also available inside ChatKit."
+            "History is available inside ChatKit."
           );
         });
 
       document
         .getElementById("newChatButton")
         .addEventListener("click", () => {
-          runFirstAvailable(
+          runAvailable(
             [
               () => chatkit?.startNewThread?.(),
               () => chatkit?.newThread?.(),
@@ -631,27 +471,7 @@
       document
         .getElementById("profileButton")
         .addEventListener("click", () => {
-          showStatus("Profile settings will be connected next.");
-        });
-
-      document
-        .getElementById("attachButton")
-        .addEventListener("click", () => {
-          window.dispatchEvent(
-            new CustomEvent("ideasforgeai:attachment-click")
-          );
-
-          showStatus("Attachment support will be connected next.");
-        });
-
-      document
-        .getElementById("micButton")
-        .addEventListener("click", () => {
-          window.dispatchEvent(
-            new CustomEvent("ideasforgeai:voice-note-click")
-          );
-
-          showStatus("Voice-note recording will be connected next.");
+          showToast("Profile settings will be connected next.");
         });
 
       updateViewport();
@@ -661,7 +481,7 @@
       });
 
       window.addEventListener("orientationchange", () => {
-        window.setTimeout(updateViewport, 120);
+        setTimeout(updateViewport, 120);
       });
 
       if (window.visualViewport) {
