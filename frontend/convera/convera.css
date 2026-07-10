@@ -1893,3 +1893,62 @@ body.drawer-open .app-shell {
   box-shadow:
     -16px 0 42px rgba(24, 34, 60, 0.14);
 }
+/* CONVERA MENU FIX V19 */
+:root {
+  --convera-drawer-width: min(82vw, 338px);
+}
+
+#menuBtn {
+  pointer-events: auto !important;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#menuBtn * {
+  pointer-events: none;
+}
+
+#converaDrawer {
+  position: fixed !important;
+  z-index: 110 !important;
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  width: var(--convera-drawer-width);
+  height: 100dvh;
+
+  transform: translateX(-100%) !important;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition: transform 300ms ease, visibility 0s linear 300ms;
+}
+
+#drawerOverlay {
+  position: fixed !important;
+  z-index: 100 !important;
+  inset: 0;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  background: rgba(20, 28, 48, 0.18);
+}
+
+body.drawer-open #converaDrawer {
+  transform: translateX(0) !important;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+body.drawer-open #drawerOverlay {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+body.drawer-open .app-shell {
+  transform: translateX(var(--convera-drawer-width)) !important;
+}
