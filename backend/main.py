@@ -10306,3 +10306,428 @@ except Exception as _if_chatkit_cors_error:
 # IF-CHATKIT-CORS-END
 
 
+
+
+
+# ADM-5F-2-PRODUCTION-SAFETY-LOCK
+import os as _ADM5F2_os
+import re as _ADM5F2_re
+from fastapi.responses import JSONResponse as _ADM5F2_JSONResponse
+
+def _adm5f2_private_host(host_value: str) -> bool:
+    host = str(host_value or "").split(":")[0].strip().lower()
+    if host in ("localhost", "127.0.0.1", "::1", "0.0.0.0"):
+        return True
+    if host.startswith("192.168.") or host.startswith("10."):
+        return True
+    if _ADM5F2_re.match(r"^172\.(1[6-9]|2\d|3[0-1])\.", host):
+        return True
+    return False
+
+def _adm5f2_expected_token() -> str:
+    return str(
+        _ADM5F2_os.getenv("IF_FOUNDER_ADMIN_TOKEN")
+        or _ADM5F2_os.getenv("FOUNDER_ADMIN_TOKEN")
+        or ""
+    ).strip()
+
+@app.middleware("http")
+async def adm5f2_founder_admin_safety_lock(request, call_next):
+    path = str(request.url.path or "")
+
+    if not path.startswith("/api/admin"):
+        return await call_next(request)
+
+    if request.method.upper() == "OPTIONS":
+        return await call_next(request)
+
+    host = request.headers.get("host", "")
+
+    # Local/LAN development remains open so mobile testing does not break.
+    if _adm5f2_private_host(host):
+        return await call_next(request)
+
+    expected = _adm5f2_expected_token()
+
+    if not expected:
+        return _ADM5F2_JSONResponse(
+            status_code=423,
+            content={
+                "ok": False,
+                "error": "founder_admin_locked",
+                "detail": "Public admin API is locked. Set IF_FOUNDER_ADMIN_TOKEN in production environment."
+            }
+        )
+
+    provided = str(
+        request.headers.get("X-IF-Founder-Token")
+        or request.headers.get("x-if-founder-token")
+        or ""
+    ).strip()
+
+    if provided != expected:
+        return _ADM5F2_JSONResponse(
+            status_code=401,
+            content={
+                "ok": False,
+                "error": "founder_admin_unauthorized",
+                "detail": "Founder token required for public admin API access."
+            }
+        )
+
+    response = await call_next(request)
+    response.headers["X-ForgeAdmin-Safety"] = "founder-gated"
+    return response
+
+
+
+# ADM-5F-CLEAN-FOUNDER-ONLY-WORKER-BOUNDARY
+import inspect as _ADM5F_inspect
+import os as _ADM5F_os
+import re as _ADM5F_re
+from fastapi import Body as _ADM5F_Body, HTTPException as _ADM5F_HTTPException, Request as _ADM5F_Request
+from fastapi.responses import JSONResponse as _ADM5F_JSONResponse
+
+
+_ADM5F_PRIVATE_HOST_PATTERN = _ADM5F_re.compile(r"^172\.(1[6-9]|2\d|3[0-1])\.")
+_ADM5F_PUBLIC_CHAT_BLOCKED_PATHS = {
+    "/api/chat-worker-handoff",
+    "/api/public-worker-handoff",
+    "/api/home-worker-handoff",
+    "/api/frontend-worker-handoff",
+}
+
+
+def _adm5f_is_private_host(host_value: str) -> bool:
+    host = str(host_value or "").split(":")[0].strip().lower()
+    if host in {"localhost", "127.0.0.1", "::1", "0.0.0.0"}:
+        return True
+    if host.startswith("192.168.") or host.startswith("10."):
+        return True
+    return bool(_ADM5F_PRIVATE_HOST_PATTERN.match(host))
+
+
+def _adm5f_expected_token() -> str:
+    return str(
+        _ADM5F_os.getenv("IF_FOUNDER_ADMIN_TOKEN")
+        or _ADM5F_os.getenv("FOUNDER_ADMIN_TOKEN")
+        or ""
+    ).strip()
+
+
+def _adm5f_force_local_token() -> bool:
+    return str(_ADM5F_os.getenv("IF_REQUIRE_FOUNDER_TOKEN") or "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def _adm5f_is_worker_sensitive_path(path_value: str) -> bool:
+    path = str(path_value or "").lower()
+    protected_prefixes = (
+        "/api/admin",
+        "/api/worker",
+        "/api/founder",
+    )
+    protected_keywords = (
+        "worker",
+        "job-queue",
+        "safe-apply",
+        "request-apply",
+        "chat-worker-handoff",
+        "front-office-worker",
+        "agent-task",
+        "patch",
+        "dry-run",
+    )
+    if path.startswith(protected_prefixes):
+        return True
+    return path.startswith("/api/") and any(keyword in path for keyword in protected_keywords)
+
+
+def _adm5f_boundary_payload(host_value: str) -> Dict[str, Any]:
+    return {
+        "ok": True,
+        "module": "ADM-5F-CLEAN",
+        "name": "Founder-Only Worker Access Boundary",
+        "status": "active",
+        "host": host_value,
+        "is_private_dev_host": _adm5f_is_private_host(host_value),
+        "local_token_required": _adm5f_force_local_token(),
+        "production_token_configured": bool(_adm5f_expected_token()),
+        "public_frontend_chat_worker_access": "blocked",
+        "founder_office_worker_access": "allowed_with_boundary",
+        "worker_execution": "review_required_and_audited",
+        "protected_paths": [
+            "/api/admin/*",
+            "/api/worker/*",
+            "/api/founder/*",
+            "job-queue",
+            "safe-apply",
+            "request-apply",
+            "chat-worker-handoff",
+            "front-office-worker-handoff",
+        ],
+    }
+
+
+async def _adm5f_delegate_chat_worker_handoff(payload: Dict[str, Any]) -> Dict[str, Any]:
+    for route in getattr(app, "routes", []):
+        if getattr(route, "path", "") != "/api/admin/chat-worker-handoff":
+            continue
+
+        endpoint = route.endpoint
+        try:
+            result = endpoint(payload)
+        except TypeError:
+            try:
+                result = endpoint(body=payload)
+            except TypeError:
+                result = endpoint(payload=payload)
+
+        if _ADM5F_inspect.isawaitable(result):
+            result = await result
+        return result
+
+    raise _ADM5F_HTTPException(status_code=503, detail="chat-worker-handoff route not available")
+
+
+@app.middleware("http")
+async def adm5f_founder_only_worker_boundary(request: _ADM5F_Request, call_next):
+    path = str(request.url.path or "")
+
+    if path in _ADM5F_PUBLIC_CHAT_BLOCKED_PATHS:
+        return _ADM5F_JSONResponse(
+            status_code=403,
+            content={
+                "ok": False,
+                "error": "public_worker_access_blocked",
+                "detail": "Public frontend chat cannot create Worker jobs. Use Founder Office only.",
+            },
+        )
+
+    if not _adm5f_is_worker_sensitive_path(path) or request.method.upper() == "OPTIONS":
+        return await call_next(request)
+
+    host = request.headers.get("host", "")
+    if _adm5f_is_private_host(host) and not _adm5f_force_local_token():
+        response = await call_next(request)
+        response.headers["X-ForgeAdmin-Boundary"] = "local-founder-dev"
+        return response
+
+    expected = _adm5f_expected_token()
+    if not expected:
+        return _ADM5F_JSONResponse(
+            status_code=423,
+            content={
+                "ok": False,
+                "error": "founder_worker_locked",
+                "detail": "Worker/Admin API is locked publicly. Set IF_FOUNDER_ADMIN_TOKEN in production.",
+            },
+        )
+
+    provided = str(
+        request.headers.get("X-IF-Founder-Token")
+        or request.headers.get("x-if-founder-token")
+        or ""
+    ).strip()
+    if provided != expected:
+        return _ADM5F_JSONResponse(
+            status_code=401,
+            content={
+                "ok": False,
+                "error": "founder_worker_unauthorized",
+                "detail": "Founder token required for Worker/Admin API access.",
+            },
+        )
+
+    response = await call_next(request)
+    response.headers["X-ForgeAdmin-Boundary"] = "founder-token-gated"
+    return response
+
+
+@app.get("/api/admin/founder-worker-boundary")
+async def adm5f_founder_worker_boundary(request: _ADM5F_Request):
+    return _adm5f_boundary_payload(request.headers.get("host", ""))
+
+
+@app.get("/api/admin/founder-worker-boundary-v2")
+async def adm5f_founder_worker_boundary_v2(request: _ADM5F_Request):
+    return _adm5f_boundary_payload(request.headers.get("host", ""))
+
+
+async def _adm5f_front_office_worker_handoff_impl(body: Dict[str, Any], source_label: str) -> Dict[str, Any]:
+    payload = dict(body or {})
+    message = str(
+        payload.get("message")
+        or payload.get("task")
+        or payload.get("instruction")
+        or ""
+    ).strip()
+    if not message:
+        raise _ADM5F_HTTPException(status_code=400, detail="message is required")
+
+    payload["message"] = message
+    payload["brain_reply"] = str(payload.get("brain_reply") or message)
+    payload["task"] = message
+    payload["source"] = source_label
+    payload["mode"] = "founder_office"
+    payload["founder_only"] = True
+    payload["worker_access_boundary"] = "ADM-5F-CLEAN"
+    return await _adm5f_delegate_chat_worker_handoff(payload)
+
+
+@app.post("/api/admin/front-office-worker-handoff")
+async def adm5f_front_office_worker_handoff(body: dict = _ADM5F_Body(default={})):
+    return await _adm5f_front_office_worker_handoff_impl(body, "founder_front_office_chat")
+
+
+@app.post("/api/admin/front-office-worker-handoff-v2")
+async def adm5f_front_office_worker_handoff_v2(body: dict = _ADM5F_Body(default={})):
+    return await _adm5f_front_office_worker_handoff_impl(body, "founder_front_office_chat_v2")
+
+
+@app.post("/api/public-worker-handoff")
+async def adm5f_block_public_worker_handoff():
+    raise _ADM5F_HTTPException(
+        status_code=403,
+        detail="Public frontend chat cannot create Worker jobs. Use Founder Office only.",
+    )
+
+
+
+# ADM-5F-CLEAN-BOUNDARY-FINAL-POWERSHELL
+import inspect as _ADM5F_CLEAN_inspect
+from fastapi import Body as _ADM5F_CLEAN_Body, Request as _ADM5F_CLEAN_Request, HTTPException as _ADM5F_CLEAN_HTTPException
+
+_ADM5F_CLEAN_PATHS = {
+    "/api/admin/founder-worker-boundary",
+    "/api/admin/founder-worker-boundary-v2",
+    "/api/admin/front-office-worker-handoff",
+    "/api/admin/front-office-worker-handoff-v2",
+    "/api/public-worker-handoff",
+    "/api/chat-worker-handoff",
+    "/api/home-worker-handoff",
+    "/api/frontend-worker-handoff",
+}
+
+# Remove duplicated/old boundary routes so these clean routes win.
+try:
+    app.router.routes[:] = [
+        r for r in app.router.routes
+        if getattr(r, "path", "") not in _ADM5F_CLEAN_PATHS
+    ]
+except Exception:
+    pass
+
+
+async def _adm5f_clean_boundary_status(request: _ADM5F_CLEAN_Request):
+    return {
+        "ok": True,
+        "module": "CLEAN-CODEX-FINAL",
+        "status": "active",
+        "public_frontend_chat_worker_access": "blocked",
+        "founder_office_worker_access": "allowed_with_boundary",
+        "worker_execution": "review_required_and_audited",
+        "worker_boundary_module": "CLEAN-CODEX-FINAL",
+    }
+
+
+async def _adm5f_clean_front_office_worker_handoff(
+    request: _ADM5F_CLEAN_Request,
+    body: dict = _ADM5F_CLEAN_Body(default={})
+):
+    payload = dict(body or {})
+
+    message = str(
+        payload.get("message")
+        or payload.get("task")
+        or payload.get("instruction")
+        or ""
+    ).strip()
+
+    if not message:
+        raise _ADM5F_CLEAN_HTTPException(status_code=400, detail="message is required")
+
+    payload["message"] = message
+    payload["brain_reply"] = str(payload.get("brain_reply") or message)
+    payload["source"] = "founder_front_office_chat"
+    payload["mode"] = "founder_office"
+    payload["founder_only"] = True
+    payload["worker_access_boundary"] = "CLEAN-CODEX-FINAL"
+
+    # Delegate to the existing admin worker handoff route.
+    for route in getattr(app, "routes", []):
+        if getattr(route, "path", "") == "/api/admin/chat-worker-handoff":
+            endpoint = route.endpoint
+
+            call_attempts = [
+                lambda: endpoint(payload),
+                lambda: endpoint(body=payload),
+                lambda: endpoint(request, payload),
+                lambda: endpoint(request=request, body=payload),
+            ]
+
+            last_error = None
+
+            for attempt in call_attempts:
+                try:
+                    result = attempt()
+                    if _ADM5F_CLEAN_inspect.isawaitable(result):
+                        result = await result
+                    return result
+                except TypeError as exc:
+                    last_error = exc
+                    continue
+
+            raise _ADM5F_CLEAN_HTTPException(
+                status_code=500,
+                detail="chat-worker-handoff signature mismatch: " + str(last_error)
+            )
+
+    raise _ADM5F_CLEAN_HTTPException(
+        status_code=503,
+        detail="chat-worker-handoff route not available"
+    )
+
+
+async def _adm5f_clean_block_public_worker_handoff():
+    raise _ADM5F_CLEAN_HTTPException(
+        status_code=403,
+        detail="Public frontend chat cannot create Worker jobs. Use Founder Office only."
+    )
+
+
+app.add_api_route(
+    "/api/admin/founder-worker-boundary",
+    _adm5f_clean_boundary_status,
+    methods=["GET"],
+)
+
+app.add_api_route(
+    "/api/admin/founder-worker-boundary-v2",
+    _adm5f_clean_boundary_status,
+    methods=["GET"],
+)
+
+app.add_api_route(
+    "/api/admin/front-office-worker-handoff",
+    _adm5f_clean_front_office_worker_handoff,
+    methods=["POST"],
+)
+
+app.add_api_route(
+    "/api/admin/front-office-worker-handoff-v2",
+    _adm5f_clean_front_office_worker_handoff,
+    methods=["POST"],
+)
+
+for _adm5f_clean_public_path in [
+    "/api/public-worker-handoff",
+    "/api/chat-worker-handoff",
+    "/api/home-worker-handoff",
+    "/api/frontend-worker-handoff",
+]:
+    app.add_api_route(
+        _adm5f_clean_public_path,
+        _adm5f_clean_block_public_worker_handoff,
+        methods=["POST"],
+    )
+
