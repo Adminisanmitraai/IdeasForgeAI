@@ -1194,8 +1194,8 @@
           </div>
 
           <div class="if-chatkit-actions">
-            <div class="if-chatkit-action">◎</div>
-            <div class="if-chatkit-action">♙</div>
+            <div class="if-chatkit-action">â—Ž</div>
+            <div class="if-chatkit-action">â™™</div>
           </div>
         </header>
 
@@ -1899,106 +1899,182 @@
 <!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
 
 <!-- IF-LANDING-PRODUCT-ROUTER-START -->
-<script id="if-landing-product-router">
+<script type="application/json" id="if-landing-product-router">
 (() => {
-  const CHAT_URL = "/pages/home-chatkit.html";
-  let navigating = false;
+  "use strict";
 
-  function cleanText(value) {
-    return String(value || "")
-      .replace(/\s+/g, " ")
+  const CHATKIT_PATH = "/pages/home-chatkit.html";
+  const PRODUCT_SELECTOR = [
+    '[data-chip="ForgeStudio" i]',
+    '[data-chip="ForgeCode" i]',
+    '[data-chip="ForgeWork" i]'
+  ].join(",");
+
+  let navigationStarted = false;
+  let lastPointerNavigation = 0;
+
+  function normalizeEntry(value) {
+    const normalized = String(value || "")
+      .replace(/\s+/g, "")
       .trim()
       .toLowerCase();
-  }
 
-  function intentFromEvent(event) {
-    const path =
-      typeof event.composedPath === "function"
-        ? event.composedPath()
-        : [];
-
-    for (const node of path) {
-      if (!(node instanceof Element)) continue;
-
-      const text = cleanText(
-        [
-          node.textContent,
-          node.getAttribute("aria-label"),
-          node.getAttribute("title"),
-          node.getAttribute("data-product"),
-          node.getAttribute("data-mode")
-        ].filter(Boolean).join(" ")
-      );
-
-      if (text.includes("forgestudio")) return "forgestudio";
-      if (text.includes("forgecode")) return "forgecode";
-      if (text.includes("forgework")) return "forgework";
-    }
+    if (normalized === "forgestudio") return "forgestudio";
+    if (normalized === "forgecode") return "forgecode";
+    if (normalized === "forgework") return "forgework";
 
     return "";
   }
 
-  function openChat(entry, prompt = "") {
-    if (navigating) return;
-    navigating = true;
+  function findProductButton(target) {
+    if (!(target instanceof Element)) return null;
 
-    const target = new URL(CHAT_URL, window.location.origin);
-    target.searchParams.set("entry", entry);
+    const directMatch = target.closest(PRODUCT_SELECTOR);
+    if (directMatch) return directMatch;
 
-    if (prompt.trim()) {
-      target.searchParams.set("prompt", prompt.trim());
-    }
+    const candidate = target.closest(
+      ".quick-chip, button, [role='button'], [aria-label], [data-product]"
+    );
 
-    window.location.assign(target.toString());
+    if (!candidate) return null;
+
+    const candidateText = [
+      candidate.getAttribute("data-chip"),
+      candidate.getAttribute("data-product"),
+      candidate.getAttribute("aria-label"),
+      candidate.textContent
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const entry = normalizeEntry(candidateText);
+
+    if (!entry) return null;
+
+    return candidate;
   }
 
-  function blockProductFocus(event) {
-    const entry = intentFromEvent(event);
-    if (!entry) return;
+  function getProductEntry(button) {
+    if (!(button instanceof Element)) return "";
 
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (typeof event.stopImmediatePropagation === "function") {
-      event.stopImmediatePropagation();
-    }
-  }
-
-  function routeProductClick(event) {
-    const entry = intentFromEvent(event);
-    if (!entry) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (typeof event.stopImmediatePropagation === "function") {
-      event.stopImmediatePropagation();
-    }
-
-    openChat(entry);
-  }
-
-  /*
-    pointerdown prevents Safari from focusing the landing composer.
-    click performs the navigation.
-  */
-  document.addEventListener("pointerdown", blockProductFocus, true);
-  document.addEventListener("touchstart", blockProductFocus, {
-    capture: true,
-    passive: false
-  });
-  document.addEventListener("click", routeProductClick, true);
-
-  function findComposer() {
-    return (
-      document.querySelector('textarea[placeholder*="Start writing" i]') ||
-      document.querySelector('input[placeholder*="Start writing" i]') ||
-      document.querySelector('[contenteditable="true"]')
+    return normalizeEntry(
+      button.getAttribute("data-chip") ||
+      button.getAttribute("data-product") ||
+      button.getAttribute("aria-label") ||
+      button.textContent
     );
   }
 
-  function readComposer() {
-    const composer = findComposer();
+  function createChatkitUrl(entry, prompt = "") {
+    const target = new URL(CHATKIT_PATH, window.location.origin);
+
+    target.searchParams.set("entry", entry);
+
+    const cleanPrompt = String(prompt || "").trim();
+
+    if (cleanPrompt) {
+      target.searchParams.set("prompt", cleanPrompt);
+    }
+
+    return target.toString();
+  }
+
+  function navigateToChatkit(entry, prompt = "") {
+    if (navigationStarted) return;
+    if (!entry) return;
+
+    navigationStarted = true;
+    window.location.assign(createChatkitUrl(entry, prompt));
+  }
+
+  function stopLandingHandlers(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+  }
+
+  function routeProductEvent(event) {
+    const button = findProductButton(event.target);
+
+    if (!button) return false;
+
+    const entry = getProductEntry(button);
+
+    if (!entry) return false;
+
+    stopLandingHandlers(event);
+    lastPointerNavigation = Date.now();
+    navigateToChatkit(entry);
+
+    return true;
+  }
+
+  /*
+   * Navigate during capture phase before the landing page's composer-focus
+   * handler can run.
+   *
+   * Pointer Events are preferred. touchstart is retained as an iOS fallback.
+   */
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.isPrimary === false) return;
+      routeProductEvent(event);
+    },
+    true
+  );
+
+  document.addEventListener(
+    "touchstart",
+    (event) => {
+      if (Date.now() - lastPointerNavigation < 750) return;
+      routeProductEvent(event);
+    },
+    {
+      capture: true,
+      passive: false
+    }
+  );
+
+  /*
+   * Keyboard-accessible and browser fallback.
+   */
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (navigationStarted) {
+        const button = findProductButton(event.target);
+
+        if (button) {
+          stopLandingHandlers(event);
+        }
+
+        return;
+      }
+
+      routeProductEvent(event);
+    },
+    true
+  );
+
+  function findLandingComposer() {
+    return (
+      document.querySelector("[data-home-input]") ||
+      document.querySelector(
+        'textarea[placeholder*="Start writing" i]'
+      ) ||
+      document.querySelector(
+        'input[placeholder*="Start writing" i]'
+      )
+    );
+  }
+
+  function readLandingPrompt() {
+    const composer = findLandingComposer();
+
     if (!composer) return "";
 
     if (
@@ -2008,27 +2084,24 @@
       return composer.value.trim();
     }
 
-    return (composer.textContent || "").trim();
+    return String(composer.textContent || "").trim();
   }
 
-  function submitIdea(event) {
-    const prompt = readComposer();
-    if (!prompt) return;
+  function submitLandingIdea(event) {
+    const prompt = readLandingPrompt();
 
-    event?.preventDefault();
-    event?.stopPropagation();
+    if (!prompt) return false;
 
-    if (typeof event?.stopImmediatePropagation === "function") {
-      event.stopImmediatePropagation();
-    }
+    stopLandingHandlers(event);
+    navigateToChatkit("idea", prompt);
 
-    openChat("idea", prompt);
+    return true;
   }
 
   document.addEventListener(
     "keydown",
     (event) => {
-      const composer = findComposer();
+      const composer = findLandingComposer();
 
       if (
         composer &&
@@ -2037,7 +2110,7 @@
         !event.shiftKey &&
         !event.isComposing
       ) {
-        submitIdea(event);
+        submitLandingIdea(event);
       }
     },
     true
@@ -2046,13 +2119,17 @@
   document.addEventListener(
     "click",
     (event) => {
-      const button = event.target.closest(
-        'button[type="submit"], button[aria-label*="send" i], button[aria-label*="submit" i]'
+      if (navigationStarted) return;
+      if (!(event.target instanceof Element)) return;
+
+      const submitButton = event.target.closest(
+        '[data-home-form] button[type="submit"],' +
+        '.home-view .composer-send[type="submit"]'
       );
 
-      if (button && findComposer()) {
-        submitIdea(event);
-      }
+      if (!submitButton) return;
+
+      submitLandingIdea(event);
     },
     true
   );
@@ -2061,6 +2138,7 @@
 <!-- IF-LANDING-PRODUCT-ROUTER-END -->
 </body>
 </html>
+
 
 
 
