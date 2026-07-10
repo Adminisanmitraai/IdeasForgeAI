@@ -126,10 +126,9 @@
       background: #111827;
     }
 
-    .logo-box img {
+    .logo-box svg {
       width: 27px;
       height: 27px;
-      object-fit: contain;
       display: block;
     }
 
@@ -1597,7 +1596,20 @@
         </button>
 
         <div class="logo-box" aria-hidden="true">
-          <img src="/frontend/assets/ideasforgeai-mark.png" alt="" />
+          <svg viewBox="0 0 64 64" fill="none" aria-hidden="true">
+            <path d="M31.8 5.5c3.8 15.2 11.5 23 26.7 26.7-15.2 3.8-22.9 11.5-26.7 26.7C28 43.7 20.3 36 5.1 32.2 20.3 28.5 28 20.7 31.8 5.5Z" fill="url(#forgeadminMarkGradient)"></path>
+            <path d="M31.8 19.8c1.8 6 5.2 9.5 11.2 11.2-6 1.8-9.4 5.2-11.2 11.2-1.8-6-5.2-9.4-11.2-11.2 6-1.7 9.4-5.2 11.2-11.2Z" fill="white"></path>
+            <path d="M49.5 12.5c1.2 4.2 3.4 6.4 7.6 7.6-4.2 1.2-6.4 3.4-7.6 7.6-1.2-4.2-3.4-6.4-7.6-7.6 4.2-1.2 6.4-3.4 7.6-7.6Z" fill="#F5B828"></path>
+            <circle cx="12" cy="15" r="3.2" fill="#4B84FF"></circle>
+            <circle cx="13" cy="49" r="3.2" fill="#4B84FF"></circle>
+            <circle cx="52" cy="48" r="3.2" fill="#7B4DFF"></circle>
+            <defs>
+              <linearGradient id="forgeadminMarkGradient" x1="5" y1="12" x2="58" y2="54" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#3B82F6"></stop>
+                <stop offset="1" stop-color="#7C3AED"></stop>
+              </linearGradient>
+            </defs>
+          </svg>
         </div>
 
         <div class="title-wrap">
@@ -1736,14 +1748,24 @@
       setTimeout(() => toast.classList.remove("show"), 1500);
     }
 
-    function getBrainApiBase() {
-      const host = window.location.hostname;
+    const LOCAL_BACKEND_PORT = "5051";
+    const PRODUCTION_API_BASE = "https://ideasforgeai-api.onrender.com";
+    const PRIVATE_HOST_PATTERN = /^(localhost|127\.0\.0\.1|::1|0\.0\.0\.0|192\.168\.|10\.|172\.(1[6-9]|2\d|3[0-1])\.)/i;
 
-      if (host === "localhost" || host === "127.0.0.1") {
-        return "http://127.0.0.1:5051";
+    function isPrivateHost(hostname) {
+      return PRIVATE_HOST_PATTERN.test(String(hostname || "").trim());
+    }
+
+    function getApiBase() {
+      const host = window.location.hostname || "127.0.0.1";
+      if (isPrivateHost(host)) {
+        return window.location.protocol + "//" + host + ":" + LOCAL_BACKEND_PORT;
       }
+      return PRODUCTION_API_BASE;
+    }
 
-      return "http://" + host + ":5051";
+    function getBrainApiBase() {
+      return getApiBase();
     }
 
     function resizeFounderInput() {
@@ -1773,10 +1795,21 @@
       return item;
     }
 
+    function isSensitiveFounderTokenCommand(value) {
+      return /^founder-token\s+set\b/i.test(String(value || "").trim());
+    }
+
+    function isFounderWorkerCommand(value) {
+      return /^(founder-token(?:\s+|$)|founder-boundary(?:\s+|$)|boundary(?:\s+|$)|front-office\s+|founder-work\s+|jobs-tail(?:\s+|$)|status\s+|work-on\s+|review\s+|final-apply\s+|audit(?:\s+|$))/i.test(String(value || "").trim());
+    }
+
     async function sendFounderMessage() {
       const value = founderInput.value.trim();
 
-      if (document.body.classList.contains("worker-active")) {
+      if (document.body.classList.contains("worker-active") || isFounderWorkerCommand(value)) {
+        if (!document.body.classList.contains("worker-active") && typeof openWorkerPanel === "function") {
+          openWorkerPanel();
+        }
         await sendWorkerCommand(value);
         return;
       }
@@ -1825,7 +1858,7 @@
         maybeAutoHandoffToWorker(value, reply);
       } catch (error) {
         thinking.remove();
-        addBrainMessage("system", "Founder brain connection failed. Backend must run on port 5051.");
+        addBrainMessage("system", "Founder backend connection failed. Check Render API/token.");
         console.error(error);
       }
     }
@@ -2001,7 +2034,9 @@
         return;
       }
 
-      appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + value, "ps-command");
+      if (!isSensitiveFounderTokenCommand(value)) {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + value, "ps-command");
+      }
       founderInput.value = "";
       resizeFounderInput();
 
@@ -2454,7 +2489,7 @@
           thinking.remove();
         }
 
-        addBrainMessage("system", "Founder brain connection failed. Backend must run on port 5051.");
+        addBrainMessage("system", "Founder backend connection failed. Check Render API/token.");
         console.error(error);
       }
     };
@@ -2572,36 +2607,2622 @@
     window.IF_PROD_API_BASE = "https://ideasforgeai-web.onrender.com";
 
     window.getBrainApiBase = function() {
-      const host = window.location.hostname;
-
-      if (host === "localhost" || host === "127.0.0.1") {
-        return "http://127.0.0.1:5051";
-      }
-
-      if (
-        host.startsWith("192.168.") ||
-        host.startsWith("10.") ||
-        host.startsWith("172.")
-      ) {
-        return "http://" + host + ":5051";
-      }
-
-      return window.IF_PROD_API_BASE;
+      return getApiBase();
     };
 
+
+    /* ADM-5C-3B-FIX: resolve proposal number to real job id */
+    async function adm5c3ResolveJobRef(jobRef) {
+      const ref = String(jobRef || "").trim();
+
+      const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+      const data = await response.json();
+
+      const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+      if (/^\d+$/.test(ref)) {
+        const index = parseInt(ref, 10) - 1;
+        if (jobs[index]) {
+          return String(jobs[index].job_id || jobs[index].id || "");
+        }
+      }
+
+      const normalizedRef = ref.toLowerCase();
+
+      const exact = jobs.find(job => {
+        const id = String(job.job_id || job.id || "").trim();
+        return id.toLowerCase() === normalizedRef;
+      });
+
+      if (exact) {
+        return String(exact.job_id || exact.id || "");
+      }
+
+      const partial = jobs.find(job => {
+        const id = String(job.job_id || job.id || "").trim();
+        return id.toLowerCase().includes(normalizedRef) || id.toLowerCase().endsWith(normalizedRef);
+      });
+
+      if (partial) {
+        return String(partial.job_id || partial.id || "");
+      }
+
+      throw new Error("Job not found for reference: " + ref);
+    }
+
+    window.adm5c3GeneratePatchProposal = async function(jobRef) {
+      appendWorkerLine("Resolving job reference " + jobRef + "...", "ps-muted");
+
+      try {
+        const resolvedJobId = await adm5c3ResolveJobRef(jobRef);
+
+        appendWorkerLine("Resolved: " + resolvedJobId, "ps-success");
+        appendWorkerLine("Generating patch proposal for " + resolvedJobId + "...", "ps-muted");
+
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(resolvedJobId) + "/generate-patch-proposal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          appendWorkerLine("Patch proposal failed: " + JSON.stringify(data), "ps-error");
+          return;
+        }
+
+        appendWorkerLine(data.report, "ps-success");
+
+        const dry = data.dry_run || {};
+        const files = dry.proposed_files || [];
+
+        if (files.length) {
+          appendWorkerLine("Proposed files:", "ps-warn");
+          files.forEach(file => appendWorkerLine("  " + file, "ps-muted"));
+        } else {
+          appendWorkerLine("No proposed writes found. This job needs FILE blocks.", "ps-warn");
+        }
+
+        const summary = dry.diff_summary || [];
+        summary.forEach(line => appendWorkerLine("  " + line, "ps-muted"));
+
+        appendWorkerLine("Next: review dry-run diff, approve, request-apply, then safe-apply only if writes are valid.", "ps-warn");
+      } catch (error) {
+        appendWorkerLine("Patch proposal failed: " + error.message, "ps-error");
+      }
+    };
+
+
+    /* ADM-5C-4-LITE: Worker write-patch command */
+    (function () {
+      const previousRunWorkerCommand = window.runWorkerCommand;
+
+      async function adm5c4ResolveJobRef(jobRef) {
+        const ref = String(jobRef || "").trim();
+
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+        const data = await response.json();
+        const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+        if (/^\d+$/.test(ref)) {
+          const index = parseInt(ref, 10) - 1;
+          if (jobs[index]) {
+            return String(jobs[index].job_id || jobs[index].id || "");
+          }
+        }
+
+        const normalizedRef = ref.toLowerCase();
+
+        const exact = jobs.find(job => {
+          const id = String(job.job_id || job.id || "").trim();
+          return id.toLowerCase() === normalizedRef;
+        });
+
+        if (exact) {
+          return String(exact.job_id || exact.id || "");
+        }
+
+        const partial = jobs.find(job => {
+          const id = String(job.job_id || job.id || "").trim();
+          return id.toLowerCase().includes(normalizedRef) || id.toLowerCase().endsWith(normalizedRef);
+        });
+
+        if (partial) {
+          return String(partial.job_id || partial.id || "");
+        }
+
+        throw new Error("Job not found for reference: " + ref);
+      }
+
+      window.adm5c4WritePatch = async function (jobRef) {
+        try {
+          appendWorkerLine("Resolving job reference " + jobRef + "...", "ps-muted");
+
+          const resolvedJobId = await adm5c4ResolveJobRef(jobRef);
+
+          appendWorkerLine("Resolved: " + resolvedJobId, "ps-success");
+          appendWorkerLine("Running Agent Patch Writer...", "ps-muted");
+
+          const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(resolvedJobId) + "/agent-write-patch", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            appendWorkerLine("Agent Patch Writer failed: " + JSON.stringify(data), "ps-error");
+            return;
+          }
+
+          appendWorkerLine(data.report, "ps-success");
+
+          if (data.agent_patch_files && data.agent_patch_files.length) {
+            appendWorkerLine("FILE blocks found:", "ps-warn");
+            data.agent_patch_files.forEach(file => appendWorkerLine("  " + file, "ps-muted"));
+
+            appendWorkerLine("Generating proposal/diff...", "ps-muted");
+
+            if (typeof window.adm5c3GeneratePatchProposal === "function") {
+              await window.adm5c3GeneratePatchProposal(resolvedJobId);
+            } else {
+              appendWorkerLine("Now run: proposal " + resolvedJobId, "ps-warn");
+            }
+          } else {
+            appendWorkerLine("No FILE blocks found in this job yet.", "ps-warn");
+            appendWorkerLine("Next: create a job that contains FILE: path plus full file content block.", "ps-muted");
+            appendWorkerLine("Use: patch-format", "ps-muted");
+          }
+        } catch (error) {
+          appendWorkerLine("write-patch failed: " + error.message, "ps-error");
+        }
+      };
+
+      window.runWorkerCommand = async function (rawCommand) {
+        const command = String(rawCommand || "").trim();
+        const parts = command.split(/\s+/);
+        const action = (parts[0] || "").toLowerCase();
+        const jobRef = parts.slice(1).join(" ").trim();
+
+        if (action === "write-patch" || action === "agent-patch" || action === "patch-writer") {
+          appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+          if (!jobRef) {
+            appendWorkerLine("Missing job reference. Usage: write-patch <job number or job id>", "ps-error");
+            return;
+          }
+
+          await window.adm5c4WritePatch(jobRef);
+          return;
+        }
+
+        if (action === "help") {
+          if (typeof previousRunWorkerCommand === "function") {
+            await previousRunWorkerCommand(rawCommand);
+          }
+
+          appendWorkerLine("  write-patch <job_id|number>    Parse FILE blocks and prepare proposal/diff", "ps-muted");
+          appendWorkerLine("  agent-patch <job_id|number>    Same as write-patch", "ps-muted");
+          return;
+        }
+
+        if (typeof previousRunWorkerCommand === "function") {
+          return previousRunWorkerCommand(rawCommand);
+        }
+
+        appendWorkerLine("Unknown command. Type help.", "ps-error");
+      };
+    })();
+
+
+    /* ADM-5C-4B: auto-patch command */
+    (function () {
+      const previousRunWorkerCommand = window.runWorkerCommand;
+
+      async function adm5c4bResolveJobRef(jobRef) {
+        const ref = String(jobRef || "").trim();
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+        const data = await response.json();
+        const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+        if (/^\d+$/.test(ref)) {
+          const index = parseInt(ref, 10) - 1;
+          if (jobs[index]) return String(jobs[index].job_id || jobs[index].id || "");
+        }
+
+        const normalized = ref.toLowerCase();
+
+        const exact = jobs.find(job => String(job.job_id || job.id || "").toLowerCase() === normalized);
+        if (exact) return String(exact.job_id || exact.id || "");
+
+        const partial = jobs.find(job => {
+          const id = String(job.job_id || job.id || "").toLowerCase();
+          return id.includes(normalized) || id.endsWith(normalized);
+        });
+
+        if (partial) return String(partial.job_id || partial.id || "");
+
+        throw new Error("Job not found for reference: " + ref);
+      }
+
+      window.adm5c4bAutoPatch = async function (jobRef) {
+        try {
+          appendWorkerLine("Resolving job reference " + jobRef + "...", "ps-muted");
+          const resolvedJobId = await adm5c4bResolveJobRef(jobRef);
+
+          appendWorkerLine("Resolved: " + resolvedJobId, "ps-success");
+          appendWorkerLine("Running Auto FILE Block Generator...", "ps-muted");
+
+          const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(resolvedJobId) + "/auto-file-blocks-brain", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            appendWorkerLine("Auto FILE Block Generator failed: " + JSON.stringify(data), "ps-error");
+            return;
+          }
+
+          appendWorkerLine(data.report, "ps-success");
+
+          if (data.agent_patch_files && data.agent_patch_files.length) {
+            appendWorkerLine("FILE blocks generated:", "ps-warn");
+            data.agent_patch_files.forEach(file => appendWorkerLine("  " + file, "ps-muted"));
+
+            appendWorkerLine("Generating proposed_writes + diff...", "ps-muted");
+
+            if (typeof window.adm5c3GeneratePatchProposal === "function") {
+              await window.adm5c3GeneratePatchProposal(resolvedJobId);
+            } else {
+              appendWorkerLine("Now run: proposal " + resolvedJobId, "ps-warn");
+            }
+          } else {
+            appendWorkerLine("No safe FILE blocks generated. Try a clearer job instruction.", "ps-warn");
+          }
+        } catch (error) {
+          appendWorkerLine("auto-patch failed: " + error.message, "ps-error");
+        }
+      };
+
+      window.runWorkerCommand = async function (rawCommand) {
+        const command = String(rawCommand || "").trim();
+        const parts = command.split(/\s+/);
+        const action = (parts[0] || "").toLowerCase();
+        const jobRef = parts.slice(1).join(" ").trim();
+
+        if (action === "auto-patch" || action === "auto-file" || action === "generate-files") {
+          appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+          if (!jobRef) {
+            appendWorkerLine("Missing job reference. Usage: auto-patch <job number or job id>", "ps-error");
+            return;
+          }
+
+          await window.adm5c4bAutoPatch(jobRef);
+          return;
+        }
+
+        if (action === "help") {
+          if (typeof previousRunWorkerCommand === "function") {
+            await previousRunWorkerCommand(rawCommand);
+          }
+
+          appendWorkerLine("  auto-patch <job_id|number>     Generate FILE blocks, proposed_writes, and diff", "ps-muted");
+          appendWorkerLine("  auto-file <job_id|number>      Same as auto-patch", "ps-muted");
+          return;
+        }
+
+        if (typeof previousRunWorkerCommand === "function") {
+          return previousRunWorkerCommand(rawCommand);
+        }
+
+        appendWorkerLine("Unknown command. Type help.", "ps-error");
+      };
+    })();
+
+
+    /* ADM-5C-4B-MOBILE-FINAL: brain-patch clean command */
+    (function () {
+      const previousRunWorkerCommandBrainPatch = window.runWorkerCommand;
+
+      async function resolveBrainPatchJob(jobRef) {
+        const ref = String(jobRef || "").trim();
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+        const data = await response.json();
+        const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+        if (/^\d+$/.test(ref)) {
+          const index = parseInt(ref, 10) - 1;
+          if (jobs[index]) return String(jobs[index].job_id || jobs[index].id || "");
+        }
+
+        const normalized = ref.toLowerCase();
+
+        const exact = jobs.find(job => String(job.job_id || job.id || "").toLowerCase() === normalized);
+        if (exact) return String(exact.job_id || exact.id || "");
+
+        const partial = jobs.find(job => {
+          const id = String(job.job_id || job.id || "").toLowerCase();
+          return id.includes(normalized) || id.endsWith(normalized);
+        });
+
+        if (partial) return String(partial.job_id || partial.id || "");
+
+        throw new Error("Job not found for reference: " + ref);
+      }
+
+      window.brainPatchJob = async function (jobRef) {
+        try {
+          appendWorkerLine("Resolving job reference " + jobRef + "...", "ps-muted");
+
+          const resolvedJobId = await resolveBrainPatchJob(jobRef);
+
+          appendWorkerLine("Resolved: " + resolvedJobId, "ps-success");
+          appendWorkerLine("Running Brain FILE Block Generator...", "ps-muted");
+
+          const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(resolvedJobId) + "/auto-file-blocks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            appendWorkerLine("Brain FILE Block Generator failed: " + JSON.stringify(data), "ps-error");
+            return;
+          }
+
+          appendWorkerLine(data.report, "ps-success");
+
+          if (data.agent_patch_files && data.agent_patch_files.length) {
+            appendWorkerLine("FILE blocks generated:", "ps-warn");
+            data.agent_patch_files.forEach(file => appendWorkerLine("  " + file, "ps-muted"));
+
+            appendWorkerLine("Generating proposed_writes + diff...", "ps-muted");
+
+            if (typeof window.adm5c3GeneratePatchProposal === "function") {
+              await window.adm5c3GeneratePatchProposal(resolvedJobId);
+            } else {
+              appendWorkerLine("Now run: proposal " + resolvedJobId, "ps-warn");
+            }
+          } else {
+            appendWorkerLine("Route is working, but no FILE blocks were generated yet.", "ps-warn");
+            appendWorkerLine("Next module needed: strict brain FILE writer retry.", "ps-muted");
+          }
+        } catch (error) {
+          appendWorkerLine("brain-patch failed: " + error.message, "ps-error");
+        }
+      };
+
+      window.runWorkerCommand = async function (rawCommand) {
+        const command = String(rawCommand || "").trim();
+        const parts = command.split(/\s+/);
+        const action = (parts[0] || "").toLowerCase();
+        const jobRef = parts.slice(1).join(" ").trim();
+
+        if (action === "brain-patch") {
+          appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+          if (!jobRef) {
+            appendWorkerLine("Missing job reference. Usage: brain-patch <job number or job id>", "ps-error");
+            return;
+          }
+
+          await window.brainPatchJob(jobRef);
+          return;
+        }
+
+        if (action === "help") {
+          if (typeof previousRunWorkerCommandBrainPatch === "function") {
+            await previousRunWorkerCommandBrainPatch(rawCommand);
+          }
+
+          appendWorkerLine("  brain-patch <job_id|number>    Clean mobile route test for FILE block generator", "ps-muted");
+          return;
+        }
+
+        if (typeof previousRunWorkerCommandBrainPatch === "function") {
+          return previousRunWorkerCommandBrainPatch(rawCommand);
+        }
+
+        appendWorkerLine("Unknown command. Type help.", "ps-error");
+      };
+    })();
+
+
+    /* ADM-5C-4C: strict-patch Worker command */
+    (function () {
+      const previousRunWorkerCommandStrictPatch = window.runWorkerCommand;
+
+      async function resolveStrictPatchJob(jobRef) {
+        const ref = String(jobRef || "").trim();
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+        const data = await response.json();
+        const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+        if (/^\d+$/.test(ref)) {
+          const index = parseInt(ref, 10) - 1;
+          if (jobs[index]) return String(jobs[index].job_id || jobs[index].id || "");
+        }
+
+        const normalized = ref.toLowerCase();
+
+        const exact = jobs.find(job => String(job.job_id || job.id || "").toLowerCase() === normalized);
+        if (exact) return String(exact.job_id || exact.id || "");
+
+        const partial = jobs.find(job => {
+          const id = String(job.job_id || job.id || "").toLowerCase();
+          return id.includes(normalized) || id.endsWith(normalized);
+        });
+
+        if (partial) return String(partial.job_id || partial.id || "");
+
+        throw new Error("Job not found for reference: " + ref);
+      }
+
+      window.strictPatchJob = async function (jobRef) {
+        try {
+          appendWorkerLine("Resolving job reference " + jobRef + "...", "ps-muted");
+
+          const resolvedJobId = await resolveStrictPatchJob(jobRef);
+
+          appendWorkerLine("Resolved: " + resolvedJobId, "ps-success");
+          appendWorkerLine("Running Strict Brain FILE Writer...", "ps-muted");
+
+          const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(resolvedJobId) + "/strict-file-blocks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            appendWorkerLine("Strict FILE Writer failed: " + JSON.stringify(data), "ps-error");
+            return;
+          }
+
+          appendWorkerLine(data.report, "ps-success");
+
+          if (data.agent_patch_files && data.agent_patch_files.length) {
+            appendWorkerLine("FILE blocks generated:", "ps-warn");
+            data.agent_patch_files.forEach(file => appendWorkerLine("  " + file, "ps-muted"));
+
+            appendWorkerLine("Generating proposed_writes + diff...", "ps-muted");
+
+            if (typeof window.adm5c3GeneratePatchProposal === "function") {
+              await window.adm5c3GeneratePatchProposal(resolvedJobId);
+            } else {
+              appendWorkerLine("Now run: proposal " + resolvedJobId, "ps-warn");
+            }
+          } else {
+            appendWorkerLine("Strict writer completed but no valid FILE blocks were generated.", "ps-warn");
+            appendWorkerLine("Try a clearer job with exact allowed file name.", "ps-muted");
+          }
+        } catch (error) {
+          appendWorkerLine("strict-patch failed: " + error.message, "ps-error");
+        }
+      };
+
+      window.runWorkerCommand = async function (rawCommand) {
+        const command = String(rawCommand || "").trim();
+        const parts = command.split(/\s+/);
+        const action = (parts[0] || "").toLowerCase();
+        const jobRef = parts.slice(1).join(" ").trim();
+
+        if (action === "strict-patch" || action === "strict-file" || action === "strict-writer") {
+          appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+          if (!jobRef) {
+            appendWorkerLine("Missing job reference. Usage: strict-patch <job number or job id>", "ps-error");
+            return;
+          }
+
+          await window.strictPatchJob(jobRef);
+          return;
+        }
+
+        if (action === "help") {
+          if (typeof previousRunWorkerCommandStrictPatch === "function") {
+            await previousRunWorkerCommandStrictPatch(rawCommand);
+          }
+
+          appendWorkerLine("  strict-patch <job_id|number>   Force brain to generate FILE blocks", "ps-muted");
+          return;
+        }
+
+        if (typeof previousRunWorkerCommandStrictPatch === "function") {
+          return previousRunWorkerCommandStrictPatch(rawCommand);
+        }
+
+        appendWorkerLine("Unknown command. Type help.", "ps-error");
+      };
+    })();
+
+
+    /* ADM-5C-4D: real-patch Worker command */
+    (function () {
+      const previousRunWorkerCommandRealPatch = window.runWorkerCommand;
+
+      async function resolveRealPatchJob(jobRef) {
+        const ref = String(jobRef || "").trim();
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+        const data = await response.json();
+        const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+        if (/^\d+$/.test(ref)) {
+          const index = parseInt(ref, 10) - 1;
+          if (jobs[index]) return String(jobs[index].job_id || jobs[index].id || "");
+        }
+
+        const normalized = ref.toLowerCase();
+
+        const exact = jobs.find(job => String(job.job_id || job.id || "").toLowerCase() === normalized);
+        if (exact) return String(exact.job_id || exact.id || "");
+
+        const partial = jobs.find(job => {
+          const id = String(job.job_id || job.id || "").toLowerCase();
+          return id.includes(normalized) || id.endsWith(normalized);
+        });
+
+        if (partial) return String(partial.job_id || partial.id || "");
+
+        throw new Error("Job not found for reference: " + ref);
+      }
+
+      async function generateProposalDirect(jobId) {
+        const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(jobId) + "/generate-patch-proposal", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: "{}"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+          appendWorkerLine("Proposal generation failed: " + JSON.stringify(data), "ps-error");
+          return;
+        }
+
+        appendWorkerLine(data.report, "ps-success");
+
+        const dry = data.dry_run || {};
+        const files = dry.proposed_files || [];
+
+        if (files.length) {
+          appendWorkerLine("Proposed files:", "ps-warn");
+          files.forEach(file => appendWorkerLine("  " + file, "ps-muted"));
+        }
+
+        const summary = dry.diff_summary || [];
+        summary.forEach(line => appendWorkerLine("  " + line, "ps-muted"));
+
+        appendWorkerLine("Next: review diff, approve, request-apply, then safe-apply only if correct.", "ps-warn");
+      }
+
+      window.realPatchJob = async function (jobRef) {
+        try {
+          appendWorkerLine("Resolving job reference " + jobRef + "...", "ps-muted");
+
+          const resolvedJobId = await resolveRealPatchJob(jobRef);
+
+          appendWorkerLine("Resolved: " + resolvedJobId, "ps-success");
+          appendWorkerLine("Running Real Patch Block Generator...", "ps-muted");
+
+          const response = await fetch(getBrainApiBase() + "/api/admin/job-queue/" + encodeURIComponent(resolvedJobId) + "/real-patch-block", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: "{}"
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.ok) {
+            appendWorkerLine("Real Patch Block Generator failed: " + JSON.stringify(data), "ps-error");
+            return;
+          }
+
+          appendWorkerLine(data.report, "ps-success");
+          appendWorkerLine("FILE block generated:", "ps-warn");
+          appendWorkerLine("  " + data.target_path, "ps-muted");
+          appendWorkerLine("Generating proposed_writes + diff...", "ps-muted");
+
+          await generateProposalDirect(resolvedJobId);
+        } catch (error) {
+          appendWorkerLine("real-patch failed: " + error.message, "ps-error");
+        }
+      };
+
+      window.runWorkerCommand = async function (rawCommand) {
+        const command = String(rawCommand || "").trim();
+        const parts = command.split(/\s+/);
+        const action = (parts[0] || "").toLowerCase();
+        const jobRef = parts.slice(1).join(" ").trim();
+
+        if (action === "real-patch" || action === "real-file" || action === "patch-block") {
+          appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+          if (!jobRef) {
+            appendWorkerLine("Missing job reference. Usage: real-patch <job number or job id>", "ps-error");
+            return;
+          }
+
+          await window.realPatchJob(jobRef);
+          return;
+        }
+
+        if (action === "help") {
+          if (typeof previousRunWorkerCommandRealPatch === "function") {
+            await previousRunWorkerCommandRealPatch(rawCommand);
+          }
+
+          appendWorkerLine("  real-patch <job_id|number>     Create actual FILE block and proposal diff", "ps-muted");
+          return;
+        }
+
+        if (typeof previousRunWorkerCommandRealPatch === "function") {
+          return previousRunWorkerCommandRealPatch(rawCommand);
+        }
+
+        appendWorkerLine("Unknown command. Type help.", "ps-error");
+      };
+    })();
+
 </script>
+
+    <!-- ADM-5E-1: Worker Live Progress Card -->
+    <style id="adm5e1-worker-progress-style">
+      .adm5e1-progress-card {
+        position: fixed;
+        left: max(16px, env(safe-area-inset-left));
+        right: max(16px, env(safe-area-inset-right));
+        bottom: calc(118px + env(safe-area-inset-bottom));
+        z-index: 9999;
+        display: none;
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 14px 16px;
+        border-radius: 22px;
+        background: rgba(5, 31, 72, 0.94);
+        color: #f8fbff;
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      }
+
+      .adm5e1-progress-card.is-visible {
+        display: block;
+        animation: adm5e1In 180ms ease-out;
+      }
+
+      .adm5e1-progress-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .adm5e1-progress-title {
+        font-size: 13px;
+        font-weight: 800;
+        letter-spacing: .04em;
+        color: #ffffff;
+      }
+
+      .adm5e1-progress-state {
+        font-size: 11px;
+        font-weight: 800;
+        color: #7df0b2;
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+
+      .adm5e1-progress-message {
+        font-size: 13px;
+        line-height: 1.42;
+        color: rgba(255,255,255,0.78);
+        white-space: normal;
+      }
+
+      .adm5e1-progress-dots {
+        display: inline-flex;
+        gap: 4px;
+        margin-left: 8px;
+        vertical-align: middle;
+      }
+
+      .adm5e1-progress-dots span {
+        width: 5px;
+        height: 5px;
+        border-radius: 999px;
+        background: #7df0b2;
+        opacity: .35;
+        animation: adm5e1Dot 1s infinite ease-in-out;
+      }
+
+      .adm5e1-progress-dots span:nth-child(2) { animation-delay: .16s; }
+      .adm5e1-progress-dots span:nth-child(3) { animation-delay: .32s; }
+
+      .adm5e1-progress-card.is-error .adm5e1-progress-state {
+        color: #ff9aa7;
+      }
+
+      .adm5e1-progress-card.is-done .adm5e1-progress-state {
+        color: #7df0b2;
+      }
+
+      .adm5e1-progress-card.is-warn .adm5e1-progress-state {
+        color: #ffd56a;
+      }
+
+      @keyframes adm5e1Dot {
+        0%, 80%, 100% { opacity: .25; transform: translateY(0); }
+        40% { opacity: 1; transform: translateY(-3px); }
+      }
+
+      @keyframes adm5e1In {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      @media (min-width: 761px) {
+        .adm5e1-progress-card {
+          left: 50%;
+          right: auto;
+          width: min(680px, calc(100vw - 40px));
+          transform: translateX(-50%);
+        }
+
+        .adm5e1-progress-card.is-visible {
+          animation: adm5e1InDesktop 180ms ease-out;
+        }
+
+        @keyframes adm5e1InDesktop {
+          from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+          to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+      }
+    </style>
+
+    <script id="adm5e1-worker-progress-script">
+      (function () {
+        if (window.__adm5e1ProgressInstalled) return;
+        window.__adm5e1ProgressInstalled = true;
+
+        function ensureProgressCard() {
+          let card = document.getElementById("adm5e1WorkerProgressCard");
+
+          if (card) return card;
+
+          card = document.createElement("div");
+          card.id = "adm5e1WorkerProgressCard";
+          card.className = "adm5e1-progress-card";
+          card.innerHTML = `
+            <div class="adm5e1-progress-top">
+              <div class="adm5e1-progress-title">Worker Execution</div>
+              <div class="adm5e1-progress-state" id="adm5e1ProgressState">Ready</div>
+            </div>
+            <div class="adm5e1-progress-message">
+              <span id="adm5e1ProgressMessage">Waiting for command</span>
+              <span class="adm5e1-progress-dots" id="adm5e1ProgressDots">
+                <span></span><span></span><span></span>
+              </span>
+            </div>
+          `;
+
+          document.body.appendChild(card);
+          return card;
+        }
+
+        let hideTimer = null;
+
+        window.adm5e1ShowProgress = function (state, message, tone) {
+          const card = ensureProgressCard();
+          const stateEl = document.getElementById("adm5e1ProgressState");
+          const messageEl = document.getElementById("adm5e1ProgressMessage");
+          const dotsEl = document.getElementById("adm5e1ProgressDots");
+
+          clearTimeout(hideTimer);
+
+          card.classList.remove("is-error", "is-done", "is-warn");
+          if (tone === "error") card.classList.add("is-error");
+          if (tone === "done") card.classList.add("is-done");
+          if (tone === "warn") card.classList.add("is-warn");
+
+          stateEl.textContent = state || "Running";
+          messageEl.textContent = message || "Working...";
+          dotsEl.style.display = tone === "done" || tone === "error" ? "none" : "inline-flex";
+
+          card.classList.add("is-visible");
+
+          if (tone === "done") {
+            hideTimer = setTimeout(() => {
+              card.classList.remove("is-visible");
+            }, 2200);
+          }
+        };
+
+        window.adm5e1HideProgress = function () {
+          const card = ensureProgressCard();
+          card.classList.remove("is-visible");
+        };
+
+        function inferProgressFromLine(line) {
+          const text = String(line || "").toLowerCase();
+
+          if (text.includes("resolving job reference")) {
+            return ["Resolving", "Finding the correct Worker job...", null];
+          }
+
+          if (text.includes("running real patch block generator")) {
+            return ["Generating", "Creating safe FILE block...", null];
+          }
+
+          if (text.includes("running strict brain file writer")) {
+            return ["Generating", "Forcing strict FILE block output...", null];
+          }
+
+          if (text.includes("running brain file block generator") || text.includes("running auto file block generator")) {
+            return ["Generating", "Creating FILE block proposal...", null];
+          }
+
+          if (text.includes("file block generated")) {
+            return ["FILE Ready", "FILE block generated successfully.", "warn"];
+          }
+
+          if (text.includes("generating proposed_writes") || text.includes("generating proposal")) {
+            return ["Diff", "Generating proposed writes and diff...", null];
+          }
+
+          if (text.includes("patch proposal generated")) {
+            return ["Review Needed", "Diff generated. Review before approval.", "warn"];
+          }
+
+          if (text.includes("approved")) {
+            return ["Approved", "Founder approval recorded.", "warn"];
+          }
+
+          if (text.includes("apply requested")) {
+            return ["Apply Requested", "Safe apply request recorded.", "warn"];
+          }
+
+          if (text.includes("safe apply completed") || text.includes("applied_safe_approved") || text.includes('"applied"')) {
+            return ["Completed", "Safe apply completed successfully.", "done"];
+          }
+
+          if (text.includes("failed") || text.includes("error") || text.includes("not found") || text.includes('"ok": false')) {
+            return ["Failed", String(line || "Worker command failed."), "error"];
+          }
+
+          return null;
+        }
+
+        const previousAppendWorkerLine = window.appendWorkerLine;
+
+        if (typeof previousAppendWorkerLine === "function") {
+          window.appendWorkerLine = function (line, className) {
+            const result = previousAppendWorkerLine.apply(this, arguments);
+            const progress = inferProgressFromLine(line);
+
+            if (progress) {
+              window.adm5e1ShowProgress(progress[0], progress[1], progress[2]);
+            }
+
+            return result;
+          };
+        }
+
+        const previousRunWorkerCommand = window.runWorkerCommand;
+
+        if (typeof previousRunWorkerCommand === "function") {
+          window.runWorkerCommand = async function (rawCommand) {
+            const command = String(rawCommand || "").trim();
+            const action = command.split(/\s+/)[0] || "worker";
+
+            if (command && !["help", "jobs", "clear", "console"].includes(action.toLowerCase())) {
+              window.adm5e1ShowProgress("Starting", "Running: " + command, null);
+            }
+
+            try {
+              const result = await previousRunWorkerCommand.apply(this, arguments);
+
+              if (command && !["help", "jobs", "clear", "console"].includes(action.toLowerCase())) {
+                setTimeout(() => {
+                  const card = document.getElementById("adm5e1WorkerProgressCard");
+                  if (card && !card.classList.contains("is-error") && !card.classList.contains("is-warn")) {
+                    window.adm5e1ShowProgress("Completed", "Worker command finished.", "done");
+                  }
+                }, 350);
+              }
+
+              return result;
+            } catch (error) {
+              window.adm5e1ShowProgress("Failed", error.message || "Worker command failed.", "error");
+              throw error;
+            }
+          };
+        }
+      })();
+    </script>
+
+
+<!-- ADM-5E-1B: Progress card fast settle -->
+<style id="adm5e1b-progress-fast-settle-style">
+  .adm5e1-progress-card {
+    bottom: calc(104px + env(safe-area-inset-bottom)) !important;
+    padding: 11px 14px !important;
+    border-radius: 18px !important;
+  }
+
+  .adm5e1-progress-title {
+    font-size: 12px !important;
+  }
+
+  .adm5e1-progress-state {
+    font-size: 10px !important;
+  }
+
+  .adm5e1-progress-message {
+    font-size: 12px !important;
+  }
+</style>
+
+<script id="adm5e1b-progress-fast-settle-script">
+  (function () {
+    if (window.__adm5e1bFastSettleInstalled) return;
+    window.__adm5e1bFastSettleInstalled = true;
+
+    function installFastSettle() {
+      if (typeof window.adm5e1ShowProgress !== "function") {
+        setTimeout(installFastSettle, 200);
+        return;
+      }
+
+      if (window.__adm5e1bShowWrapped) return;
+      window.__adm5e1bShowWrapped = true;
+
+      const previousShow = window.adm5e1ShowProgress;
+
+      window.adm5e1ShowProgress = function (state, message, tone) {
+        const result = previousShow.apply(this, arguments);
+
+        const card = document.getElementById("adm5e1WorkerProgressCard");
+        const dots = document.getElementById("adm5e1ProgressDots");
+        const stateText = String(state || "").toLowerCase();
+        const msgText = String(message || "").toLowerCase();
+
+        const isWaitingReview =
+          tone === "warn" ||
+          stateText.includes("review") ||
+          stateText.includes("file ready") ||
+          stateText.includes("approved") ||
+          stateText.includes("apply requested") ||
+          msgText.includes("review before approval");
+
+        if (isWaitingReview && dots) {
+          dots.style.display = "none";
+        }
+
+        if (isWaitingReview && card) {
+          clearTimeout(window.__adm5e1bHideTimer);
+          window.__adm5e1bHideTimer = setTimeout(function () {
+            card.classList.remove("is-visible");
+          }, 3200);
+        }
+
+        return result;
+      };
+    }
+
+    installFastSettle();
+  })();
+</script>
+
+
+<!-- ADM-5E-1C: Progress false-fail guard -->
+<script id="adm5e1c-progress-false-fail-guard">
+  (function () {
+    if (window.__adm5e1cFalseFailGuardInstalled) return;
+    window.__adm5e1cFalseFailGuardInstalled = true;
+
+    function isJobListLine(line) {
+      const text = String(line || "");
+      return /^\s*\d+\.\s+/.test(text) || text.includes(" | waiting_approval | ") || text.includes(" | patch_writer_") || text.includes(" | apply_requested | ") || text.includes(" | approved | ") || text.includes(" | applied | ");
+    }
+
+    function hideFalseProgress() {
+      const card = document.getElementById("adm5e1WorkerProgressCard");
+      const state = document.getElementById("adm5e1ProgressState");
+
+      if (!card || !state) return;
+
+      if (String(state.textContent || "").toLowerCase().includes("failed")) {
+        card.classList.remove("is-visible");
+        card.classList.remove("is-error");
+      }
+    }
+
+    const previousAppend = window.appendWorkerLine;
+
+    if (typeof previousAppend === "function") {
+      window.appendWorkerLine = function (line, className) {
+        const result = previousAppend.apply(this, arguments);
+
+        if (window.__adm5e1SuppressProgress || isJobListLine(line)) {
+          setTimeout(hideFalseProgress, 0);
+          setTimeout(hideFalseProgress, 80);
+        }
+
+        return result;
+      };
+    }
+
+    const previousRun = window.runWorkerCommand;
+
+    if (typeof previousRun === "function") {
+      window.runWorkerCommand = async function (rawCommand) {
+        const command = String(rawCommand || "").trim().toLowerCase();
+
+        if (command === "jobs" || command === "audit" || command === "executions") {
+          window.__adm5e1SuppressProgress = true;
+
+          try {
+            const result = await previousRun.apply(this, arguments);
+            setTimeout(hideFalseProgress, 100);
+            setTimeout(() => {
+              window.__adm5e1SuppressProgress = false;
+            }, 700);
+            return result;
+          } catch (error) {
+            window.__adm5e1SuppressProgress = false;
+            throw error;
+          }
+        }
+
+        return previousRun.apply(this, arguments);
+      };
+    }
+  })();
+</script>
+
+
+<!-- ADM-5E-2: Worker Number Resolver -->
+<script id="adm5e2-worker-number-resolver">
+  (function () {
+    if (window.__adm5e2NumberResolverInstalled) return;
+    window.__adm5e2NumberResolverInstalled = true;
+
+    const previousRunWorkerCommandNumberResolver = window.runWorkerCommand;
+
+    async function adm5e2ResolveJobNumber(jobRef) {
+      const ref = String(jobRef || "").trim();
+
+      if (!/^\d+$/.test(ref)) {
+        return ref;
+      }
+
+      const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+      const data = await response.json();
+      const jobs = Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+
+      const index = parseInt(ref, 10) - 1;
+      const job = jobs[index];
+
+      if (!job) {
+        throw new Error("Job number not found: " + ref);
+      }
+
+      return String(job.job_id || job.id || "");
+    }
+
+    window.runWorkerCommand = async function (rawCommand) {
+      const command = String(rawCommand || "").trim();
+      const parts = command.split(/\s+/);
+      const action = (parts[0] || "").toLowerCase();
+      const jobRef = parts.slice(1).join(" ").trim();
+
+      const needsResolver = [
+        "approve",
+        "request-apply",
+        "safe-apply",
+        "real-patch",
+        "strict-patch",
+        "brain-patch",
+        "auto-patch",
+        "write-patch",
+        "proposal"
+      ].includes(action);
+
+      if (needsResolver && /^\d+$/.test(jobRef)) {
+        try {
+          appendWorkerLine("Resolving job number " + jobRef + "...", "ps-muted");
+
+          const resolvedJobId = await adm5e2ResolveJobNumber(jobRef);
+
+          appendWorkerLine("Resolved " + jobRef + " → " + resolvedJobId, "ps-success");
+
+          const resolvedCommand = action + " " + resolvedJobId;
+
+          if (typeof previousRunWorkerCommandNumberResolver === "function") {
+            return previousRunWorkerCommandNumberResolver(resolvedCommand);
+          }
+
+          appendWorkerLine("Worker command runner not available.", "ps-error");
+          return;
+        } catch (error) {
+          appendWorkerLine("Number resolver failed: " + error.message, "ps-error");
+          return;
+        }
+      }
+
+      if (action === "help") {
+        if (typeof previousRunWorkerCommandNumberResolver === "function") {
+          await previousRunWorkerCommandNumberResolver(rawCommand);
+        }
+
+        appendWorkerLine("  approve <number|job_id>        Approve by job number or full ID", "ps-muted");
+        appendWorkerLine("  request-apply <number|job_id>  Request safe apply by job number or full ID", "ps-muted");
+        appendWorkerLine("  safe-apply <number|job_id>     Apply safely by job number or full ID", "ps-muted");
+        return;
+      }
+
+      if (typeof previousRunWorkerCommandNumberResolver === "function") {
+        return previousRunWorkerCommandNumberResolver(rawCommand);
+      }
+
+      appendWorkerLine("Unknown command. Type help.", "ps-error");
+    };
+  })();
+</script>
+
+
+<!-- ADM-5E-FINAL: Worker Complete Apply Bridge -->
+<script id="adm5e-final-worker-complete-apply">
+  (function () {
+    if (window.__adm5eFinalCompleteApplyInstalled) return;
+    window.__adm5eFinalCompleteApplyInstalled = true;
+
+    const previousRunWorkerCommandFinal = window.runWorkerCommand;
+
+    async function adm5eFinalGetJobs() {
+      const response = await fetch(getBrainApiBase() + "/api/admin/job-queue");
+      const data = await response.json();
+      return Array.isArray(data) ? data : (data.jobs || data.queue || data.items || []);
+    }
+
+    async function adm5eFinalResolveJob(jobRef) {
+      const ref = String(jobRef || "").trim();
+      const jobs = await adm5eFinalGetJobs();
+
+      if (/^\d+$/.test(ref)) {
+        const job = jobs[parseInt(ref, 10) - 1];
+        if (!job) throw new Error("Job number not found: " + ref);
+        return String(job.job_id || job.id || "");
+      }
+
+      const normalized = ref.toLowerCase();
+
+      const exact = jobs.find(job => String(job.job_id || job.id || "").toLowerCase() === normalized);
+      if (exact) return String(exact.job_id || exact.id || "");
+
+      const partial = jobs.find(job => {
+        const id = String(job.job_id || job.id || "").toLowerCase();
+        return id.includes(normalized) || id.endsWith(normalized);
+      });
+
+      if (partial) return String(partial.job_id || partial.id || "");
+
+      throw new Error("Job not found: " + ref);
+    }
+
+    async function adm5eFinalRun(command) {
+      if (typeof previousRunWorkerCommandFinal !== "function") {
+        throw new Error("Base Worker command runner missing");
+      }
+      appendWorkerLine("→ " + command, "ps-muted");
+      return previousRunWorkerCommandFinal(command);
+    }
+
+    window.adm5eFinalApply = async function (jobRef) {
+      try {
+        if (typeof window.adm5e1ShowProgress === "function") {
+          window.adm5e1ShowProgress("Resolving", "Preparing final safe apply for job " + jobRef + "...", null);
+        }
+
+        appendWorkerLine("Resolving final apply job " + jobRef + "...", "ps-muted");
+        const jobId = await adm5eFinalResolveJob(jobRef);
+        appendWorkerLine("Resolved " + jobRef + " → " + jobId, "ps-success");
+
+        if (typeof window.adm5e1ShowProgress === "function") {
+          window.adm5e1ShowProgress("Approving", "Recording founder approval...", "warn");
+        }
+        await adm5eFinalRun("approve " + jobId);
+
+        if (typeof window.adm5e1ShowProgress === "function") {
+          window.adm5e1ShowProgress("Apply Requested", "Requesting safe apply...", "warn");
+        }
+        await adm5eFinalRun("request-apply " + jobId);
+
+        if (typeof window.adm5e1ShowProgress === "function") {
+          window.adm5e1ShowProgress("Applying", "Running founder-gated safe apply...", null);
+        }
+        await adm5eFinalRun("safe-apply " + jobId);
+
+        appendWorkerLine("Final apply sequence completed for " + jobId, "ps-success");
+        appendWorkerLine("Run audit to confirm applied_safe_approved.", "ps-warn");
+
+        if (typeof window.adm5e1ShowProgress === "function") {
+          window.adm5e1ShowProgress("Completed", "Final safe apply sequence finished.", "done");
+        }
+      } catch (error) {
+        appendWorkerLine("final-apply failed: " + error.message, "ps-error");
+        if (typeof window.adm5e1ShowProgress === "function") {
+          window.adm5e1ShowProgress("Failed", error.message, "error");
+        }
+      }
+    };
+
+    window.adm5eFinalStatus = async function (jobRef) {
+      try {
+        const jobId = await adm5eFinalResolveJob(jobRef);
+        const jobs = await adm5eFinalGetJobs();
+        const job = jobs.find(item => String(item.job_id || item.id || "") === jobId);
+
+        if (!job) {
+          appendWorkerLine("Status failed: job not found after resolve.", "ps-error");
+          return;
+        }
+
+        appendWorkerLine("Status for " + jobId, "ps-success");
+        appendWorkerLine("  status: " + (job.status || "unknown"), "ps-muted");
+        appendWorkerLine("  execution: " + (job.execution || "none"), "ps-muted");
+        appendWorkerLine("  proposed_writes: " + ((job.proposed_writes || []).length || 0), "ps-muted");
+        appendWorkerLine("  allowed_files: " + JSON.stringify(job.allowed_files || []), "ps-muted");
+
+        if (job.last_report) appendWorkerLine("  report: " + job.last_report, "ps-muted");
+      } catch (error) {
+        appendWorkerLine("status failed: " + error.message, "ps-error");
+      }
+    };
+
+    window.adm5eFinalJobsTail = async function () {
+      try {
+        const jobs = await adm5eFinalGetJobs();
+        appendWorkerLine("Jobs tail: " + jobs.length + " total", "ps-success");
+
+        jobs.slice(-6).forEach((job, offset) => {
+          const number = jobs.length - 6 + offset + 1;
+          const id = String(job.job_id || job.id || "");
+          const status = job.status || "unknown";
+          const title = String(job.summary || job.task || job.instruction || "Worker job").slice(0, 80);
+          appendWorkerLine(number + ". " + id + " | " + status + " | " + title, "ps-muted");
+        });
+      } catch (error) {
+        appendWorkerLine("jobs-tail failed: " + error.message, "ps-error");
+      }
+    };
+
+    window.runWorkerCommand = async function (rawCommand) {
+      const command = String(rawCommand || "").trim();
+      const parts = command.split(/\s+/);
+      const action = (parts[0] || "").toLowerCase();
+      const jobRef = parts.slice(1).join(" ").trim();
+
+      if (action === "final-apply" || action === "finish-apply") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+        if (!jobRef) {
+          appendWorkerLine("Missing job reference. Usage: final-apply <number|job_id>", "ps-error");
+          return;
+        }
+
+        await window.adm5eFinalApply(jobRef);
+        return;
+      }
+
+      if (action === "status") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+
+        if (!jobRef) {
+          appendWorkerLine("Missing job reference. Usage: status <number|job_id>", "ps-error");
+          return;
+        }
+
+        await window.adm5eFinalStatus(jobRef);
+        return;
+      }
+
+      if (action === "jobs-tail" || action === "tail-jobs") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        await window.adm5eFinalJobsTail();
+        return;
+      }
+
+      if (action === "help") {
+        if (typeof previousRunWorkerCommandFinal === "function") {
+          await previousRunWorkerCommandFinal(rawCommand);
+        }
+
+        appendWorkerLine("  jobs-tail                    Show latest jobs only", "ps-muted");
+        appendWorkerLine("  status <number|job_id>       Show job status", "ps-muted");
+        appendWorkerLine("  final-apply <number|job_id>  Approve + request-apply + safe-apply", "ps-muted");
+        return;
+      }
+
+      if (typeof previousRunWorkerCommandFinal === "function") {
+        return previousRunWorkerCommandFinal(rawCommand);
+      }
+
+      appendWorkerLine("Unknown command. Type help.", "ps-error");
+    };
+  })();
+</script>
+
+
+<!-- ADM-5E-3 / 5E-4 / 5E-5 / 5E-6 / 5F-1 / 5F-2 FINAL WORKER UX -->
+<style id="adm5e-final-worker-style">
+  .adm5e-review-panel {
+    position: fixed;
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    bottom: calc(116px + env(safe-area-inset-bottom));
+    z-index: 10020;
+    display: none;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 14px;
+    border-radius: 24px;
+    background: rgba(5, 28, 64, 0.96);
+    border: 1px solid rgba(255,255,255,.16);
+    box-shadow: 0 22px 70px rgba(0,0,0,.34);
+    color: #f8fbff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .adm5e-review-panel.is-visible {
+    display: block;
+  }
+
+  .adm5e-review-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .adm5e-review-title {
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .06em;
+  }
+
+  .adm5e-review-close {
+    width: 34px;
+    height: 34px;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 14px;
+    background: rgba(255,255,255,.08);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .adm5e-review-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+    margin: 10px 0;
+  }
+
+  .adm5e-review-metric {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 16px;
+    padding: 10px;
+    background: rgba(255,255,255,.06);
+  }
+
+  .adm5e-review-label {
+    font-size: 10px;
+    color: rgba(255,255,255,.52);
+    text-transform: uppercase;
+    letter-spacing: .09em;
+    margin-bottom: 4px;
+  }
+
+  .adm5e-review-value {
+    font-size: 13px;
+    font-weight: 800;
+    word-break: break-word;
+  }
+
+  .adm5e-review-file {
+    margin-top: 8px;
+    padding: 10px;
+    border-radius: 16px;
+    background: rgba(125,240,178,.08);
+    border: 1px solid rgba(125,240,178,.18);
+    color: #98f3c1;
+    font-size: 12px;
+    word-break: break-word;
+  }
+
+  .adm5e-review-msg {
+    font-size: 12px;
+    line-height: 1.45;
+    color: rgba(255,255,255,.72);
+    margin-top: 8px;
+  }
+
+  .adm5e-review-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .adm5e-review-actions button {
+    min-height: 38px;
+    border: 0;
+    border-radius: 14px;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .adm5e-btn-review {
+    background: rgba(255,255,255,.12);
+    color: #fff;
+  }
+
+  .adm5e-btn-approve {
+    background: #ffd56a;
+    color: #061d3d;
+  }
+
+  .adm5e-btn-apply {
+    background: #7df0b2;
+    color: #061d3d;
+  }
+
+  .adm5e-token-banner {
+    position: fixed;
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    top: calc(12px + env(safe-area-inset-top));
+    z-index: 10030;
+    display: none;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(120, 20, 30, .94);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    box-shadow: 0 16px 50px rgba(0,0,0,.26);
+  }
+
+  .adm5e-token-banner.is-visible {
+    display: block;
+  }
+
+  @media (max-width: 760px) {
+    .adm5e-review-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .adm5e-review-actions {
+      grid-template-columns: 1fr;
+    }
+
+    .adm5e-review-panel {
+      bottom: calc(108px + env(safe-area-inset-bottom));
+    }
+  }
+</style>
+
+<script id="adm5e-to-5f-final-worker-script">
+(function () {
+  if (window.__adm5eTo5fFinalInstalled) return;
+  window.__adm5eTo5fFinalInstalled = true;
+
+  const previousRunWorkerCommand = window.runWorkerCommand;
+  const BOUNDARY_VERSION = "CLEAN-CODEX-FINAL";
+  const LIVE_FOUNDER_ADMIN_API_BASE = PRODUCTION_API_BASE;
+  const FOUNDER_ADMIN_TOKEN_KEY = "IF_FOUNDER_ADMIN_TOKEN";
+
+  function getStableBrainApiBase() {
+    return getApiBase();
+  }
+
+  function getFounderToken() {
+    try {
+      return localStorage.getItem(FOUNDER_ADMIN_TOKEN_KEY) || "";
+    } catch (error) {
+      return "";
+    }
+  }
+
+  function setFounderToken(token) {
+    try {
+      const normalized = String(token || "").trim();
+      if (!normalized) {
+        localStorage.removeItem(FOUNDER_ADMIN_TOKEN_KEY);
+        return;
+      }
+      localStorage.setItem(FOUNDER_ADMIN_TOKEN_KEY, normalized);
+    } catch (error) {}
+  }
+
+  function requireFounderToken() {
+    const founderToken = getFounderToken();
+    if (!founderToken) {
+      appendWorkerLine("Founder token missing. Run founder-token set <token> first.", "ps-error");
+      return "";
+    }
+    return founderToken;
+  }
+
+  async function fetchFounderAdminJson(path, options) {
+    const rawPath = String(path || "");
+    const useLiveFounderAdminApi = rawPath.startsWith("/api/admin/") || rawPath.startsWith(LIVE_FOUNDER_ADMIN_API_BASE);
+    const url = rawPath.startsWith("http")
+      ? rawPath
+      : (useLiveFounderAdminApi ? LIVE_FOUNDER_ADMIN_API_BASE : getStableBrainApiBase()).replace(/\/$/, "") + rawPath;
+
+    const requestOptions = Object.assign({}, options || {});
+    requestOptions.headers = Object.assign({}, requestOptions.headers || {});
+
+    const founderToken = getFounderToken();
+    if (founderToken && url.includes("/api/admin") && !requestOptions.headers["X-IF-Founder-Token"]) {
+      requestOptions.headers["X-IF-Founder-Token"] = founderToken;
+    }
+
+    const response = await fetch(url, requestOptions);
+    const payload = await response.json().catch(function () {
+      return { ok: false, detail: "Invalid JSON response" };
+    });
+    return { response, payload };
+  }
+
+  async function getJobsFinal() {
+    const result = await fetchFounderAdminJson("/api/admin/job-queue", { method: "GET" });
+    const payload = result.payload;
+    if (Array.isArray(payload)) return payload;
+    return payload.jobs || payload.queue || payload.items || [];
+  }
+
+  async function resolveJobFinal(ref) {
+    const raw = String(ref || "").trim();
+    const jobs = await getJobsFinal();
+
+    if (!raw) throw new Error("Job reference is required.");
+
+    if (/^\d+$/.test(raw)) {
+      const index = parseInt(raw, 10) - 1;
+      const numberedJob = jobs[index];
+      if (!numberedJob) throw new Error("Job number not found: " + raw);
+      return String(numberedJob.job_id || numberedJob.id || "");
+    }
+
+    const normalized = raw.toLowerCase();
+    const exact = jobs.find(function (job) {
+      return String(job.job_id || job.id || "").toLowerCase() === normalized;
+    });
+    if (exact) return String(exact.job_id || exact.id || "");
+
+    const partial = jobs.find(function (job) {
+      const id = String(job.job_id || job.id || "").toLowerCase();
+      return id.includes(normalized) || id.endsWith(normalized);
+    });
+    if (partial) return String(partial.job_id || partial.id || "");
+
+    throw new Error("Job not found: " + raw);
+  }
+
+  async function getJobFinal(ref) {
+    const id = await resolveJobFinal(ref);
+    const jobs = await getJobsFinal();
+    const job = jobs.find(function (item) {
+      return String(item.job_id || item.id || "") === id;
+    });
+    if (!job) throw new Error("Resolved job not found: " + id);
+    return { id, job, jobs };
+  }
+
+  function ensureReviewPanel() {
+    let panel = document.getElementById("adm5eReviewPanel");
+    if (panel) return panel;
+
+    panel = document.createElement("div");
+    panel.id = "adm5eReviewPanel";
+    panel.className = "adm5e-review-panel";
+    panel.innerHTML = `
+      <div class="adm5e-review-head">
+        <div>
+          <div class="adm5e-review-title">WORKER REVIEW PANEL</div>
+          <div class="adm5e-review-msg" id="adm5eReviewSubtitle">Review before safe apply.</div>
+        </div>
+        <button class="adm5e-review-close" type="button" onclick="window.adm5eHideReviewPanel()">?</button>
+      </div>
+      <div class="adm5e-review-grid" id="adm5eReviewGrid"></div>
+      <div id="adm5eReviewFiles"></div>
+      <div class="adm5e-review-msg" id="adm5eReviewMessage"></div>
+      <div class="adm5e-review-actions">
+        <button class="adm5e-btn-review" id="adm5eReviewStatusBtn" type="button">Status</button>
+        <button class="adm5e-btn-approve" id="adm5eReviewApproveBtn" type="button">Approve</button>
+        <button class="adm5e-btn-apply" id="adm5eReviewApplyBtn" type="button">Final Apply</button>
+      </div>
+    `;
+    document.body.appendChild(panel);
+    return panel;
+  }
+
+  window.adm5eHideReviewPanel = function () {
+    const panel = document.getElementById("adm5eReviewPanel");
+    if (panel) panel.classList.remove("is-visible");
+  };
+
+  function metric(label, value) {
+    return `
+      <div class="adm5e-review-metric">
+        <div class="adm5e-review-label">${label}</div>
+        <div class="adm5e-review-value">${String(value ?? "?")}</div>
+      </div>
+    `;
+  }
+
+  function summarizeProposedWrites(job) {
+    const writes = job.proposed_writes || job.proposedWrites || [];
+    if (Array.isArray(writes)) return writes.length;
+    if (writes && typeof writes === "object") return Object.keys(writes).length;
+    return 0;
+  }
+
+  function getFiles(job) {
+    const files = []
+      .concat(job.agent_patch_files || [])
+      .concat(job.allowed_files || []);
+
+    const writes = job.proposed_writes || [];
+    if (Array.isArray(writes)) {
+      writes.forEach(function (write) {
+        if (write && (write.path || write.file || write.target_path)) {
+          files.push(write.path || write.file || write.target_path);
+        }
+      });
+    }
+
+    return Array.from(new Set(files.filter(Boolean)));
+  }
+
+  function getDiffLineCount(job) {
+    const dry = job.dry_run || job.dryRun || {};
+    const summary = dry.diff_summary || dry.diffSummary || job.diff_summary || [];
+
+    if (Array.isArray(summary)) {
+      const line = summary.find(function (entry) {
+        return String(entry).includes("diff_lines=");
+      });
+      if (line) {
+        const match = String(line).match(/diff_lines=(\d+)/);
+        if (match) return match[1];
+      }
+      return summary.length || 0;
+    }
+
+    if (typeof summary === "string") {
+      const match = summary.match(/diff_lines=(\d+)/);
+      return match ? match[1] : summary.split("\n").length;
+    }
+
+    return job.diff_lines || job.diffLines || "?";
+  }
+
+  async function showReview(ref, mode) {
+    const detail = await getJobFinal(ref);
+    const id = detail.id;
+    const job = detail.job;
+    const panel = ensureReviewPanel();
+
+    const status = job.status || "unknown";
+    const execution = job.execution || "none";
+    const writes = summarizeProposedWrites(job);
+    const files = getFiles(job);
+    const blocked = (job.blocked_files || job.agent_patch_blocked_files || []).length || 0;
+    const diffLines = getDiffLineCount(job);
+    const risk = blocked > 0 ? "Blocked" : "Low";
+
+    document.getElementById("adm5eReviewSubtitle").textContent =
+      mode === "detail" ? "Full job detail view." : "Review proposed changes before approval.";
+
+    document.getElementById("adm5eReviewGrid").innerHTML =
+      metric("Job", id) +
+      metric("Status", status) +
+      metric("Execution", execution) +
+      metric("Writes", writes) +
+      metric("Diff Lines", diffLines) +
+      metric("Risk", risk);
+
+    document.getElementById("adm5eReviewFiles").innerHTML = files.length
+      ? files.map(function (file) { return `<div class="adm5e-review-file">${file}</div>`; }).join("")
+      : `<div class="adm5e-review-file">No files detected yet. Run real-patch first.</div>`;
+
+    document.getElementById("adm5eReviewMessage").textContent =
+      job.last_report || job.report || job.summary || "Review this job before applying.";
+
+    document.getElementById("adm5eReviewStatusBtn").onclick = function () { window.runWorkerCommand("status " + id); };
+    document.getElementById("adm5eReviewApproveBtn").onclick = function () { window.runWorkerCommand("approve " + id); };
+    document.getElementById("adm5eReviewApplyBtn").onclick = function () { window.runWorkerCommand("final-apply " + id); };
+
+    panel.classList.add("is-visible");
+
+    appendWorkerLine("Review ready for " + id, "ps-success");
+    appendWorkerLine("  status: " + status + " | writes: " + writes + " | blocked: " + blocked, "ps-muted");
+    files.forEach(function (file) {
+      appendWorkerLine("  file: " + file, "ps-muted");
+    });
+  }
+
+  async function showStatus(ref) {
+    const detail = await getJobFinal(ref);
+    const id = detail.id;
+    const job = detail.job;
+    appendWorkerLine("Status for " + id, "ps-success");
+    appendWorkerLine("  status: " + (job.status || "unknown"), "ps-muted");
+    appendWorkerLine("  execution: " + (job.execution || "none"), "ps-muted");
+    appendWorkerLine("  proposed_writes: " + summarizeProposedWrites(job), "ps-muted");
+    appendWorkerLine("  diff_lines: " + getDiffLineCount(job), "ps-muted");
+    appendWorkerLine("  files: " + JSON.stringify(getFiles(job)), "ps-muted");
+    if (job.last_report) appendWorkerLine("  report: " + job.last_report, "ps-muted");
+    await showReview(id, "detail");
+  }
+
+  async function jobsTail() {
+    const jobs = await getJobsFinal();
+    appendWorkerLine("Jobs tail: " + jobs.length + " total", "ps-success");
+    jobs.slice(-6).forEach(function (job, idx) {
+      const number = Math.max(1, jobs.length - 6 + idx + 1);
+      const id = String(job.job_id || job.id || "");
+      const status = job.status || "unknown";
+      const title = String(job.summary || job.task || job.instruction || "Worker job").slice(0, 90);
+      appendWorkerLine(number + ". " + id + " | " + status + " | " + title, "ps-muted");
+    });
+  }
+
+  async function runPrevious(command) {
+    if (typeof previousRunWorkerCommand !== "function") {
+      throw new Error("Base Worker command runner missing");
+    }
+    return previousRunWorkerCommand(command);
+  }
+
+  async function workOn(ref) {
+    appendWorkerLine("Starting one-command worker flow for " + ref + "...", "ps-muted");
+    if (typeof window.adm5e1ShowProgress === "function") {
+      window.adm5e1ShowProgress("Working", "Generating patch and review for job " + ref + "...", null);
+    }
+    await runPrevious("real-patch " + ref);
+    await showReview(ref, "review");
+    if (typeof window.adm5e1ShowProgress === "function") {
+      window.adm5e1ShowProgress("Review Needed", "Patch is ready. Review before final apply.", "warn");
+    }
+  }
+
+  async function finalApply(ref) {
+    const id = await resolveJobFinal(ref);
+    appendWorkerLine("Final apply sequence for " + id, "ps-success");
+
+    if (typeof window.adm5e1ShowProgress === "function") {
+      window.adm5e1ShowProgress("Approving", "Recording founder approval...", "warn");
+    }
+    await runPrevious("approve " + id);
+
+    if (typeof window.adm5e1ShowProgress === "function") {
+      window.adm5e1ShowProgress("Apply Requested", "Requesting safe apply...", "warn");
+    }
+    await runPrevious("request-apply " + id);
+
+    if (typeof window.adm5e1ShowProgress === "function") {
+      window.adm5e1ShowProgress("Applying", "Running safe apply...", null);
+    }
+    await runPrevious("safe-apply " + id);
+
+    appendWorkerLine("Final apply sequence completed for " + id, "ps-success");
+    appendWorkerLine("Run audit to confirm applied_safe_approved.", "ps-warn");
+
+    if (typeof window.adm5e1ShowProgress === "function") {
+      window.adm5e1ShowProgress("Completed", "Safe apply sequence completed.", "done");
+    }
+  }
+
+  async function showFounderBoundaryStatus() {
+    if (!requireFounderToken()) {
+      return;
+    }
+
+    appendWorkerLine("Worker Boundary Module: " + BOUNDARY_VERSION, "ps-muted");
+    appendWorkerLine("Checking Founder Worker boundary...", "ps-muted");
+
+    const result = await fetchFounderAdminJson("/api/admin/founder-worker-boundary", { method: "GET" });
+    if (!result.response.ok || !result.payload.ok) {
+      appendWorkerLine("Boundary check failed: " + JSON.stringify(result.payload), "ps-error");
+      return;
+    }
+
+    appendWorkerLine("Founder Worker Boundary: ACTIVE", "ps-success");
+    appendWorkerLine("public frontend chat: " + result.payload.public_frontend_chat_worker_access, "ps-muted");
+    appendWorkerLine("founder office worker: " + result.payload.founder_office_worker_access, "ps-muted");
+    appendWorkerLine("worker execution: " + result.payload.worker_execution, "ps-muted");
+  }
+
+  async function createFrontOfficeWorkerJob(taskText) {
+    const task = String(taskText || "").trim();
+    if (!task) {
+      appendWorkerLine("Usage: front-office <task>", "ps-error");
+      return;
+    }
+
+    if (!requireFounderToken()) {
+      return;
+    }
+
+    appendWorkerLine("Worker Boundary Module: " + BOUNDARY_VERSION, "ps-muted");
+    appendWorkerLine("Founder Front Office -> Worker handoff...", "ps-muted");
+
+    const result = await fetchFounderAdminJson("/api/admin/front-office-worker-handoff", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: task,
+        brain_reply: task,
+        task: task,
+        source: "founder_front_office_console",
+        mode: "founder_office",
+        founder_only: true
+      })
+    });
+
+    if (!result.response.ok || !result.payload.ok) {
+      appendWorkerLine("Front Office handoff failed: " + JSON.stringify(result.payload), "ps-error");
+      return;
+    }
+
+    appendWorkerLine(result.payload.report || ("Worker job created: " + result.payload.job_id), "ps-success");
+    appendWorkerLine("Next: jobs-tail -> work-on <job number> -> review", "ps-warn");
+  }
+
+  function maybeRouteFix() {
+    const path = window.location.pathname.toLowerCase();
+    if (path.endsWith("/forgeadmin.html")) {
+      window.location.replace("/forgeadmin/");
+    }
+  }
+
+  maybeRouteFix();
+
+  window.getBrainApiBase = getStableBrainApiBase;
+  window.__forgeAdminWorkerApi = {
+    version: BOUNDARY_VERSION,
+    localBackendPort: LOCAL_BACKEND_PORT,
+    getStableBrainApiBase: getStableBrainApiBase,
+    fetchFounderAdminJson: fetchFounderAdminJson
+  };
+
+  window.runWorkerCommand = async function (rawCommand) {
+    const command = String(rawCommand || "").trim();
+    const parts = command.split(/\s+/);
+    const action = (parts[0] || "").toLowerCase();
+    const rest = parts.slice(1).join(" ").trim();
+
+    try {
+      if (action === "founder-boundary" || action === "boundary") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        await showFounderBoundaryStatus();
+        return;
+      }
+
+      if (action === "front-office" || action === "founder-work") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        await createFrontOfficeWorkerJob(rest);
+        return;
+      }
+
+      if (action === "review" || action === "diff-review") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        if (!rest) return appendWorkerLine("Usage: review <number|job_id>", "ps-error");
+        await showReview(rest, "review");
+        return;
+      }
+
+      if (action === "details" || action === "detail" || action === "status") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        if (!rest) return appendWorkerLine("Usage: status <number|job_id>", "ps-error");
+        await showStatus(rest);
+        return;
+      }
+
+      if (action === "work-on") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        if (!rest) return appendWorkerLine("Usage: work-on <number|job_id>", "ps-error");
+        await workOn(rest);
+        return;
+      }
+
+      if (action === "final-apply" || action === "finish-apply") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        if (!rest) return appendWorkerLine("Usage: final-apply <number|job_id>", "ps-error");
+        await finalApply(rest);
+        return;
+      }
+
+      if (action === "jobs-tail" || action === "tail-jobs") {
+        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + command, "ps-command");
+        await jobsTail();
+        return;
+      }
+
+      if (action === "founder-token") {
+        const sub = (parts[1] || "").toLowerCase();
+        if (sub === "set") {
+          const token = parts.slice(2).join(" ").trim();
+          if (!token) {
+            appendWorkerLine("Usage: founder-token set <token>", "ps-error");
+            return;
+          }
+          setFounderToken(token);
+          appendWorkerLine("Founder token saved locally ?", "ps-success");
+        } else if (sub === "clear") {
+          setFounderToken("");
+          appendWorkerLine("Founder token cleared.", "ps-success");
+        } else {
+          appendWorkerLine("Founder token status: " + (getFounderToken() ? "saved" : "not set"), "ps-muted");
+          appendWorkerLine("Usage: founder-token set <token> | founder-token clear", "ps-muted");
+        }
+        return;
+      }
+
+      if (action === "help") {
+        if (typeof previousRunWorkerCommand === "function") {
+          await previousRunWorkerCommand(rawCommand);
+        }
+        appendWorkerLine("  founder-boundary              Check founder-only Worker boundary", "ps-muted");
+        appendWorkerLine("  front-office <task>           Founder Office -> Worker handoff", "ps-muted");
+        appendWorkerLine("  founder-work <task>           Same as front-office", "ps-muted");
+        appendWorkerLine("  jobs-tail                     Show latest jobs only", "ps-muted");
+        appendWorkerLine("  work-on <number|job_id>       Generate patch + review", "ps-muted");
+        appendWorkerLine("  review <number|job_id>        Show diff review panel", "ps-muted");
+        appendWorkerLine("  final-apply <number|job_id>   Approve + request-apply + safe-apply", "ps-muted");
+        appendWorkerLine("  audit                         Show audit trail", "ps-muted");
+        return;
+      }
+
+      if (typeof previousRunWorkerCommand === "function") {
+        return previousRunWorkerCommand(rawCommand);
+      }
+
+      appendWorkerLine("Unknown command. Type help.", "ps-error");
+    } catch (error) {
+      appendWorkerLine(action + " failed: " + error.message, "ps-error");
+      if (typeof window.adm5e1ShowProgress === "function") {
+        window.adm5e1ShowProgress("Failed", error.message, "error");
+      }
+    }
+  };
+})();
+</script>
+
+
+<!-- ADM-5E-3B: Review Panel Applied-State Lock -->
+<style id="adm5e3b-review-applied-lock-style">
+  .adm5e-applied-badge {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 16px;
+    background: rgba(125, 240, 178, 0.12);
+    border: 1px solid rgba(125, 240, 178, 0.26);
+    color: #8df4bd;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.45;
+    font-weight: 800;
+  }
+
+  .adm5e-review-panel.is-applied .adm5e-btn-approve,
+  .adm5e-review-panel.is-applied .adm5e-btn-apply {
+    display: none !important;
+  }
+
+  .adm5e-review-panel.is-applied .adm5e-review-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .adm5e-review-panel.is-applied .adm5e-btn-review {
+    background: rgba(125, 240, 178, 0.18) !important;
+    color: #8df4bd !important;
+  }
+</style>
+
+<script id="adm5e3b-review-applied-lock-script">
+  (function () {
+    if (window.__adm5e3bReviewAppliedLockInstalled) return;
+    window.__adm5e3bReviewAppliedLockInstalled = true;
+
+    function getMetricValue(labelName) {
+      const panel = document.getElementById("adm5eReviewPanel");
+      if (!panel) return "";
+
+      const metrics = panel.querySelectorAll(".adm5e-review-metric");
+
+      for (const metric of metrics) {
+        const label = metric.querySelector(".adm5e-review-label");
+        const value = metric.querySelector(".adm5e-review-value");
+
+        if (!label || !value) continue;
+
+        if (String(label.textContent || "").trim().toLowerCase() === labelName.toLowerCase()) {
+          return String(value.textContent || "").trim();
+        }
+      }
+
+      return "";
+    }
+
+    function ensureAppliedBadge(panel) {
+      let badge = document.getElementById("adm5eAppliedBadge");
+
+      if (!badge) {
+        badge = document.createElement("div");
+        badge.id = "adm5eAppliedBadge";
+        badge.className = "adm5e-applied-badge";
+
+        const msg = document.getElementById("adm5eReviewMessage");
+        if (msg && msg.parentNode) {
+          msg.parentNode.insertBefore(badge, msg.nextSibling);
+        } else {
+          panel.appendChild(badge);
+        }
+      }
+
+      badge.textContent = "Already Applied ✅ No further action needed. This job has already passed founder approval and safe apply.";
+      badge.style.display = "block";
+    }
+
+    function hideAppliedBadge() {
+      const badge = document.getElementById("adm5eAppliedBadge");
+      if (badge) badge.style.display = "none";
+    }
+
+    function settleReviewPanelState() {
+      const panel = document.getElementById("adm5eReviewPanel");
+      if (!panel) return;
+
+      const status = getMetricValue("Status").toLowerCase();
+      const execution = getMetricValue("Execution").toLowerCase();
+
+      const isApplied =
+        status.includes("applied") ||
+        execution.includes("applied_safe_approved") ||
+        execution.includes("applied");
+
+      const subtitle = document.getElementById("adm5eReviewSubtitle");
+      const statusBtn = document.getElementById("adm5eReviewStatusBtn");
+
+      if (isApplied) {
+        panel.classList.add("is-applied");
+        ensureAppliedBadge(panel);
+
+        if (subtitle) {
+          subtitle.textContent = "This job is already applied. No further action is needed.";
+        }
+
+        if (statusBtn) {
+          statusBtn.textContent = "Applied ✅";
+        }
+      } else {
+        panel.classList.remove("is-applied");
+        hideAppliedBadge();
+
+        if (statusBtn && statusBtn.textContent === "Applied ✅") {
+          statusBtn.textContent = "Status";
+        }
+      }
+    }
+
+    const observer = new MutationObserver(function () {
+      setTimeout(settleReviewPanelState, 30);
+    });
+
+    function startObserver() {
+      const panel = document.getElementById("adm5eReviewPanel");
+
+      if (!panel) {
+        setTimeout(startObserver, 300);
+        return;
+      }
+
+      observer.observe(panel, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true
+      });
+
+      settleReviewPanelState();
+    }
+
+    startObserver();
+
+    const previousAppend = window.appendWorkerLine;
+    if (typeof previousAppend === "function") {
+      window.appendWorkerLine = function () {
+        const result = previousAppend.apply(this, arguments);
+        setTimeout(settleReviewPanelState, 80);
+        return result;
+      };
+    }
+
+    const previousRun = window.runWorkerCommand;
+    if (typeof previousRun === "function") {
+      window.runWorkerCommand = async function () {
+        const result = await previousRun.apply(this, arguments);
+        setTimeout(settleReviewPanelState, 120);
+        return result;
+      };
+    }
+  })();
+</script>
+
+<!-- ADM-5F-CLEAN: Founder Worker Boundary Final -->
+
+
+<!-- ADM-5F: Reliable Worker Progress Card -->
+
+
+
+
+
+<!-- ADM-5F: Reliable Worker Progress Card -->
+<style id="adm5f-progress-card-style">
+  .adm5f-progress-card {
+    position: fixed;
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+    bottom: calc(120px + env(safe-area-inset-bottom));
+    z-index: 10080;
+    display: none;
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 16px 18px;
+    border-radius: 24px;
+    background: rgba(5, 28, 64, 0.96);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #f8fbff;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    box-shadow: 0 22px 70px rgba(0,0,0,.36);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+
+  .adm5f-progress-card.is-visible {
+    display: block;
+  }
+
+  .adm5f-progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .adm5f-progress-title {
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: .06em;
+  }
+
+  .adm5f-progress-state {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: .08em;
+    color: #ffd56a;
+  }
+
+  .adm5f-progress-card.is-done .adm5f-progress-state {
+    color: #7df0b2;
+  }
+
+  .adm5f-progress-card.is-error .adm5f-progress-state {
+    color: #ff9baa;
+  }
+
+  .adm5f-progress-body {
+    font-size: 13px;
+    line-height: 1.45;
+    color: rgba(255,255,255,.76);
+  }
+
+  .adm5f-progress-dots {
+    margin-top: 10px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .adm5f-progress-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 99px;
+    background: #7df0b2;
+    opacity: .35;
+    animation: adm5fDot 1.1s infinite ease-in-out;
+  }
+
+  .adm5f-progress-dots span:nth-child(2) {
+    animation-delay: .16s;
+  }
+
+  .adm5f-progress-dots span:nth-child(3) {
+    animation-delay: .32s;
+  }
+
+  @keyframes adm5fDot {
+    0%, 100% { opacity: .25; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-2px); }
+  }
+</style>
+
+<script id="adm5f-progress-card-script">
+(function () {
+  if (window.__adm5fProgressCardInstalled) return;
+  window.__adm5fProgressCardInstalled = true;
+
+  function ensureProgressCard() {
+    let card = document.getElementById("adm5fProgressCard");
+
+    if (card) return card;
+
+    card = document.createElement("div");
+    card.id = "adm5fProgressCard";
+    card.className = "adm5f-progress-card";
+    card.innerHTML = `
+      <div class="adm5f-progress-head">
+        <div class="adm5f-progress-title">Worker Execution</div>
+        <div class="adm5f-progress-state" id="adm5fProgressState">RUNNING</div>
+      </div>
+      <div class="adm5f-progress-body" id="adm5fProgressBody">Worker command in progress...</div>
+      <div class="adm5f-progress-dots" id="adm5fProgressDots">
+        <span></span><span></span><span></span>
+      </div>
+    `;
+
+    document.body.appendChild(card);
+    return card;
+  }
+
+  window.adm5fShowProgress = function (state, message, mode) {
+    const card = ensureProgressCard();
+    const stateEl = document.getElementById("adm5fProgressState");
+    const bodyEl = document.getElementById("adm5fProgressBody");
+    const dotsEl = document.getElementById("adm5fProgressDots");
+
+    card.classList.remove("is-done", "is-error");
+
+    if (mode === "done") card.classList.add("is-done");
+    if (mode === "error") card.classList.add("is-error");
+
+    stateEl.textContent = state || "RUNNING";
+    bodyEl.textContent = message || "Worker command in progress...";
+    dotsEl.style.display = mode === "done" || mode === "error" ? "none" : "flex";
+
+    card.classList.add("is-visible");
+
+    if (mode === "done" || mode === "error") {
+      clearTimeout(window.__adm5fProgressHideTimer);
+      window.__adm5fProgressHideTimer = setTimeout(function () {
+        card.classList.remove("is-visible");
+      }, 2600);
+    }
+  };
+
+  window.adm5e1ShowProgress = window.adm5e1ShowProgress || function (title, message, mode) {
+    const normalizedMode = mode === "done" ? "done" : mode === "error" ? "error" : "";
+    window.adm5fShowProgress(String(title || "Worker Execution").toUpperCase(), message, normalizedMode);
+  };
+
+  function commandLabel(command) {
+    const action = String(command || "").trim().split(/\s+/)[0] || "command";
+
+    if (action === "front-office" || action === "founder-work") return ["HANDOFF", "Creating Founder Office Worker job..."];
+    if (action === "work-on") return ["RUNNING", "Generating patch and review..."];
+    if (action === "review") return ["REVIEW", "Opening Worker review panel..."];
+    if (action === "final-apply") return ["APPLYING", "Running approval and safe apply sequence..."];
+    if (action === "jobs-tail") return ["LOADING", "Loading latest Worker jobs..."];
+    if (action === "founder-boundary" || action === "boundary") return ["CHECKING", "Checking Founder Worker boundary..."];
+    if (action === "audit") return ["LOADING", "Loading audit logs..."];
+    if (action === "executions") return ["LOADING", "Loading execution jobs..."];
+
+    return ["RUNNING", "Worker command in progress..."];
+  }
+
+  function installWrapper() {
+    if (typeof window.runWorkerCommand !== "function") return false;
+    if (window.runWorkerCommand.__adm5fProgressWrapped) return true;
+
+    const previous = window.runWorkerCommand;
+
+    const wrapped = async function (rawCommand) {
+      const command = String(rawCommand || "").trim();
+      const action = command.split(/\s+/)[0] || "";
+
+      const shouldShow = [
+        "front-office",
+        "founder-work",
+        "founder-task",
+        "work-on",
+        "review",
+        "final-apply",
+        "jobs-tail",
+        "founder-boundary",
+        "boundary",
+        "audit",
+        "executions"
+      ].includes(action);
+
+      if (shouldShow) {
+        const label = commandLabel(command);
+        window.adm5fShowProgress(label[0], label[1], "");
+      }
+
+      try {
+        const result = await previous.apply(this, arguments);
+
+        if (shouldShow) {
+          window.adm5fShowProgress("COMPLETED", "Worker command finished.", "done");
+        }
+
+        return result;
+      } catch (error) {
+        if (shouldShow) {
+          window.adm5fShowProgress("FAILED", error && error.message ? error.message : "Worker command failed.", "error");
+        }
+        throw error;
+      }
+    };
+
+    wrapped.__adm5fProgressWrapped = true;
+    window.runWorkerCommand = wrapped;
+    return true;
+  }
+
+  if (!installWrapper()) {
+    const timer = setInterval(function () {
+      if (installWrapper()) clearInterval(timer);
+    }, 250);
+
+    setTimeout(function () {
+      clearInterval(timer);
+    }, 6000);
+  }
+})();
+</script>
+
+
+<!-- ADM-5F: Force Review Panel X Close -->
+<style id="adm5f-force-review-x-style">
+  .adm5f-force-close-x {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 30px !important;
+    font-weight: 400 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+  }
+</style>
+
+<script id="adm5f-force-review-x-script">
+(function () {
+  if (window.__adm5fForceReviewXInstalled) return;
+  window.__adm5fForceReviewXInstalled = true;
+
+  function findReviewPanel() {
+    return (
+      document.getElementById("adm5eReviewPanel") ||
+      document.querySelector(".adm5e-review-panel") ||
+      document.querySelector("[class*='review'][class*='panel']") ||
+      document.querySelector("[id*='Review'][id*='Panel']")
+    );
+  }
+
+  function closeReviewPanel(panel) {
+    if (!panel) return;
+
+    panel.classList.remove("is-visible", "visible", "open", "active", "show");
+    panel.style.display = "none";
+
+    const overlays = document.querySelectorAll(
+      ".adm5e-review-backdrop, .adm5e-review-overlay, [class*='review'][class*='backdrop'], [class*='review'][class*='overlay']"
+    );
+
+    overlays.forEach(function (el) {
+      el.classList.remove("is-visible", "visible", "open", "active", "show");
+      el.style.display = "none";
+    });
+  }
+
+  function forceXClose() {
+    const panel = findReviewPanel();
+    if (!panel) return;
+
+    const panelRect = panel.getBoundingClientRect();
+    const candidates = panel.querySelectorAll("button, [role='button'], .adm5e-review-close, [class*='close'], [class*='help']");
+
+    candidates.forEach(function (btn) {
+      const text = String(btn.textContent || "").trim();
+      const rect = btn.getBoundingClientRect();
+
+      const isTopRight =
+        rect.left > panelRect.left + panelRect.width - 130 &&
+        rect.top < panelRect.top + 130;
+
+      const isQuestion = text === "?" || text === "？";
+
+      if (isQuestion || isTopRight || btn.className.toString().includes("close")) {
+        btn.textContent = "×";
+        btn.classList.add("adm5f-force-close-x");
+        btn.setAttribute("aria-label", "Close review panel");
+        btn.setAttribute("title", "Close");
+
+        if (!btn.__adm5fCloseBound) {
+          btn.__adm5fCloseBound = true;
+          btn.addEventListener("click", function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeReviewPanel(panel);
+          }, true);
+        }
+      }
+    });
+  }
+
+  forceXClose();
+
+  setInterval(forceXClose, 500);
+
+  const previousRun = window.runWorkerCommand;
+  if (typeof previousRun === "function" && !previousRun.__adm5fForceXWrapped) {
+    const wrapped = async function () {
+      const result = await previousRun.apply(this, arguments);
+      setTimeout(forceXClose, 80);
+      setTimeout(forceXClose, 300);
+      return result;
+    };
+
+    wrapped.__adm5fForceXWrapped = true;
+    window.runWorkerCommand = wrapped;
+  }
+
+  const observer = new MutationObserver(function () {
+    forceXClose();
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+})();
+</script>
+
+
+<!-- ADM-5F: Progress Card Timeout + Non Blocking Review Fix -->
+<style id="adm5f-progress-timeout-style">
+  #adm5fProgressCard {
+    pointer-events: none !important;
+  }
+</style>
+
+<script id="adm5f-progress-timeout-script">
+(function () {
+  if (window.__adm5fProgressTimeoutFixInstalled) return;
+  window.__adm5fProgressTimeoutFixInstalled = true;
+
+  function hideProgressCard() {
+    const cards = document.querySelectorAll(
+      "#adm5fProgressCard, .adm5f-progress-card, [class*='progress-card']"
+    );
+
+    cards.forEach(function (card) {
+      card.classList.remove("is-visible");
+      card.style.display = "none";
+    });
+  }
+
+  window.adm5fHideProgress = hideProgressCard;
+
+  const oldShow = window.adm5fShowProgress;
+
+  window.adm5fShowProgress = function (state, message, mode) {
+    if (typeof oldShow === "function") {
+      oldShow(state, message, mode);
+    }
+
+    clearTimeout(window.__adm5fProgressForceHideTimer);
+
+    const stateText = String(state || "").toLowerCase();
+
+    let delay = 8000;
+
+    if (
+      stateText.includes("review") ||
+      String(message || "").toLowerCase().includes("review")
+    ) {
+      delay = 3500;
+    }
+
+    if (mode === "done" || mode === "error") {
+      delay = 2200;
+    }
+
+    window.__adm5fProgressForceHideTimer = setTimeout(hideProgressCard, delay);
+  };
+
+  const oldRun = window.runWorkerCommand;
+
+  if (typeof oldRun === "function" && !oldRun.__adm5fNonBlockingProgressFix) {
+    const wrapped = function (rawCommand) {
+      const command = String(rawCommand || "").trim();
+      const action = command.split(/\s+/)[0] || "";
+
+      if (action === "review") {
+        setTimeout(hideProgressCard, 3500);
+      }
+
+      if (action === "work-on") {
+        setTimeout(hideProgressCard, 8000);
+      }
+
+      if (action === "jobs-tail" || action === "status" || action === "audit") {
+        setTimeout(hideProgressCard, 3500);
+      }
+
+      return oldRun.apply(this, arguments);
+    };
+
+    wrapped.__adm5fNonBlockingProgressFix = true;
+    window.runWorkerCommand = wrapped;
+  }
+
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      hideProgressCard();
+    }
+  });
+
+  document.addEventListener("click", function (event) {
+    const target = event.target;
+    if (!target) return;
+
+    const text = String(target.textContent || "").trim().toLowerCase();
+
+    if (text === "status" || text === "approve" || text === "final apply") {
+      hideProgressCard();
+    }
+  }, true);
+})();
+</script>
+
 </body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
 
