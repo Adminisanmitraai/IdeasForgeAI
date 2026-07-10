@@ -27,6 +27,9 @@ from backend.convera.agents.convera_orchestrator_agent import (
 from backend.convera.agents.quality_validator_agent import (
     QualityValidatorAgent,
 )
+from backend.convera.agents.response_composer_agent import (
+    ResponseComposerAgent,
+)
 
 
 AGENT_CLASSES = [
@@ -38,6 +41,7 @@ AGENT_CLASSES = [
     ConversationMemoryAgent,
     ConveraOrchestratorAgent,
     QualityValidatorAgent,
+    ResponseComposerAgent,
 ]
 
 

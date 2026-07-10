@@ -261,11 +261,11 @@ class ConveraOrchestratorAgentTests(unittest.TestCase):
 
         self.assertEqual(
             result.data["status"],
-            "validated",
+            "completed",
         )
         self.assertEqual(
             result.data["execution_plan"]["next_step"],
-            "compose_response",
+            "send_final_reply",
         )
 
         stages = [
@@ -274,10 +274,11 @@ class ConveraOrchestratorAgentTests(unittest.TestCase):
         ]
 
         self.assertEqual(
-            stages[-2:],
+            stages[-3:],
             [
                 "specialist_agent",
                 "quality_validator",
+                "response_composer",
             ],
         )
 
@@ -332,7 +333,7 @@ class ConveraOrchestratorAgentTests(unittest.TestCase):
 
         self.assertEqual(
             result.data["status"],
-            "validated",
+            "completed",
         )
         self.assertEqual(
             result.data["validated_response"][
@@ -417,6 +418,178 @@ class ConveraOrchestratorAgentTests(unittest.TestCase):
         self.assertEqual(
             result.data["status"],
             "validation_failed",
+        )
+        self.assertFalse(
+            result.data["should_respond"]
+        )
+        self.assertIn(
+            "failed safely",
+            result.data["error"],
+        )
+
+
+    def test_composes_validated_specialist_result(
+        self,
+    ) -> None:
+        payload = self.base_payload()
+        payload["message"] = (
+            "@Convera summarize the project discussion"
+        )
+        payload["specialist_result"] = {
+            "success": True,
+            "agent_id": "convera.summarization",
+            "output": (
+                "The project discussion focused on the "
+                "mobile interface and deployment plan."
+            ),
+        }
+
+        result = self.agent.execute(payload)
+
+        self.assertEqual(
+            result.data["status"],
+            "completed",
+        )
+        self.assertTrue(
+            result.data["should_respond"]
+        )
+        self.assertEqual(
+            result.data["execution_plan"]["next_step"],
+            "send_final_reply",
+        )
+        self.assertEqual(
+            result.data["final_reply"]["sender"]["id"],
+            "convera",
+        )
+
+    def test_trace_ends_with_response_composer(
+        self,
+    ) -> None:
+        payload = self.base_payload()
+        payload["message"] = (
+            "@Convera summarize the project discussion"
+        )
+        payload["specialist_result"] = {
+            "success": True,
+            "agent_id": "convera.summarization",
+            "output": (
+                "The project discussion focused on the "
+                "mobile interface."
+            ),
+        }
+
+        result = self.agent.execute(payload)
+
+        stages = [
+            item["stage"]
+            for item in result.data["trace"]
+        ]
+
+        self.assertEqual(
+            stages[-3:],
+            [
+                "specialist_agent",
+                "quality_validator",
+                "response_composer",
+            ],
+        )
+
+    def test_composer_does_not_run_when_validation_rejects(
+        self,
+    ) -> None:
+        payload = self.base_payload()
+        payload["message"] = (
+            "@Convera summarize the project discussion"
+        )
+        payload["specialist_result"] = {
+            "success": True,
+            "agent_id": "convera.summarization",
+            "output": "",
+        }
+
+        result = self.agent.execute(payload)
+
+        stages = [
+            item["stage"]
+            for item in result.data["trace"]
+        ]
+
+        self.assertNotIn(
+            "response_composer",
+            stages,
+        )
+        self.assertEqual(
+            result.data["status"],
+            "validation_rejected",
+        )
+
+    def test_composer_preserves_artifact_output(
+        self,
+    ) -> None:
+        payload = self.base_payload()
+        payload["message"] = (
+            "@Convera create a project summary document"
+        )
+        payload["specialist_result"] = {
+            "success": True,
+            "agent_id": "convera.document",
+            "output": {
+                "type": "document",
+                "content": (
+                    "The project summary covers the mobile "
+                    "interface and deployment."
+                ),
+                "artifact": {
+                    "artifact_id": "doc-1",
+                    "format": "docx",
+                },
+            },
+        }
+
+        result = self.agent.execute(payload)
+
+        self.assertEqual(
+            result.data["status"],
+            "completed",
+        )
+        self.assertEqual(
+            result.data["final_reply"]["type"],
+            "document",
+        )
+        self.assertEqual(
+            result.data["final_reply"]["artifacts"][0][
+                "artifact_id"
+            ],
+            "doc-1",
+        )
+
+    def test_composer_exception_fails_safely(
+        self,
+    ) -> None:
+        class ExplodingComposer:
+            def execute(self, payload: dict) -> object:
+                raise RuntimeError("composer exploded")
+
+        self.agent._composer_agent = ExplodingComposer()
+
+        payload = self.base_payload()
+        payload["message"] = (
+            "@Convera summarize the project discussion"
+        )
+        payload["specialist_result"] = {
+            "success": True,
+            "agent_id": "convera.summarization",
+            "output": (
+                "The project discussion covers the "
+                "mobile interface."
+            ),
+        }
+
+        result = self.agent.execute(payload)
+
+        self.assertEqual(
+            result.data["status"],
+            "composition_failed",
         )
         self.assertFalse(
             result.data["should_respond"]

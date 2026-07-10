@@ -25,6 +25,9 @@ from .permission_privacy_agent import (
 from .quality_validator_agent import (
     QualityValidatorAgent,
 )
+from .response_composer_agent import (
+    ResponseComposerAgent,
+)
 
 
 class ConveraOrchestratorAgent(BaseConveraAgent):
@@ -45,7 +48,7 @@ class ConveraOrchestratorAgent(BaseConveraAgent):
         performs_external_actions=False,
     )
 
-    PIPELINE_VERSION = "1.1.0"
+    PIPELINE_VERSION = "1.2.0"
 
     def __init__(self) -> None:
         self._mention_agent = MentionActivationAgent()
@@ -54,6 +57,7 @@ class ConveraOrchestratorAgent(BaseConveraAgent):
         self._permission_agent = PermissionPrivacyAgent()
         self._memory_agent = ConversationMemoryAgent()
         self._quality_agent = QualityValidatorAgent()
+        self._composer_agent = ResponseComposerAgent()
 
     def execute(self, payload: Mapping[str, Any]) -> AgentResult:
         validation_error = self._validate(payload)
@@ -525,18 +529,13 @@ class ConveraOrchestratorAgent(BaseConveraAgent):
             return result
 
         if quality.data.get("approved", False):
-            result["status"] = "validated"
-            result["should_respond"] = True
-            result["validated_response"] = quality.data.get(
-                "validated_response"
+            return self._compose_validated_response(
+                payload=payload,
+                plan=plan,
+                trace=trace,
+                result=result,
+                quality=quality,
             )
-            result["execution_plan"] = dict(
-                plan["execution_plan"]
-            )
-            result["execution_plan"][
-                "next_step"
-            ] = "compose_response"
-            return result
 
         result["status"] = "validation_rejected"
         result["should_respond"] = False
@@ -551,6 +550,139 @@ class ConveraOrchestratorAgent(BaseConveraAgent):
             )
         )
         return result
+
+    def _compose_validated_response(
+        self,
+        *,
+        payload: Mapping[str, Any],
+        plan: Dict[str, Any],
+        trace: list[Dict[str, Any]],
+        result: Dict[str, Any],
+        quality: AgentResult,
+    ) -> Dict[str, Any]:
+        composer_payload = {
+            "conversation_id": payload.get(
+                "conversation_id"
+            ),
+            "thread_id": payload.get("thread_id"),
+            "project_id": payload.get("project_id"),
+            "request_id": payload.get("request_id"),
+            "trace_id": payload.get("trace_id"),
+            "chat_type": payload.get(
+                "chat_type",
+                "private",
+            ),
+            "activated": True,
+            "permission_allowed": bool(
+                plan.get(
+                    "permission",
+                    {},
+                ).get("allowed", False)
+            ),
+            "permission_reason": plan.get(
+                "permission",
+                {},
+            ).get("reason"),
+            "validation_approved": True,
+            "validated_response": quality.data.get(
+                "validated_response"
+            ),
+            "required_action": quality.data.get(
+                "required_action"
+            ),
+            "artifacts": payload.get("artifacts", []),
+            "attachments": payload.get(
+                "attachments",
+                payload.get("files", []),
+            ),
+            "citations": payload.get("citations", []),
+            "reply_to_message_id": payload.get(
+                "reply_to_message_id"
+            ),
+            "mentions": payload.get("mentions", []),
+        }
+
+        try:
+            composition = self._composer_agent.execute(
+                composer_payload
+            )
+        except Exception as error:
+            composition = AgentResult(
+                success=False,
+                agent_id=(
+                    ResponseComposerAgent.metadata.agent_id
+                ),
+                data={
+                    "status": "composition_failed",
+                    "should_send": False,
+                    "reply": None,
+                },
+                error=(
+                    "Response composition failed safely: "
+                    f"{error}"
+                ),
+            )
+
+        trace.append(
+            self._trace_entry(
+                "response_composer",
+                composition,
+            )
+        )
+
+        final_result = dict(result)
+        final_result["trace"] = trace
+        final_result["composition"] = composition.data
+
+        if not composition.success:
+            final_result["status"] = "composition_failed"
+            final_result["should_respond"] = False
+            final_result["error"] = composition.error
+            final_result["execution_plan"] = dict(
+                plan["execution_plan"]
+            )
+            final_result["execution_plan"][
+                "can_execute"
+            ] = False
+            final_result["execution_plan"][
+                "next_step"
+            ] = "handle_composition_failure"
+            return final_result
+
+        if not composition.data.get(
+            "should_send",
+            False,
+        ):
+            final_result["status"] = composition.data.get(
+                "status",
+                "not_ready",
+            )
+            final_result["should_respond"] = False
+            final_result["final_reply"] = None
+            final_result["execution_plan"] = dict(
+                plan["execution_plan"]
+            )
+            final_result["execution_plan"][
+                "next_step"
+            ] = "do_not_send"
+            return final_result
+
+        final_result["status"] = "completed"
+        final_result["should_respond"] = True
+        final_result["validated_response"] = (
+            quality.data.get("validated_response")
+        )
+        final_result["final_reply"] = composition.data.get(
+            "reply"
+        )
+        final_result["execution_plan"] = dict(
+            plan["execution_plan"]
+        )
+        final_result["execution_plan"][
+            "next_step"
+        ] = "send_final_reply"
+
+        return final_result
 
     def _validate(
         self,
