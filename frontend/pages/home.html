@@ -1898,8 +1898,160 @@
 </script>
 <!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
 
+<!-- IF-LANDING-CHAT-ROUTER-START -->
+<script id="if-landing-chat-router">
+(() => {
+  const CHAT_PAGE = "/pages/home-chatkit.html";
+  const DOMAIN_KEY_STORAGE = "ideasforgeai_chatkit_domain_key";
+
+  function getDomainKey() {
+    const params = new URLSearchParams(window.location.search);
+    const keyFromUrl = params.get("domainKey");
+
+    if (keyFromUrl) {
+      localStorage.setItem(DOMAIN_KEY_STORAGE, keyFromUrl);
+      return keyFromUrl;
+    }
+
+    return localStorage.getItem(DOMAIN_KEY_STORAGE) || "";
+  }
+
+  function openChat(entry, prompt = "") {
+    const domainKey = getDomainKey();
+
+    if (!domainKey) {
+      alert(
+        "Open the ChatKit page once with your real domain key, then return to the landing page."
+      );
+      return;
+    }
+
+    const url = new URL(CHAT_PAGE, window.location.origin);
+
+    url.searchParams.set("domainKey", domainKey);
+    url.searchParams.set("entry", entry);
+
+    if (prompt.trim()) {
+      url.searchParams.set("prompt", prompt.trim());
+    }
+
+    window.location.href = url.toString();
+  }
+
+  function textOf(element) {
+    return (element?.textContent || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+  function findComposer() {
+    return (
+      document.querySelector('textarea[placeholder*="Start writing" i]') ||
+      document.querySelector('input[placeholder*="Start writing" i]') ||
+      document.querySelector('[contenteditable="true"]')
+    );
+  }
+
+  function composerValue(element) {
+    if (!element) return "";
+
+    if (
+      element instanceof HTMLInputElement ||
+      element instanceof HTMLTextAreaElement
+    ) {
+      return element.value || "";
+    }
+
+    return element.textContent || "";
+  }
+
+  function submitIdea() {
+    const composer = findComposer();
+    const prompt = composerValue(composer).trim();
+
+    if (!prompt) {
+      composer?.focus();
+      return;
+    }
+
+    openChat("idea", prompt);
+  }
+
+  document.addEventListener("click", (event) => {
+    const target = event.target.closest(
+      "button, a, [role='button'], .card, .chip"
+    );
+
+    if (!target) return;
+
+    const text = textOf(target);
+
+    if (text.includes("forgestudio")) {
+      event.preventDefault();
+      openChat("forgestudio");
+      return;
+    }
+
+    if (text.includes("forgecode")) {
+      event.preventDefault();
+      openChat("forgecode");
+      return;
+    }
+
+    if (text.includes("forgework")) {
+      event.preventDefault();
+      openChat("forgework");
+      return;
+    }
+
+    const aria = (
+      target.getAttribute("aria-label") || ""
+    ).toLowerCase();
+
+    const type = (
+      target.getAttribute("type") || ""
+    ).toLowerCase();
+
+    if (
+      aria.includes("send") ||
+      aria.includes("submit") ||
+      type === "submit"
+    ) {
+      const composer = findComposer();
+
+      if (composer) {
+        event.preventDefault();
+        submitIdea();
+      }
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const composer = findComposer();
+
+    if (
+      composer &&
+      event.target === composer &&
+      event.key === "Enter" &&
+      !event.shiftKey &&
+      !event.isComposing
+    ) {
+      event.preventDefault();
+      submitIdea();
+    }
+  });
+
+  window.IdeasForgeLanding = {
+    openChat,
+    submitIdea
+  };
+})();
+</script>
+<!-- IF-LANDING-CHAT-ROUTER-END -->
 </body>
 </html>
+
 
 
 
