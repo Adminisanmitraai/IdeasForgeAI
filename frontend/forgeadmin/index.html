@@ -5309,243 +5309,62 @@
 </script>
 
 
-<!-- IF-FOUNDER-TOKEN-INTERCEPT-START -->
-<script id="if-founder-token-intercept-final">
+
+
+
+
+<!-- IF-FOUNDER-TOKEN-FINAL-COMMAND-START -->
+<script id="if-founder-token-final-command">
 (function () {
-  if (window.__ifFounderTokenInterceptHardFinal) return;
-  window.__ifFounderTokenInterceptHardFinal = true;
-
-  const TOKEN_KEY = "IF_FOUNDER_ADMIN_TOKEN";
-  const API_BASE = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname.startsWith("192.168.")
-    ? "http://" + location.hostname + ":5051"
-    : "https://ideasforgeai-api.onrender.com";
-
-  function isCmd(v) {
-    return /^(founder-token|founder-boundary|front-office)\b/i.test(String(v || "").trim());
-  }
-
-  function inputEl() {
-    const active = document.activeElement;
-    if (active && (active.tagName === "TEXTAREA" || active.tagName === "INPUT" || active.isContentEditable)) return active;
-
-    const all = Array.from(document.querySelectorAll("textarea,input,[contenteditable='true'],[role='textbox']"));
-    return all.find(el => isCmd(valueOf(el))) || all[all.length - 1] || null;
-  }
-
-  function valueOf(el) {
-    if (!el) return "";
-    return "value" in el ? el.value : el.textContent;
-  }
-
-  function clearInput(el) {
-    if (!el) return;
-    if ("value" in el) el.value = "";
-    else el.textContent = "";
-    el.dispatchEvent(new Event("input", { bubbles: true }));
-  }
-
-  function stop(e) {
-    if (!e) return;
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
-  }
-
-  function note(text) {
-    const box = document.createElement("div");
-    box.textContent = text;
-    box.style.cssText = "white-space:pre-line;margin:16px auto;padding:14px 18px;max-width:86%;border-radius:22px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 10px 30px rgba(0,0,0,.08);font:700 15px/1.35 system-ui;color:#111827;";
-    const host = document.querySelector("main") || document.querySelector("[class*='chat']") || document.body;
-    host.appendChild(box);
-    try { box.scrollIntoView({behavior:"smooth",block:"center"}); } catch {}
-  }
-
-  async function api(path, options) {
-    const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
-    if (!token) {
-      note("Founder token missing. Run founder-token set <token> first.");
-      return;
-    }
-
-    const headers = Object.assign({}, options && options.headers || {}, {
-      "X-IF-Founder-Token": token
-    });
-
-    const res = await fetch(API_BASE + path, Object.assign({}, options || {}, { headers }));
-    const text = await res.text();
-    let data = {};
-    try { data = JSON.parse(text || "{}"); } catch { data = { raw: text }; }
-
-    if (!res.ok) {
-      note("Founder backend connection failed. Check Render API/token.\n" + (data.detail || data.error || data.raw || res.status));
-      return;
-    }
-
-    if (data.job_id) {
-      note("Worker job created: " + data.job_id + "\nstatus: " + (data.status || "waiting_approval"));
-      return;
-    }
-
-    note(
-      "Founder Worker Boundary: " + String(data.status || "active").toUpperCase() +
-      "\npublic frontend chat: " + (data.public_frontend_chat_worker_access || "unknown") +
-      "\nfounder office worker: " + (data.founder_office_worker_access || "unknown") +
-      "\nworker execution: " + (data.worker_execution || "unknown")
-    );
-  }
-
-  async function handle(v, e) {
-    v = String(v || "").trim();
-    if (!isCmd(v)) return false;
-
-    stop(e);
-
-    const el = inputEl();
-    clearInput(el);
-
-    const low = v.toLowerCase();
-
-    if (low.startsWith("founder-token set ")) {
-      const token = v.slice("founder-token set ".length).trim();
-      if (!token) {
-        note("Founder token missing. Run founder-token set <token> first.");
-        return true;
-      }
-      localStorage.setItem(TOKEN_KEY, token);
-      note("Founder token saved locally ✅");
-      return true;
-    }
-
-    if (low === "founder-token clear") {
-      localStorage.removeItem(TOKEN_KEY);
-      note("Founder token cleared.");
-      return true;
-    }
-
-    if (low === "founder-boundary") {
-      note("Checking Founder Worker boundary...");
-      await api("/api/admin/founder-worker-boundary", { method: "GET" });
-      return true;
-    }
-
-    if (low.startsWith("front-office ")) {
-      const task = v.slice("front-office ".length).trim();
-      if (!task) {
-        note("Front-office task missing.");
-        return true;
-      }
-      note("Creating Founder Worker job...");
-      await api("/api/admin/front-office-worker-handoff", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: task, source: "founder_office", founder_only: true })
-      });
-      return true;
-    }
-
-    return false;
-  }
-
-  window.handleFounderLocalCommand = handle;
-
-  document.addEventListener("submit", e => {
-    const el = inputEl();
-    const v = valueOf(el);
-    if (isCmd(v)) handle(v, e);
-  }, true);
-
-  document.addEventListener("keydown", e => {
-    if (e.key !== "Enter" || e.shiftKey) return;
-    const el = e.target;
-    const v = valueOf(el);
-    if (isCmd(v)) handle(v, e);
-  }, true);
-
-  document.addEventListener("click", e => {
-    const el = inputEl();
-    const v = valueOf(el);
-    if (isCmd(v)) handle(v, e);
-  }, true);
-
-  const oldFetch = window.fetch;
-  window.fetch = function(resource, init) {
-    try {
-      const body = init && init.body ? String(init.body) : "";
-      if (/founder-token\s+set\s+/i.test(body)) {
-        return Promise.resolve(new Response(JSON.stringify({ ok:true, intercepted:true }), {
-          status: 200,
-          headers: { "Content-Type": "application/json" }
-        }));
-      }
-    } catch {}
-    return oldFetch.apply(this, arguments);
-  };
-})();
-</script>
-<!-- IF-FOUNDER-TOKEN-INTERCEPT-END -->
-
-<!-- IF-FOUNDER-TOKEN-VISIBLE-CONFIRM-START -->
-<script id="if-founder-token-visible-confirm">
-(function () {
-  if (window.__ifFounderTokenVisibleConfirm) return;
-  window.__ifFounderTokenVisibleConfirm = true;
+  if (window.__ifFounderTokenFinalCommand) return;
+  window.__ifFounderTokenFinalCommand = true;
 
   const TOKEN_KEY = "IF_FOUNDER_ADMIN_TOKEN";
   const API_BASE = "https://ideasforgeai-api.onrender.com";
 
-  function visibleToast(text, type) {
-    let box = document.getElementById("if-founder-visible-toast");
+  function toast(message, error) {
+    let box = document.getElementById("if-founder-token-toast-final");
     if (!box) {
       box = document.createElement("div");
-      box.id = "if-founder-visible-toast";
+      box.id = "if-founder-token-toast-final";
       document.body.appendChild(box);
     }
 
-    box.textContent = text;
-    box.style.cssText = [
-      "position:fixed",
-      "left:18px",
-      "right:18px",
-      "bottom:118px",
-      "z-index:2147483647",
-      "padding:16px 18px",
-      "border-radius:24px",
-      "background:" + (type === "error" ? "#fff1f2" : "#ecfdf5"),
-      "color:#0f172a",
-      "border:1px solid " + (type === "error" ? "rgba(244,63,94,.35)" : "rgba(16,185,129,.35)"),
-      "box-shadow:0 18px 55px rgba(15,23,42,.18)",
-      "font:800 16px/1.35 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
-      "white-space:pre-line",
-      "text-align:left"
-    ].join(";");
+    box.textContent = message;
+    box.style.cssText =
+      "position:fixed;" +
+      "left:20px;" +
+      "right:20px;" +
+      "bottom:120px;" +
+      "z-index:2147483647;" +
+      "padding:18px 20px;" +
+      "border-radius:24px;" +
+      "background:" + (error ? "#fff1f2" : "#ecfdf5") + ";" +
+      "border:1px solid " + (error ? "rgba(244,63,94,.38)" : "rgba(16,185,129,.38)") + ";" +
+      "box-shadow:0 20px 60px rgba(15,23,42,.22);" +
+      "color:#0f172a;" +
+      "font:800 17px/1.35 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;" +
+      "white-space:pre-line;" +
+      "text-align:left;";
 
-    clearTimeout(window.__ifFounderVisibleToastTimer);
-    window.__ifFounderVisibleToastTimer = setTimeout(function () {
+    clearTimeout(window.__ifFounderTokenToastTimer);
+    window.__ifFounderTokenToastTimer = setTimeout(function () {
       if (box) box.remove();
-    }, 5000);
+    }, 6000);
   }
 
-  function allComposerValues() {
-    const els = Array.from(document.querySelectorAll(
+  function getInputs() {
+    return Array.from(document.querySelectorAll(
       "textarea,input,[contenteditable='true'],[role='textbox']"
     ));
-
-    return els.map(function (el) {
-      return {
-        el: el,
-        value: ("value" in el ? el.value : el.textContent || "").trim()
-      };
-    });
   }
 
-  function findCommandInput() {
-    const items = allComposerValues();
-    return items.find(function (x) {
-      return /^(founder-token|founder-boundary|front-office)\b/i.test(x.value);
-    });
+  function val(el) {
+    if (!el) return "";
+    return ("value" in el ? el.value : el.textContent || "").trim();
   }
 
-  function clearEl(el) {
+  function clear(el) {
     if (!el) return;
     if ("value" in el) el.value = "";
     else el.textContent = "";
@@ -5553,6 +5372,17 @@
     el.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
+  function findCommand() {
+    const inputs = getInputs();
+    for (const el of inputs) {
+      const v = val(el);
+      if (/^(founder-token|founder-boundary|front-office)\b/i.test(v)) {
+        return { el, text: v };
+      }
+    }
+    return null;
+  }
+
   function stop(e) {
     if (!e) return;
     e.preventDefault();
@@ -5560,42 +5390,45 @@
     if (e.stopImmediatePropagation) e.stopImmediatePropagation();
   }
 
-  async function handleFounderCommandFromAnyInput(e) {
-    const found = findCommandInput();
+  async function runCommand(found, e) {
     if (!found) return false;
 
-    const input = found.value;
+    const input = found.text;
     const lower = input.toLowerCase();
 
+    if (!/^(founder-token|founder-boundary|front-office)\b/i.test(input)) {
+      return false;
+    }
+
     stop(e);
-    clearEl(found.el);
+    clear(found.el);
 
     if (lower.startsWith("founder-token set ")) {
       const token = input.slice("founder-token set ".length).trim();
       if (!token) {
-        visibleToast("Founder token missing. Run founder-token set <token> first.", "error");
+        toast("Founder token missing. Run founder-token set <token> first.", true);
         return true;
       }
 
       localStorage.setItem(TOKEN_KEY, token);
-      visibleToast("Founder token saved locally ✅", "ok");
+      toast("Founder token saved locally ✅", false);
       return true;
     }
 
     if (lower === "founder-token clear") {
       localStorage.removeItem(TOKEN_KEY);
-      visibleToast("Founder token cleared.", "ok");
+      toast("Founder token cleared.", false);
       return true;
     }
 
     if (lower === "founder-boundary") {
       const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
       if (!token) {
-        visibleToast("Founder token missing. Run founder-token set <token> first.", "error");
+        toast("Founder token missing. Run founder-token set <token> first.", true);
         return true;
       }
 
-      visibleToast("Checking Founder Worker boundary...", "ok");
+      toast("Checking Founder Worker boundary...", false);
 
       try {
         const res = await fetch(API_BASE + "/api/admin/founder-worker-boundary", {
@@ -5606,39 +5439,39 @@
         const data = await res.json();
 
         if (!res.ok || data.ok === false) {
-          visibleToast("Founder backend connection failed. Check Render API/token.", "error");
+          toast("Founder backend connection failed. Check Render API/token.", true);
           return true;
         }
 
-        visibleToast(
+        toast(
           "Founder Worker Boundary: " + String(data.status || "active").toUpperCase() +
           "\npublic frontend chat: " + (data.public_frontend_chat_worker_access || "unknown") +
           "\nfounder office worker: " + (data.founder_office_worker_access || "unknown") +
           "\nworker execution: " + (data.worker_execution || "unknown"),
-          "ok"
+          false
         );
       } catch (err) {
-        visibleToast("Founder backend connection failed. Check Render API/token.", "error");
+        toast("Founder backend connection failed. Check Render API/token.", true);
       }
 
       return true;
     }
 
     if (lower.startsWith("front-office ")) {
-      const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
       const task = input.slice("front-office ".length).trim();
+      const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
 
       if (!token) {
-        visibleToast("Founder token missing. Run founder-token set <token> first.", "error");
+        toast("Founder token missing. Run founder-token set <token> first.", true);
         return true;
       }
 
       if (!task) {
-        visibleToast("Front-office task missing.", "error");
+        toast("Front-office task missing.", true);
         return true;
       }
 
-      visibleToast("Creating Founder Worker job...", "ok");
+      toast("Creating Founder Worker job...", false);
 
       try {
         const res = await fetch(API_BASE + "/api/admin/front-office-worker-handoff", {
@@ -5657,17 +5490,17 @@
         const data = await res.json();
 
         if (!res.ok || data.ok === false) {
-          visibleToast("Founder Worker handoff failed. Check Render API/token.", "error");
+          toast("Founder Worker handoff failed. Check Render API/token.", true);
           return true;
         }
 
-        visibleToast(
+        toast(
           "Worker job created: " + data.job_id +
           "\nstatus: " + (data.status || "waiting_approval"),
-          "ok"
+          false
         );
       } catch (err) {
-        visibleToast("Founder Worker handoff failed. Check Render API/token.", "error");
+        toast("Founder Worker handoff failed. Check Render API/token.", true);
       }
 
       return true;
@@ -5676,27 +5509,25 @@
     return false;
   }
 
-  document.addEventListener("submit", function (e) {
-    handleFounderCommandFromAnyInput(e);
-  }, true);
+  function intercept(e) {
+    const found = findCommand();
+    if (found) runCommand(found, e);
+  }
 
-  document.addEventListener("click", function (e) {
-    handleFounderCommandFromAnyInput(e);
-  }, true);
-
+  document.addEventListener("submit", intercept, true);
+  document.addEventListener("click", intercept, true);
+  document.addEventListener("touchstart", intercept, true);
   document.addEventListener("keydown", function (e) {
-    if (e.key === "Enter" && !e.shiftKey) {
-      handleFounderCommandFromAnyInput(e);
-    }
+    if (e.key === "Enter" && !e.shiftKey) intercept(e);
   }, true);
 
-  window.ifFounderTokenTest = function () {
+  window.ifFounderTokenDebug = function () {
     localStorage.setItem(TOKEN_KEY, "test123");
-    visibleToast("Founder token saved locally ✅", "ok");
+    toast("Founder token saved locally ✅", false);
   };
 })();
 </script>
-<!-- IF-FOUNDER-TOKEN-VISIBLE-CONFIRM-END -->
+<!-- IF-FOUNDER-TOKEN-FINAL-COMMAND-END -->
 </body>
 
 </html>
