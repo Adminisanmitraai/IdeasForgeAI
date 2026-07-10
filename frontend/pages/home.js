@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   const body = document.body;
   const homeView = document.querySelector("[data-home-view]");
   const chatView = document.querySelector("[data-chat-view]");
@@ -1423,3 +1423,125 @@
   setTimeout(renderChatComposerIcons, 1600);
 })();
 // CHAT-ONLY-FINAL-POLISH-END
+
+// IF-HOME-CHAT-ENTRY-OVERRIDE-START
+(() => {
+  const languageAgent = window.IdeasForgeLanguageAgent;
+  const homeForm = document.querySelector("[data-home-form]");
+  const homeInput = document.querySelector("[data-home-input]");
+  const entryMap = {
+    ForgeStudio: "forgestudio",
+    ForgeCode: "forgecode",
+    ForgeWork: "forgework"
+  };
+
+  function getLanguage() {
+    return languageAgent?.getCurrentLanguage?.() || "en";
+  }
+
+  function buildChatUrl(entry, prompt) {
+    const url = new URL("/pages/home-chatkit.html", window.location.origin);
+    url.searchParams.set("entry", entry || "idea");
+    url.searchParams.set("language", getLanguage());
+    const cleanPrompt = typeof prompt === "string" ? prompt.trim() : "";
+    if (cleanPrompt) {
+      url.searchParams.set("prompt", cleanPrompt);
+    }
+    return url.toString();
+  }
+
+  function navigateToChat(entry, prompt) {
+    window.location.href = buildChatUrl(entry, prompt);
+  }
+
+  function interceptChip(event, chip) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+    const key = chip?.getAttribute("data-chip");
+    navigateToChat(entryMap[key] || "idea");
+  }
+
+  document.querySelectorAll("[data-chip]").forEach((chip) => {
+    chip.addEventListener("click", (event) => interceptChip(event, chip), true);
+    chip.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        interceptChip(event, chip);
+      }
+    }, true);
+  });
+
+  homeForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+    navigateToChat("idea", homeInput?.value || "");
+  }, true);
+
+  document.getElementById("landingLanguageButton")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    languageAgent?.openSelector?.();
+  });
+
+  function setText(selector, value) {
+    const node = document.querySelector(selector);
+    if (node) {
+      node.textContent = value;
+    }
+  }
+
+  function applyLandingTranslations() {
+    const title = document.querySelector(".hero-content h1");
+    const paragraph = document.querySelector(".hero-content p");
+    if (title && languageAgent) {
+      title.innerHTML =
+        languageAgent.translateKey("home_title") +
+        "<br /><span>" +
+        languageAgent.translateKey("home_title_highlight") +
+        "</span>";
+    }
+    if (paragraph && languageAgent) {
+      paragraph.textContent = languageAgent.translateKey("home_subtitle");
+    }
+    if (homeInput && languageAgent) {
+      const placeholder = languageAgent.translateKey("home_placeholder");
+      homeInput.placeholder = placeholder;
+      homeInput.setAttribute("aria-label", placeholder);
+    }
+    setText('[data-chip="ForgeStudio"] span:last-child', languageAgent?.translateKey("chip_studio") || "ForgeStudio");
+    setText('[data-chip="ForgeCode"] span:last-child', languageAgent?.translateKey("chip_code") || "ForgeCode");
+    setText('[data-chip="ForgeWork"] span:last-child', languageAgent?.translateKey("chip_work") || "ForgeWork");
+    const navLabels = document.querySelectorAll(".sidebar-nav .nav-item span");
+    if (navLabels[0]) navLabels[0].textContent = languageAgent?.translateKey("sidebar_search") || "Search chats";
+    if (navLabels[1]) navLabels[1].textContent = languageAgent?.translateKey("sidebar_library") || "Library";
+    if (navLabels[2]) navLabels[2].textContent = languageAgent?.translateKey("sidebar_templates") || "Templates";
+    if (navLabels[3]) navLabels[3].textContent = languageAgent?.translateKey("sidebar_knowledge") || "Knowledge";
+    const sectionHeadings = document.querySelectorAll(".sidebar-section > h2");
+    if (sectionHeadings[0]) sectionHeadings[0].textContent = languageAgent?.translateKey("sidebar_pinned") || "Pinned";
+    if (sectionHeadings[1]) sectionHeadings[1].textContent = languageAgent?.translateKey("sidebar_projects") || "Projects";
+    document.querySelectorAll(".projects-section .history-item span").forEach((node) => {
+      if (node.textContent.trim() === "Personal Workspace") {
+        node.textContent = languageAgent?.translateKey("sidebar_workspace") || "Personal Workspace";
+      }
+    });
+  }
+
+  applyLandingTranslations();
+  window.addEventListener("ideasforgeai:language-changed", applyLandingTranslations);
+
+  languageAgent?.attachSwipeMenu?.({
+    isOpen: () =>
+      document.body.classList.contains("sidebar-open") ||
+      document.body.classList.contains("mobile-sidebar-open"),
+    open: () => document.querySelector("[data-open-sidebar]")?.click(),
+    close: () => {
+      document.body.classList.remove("sidebar-open");
+      document.body.classList.remove("mobile-sidebar-open");
+    }
+  });
+})();
+// IF-HOME-CHAT-ENTRY-OVERRIDE-END

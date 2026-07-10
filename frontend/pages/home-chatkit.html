@@ -16,6 +16,8 @@
     async
   ></script>
 
+  <script src="../assets/js/ideasforge-language.js"></script>
+
   <style>
     :root {
       --viewport-height: 100dvh;
@@ -589,6 +591,97 @@
   }
 </style>
 <!-- IF-CHATKIT-PHASE2-1-SPACING-END -->
+<style id="if-chatkit-onboarding-style">
+  .chat-card {
+    position: relative;
+  }
+
+  .if-chatkit-onboarding {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    right: 18px;
+    z-index: 3;
+    padding: 18px 18px 16px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 22px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 248, 255, 0.96));
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+  }
+
+  .if-chatkit-onboarding[hidden] {
+    display: none !important;
+  }
+
+  .if-chatkit-onboarding h2 {
+    margin: 0 0 8px;
+    font-size: 22px;
+    line-height: 1.1;
+  }
+
+  .if-chatkit-onboarding p {
+    margin: 0;
+    color: #334155;
+    line-height: 1.5;
+  }
+
+  .if-chatkit-onboarding-label {
+    display: block;
+    margin-top: 14px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #6b7280;
+  }
+
+  .if-chatkit-onboarding-prompt {
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: #f8fafc;
+    color: #111827;
+    font-size: 14px;
+    white-space: pre-wrap;
+  }
+
+  .if-chatkit-onboarding-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .if-chatkit-onboarding-chip {
+    padding: 10px 14px;
+    border: 1px solid rgba(99, 102, 241, 0.12);
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #3730a3;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .if-chatkit-onboarding-dismiss {
+    margin-left: auto;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @media (max-width: 768px) {
+    .if-chatkit-onboarding {
+      top: 14px;
+      left: 14px;
+      right: 14px;
+      padding: 16px 16px 14px;
+      border-radius: 20px;
+    }
+  }
+</style>
 </head>
 
 <body>
@@ -648,6 +741,7 @@
 
     <main class="chat-region">
       <section class="chat-card">
+        <section id="if-chatkit-entry-onboarding" class="if-chatkit-onboarding" hidden></section>
         <openai-chatkit id="chatkit"></openai-chatkit>
       </section>
     </main>
@@ -669,6 +763,16 @@
 
       const root = document.documentElement;
       const chatkit = document.getElementById("chatkit");
+      const languageAgent = window.IdeasForgeLanguageAgent;
+      const requestedLanguage = params.get("language");
+
+      if (requestedLanguage && languageAgent?.setLanguage) {
+        languageAgent.setLanguage(requestedLanguage, {
+          persist: true,
+          source: "query"
+        });
+      }
+
       const toast = document.getElementById("toast");
 
       let toastTimer = 0;
@@ -710,6 +814,40 @@
         );
       }
 
+      function buildChatKitOptions() {
+        return {
+          api: {
+            url: BACKEND_URL,
+            domainKey,
+            uploadStrategy: {
+              type: "two_phase"
+            }
+          },
+
+          theme: {
+            colorScheme: "light"
+          },
+
+          history: {
+            enabled: true
+          },
+
+          composer: {
+            placeholder:
+              languageAgent?.translateKey("chat_placeholder") ||
+              "Message the AI",
+            attachments: {
+              enabled: true,
+              maxCount: 5,
+              maxSize: 20971520
+            },
+            dictation: {
+              enabled: true
+            }
+          }
+        };
+      }
+
       async function configureChatKit() {
         if (!chatkit || typeof chatkit.setOptions !== "function") {
           configureAttempts += 1;
@@ -728,35 +866,16 @@
         }
 
         try {
-          await chatkit.setOptions({
-            api: {
-              url: BACKEND_URL,
-              domainKey,
-              uploadStrategy: {
-                type: "two_phase"
-              }
-            },
+          await chatkit.setOptions(buildChatKitOptions());
 
-            theme: {
-              colorScheme: "light"
+          window.IdeasForgeChatKitPage = {
+            applyLanguage() {
+              return chatkit.setOptions(buildChatKitOptions());
             },
-
-            history: {
-              enabled: true
-            },
-
-            composer: {
-              placeholder: "Message the AI",
-              attachments: {
-                enabled: true,
-                maxCount: 5,
-                maxSize: 20971520
-              },
-              dictation: {
-                enabled: true
-              }
+            getChatkit() {
+              return chatkit;
             }
-          });
+          };
 
           console.info("IdeasForgeAI native ChatKit ready");
         } catch (error) {
@@ -785,10 +904,22 @@
         return false;
       }
 document
+        .getElementById("languageButton")
+        ?.addEventListener("click", () => {
+          languageAgent?.openSelector?.();
+        });
+document
         .getElementById("profileButton")
         .addEventListener("click", () => {
-          showToast("Profile settings will be connected next.");
+          showToast(
+            languageAgent?.translateKey("profile_soon") ||
+              "Profile settings will be connected next."
+          );
         });
+
+      window.addEventListener("ideasforgeai:language-changed", () => {
+        window.IdeasForgeChatKitPage?.applyLanguage?.().catch?.(() => {});
+      });
 
       updateViewport();
 
@@ -1003,7 +1134,7 @@ document
           <path d="M3 11.5 12 4l9 7.5"></path>
           <path d="M5.5 10.5V20h13v-9.5"></path>
         </svg>
-        <span>Home</span>
+        <span id="menuHomeLabel">Home</span>
       </a>
 
       <button
@@ -1015,7 +1146,7 @@ document
           <path d="M12 5v14"></path>
           <path d="M5 12h14"></path>
         </svg>
-        <span>New chat</span>
+        <span id="menuNewChatLabel">New chat</span>
       </button>
 
       <button
@@ -1027,7 +1158,7 @@ document
           <path d="M3 12a9 9 0 1 0 3-6.7"></path>
           <path d="M3 4v6h6"></path>
         </svg>
-        <span>Chat history</span>
+        <span id="menuHistoryLabel">Chat history</span>
       </button>
 
       <div class="chat-menu-divider"></div>
@@ -1043,7 +1174,7 @@ document
           <path d="M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21"></path>
           <path d="M12 3C9.6 5.5 8.4 8.5 8.4 12S9.6 18.5 12 21"></path>
         </svg>
-        <span>Language</span>
+        <span id="menuLanguageLabel">Language</span>
       </button>
 
       <button
@@ -1055,7 +1186,7 @@ document
           <circle cx="12" cy="8" r="3.5"></circle>
           <path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
         </svg>
-        <span>Profile</span>
+        <span id="menuProfileLabel">Profile</span>
       </button>
     </nav>
   </aside>
@@ -1071,12 +1202,14 @@ document
       backdrop.classList.add("open");
       backdrop.setAttribute("aria-hidden", "false");
       document.body.classList.add("chat-menu-open");
+      document.body.classList.add("if-menu-open-lock");
     }
 
     function closeMenu() {
       backdrop.classList.remove("open");
       backdrop.setAttribute("aria-hidden", "true");
       document.body.classList.remove("chat-menu-open");
+      document.body.classList.remove("if-menu-open-lock");
     }
 
     menuButton?.addEventListener("click", openMenu);
@@ -1108,7 +1241,10 @@ document
           } catch {}
         }
 
-        showToast("Use ChatKit’s new-thread control.");
+        showToast(
+          window.IdeasForgeLanguageAgent?.translateKey("new_thread_hint") ||
+            "Use ChatKit's new-thread control."
+        );
       });
 
     document
@@ -1129,7 +1265,10 @@ document
           } catch {}
         }
 
-        showToast("History is available inside ChatKit.");
+        showToast(
+          window.IdeasForgeLanguageAgent?.translateKey("history_hint") ||
+            "History is available inside ChatKit."
+        );
       });
 
     document
@@ -1145,6 +1284,25 @@ document
         closeMenu();
         document.getElementById("profileButton")?.click();
       });
+
+    function applyMenuTranslations() {
+      const t = window.IdeasForgeLanguageAgent?.translateKey;
+      if (!t) return;
+      document.getElementById("menuHomeLabel").textContent = t("menu_home");
+      document.getElementById("menuNewChatLabel").textContent = t("menu_new_chat");
+      document.getElementById("menuHistoryLabel").textContent = t("menu_history");
+      document.getElementById("menuLanguageLabel").textContent = t("menu_language");
+      document.getElementById("menuProfileLabel").textContent = t("menu_profile");
+    }
+
+    applyMenuTranslations();
+    window.addEventListener("ideasforgeai:language-changed", applyMenuTranslations);
+
+    window.IdeasForgeLanguageAgent?.attachSwipeMenu?.({
+      isOpen: () => backdrop?.classList.contains("open"),
+      open: () => openMenu(),
+      close: () => closeMenu()
+    });
   })();
 </script>
 <!-- IF-CHATKIT-MENU-END -->
@@ -1172,8 +1330,6 @@ document
       window.location.href = LANDING_URL;
     }
 
-    menuButton?.addEventListener("click", goToLandingPage);
-
     brandLink?.addEventListener("click", goToLandingPage);
 
     brandLink?.addEventListener("keydown", (event) => {
@@ -1185,6 +1341,89 @@ document
   })();
 </script>
 <!-- IF-CHATKIT-LANDING-LINK-END -->
+<script id="if-chatkit-entry-runtime">
+  (() => {
+    const onboarding = document.getElementById("if-chatkit-entry-onboarding");
+    const chatCard = document.querySelector(".chat-card");
+    const query = new URLSearchParams(window.location.search);
+    const entry = (query.get("entry") || "idea").toLowerCase();
+    const prompt = (query.get("prompt") || "").trim();
+    const languageAgent = window.IdeasForgeLanguageAgent;
+    const storageKey = "ideasforgeai.chatkit.onboarding.dismissed";
+
+    if (!onboarding || !chatCard || !languageAgent) return;
+
+    function signature() {
+      return JSON.stringify({
+        entry,
+        prompt,
+        language: languageAgent.getCurrentLanguage()
+      });
+    }
+
+    function hideOnboarding() {
+      onboarding.hidden = true;
+      try {
+        sessionStorage.setItem(storageKey, signature());
+      } catch {}
+    }
+
+    function renderOnboarding() {
+      const state = languageAgent.buildOnboardingMessages(entry, { prompt });
+      const dismissed = (() => {
+        try {
+          return sessionStorage.getItem(storageKey) === signature();
+        } catch {
+          return false;
+        }
+      })();
+
+      onboarding.innerHTML = [
+        "<h2>" + state.title + "</h2>",
+        "<p>" + state.intro + "</p>",
+        prompt ? '<span class="if-chatkit-onboarding-label">' + state.promptLabel + "</span>" : "",
+        prompt ? '<div class="if-chatkit-onboarding-prompt"></div>' : "",
+        '<div class="if-chatkit-onboarding-actions"></div>',
+        "<p style='margin-top:14px'>" + state.hint + "</p>"
+      ].join("");
+      if (prompt) {
+        onboarding.querySelector(".if-chatkit-onboarding-prompt").textContent = prompt;
+      }
+      const actions = onboarding.querySelector(".if-chatkit-onboarding-actions");
+      state.suggestions.forEach((item) => {
+        const chip = document.createElement("span");
+        chip.className = "if-chatkit-onboarding-chip";
+        chip.textContent = item;
+        actions.appendChild(chip);
+      });
+      const dismiss = document.createElement("button");
+      dismiss.type = "button";
+      dismiss.className = "if-chatkit-onboarding-dismiss";
+      dismiss.textContent = state.secondary;
+      dismiss.addEventListener("click", hideOnboarding);
+      actions.appendChild(dismiss);
+      onboarding.hidden = dismissed;
+    }
+
+    ["pointerdown", "focusin", "keydown"].forEach((eventName) => {
+      chatCard.addEventListener(eventName, (event) => {
+        if (event.target?.closest?.("openai-chatkit")) {
+          hideOnboarding();
+        }
+      }, { passive: eventName !== "keydown" });
+    });
+
+    document.getElementById("menuNewChatButton")?.addEventListener("click", () => {
+      try {
+        sessionStorage.removeItem(storageKey);
+      } catch {}
+      onboarding.hidden = true;
+    });
+
+    renderOnboarding();
+    window.addEventListener("ideasforgeai:language-changed", renderOnboarding);
+  })();
+</script>
 </body>
 </html>
 
