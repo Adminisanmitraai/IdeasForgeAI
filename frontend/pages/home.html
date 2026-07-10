@@ -1898,8 +1898,170 @@
 </script>
 <!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
 
+<!-- IF-LANDING-PRODUCT-ROUTER-START -->
+<script id="if-landing-product-router">
+(() => {
+  const CHAT_URL = "/pages/home-chatkit.html";
+  let navigating = false;
+
+  function cleanText(value) {
+    return String(value || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .toLowerCase();
+  }
+
+  function intentFromEvent(event) {
+    const path =
+      typeof event.composedPath === "function"
+        ? event.composedPath()
+        : [];
+
+    for (const node of path) {
+      if (!(node instanceof Element)) continue;
+
+      const text = cleanText(
+        [
+          node.textContent,
+          node.getAttribute("aria-label"),
+          node.getAttribute("title"),
+          node.getAttribute("data-product"),
+          node.getAttribute("data-mode")
+        ].filter(Boolean).join(" ")
+      );
+
+      if (text.includes("forgestudio")) return "forgestudio";
+      if (text.includes("forgecode")) return "forgecode";
+      if (text.includes("forgework")) return "forgework";
+    }
+
+    return "";
+  }
+
+  function openChat(entry, prompt = "") {
+    if (navigating) return;
+    navigating = true;
+
+    const target = new URL(CHAT_URL, window.location.origin);
+    target.searchParams.set("entry", entry);
+
+    if (prompt.trim()) {
+      target.searchParams.set("prompt", prompt.trim());
+    }
+
+    window.location.assign(target.toString());
+  }
+
+  function blockProductFocus(event) {
+    const entry = intentFromEvent(event);
+    if (!entry) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+  }
+
+  function routeProductClick(event) {
+    const entry = intentFromEvent(event);
+    if (!entry) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+
+    openChat(entry);
+  }
+
+  /*
+    pointerdown prevents Safari from focusing the landing composer.
+    click performs the navigation.
+  */
+  document.addEventListener("pointerdown", blockProductFocus, true);
+  document.addEventListener("touchstart", blockProductFocus, {
+    capture: true,
+    passive: false
+  });
+  document.addEventListener("click", routeProductClick, true);
+
+  function findComposer() {
+    return (
+      document.querySelector('textarea[placeholder*="Start writing" i]') ||
+      document.querySelector('input[placeholder*="Start writing" i]') ||
+      document.querySelector('[contenteditable="true"]')
+    );
+  }
+
+  function readComposer() {
+    const composer = findComposer();
+    if (!composer) return "";
+
+    if (
+      composer instanceof HTMLInputElement ||
+      composer instanceof HTMLTextAreaElement
+    ) {
+      return composer.value.trim();
+    }
+
+    return (composer.textContent || "").trim();
+  }
+
+  function submitIdea(event) {
+    const prompt = readComposer();
+    if (!prompt) return;
+
+    event?.preventDefault();
+    event?.stopPropagation();
+
+    if (typeof event?.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+
+    openChat("idea", prompt);
+  }
+
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      const composer = findComposer();
+
+      if (
+        composer &&
+        event.target === composer &&
+        event.key === "Enter" &&
+        !event.shiftKey &&
+        !event.isComposing
+      ) {
+        submitIdea(event);
+      }
+    },
+    true
+  );
+
+  document.addEventListener(
+    "click",
+    (event) => {
+      const button = event.target.closest(
+        'button[type="submit"], button[aria-label*="send" i], button[aria-label*="submit" i]'
+      );
+
+      if (button && findComposer()) {
+        submitIdea(event);
+      }
+    },
+    true
+  );
+})();
+</script>
+<!-- IF-LANDING-PRODUCT-ROUTER-END -->
 </body>
 </html>
+
 
 
 
