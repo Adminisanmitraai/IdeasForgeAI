@@ -188,7 +188,7 @@ composer.addEventListener("submit", (event) => {
   messageInput.value = "";
 });
 
-document.getElementById("menuBtn").onclick = () => showToast("Menu");
+
 document.getElementById("logoBtn").onclick = () => showToast("Convera");
 document.getElementById("cameraBtn").onclick = () => showToast("Camera");
 document.getElementById("addUserBtn").onclick = () => showToast("Add user");
@@ -198,3 +198,153 @@ document.getElementById("attachBtn").onclick = () => showToast("Add attachment")
 document.getElementById("micBtn").onclick = () => showToast("Voice note");
 
 renderConversations();
+
+// Convera slide navigation
+const navigationDrawer = document.getElementById("navigationDrawer");
+const drawerBackdrop = document.getElementById("drawerBackdrop");
+const menuButton = document.getElementById("menuBtn");
+
+let drawerOpen = false;
+let touchStartX = 0;
+let touchStartY = 0;
+let touchCurrentX = 0;
+let gestureActive = false;
+
+function setDrawerState(open) {
+  drawerOpen = open;
+
+  document.body.classList.toggle("drawer-open", open);
+
+  navigationDrawer.setAttribute(
+    "aria-hidden",
+    open ? "false" : "true"
+  );
+
+  menuButton.setAttribute(
+    "aria-expanded",
+    open ? "true" : "false"
+  );
+}
+
+function openDrawer() {
+  setDrawerState(true);
+}
+
+function closeDrawer() {
+  setDrawerState(false);
+}
+
+function toggleDrawer() {
+  setDrawerState(!drawerOpen);
+}
+
+menuButton.onclick = toggleDrawer;
+
+drawerBackdrop.addEventListener(
+  "click",
+  closeDrawer
+);
+
+document.addEventListener(
+  "touchstart",
+  (event) => {
+    if (event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchCurrentX = touch.clientX;
+
+    gestureActive =
+      drawerOpen ||
+      touchStartX <= 32;
+  },
+  { passive: true }
+);
+
+document.addEventListener(
+  "touchmove",
+  (event) => {
+    if (!gestureActive) return;
+    if (event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+
+    touchCurrentX = touch.clientX;
+
+    const deltaX =
+      touchCurrentX - touchStartX;
+
+    const deltaY =
+      touch.clientY - touchStartY;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      gestureActive = false;
+    }
+  },
+  { passive: true }
+);
+
+document.addEventListener(
+  "touchend",
+  () => {
+    if (!gestureActive) return;
+
+    const deltaX =
+      touchCurrentX - touchStartX;
+
+    const threshold = 56;
+
+    if (!drawerOpen && deltaX > threshold) {
+      openDrawer();
+    } else if (drawerOpen && deltaX < -threshold) {
+      closeDrawer();
+    }
+
+    gestureActive = false;
+  },
+  { passive: true }
+);
+
+document.addEventListener(
+  "keydown",
+  (event) => {
+    if (event.key === "Escape" && drawerOpen) {
+      closeDrawer();
+    }
+  }
+);
+
+navigationDrawer
+  .querySelectorAll(
+    "button[data-section], button[data-drawer-action]"
+  )
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      const label =
+        button.dataset.section ||
+        button.dataset.drawerAction ||
+        button.textContent.trim();
+
+      showToast(
+        label.replaceAll("-", " ")
+      );
+
+      closeDrawer();
+    });
+  });
+
+navigationDrawer
+  .querySelectorAll(
+    ".drawer-recent button, .drawer-projects button"
+  )
+  .forEach((button) => {
+    button.addEventListener("click", () => {
+      showToast(
+        `Opening ${button.textContent.trim()}`
+      );
+
+      closeDrawer();
+    });
+  });
