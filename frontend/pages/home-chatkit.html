@@ -322,34 +322,6 @@
         );
       }
 
-      async function getClientSecret(existingSecret) {
-        const response = await fetch(
-          "https://ideasforgeai-api.onrender.com/api/chatkit/session",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              user_id: "ideasforgeai-web-user",
-              existing_secret: existingSecret || null
-            })
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(`ChatKit session failed: ${response.status}`);
-        }
-
-        const data = await response.json();
-
-        return (
-          data.client_secret ||
-          data.clientSecret ||
-          data.secret
-        );
-      }
-
       async function configureChatKit() {
         if (!chatkit || typeof chatkit.setOptions !== "function") {
           window.setTimeout(configureChatKit, 150);
@@ -357,9 +329,14 @@
         }
 
         try {
+          if (!domainKey) {
+            throw new Error("Missing ChatKit domain key in the URL.");
+          }
+
           await chatkit.setOptions({
             api: {
-              getClientSecret
+              url: "https://ideasforgeai-api.onrender.com/api/chatkit",
+              domainKey: domainKey
             },
             theme: {
               colorScheme: "light"
@@ -368,7 +345,10 @@
               enabled: true
             },
             composer: {
-              placeholder: "Message the AI"
+              placeholder: "Message the AI",
+              attachments: {
+                enabled: false
+              }
             }
           });
 
@@ -444,3 +424,4 @@
   </script>
 </body>
 </html>
+
