@@ -1099,3 +1099,40 @@ body.drawer-open .hamburger-lines i:nth-child(2) {
 body.drawer-open .hamburger-lines i:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
+
+/* CONVERA ACTIVE DRAWER V9 */
+.convera-drawer {
+  visibility: visible;
+}
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+body.drawer-open .convera-drawer {
+  transform: translateX(0) !important;
+  pointer-events: auto;
+}
+
+body.drawer-open .app-shell {
+  transform: translateX(var(--convera-drawer-width)) !important;
+}
+
+body.drawer-open .drawer-overlay {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.menu-button {
+  position: relative;
+  z-index: 50;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.drawer-nav button.active,
+.drawer-actions button.active,
+.drawer-section button.active {
+  color: #5056e8;
+  background: #f0f1ff;
+}

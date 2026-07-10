@@ -428,3 +428,134 @@ navigationDrawer
     });
   });
 })();
+
+// CONVERA ACTIVE DRAWER V9
+document.addEventListener("DOMContentLoaded", () => {
+  const menuButton = document.getElementById("menuBtn");
+  const drawer = document.getElementById("converaDrawer");
+  const overlay = document.getElementById("drawerOverlay");
+
+  if (!menuButton || !drawer || !overlay) {
+    console.error("Convera drawer could not initialize", {
+      menuButton,
+      drawer,
+      overlay
+    });
+    return;
+  }
+
+  let drawerOpen = false;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchCurrentX = 0;
+  let trackingSwipe = false;
+
+  function setDrawer(open) {
+    drawerOpen = open;
+
+    document.body.classList.toggle("drawer-open", open);
+
+    drawer.setAttribute(
+      "aria-hidden",
+      open ? "false" : "true"
+    );
+
+    menuButton.setAttribute(
+      "aria-expanded",
+      open ? "true" : "false"
+    );
+  }
+
+  function openDrawer() {
+    setDrawer(true);
+  }
+
+  function closeDrawer() {
+    setDrawer(false);
+  }
+
+  function toggleDrawer(event) {
+    event?.preventDefault();
+    event?.stopPropagation();
+    setDrawer(!drawerOpen);
+  }
+
+  menuButton.addEventListener("click", toggleDrawer);
+  menuButton.addEventListener("touchend", (event) => {
+    event.preventDefault();
+    toggleDrawer(event);
+  }, { passive: false });
+
+  overlay.addEventListener("click", closeDrawer);
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && drawerOpen) {
+      closeDrawer();
+    }
+  });
+
+  document.addEventListener("touchstart", (event) => {
+    if (event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchCurrentX = touch.clientX;
+
+    trackingSwipe =
+      drawerOpen ||
+      touchStartX <= 34;
+  }, { passive: true });
+
+  document.addEventListener("touchmove", (event) => {
+    if (!trackingSwipe || event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+
+    touchCurrentX = touch.clientX;
+
+    const deltaX = touchCurrentX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      trackingSwipe = false;
+    }
+  }, { passive: true });
+
+  document.addEventListener("touchend", () => {
+    if (!trackingSwipe) return;
+
+    const deltaX = touchCurrentX - touchStartX;
+
+    if (!drawerOpen && deltaX > 55) {
+      openDrawer();
+    } else if (drawerOpen && deltaX < -55) {
+      closeDrawer();
+    }
+
+    trackingSwipe = false;
+  }, { passive: true });
+
+  drawer.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      drawer.querySelectorAll("button").forEach((item) => {
+        item.classList.remove("active");
+      });
+
+      button.classList.add("active");
+
+      const label = button.textContent.trim();
+
+      if (typeof showToast === "function") {
+        showToast(label);
+      }
+
+      setTimeout(closeDrawer, 120);
+    });
+  });
+
+  setDrawer(false);
+
+  console.log("Convera drawer V9 active");
+});
