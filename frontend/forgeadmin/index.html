@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -1803,8 +1803,80 @@
       return /^(founder-token(?:\s+|$)|founder-boundary(?:\s+|$)|boundary(?:\s+|$)|front-office\s+|founder-work\s+|jobs-tail(?:\s+|$)|status\s+|work-on\s+|review\s+|final-apply\s+|audit(?:\s+|$))/i.test(String(value || "").trim());
     }
 
+    async function handleFounderLocalCommand(rawInput) {
+      const input = String(rawInput || "").trim();
+
+      if (!input) {
+        return false;
+      }
+
+      if (!/^(founder-token(?:\s+|$)|founder-boundary(?:\s+|$)|boundary(?:\s+|$)|front-office\s+)/i.test(input)) {
+        return false;
+      }
+
+      if (typeof openWorkerPanel === "function") {
+        openWorkerPanel();
+      } else {
+        document.body.classList.add("worker-active");
+      }
+
+      if (/^founder-token\s+set\b/i.test(input)) {
+        const token = input.replace(/^founder-token\s+set\s+/i, "").trim();
+        if (!token) {
+          appendWorkerLine("Usage: founder-token set <token>", "ps-error");
+          return true;
+        }
+        setFounderToken(token);
+        if (founderInput) {
+          founderInput.value = "";
+          resizeFounderInput();
+        }
+        appendWorkerLine("Founder token saved locally \u2705", "ps-success");
+        return true;
+      }
+
+      if (/^founder-token\s+clear\b/i.test(input)) {
+        setFounderToken("");
+        if (founderInput) {
+          founderInput.value = "";
+          resizeFounderInput();
+        }
+        appendWorkerLine("Founder token cleared.", "ps-success");
+        return true;
+      }
+
+      if (/^(founder-boundary|boundary)\b/i.test(input)) {
+        if (founderInput) {
+          founderInput.value = "";
+          resizeFounderInput();
+        }
+        await runWorkerCommand("founder-boundary");
+        return true;
+      }
+
+      if (/^front-office\s+/i.test(input)) {
+        const task = input.replace(/^front-office\s+/i, "").trim();
+        if (!task) {
+          appendWorkerLine("Usage: front-office <task>", "ps-error");
+          return true;
+        }
+        if (founderInput) {
+          founderInput.value = "";
+          resizeFounderInput();
+        }
+        await runWorkerCommand("front-office " + task);
+        return true;
+      }
+
+      return false;
+    }
+
     async function sendFounderMessage() {
       const value = founderInput.value.trim();
+
+      if (await handleFounderLocalCommand(value)) {
+        return;
+      }
 
       if (document.body.classList.contains("worker-active") || isFounderWorkerCommand(value)) {
         if (!document.body.classList.contains("worker-active") && typeof openWorkerPanel === "function") {
@@ -1866,9 +1938,13 @@
     if (founderInput) {
       founderInput.addEventListener("input", resizeFounderInput);
 
-      founderInput.addEventListener("keydown", function(event) {
+      founderInput.addEventListener("keydown", async function(event) {
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();
+          const value = founderInput.value.trim();
+          if (await handleFounderLocalCommand(value)) {
+            return;
+          }
           sendFounderMessage();
         }
       });
@@ -2029,18 +2105,24 @@
     }
 
     async function sendWorkerCommand(value) {
-      if (!value) {
+      const commandValue = String(value || "").trim();
+
+      if (await handleFounderLocalCommand(commandValue)) {
+        return;
+      }
+
+      if (!commandValue) {
         showToast("Write a worker command first");
         return;
       }
 
-      if (!isSensitiveFounderTokenCommand(value)) {
-        appendWorkerLine("PS D:\\APPS\\IdeasForgeAI> " + value, "ps-command");
+      if (!isSensitiveFounderTokenCommand(commandValue)) {
+        appendWorkerLine("PS D:\APPS\IdeasForgeAI> " + commandValue, "ps-command");
       }
       founderInput.value = "";
       resizeFounderInput();
 
-      await runWorkerCommand(value);
+      await runWorkerCommand(commandValue);
     }
 
     async function runWorkerCommand(rawCommand) {
@@ -2430,6 +2512,10 @@
     window.sendFounderMessage = async function() {
       const input = document.getElementById("founderInput");
       const value = input.value.trim();
+
+      if (await handleFounderLocalCommand(value)) {
+        return;
+      }
 
       if (!value) {
         showToast("Write a command first");
@@ -4254,7 +4340,7 @@
           <div class="adm5e-review-title">WORKER REVIEW PANEL</div>
           <div class="adm5e-review-msg" id="adm5eReviewSubtitle">Review before safe apply.</div>
         </div>
-        <button class="adm5e-review-close" type="button" onclick="window.adm5eHideReviewPanel()">?</button>
+        <button class="adm5e-review-close" type="button" onclick="window.adm5eHideReviewPanel()">&times;</button>
       </div>
       <div class="adm5e-review-grid" id="adm5eReviewGrid"></div>
       <div id="adm5eReviewFiles"></div>
@@ -4582,7 +4668,7 @@
             return;
           }
           setFounderToken(token);
-          appendWorkerLine("Founder token saved locally ?", "ps-success");
+          appendWorkerLine("Founder token saved locally \u2705", "ps-success");
         } else if (sub === "clear") {
           setFounderToken("");
           appendWorkerLine("Founder token cleared.", "ps-success");
@@ -5222,6 +5308,181 @@
 })();
 </script>
 
+
+<!-- IF-FOUNDER-TOKEN-INTERCEPT-START -->
+<script id="if-founder-token-intercept-final">
+(function () {
+  if (window.__ifFounderTokenInterceptHardFinal) return;
+  window.__ifFounderTokenInterceptHardFinal = true;
+
+  const TOKEN_KEY = "IF_FOUNDER_ADMIN_TOKEN";
+  const API_BASE = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.hostname.startsWith("192.168.")
+    ? "http://" + location.hostname + ":5051"
+    : "https://ideasforgeai-api.onrender.com";
+
+  function isCmd(v) {
+    return /^(founder-token|founder-boundary|front-office)\b/i.test(String(v || "").trim());
+  }
+
+  function inputEl() {
+    const active = document.activeElement;
+    if (active && (active.tagName === "TEXTAREA" || active.tagName === "INPUT" || active.isContentEditable)) return active;
+
+    const all = Array.from(document.querySelectorAll("textarea,input,[contenteditable='true'],[role='textbox']"));
+    return all.find(el => isCmd(valueOf(el))) || all[all.length - 1] || null;
+  }
+
+  function valueOf(el) {
+    if (!el) return "";
+    return "value" in el ? el.value : el.textContent;
+  }
+
+  function clearInput(el) {
+    if (!el) return;
+    if ("value" in el) el.value = "";
+    else el.textContent = "";
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  function stop(e) {
+    if (!e) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+  }
+
+  function note(text) {
+    const box = document.createElement("div");
+    box.textContent = text;
+    box.style.cssText = "white-space:pre-line;margin:16px auto;padding:14px 18px;max-width:86%;border-radius:22px;background:#fff;border:1px solid rgba(0,0,0,.08);box-shadow:0 10px 30px rgba(0,0,0,.08);font:700 15px/1.35 system-ui;color:#111827;";
+    const host = document.querySelector("main") || document.querySelector("[class*='chat']") || document.body;
+    host.appendChild(box);
+    try { box.scrollIntoView({behavior:"smooth",block:"center"}); } catch {}
+  }
+
+  async function api(path, options) {
+    const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
+    if (!token) {
+      note("Founder token missing. Run founder-token set <token> first.");
+      return;
+    }
+
+    const headers = Object.assign({}, options && options.headers || {}, {
+      "X-IF-Founder-Token": token
+    });
+
+    const res = await fetch(API_BASE + path, Object.assign({}, options || {}, { headers }));
+    const text = await res.text();
+    let data = {};
+    try { data = JSON.parse(text || "{}"); } catch { data = { raw: text }; }
+
+    if (!res.ok) {
+      note("Founder backend connection failed. Check Render API/token.\n" + (data.detail || data.error || data.raw || res.status));
+      return;
+    }
+
+    if (data.job_id) {
+      note("Worker job created: " + data.job_id + "\nstatus: " + (data.status || "waiting_approval"));
+      return;
+    }
+
+    note(
+      "Founder Worker Boundary: " + String(data.status || "active").toUpperCase() +
+      "\npublic frontend chat: " + (data.public_frontend_chat_worker_access || "unknown") +
+      "\nfounder office worker: " + (data.founder_office_worker_access || "unknown") +
+      "\nworker execution: " + (data.worker_execution || "unknown")
+    );
+  }
+
+  async function handle(v, e) {
+    v = String(v || "").trim();
+    if (!isCmd(v)) return false;
+
+    stop(e);
+
+    const el = inputEl();
+    clearInput(el);
+
+    const low = v.toLowerCase();
+
+    if (low.startsWith("founder-token set ")) {
+      const token = v.slice("founder-token set ".length).trim();
+      if (!token) {
+        note("Founder token missing. Run founder-token set <token> first.");
+        return true;
+      }
+      localStorage.setItem(TOKEN_KEY, token);
+      note("Founder token saved locally ✅");
+      return true;
+    }
+
+    if (low === "founder-token clear") {
+      localStorage.removeItem(TOKEN_KEY);
+      note("Founder token cleared.");
+      return true;
+    }
+
+    if (low === "founder-boundary") {
+      note("Checking Founder Worker boundary...");
+      await api("/api/admin/founder-worker-boundary", { method: "GET" });
+      return true;
+    }
+
+    if (low.startsWith("front-office ")) {
+      const task = v.slice("front-office ".length).trim();
+      if (!task) {
+        note("Front-office task missing.");
+        return true;
+      }
+      note("Creating Founder Worker job...");
+      await api("/api/admin/front-office-worker-handoff", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: task, source: "founder_office", founder_only: true })
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  window.handleFounderLocalCommand = handle;
+
+  document.addEventListener("submit", e => {
+    const el = inputEl();
+    const v = valueOf(el);
+    if (isCmd(v)) handle(v, e);
+  }, true);
+
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Enter" || e.shiftKey) return;
+    const el = e.target;
+    const v = valueOf(el);
+    if (isCmd(v)) handle(v, e);
+  }, true);
+
+  document.addEventListener("click", e => {
+    const el = inputEl();
+    const v = valueOf(el);
+    if (isCmd(v)) handle(v, e);
+  }, true);
+
+  const oldFetch = window.fetch;
+  window.fetch = function(resource, init) {
+    try {
+      const body = init && init.body ? String(init.body) : "";
+      if (/founder-token\s+set\s+/i.test(body)) {
+        return Promise.resolve(new Response(JSON.stringify({ ok:true, intercepted:true }), {
+          status: 200,
+          headers: { "Content-Type": "application/json" }
+        }));
+      }
+    } catch {}
+    return oldFetch.apply(this, arguments);
+  };
+})();
+</script>
+<!-- IF-FOUNDER-TOKEN-INTERCEPT-END -->
 </body>
 
 </html>
