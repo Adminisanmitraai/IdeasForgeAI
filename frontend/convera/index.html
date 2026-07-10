@@ -8,7 +8,7 @@
   >
   <meta name="theme-color" content="#f8faff">
   <title>Convera</title>
-  <link rel="stylesheet" href="./convera.css?v=11">
+  <link rel="stylesheet" href="./convera.css?v=12">
 </head>
 
 <body>
@@ -277,7 +277,106 @@
       </div>
     </section>
 
-        <nav
+            <section
+      class="dummy-chat-screen"
+      id="dummyChatScreen"
+      aria-hidden="true"
+    >
+      <header class="dummy-chat-header">
+        <button
+          class="dummy-back-button"
+          id="dummyBackBtn"
+          type="button"
+          aria-label="Back to chats"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="m15 5-7 7 7 7"></path>
+          </svg>
+        </button>
+
+        <div class="dummy-chat-avatar">C</div>
+
+        <div class="dummy-chat-title">
+          <strong>Convera</strong>
+          <span>Online</span>
+        </div>
+
+        <button
+          class="dummy-header-action"
+          id="dummyInfoBtn"
+          type="button"
+          aria-label="Chat information"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M12 10v6"></path>
+            <path d="M12 7h.01"></path>
+          </svg>
+        </button>
+      </header>
+
+      <div class="dummy-chat-messages" id="dummyChatMessages">
+        <div class="dummy-day-label">Today</div>
+
+        <div class="dummy-message assistant">
+          <p>Hello Ranjan 👋</p>
+          <p>I’m Convera. You can test this chat by asking me anything.</p>
+          <span>1:36 PM</span>
+        </div>
+
+        <div class="dummy-message assistant">
+          <p>Try: “Create a presentation outline for Convera.”</p>
+          <span>1:36 PM</span>
+        </div>
+      </div>
+
+      <form class="dummy-composer" id="dummyComposer">
+        <button
+          class="dummy-composer-button"
+          id="dummyAttachBtn"
+          type="button"
+          aria-label="Attach"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 6v12M6 12h12"></path>
+          </svg>
+        </button>
+
+        <input
+          id="dummyMessageInput"
+          type="text"
+          placeholder="Message Convera..."
+          autocomplete="off"
+          enterkeyhint="send"
+          aria-label="Message Convera"
+        >
+
+        <button
+          class="dummy-mic-button"
+          id="dummyMicBtn"
+          type="button"
+          aria-label="Voice note"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="8.4" y="3" width="7.2" height="11.5" rx="3.6"></rect>
+            <path d="M5.8 11.2a6.2 6.2 0 0 0 12.4 0"></path>
+            <path d="M12 17.4V21"></path>
+            <path d="M9.5 21h5"></path>
+          </svg>
+        </button>
+
+        <button
+          class="dummy-send-button"
+          type="submit"
+          aria-label="Send"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 5.5 19 12 5 18.5l2-5.1 7.4-1.4L7 10.6 5 5.5Z"></path>
+          </svg>
+        </button>
+      </form>
+    </section>
+    <nav
       class="bottom-navigation"
       id="bottomNavigation"
       aria-label="Primary navigation"
@@ -351,9 +450,10 @@
 <div class="toast" id="toast"></div>
   </main>
 
-  <script src="./convera.js?v=11"></script>
+  <script src="./convera.js?v=12"></script>
 </body>
 </html>
+
 
 
 

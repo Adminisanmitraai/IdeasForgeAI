@@ -371,3 +371,110 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 })();
+
+// CONVERA DUMMY CHAT V12
+(() => {
+  const dummyScreen = document.getElementById("dummyChatScreen");
+  const dummyBackBtn = document.getElementById("dummyBackBtn");
+  const dummyInfoBtn = document.getElementById("dummyInfoBtn");
+  const dummyComposer = document.getElementById("dummyComposer");
+  const dummyInput = document.getElementById("dummyMessageInput");
+  const dummyMessages = document.getElementById("dummyChatMessages");
+  const dummyAttachBtn = document.getElementById("dummyAttachBtn");
+  const dummyMicBtn = document.getElementById("dummyMicBtn");
+
+  function openDummyChat() {
+    document.body.classList.add("dummy-chat-open");
+    dummyScreen?.setAttribute("aria-hidden", "false");
+
+    window.setTimeout(() => {
+      dummyInput?.focus();
+    }, 320);
+  }
+
+  function closeDummyChat() {
+    document.body.classList.remove("dummy-chat-open");
+    dummyScreen?.setAttribute("aria-hidden", "true");
+  }
+
+  function addDummyMessage(text, type) {
+    if (!dummyMessages) return;
+
+    const bubble = document.createElement("div");
+
+    bubble.className = `dummy-message ${type}`;
+
+    bubble.innerHTML = `
+      <p>${text}</p>
+      <span>Now</span>
+    `;
+
+    dummyMessages.appendChild(bubble);
+
+    dummyMessages.scrollTo({
+      top: dummyMessages.scrollHeight,
+      behavior: "smooth"
+    });
+  }
+
+  document
+    .querySelectorAll(".conversation")
+    .forEach((row) => {
+      const name = row
+        .querySelector(".conversation-name")
+        ?.textContent
+        ?.trim()
+        ?.toLowerCase();
+
+      if (name === "convera") {
+        row.addEventListener("click", (event) => {
+          event.preventDefault();
+          openDummyChat();
+        });
+      }
+    });
+
+  dummyBackBtn?.addEventListener("click", closeDummyChat);
+
+  dummyInfoBtn?.addEventListener("click", () => {
+    if (typeof showToast === "function") {
+      showToast("Convera chat information");
+    }
+  });
+
+  dummyAttachBtn?.addEventListener("click", () => {
+    if (typeof showToast === "function") {
+      showToast("Attach file");
+    }
+  });
+
+  dummyMicBtn?.addEventListener("click", () => {
+    if (typeof showToast === "function") {
+      showToast("Voice note");
+    }
+  });
+
+  dummyComposer?.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const text = dummyInput?.value.trim();
+
+    if (!text) {
+      dummyInput?.focus();
+      return;
+    }
+
+    addDummyMessage(text, "user");
+
+    if (dummyInput) {
+      dummyInput.value = "";
+    }
+
+    window.setTimeout(() => {
+      addDummyMessage(
+        "This is a dummy response from Convera for testing.",
+        "assistant"
+      );
+    }, 650);
+  });
+})();
