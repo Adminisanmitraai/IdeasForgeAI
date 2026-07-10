@@ -16,9 +16,9 @@
 
   <style>
     :root {
-      --header-height: 118px;
-      --browser-reserve: 92px;
-      --page-padding: 17px;
+      --header-height: 102px;
+      --browser-reserve: 66px;
+      --page-padding: 16px;
       --purple: #9873ff;
     }
 
@@ -65,7 +65,7 @@
       align-items: center;
       gap: 14px;
       padding:
-        max(28px, env(safe-area-inset-top))
+        max(20px, env(safe-area-inset-top))
         14px
         12px;
       background:
@@ -203,8 +203,8 @@
 
     @media (max-width: 390px) {
       :root {
-        --header-height: 110px;
-        --browser-reserve: 96px;
+        --header-height: 98px;
+        --browser-reserve: 70px;
         --page-padding: 16px;
       }
 
@@ -242,6 +242,128 @@
       }
     }
   </style>
+
+<!-- IF-CHATKIT-FINAL-MOBILE-POLISH-START -->
+<style id="if-chatkit-final-mobile-polish">
+  .app-header {
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: 8px;
+  }
+
+  .icon-button {
+    width: 46px;
+    height: 46px;
+    border-radius: 16px;
+  }
+
+  .brand {
+    gap: 9px;
+  }
+
+  .brand-mark {
+    font-size: 32px;
+  }
+
+  .brand-name {
+    font-size: clamp(20px, 5.5vw, 25px);
+  }
+
+  .chat-card {
+    position: relative;
+    border-radius: 31px 31px 0 0;
+  }
+
+  .composer-tools {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 82px;
+    z-index: 20;
+    pointer-events: none;
+  }
+
+  .composer-tool {
+    position: absolute;
+    bottom: 22px;
+    width: 38px;
+    height: 38px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    color: #232323;
+    pointer-events: auto;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .composer-tool svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.9;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .composer-tool-add {
+    left: 24px;
+  }
+
+  .composer-tool-mic {
+    right: 82px;
+  }
+
+  .composer-tool:active {
+    transform: scale(0.94);
+  }
+
+  .browser-reserve {
+    min-height: 0;
+  }
+
+  @media (max-width: 390px) {
+    .app-header {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+
+    .icon-button {
+      width: 44px;
+      height: 44px;
+      border-radius: 15px;
+    }
+
+    .brand-name {
+      font-size: 20px;
+    }
+
+    .brand-mark {
+      font-size: 30px;
+    }
+
+    .composer-tool-add {
+      left: 21px;
+    }
+
+    .composer-tool-mic {
+      right: 78px;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .composer-tools {
+      display: none;
+    }
+  }
+</style>
+<!-- IF-CHATKIT-FINAL-MOBILE-POLISH-END -->
 </head>
 
 <body>
@@ -259,10 +381,10 @@
       </div>
 
       <div class="header-actions">
-        <button id="historyButton" class="icon-button" type="button" aria-label="Chat history">
+        <button id="newThreadButton" class="icon-button" type="button" aria-label="New chat">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M3 12a9 9 0 1 0 3-6.7"></path>
-            <path d="M3 4v6h6"></path>
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
           </svg>
         </button>
 
@@ -278,6 +400,23 @@
     <main class="chat-region">
       <section class="chat-card">
         <openai-chatkit id="chatkit"></openai-chatkit>
+
+        <div class="composer-tools" aria-label="Composer tools">
+          <button id="attachButton" class="composer-tool composer-tool-add" type="button" aria-label="Add attachment">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 5v14"></path>
+              <path d="M5 12h14"></path>
+            </svg>
+          </button>
+
+          <button id="micButton" class="composer-tool composer-tool-mic" type="button" aria-label="Voice note">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="9" y="3" width="6" height="11" rx="3"></rect>
+              <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"></path>
+              <path d="M12 18v3"></path>
+            </svg>
+          </button>
+        </div>
       </section>
     </main>
 
@@ -314,11 +453,16 @@
           : 0;
 
         const isPhone = window.matchMedia("(max-width: 768px)").matches;
-        const baseReserve = isPhone ? 78 : 20;
+        const baseReserve = isPhone ? 58 : 20;
+        const keyboardOpen = hiddenHeight > 140;
+
+        const reserve = keyboardOpen
+          ? Math.max(12, Math.ceil(hiddenHeight + 8))
+          : Math.max(baseReserve, Math.ceil(hiddenHeight + 10));
 
         document.documentElement.style.setProperty(
           "--browser-reserve",
-          `${Math.max(baseReserve, Math.ceil(hiddenHeight + 18))}px`
+          `${reserve}px`
         );
       }
 
@@ -379,12 +523,12 @@
         });
 
       document
-        .getElementById("historyButton")
+        .getElementById("newThreadButton")
         .addEventListener("click", () => {
           const candidates = [
-            () => chatkit?.openHistory?.(),
-            () => chatkit?.showHistory?.(),
-            () => chatkit?.toggleHistory?.()
+            () => chatkit?.startNewThread?.(),
+            () => chatkit?.newThread?.(),
+            () => chatkit?.createThread?.()
           ];
 
           for (const action of candidates) {
@@ -394,7 +538,23 @@
             } catch {}
           }
 
-          showStatus("Chat history remains available inside ChatKit.");
+          showStatus("Use the new-chat action inside ChatKit.");
+        });
+
+      document
+        .getElementById("attachButton")
+        .addEventListener("click", () => {
+          showStatus("Attachment support will be connected to the ChatKit file store.");
+        });
+
+      document
+        .getElementById("micButton")
+        .addEventListener("click", () => {
+          window.dispatchEvent(
+            new CustomEvent("ideasforgeai:voice-note-click")
+          );
+
+          showStatus("Voice-note recording will be connected next.");
         });
 
       document
@@ -424,4 +584,5 @@
   </script>
 </body>
 </html>
+
 
