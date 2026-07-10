@@ -1,88 +1,125 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta
     name="viewport"
     content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
-  />
-  <meta name="theme-color" content="#f8faff" />
+  >
+  <meta name="theme-color" content="#f8faff">
   <title>Convera</title>
-  <link rel="stylesheet" href="./convera.css?v=3" />
+  <link rel="stylesheet" href="./convera.css?v=4">
 </head>
 
 <body>
-  <main class="convera-shell">
+  <main class="app-shell">
     <header class="topbar">
       <div class="topbar-left">
-        <button class="header-button menu-button" id="menuBtn" type="button" aria-label="Open menu">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="12" cy="5.5" r="1.45"></circle>
-            <circle cx="12" cy="12" r="1.45"></circle>
-            <circle cx="12" cy="18.5" r="1.45"></circle>
+        <button class="soft-button menu-button" id="menuBtn" aria-label="Open menu">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="5" r="1.5"></circle>
+            <circle cx="12" cy="12" r="1.5"></circle>
+            <circle cx="12" cy="19" r="1.5"></circle>
           </svg>
         </button>
 
-        <button class="brand-button" type="button" aria-label="Convera">
-          <svg class="convera-symbol" viewBox="0 0 64 64" aria-hidden="true">
+        <button class="logo-button" id="logoBtn" aria-label="Convera">
+          <svg class="convera-logo" viewBox="0 0 64 64">
             <defs>
-              <linearGradient id="brandGradient" x1="12" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
-                <stop offset="0" stop-color="#20D6A2"></stop>
-                <stop offset="0.48" stop-color="#1688FF"></stop>
-                <stop offset="1" stop-color="#5227D8"></stop>
+              <linearGradient id="logoGradient" x1="10" y1="7" x2="55" y2="58">
+                <stop offset="0" stop-color="#20d6a2"></stop>
+                <stop offset=".48" stop-color="#1688ff"></stop>
+                <stop offset="1" stop-color="#5227d8"></stop>
               </linearGradient>
             </defs>
-
             <path
-              fill="url(#brandGradient)"
-              fill-rule="evenodd"
-              d="M33 5C17.5 5 6 16.2 6 30.1c0 6.4 2.5 12.3 7.1 16.7L10.7 58l11-5.3A29.3 29.3 0 0 0 33 55c7.9 0 14.8-3 19.7-7.8l-7.4-7.4A17.4 17.4 0 0 1 33 44.7c-9.2 0-16.3-6.4-16.3-14.6S23.8 15.5 33 15.5c5 0 9.4 1.9 12.3 5l7.4-7.4C47.8 8 40.8 5 33 5Zm-8.2 25.2a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Z"
+              fill="url(#logoGradient)"
+              d="M33 5C17.5 5 6 16.2 6 30.1c0 6.4 2.5 12.3 7.1 16.7L10.7 58l11-5.3A29.3 29.3 0 0 0 33 55c7.9 0 14.8-3 19.7-7.8l-7.4-7.4A17.4 17.4 0 0 1 33 44.7c-9.2 0-16.3-6.4-16.3-14.6S23.8 15.5 33 15.5c5 0 9.4 1.9 12.3 5l7.4-7.4C47.8 8 40.8 5 33 5Z"
             ></path>
+            <circle cx="25.5" cy="30" r="2.3" fill="#fff"></circle>
+            <circle cx="33" cy="30" r="2.3" fill="#fff"></circle>
+            <circle cx="40.5" cy="30" r="2.3" fill="#fff"></circle>
           </svg>
         </button>
       </div>
 
       <div class="topbar-right">
-        <button class="header-button" id="cameraBtn" type="button" aria-label="Open camera">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
+        <button class="soft-button" id="cameraBtn" aria-label="Camera">
+          <svg viewBox="0 0 24 24">
             <path d="M8.8 6.5 10.2 4.8h3.6l1.4 1.7H18a2.2 2.2 0 0 1 2.2 2.2v8.6a2.2 2.2 0 0 1-2.2 2.2H6a2.2 2.2 0 0 1-2.2-2.2V8.7A2.2 2.2 0 0 1 6 6.5h2.8Z"></path>
             <circle cx="12" cy="13" r="3.6"></circle>
           </svg>
         </button>
 
-        <button class="add-user-button" id="addUserBtn" type="button" aria-label="Add user">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
+        <button class="add-button" id="addUserBtn" aria-label="Add user">
+          <svg viewBox="0 0 24 24">
             <path d="M12 6v12M6 12h12"></path>
           </svg>
         </button>
       </div>
     </header>
 
-    <section class="chat-thread" id="chatThread">
-      <div class="empty-state" id="emptyState">
-        <svg class="empty-logo" viewBox="0 0 64 64" aria-hidden="true">
-          <defs>
-            <linearGradient id="emptyGradient" x1="12" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stop-color="#20D6A2"></stop>
-              <stop offset="0.48" stop-color="#1688FF"></stop>
-              <stop offset="1" stop-color="#5227D8"></stop>
-            </linearGradient>
-          </defs>
+    <section class="content">
+      <h1>Chat</h1>
 
-          <path
-            fill="url(#emptyGradient)"
-            fill-rule="evenodd"
-            d="M33 5C17.5 5 6 16.2 6 30.1c0 6.4 2.5 12.3 7.1 16.7L10.7 58l11-5.3A29.3 29.3 0 0 0 33 55c7.9 0 14.8-3 19.7-7.8l-7.4-7.4A17.4 17.4 0 0 1 33 44.7c-9.2 0-16.3-6.4-16.3-14.6S23.8 15.5 33 15.5c5 0 9.4 1.9 12.3 5l7.4-7.4C47.8 8 40.8 5 33 5Zm-8.2 25.2a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Zm7.5 0a2.35 2.35 0 1 1 4.7 0 2.35 2.35 0 0 1-4.7 0Z"
-          ></path>
+      <div class="search-panel">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <circle cx="10.5" cy="10.5" r="6.5"></circle>
+          <path d="m15.5 15.5 4 4"></path>
         </svg>
 
-        <p>Start a conversation</p>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search conversations..."
+          autocomplete="off"
+        >
+
+        <button id="filterBtn" class="filter-button" aria-label="Search options">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 6h10M18 6h2M4 12h3M11 12h9M4 18h7M15 18h5"></path>
+            <circle cx="16" cy="6" r="2"></circle>
+            <circle cx="9" cy="12" r="2"></circle>
+            <circle cx="13" cy="18" r="2"></circle>
+          </svg>
+        </button>
+      </div>
+
+      <div class="filter-row" id="filterRow">
+        <button class="filter-chip ai-chip active" data-filter="ai">
+          <svg class="mini-logo" viewBox="0 0 64 64">
+            <defs>
+              <linearGradient id="miniGradient" x1="10" y1="7" x2="55" y2="58">
+                <stop offset="0" stop-color="#20d6a2"></stop>
+                <stop offset=".48" stop-color="#1688ff"></stop>
+                <stop offset="1" stop-color="#5227d8"></stop>
+              </linearGradient>
+            </defs>
+            <path fill="url(#miniGradient)" d="M33 5C17.5 5 6 16.2 6 30.1c0 6.4 2.5 12.3 7.1 16.7L10.7 58l11-5.3A29.3 29.3 0 0 0 33 55c7.9 0 14.8-3 19.7-7.8l-7.4-7.4A17.4 17.4 0 0 1 33 44.7c-9.2 0-16.3-6.4-16.3-14.6S23.8 15.5 33 15.5c5 0 9.4 1.9 12.3 5l7.4-7.4C47.8 8 40.8 5 33 5Z"></path>
+            <circle cx="25.5" cy="30" r="2.3" fill="#fff"></circle>
+            <circle cx="33" cy="30" r="2.3" fill="#fff"></circle>
+            <circle cx="40.5" cy="30" r="2.3" fill="#fff"></circle>
+          </svg>
+          <span>Chat with<br>Convera</span>
+        </button>
+
+        <button class="filter-chip" data-filter="all">All</button>
+        <button class="filter-chip" data-filter="unread">Unread</button>
+        <button class="filter-chip" data-filter="favorites">Favourites</button>
+        <button class="filter-chip" data-filter="groups">Groups</button>
+        <button class="filter-chip add-filter" id="newFilterBtn" aria-label="Add filter">+</button>
+      </div>
+
+      <div class="conversation-list" id="conversationList"></div>
+
+      <div class="empty-results" id="emptyResults" hidden>
+        No matching conversations
       </div>
     </section>
 
     <form class="composer" id="composer">
-      <button class="composer-side-button" id="plusBtn" type="button" aria-label="Add attachment">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
+      <button class="composer-plus" id="attachBtn" type="button" aria-label="Attach">
+        <svg viewBox="0 0 24 24">
           <path d="M12 6v12M6 12h12"></path>
         </svg>
       </button>
@@ -93,28 +130,25 @@
         placeholder="Message..."
         autocomplete="off"
         enterkeyhint="send"
-        aria-label="Message"
-      />
+      >
 
-      <button class="composer-side-button mic-button" id="micBtn" type="button" aria-label="Record voice note">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="8.3" y="3" width="7.4" height="11.7" rx="3.7"></rect>
-          <path d="M5.7 11.3a6.3 6.3 0 0 0 12.6 0"></path>
-          <path d="M12 17.6V21"></path>
-          <path d="M9.4 21h5.2"></path>
+      <button class="mic-button" id="micBtn" type="button" aria-label="Voice note">
+        <svg viewBox="0 0 24 24">
+          <rect x="8.4" y="3" width="7.2" height="11.5" rx="3.6"></rect>
+          <path d="M5.8 11.2a6.2 6.2 0 0 0 12.4 0M12 17.4V21M9.5 21h5"></path>
         </svg>
       </button>
 
-      <button class="send-button" id="sendBtn" type="submit" aria-label="Send message">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4.3 5.1 20 12 4.3 18.9l2.1-5.4L14.7 12l-8.3-1.5-2.1-5.4Z"></path>
+      <button class="send-button" type="submit" aria-label="Send">
+        <svg viewBox="0 0 24 24">
+          <path d="M5 5.5 19 12 5 18.5l2-5.1 7.4-1.4L7 10.6 5 5.5Z"></path>
         </svg>
       </button>
     </form>
 
-    <div class="toast" id="toast" role="status"></div>
+    <div class="toast" id="toast"></div>
   </main>
 
-  <script src="./convera.js?v=3"></script>
+  <script src="./convera.js?v=4"></script>
 </body>
 </html>
