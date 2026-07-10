@@ -607,7 +607,7 @@
         </svg>
       </button>
 
-      <div class="brand" aria-label="IdeasForgeAI">
+      <div class="brand" id="landingBrandLink" role="link" tabindex="0" aria-label="Go to IdeasForgeAI home">
         <img
           class="brand-icon-original"
           src="../assets/brand/ideasforgeai-favicon-64.png"
@@ -1146,8 +1146,46 @@ document
   })();
 </script>
 <!-- IF-CHATKIT-MENU-END -->
+
+<!-- IF-CHATKIT-LANDING-LINK-START -->
+<style id="if-chatkit-landing-link-style">
+  #landingBrandLink {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #landingBrandLink:active {
+    transform: scale(0.985);
+  }
+</style>
+
+<script id="if-chatkit-landing-link-script">
+  (() => {
+    const LANDING_URL = "/pages/home.html";
+
+    const menuButton = document.getElementById("menuButton");
+    const brandLink = document.getElementById("landingBrandLink");
+
+    function goToLandingPage() {
+      window.location.href = LANDING_URL;
+    }
+
+    menuButton?.addEventListener("click", goToLandingPage);
+
+    brandLink?.addEventListener("click", goToLandingPage);
+
+    brandLink?.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        goToLandingPage();
+      }
+    });
+  })();
+</script>
+<!-- IF-CHATKIT-LANDING-LINK-END -->
 </body>
 </html>
+
 
 
 
