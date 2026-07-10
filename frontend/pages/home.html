@@ -1,6 +1,25 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
+<!-- IF-CHATKIT-DEDICATED-REDIRECT-START -->
+<script>
+(function () {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get("chatkit") !== "1") return;
+
+  const target = new URL("./home-chatkit.html", window.location.href);
+
+  for (const [key, value] of params.entries()) {
+    if (key !== "chatkit") {
+      target.searchParams.set(key, value);
+    }
+  }
+
+  window.location.replace(target.href);
+})();
+</script>
+<!-- IF-CHATKIT-DEDICATED-REDIRECT-END -->
 
 
 
@@ -1881,6 +1900,7 @@
 
 </body>
 </html>
+
 
 
 

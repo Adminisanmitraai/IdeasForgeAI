@@ -1,0 +1,446 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  />
+
+  <title>IdeasForgeAI Chat</title>
+
+  <script
+    src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"
+    defer
+  ></script>
+
+  <style>
+    :root {
+      --header-height: 118px;
+      --browser-reserve: 92px;
+      --page-padding: 17px;
+      --purple: #9873ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    }
+
+    button {
+      font: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .app-shell {
+      position: fixed;
+      inset: 0;
+      display: grid;
+      grid-template-rows:
+        var(--header-height)
+        minmax(0, 1fr)
+        var(--browser-reserve);
+      width: 100vw;
+      height: 100dvh;
+      min-height: 100svh;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .app-header {
+      display: grid;
+      grid-template-columns: 56px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      padding:
+        max(28px, env(safe-area-inset-top))
+        14px
+        12px;
+      background:
+        radial-gradient(
+          circle at 58% 70%,
+          rgba(116, 79, 255, 0.13),
+          transparent 45%
+        ),
+        #000;
+    }
+
+    .icon-button {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 17px;
+      background: linear-gradient(180deg, #282b31, #14161a);
+      color: #fff;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.12),
+        0 8px 24px rgba(0,0,0,0.22);
+      cursor: pointer;
+    }
+
+    .icon-button svg {
+      width: 23px;
+      height: 23px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .brand {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .brand-mark {
+      color: var(--purple);
+      font-size: 38px;
+      line-height: 1;
+      filter: drop-shadow(0 0 16px rgba(152,115,255,0.55));
+    }
+
+    .brand-name {
+      overflow: hidden;
+      color: #fff;
+      font-size: clamp(21px, 6vw, 28px);
+      font-weight: 780;
+      letter-spacing: -0.055em;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .brand-name span {
+      color: var(--purple);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-region {
+      min-height: 0;
+      padding: 0 var(--page-padding);
+      overflow: hidden;
+    }
+
+    .chat-card {
+      width: min(100%, 980px);
+      height: 100%;
+      margin: 0 auto;
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 34px 34px 0 0;
+      background: #fff;
+      color: #111;
+    }
+
+    #chatkit {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .browser-reserve {
+      background: #000;
+      pointer-events: none;
+    }
+
+    .status {
+      position: absolute;
+      inset: auto 30px calc(var(--browser-reserve) + 22px);
+      z-index: 20;
+      display: none;
+      padding: 11px 14px;
+      border-radius: 14px;
+      background: rgba(18,18,20,0.92);
+      color: #fff;
+      font-size: 13px;
+      line-height: 1.35;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.32);
+    }
+
+    .status.visible {
+      display: block;
+    }
+
+    @media (min-width: 769px) {
+      :root {
+        --header-height: 120px;
+        --browser-reserve: 20px;
+        --page-padding: 22px;
+      }
+
+      .app-header {
+        grid-template-columns: 52px minmax(0, 1fr) auto;
+        padding-top: 18px;
+      }
+
+      .chat-card {
+        border-radius: 30px;
+      }
+    }
+
+    @media (max-width: 390px) {
+      :root {
+        --header-height: 110px;
+        --browser-reserve: 96px;
+        --page-padding: 16px;
+      }
+
+      .app-header {
+        grid-template-columns: 48px minmax(0, 1fr) auto;
+        gap: 9px;
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .icon-button {
+        width: 46px;
+        height: 46px;
+        border-radius: 16px;
+      }
+
+      .brand {
+        gap: 8px;
+      }
+
+      .brand-mark {
+        font-size: 32px;
+      }
+
+      .brand-name {
+        font-size: 21px;
+      }
+
+      .header-actions {
+        gap: 8px;
+      }
+
+      .chat-card {
+        border-radius: 31px 31px 0 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <header class="app-header">
+      <button id="newChatButton" class="icon-button" type="button" aria-label="New chat">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <div class="brand" aria-label="IdeasForgeAI">
+        <span class="brand-mark">✦</span>
+        <div class="brand-name">IdeasForge<span>AI</span></div>
+      </div>
+
+      <div class="header-actions">
+        <button id="historyButton" class="icon-button" type="button" aria-label="Chat history">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 12a9 9 0 1 0 3-6.7"></path>
+            <path d="M3 4v6h6"></path>
+          </svg>
+        </button>
+
+        <button id="profileButton" class="icon-button" type="button" aria-label="Profile">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="8" r="3.5"></circle>
+            <path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="chat-region">
+      <section class="chat-card">
+        <openai-chatkit id="chatkit"></openai-chatkit>
+      </section>
+    </main>
+
+    <div class="browser-reserve"></div>
+  </div>
+
+  <div id="status" class="status" role="status"></div>
+
+  <script>
+    (() => {
+      const params = new URLSearchParams(location.search);
+      const domainKey = params.get("domainKey") || "";
+
+      const chatkit = document.getElementById("chatkit");
+      const status = document.getElementById("status");
+
+      function showStatus(message) {
+        status.textContent = message;
+        status.classList.add("visible");
+
+        window.setTimeout(() => {
+          status.classList.remove("visible");
+        }, 4000);
+      }
+
+      function updateBrowserReserve() {
+        const viewport = window.visualViewport;
+
+        const hiddenHeight = viewport
+          ? Math.max(
+              0,
+              window.innerHeight - viewport.height - viewport.offsetTop
+            )
+          : 0;
+
+        const isPhone = window.matchMedia("(max-width: 768px)").matches;
+        const baseReserve = isPhone ? 78 : 20;
+
+        document.documentElement.style.setProperty(
+          "--browser-reserve",
+          `${Math.max(baseReserve, Math.ceil(hiddenHeight + 18))}px`
+        );
+      }
+
+      async function getClientSecret(existingSecret) {
+        const response = await fetch(
+          "https://ideasforgeai-api.onrender.com/api/chatkit/session",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              user_id: "ideasforgeai-web-user",
+              existing_secret: existingSecret || null
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`ChatKit session failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return (
+          data.client_secret ||
+          data.clientSecret ||
+          data.secret
+        );
+      }
+
+      async function configureChatKit() {
+        if (!chatkit || typeof chatkit.setOptions !== "function") {
+          window.setTimeout(configureChatKit, 150);
+          return;
+        }
+
+        try {
+          await chatkit.setOptions({
+            api: {
+              getClientSecret
+            },
+            theme: {
+              colorScheme: "light"
+            },
+            history: {
+              enabled: true
+            },
+            composer: {
+              placeholder: "Message the AI"
+            }
+          });
+
+          console.info("IdeasForgeAI dedicated ChatKit page ready");
+        } catch (error) {
+          console.error("ChatKit setup failed", error);
+          showStatus(error?.message || "ChatKit could not start.");
+        }
+      }
+
+      document
+        .getElementById("newChatButton")
+        .addEventListener("click", () => {
+          const candidates = [
+            () => chatkit?.startNewThread?.(),
+            () => chatkit?.newThread?.(),
+            () => chatkit?.createThread?.()
+          ];
+
+          for (const action of candidates) {
+            try {
+              const result = action();
+              if (result !== undefined) return;
+            } catch {}
+          }
+
+          showStatus("New chat control will be connected to the ChatKit thread API.");
+        });
+
+      document
+        .getElementById("historyButton")
+        .addEventListener("click", () => {
+          const candidates = [
+            () => chatkit?.openHistory?.(),
+            () => chatkit?.showHistory?.(),
+            () => chatkit?.toggleHistory?.()
+          ];
+
+          for (const action of candidates) {
+            try {
+              const result = action();
+              if (result !== undefined) return;
+            } catch {}
+          }
+
+          showStatus("Chat history remains available inside ChatKit.");
+        });
+
+      document
+        .getElementById("profileButton")
+        .addEventListener("click", () => {
+          showStatus("Profile settings will be connected next.");
+        });
+
+      updateBrowserReserve();
+
+      window.addEventListener("resize", updateBrowserReserve);
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener(
+          "resize",
+          updateBrowserReserve
+        );
+
+        window.visualViewport.addEventListener(
+          "scroll",
+          updateBrowserReserve
+        );
+      }
+
+      configureChatKit();
+    })();
+  </script>
+</body>
+</html>
