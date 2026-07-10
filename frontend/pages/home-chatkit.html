@@ -22,7 +22,7 @@
       --viewport-offset-top: 0px;
       --header-height: 104px;
       --page-gap: 16px;
-      --bottom-space: max(8px, env(safe-area-inset-bottom));
+      --bottom-space: max(0px, env(safe-area-inset-bottom));
       --purple: #9b78ff;
     }
 
@@ -315,6 +315,52 @@
   }
 </style>
 <!-- IF-CHATKIT-PHASE1-HEADER-END -->
+
+<!-- IF-CHATKIT-PHASE2-COMPOSER-START -->
+<style id="if-chatkit-phase2-composer">
+  /*
+    Increase the usable white chat surface.
+    ChatKit keeps full ownership of its composer, mic, send and stop controls.
+  */
+  .chat-region {
+    padding-bottom: 0 !important;
+  }
+
+  .chat-card {
+    height: calc(100% + 10px);
+    min-height: 0;
+  }
+
+  @media (max-width: 768px) {
+    :root {
+      --bottom-space: max(0px, env(safe-area-inset-bottom));
+    }
+
+    .page {
+      grid-template-rows:
+        var(--header-height)
+        minmax(0, 1fr)
+        var(--bottom-space);
+    }
+
+    .chat-card {
+      height: calc(100% + 12px);
+    }
+  }
+
+  @media (max-width: 430px) {
+    .chat-card {
+      height: calc(100% + 14px);
+    }
+  }
+
+  @media (min-width: 769px) {
+    .chat-card {
+      height: 100%;
+    }
+  }
+</style>
+<!-- IF-CHATKIT-PHASE2-COMPOSER-END -->
 </head>
 
 <body>
@@ -453,7 +499,10 @@
           await chatkit.setOptions({
             api: {
               url: BACKEND_URL,
-              domainKey
+              domainKey,
+              uploadStrategy: {
+                type: "two_phase"
+              }
             },
 
             theme: {
@@ -466,6 +515,11 @@
 
             composer: {
               placeholder: "Message the AI",
+              attachments: {
+                enabled: true,
+                maxCount: 5,
+                maxSize: 20971520
+              },
               dictation: {
                 enabled: true
               }
@@ -546,4 +600,5 @@ document
   </script>
 </body>
 </html>
+
 
