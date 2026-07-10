@@ -614,6 +614,79 @@ def iter_source_files() -> Iterable[Path]:
                 yield path
 
 
+# FC-RI-1B - runtime-only global hygiene audit scope
+FRONTEND_RUNTIME_SECRET_EXTENSIONS = {
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".html",
+    ".css",
+    ".json",
+}
+
+CROSS_PROJECT_RUNTIME_EXTENSIONS = {
+    ".py",
+    ".js",
+    ".jsx",
+    ".ts",
+    ".tsx",
+    ".html",
+    ".css",
+    ".json",
+    ".yml",
+    ".yaml",
+    ".toml",
+}
+
+NON_RUNTIME_AUDIT_DIRECTORIES = {
+    "design-reference",
+    "archived_contracts",
+    "archived_agents",
+    ".phase-patches",
+}
+
+NON_RUNTIME_AUDIT_FILENAMES = {
+    "agent_exclusions.json",
+    "archive_manifest.json",
+}
+
+
+def is_non_runtime_audit_path(path: Path) -> bool:
+    try:
+        relative_parts = path.relative_to(PROJECT_ROOT).parts
+    except ValueError:
+        relative_parts = path.parts
+
+    directory_parts = {
+        part.lower()
+        for part in relative_parts[:-1]
+    }
+
+    # FC-RI-1B - exclude timestamped backup artifacts
+    file_name = path.name.lower()
+
+    if file_name in NON_RUNTIME_AUDIT_FILENAMES:
+        return True
+
+    if ".backup-" in file_name or "-backup-" in file_name:
+        return True
+
+    return bool(
+        directory_parts
+        & NON_RUNTIME_AUDIT_DIRECTORIES
+    )
+
+
+def is_frontend_runtime_secret_candidate(path: Path) -> bool:
+    name = path.name.lower()
+
+    if name == ".env" or name.startswith(".env."):
+        return True
+
+    return path.suffix.lower() in FRONTEND_RUNTIME_SECRET_EXTENSIONS
+
+
 def line_hits(text: str, patterns: Sequence[str], max_hits: int = 10) -> List[str]:
     hits: List[str] = []
     for index, line in enumerate(text.splitlines(), start=1):
@@ -1009,6 +1082,10 @@ def check_frontend_secrets(report: AuditReport) -> None:
     for path in iter_source_files():
         if "frontend" not in path.parts:
             continue
+        if not is_frontend_runtime_secret_candidate(path):
+            continue
+        if is_non_runtime_audit_path(path):
+            continue
         text = read_text(path)
         pattern_hits = regex_hits(text, SECRET_VALUE_PATTERNS + SECRET_NAME_PATTERNS, max_hits=3)
         for hit in pattern_hits:
@@ -1047,6 +1124,10 @@ def check_forbidden_cross_project_references(report: AuditReport) -> None:
     ]
     for path in iter_source_files():
         if path.resolve() == AUDIT_FILE:
+            continue
+        if path.suffix.lower() not in CROSS_PROJECT_RUNTIME_EXTENSIONS:
+            continue
+        if is_non_runtime_audit_path(path):
             continue
         for index, line in enumerate(read_text(path).splitlines(), start=1):
             lower_line = line.lower()

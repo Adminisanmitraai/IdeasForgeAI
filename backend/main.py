@@ -1,10 +1,11 @@
-﻿import json
+﻿from dataclasses import asdict
+import json
 import os
 import re
 import subprocess
 from typing import Any, Dict, List, Literal, Optional
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -18,6 +19,10 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
+from backend.coding_agent_repository_intelligence import (
+    WorkspaceValidationError,
+    analyze_repository,
+)
 from backend.design_system_engine import DesignSystemEngine
 from backend.frontend_generator import (
     FrontendGeneratorContractEngine,
@@ -1248,6 +1253,10 @@ app.include_router(requirements_router)
 app.include_router(workflow_map_router)
 app.include_router(output_type_selector_router)
 app.include_router(product_flow_orchestrator_router)
+
+from backend.api.convera import router as convera_router
+
+app.include_router(convera_router)
 
 if BACKEND_GENERATED_APPS_DIR.exists():
     app.mount(
@@ -3182,9 +3191,22 @@ class ArchitectureAnalyzerSearchResult(BaseModel):
 
 class ArchitectureAnalyzerRequest(BaseModel):
     project_id: str = Field(min_length=1, max_length=200)
-    repository_metadata: ProjectIndexerRepositoryMetadata
-    indexed_entries: List[ArchitectureAnalyzerIndexedEntry] = Field(default_factory=list, max_length=5000)
-    search_results: List[ArchitectureAnalyzerSearchResult] = Field(default_factory=list, max_length=500)
+
+    # Existing CA-27 metadata mode.
+    repository_metadata: Optional[ProjectIndexerRepositoryMetadata] = None
+    indexed_entries: List[ArchitectureAnalyzerIndexedEntry] = Field(
+        default_factory=list,
+        max_length=5000,
+    )
+    search_results: List[ArchitectureAnalyzerSearchResult] = Field(
+        default_factory=list,
+        max_length=500,
+    )
+
+    # FC-RI-1B local workspace mode.
+    project_path: Optional[str] = Field(default=None, max_length=1200)
+    max_files: int = Field(default=5000, ge=1, le=5000)
+    max_depth: int = Field(default=20, ge=1, le=20)
 
 
 class TaskPlannerLayerEntry(BaseModel):
@@ -4121,9 +4143,198 @@ def coding_agent_architecture_analyzer_health():
     }
 
 
+# FC-RI-1B — shared repository analysis contract
+FORGECODE_REPOSITORY_CONTRACT_VERSION = "forgecode.repository.v1"
+
+
+def _forgecode_repository_capabilities() -> Dict[str, bool]:
+    return {
+        "repository_read": True,
+        "file_write": False,
+        "terminal": False,
+        "git": False,
+        "deployment": False,
+    }
+
+
+def _ca27_metadata_contract_response(
+    request: ArchitectureAnalyzerRequest,
+) -> Dict[str, Any]:
+    """Preserve CA-27 metadata behavior while adding the shared client contract."""
+    if request.repository_metadata is None:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "repository_metadata_required",
+                "message": (
+                    "repository_metadata is required when project_path "
+                    "is not supplied."
+                ),
+                "contract_version": FORGECODE_REPOSITORY_CONTRACT_VERSION,
+            },
+        )
+
+    legacy_response = _ca27_build_architecture_analysis(request)
+    repository_metadata = request.repository_metadata.model_dump()
+
+    metadata_language = repository_metadata.get("language")
+    language_inventory: List[Dict[str, Any]] = []
+
+    if metadata_language:
+        language_inventory.append(
+            {
+                "language": metadata_language,
+                "file_count": 0,
+                "total_bytes": 0,
+                "percentage": 0.0,
+                "source": "repository_metadata",
+            }
+        )
+
+    directories = _ca27_unique_preserve(
+        [
+            entry.folder
+            for entry in request.indexed_entries
+            if entry.folder and entry.folder != "(root)"
+        ]
+    )
+
+    architecture = {
+        "summary": {
+            "analysis_source": "metadata",
+            "repository_metadata": repository_metadata,
+            "indexed_entry_count": len(request.indexed_entries),
+            "search_result_count": len(request.search_results),
+            "detected_stack": legacy_response.get("detected_stack", []),
+            "architecture_layers": legacy_response.get(
+                "architecture_layers",
+                [],
+            ),
+            "entrypoints": legacy_response.get("entrypoints", {}),
+            "health_score_available": False,
+        },
+        "files": [
+            entry.model_dump()
+            for entry in request.indexed_entries
+        ],
+        "directories": directories,
+        "languages": language_inventory,
+        "frameworks": legacy_response.get("detected_stack", []),
+        "api_inventory": legacy_response.get("api_surface_guess", []),
+        "configuration_inventory": legacy_response.get(
+            "data_config_files",
+            [],
+        ),
+        "dependency_inventory": [],
+        "issues": legacy_response.get("risk_flags", []),
+        "health_score": 0,
+    }
+
+    return {
+        **legacy_response,
+        "mode": "metadata",
+        "legacy_mode": legacy_response.get(
+            "mode",
+            "architecture-analyzer",
+        ),
+        "architecture": architecture,
+        "capabilities": _forgecode_repository_capabilities(),
+        "contract_version": FORGECODE_REPOSITORY_CONTRACT_VERSION,
+    }
+
+
+def _ca27_local_workspace_contract_response(
+    request: ArchitectureAnalyzerRequest,
+) -> Dict[str, Any]:
+    """Run the bounded read-only scanner inside the approved project root."""
+    if not request.project_path:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "project_path_required",
+                "message": "project_path is required for local workspace mode.",
+                "contract_version": FORGECODE_REPOSITORY_CONTRACT_VERSION,
+            },
+        )
+
+    has_metadata_input = (
+        request.repository_metadata is not None
+        or bool(request.indexed_entries)
+        or bool(request.search_results)
+    )
+
+    if has_metadata_input:
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "code": "ambiguous_repository_analysis_mode",
+                "message": (
+                    "Use either project_path local-workspace mode or "
+                    "repository metadata mode, not both."
+                ),
+                "contract_version": FORGECODE_REPOSITORY_CONTRACT_VERSION,
+            },
+        )
+
+    try:
+        scan_result = analyze_repository(
+            request.project_path,
+            approved_root=str(PROJECT_ROOT),
+            max_files=request.max_files,
+            max_depth=request.max_depth,
+        )
+    except WorkspaceValidationError as exc:
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "code": "workspace_validation_failed",
+                "message": str(exc),
+                "contract_version": FORGECODE_REPOSITORY_CONTRACT_VERSION,
+            },
+        ) from exc
+
+    scan_data = asdict(scan_result)
+    summary = scan_data.get("summary") or {}
+
+    architecture = {
+        "summary": summary,
+        "files": scan_data.get("files", []),
+        "directories": scan_data.get("directories", []),
+        "languages": summary.get("languages", []),
+        "frameworks": summary.get("detected_frameworks", []),
+        "api_inventory": scan_data.get("api_inventory", []),
+        "configuration_inventory": scan_data.get(
+            "configuration_inventory",
+            [],
+        ),
+        "dependency_inventory": scan_data.get(
+            "dependency_inventory",
+            [],
+        ),
+        "issues": scan_data.get("issues", []),
+        "health_score": summary.get("health_score", 0),
+    }
+
+    return {
+        "ok": True,
+        "status": "architecture-analyzer-ready",
+        "feature": "ArchitectureAnalyzer",
+        "project_id": request.project_id.strip(),
+        "mode": "local_workspace",
+        "architecture": architecture,
+        "capabilities": _forgecode_repository_capabilities(),
+        "contract_version": FORGECODE_REPOSITORY_CONTRACT_VERSION,
+    }
+
+
 @app.post("/api/coding-agent/architecture-analyzer/analyze")
-def coding_agent_architecture_analyzer_analyze(request: ArchitectureAnalyzerRequest):
-    return _ca27_build_architecture_analysis(request)
+def coding_agent_architecture_analyzer_analyze(
+    request: ArchitectureAnalyzerRequest,
+):
+    if request.project_path:
+        return _ca27_local_workspace_contract_response(request)
+
+    return _ca27_metadata_contract_response(request)
 
 
 @app.get("/api/coding-agent/task-planner/health")
