@@ -1739,3 +1739,21 @@ body.dummy-chat-open .topbar {
   stroke-width: 1.8;
   stroke-linejoin: round;
 }
+
+/* CONVERA CHAT LAUNCH V13 */
+
+.bottom-navigation {
+  bottom: max(
+    calc(var(--safe-bottom) - 22px),
+    0px
+  );
+}
+
+#chatWithConveraBtn {
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+#chatWithConveraBtn:active {
+  transform: scale(0.97);
+}

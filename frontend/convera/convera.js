@@ -478,3 +478,52 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 650);
   });
 })();
+
+// CONVERA CHAT LAUNCH V13
+document.addEventListener("DOMContentLoaded", () => {
+  const launchButton = document.getElementById("chatWithConveraBtn");
+  const dummyScreen = document.getElementById("dummyChatScreen");
+  const dummyInput = document.getElementById("dummyMessageInput");
+
+  function openConveraTestChat() {
+    document.body.classList.add("dummy-chat-open");
+
+    if (dummyScreen) {
+      dummyScreen.setAttribute("aria-hidden", "false");
+    }
+
+    window.setTimeout(() => {
+      dummyInput?.focus();
+    }, 320);
+  }
+
+  launchButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openConveraTestChat();
+  });
+
+  launchButton?.addEventListener("touchend", (event) => {
+    event.preventDefault();
+    openConveraTestChat();
+  }, { passive: false });
+
+  document
+    .querySelectorAll(".conversation")
+    .forEach((row) => {
+      const name = row
+        .querySelector(".conversation-name")
+        ?.textContent
+        ?.trim()
+        ?.toLowerCase();
+
+      if (name === "convera") {
+        row.addEventListener("click", (event) => {
+          event.preventDefault();
+          openConveraTestChat();
+        });
+      }
+    });
+
+  console.log("Convera test chat launcher V13 active");
+});
