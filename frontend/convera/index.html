@@ -8,10 +8,62 @@
   >
   <meta name="theme-color" content="#f8faff">
   <title>Convera</title>
-  <link rel="stylesheet" href="./convera.css?v=4">
+  <link rel="stylesheet" href="./convera.css?v=7">
 </head>
 
 <body>
+  <aside class="convera-drawer" id="converaDrawer" aria-hidden="true">
+    <div class="drawer-profile">
+      <div class="drawer-avatar">R</div>
+      <div>
+        <strong>Ranjan</strong>
+        <span>Online</span>
+      </div>
+    </div>
+
+    <div class="drawer-actions">
+      <button type="button">＋ New chat</button>
+      <button type="button">✦ New Convera chat</button>
+      <button type="button">▣ New project</button>
+    </div>
+
+    <nav class="drawer-nav">
+      <button type="button" class="active">Chats</button>
+      <button type="button">Convera AI</button>
+      <button type="button">Projects</button>
+      <button type="button">Groups</button>
+      <button type="button">Favourites</button>
+      <button type="button">Files</button>
+      <button type="button">Tasks</button>
+      <button type="button">Calendar</button>
+    </nav>
+
+    <section class="drawer-section">
+      <label>Recent Convera chats</label>
+      <button type="button">Product strategy</button>
+      <button type="button">Mobile UI refinement</button>
+      <button type="button">Financial planning</button>
+    </section>
+
+    <section class="drawer-section">
+      <label>Projects</label>
+      <button type="button">IdeasForgeAI</button>
+      <button type="button">Convera</button>
+      <button type="button">KisanMitraAI</button>
+    </section>
+
+    <footer class="drawer-footer">
+      <button type="button">Settings</button>
+      <button type="button">Help</button>
+    </footer>
+  </aside>
+
+  <button
+    class="drawer-overlay"
+    id="drawerOverlay"
+    type="button"
+    aria-label="Close menu"
+  ></button>
   <aside
     class="navigation-drawer"
     id="navigationDrawer"
@@ -124,12 +176,12 @@
   aria-label="Open navigation"
   aria-expanded="false"
 >
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M5 7h14"></path>
-    <path d="M5 12h14"></path>
-    <path d="M5 17h14"></path>
-  </svg>
-</button>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 7h14"></path>
+      <path d="M5 12h14"></path>
+      <path d="M5 17h14"></path>
+    </svg>
+  </button>
 
         <button class="logo-button" id="logoBtn" aria-label="Convera">
           <svg class="convera-logo" viewBox="0 0 64 64">
@@ -257,7 +309,8 @@
     <div class="toast" id="toast"></div>
   </main>
 
-  <script src="./convera.js?v=4"></script>
+  <script src="./convera.js?v=7"></script>
 </body>
 </html>
+
 

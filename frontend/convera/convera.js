@@ -348,3 +348,83 @@ navigationDrawer
       closeDrawer();
     });
   });
+
+// CONVERA DRAWER V7
+(() => {
+  const menuButton = document.getElementById("menuBtn");
+  const drawer = document.getElementById("converaDrawer");
+  const overlay = document.getElementById("drawerOverlay");
+
+  if (!menuButton || !drawer || !overlay) {
+    console.error("Convera drawer elements missing");
+    return;
+  }
+
+  let open = false;
+  let startX = 0;
+  let startY = 0;
+  let currentX = 0;
+  let tracking = false;
+
+  function setOpen(value) {
+    open = value;
+    document.body.classList.toggle("drawer-open", value);
+    drawer.setAttribute("aria-hidden", value ? "false" : "true");
+    menuButton.setAttribute("aria-expanded", value ? "true" : "false");
+  }
+
+  menuButton.onclick = () => setOpen(!open);
+  overlay.onclick = () => setOpen(false);
+
+  document.addEventListener("touchstart", (event) => {
+    if (event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+
+    startX = touch.clientX;
+    startY = touch.clientY;
+    currentX = startX;
+
+    tracking = open || startX <= 30;
+  }, { passive: true });
+
+  document.addEventListener("touchmove", (event) => {
+    if (!tracking || event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+    currentX = touch.clientX;
+
+    const deltaX = currentX - startX;
+    const deltaY = touch.clientY - startY;
+
+    if (Math.abs(deltaY) > Math.abs(deltaX)) {
+      tracking = false;
+    }
+  }, { passive: true });
+
+  document.addEventListener("touchend", () => {
+    if (!tracking) return;
+
+    const deltaX = currentX - startX;
+
+    if (!open && deltaX > 55) {
+      setOpen(true);
+    }
+
+    if (open && deltaX < -55) {
+      setOpen(false);
+    }
+
+    tracking = false;
+  }, { passive: true });
+
+  drawer.querySelectorAll("button").forEach((button) => {
+    button.addEventListener("click", () => {
+      if (typeof showToast === "function") {
+        showToast(button.textContent.trim());
+      }
+
+      setOpen(false);
+    });
+  });
+})();
