@@ -1,12 +1,20 @@
 ﻿:root {
   color-scheme: light;
+
   font-family:
     Inter,
     -apple-system,
     BlinkMacSystemFont,
-    "SF Pro Display",
+    "SF Pro Text",
     "Segoe UI",
     sans-serif;
+
+  --header-height: 72px;
+  --page-background: #f9fbff;
+  --icon-background: rgba(244, 246, 252, 0.94);
+  --icon-color: #1b2232;
+  --muted: #969dac;
+  --border: rgba(220, 225, 236, 0.82);
 }
 
 * {
@@ -17,13 +25,13 @@
 html,
 body {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   margin: 0;
   overflow: hidden;
 }
 
 body {
-  background: #f3f5fa;
+  background: #eef1f7;
   color: #111827;
 }
 
@@ -34,53 +42,60 @@ input {
 
 button {
   border: 0;
-  padding: 0;
+  cursor: pointer;
 }
 
 button,
 input {
-  -webkit-appearance: none;
   appearance: none;
+  -webkit-appearance: none;
 }
 
 .convera-shell {
   position: relative;
+
   width: 100%;
   max-width: 430px;
+
+  height: 100vh;
   height: 100dvh;
-  min-height: 100vh;
+
   margin: 0 auto;
   overflow: hidden;
+
   background:
     radial-gradient(
-      circle at 50% 15%,
-      rgba(100, 113, 255, 0.08),
-      transparent 33%
+      circle at 50% 17%,
+      rgba(95, 104, 255, 0.045),
+      transparent 31%
     ),
-    #fbfdff;
+    var(--page-background);
 }
 
 .topbar {
   position: absolute;
   z-index: 20;
+
   top: 0;
   left: 0;
   right: 0;
 
-  min-height: calc(76px + env(safe-area-inset-top));
+  height: calc(var(--header-height) + env(safe-area-inset-top));
+
   padding:
-    calc(12px + env(safe-area-inset-top))
-    20px
-    12px;
+    env(safe-area-inset-top)
+    18px
+    0;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  background: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid rgba(218, 224, 237, 0.74);
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  background: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid var(--border);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .topbar-left,
@@ -90,90 +105,99 @@ input {
 }
 
 .topbar-left {
-  gap: 8px;
+  gap: 5px;
 }
 
 .topbar-right {
-  gap: 12px;
+  gap: 9px;
 }
 
-.top-icon-button,
-.convera-logo-button,
+.header-button,
+.brand-button,
 .add-user-button,
-.composer-icon-button,
+.composer-side-button,
 .send-button {
   display: grid;
   place-items: center;
-  cursor: pointer;
   flex: 0 0 auto;
 }
 
-.top-icon-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 17px;
-  color: #171c2a;
-  background: rgba(244, 246, 251, 0.94);
+.header-button {
+  width: 42px;
+  height: 42px;
+
+  border-radius: 15px;
+
+  color: var(--icon-color);
+  background: var(--icon-background);
 }
 
-.top-icon-button svg {
-  width: 23px;
-  height: 23px;
-  fill: currentColor;
+.header-button svg {
+  width: 21px;
+  height: 21px;
+
+  fill: none;
   stroke: currentColor;
-  stroke-width: 1.7;
+  stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.top-icon-button svg circle,
-.top-icon-button svg path {
-  vector-effect: non-scaling-stroke;
+.menu-button svg {
+  fill: currentColor;
+  stroke: none;
 }
 
-.convera-logo-button {
-  width: 46px;
-  height: 46px;
+.brand-button {
+  width: 42px;
+  height: 42px;
+
   background: transparent;
 }
 
 .convera-symbol {
-  width: 42px;
-  height: 42px;
   display: block;
+  width: 38px;
+  height: 38px;
 }
 
 .add-user-button {
-  width: 46px;
-  height: 46px;
-  border-radius: 17px;
+  width: 43px;
+  height: 43px;
+
+  border-radius: 15px;
+
   color: #ffffff;
-  background: linear-gradient(145deg, #3185ff, #6357f4);
+  background: linear-gradient(145deg, #3285ff, #6255f1);
+
   box-shadow:
-    0 12px 28px rgba(74, 92, 242, 0.29),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    0 9px 20px rgba(78, 91, 238, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .add-user-button svg {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
+
   fill: none;
   stroke: currentColor;
-  stroke-width: 2.2;
+  stroke-width: 2;
   stroke-linecap: round;
 }
 
 .chat-thread {
   position: absolute;
   inset: 0;
+
   padding:
-    calc(90px + env(safe-area-inset-top))
+    calc(var(--header-height) + env(safe-area-inset-top) + 16px)
     18px
-    calc(100px + env(safe-area-inset-bottom));
+    calc(104px + env(safe-area-inset-bottom));
 
   overflow-y: auto;
-  overscroll-behavior: contain;
+
   scrollbar-width: none;
+  overscroll-behavior: contain;
 }
 
 .chat-thread::-webkit-scrollbar {
@@ -182,88 +206,116 @@ input {
 
 .empty-state {
   min-height: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transform: translateY(-3%);
+
+  padding-bottom: 13vh;
+
   text-align: center;
 }
 
 .empty-logo {
-  width: 74px;
-  height: 74px;
-  margin-bottom: 18px;
-  filter: drop-shadow(0 15px 20px rgba(69, 79, 224, 0.15));
+  width: 60px;
+  height: 60px;
+  margin-bottom: 15px;
+
+  filter:
+    drop-shadow(0 10px 15px rgba(64, 85, 225, 0.11));
 }
 
 .empty-state p {
   margin: 0;
-  color: #9299aa;
-  font-size: 19px;
+
+  color: var(--muted);
+
+  font-size: 18px;
   font-weight: 450;
-  letter-spacing: -0.02em;
+  line-height: 1.25;
+
+  letter-spacing: -0.025em;
 }
 
 .message {
   width: fit-content;
   max-width: 78%;
-  margin: 10px 0;
-  padding: 12px 15px;
+
+  margin: 9px 0;
+  padding: 11px 14px;
 
   color: #152033;
   background: #ffffff;
+
   border: 1px solid rgba(226, 230, 238, 0.88);
-  border-radius: 20px 20px 20px 7px;
+  border-radius: 19px 19px 19px 7px;
 
   font-size: 15px;
   line-height: 1.45;
+
   overflow-wrap: anywhere;
 
-  box-shadow: 0 8px 24px rgba(22, 31, 55, 0.07);
+  box-shadow: 0 7px 20px rgba(22, 31, 55, 0.06);
 }
 
 .message.me {
   margin-left: auto;
+
   color: #111827;
-  background: linear-gradient(145deg, #f0efff, #e7ebff);
-  border-color: rgba(205, 208, 252, 0.7);
-  border-radius: 20px 20px 7px 20px;
+
+  background: linear-gradient(
+    145deg,
+    #f0efff,
+    #e8ecff
+  );
+
+  border-color: rgba(205, 208, 252, 0.68);
+  border-radius: 19px 19px 7px 19px;
 }
 
 .composer {
   position: absolute;
   z-index: 30;
+
   left: 14px;
   right: 14px;
-  bottom: calc(12px + env(safe-area-inset-bottom));
 
-  min-height: 66px;
+  bottom: max(
+    calc(env(safe-area-inset-bottom) + 14px),
+    34px
+  );
+
+  min-height: 62px;
+
   margin: 0;
-  padding: 8px;
+  padding: 7px;
 
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
 
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(221, 226, 237, 0.9);
-  border-radius: 34px;
+  background: rgba(255, 255, 255, 0.96);
+
+  border: 1px solid rgba(219, 224, 235, 0.92);
+  border-radius: 31px;
 
   box-shadow:
-    0 18px 46px rgba(29, 38, 68, 0.13),
-    0 2px 8px rgba(29, 38, 68, 0.04);
+    0 15px 38px rgba(30, 40, 70, 0.12),
+    0 2px 7px rgba(30, 40, 70, 0.04);
 
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
 }
 
 .composer input {
   min-width: 0;
   flex: 1;
-  height: 48px;
 
-  padding: 0 7px;
+  height: 46px;
+
+  padding: 0 8px;
+
   border: 0;
   outline: 0;
 
@@ -271,49 +323,29 @@ input {
   background: transparent;
 
   font-size: 17px;
-  letter-spacing: -0.015em;
+
+  letter-spacing: -0.018em;
 }
 
 .composer input::placeholder {
-  color: #adb2bf;
+  color: #afb4c0;
   opacity: 1;
 }
 
-.composer-icon-button {
-  width: 48px;
-  height: 48px;
+.composer-side-button {
+  width: 46px;
+  height: 46px;
+
   border-radius: 50%;
 
-  color: #555d70;
+  color: #586174;
   background: #f4f6fb;
 }
 
-.composer-icon-button svg {
-  width: 24px;
-  height: 24px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+.composer-side-button svg {
+  width: 22px;
+  height: 22px;
 
-.send-button {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-
-  color: #ffffff;
-  background: linear-gradient(145deg, #3185ff, #6357f4);
-
-  box-shadow:
-    0 12px 24px rgba(75, 94, 240, 0.27),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.send-button svg {
-  width: 24px;
-  height: 24px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.9;
@@ -321,10 +353,46 @@ input {
   stroke-linejoin: round;
 }
 
-.top-icon-button:active,
-.convera-logo-button:active,
+.mic-button {
+  width: 42px;
+  height: 42px;
+
+  background: transparent;
+}
+
+.send-button {
+  width: 48px;
+  height: 48px;
+
+  border-radius: 50%;
+
+  color: #ffffff;
+
+  background: linear-gradient(
+    145deg,
+    #3285ff,
+    #6255f1
+  );
+
+  box-shadow:
+    0 9px 20px rgba(77, 94, 239, 0.23),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.send-button svg {
+  width: 23px;
+  height: 23px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linejoin: round;
+}
+
+.header-button:active,
+.brand-button:active,
 .add-user-button:active,
-.composer-icon-button:active,
+.composer-side-button:active,
 .send-button:active {
   transform: scale(0.95);
 }
@@ -332,27 +400,36 @@ input {
 .toast {
   position: absolute;
   z-index: 50;
+
   left: 50%;
-  bottom: calc(92px + env(safe-area-inset-bottom));
+
+  bottom: max(
+    calc(env(safe-area-inset-bottom) + 92px),
+    112px
+  );
 
   max-width: calc(100% - 44px);
-  padding: 10px 15px;
+
+  padding: 9px 14px;
 
   color: #ffffff;
-  background: rgba(20, 27, 43, 0.91);
-  border-radius: 15px;
+  background: rgba(18, 25, 40, 0.91);
+
+  border-radius: 14px;
 
   font-size: 13px;
   font-weight: 550;
+
   text-align: center;
 
   opacity: 0;
   pointer-events: none;
 
-  transform: translate(-50%, 10px);
+  transform: translate(-50%, 8px);
+
   transition:
-    opacity 180ms ease,
-    transform 180ms ease;
+    opacity 170ms ease,
+    transform 170ms ease;
 }
 
 .toast.visible {
@@ -362,8 +439,20 @@ input {
 
 @media (min-width: 431px) {
   .convera-shell {
-    border-left: 1px solid #e5e9f2;
-    border-right: 1px solid #e5e9f2;
+    border-left: 1px solid #e4e8f1;
+    border-right: 1px solid #e4e8f1;
+
     box-shadow: 0 0 60px rgba(20, 30, 60, 0.1);
+  }
+}
+
+@media (max-height: 700px) {
+  .empty-state {
+    padding-bottom: 7vh;
+  }
+
+  .empty-logo {
+    width: 52px;
+    height: 52px;
   }
 }
