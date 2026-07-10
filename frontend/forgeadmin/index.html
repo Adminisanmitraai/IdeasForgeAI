@@ -5483,6 +5483,220 @@
 })();
 </script>
 <!-- IF-FOUNDER-TOKEN-INTERCEPT-END -->
+
+<!-- IF-FOUNDER-TOKEN-VISIBLE-CONFIRM-START -->
+<script id="if-founder-token-visible-confirm">
+(function () {
+  if (window.__ifFounderTokenVisibleConfirm) return;
+  window.__ifFounderTokenVisibleConfirm = true;
+
+  const TOKEN_KEY = "IF_FOUNDER_ADMIN_TOKEN";
+  const API_BASE = "https://ideasforgeai-api.onrender.com";
+
+  function visibleToast(text, type) {
+    let box = document.getElementById("if-founder-visible-toast");
+    if (!box) {
+      box = document.createElement("div");
+      box.id = "if-founder-visible-toast";
+      document.body.appendChild(box);
+    }
+
+    box.textContent = text;
+    box.style.cssText = [
+      "position:fixed",
+      "left:18px",
+      "right:18px",
+      "bottom:118px",
+      "z-index:2147483647",
+      "padding:16px 18px",
+      "border-radius:24px",
+      "background:" + (type === "error" ? "#fff1f2" : "#ecfdf5"),
+      "color:#0f172a",
+      "border:1px solid " + (type === "error" ? "rgba(244,63,94,.35)" : "rgba(16,185,129,.35)"),
+      "box-shadow:0 18px 55px rgba(15,23,42,.18)",
+      "font:800 16px/1.35 system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
+      "white-space:pre-line",
+      "text-align:left"
+    ].join(";");
+
+    clearTimeout(window.__ifFounderVisibleToastTimer);
+    window.__ifFounderVisibleToastTimer = setTimeout(function () {
+      if (box) box.remove();
+    }, 5000);
+  }
+
+  function allComposerValues() {
+    const els = Array.from(document.querySelectorAll(
+      "textarea,input,[contenteditable='true'],[role='textbox']"
+    ));
+
+    return els.map(function (el) {
+      return {
+        el: el,
+        value: ("value" in el ? el.value : el.textContent || "").trim()
+      };
+    });
+  }
+
+  function findCommandInput() {
+    const items = allComposerValues();
+    return items.find(function (x) {
+      return /^(founder-token|founder-boundary|front-office)\b/i.test(x.value);
+    });
+  }
+
+  function clearEl(el) {
+    if (!el) return;
+    if ("value" in el) el.value = "";
+    else el.textContent = "";
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+  }
+
+  function stop(e) {
+    if (!e) return;
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+  }
+
+  async function handleFounderCommandFromAnyInput(e) {
+    const found = findCommandInput();
+    if (!found) return false;
+
+    const input = found.value;
+    const lower = input.toLowerCase();
+
+    stop(e);
+    clearEl(found.el);
+
+    if (lower.startsWith("founder-token set ")) {
+      const token = input.slice("founder-token set ".length).trim();
+      if (!token) {
+        visibleToast("Founder token missing. Run founder-token set <token> first.", "error");
+        return true;
+      }
+
+      localStorage.setItem(TOKEN_KEY, token);
+      visibleToast("Founder token saved locally ✅", "ok");
+      return true;
+    }
+
+    if (lower === "founder-token clear") {
+      localStorage.removeItem(TOKEN_KEY);
+      visibleToast("Founder token cleared.", "ok");
+      return true;
+    }
+
+    if (lower === "founder-boundary") {
+      const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
+      if (!token) {
+        visibleToast("Founder token missing. Run founder-token set <token> first.", "error");
+        return true;
+      }
+
+      visibleToast("Checking Founder Worker boundary...", "ok");
+
+      try {
+        const res = await fetch(API_BASE + "/api/admin/founder-worker-boundary", {
+          method: "GET",
+          headers: { "X-IF-Founder-Token": token }
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.ok === false) {
+          visibleToast("Founder backend connection failed. Check Render API/token.", "error");
+          return true;
+        }
+
+        visibleToast(
+          "Founder Worker Boundary: " + String(data.status || "active").toUpperCase() +
+          "\npublic frontend chat: " + (data.public_frontend_chat_worker_access || "unknown") +
+          "\nfounder office worker: " + (data.founder_office_worker_access || "unknown") +
+          "\nworker execution: " + (data.worker_execution || "unknown"),
+          "ok"
+        );
+      } catch (err) {
+        visibleToast("Founder backend connection failed. Check Render API/token.", "error");
+      }
+
+      return true;
+    }
+
+    if (lower.startsWith("front-office ")) {
+      const token = (localStorage.getItem(TOKEN_KEY) || "").trim();
+      const task = input.slice("front-office ".length).trim();
+
+      if (!token) {
+        visibleToast("Founder token missing. Run founder-token set <token> first.", "error");
+        return true;
+      }
+
+      if (!task) {
+        visibleToast("Front-office task missing.", "error");
+        return true;
+      }
+
+      visibleToast("Creating Founder Worker job...", "ok");
+
+      try {
+        const res = await fetch(API_BASE + "/api/admin/front-office-worker-handoff", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-IF-Founder-Token": token
+          },
+          body: JSON.stringify({
+            message: task,
+            source: "founder_office",
+            founder_only: true
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || data.ok === false) {
+          visibleToast("Founder Worker handoff failed. Check Render API/token.", "error");
+          return true;
+        }
+
+        visibleToast(
+          "Worker job created: " + data.job_id +
+          "\nstatus: " + (data.status || "waiting_approval"),
+          "ok"
+        );
+      } catch (err) {
+        visibleToast("Founder Worker handoff failed. Check Render API/token.", "error");
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
+  document.addEventListener("submit", function (e) {
+    handleFounderCommandFromAnyInput(e);
+  }, true);
+
+  document.addEventListener("click", function (e) {
+    handleFounderCommandFromAnyInput(e);
+  }, true);
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      handleFounderCommandFromAnyInput(e);
+    }
+  }, true);
+
+  window.ifFounderTokenTest = function () {
+    localStorage.setItem(TOKEN_KEY, "test123");
+    visibleToast("Founder token saved locally ✅", "ok");
+  };
+})();
+</script>
+<!-- IF-FOUNDER-TOKEN-VISIBLE-CONFIRM-END -->
 </body>
 
 </html>
