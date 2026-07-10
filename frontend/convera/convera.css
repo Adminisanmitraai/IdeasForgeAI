@@ -1056,3 +1056,46 @@ body.drawer-open .drawer-overlay {
 .drawer-footer button:active {
   background: #f1f3f8;
 }
+
+/* CONVERA HAMBURGER FIX V8 */
+.menu-button {
+  display: grid;
+  place-items: center;
+}
+
+.hamburger-lines {
+  width: 20px;
+  height: 16px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hamburger-lines i {
+  display: block;
+
+  width: 20px;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background: #182031;
+
+  transform-origin: center;
+  transition:
+    transform 220ms ease,
+    opacity 160ms ease;
+}
+
+body.drawer-open .hamburger-lines i:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+body.drawer-open .hamburger-lines i:nth-child(2) {
+  opacity: 0;
+}
+
+body.drawer-open .hamburger-lines i:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
