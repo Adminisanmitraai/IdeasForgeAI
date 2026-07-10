@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   color: #121827;
   background: #f3f5fa;
@@ -1786,4 +1786,14 @@ body.dummy-chat-open .topbar {
 
 #chatWithConveraBtn:active {
   transform: scale(.97);
+}
+
+/* CONVERA SAVED THREAD ROW V17 */
+.saved-convera-thread {
+  color: inherit;
+  text-decoration: none;
+}
+
+.saved-convera-thread:active {
+  background: #f7f8fc;
 }

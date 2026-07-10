@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   font-family: Inter, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
   color: #141a27;
   background: #eef1f7;
@@ -268,4 +268,17 @@ textarea {
 .toast.visible {
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+/* CONVERA COMPOSER LOWER V17 */
+.composer {
+  bottom: max(
+    calc(env(safe-area-inset-bottom) - 12px),
+    4px
+  ) !important;
+}
+
+.message-thread {
+  padding-bottom:
+    calc(84px + env(safe-area-inset-bottom)) !important;
 }
