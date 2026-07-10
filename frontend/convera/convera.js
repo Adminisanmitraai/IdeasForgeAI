@@ -1,35 +1,94 @@
 ﻿const chatThread = document.getElementById("chatThread");
+const emptyState = document.getElementById("emptyState");
+const composer = document.getElementById("composer");
 const input = document.getElementById("messageInput");
-const sendBtn = document.getElementById("sendBtn");
+const toastElement = document.getElementById("toast");
 
-function toast(text) {
-  console.log("[Convera]", text);
+let toastTimer = null;
+let isRecording = false;
+
+function showToast(message) {
+  clearTimeout(toastTimer);
+
+  toastElement.textContent = message;
+  toastElement.classList.add("visible");
+
+  toastTimer = setTimeout(() => {
+    toastElement.classList.remove("visible");
+  }, 1800);
 }
 
 function sendMessage() {
-  const text = input.value.trim();
-  if (!text) return;
+  const message = input.value.trim();
 
-  const empty = chatThread.querySelector(".empty-state");
-  if (empty) empty.remove();
+  if (!message) {
+    input.focus();
+    return;
+  }
+
+  if (emptyState) {
+    emptyState.remove();
+  }
 
   const bubble = document.createElement("div");
   bubble.className = "message me";
-  bubble.textContent = text;
+  bubble.textContent = message;
+
   chatThread.appendChild(bubble);
 
   input.value = "";
-  chatThread.scrollTop = chatThread.scrollHeight;
+  input.focus();
+
+  requestAnimationFrame(() => {
+    chatThread.scrollTo({
+      top: chatThread.scrollHeight,
+      behavior: "smooth"
+    });
+  });
 }
 
-sendBtn.addEventListener("click", sendMessage);
-
-input.addEventListener("keydown", (event) => {
-  if (event.key === "Enter") sendMessage();
+composer.addEventListener("submit", (event) => {
+  event.preventDefault();
+  sendMessage();
 });
 
-document.getElementById("menuBtn").addEventListener("click", () => toast("Menu coming next"));
-document.getElementById("cameraBtn").addEventListener("click", () => toast("Camera coming next"));
-document.getElementById("addUserBtn").addEventListener("click", () => toast("Add user coming next"));
-document.getElementById("plusBtn").addEventListener("click", () => toast("Attach coming next"));
-document.getElementById("micBtn").addEventListener("click", () => toast("Voice note coming next"));
+document
+  .getElementById("menuBtn")
+  .addEventListener("click", () => {
+    showToast("Menu will be added next");
+  });
+
+document
+  .getElementById("cameraBtn")
+  .addEventListener("click", () => {
+    showToast("Camera will be added next");
+  });
+
+document
+  .getElementById("addUserBtn")
+  .addEventListener("click", () => {
+    showToast("Add user will be added next");
+  });
+
+document
+  .getElementById("plusBtn")
+  .addEventListener("click", () => {
+    showToast("Attachments will be added next");
+  });
+
+document
+  .getElementById("micBtn")
+  .addEventListener("click", (event) => {
+    isRecording = !isRecording;
+
+    event.currentTarget.setAttribute(
+      "aria-label",
+      isRecording ? "Stop recording" : "Record voice note"
+    );
+
+    showToast(
+      isRecording
+        ? "Voice recording started"
+        : "Voice recording stopped"
+    );
+  });

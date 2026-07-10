@@ -2,39 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1, viewport-fit=cover" />
+
+  <meta name="theme-color" content="#ffffff" />
+
   <title>Convera</title>
-  <link rel="stylesheet" href="./convera.css" />
+
+  <link rel="stylesheet" href="./convera.css?v=2" />
 </head>
+
 <body>
   <main class="convera-shell">
+
     <header class="topbar">
-      <div class="top-left">
-        <button class="icon-btn" id="menuBtn">⋮</button>
-        <img src="./assets/convera_logo_symbol.png" class="brand-icon" alt="Convera" />
+
+      <div class="topbar-left">
+
+        <button
+          class="top-icon-button"
+          id="menuBtn"
+          type="button"
+          aria-label="Open menu"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="5" r="1.7"></circle>
+            <circle cx="12" cy="12" r="1.7"></circle>
+            <circle cx="12" cy="19" r="1.7"></circle>
+          </svg>
+        </button>
+
+        <button
+          class="convera-logo-button"
+          type="button"
+          aria-label="Convera home"
+        >
+          <svg
+            class="convera-symbol"
+            viewBox="0 0 64 64"
+            aria-hidden="true"
+          >
+            <defs>
+              <linearGradient
+                id="converaGradient"
+                x1="8"
+                y1="6"
+                x2="56"
+                y2="58"
+                gradientUnits="userSpaceOnUse"
+              >
+                <stop offset="0%" stop-color="#20d8a0"></stop>
+                <stop offset="48%" stop-color="#1688ff"></stop>
+                <stop offset="100%" stop-color="#5025d5"></stop>
+              </linearGradient>
+            </defs>
+
+            <path
+              fill="url(#converaGradient)"
+              d="M32 6C17.64 6 6 16.75 6 30c0 7.11 3.37 13.5 8.72 17.88L12 58l11.42-5.18A28.17 28.17 0 0 0 32 54c14.36 0 26-10.75 26-24S46.36 6 32 6Zm0 38c-8.84 0-16-6.27-16-14s7.16-14 16-14 16 6.27 16 14-7.16 14-16 14Z"
+            ></path>
+
+            <circle cx="25" cy="30" r="2.6" fill="#ffffff"></circle>
+            <circle cx="32" cy="30" r="2.6" fill="#ffffff"></circle>
+            <circle cx="39" cy="30" r="2.6" fill="#ffffff"></circle>
+          </svg>
+        </button>
+
       </div>
 
-      <div class="top-right">
-        <button class="icon-btn" id="cameraBtn">📷</button>
-        <button class="add-btn" id="addUserBtn">+</button>
+      <div class="topbar-right">
+
+        <button
+          class="top-icon-button"
+          id="cameraBtn"
+          type="button"
+          aria-label="Open camera"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M8.5 6.5 10 4.5h4l1.5 2H19a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h3.5Z"
+            ></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </button>
+
+        <button
+          class="add-user-button"
+          id="addUserBtn"
+          type="button"
+          aria-label="Add user"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 5v14M5 12h14"></path>
+          </svg>
+        </button>
+
       </div>
+
     </header>
 
     <section class="chat-thread" id="chatThread">
-      <div class="empty-state">
-        <img src="./assets/convera_logo_symbol.png" alt="Convera" />
+
+      <div class="empty-state" id="emptyState">
+        <svg
+          class="empty-logo"
+          viewBox="0 0 64 64"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient
+              id="emptyLogoGradient"
+              x1="8"
+              y1="6"
+              x2="56"
+              y2="58"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop offset="0%" stop-color="#20d8a0"></stop>
+              <stop offset="48%" stop-color="#1688ff"></stop>
+              <stop offset="100%" stop-color="#5025d5"></stop>
+            </linearGradient>
+          </defs>
+
+          <path
+            fill="url(#emptyLogoGradient)"
+            d="M32 6C17.64 6 6 16.75 6 30c0 7.11 3.37 13.5 8.72 17.88L12 58l11.42-5.18A28.17 28.17 0 0 0 32 54c14.36 0 26-10.75 26-24S46.36 6 32 6Zm0 38c-8.84 0-16-6.27-16-14s7.16-14 16-14 16 6.27 16 14-7.16 14-16 14Z"
+          ></path>
+
+          <circle cx="25" cy="30" r="2.6" fill="#ffffff"></circle>
+          <circle cx="32" cy="30" r="2.6" fill="#ffffff"></circle>
+          <circle cx="39" cy="30" r="2.6" fill="#ffffff"></circle>
+        </svg>
+
         <p>Start a conversation</p>
       </div>
+
     </section>
 
-    <footer class="composer">
-      <button class="plus-btn" id="plusBtn">+</button>
-      <input id="messageInput" type="text" placeholder="Message..." />
-      <button class="mic-btn" id="micBtn">🎙</button>
-      <button class="send-btn" id="sendBtn">➤</button>
-    </footer>
+    <form class="composer" id="composer">
+
+      <button
+        class="composer-icon-button"
+        id="plusBtn"
+        type="button"
+        aria-label="Add attachment"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
+      </button>
+
+      <input
+        id="messageInput"
+        type="text"
+        placeholder="Message..."
+        autocomplete="off"
+        enterkeyhint="send"
+        aria-label="Message"
+      />
+
+      <button
+        class="composer-icon-button"
+        id="micBtn"
+        type="button"
+        aria-label="Record voice note"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="8" y="3" width="8" height="12" rx="4"></rect>
+          <path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"></path>
+        </svg>
+      </button>
+
+      <button
+        class="send-button"
+        id="sendBtn"
+        type="submit"
+        aria-label="Send message"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m4 4 17 8-17 8 3-8-3-8Z"></path>
+          <path d="M7 12h14"></path>
+        </svg>
+      </button>
+
+    </form>
+
+    <div class="toast" id="toast" role="status"></div>
+
   </main>
 
-  <script src="./convera.js"></script>
+  <script src="./convera.js?v=2"></script>
 </body>
 </html>

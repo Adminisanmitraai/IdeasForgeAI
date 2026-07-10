@@ -1,167 +1,369 @@
-﻿* {
+﻿:root {
+  color-scheme: light;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Segoe UI",
+    sans-serif;
+}
+
+* {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
 }
 
 body {
-  margin: 0;
-  min-height: 100vh;
-  background: #f4f6fb;
-  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  display: flex;
-  justify-content: center;
+  background: #f3f5fa;
+  color: #111827;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  padding: 0;
+}
+
+button,
+input {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .convera-shell {
+  position: relative;
   width: 100%;
   max-width: 430px;
-  height: 100vh;
-  background: #ffffff;
-  position: relative;
+  height: 100dvh;
+  min-height: 100vh;
+  margin: 0 auto;
   overflow: hidden;
-  border-left: 1px solid #edf0f6;
-  border-right: 1px solid #edf0f6;
+  background:
+    radial-gradient(
+      circle at 50% 15%,
+      rgba(100, 113, 255, 0.08),
+      transparent 33%
+    ),
+    #fbfdff;
 }
 
 .topbar {
-  height: 74px;
-  padding: 14px 18px;
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  min-height: calc(76px + env(safe-area-inset-top));
+  padding:
+    calc(12px + env(safe-area-inset-top))
+    20px
+    12px;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: rgba(255,255,255,0.92);
-  border-bottom: 1px solid #eef1f7;
-  backdrop-filter: blur(18px);
+
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom: 1px solid rgba(218, 224, 237, 0.74);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
 }
 
-.top-left,
-.top-right {
+.topbar-left,
+.topbar-right {
   display: flex;
   align-items: center;
+}
+
+.topbar-left {
+  gap: 8px;
+}
+
+.topbar-right {
   gap: 12px;
 }
 
-.brand-icon {
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-}
-
-.icon-btn,
-.add-btn,
-.plus-btn,
-.mic-btn,
-.send-btn {
-  border: 0;
-  cursor: pointer;
+.top-icon-button,
+.convera-logo-button,
+.add-user-button,
+.composer-icon-button,
+.send-button {
   display: grid;
   place-items: center;
+  cursor: pointer;
+  flex: 0 0 auto;
 }
 
-.icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
-  background: #f6f7fb;
-  font-size: 24px;
-  color: #101828;
+.top-icon-button {
+  width: 44px;
+  height: 44px;
+  border-radius: 17px;
+  color: #171c2a;
+  background: rgba(244, 246, 251, 0.94);
 }
 
-.add-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #3b82f6, #6d5dfc);
-  color: white;
-  font-size: 26px;
-  box-shadow: 0 12px 24px rgba(85, 97, 255, 0.28);
+.top-icon-button svg {
+  width: 23px;
+  height: 23px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.top-icon-button svg circle,
+.top-icon-button svg path {
+  vector-effect: non-scaling-stroke;
+}
+
+.convera-logo-button {
+  width: 46px;
+  height: 46px;
+  background: transparent;
+}
+
+.convera-symbol {
+  width: 42px;
+  height: 42px;
+  display: block;
+}
+
+.add-user-button {
+  width: 46px;
+  height: 46px;
+  border-radius: 17px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #3185ff, #6357f4);
+  box-shadow:
+    0 12px 28px rgba(74, 92, 242, 0.29),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.add-user-button svg {
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
 }
 
 .chat-thread {
-  height: calc(100vh - 154px);
-  padding: 18px;
+  position: absolute;
+  inset: 0;
+  padding:
+    calc(90px + env(safe-area-inset-top))
+    18px
+    calc(100px + env(safe-area-inset-bottom));
+
   overflow-y: auto;
-  background:
-    radial-gradient(circle at top, rgba(99,102,241,0.06), transparent 28%),
-    #fbfcff;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.chat-thread::-webkit-scrollbar {
+  display: none;
 }
 
 .empty-state {
-  height: 100%;
-  display: grid;
-  place-content: center;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-3%);
   text-align: center;
-  color: #8a91a4;
-  gap: 12px;
 }
 
-.empty-state img {
-  width: 72px;
-  margin: auto;
-  opacity: 0.9;
+.empty-logo {
+  width: 74px;
+  height: 74px;
+  margin-bottom: 18px;
+  filter: drop-shadow(0 15px 20px rgba(69, 79, 224, 0.15));
+}
+
+.empty-state p {
+  margin: 0;
+  color: #9299aa;
+  font-size: 19px;
+  font-weight: 450;
+  letter-spacing: -0.02em;
 }
 
 .message {
+  width: fit-content;
   max-width: 78%;
-  padding: 12px 14px;
   margin: 10px 0;
-  border-radius: 20px;
+  padding: 12px 15px;
+
+  color: #152033;
+  background: #ffffff;
+  border: 1px solid rgba(226, 230, 238, 0.88);
+  border-radius: 20px 20px 20px 7px;
+
   font-size: 15px;
-  line-height: 1.4;
-  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.07);
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+
+  box-shadow: 0 8px 24px rgba(22, 31, 55, 0.07);
 }
 
 .message.me {
   margin-left: auto;
-  background: #eef0ff;
-  color: #0f172a;
-  border-bottom-right-radius: 8px;
+  color: #111827;
+  background: linear-gradient(145deg, #f0efff, #e7ebff);
+  border-color: rgba(205, 208, 252, 0.7);
+  border-radius: 20px 20px 7px 20px;
 }
 
 .composer {
-  position: fixed;
-  left: 50%;
-  bottom: 14px;
-  transform: translateX(-50%);
-  width: calc(100% - 24px);
-  max-width: 406px;
-  height: 66px;
+  position: absolute;
+  z-index: 30;
+  left: 14px;
+  right: 14px;
+  bottom: calc(12px + env(safe-area-inset-bottom));
+
+  min-height: 66px;
+  margin: 0;
   padding: 8px;
+
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,0.96);
-  border: 1px solid #e9edf5;
-  border-radius: 999px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  backdrop-filter: blur(18px);
+  gap: 7px;
+
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(221, 226, 237, 0.9);
+  border-radius: 34px;
+
+  box-shadow:
+    0 18px 46px rgba(29, 38, 68, 0.13),
+    0 2px 8px rgba(29, 38, 68, 0.04);
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
 }
 
 .composer input {
+  min-width: 0;
   flex: 1;
-  height: 44px;
+  height: 48px;
+
+  padding: 0 7px;
   border: 0;
   outline: 0;
-  font-size: 15px;
+
+  color: #151a28;
   background: transparent;
-  color: #101828;
+
+  font-size: 17px;
+  letter-spacing: -0.015em;
 }
 
-.plus-btn,
-.mic-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #f4f6fb;
-  color: #4b5563;
-  font-size: 23px;
+.composer input::placeholder {
+  color: #adb2bf;
+  opacity: 1;
 }
 
-.send-btn {
+.composer-icon-button {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #6d5dfc);
-  color: white;
-  font-size: 22px;
-  box-shadow: 0 12px 26px rgba(85, 97, 255, 0.28);
+
+  color: #555d70;
+  background: #f4f6fb;
+}
+
+.composer-icon-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.send-button {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+
+  color: #ffffff;
+  background: linear-gradient(145deg, #3185ff, #6357f4);
+
+  box-shadow:
+    0 12px 24px rgba(75, 94, 240, 0.27),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.send-button svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.top-icon-button:active,
+.convera-logo-button:active,
+.add-user-button:active,
+.composer-icon-button:active,
+.send-button:active {
+  transform: scale(0.95);
+}
+
+.toast {
+  position: absolute;
+  z-index: 50;
+  left: 50%;
+  bottom: calc(92px + env(safe-area-inset-bottom));
+
+  max-width: calc(100% - 44px);
+  padding: 10px 15px;
+
+  color: #ffffff;
+  background: rgba(20, 27, 43, 0.91);
+  border-radius: 15px;
+
+  font-size: 13px;
+  font-weight: 550;
+  text-align: center;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transform: translate(-50%, 10px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.toast.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (min-width: 431px) {
+  .convera-shell {
+    border-left: 1px solid #e5e9f2;
+    border-right: 1px solid #e5e9f2;
+    box-shadow: 0 0 60px rgba(20, 30, 60, 0.1);
+  }
 }
