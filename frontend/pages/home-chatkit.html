@@ -589,6 +589,66 @@
   }
 </style>
 <!-- IF-CHATKIT-PHASE2-1-SPACING-END -->
+
+<!-- IF-CHATKIT-PHASE3-FUNCTIONALITY-START -->
+<style id="if-chatkit-phase3-functionality">
+  .chat-status {
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    bottom: calc(var(--bottom-space) + 18px);
+    max-width: calc(100vw - 36px);
+    padding: 9px 13px;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 14px;
+    background: rgba(20,20,23,.94);
+    color: #fff;
+    font-size: 12px;
+    line-height: 1.35;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 8px);
+    transition:
+      opacity 160ms ease,
+      transform 160ms ease;
+    backdrop-filter: blur(14px);
+  }
+
+  .chat-status.visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  html.keyboard-open .header {
+    opacity: .98;
+  }
+
+  html.keyboard-open .page {
+    grid-template-rows:
+      min(var(--header-height), 76px)
+      minmax(0, 1fr)
+      max(0px, env(safe-area-inset-bottom)) !important;
+  }
+
+  @media (max-width: 768px) {
+    html.keyboard-open .brand-icon-original {
+      width: 30px !important;
+      height: 30px !important;
+      flex-basis: 30px !important;
+    }
+
+    html.keyboard-open .brand-name {
+      font-size: 18px !important;
+    }
+
+    html.keyboard-open .header-button {
+      width: 38px;
+      height: 38px;
+    }
+  }
+</style>
+<!-- IF-CHATKIT-PHASE3-FUNCTIONALITY-END -->
 </head>
 
 <body>
@@ -708,6 +768,55 @@
         );
       }
 
+      const chatStatus = document.getElementById("chatStatus");
+      let chatStatusTimer = 0;
+
+      function phase3ShowStatus(message) {
+        if (!chatStatus || !message) return;
+
+        clearTimeout(chatStatusTimer);
+        chatStatus.textContent = message;
+        chatStatus.classList.add("visible");
+
+        chatStatusTimer = setTimeout(() => {
+          chatStatus.classList.remove("visible");
+        }, 3200);
+      }
+
+      function updateKeyboardState() {
+        const viewport = window.visualViewport;
+
+        if (!viewport) {
+          document.documentElement.classList.remove("keyboard-open");
+          return;
+        }
+
+        const hiddenHeight =
+          window.innerHeight - viewport.height - viewport.offsetTop;
+
+        document.documentElement.classList.toggle(
+          "keyboard-open",
+          hiddenHeight > 140
+        );
+      }
+
+      window.addEventListener("error", (event) => {
+        console.error("IdeasForgeAI page error:", event.error || event.message);
+      });
+
+      window.addEventListener("unhandledrejection", (event) => {
+        console.error(
+          "IdeasForgeAI unhandled promise rejection:",
+          event.reason
+        );
+
+        const message =
+          event.reason && event.reason.message
+            ? event.reason.message
+            : "An unexpected chat error occurred.";
+
+        phase3ShowStatus(message);
+      });
       async function configureChatKit() {
         if (!chatkit || typeof chatkit.setOptions !== "function") {
           configureAttempts += 1;
@@ -726,7 +835,7 @@
         }
 
         try {
-          await chatkit.setOptions({
+          await chatkit.setOptions({`r`n            frameTitle: "IdeasForgeAI Chat",
             api: {
               url: BACKEND_URL,
               domainKey,
@@ -753,12 +862,18 @@
               dictation: {
                 enabled: true
               }
+            },
+              dictation: {
+                enabled: true
+              }
             }
           });
 
           console.info("IdeasForgeAI native ChatKit ready");
+          document.documentElement.classList.add("chatkit-ready");
         } catch (error) {
           console.error("ChatKit initialization failed:", error);
+          document.documentElement.classList.remove("chatkit-ready");
 
           showToast(
             error && error.message
@@ -825,11 +940,28 @@ document
         );
       }
 
+      updateKeyboardState();
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener(
+          "resize",
+          updateKeyboardState,
+          { passive: true }
+        );
+
+        window.visualViewport.addEventListener(
+          "scroll",
+          updateKeyboardState,
+          { passive: true }
+        );
+      }
+
       configureChatKit();
     })();
   </script>
-</body>
+  <div id="chatStatus" class="chat-status" role="status" aria-live="polite"></div>`r`n</body>
 </html>
+
 
 
 
