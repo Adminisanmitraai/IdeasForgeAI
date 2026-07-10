@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+  >
+  <meta name="theme-color" content="#f8faff">
+  <title>Chat with Convera</title>
+  <link rel="stylesheet" href="./chat.css?v=1">
+</head>
+
+<body>
+  <main class="chat-shell">
+    <header class="chat-header">
+      <a class="back-button" href="./" aria-label="Back to chats">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 5-7 7 7 7"></path>
+        </svg>
+      </a>
+
+      <div class="convera-avatar">C</div>
+
+      <div class="chat-heading">
+        <strong>Convera</strong>
+        <span>Online</span>
+      </div>
+
+      <button class="header-button" id="infoBtn" type="button" aria-label="Information">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 10v6"></path>
+          <path d="M12 7h.01"></path>
+        </svg>
+      </button>
+    </header>
+
+    <section class="message-thread" id="messageThread">
+      <div class="date-label">Today</div>
+
+      <article class="message assistant">
+        <p>Hello Ranjan 👋</p>
+        <p>I’m Convera. This is the temporary test chat.</p>
+        <time>Now</time>
+      </article>
+
+      <article class="message assistant">
+        <p>Ask me to create a presentation, logo, project plan, summary, or any other task.</p>
+        <time>Now</time>
+      </article>
+    </section>
+
+    <form class="composer" id="composer">
+      <button class="composer-button" id="attachBtn" type="button" aria-label="Attach">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 6v12M6 12h12"></path>
+        </svg>
+      </button>
+
+      <textarea
+        id="messageInput"
+        rows="1"
+        placeholder="Message Convera..."
+        aria-label="Message Convera"
+      ></textarea>
+
+      <button class="mic-button" id="micBtn" type="button" aria-label="Voice note">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="8.3" y="3" width="7.4" height="11.7" rx="3.7"></rect>
+          <path d="M5.7 11.3a6.3 6.3 0 0 0 12.6 0"></path>
+          <path d="M12 17.6V21"></path>
+          <path d="M9.4 21h5.2"></path>
+        </svg>
+      </button>
+
+      <button class="send-button" type="submit" aria-label="Send message">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M5 5.5 19 12 5 18.5l2-5.1 7.4-1.4L7 10.6 5 5.5Z"></path>
+        </svg>
+      </button>
+    </form>
+
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <script src="./chat.js?v=1"></script>
+</body>
+</html>
