@@ -1952,3 +1952,140 @@ body.drawer-open #drawerOverlay {
 body.drawer-open .app-shell {
   transform: translateX(var(--convera-drawer-width)) !important;
 }
+/* CONVERA CONVERSATION SWIPE START */
+.conversation-list {
+  overflow-x: hidden;
+}
+
+.conversation-swipe-shell {
+  position: relative;
+  width: 100%;
+  min-height: 76px;
+  overflow: hidden;
+  background: #ffffff;
+  border-bottom: 1px solid #eceef4;
+  touch-action: pan-y;
+}
+
+.conversation-swipe-shell > .conversation {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  min-height: 76px;
+  border-bottom: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,1),
+      rgba(252,253,255,1)
+    );
+  transform: translate3d(0, 0, 0);
+  transition:
+    transform 245ms cubic-bezier(.22, 1, .36, 1);
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.swipe-actions {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  display: flex;
+}
+
+.swipe-actions-left {
+  left: 0;
+  width: 82px;
+}
+
+.swipe-actions-right {
+  right: 0;
+  width: 154px;
+}
+
+.swipe-action {
+  height: 100%;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 0;
+  border-radius: 0;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.swipe-action svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.85;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.swipe-pin-button {
+  width: 82px;
+  background:
+    linear-gradient(145deg, #2d83ff, #5558ed);
+}
+
+.swipe-more-button {
+  width: 72px;
+  background:
+    linear-gradient(145deg, #aeb4c3, #858d9f);
+}
+
+.swipe-delete-button {
+  width: 82px;
+  background:
+    linear-gradient(145deg, #ff4b55, #e52335);
+}
+
+.swipe-action:active {
+  filter: brightness(.94);
+}
+
+.conversation-swipe-shell.is-pinned::after {
+  content: "";
+  position: absolute;
+  z-index: 4;
+  top: 10px;
+  left: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #5060ee;
+  box-shadow: 0 0 0 3px rgba(80, 96, 238, .12);
+  pointer-events: none;
+}
+
+.conversation-swipe-shell.is-deleting {
+  opacity: 0;
+  transform: translateX(-24px);
+  max-height: 0;
+  min-height: 0;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease,
+    max-height 230ms ease,
+    min-height 230ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .conversation-swipe-shell > .conversation {
+    cursor: grab;
+  }
+
+  .conversation-swipe-shell > .conversation:active {
+    cursor: grabbing;
+  }
+}
+/* CONVERA CONVERSATION SWIPE END */
