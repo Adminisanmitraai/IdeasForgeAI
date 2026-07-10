@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <!-- IF-CHATKIT-DEDICATED-REDIRECT-START -->
@@ -469,7 +469,15 @@
           </form>
 
           <div class="quick-chips" aria-label="IdeasForgeAI pillars">
-            <button class="quick-chip" type="button" data-chip="ForgeStudio">
+            <a
+  class="quick-chip"
+  data-chip="ForgeStudio"
+  href="/pages/home-chatkit.html?entry=forgestudio"
+  aria-label="Open ForgeStudio"
+  onpointerdown="event.stopPropagation()"
+  ontouchstart="event.stopPropagation()"
+  onclick="event.stopPropagation()"
+>
               <span class="product-icon studio-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <rect x="4.2" y="5.5" width="13.8" height="10" rx="2.1"></rect>
@@ -478,9 +486,17 @@
                 </svg>
               </span>
               <span>ForgeStudio</span>
-            </button>
+            </a>
 
-            <button class="quick-chip" type="button" data-chip="ForgeCode">
+            <a
+  class="quick-chip"
+  data-chip="ForgeCode"
+  href="/pages/home-chatkit.html?entry=forgecode"
+  aria-label="Open ForgeCode"
+  onpointerdown="event.stopPropagation()"
+  ontouchstart="event.stopPropagation()"
+  onclick="event.stopPropagation()"
+>
               <span class="product-icon code-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <rect x="4" y="4.8" width="16" height="14.4" rx="3"></rect>
@@ -489,9 +505,17 @@
                 </svg>
               </span>
               <span>ForgeCode</span>
-            </button>
+            </a>
 
-            <button class="quick-chip" type="button" data-chip="ForgeWork">
+            <a
+  class="quick-chip"
+  data-chip="ForgeWork"
+  href="/pages/home-chatkit.html?entry=forgework"
+  aria-label="Open ForgeWork"
+  onpointerdown="event.stopPropagation()"
+  ontouchstart="event.stopPropagation()"
+  onclick="event.stopPropagation()"
+>
               <span class="product-icon work-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" focusable="false">
                   <path d="M5 6.8h14v8.6H9.3L5 18.8z"></path>
@@ -502,7 +526,7 @@
                 </svg>
               </span>
               <span>ForgeWork</span>
-            </button>
+            </a>
           </div>
         </div>
       </section>
@@ -1898,244 +1922,16 @@
 </script>
 <!-- IF-CHATKIT-FINAL-MOBILE-SHELL-END -->
 
-<!-- IF-LANDING-PRODUCT-ROUTER-START -->
-<script type="application/json" id="if-landing-product-router">
-(() => {
-  "use strict";
-
-  const CHATKIT_PATH = "/pages/home-chatkit.html";
-  const PRODUCT_SELECTOR = [
-    '[data-chip="ForgeStudio" i]',
-    '[data-chip="ForgeCode" i]',
-    '[data-chip="ForgeWork" i]'
-  ].join(",");
-
-  let navigationStarted = false;
-  let lastPointerNavigation = 0;
-
-  function normalizeEntry(value) {
-    const normalized = String(value || "")
-      .replace(/\s+/g, "")
-      .trim()
-      .toLowerCase();
-
-    if (normalized === "forgestudio") return "forgestudio";
-    if (normalized === "forgecode") return "forgecode";
-    if (normalized === "forgework") return "forgework";
-
-    return "";
+<!-- IF-LANDING-DIRECT-PRODUCT-LINKS-START -->
+<style id="if-landing-direct-product-links">
+  .quick-chips > a.quick-chip {
+    text-decoration: none;
+    color: inherit;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
-
-  function findProductButton(target) {
-    if (!(target instanceof Element)) return null;
-
-    const directMatch = target.closest(PRODUCT_SELECTOR);
-    if (directMatch) return directMatch;
-
-    const candidate = target.closest(
-      ".quick-chip, button, [role='button'], [aria-label], [data-product]"
-    );
-
-    if (!candidate) return null;
-
-    const candidateText = [
-      candidate.getAttribute("data-chip"),
-      candidate.getAttribute("data-product"),
-      candidate.getAttribute("aria-label"),
-      candidate.textContent
-    ]
-      .filter(Boolean)
-      .join(" ");
-
-    const entry = normalizeEntry(candidateText);
-
-    if (!entry) return null;
-
-    return candidate;
-  }
-
-  function getProductEntry(button) {
-    if (!(button instanceof Element)) return "";
-
-    return normalizeEntry(
-      button.getAttribute("data-chip") ||
-      button.getAttribute("data-product") ||
-      button.getAttribute("aria-label") ||
-      button.textContent
-    );
-  }
-
-  function createChatkitUrl(entry, prompt = "") {
-    const target = new URL(CHATKIT_PATH, window.location.origin);
-
-    target.searchParams.set("entry", entry);
-
-    const cleanPrompt = String(prompt || "").trim();
-
-    if (cleanPrompt) {
-      target.searchParams.set("prompt", cleanPrompt);
-    }
-
-    return target.toString();
-  }
-
-  function navigateToChatkit(entry, prompt = "") {
-    if (navigationStarted) return;
-    if (!entry) return;
-
-    navigationStarted = true;
-    window.location.assign(createChatkitUrl(entry, prompt));
-  }
-
-  function stopLandingHandlers(event) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (typeof event.stopImmediatePropagation === "function") {
-      event.stopImmediatePropagation();
-    }
-  }
-
-  function routeProductEvent(event) {
-    const button = findProductButton(event.target);
-
-    if (!button) return false;
-
-    const entry = getProductEntry(button);
-
-    if (!entry) return false;
-
-    stopLandingHandlers(event);
-    lastPointerNavigation = Date.now();
-    navigateToChatkit(entry);
-
-    return true;
-  }
-
-  /*
-   * Navigate during capture phase before the landing page's composer-focus
-   * handler can run.
-   *
-   * Pointer Events are preferred. touchstart is retained as an iOS fallback.
-   */
-  document.addEventListener(
-    "pointerdown",
-    (event) => {
-      if (event.isPrimary === false) return;
-      routeProductEvent(event);
-    },
-    true
-  );
-
-  document.addEventListener(
-    "touchstart",
-    (event) => {
-      if (Date.now() - lastPointerNavigation < 750) return;
-      routeProductEvent(event);
-    },
-    {
-      capture: true,
-      passive: false
-    }
-  );
-
-  /*
-   * Keyboard-accessible and browser fallback.
-   */
-  document.addEventListener(
-    "click",
-    (event) => {
-      if (navigationStarted) {
-        const button = findProductButton(event.target);
-
-        if (button) {
-          stopLandingHandlers(event);
-        }
-
-        return;
-      }
-
-      routeProductEvent(event);
-    },
-    true
-  );
-
-  function findLandingComposer() {
-    return (
-      document.querySelector("[data-home-input]") ||
-      document.querySelector(
-        'textarea[placeholder*="Start writing" i]'
-      ) ||
-      document.querySelector(
-        'input[placeholder*="Start writing" i]'
-      )
-    );
-  }
-
-  function readLandingPrompt() {
-    const composer = findLandingComposer();
-
-    if (!composer) return "";
-
-    if (
-      composer instanceof HTMLInputElement ||
-      composer instanceof HTMLTextAreaElement
-    ) {
-      return composer.value.trim();
-    }
-
-    return String(composer.textContent || "").trim();
-  }
-
-  function submitLandingIdea(event) {
-    const prompt = readLandingPrompt();
-
-    if (!prompt) return false;
-
-    stopLandingHandlers(event);
-    navigateToChatkit("idea", prompt);
-
-    return true;
-  }
-
-  document.addEventListener(
-    "keydown",
-    (event) => {
-      const composer = findLandingComposer();
-
-      if (
-        composer &&
-        event.target === composer &&
-        event.key === "Enter" &&
-        !event.shiftKey &&
-        !event.isComposing
-      ) {
-        submitLandingIdea(event);
-      }
-    },
-    true
-  );
-
-  document.addEventListener(
-    "click",
-    (event) => {
-      if (navigationStarted) return;
-      if (!(event.target instanceof Element)) return;
-
-      const submitButton = event.target.closest(
-        '[data-home-form] button[type="submit"],' +
-        '.home-view .composer-send[type="submit"]'
-      );
-
-      if (!submitButton) return;
-
-      submitLandingIdea(event);
-    },
-    true
-  );
-})();
-</script>
-<!-- IF-LANDING-PRODUCT-ROUTER-END -->
+</style>
+<!-- IF-LANDING-DIRECT-PRODUCT-LINKS-END -->
 </body>
 </html>
 
