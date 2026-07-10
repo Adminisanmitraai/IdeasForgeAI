@@ -263,6 +263,58 @@
       }
     }
   </style>
+
+<!-- IF-CHATKIT-PHASE1-HEADER-START -->
+<style id="if-chatkit-phase1-header">
+  .brand {
+    justify-content: flex-start !important;
+    overflow: visible;
+    margin-left: -8px;
+  }
+
+  .brand-full-logo {
+    display: block;
+    width: min(100%, 286px);
+    max-width: 286px;
+    height: 48px;
+    object-fit: contain;
+    object-position: left center;
+    filter: drop-shadow(0 0 15px rgba(128, 91, 255, 0.18));
+  }
+
+  @media (max-width: 430px) {
+    .brand {
+      margin-left: -10px;
+    }
+
+    .brand-full-logo {
+      width: min(100%, 250px);
+      max-width: 250px;
+      height: 44px;
+    }
+  }
+
+  @media (max-width: 390px) {
+    .brand {
+      margin-left: -8px;
+    }
+
+    .brand-full-logo {
+      width: min(100%, 222px);
+      max-width: 222px;
+      height: 41px;
+    }
+  }
+
+  @media (max-width: 370px) {
+    .brand-full-logo {
+      width: min(100%, 205px);
+      max-width: 205px;
+      height: 38px;
+    }
+  }
+</style>
+<!-- IF-CHATKIT-PHASE1-HEADER-END -->
 </head>
 
 <body>
@@ -282,20 +334,25 @@
       </button>
 
       <div class="brand" aria-label="IdeasForgeAI">
-        <span class="brand-mark" aria-hidden="true">✦</span>
-        <div class="brand-name">IdeasForge<span>AI</span></div>
+        <img
+          class="brand-full-logo"
+          src="../assets/brand/ideasforgeai-logo-full.png"
+          alt="IdeasForgeAI"
+        >
       </div>
 
       <div class="header-actions">
         <button
-          id="newChatButton"
+          id="languageButton"
           class="header-button"
           type="button"
-          aria-label="New chat"
+          aria-label="Change language"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 5v14"></path>
-            <path d="M5 12h14"></path>
+            <circle cx="12" cy="12" r="9"></circle>
+            <path d="M3 12h18"></path>
+            <path d="M12 3c2.4 2.5 3.6 5.5 3.6 9S14.4 18.5 12 21"></path>
+            <path d="M12 3C9.6 5.5 8.4 8.5 8.4 12S9.6 18.5 12 21"></path>
           </svg>
         </button>
 
@@ -454,21 +511,7 @@
             "History is available inside ChatKit."
           );
         });
-
-      document
-        .getElementById("newChatButton")
-        .addEventListener("click", () => {
-          runAvailable(
-            [
-              () => chatkit?.startNewThread?.(),
-              () => chatkit?.newThread?.(),
-              () => chatkit?.createThread?.()
-            ],
-            "Use ChatKit’s new-thread control."
-          );
-        });
-
-      document
+document
         .getElementById("profileButton")
         .addEventListener("click", () => {
           showToast("Profile settings will be connected next.");
@@ -503,3 +546,4 @@
   </script>
 </body>
 </html>
+
