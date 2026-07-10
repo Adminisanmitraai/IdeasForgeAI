@@ -1757,3 +1757,22 @@ body.dummy-chat-open .topbar {
 #chatWithConveraBtn:active {
   transform: scale(0.97);
 }
+
+/* CONVERA DIRECT CHAT LAUNCHER V14 */
+#chatWithConveraBtn {
+  position: relative;
+  z-index: 20;
+  pointer-events: auto !important;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#chatWithConveraBtn * {
+  pointer-events: none;
+}
+
+#chatWithConveraBtn:active {
+  transform: scale(0.97);
+}
