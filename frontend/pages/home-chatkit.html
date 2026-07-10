@@ -1,25 +1,34 @@
 ﻿<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
+
   <meta
     name="viewport"
-    content="width=device-width, initial-scale=1, viewport-fit=cover"
-  />
+    content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+  >
+
+  <meta name="theme-color" content="#000000">
 
   <title>IdeasForgeAI Chat</title>
 
   <script
     src="https://cdn.platform.openai.com/deployments/chatkit/chatkit.js"
-    defer
+    async
   ></script>
 
   <style>
     :root {
-      --header-height: 102px;
-      --browser-reserve: 66px;
-      --page-padding: 16px;
-      --purple: #9873ff;
+      --app-height: 100dvh;
+      --viewport-top: 0px;
+
+      --header-height: 108px;
+      --side-gap: 17px;
+      --bottom-gap: max(14px, env(safe-area-inset-bottom));
+
+      --purple: #9a75ff;
+      --black: #000;
+      --white: #fff;
     }
 
     * {
@@ -32,73 +41,92 @@
       height: 100%;
       margin: 0;
       overflow: hidden;
-      background: #000;
-      color: #fff;
+      overscroll-behavior: none;
+      background: var(--black);
+      color: var(--white);
       font-family:
-        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
     }
 
     button {
       font: inherit;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
     }
 
-    .app-shell {
+    .chat-page {
       position: fixed;
-      inset: 0;
+      top: var(--viewport-top);
+      left: 0;
+      width: 100vw;
+      height: var(--app-height);
       display: grid;
       grid-template-rows:
         var(--header-height)
         minmax(0, 1fr)
-        var(--browser-reserve);
-      width: 100vw;
-      height: 100dvh;
-      min-height: 100svh;
+        var(--bottom-gap);
       overflow: hidden;
-      background: #000;
-    }
-
-    .app-header {
-      display: grid;
-      grid-template-columns: 56px minmax(0, 1fr) auto;
-      align-items: center;
-      gap: 14px;
-      padding:
-        max(20px, env(safe-area-inset-top))
-        14px
-        12px;
       background:
         radial-gradient(
-          circle at 58% 70%,
-          rgba(116, 79, 255, 0.13),
-          transparent 45%
+          circle at 56% 15%,
+          rgba(117, 78, 255, 0.14),
+          transparent 29%
         ),
         #000;
     }
 
-    .icon-button {
-      width: 50px;
-      height: 50px;
+    /* ---------- Header ---------- */
+
+    .app-header {
+      min-width: 0;
+      display: grid;
+      grid-template-columns: 52px minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 12px;
+      padding:
+        max(16px, env(safe-area-inset-top))
+        14px
+        8px;
+    }
+
+    .header-button {
+      width: 48px;
+      height: 48px;
+      margin: 0;
+      padding: 0;
       display: grid;
       place-items: center;
-      padding: 0;
-      border: 1px solid rgba(255,255,255,0.18);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       border-radius: 17px;
-      background: linear-gradient(180deg, #282b31, #14161a);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(43, 46, 52, 0.98),
+          rgba(18, 20, 24, 0.98)
+        );
       color: #fff;
       box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 8px 24px rgba(0,0,0,0.22);
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 8px 24px rgba(0, 0, 0, 0.22);
       cursor: pointer;
     }
 
-    .icon-button svg {
+    .header-button:active {
+      transform: scale(0.96);
+    }
+
+    .header-button svg {
       width: 23px;
       height: 23px;
       fill: none;
       stroke: currentColor;
-      stroke-width: 1.9;
+      stroke-width: 2;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
@@ -107,21 +135,27 @@
       min-width: 0;
       display: flex;
       align-items: center;
-      gap: 11px;
+      justify-content: center;
+      gap: 9px;
+      overflow: hidden;
     }
 
     .brand-mark {
+      flex: 0 0 auto;
       color: var(--purple);
-      font-size: 38px;
+      font-size: 34px;
       line-height: 1;
-      filter: drop-shadow(0 0 16px rgba(152,115,255,0.55));
+      filter:
+        drop-shadow(0 0 15px rgba(154, 117, 255, 0.55));
     }
 
     .brand-name {
+      min-width: 0;
       overflow: hidden;
       color: #fff;
-      font-size: clamp(21px, 6vw, 28px);
+      font-size: clamp(21px, 5.8vw, 27px);
       font-weight: 780;
+      line-height: 1;
       letter-spacing: -0.055em;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -134,78 +168,131 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 9px;
     }
+
+    /* ---------- Chat card ---------- */
 
     .chat-region {
       min-height: 0;
-      padding: 0 var(--page-padding);
+      padding: 0 var(--side-gap);
       overflow: hidden;
     }
 
     .chat-card {
+      position: relative;
       width: min(100%, 980px);
       height: 100%;
+      min-height: 0;
       margin: 0 auto;
       overflow: hidden;
-      border: 1px solid rgba(0,0,0,0.2);
-      border-radius: 34px 34px 0 0;
+      border: 1px solid rgba(0, 0, 0, 0.26);
+      border-radius: 33px 33px 0 0;
       background: #fff;
       color: #111;
+      isolation: isolate;
     }
 
-    #chatkit {
+    openai-chatkit {
+      position: relative;
+      z-index: 1;
       display: block;
       width: 100%;
       height: 100%;
       min-height: 0;
     }
 
-    .browser-reserve {
-      background: #000;
+    /* ---------- Composer overlay tools ---------- */
+
+    .composer-overlay {
+      position: absolute;
+      z-index: 30;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 94px;
       pointer-events: none;
     }
 
-    .status {
+    .composer-tool {
       position: absolute;
-      inset: auto 30px calc(var(--browser-reserve) + 22px);
-      z-index: 20;
-      display: none;
-      padding: 11px 14px;
+      bottom: 22px;
+      width: 38px;
+      height: 38px;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(246, 246, 246, 0.98);
+      color: #202124;
+      box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.08),
+        inset 0 0 0 1px rgba(0, 0, 0, 0.055);
+      pointer-events: auto;
+      cursor: pointer;
+    }
+
+    .composer-tool:active {
+      transform: scale(0.94);
+    }
+
+    .composer-tool svg {
+      width: 21px;
+      height: 21px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .composer-add {
+      left: 25px;
+    }
+
+    .composer-mic {
+      right: 78px;
+    }
+
+    /* ---------- Status message ---------- */
+
+    .status-toast {
+      position: fixed;
+      z-index: 100;
+      left: 50%;
+      bottom: calc(var(--bottom-gap) + 22px);
+      width: max-content;
+      max-width: calc(100vw - 40px);
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.13);
       border-radius: 14px;
-      background: rgba(18,18,20,0.92);
+      background: rgba(20, 20, 23, 0.94);
       color: #fff;
       font-size: 13px;
       line-height: 1.35;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.32);
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 8px);
+      transition:
+        opacity 160ms ease,
+        transform 160ms ease;
+      backdrop-filter: blur(15px);
     }
 
-    .status.visible {
-      display: block;
+    .status-toast.visible {
+      opacity: 1;
+      transform: translate(-50%, 0);
     }
 
-    @media (min-width: 769px) {
+    /* ---------- Mobile tuning ---------- */
+
+    @media (max-width: 430px) {
       :root {
-        --header-height: 120px;
-        --browser-reserve: 20px;
-        --page-padding: 22px;
-      }
-
-      .app-header {
-        grid-template-columns: 52px minmax(0, 1fr) auto;
-        padding-top: 18px;
-      }
-
-      .chat-card {
-        border-radius: 30px;
-      }
-    }
-
-    @media (max-width: 390px) {
-      :root {
-        --header-height: 98px;
-        --browser-reserve: 70px;
-        --page-padding: 16px;
+        --header-height: 104px;
+        --side-gap: 16px;
       }
 
       .app-header {
@@ -215,10 +302,14 @@
         padding-right: 12px;
       }
 
-      .icon-button {
+      .header-button {
         width: 46px;
         height: 46px;
         border-radius: 16px;
+      }
+
+      .header-actions {
+        gap: 8px;
       }
 
       .brand {
@@ -226,169 +317,134 @@
       }
 
       .brand-mark {
-        font-size: 32px;
+        font-size: 31px;
       }
 
       .brand-name {
-        font-size: 21px;
-      }
-
-      .header-actions {
-        gap: 8px;
+        font-size: clamp(20px, 5.55vw, 24px);
       }
 
       .chat-card {
         border-radius: 31px 31px 0 0;
       }
+
+      .composer-add {
+        left: 22px;
+      }
+
+      .composer-mic {
+        right: 76px;
+      }
+    }
+
+    @media (max-width: 370px) {
+      :root {
+        --header-height: 100px;
+        --side-gap: 13px;
+      }
+
+      .app-header {
+        grid-template-columns: 44px minmax(0, 1fr) auto;
+        gap: 7px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .header-button {
+        width: 43px;
+        height: 43px;
+        border-radius: 15px;
+      }
+
+      .header-button svg {
+        width: 21px;
+        height: 21px;
+      }
+
+      .brand-mark {
+        font-size: 28px;
+      }
+
+      .brand-name {
+        font-size: 19px;
+      }
+
+      .header-actions {
+        gap: 6px;
+      }
+    }
+
+    /* ---------- Desktop ---------- */
+
+    @media (min-width: 769px) {
+      :root {
+        --header-height: 100px;
+        --side-gap: 22px;
+        --bottom-gap: 18px;
+      }
+
+      .app-header {
+        padding-top: 12px;
+      }
+
+      .brand {
+        justify-content: flex-start;
+      }
+
+      .chat-card {
+        border-radius: 28px;
+      }
+
+      .composer-overlay {
+        display: none;
+      }
     }
   </style>
-
-<!-- IF-CHATKIT-FINAL-MOBILE-POLISH-START -->
-<style id="if-chatkit-final-mobile-polish">
-  .app-header {
-    padding-left: 14px;
-    padding-right: 14px;
-    padding-bottom: 8px;
-  }
-
-  .icon-button {
-    width: 46px;
-    height: 46px;
-    border-radius: 16px;
-  }
-
-  .brand {
-    gap: 9px;
-  }
-
-  .brand-mark {
-    font-size: 32px;
-  }
-
-  .brand-name {
-    font-size: clamp(20px, 5.5vw, 25px);
-  }
-
-  .chat-card {
-    position: relative;
-    border-radius: 31px 31px 0 0;
-  }
-
-  .composer-tools {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 82px;
-    z-index: 20;
-    pointer-events: none;
-  }
-
-  .composer-tool {
-    position: absolute;
-    bottom: 22px;
-    width: 38px;
-    height: 38px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    border-radius: 999px;
-    display: grid;
-    place-items: center;
-    background: transparent;
-    color: #232323;
-    pointer-events: auto;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  .composer-tool svg {
-    width: 22px;
-    height: 22px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.9;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-
-  .composer-tool-add {
-    left: 24px;
-  }
-
-  .composer-tool-mic {
-    right: 82px;
-  }
-
-  .composer-tool:active {
-    transform: scale(0.94);
-  }
-
-  .browser-reserve {
-    min-height: 0;
-  }
-
-  @media (max-width: 390px) {
-    .app-header {
-      padding-left: 12px;
-      padding-right: 12px;
-    }
-
-    .icon-button {
-      width: 44px;
-      height: 44px;
-      border-radius: 15px;
-    }
-
-    .brand-name {
-      font-size: 20px;
-    }
-
-    .brand-mark {
-      font-size: 30px;
-    }
-
-    .composer-tool-add {
-      left: 21px;
-    }
-
-    .composer-tool-mic {
-      right: 78px;
-    }
-  }
-
-  @media (min-width: 769px) {
-    .composer-tools {
-      display: none;
-    }
-  }
-</style>
-<!-- IF-CHATKIT-FINAL-MOBILE-POLISH-END -->
 </head>
 
 <body>
-  <div class="app-shell">
+  <div class="chat-page">
     <header class="app-header">
-      <button id="newChatButton" class="icon-button" type="button" aria-label="New chat">
+      <button
+        id="menuButton"
+        class="header-button"
+        type="button"
+        aria-label="Open menu"
+      >
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M4 6h16M4 12h16M4 18h16"></path>
+          <path d="M4 6h16"></path>
+          <path d="M4 12h16"></path>
+          <path d="M4 18h16"></path>
         </svg>
       </button>
 
       <div class="brand" aria-label="IdeasForgeAI">
-        <span class="brand-mark">✦</span>
-        <div class="brand-name">IdeasForge<span>AI</span></div>
+        <span class="brand-mark" aria-hidden="true">✦</span>
+
+        <div class="brand-name">
+          IdeasForge<span>AI</span>
+        </div>
       </div>
 
       <div class="header-actions">
-        <button id="newThreadButton" class="icon-button" type="button" aria-label="New chat">
+        <button
+          id="newChatButton"
+          class="header-button"
+          type="button"
+          aria-label="New chat"
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14"></path>
             <path d="M5 12h14"></path>
           </svg>
         </button>
 
-        <button id="profileButton" class="icon-button" type="button" aria-label="Profile">
+        <button
+          id="profileButton"
+          class="header-button"
+          type="button"
+          aria-label="Profile"
+        >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <circle cx="12" cy="8" r="3.5"></circle>
             <path d="M5 20c.8-4 3.2-6 7-6s6.2 2 7 6"></path>
@@ -401,15 +457,25 @@
       <section class="chat-card">
         <openai-chatkit id="chatkit"></openai-chatkit>
 
-        <div class="composer-tools" aria-label="Composer tools">
-          <button id="attachButton" class="composer-tool composer-tool-add" type="button" aria-label="Add attachment">
+        <div class="composer-overlay" aria-label="Composer controls">
+          <button
+            id="attachButton"
+            class="composer-tool composer-add"
+            type="button"
+            aria-label="Add attachment"
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 5v14"></path>
               <path d="M5 12h14"></path>
             </svg>
           </button>
 
-          <button id="micButton" class="composer-tool composer-tool-mic" type="button" aria-label="Voice note">
+          <button
+            id="micButton"
+            class="composer-tool composer-mic"
+            type="button"
+            aria-label="Voice note"
+          >
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <rect x="9" y="3" width="6" height="11" rx="3"></rect>
               <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0"></path>
@@ -420,131 +486,162 @@
       </section>
     </main>
 
-    <div class="browser-reserve"></div>
+    <div aria-hidden="true"></div>
   </div>
 
-  <div id="status" class="status" role="status"></div>
+  <div id="statusToast" class="status-toast" role="status"></div>
 
   <script>
     (() => {
-      const params = new URLSearchParams(location.search);
+      const BACKEND_URL =
+        "https://ideasforgeai-api.onrender.com/api/chatkit";
+
+      const params = new URLSearchParams(window.location.search);
       const domainKey = params.get("domainKey") || "";
 
+      const root = document.documentElement;
       const chatkit = document.getElementById("chatkit");
-      const status = document.getElementById("status");
+      const statusToast = document.getElementById("statusToast");
+
+      let toastTimer = 0;
 
       function showStatus(message) {
-        status.textContent = message;
-        status.classList.add("visible");
+        if (!statusToast) return;
 
-        window.setTimeout(() => {
-          status.classList.remove("visible");
-        }, 4000);
+        window.clearTimeout(toastTimer);
+
+        statusToast.textContent = message;
+        statusToast.classList.add("visible");
+
+        toastTimer = window.setTimeout(() => {
+          statusToast.classList.remove("visible");
+        }, 3000);
       }
 
-      function updateBrowserReserve() {
+      function updateViewport() {
         const viewport = window.visualViewport;
 
-        const hiddenHeight = viewport
-          ? Math.max(
-              0,
-              window.innerHeight - viewport.height - viewport.offsetTop
-            )
-          : 0;
+        if (!viewport) {
+          root.style.setProperty("--app-height", `${window.innerHeight}px`);
+          root.style.setProperty("--viewport-top", "0px");
+          return;
+        }
 
-        const isPhone = window.matchMedia("(max-width: 768px)").matches;
-        const baseReserve = isPhone ? 58 : 20;
-        const keyboardOpen = hiddenHeight > 140;
+        root.style.setProperty(
+          "--app-height",
+          `${Math.round(viewport.height)}px`
+        );
 
-        const reserve = keyboardOpen
-          ? Math.max(12, Math.ceil(hiddenHeight + 8))
-          : Math.max(baseReserve, Math.ceil(hiddenHeight + 10));
-
-        document.documentElement.style.setProperty(
-          "--browser-reserve",
-          `${reserve}px`
+        root.style.setProperty(
+          "--viewport-top",
+          `${Math.round(viewport.offsetTop)}px`
         );
       }
 
       async function configureChatKit() {
         if (!chatkit || typeof chatkit.setOptions !== "function") {
-          window.setTimeout(configureChatKit, 150);
+          window.setTimeout(configureChatKit, 120);
+          return;
+        }
+
+        if (!domainKey) {
+          showStatus("Missing ChatKit domain key.");
+          console.error("Missing ChatKit domain key in URL.");
           return;
         }
 
         try {
-          if (!domainKey) {
-            throw new Error("Missing ChatKit domain key in the URL.");
-          }
-
           await chatkit.setOptions({
             api: {
-              url: "https://ideasforgeai-api.onrender.com/api/chatkit",
+              url: BACKEND_URL,
               domainKey: domainKey
             },
+
             theme: {
               colorScheme: "light"
             },
+
             history: {
               enabled: true
             },
+
             composer: {
-              placeholder: "Message the AI",
-              attachments: {
-                enabled: false
-              }
+              placeholder: "Message the AI"
             }
           });
 
-          console.info("IdeasForgeAI dedicated ChatKit page ready");
+          console.info("IdeasForgeAI ChatKit ready");
         } catch (error) {
-          console.error("ChatKit setup failed", error);
-          showStatus(error?.message || "ChatKit could not start.");
+          console.error("ChatKit initialization failed:", error);
+
+          showStatus(
+            error && error.message
+              ? error.message
+              : "ChatKit could not start."
+          );
         }
       }
+
+      function runFirstAvailable(actions, fallbackMessage) {
+        for (const action of actions) {
+          try {
+            const result = action();
+
+            if (result !== undefined) {
+              return true;
+            }
+          } catch (error) {
+            console.debug(error);
+          }
+        }
+
+        if (fallbackMessage) {
+          showStatus(fallbackMessage);
+        }
+
+        return false;
+      }
+
+      document
+        .getElementById("menuButton")
+        .addEventListener("click", () => {
+          runFirstAvailable(
+            [
+              () => chatkit?.openHistory?.(),
+              () => chatkit?.showHistory?.(),
+              () => chatkit?.toggleHistory?.()
+            ],
+            "Chat history is also available inside ChatKit."
+          );
+        });
 
       document
         .getElementById("newChatButton")
         .addEventListener("click", () => {
-          const candidates = [
-            () => chatkit?.startNewThread?.(),
-            () => chatkit?.newThread?.(),
-            () => chatkit?.createThread?.()
-          ];
-
-          for (const action of candidates) {
-            try {
-              const result = action();
-              if (result !== undefined) return;
-            } catch {}
-          }
-
-          showStatus("New chat control will be connected to the ChatKit thread API.");
+          runFirstAvailable(
+            [
+              () => chatkit?.startNewThread?.(),
+              () => chatkit?.newThread?.(),
+              () => chatkit?.createThread?.()
+            ],
+            "Use ChatKit’s new-thread control."
+          );
         });
 
       document
-        .getElementById("newThreadButton")
+        .getElementById("profileButton")
         .addEventListener("click", () => {
-          const candidates = [
-            () => chatkit?.startNewThread?.(),
-            () => chatkit?.newThread?.(),
-            () => chatkit?.createThread?.()
-          ];
-
-          for (const action of candidates) {
-            try {
-              const result = action();
-              if (result !== undefined) return;
-            } catch {}
-          }
-
-          showStatus("Use the new-chat action inside ChatKit.");
+          showStatus("Profile settings will be connected next.");
         });
 
       document
         .getElementById("attachButton")
         .addEventListener("click", () => {
-          showStatus("Attachment support will be connected to the ChatKit file store.");
+          window.dispatchEvent(
+            new CustomEvent("ideasforgeai:attachment-click")
+          );
+
+          showStatus("Attachment support will be connected next.");
         });
 
       document
@@ -557,25 +654,27 @@
           showStatus("Voice-note recording will be connected next.");
         });
 
-      document
-        .getElementById("profileButton")
-        .addEventListener("click", () => {
-          showStatus("Profile settings will be connected next.");
-        });
+      updateViewport();
 
-      updateBrowserReserve();
+      window.addEventListener("resize", updateViewport, {
+        passive: true
+      });
 
-      window.addEventListener("resize", updateBrowserReserve);
+      window.addEventListener("orientationchange", () => {
+        window.setTimeout(updateViewport, 120);
+      });
 
       if (window.visualViewport) {
         window.visualViewport.addEventListener(
           "resize",
-          updateBrowserReserve
+          updateViewport,
+          { passive: true }
         );
 
         window.visualViewport.addEventListener(
           "scroll",
-          updateBrowserReserve
+          updateViewport,
+          { passive: true }
         );
       }
 
@@ -584,5 +683,3 @@
   </script>
 </body>
 </html>
-
-
