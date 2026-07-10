@@ -299,19 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-  if (composer) {
-    composer.addEventListener("submit", (event) => {
-      event.preventDefault();
-
-      if (!messageInput) return;
-
-      const message = messageInput.value.trim();
-
-      if (!message) {
-        messageInput.focus();
-        return;
-      }
-
       showToast("Message sent");
       messageInput.value = "";
     });
@@ -342,3 +329,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
   console.log("Convera V10 initialized");
 });
+
+// CONVERA BOTTOM NAVIGATION V11
+(() => {
+  const navigation = document.getElementById("bottomNavigation");
+
+  if (!navigation) {
+    console.error("Convera bottom navigation missing");
+    return;
+  }
+
+  const labels = {
+    calls: "Calls",
+    groups: "Groups",
+    projects: "Projects",
+    chats: "Chats",
+    profile: "Profile"
+  };
+
+  navigation
+    .querySelectorAll(".bottom-nav-item")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        navigation
+          .querySelectorAll(".bottom-nav-item")
+          .forEach((item) => {
+            item.classList.remove("active");
+            item.removeAttribute("aria-current");
+          });
+
+        button.classList.add("active");
+        button.setAttribute("aria-current", "page");
+
+        const tab = button.dataset.tab || "chats";
+
+        if (typeof showToast === "function") {
+          showToast(labels[tab] || tab);
+        }
+
+        document.body.dataset.activeTab = tab;
+      });
+    });
+})();

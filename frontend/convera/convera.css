@@ -1271,3 +1271,137 @@ body.drawer-open .hamburger-lines i:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
 
+
+/* CONVERA BOTTOM NAVIGATION V11 */
+
+.content {
+  padding-bottom: calc(102px + var(--safe-bottom));
+}
+
+.composer {
+  display: none !important;
+}
+
+.bottom-navigation {
+  position: absolute;
+  z-index: 30;
+
+  left: 14px;
+  right: 14px;
+
+  bottom: max(
+    calc(var(--safe-bottom) + 10px),
+    30px
+  );
+
+  min-height: 72px;
+  padding: 7px 8px;
+
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+
+  background: rgba(255, 255, 255, 0.97);
+
+  border: 1px solid rgba(219, 224, 235, 0.94);
+  border-radius: 28px;
+
+  box-shadow:
+    0 16px 38px rgba(29, 39, 68, 0.13),
+    0 2px 7px rgba(29, 39, 68, 0.04);
+
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+.bottom-nav-item {
+  min-width: 0;
+  min-height: 56px;
+
+  padding: 5px 2px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  border: 0;
+  border-radius: 18px;
+
+  color: #81899a;
+  background: transparent;
+
+  font-size: 10px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    transform 150ms ease;
+}
+
+.bottom-nav-item svg {
+  width: 22px;
+  height: 22px;
+
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.bottom-nav-item span {
+  overflow: hidden;
+  max-width: 100%;
+
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.bottom-nav-item.active {
+  color: #4d58eb;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(237, 239, 255, 0.98),
+      rgba(243, 244, 255, 0.98)
+    );
+}
+
+.bottom-nav-item.active svg {
+  stroke-width: 2;
+}
+
+.bottom-nav-item:active {
+  transform: scale(0.95);
+}
+
+.toast {
+  bottom: max(
+    calc(var(--safe-bottom) + 94px),
+    114px
+  );
+}
+
+@media (max-width: 360px) {
+  .bottom-navigation {
+    left: 9px;
+    right: 9px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .bottom-nav-item {
+    font-size: 9px;
+  }
+
+  .bottom-nav-item svg {
+    width: 20px;
+    height: 20px;
+  }
+}
