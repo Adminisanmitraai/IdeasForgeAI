@@ -662,8 +662,9 @@
       const BACKEND_URL =
         "https://ideasforgeai-api.onrender.com/api/chatkit";
 
+      const EMBEDDED_CHATKIT_DOMAIN_KEY = "git --no-pager diff -- frontend/pages/home.html frontend/pages/home-chatkit.html";
       const params = new URLSearchParams(window.location.search);
-      const domainKey = params.get("domainKey") || "";
+      const domainKey = params.get("domainKey") || EMBEDDED_CHATKIT_DOMAIN_KEY;
 
       const root = document.documentElement;
       const chatkit = document.getElementById("chatkit");
@@ -1185,6 +1186,7 @@ document
 <!-- IF-CHATKIT-LANDING-LINK-END -->
 </body>
 </html>
+
 
 
 
