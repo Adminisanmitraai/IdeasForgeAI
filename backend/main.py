@@ -10948,3 +10948,7 @@ for _adm5f_clean_public_path in [
         methods=["POST"],
     )
 
+# FC-TR-5F-BEGIN: controlled terminal API registration
+from backend.coding_agent_terminal_api import register_terminal_api_routes as _register_forgecode_terminal_api_routes
+_register_forgecode_terminal_api_routes(app)
+# FC-TR-5F-END: controlled terminal API registration
