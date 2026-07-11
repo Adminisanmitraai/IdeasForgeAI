@@ -1,4 +1,4 @@
-﻿from dataclasses import asdict
+from dataclasses import asdict
 import json
 import os
 import re
@@ -68,6 +68,9 @@ app.add_middleware(
         "http://localhost:8088",
         "http://192.168.1.7:8088",
         "http://127.0.0.1:5173",
+    "http://tauri.localhost",
+    "https://tauri.localhost",
+    "tauri://localhost",
         "http://localhost:5173",
         "https://www.ideasforgeai.com",
         "https://ideasforgeai.com",
@@ -6901,6 +6904,9 @@ _IF_ALLOWED_CHAT_ORIGINS = {
     "https://ideasforgeai-web.onrender.com",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
+    "http://tauri.localhost",
+    "https://tauri.localhost",
+    "tauri://localhost",
     "http://192.168.1.7:5173",
     "http://192.168.1.7"
 }
