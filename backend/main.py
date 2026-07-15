@@ -17,6 +17,8 @@ from backend.agents.orchestrator_agent import create_default_builder_pipeline
 from backend.agents.pixel_matched_page_converter_agent import PixelMatchedPageConverterAgent
 from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
+from backend.interfaces.founder_os.router import create_founder_os_router
+from backend.founder_brain.router import create_founder_brain_router
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -74,6 +76,7 @@ app.add_middleware(
         "http://localhost:5173",
         "https://www.ideasforgeai.com",
         "https://ideasforgeai.com",
+        "https://founder.ideasforgeai.com",
         "null",
     ],
     allow_origin_regex=r"^(https://.*\.app\.github\.dev|http://(192\.168\.\d{1,3}\.\d{1,3}|10\.\d{1,3}\.\d{1,3}\.\d{1,3}|172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}):8088)$",
@@ -1245,6 +1248,15 @@ async def studio_v4_product_flow(request: Request):
         "plan": plan,
         "next_action": "approve_generate",
     }
+
+
+# FOS-1A.1-BEGIN: Founder OS read-only API registration
+app.include_router(create_founder_os_router())
+# FOS-1A.1-END: Founder OS read-only API registration
+
+# FOS-1B.1-BEGIN: Founder Brain read-only operating-state registration
+app.include_router(create_founder_brain_router())
+# FOS-1B.1-END: Founder Brain read-only operating-state registration
 
 app.include_router(health_router)
 app.include_router(phase26a_contract_router)
@@ -6900,6 +6912,7 @@ from starlette.responses import Response as _IFChatCorsResponse
 
 _IF_ALLOWED_CHAT_ORIGINS = {
     "https://ideasforgeai.com",
+    "https://founder.ideasforgeai.com",
     "https://www.ideasforgeai.com",
     "https://ideasforgeai-web.onrender.com",
     "http://localhost:5173",
@@ -10512,6 +10525,7 @@ try:
             "http://127.0.0.1:5179",
             "http://localhost:5179",
             "https://ideasforgeai.com",
+            "https://founder.ideasforgeai.com",
             "https://www.ideasforgeai.com",
         ],
         allow_credentials=True,
