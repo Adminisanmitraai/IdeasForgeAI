@@ -5,3 +5,4 @@ openai
 truststore
 
 openai-chatkit==1.6.5
+pypdf>=5,<6
