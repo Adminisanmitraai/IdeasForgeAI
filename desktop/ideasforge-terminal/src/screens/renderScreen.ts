@@ -401,13 +401,12 @@ function renderStoredChatMessages(): string {
 
             <div
               class="chat-turn__actions"
-              style="display:flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; position:static !important; width:100% !important; min-height:38px !important; height:auto !important; margin-top:8px !important; gap:8px !important; flex-wrap:wrap !important; overflow:visible !important; transform:none !important;"
               role="group"
               aria-label="${authorName} message actions"
             >
               <button
                 type="button"
-                class="chat-turn__action chat-turn__copy" style="display:inline-flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; min-width:54px !important; min-height:38px !important; padding:7px 11px !important; border:1px solid #dedee3 !important; border-radius:10px !important; background:#f5f5f7 !important; color:#5f6368 !important; align-items:center !important; justify-content:center !important; position:static !important; transform:none !important;"
+                class="chat-turn__action chat-turn__copy"
                 data-message-action="copy"
                 data-message-id="${messageId}"
                 aria-label="Copy ${authorName} message"
@@ -419,7 +418,7 @@ function renderStoredChatMessages(): string {
                   ? `
                     <button
                       type="button"
-                      class="chat-turn__action" style="display:inline-flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; min-width:54px !important; min-height:38px !important; padding:7px 11px !important; border:1px solid #dedee3 !important; border-radius:10px !important; background:#f5f5f7 !important; color:#5f6368 !important; align-items:center !important; justify-content:center !important; position:static !important; transform:none !important;"
+                      class="chat-turn__action"
                       data-message-action="edit"
                       data-message-id="${messageId}"
                       aria-label="Edit your message"${disabledAttributes}
@@ -436,7 +435,7 @@ function renderStoredChatMessages(): string {
                   ? `
                     <button
                       type="button"
-                      class="chat-turn__action" style="display:inline-flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; min-width:54px !important; min-height:38px !important; padding:7px 11px !important; border:1px solid #dedee3 !important; border-radius:10px !important; background:#f5f5f7 !important; color:#5f6368 !important; align-items:center !important; justify-content:center !important; position:static !important; transform:none !important;"
+                      class="chat-turn__action"
                       data-message-action="regenerate"
                       data-message-id="${messageId}"
                       aria-label="Regenerate IdeasForgeAI response"${disabledAttributes}
@@ -451,7 +450,7 @@ function renderStoredChatMessages(): string {
                   ? `
                     <button
                       type="button"
-                      class="chat-turn__action chat-turn__retry" style="display:inline-flex !important; visibility:visible !important; opacity:1 !important; pointer-events:auto !important; min-width:54px !important; min-height:38px !important; padding:7px 11px !important; border:1px solid #dedee3 !important; border-radius:10px !important; background:#f5f5f7 !important; color:#5f6368 !important; align-items:center !important; justify-content:center !important; position:static !important; transform:none !important;"
+                      class="chat-turn__action chat-turn__retry"
                       data-message-action="retry"
                       data-message-id="${messageId}"
                       aria-label="Retry failed IdeasForgeAI response"${disabledAttributes}
@@ -528,6 +527,54 @@ function renderChat(): string {
         aria-label="Conversation"
       >
         ${renderStoredChatMessages()}
+
+        ${
+          chatState.status === "sending" &&
+          !chatState.activeRequestId
+            ? `
+              <!-- CHAT-2A.7B.1 — FOUNDER BRAIN THINKING CARD -->
+              <article
+                class="chat-turn chat-turn--assistant chat-thinking-turn"
+                role="status"
+                aria-live="polite"
+                aria-label="Founder Brain is thinking"
+              >
+                <img
+                  class="chat-turn__avatar chat-thinking-turn__avatar"
+                  src="${ideasForgeAssistantIcon}"
+                  alt=""
+                  aria-hidden="true"
+                />
+
+                <div class="chat-thinking-card">
+                  <div class="chat-thinking-card__header">
+                    <strong>Founder Brain</strong>
+
+                    <span
+                      class="chat-thinking-card__pulse"
+                      aria-hidden="true"
+                    ></span>
+                  </div>
+
+                  <div class="chat-thinking-card__body">
+                    <span class="chat-thinking-card__label">
+                      Understanding your request
+                    </span>
+
+                    <span
+                      class="chat-thinking-card__dots"
+                      aria-hidden="true"
+                    >
+                      <i></i>
+                      <i></i>
+                      <i></i>
+                    </span>
+                  </div>
+                </div>
+              </article>
+            `
+            : ""
+        }
       </div>
 
             <div
@@ -806,22 +853,47 @@ function renderChat(): string {
           </svg>
         </button>
 
-        <button
-          type="submit"
-          class="composer-send"
-          aria-label="Send"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path
-              d="M12 19V5m0 0-5 5m5-5 5 5"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            ></path>
-          </svg>
-        </button>
+        ${
+          chatState.status === "sending"
+            ? `
+              <button
+                type="button"
+                id="chat-stop"
+                class="composer-send composer-stop"
+                aria-label="Stop generation"
+                title="Stop generation"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect
+                    x="8"
+                    y="8"
+                    width="8"
+                    height="8"
+                    rx="1.5"
+                    fill="currentColor"
+                  ></rect>
+                </svg>
+              </button>
+            `
+            : `
+              <button
+                type="submit"
+                class="composer-send"
+                aria-label="Send"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M12 19V5m0 0-5 5m5-5 5 5"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </svg>
+              </button>
+            `
+        }
       </form>
     </section>
   `;

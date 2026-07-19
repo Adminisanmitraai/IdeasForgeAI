@@ -428,6 +428,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 let chatRequestInFlight = false;
+let activeChatAbortController: AbortController | null = null;
+let activeAssistantStreamId: string | null = null;
 
 interface ChatSendOptions {
   includePendingAttachments?: boolean;
@@ -460,16 +462,34 @@ async function completeChatRequest(
       const uploadedAttachments = pendingAttachments.length > 0
         ? await uploadAttachments(pendingAttachments)
         : [];
-      const response = await chatService.sendMessage(
-        message,
-        uploadedAttachments.map(attachment => attachment.id),
+      const attachmentIds =
+        uploadedAttachments.map(attachment => attachment.id);
+
+      const assistantMessage =
+        chatStore.beginAssistantStream();
+
+      activeAssistantStreamId = assistantMessage.id;
+      activeChatAbortController = new AbortController();
+
+      const response =
+        await chatService.sendStreamingMessage(
+          message,
+          attachmentIds,
+          {
+            onChunk(chunk) {
+              chatStore.appendAssistantStream(
+                assistantMessage.id,
+                chunk,
+              );
+            },
+          },
+          activeChatAbortController.signal,
+        );
+
+      chatStore.completeAssistantStream(
+        assistantMessage.id,
+        response,
       );
-
-      if (!response.ok || !response.data) {
-        throw new Error("IdeasForgeAI returned no usable response.");
-      }
-
-      chatStore.applyResponse(response.data);
 
       if (options.includePendingAttachments) {
         clearPendingAttachments();
@@ -478,16 +498,42 @@ async function completeChatRequest(
 
     return true;
   } catch (error) {
+    const aborted =
+      error instanceof DOMException &&
+      error.name === "AbortError";
+
+    if (aborted && activeAssistantStreamId) {
+      chatStore.cancelAssistantStream(
+        activeAssistantStreamId,
+      );
+
+      showToast("Generation stopped.");
+      return false;
+    }
+
     const detail =
       error instanceof Error
         ? error.message
         : "IdeasForgeAI could not complete the request.";
 
-    chatStore.applyError(detail);
-    showToast("Live IdeasForgeAI request failed. Please try again.");
+    if (activeAssistantStreamId) {
+      chatStore.failAssistantStream(
+        activeAssistantStreamId,
+        detail,
+      );
+    } else {
+      chatStore.applyError(detail);
+    }
+
+    showToast(
+      "Live IdeasForgeAI request failed. Please try again.",
+    );
+
     return false;
   } finally {
     chatRequestInFlight = false;
+    activeChatAbortController = null;
+    activeAssistantStreamId = null;
 
     const activeInput =
       document.querySelector<HTMLTextAreaElement>("#chat-input");
@@ -588,10 +634,16 @@ document.addEventListener("submit", async (event) => {
 
 document.addEventListener("click", async (event) => {
   const target = (event.target as HTMLElement).closest<HTMLElement>(
-    "[data-route], [data-action], [data-message-action], [data-right-tab], [data-toast], #check-architecture-health, #chat-attach, #chat-voice",
+    "[data-route], [data-action], [data-message-action], [data-right-tab], [data-toast], #check-architecture-health, #chat-attach, #chat-voice, #chat-stop",
   );
 
   if (!target) return;
+
+  if (target.id === "chat-stop") {
+    activeChatAbortController?.abort();
+    return;
+  }
+
   if (target.id === "chat-voice") {
     showToast("Voice note recording will be connected in the next audio phase.");
     return;
