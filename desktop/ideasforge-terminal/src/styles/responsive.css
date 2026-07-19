@@ -1,0 +1,2778 @@
+@media (max-width: 1280px) {
+  :root {
+    --left-width: 214px;
+    --right-width: 300px;
+  }
+
+  .product-title {
+    display: none;
+  }
+
+  .brand-divider {
+    display: none;
+  }
+
+  .header-select {
+    min-width: 168px;
+  }
+
+  .founder-module-bar {
+    grid-template-columns: 164px minmax(0, 1fr) minmax(205px, 250px);
+  }
+}
+
+@media (max-width: 1120px) {
+  .terminal-shell,
+  .terminal-shell.left-collapsed,
+  .terminal-shell.right-collapsed,
+  .terminal-shell.left-collapsed.right-collapsed {
+    grid-template-columns: var(--left-collapsed-width) minmax(0, 1fr);
+  }
+
+  .left-sidebar {
+    grid-column: 1;
+  }
+
+  .left-sidebar .nav-item {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    padding: 0;
+  }
+
+  .left-sidebar .nav-item strong,
+  .left-sidebar .collapse-button span {
+    display: none;
+  }
+
+  .right-panel {
+    position: fixed;
+    top: calc(var(--founder-module-height) + var(--header-height));
+    right: 0;
+    bottom: var(--status-height);
+    z-index: 80;
+    width: 320px;
+    transform: translateX(0);
+    box-shadow: -20px 0 70px rgba(0, 0, 0, 0.45);
+  }
+
+  .right-panel.collapsed {
+    width: var(--right-collapsed-width);
+  }
+
+  .center-workspace {
+    grid-column: 2;
+  }
+
+  .placeholder-grid,
+  .agent-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .founder-module-context p,
+  .founder-module-context code {
+    display: none;
+  }
+
+  .founder-module-context {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    grid-template-rows: 1fr;
+  }
+
+  .founder-module-context-icon {
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 761px) {
+  .founder-module-bar {
+    grid-template-columns: 135px minmax(0, 1fr) 176px;
+    gap: 6px;
+  }
+
+  .founder-os-identity strong {
+    font-size: 11px;
+  }
+
+  .founder-module-item {
+    min-width: 66px;
+    padding-inline: 8px;
+  }
+
+  .founder-module-grid,
+  .planned-module-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .worker-operating-grid {
+    grid-template-columns: minmax(210px, 0.65fr) minmax(0, 1.35fr);
+  }
+
+  .worker-task-overview {
+    grid-template-columns: 1fr;
+  }
+
+  .worker-state-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --header-height: 62px;
+    --status-height: 0px;
+    --mobile-safe-top: env(safe-area-inset-top, 0px);
+    --mobile-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --mobile-nav-height: calc(62px + var(--mobile-safe-bottom));
+  }
+
+  .terminal-shell,
+  .terminal-shell.left-collapsed,
+  .terminal-shell.right-collapsed,
+  .terminal-shell.left-collapsed.right-collapsed {
+    display: block;
+    --founder-module-height: calc(84px + var(--mobile-safe-top));
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 100dvh;
+    padding-top: calc(var(--founder-module-height) + var(--header-height));
+    padding-bottom: var(--mobile-nav-height);
+    overflow-x: clip;
+  }
+
+  .founder-module-bar {
+    position: fixed;
+    inset: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: 38px 36px;
+    gap: 2px;
+    height: var(--founder-module-height);
+    max-width: 100%;
+    padding: calc(5px + var(--mobile-safe-top)) 8px 5px;
+  }
+
+  .founder-os-identity {
+    display: none;
+  }
+
+  .founder-module-rail {
+    grid-row: 1;
+    scroll-snap-type: x proximity;
+  }
+
+  .founder-module-item {
+    min-width: 62px;
+    min-height: 36px;
+    padding-inline: 6px;
+    gap: 4px;
+  }
+
+  .founder-module-item span {
+    font-size: 9px;
+  }
+
+  .founder-module-context {
+    grid-row: 2;
+    grid-template-columns: 24px minmax(0, 1fr) auto;
+    grid-template-rows: 1fr;
+    min-height: 34px;
+    padding: 3px 7px;
+    border-radius: 8px;
+  }
+
+  .founder-module-context-icon {
+    grid-row: 1;
+    width: 24px;
+    height: 24px;
+  }
+
+  .founder-module-context p,
+  .founder-module-context code {
+    display: none;
+  }
+
+  .founder-module-context strong {
+    font-size: 10px;
+  }
+
+  .founder-module-context-status {
+    align-self: center;
+    font-size: 7px;
+  }
+
+  .top-header {
+    position: fixed;
+    top: var(--founder-module-height);
+    right: 0;
+    left: 0;
+    height: var(--header-height);
+    min-height: var(--header-height);
+    padding: 0 10px;
+  }
+
+  .brand-button {
+    width: 136px;
+  }
+
+  .brand-button img {
+    width: 132px;
+  }
+
+  .header-select,
+  .connection-pill,
+  .notification-button {
+    display: none;
+  }
+
+  .left-sidebar {
+    position: fixed;
+    top: calc(var(--founder-module-height) + var(--header-height));
+    bottom: var(--mobile-nav-height);
+    left: 0;
+    z-index: 120;
+    width: 270px;
+    padding: 12px;
+    transform: translateX(-102%);
+    transition: transform 180ms ease;
+    box-shadow: 20px 0 70px rgba(0, 0, 0, 0.5);
+  }
+
+  .terminal-shell.mobile-drawer-open .left-sidebar {
+    transform: translateX(0);
+  }
+
+  .left-sidebar .nav-item {
+    grid-template-columns: 34px minmax(0, 1fr);
+    justify-items: stretch;
+    padding: 0 12px;
+  }
+
+  .left-sidebar .nav-item strong,
+  .left-sidebar .collapse-button span {
+    display: block;
+  }
+
+  .center-workspace {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: calc(100dvh - var(--founder-module-height) - var(--header-height) - var(--mobile-nav-height));
+    overflow-x: clip;
+  }
+
+  .right-panel {
+    top: auto;
+    right: 0;
+    bottom: var(--mobile-nav-height);
+    left: 0;
+    z-index: 125;
+    width: 100%;
+    max-height: min(72vh, 610px);
+    border-top: 1px solid var(--line);
+    border-left: 0;
+    border-radius: 18px 18px 0 0;
+    transform: translateY(calc(100% - 42px));
+    transition: transform 180ms ease;
+    box-shadow: 0 -22px 70px rgba(0, 0, 0, 0.55);
+  }
+
+  .terminal-shell.mobile-context-open .right-panel {
+    transform: translateY(0);
+  }
+
+  .right-panel.collapsed {
+    width: 100%;
+    height: auto;
+  }
+
+  .right-panel .right-toggle {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+  }
+
+  .status-bar {
+    display: none;
+  }
+
+  .mobile-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 140;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
+    max-width: 100%;
+    height: var(--mobile-nav-height);
+    padding-bottom: var(--mobile-safe-bottom);
+    border-top: 1px solid var(--line);
+    background: rgba(6, 10, 18, 0.96);
+    backdrop-filter: blur(16px);
+  }
+
+  .mobile-nav button {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 3px;
+    border: 0;
+    background: transparent;
+    color: var(--text-3);
+  }
+
+  .mobile-nav button.active {
+    color: #8476ff;
+  }
+
+  .mobile-nav small {
+    font-size: 8px;
+  }
+
+  .mobile-backdrop.open {
+    position: fixed;
+    inset: calc(var(--founder-module-height) + var(--header-height)) 0 var(--mobile-nav-height);
+    z-index: 110;
+    display: block;
+    background: rgba(0, 0, 0, 0.56);
+    backdrop-filter: blur(3px);
+    cursor: pointer;
+  }
+
+  .terminal-shell.mobile-context-open .mobile-backdrop {
+    position: fixed;
+    inset: calc(var(--founder-module-height) + var(--header-height)) 0 var(--mobile-nav-height);
+    z-index: 115;
+    display: block;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(3px);
+  }
+
+  .terminal-shell.mobile-drawer-open .center-workspace,
+  .terminal-shell.mobile-context-open .center-workspace {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .screen {
+    width: calc(100% - 20px);
+    max-width: 100%;
+    min-width: 0;
+    padding-top: 18px;
+  }
+
+  .screen-chat,
+  .chat-stage,
+  #chat-composer,
+  #chat-input {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .screen-chat {
+    padding-bottom: 54px;
+  }
+
+  #chat-composer {
+    width: 100%;
+  }
+
+  .screen-heading h1 {
+    font-size: 25px;
+  }
+
+  .inline-plan {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .placeholder-grid,
+  .agent-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .founder-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .founder-dashboard {
+    gap: 18px;
+    padding-top: 14px;
+  }
+
+  .founder-dashboard-header {
+    display: grid;
+    gap: 14px;
+    padding: 18px;
+  }
+
+  .founder-dashboard-header h1 {
+    font-size: 27px;
+  }
+
+  .founder-dashboard-state {
+    min-width: 0;
+  }
+
+  .founder-section-heading {
+    display: grid;
+    gap: 6px;
+  }
+
+  .founder-section-heading > p {
+    text-align: left;
+  }
+
+  .founder-module-grid,
+  .founder-dashboard-lower,
+  .planned-module-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .founder-module-card {
+    min-height: 166px;
+  }
+
+  .founder-foundation ul {
+    grid-template-columns: 1fr;
+  }
+
+  .planned-module-header {
+    grid-template-columns: 40px minmax(0, 1fr);
+    padding: 16px;
+  }
+
+  .planned-module-header > .founder-status {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+
+  .planned-module-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .planned-module-header h1 {
+    font-size: 24px;
+  }
+
+  .planned-module-card {
+    min-height: 0;
+  }
+
+  .planned-module-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .planned-module-actions button {
+    justify-content: center;
+    min-height: 42px;
+  }
+
+  .ghost-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ghost-preview {
+    min-height: 300px;
+  }
+
+  .worker-screen {
+    gap: 12px;
+    padding-top: 12px;
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+
+  .worker-header,
+  .worker-relationship {
+    display: grid;
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .worker-header h1 {
+    font-size: 26px;
+  }
+
+  .worker-foundation-state {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .worker-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .worker-summary-grid article {
+    padding: 11px;
+  }
+
+  .worker-summary-grid strong {
+    font-size: 20px;
+  }
+
+  .worker-operating-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .worker-queue-list {
+    grid-template-columns: repeat(5, minmax(216px, 76vw));
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    overscroll-behavior-inline: contain;
+  }
+
+  .worker-queue-item {
+    min-height: 118px;
+    scroll-snap-align: start;
+  }
+
+  .worker-filters label,
+  .worker-view-options label {
+    min-height: 44px;
+    padding-inline: 12px;
+  }
+
+  .worker-task-panel {
+    padding: 14px;
+  }
+
+  .worker-detail-heading {
+    display: grid;
+    gap: 11px;
+  }
+
+  .worker-detail-heading > .worker-status {
+    grid-row: 1;
+  }
+
+  .worker-task-overview,
+  .worker-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .worker-facts div {
+    min-height: 42px;
+  }
+
+  .worker-view-options {
+    padding: 5px;
+  }
+
+  .worker-entry-list li {
+    grid-template-columns: 50px minmax(0, 1fr);
+  }
+
+  .worker-relationship-links {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .worker-relationship-links button {
+    min-height: 44px;
+  }
+
+  .worker-state-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 430px) {
+  .founder-module-rail {
+    gap: 2px;
+  }
+
+  .founder-module-item {
+    min-width: auto;
+    padding-inline: 5px;
+  }
+
+  .founder-module-item .ui-icon,
+  .founder-module-item[data-module-status="planned"]::after {
+    display: none;
+  }
+
+  .founder-module-item span {
+    font-size: 8px;
+  }
+
+  .worker-state-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .worker-state-gallery summary {
+    min-height: 48px;
+  }
+}
+
+/* ==========================================================
+   FO-MOBILE-COMPOSER — mobile tray refinement
+   ========================================================== */
+
+@media (max-width: 700px) {
+  .composer-zone {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    padding-inline: 10px;
+  }
+
+  .composer {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-height: 54px;
+    height: auto;
+    padding: 6px 7px 6px 9px;
+    grid-template-columns: 34px minmax(0, 1fr) 34px 42px;
+    align-items: center;
+    gap: 5px;
+    border-radius: 19px;
+  }
+
+  .composer input,
+  .composer textarea {
+    min-width: 0;
+    height: 40px;
+    max-height: 88px;
+    padding: 8px 3px;
+    line-height: 1.35;
+  }
+
+  .composer .composer-tool {
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+  }
+
+  /* Preserve only the visible plus and microphone tools on mobile. */
+  .composer .composer-tool:nth-of-type(2),
+  .composer .composer-tool:nth-of-type(3) {
+    display: none;
+  }
+
+  .composer .send-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    margin: 0;
+    align-self: center;
+    transform: translateY(-3px);
+    display: inline-grid;
+    place-items: center;
+  }
+
+  .composer .send-button:hover {
+    transform: translateY(-4px);
+  }
+
+  .composer .send-button:active {
+    transform: translateY(-2px);
+  }
+
+  .response-mode-wrap,
+  .response-mode {
+    display: none !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .composer-zone {
+    padding-inline: 8px;
+  }
+
+  .composer {
+    grid-template-columns: 32px minmax(0, 1fr) 32px 40px;
+    gap: 4px;
+    padding-inline: 7px;
+  }
+
+  .composer .composer-tool {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+  }
+
+  .composer .send-button {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+  }
+}
+
+/* ==========================================================
+   FO-1B.3-FOUNDER-SWIPE-POWERSHELL
+   Founder mobile shell, fixed viewport and swipe feedback
+   ========================================================== */
+
+html,
+body,
+#app {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+html,
+body {
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+#app,
+.app-shell,
+.terminal-shell,
+.shell-main,
+.workspace-shell,
+.workspace-main,
+.workspace-content,
+.screen-content,
+.chat-thread,
+.terminal-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.founder-module-rail,
+.mobile-bottom-nav,
+.worker-queue,
+.worker-task-list {
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.founder-swipe-announcer {
+  position: fixed;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  body {
+    touch-action: pan-y pinch-zoom;
+  }
+
+  .founder-module-rail,
+  .mobile-bottom-nav,
+  .worker-queue,
+  .worker-task-list {
+    touch-action: pan-x;
+  }
+
+  .founder-module-context {
+    min-height: 38px;
+    border-radius: 10px;
+  }
+
+  .founder-module-context__title,
+  .founder-module-context-title {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .profile-button,
+  .avatar-button {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.12),
+      0 8px 22px rgba(0,0,0,0.24);
+  }
+
+  .mobile-bottom-nav {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .founder-swipe-hint {
+    position: fixed;
+    left: 50%;
+    bottom: calc(
+      102px +
+      env(safe-area-inset-bottom, 0px)
+    );
+    z-index: 9999;
+    max-width: calc(100vw - 32px);
+    padding: 9px 14px;
+    border: 1px solid rgba(130, 105, 255, 0.42);
+    border-radius: 999px;
+    background: rgba(8, 13, 28, 0.94);
+    color: rgba(235, 238, 255, 0.94);
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 8px);
+    transition:
+      opacity 180ms ease,
+      transform 180ms ease;
+  }
+
+  .founder-swipe-hint.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
+  html.founder-swipe-forward #app {
+    animation: founder-module-forward 190ms ease-out;
+  }
+
+  html.founder-swipe-backward #app {
+    animation: founder-module-backward 190ms ease-out;
+  }
+
+  html.founder-swipe-boundary #app {
+    animation: founder-module-boundary 150ms ease-out;
+  }
+}
+
+@keyframes founder-module-forward {
+  from {
+    opacity: 0.84;
+    transform: translateX(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes founder-module-backward {
+  from {
+    opacity: 0.84;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes founder-module-boundary {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.founder-swipe-forward #app,
+  html.founder-swipe-backward #app,
+  html.founder-swipe-boundary #app {
+    animation: none;
+  }
+
+  .founder-swipe-hint {
+    transition: none;
+  }
+}
+
+/* ==========================================================
+   FO-IOS-SWIPE-VIEWPORT-FIX
+   Lock application to the iPhone visual viewport.
+   ========================================================== */
+
+@media (max-width: 700px) {
+  html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    overscroll-behavior-x: none;
+  }
+
+  body {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow-x: hidden !important;
+    overscroll-behavior-x: none;
+  }
+
+  #app {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden !important;
+  }
+
+  .app-shell,
+  .terminal-shell,
+  .founder-shell,
+  .shell-main,
+  .workspace-shell,
+  .workspace-layout,
+  .workspace-main,
+  .workspace-content,
+  .screen-content,
+  .chat-screen,
+  .chat-thread,
+  .terminal-panel,
+  .terminal-main,
+  .main-content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .workspace-layout > *,
+  .workspace-shell > *,
+  .shell-main > *,
+  .terminal-shell > *,
+  .chat-screen > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  img,
+  svg,
+  canvas,
+  video {
+    max-width: 100%;
+  }
+
+  .composer-zone {
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-inline: 0;
+  }
+
+  .composer {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .mobile-bottom-nav {
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+  }
+
+  .founder-module-rail {
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
+  }
+
+  .context-sheet,
+  .drawer,
+  .mobile-drawer {
+    box-sizing: border-box;
+    max-width: min(100%, 100dvw);
+  }
+}
+
+/* ==========================================================
+   FO-IOS-BOTTOM-NAV-COMPACT
+   Compact iPhone standalone navigation and remove blank space.
+   ========================================================== */
+
+@media (max-width: 700px) {
+  .mobile-bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+
+    height: auto !important;
+    min-height: 88px !important;
+    max-height: calc(104px + env(safe-area-inset-bottom, 0px));
+
+    margin: 0 !important;
+    padding:
+      10px
+      10px
+      calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    z-index: 1200;
+  }
+
+  .mobile-bottom-nav > * {
+    min-height: 58px;
+    height: auto;
+    margin-block: 0 !important;
+    align-self: center;
+  }
+
+  .mobile-bottom-nav a,
+  .mobile-bottom-nav button,
+  .mobile-bottom-nav [role="link"],
+  .mobile-bottom-nav [role="button"] {
+    min-height: 58px;
+    padding-block: 6px !important;
+
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin-block: 0 !important;
+  }
+
+  .mobile-bottom-nav svg {
+    flex: 0 0 auto;
+  }
+
+  /* Keep page content clear of the compact dock. */
+  .screen-content,
+  .workspace-content,
+  .chat-thread,
+  .dashboard-content {
+    padding-bottom:
+      calc(112px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Composer remains directly above the dock. */
+  .composer-zone {
+    bottom:
+      calc(92px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* Installed iPhone PWA mode. */
+@media (display-mode: standalone) and (max-width: 700px) {
+  .mobile-bottom-nav {
+    min-height: 84px !important;
+    max-height: calc(98px + env(safe-area-inset-bottom, 0px));
+    padding-bottom:
+      calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .composer-zone {
+    bottom:
+      calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ==========================================================
+   FO-IOS-BOTTOM-NAV-LOWER-50
+   Shift installed iPhone bottom dock 50px lower.
+   ========================================================== */
+
+@media (display-mode: standalone) and (max-width: 700px) {
+  .mobile-bottom-nav {
+    transform: translateY(50px) !important;
+  }
+
+  .composer-zone {
+    bottom:
+      calc(38px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .screen-content,
+  .workspace-content,
+  .chat-thread,
+  .dashboard-content {
+    padding-bottom:
+      calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ==========================================================
+   FO-IOS-BOTTOM-GAP-FIX
+   Remove transformed dock gap and use actual iPhone viewport.
+   ========================================================== */
+
+@media (display-mode: standalone) and (max-width: 700px) {
+  html,
+  body,
+  #app {
+    height: 100%;
+    min-height: 100%;
+    max-height: 100%;
+    margin: 0;
+  }
+
+  body,
+  #app {
+    min-height: 100dvh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .app-shell,
+  .terminal-shell,
+  .founder-shell {
+    min-height: 100dvh;
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .mobile-bottom-nav {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    transform: none !important;
+    margin: 0 !important;
+
+    height: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+    max-height: calc(86px + env(safe-area-inset-bottom, 0px)) !important;
+
+    padding:
+      8px
+      10px
+      max(6px, env(safe-area-inset-bottom, 0px)) !important;
+
+    align-items: flex-start !important;
+  }
+
+  .mobile-bottom-nav > * {
+    min-height: 56px !important;
+    height: 56px !important;
+    margin: 0 !important;
+  }
+
+  .mobile-bottom-nav a,
+  .mobile-bottom-nav button,
+  .mobile-bottom-nav [role="link"],
+  .mobile-bottom-nav [role="button"] {
+    min-height: 56px !important;
+    height: 56px !important;
+    padding: 4px 10px !important;
+    justify-content: center !important;
+  }
+
+  .workspace-content,
+  .screen-content,
+  .dashboard-content,
+  .chat-thread {
+    height: auto;
+    max-height: calc(
+      100dvh -
+      86px -
+      env(safe-area-inset-bottom, 0px)
+    );
+    padding-bottom:
+      calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-y: auto;
+  }
+
+  .composer-zone {
+    bottom:
+      calc(90px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* Fallback for older iOS versions without dynamic viewport units. */
+@supports not (height: 100dvh) {
+  @media (display-mode: standalone) and (max-width: 700px) {
+    body,
+    #app,
+    .app-shell,
+    .terminal-shell,
+    .founder-shell {
+      height: -webkit-fill-available;
+      min-height: -webkit-fill-available;
+    }
+  }
+}
+
+/* ==========================================================
+   FO-IOS-KEYBOARD-01
+   iPhone keyboard handling and ChatGPT-style chat typography.
+   ========================================================== */
+
+:root {
+  --ios-keyboard-height: 0px;
+}
+
+@media (max-width: 700px) {
+  /* Prevent iOS input zoom and improve composer readability. */
+  .composer input,
+  .composer textarea,
+  #composer-input {
+    min-width: 0;
+    width: 100%;
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.01em;
+  }
+
+  .composer input::placeholder,
+  .composer textarea::placeholder,
+  #composer-input::placeholder {
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    color: rgba(170, 181, 205, 0.58);
+  }
+
+  /*
+   * ChatGPT-like message readability.
+   * Multiple selectors are included because Founder OS contains
+   * both current and compatibility chat renderers.
+   */
+  .chat-thread .message,
+  .chat-thread .message-body,
+  .chat-thread .message-content,
+  .chat-thread .message-copy,
+  .chat-message,
+  .chat-message__content,
+  .message-text,
+  .message p,
+  .chat-thread p {
+    font-size: 17px !important;
+    line-height: 1.58 !important;
+    font-weight: 400;
+    letter-spacing: -0.012em;
+    text-wrap: pretty;
+  }
+
+  .message-time,
+  .message-timestamp,
+  .chat-message__time {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+  }
+
+  .message-copy-action,
+  .message-action,
+  .copy-action {
+    font-size: 13px !important;
+  }
+
+  /*
+   * Composer remains above the normal bottom dock while the
+   * keyboard is closed.
+   */
+  .composer-zone {
+    box-sizing: border-box;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 100%;
+    transition:
+      bottom 180ms ease,
+      transform 180ms ease;
+  }
+
+  /*
+   * While the keyboard is open, remove the module dock and pin
+   * the composer immediately above the visible keyboard.
+   */
+  html.ios-keyboard-open .mobile-bottom-nav {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(100%) !important;
+  }
+
+  html.ios-keyboard-open .composer-zone {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom:
+      calc(
+        var(--ios-keyboard-height, 0px) +
+        6px
+      ) !important;
+
+    z-index: 5000 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding:
+      6px
+      10px
+      4px !important;
+
+    margin: 0 !important;
+    transform: none !important;
+  }
+
+  html.ios-keyboard-open .composer {
+    width: 100%;
+    max-width: 100%;
+    min-height: 56px;
+    margin: 0;
+  }
+
+  html.ios-keyboard-open .chat-thread,
+  html.ios-keyboard-open .screen-content,
+  html.ios-keyboard-open .workspace-content {
+    padding-bottom:
+      calc(
+        86px +
+        var(--ios-keyboard-height, 0px)
+      ) !important;
+
+    scroll-padding-bottom:
+      calc(
+        86px +
+        var(--ios-keyboard-height, 0px)
+      );
+  }
+
+  html.ios-keyboard-open body,
+  html.ios-keyboard-open #app {
+    overflow-x: hidden !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 700px) {
+  html.ios-keyboard-open .composer-zone {
+    bottom:
+      calc(
+        var(--ios-keyboard-height, 0px) +
+        4px
+      ) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composer-zone,
+  .mobile-bottom-nav {
+    transition: none !important;
+  }
+}
+
+/* ==========================================================
+   FO-MOBILE-CLEAN-CHAT-V1
+   Clean white Chat-only mobile operating surface.
+   ========================================================== */
+
+@media (max-width: 700px) {
+
+  /* --------------------------------------------------------
+     Root surface
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat,
+  html.mobile-clean-chat body,
+  html.mobile-clean-chat #app {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 100%;
+    min-height: 100dvh;
+    margin: 0;
+    background: #ffffff !important;
+    color: #111827 !important;
+    overflow-x: hidden !important;
+  }
+
+  html.mobile-clean-chat body {
+    overscroll-behavior-x: none;
+  }
+
+  html.mobile-clean-chat #app {
+    min-height: 100dvh;
+  }
+
+  /* --------------------------------------------------------
+     Hide Founder OS shell elements on Chat only
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .founder-module-rail,
+  html.mobile-clean-chat .founder-module-context,
+  html.mobile-clean-chat .mobile-bottom-nav,
+  html.mobile-clean-chat .terminal-sidebar,
+  html.mobile-clean-chat .workspace-sidebar,
+  html.mobile-clean-chat .left-sidebar,
+  html.mobile-clean-chat .context-panel,
+  html.mobile-clean-chat .right-context-panel,
+  html.mobile-clean-chat .right-panel,
+  html.mobile-clean-chat .workspace-context,
+  html.mobile-clean-chat .status-bar,
+  html.mobile-clean-chat .workspace-statusbar,
+  html.mobile-clean-chat .terminal-statusbar {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------
+     Collapse shell to one clean column
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .app-shell,
+  html.mobile-clean-chat .terminal-shell,
+  html.mobile-clean-chat .founder-shell,
+  html.mobile-clean-chat .shell-main,
+  html.mobile-clean-chat .workspace-shell,
+  html.mobile-clean-chat .workspace-layout,
+  html.mobile-clean-chat .workspace-main,
+  html.mobile-clean-chat .workspace-content,
+  html.mobile-clean-chat .screen-content,
+  html.mobile-clean-chat .terminal-main,
+  html.mobile-clean-chat .main-content {
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 0 !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  html.mobile-clean-chat .workspace-layout,
+  html.mobile-clean-chat .terminal-shell {
+    display: block !important;
+  }
+
+  /* --------------------------------------------------------
+     Compact white application header
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .terminal-header,
+  html.mobile-clean-chat .shell-header,
+  html.mobile-clean-chat .app-header,
+  html.mobile-clean-chat .main-header {
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 92px;
+    padding:
+      calc(14px + env(safe-area-inset-top, 0px))
+      22px
+      14px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    gap: 14px !important;
+
+    background: rgba(255, 255, 255, 0.98) !important;
+    color: #111827 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+
+  html.mobile-clean-chat .terminal-header svg,
+  html.mobile-clean-chat .shell-header svg,
+  html.mobile-clean-chat .app-header svg {
+    color: #111827;
+  }
+
+  html.mobile-clean-chat .brand-name,
+  html.mobile-clean-chat .brand-title,
+  html.mobile-clean-chat .header-brand,
+  html.mobile-clean-chat .terminal-brand {
+    color: #111827 !important;
+    font-weight: 750 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  html.mobile-clean-chat .profile-button,
+  html.mobile-clean-chat .avatar-button {
+    box-shadow:
+      0 0 0 2px #d1d5db,
+      0 5px 14px rgba(15, 23, 42, 0.08) !important;
+  }
+
+  /* --------------------------------------------------------
+     Chat workspace
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .chat-screen,
+  html.mobile-clean-chat .chat-workspace,
+  html.mobile-clean-chat .chat-layout,
+  html.mobile-clean-chat .terminal-panel {
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: calc(100dvh - 92px);
+    min-height: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* --------------------------------------------------------
+     Chat title row
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .screen-header,
+  html.mobile-clean-chat .workspace-titlebar,
+  html.mobile-clean-chat .chat-header {
+    box-sizing: border-box;
+    width: auto;
+    min-height: 84px;
+    margin: 0 24px !important;
+    padding: 24px 0 18px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+
+  html.mobile-clean-chat .screen-header h1,
+  html.mobile-clean-chat .workspace-titlebar h1,
+  html.mobile-clean-chat .chat-header h1 {
+    margin: 0 !important;
+    color: #111827 !important;
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+    font-weight: 720 !important;
+    letter-spacing: -0.025em !important;
+  }
+
+  html.mobile-clean-chat .workspace-eyebrow,
+  html.mobile-clean-chat .screen-eyebrow,
+  html.mobile-clean-chat .chat-kicker,
+  html.mobile-clean-chat .workspace-titlebar .eyebrow {
+    display: none !important;
+  }
+
+  html.mobile-clean-chat .live-indicator,
+  html.mobile-clean-chat .screen-status,
+  html.mobile-clean-chat .chat-status {
+    color: #6b7280 !important;
+    font-size: 16px !important;
+  }
+
+  /* --------------------------------------------------------
+     Messages
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .chat-thread {
+    box-sizing: border-box;
+    width: 100%;
+    height: calc(100% - 84px);
+    min-height: 0;
+
+    padding:
+      28px
+      24px
+      calc(122px + env(safe-area-inset-bottom, 0px)) !important;
+
+    margin: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain;
+    scroll-padding-bottom:
+      calc(126px + env(safe-area-inset-bottom, 0px));
+  }
+
+  html.mobile-clean-chat .message,
+  html.mobile-clean-chat .chat-message {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0 0 28px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    color: #111827 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html.mobile-clean-chat .message {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    column-gap: 18px;
+    align-items: start;
+  }
+
+  html.mobile-clean-chat .message-avatar,
+  html.mobile-clean-chat .chat-message__avatar {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    border-radius: 50% !important;
+    overflow: hidden;
+    background: #050816 !important;
+  }
+
+  html.mobile-clean-chat .message-avatar img,
+  html.mobile-clean-chat .chat-message__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  html.mobile-clean-chat .message-body,
+  html.mobile-clean-chat .message-content,
+  html.mobile-clean-chat .message-copy,
+  html.mobile-clean-chat .chat-message__content,
+  html.mobile-clean-chat .message-text,
+  html.mobile-clean-chat .message p,
+  html.mobile-clean-chat .chat-thread p {
+    margin-top: 0 !important;
+    color: #111827 !important;
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "SF Pro Text",
+      "Segoe UI",
+      sans-serif !important;
+
+    font-size: 17px !important;
+    line-height: 1.58 !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.012em !important;
+  }
+
+  html.mobile-clean-chat .message-time,
+  html.mobile-clean-chat .message-timestamp,
+  html.mobile-clean-chat .chat-message__time {
+    margin-top: 12px !important;
+    color: #8b95a5 !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
+
+  html.mobile-clean-chat .message-action,
+  html.mobile-clean-chat .message-copy-action,
+  html.mobile-clean-chat .copy-action {
+    margin-top: 13px !important;
+    color: #7b8494 !important;
+    font-size: 14px !important;
+  }
+
+  /* --------------------------------------------------------
+     Composer at extreme bottom
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat .composer-zone {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+
+    padding:
+      10px
+      20px
+      calc(10px + env(safe-area-inset-bottom, 0px)) !important;
+
+    background:
+      linear-gradient(
+        to top,
+        #ffffff 76%,
+        rgba(255, 255, 255, 0)
+      ) !important;
+
+    z-index: 5000 !important;
+    transform: none !important;
+  }
+
+  html.mobile-clean-chat .composer {
+    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 60px !important;
+    height: auto !important;
+
+    margin: 0 auto !important;
+    padding: 7px 8px 7px 10px !important;
+
+    display: grid !important;
+    grid-template-columns:
+      40px
+      minmax(0, 1fr)
+      40px
+      48px !important;
+
+    align-items: center !important;
+    gap: 5px !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+
+    border: 1px solid #e1e5eb !important;
+    border-radius: 30px !important;
+
+    box-shadow:
+      0 8px 28px rgba(15, 23, 42, 0.08),
+      0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  html.mobile-clean-chat .composer input,
+  html.mobile-clean-chat .composer textarea,
+  html.mobile-clean-chat #composer-input {
+    box-sizing: border-box;
+    min-width: 0;
+    width: 100%;
+    height: 44px;
+    max-height: 120px;
+    margin: 0;
+    padding: 10px 5px !important;
+
+    background: transparent !important;
+    color: #111827 !important;
+    border: 0 !important;
+    outline: 0 !important;
+
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "SF Pro Text",
+      "Segoe UI",
+      sans-serif !important;
+
+    font-size: 16px !important;
+    line-height: 1.4 !important;
+    letter-spacing: -0.01em;
+  }
+
+  html.mobile-clean-chat .composer input::placeholder,
+  html.mobile-clean-chat .composer textarea::placeholder,
+  html.mobile-clean-chat #composer-input::placeholder {
+    color: #8b95a5 !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+  }
+
+  html.mobile-clean-chat .composer-tool {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+
+    display: inline-grid !important;
+    place-items: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    background: transparent !important;
+    color: #374151 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+  }
+
+  html.mobile-clean-chat .composer-tool:nth-of-type(2),
+  html.mobile-clean-chat .composer-tool:nth-of-type(3) {
+    display: none !important;
+  }
+
+  html.mobile-clean-chat .send-button {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    display: inline-grid !important;
+    place-items: center !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    color: #ffffff !important;
+    background:
+      linear-gradient(
+        135deg,
+        #377dff 0%,
+        #6546e8 100%
+      ) !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    box-shadow:
+      0 6px 15px rgba(82, 74, 231, 0.24) !important;
+
+    transform: none !important;
+  }
+
+  html.mobile-clean-chat .send-button:hover,
+  html.mobile-clean-chat .send-button:active {
+    transform: none !important;
+  }
+
+  html.mobile-clean-chat .quick-examples {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------
+     Keyboard-open state
+     -------------------------------------------------------- */
+
+  html.mobile-clean-chat.ios-keyboard-open .composer-zone {
+    bottom:
+      calc(
+        var(--ios-keyboard-height, 0px) +
+        2px
+      ) !important;
+
+    padding-bottom: 6px !important;
+  }
+
+  html.mobile-clean-chat.ios-keyboard-open .chat-thread {
+    padding-bottom:
+      calc(
+        94px +
+        var(--ios-keyboard-height, 0px)
+      ) !important;
+
+    scroll-padding-bottom:
+      calc(
+        94px +
+        var(--ios-keyboard-height, 0px)
+      ) !important;
+  }
+}
+
+/* Installed iPhone application mode. */
+@media (display-mode: standalone) and (max-width: 700px) {
+  html.mobile-clean-chat .composer-zone {
+    padding-bottom:
+      calc(
+        8px +
+        env(safe-area-inset-bottom, 0px)
+      ) !important;
+  }
+}
+
+/* Older iOS viewport fallback. */
+@supports not (height: 100dvh) {
+  @media (max-width: 700px) {
+    html.mobile-clean-chat,
+    html.mobile-clean-chat body,
+    html.mobile-clean-chat #app,
+    html.mobile-clean-chat .chat-screen,
+    html.mobile-clean-chat .chat-workspace {
+      min-height: -webkit-fill-available;
+    }
+  }
+}
+
+/* Reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  html.mobile-clean-chat .composer-zone,
+  html.mobile-clean-chat .composer,
+  html.mobile-clean-chat .send-button {
+    transition: none !important;
+  }
+}
+
+/* ==========================================================
+   FO-MOBILE-CLEAN-CHAT-FINAL-FIX
+   Final active-selector correction for the clean Chat surface.
+   ========================================================== */
+
+@media (max-width: 700px) {
+
+  /* Entire Chat route becomes a white standalone surface. */
+  html.mobile-clean-chat,
+  html.mobile-clean-chat body,
+  html.mobile-clean-chat #app,
+  html.mobile-clean-chat .terminal-shell,
+  html.mobile-clean-chat .shell-main,
+  html.mobile-clean-chat .workspace-shell,
+  html.mobile-clean-chat .workspace-layout,
+  html.mobile-clean-chat .workspace-main,
+  html.mobile-clean-chat .workspace-content,
+  html.mobile-clean-chat .terminal-panel,
+  html.mobile-clean-chat .screen-content {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    border-color: #e5e7eb !important;
+  }
+
+  html.mobile-clean-chat,
+  html.mobile-clean-chat body,
+  html.mobile-clean-chat #app {
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  html.mobile-clean-chat .terminal-shell {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  html.mobile-clean-chat .shell-main,
+  html.mobile-clean-chat .workspace-shell,
+  html.mobile-clean-chat .workspace-layout,
+  html.mobile-clean-chat .workspace-main,
+  html.mobile-clean-chat .workspace-content,
+  html.mobile-clean-chat .terminal-panel,
+  html.mobile-clean-chat .screen-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow: hidden !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  /* Hide every Terminal/Founder navigation surface on Chat only. */
+  html.mobile-clean-chat .founder-module-rail,
+  html.mobile-clean-chat .founder-module-context,
+  html.mobile-clean-chat .mobile-bottom-nav,
+  html.mobile-clean-chat .terminal-sidebar,
+  html.mobile-clean-chat .workspace-sidebar,
+  html.mobile-clean-chat .context-panel,
+  html.mobile-clean-chat .workspace-context,
+  html.mobile-clean-chat .right-context-panel,
+  html.mobile-clean-chat .status-bar,
+  html.mobile-clean-chat .terminal-statusbar {
+    display: none !important;
+  }
+
+  /* Clean white application header. */
+  html.mobile-clean-chat .terminal-header {
+    box-sizing: border-box !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-height: 96px !important;
+    padding:
+      calc(16px + env(safe-area-inset-top, 0px))
+      22px
+      16px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+
+  html.mobile-clean-chat .terminal-header button,
+  html.mobile-clean-chat .terminal-header svg {
+    color: #111827 !important;
+  }
+
+  html.mobile-clean-chat .terminal-header .brand-name,
+  html.mobile-clean-chat .terminal-header .terminal-brand,
+  html.mobile-clean-chat .terminal-header .header-brand {
+    color: #111827 !important;
+    font-size: 24px !important;
+    font-weight: 750 !important;
+    letter-spacing: -0.035em !important;
+  }
+
+  /* Chat workspace occupies all remaining viewport height. */
+  html.mobile-clean-chat .terminal-panel {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 0 !important;
+  }
+
+  /* Clean title row. */
+  html.mobile-clean-chat .workspace-titlebar,
+  html.mobile-clean-chat .screen-header {
+    box-sizing: border-box !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-height: 88px !important;
+    margin: 0 24px !important;
+    padding: 25px 0 19px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+  }
+
+  html.mobile-clean-chat .workspace-titlebar h1,
+  html.mobile-clean-chat .screen-header h1 {
+    margin: 0 !important;
+    color: #111827 !important;
+    font-size: 22px !important;
+    line-height: 1.2 !important;
+    font-weight: 720 !important;
+    letter-spacing: -0.025em !important;
+  }
+
+  html.mobile-clean-chat .workspace-eyebrow,
+  html.mobile-clean-chat .screen-eyebrow {
+    display: none !important;
+  }
+
+  html.mobile-clean-chat .workspace-titlebar .screen-status,
+  html.mobile-clean-chat .workspace-titlebar .live-indicator,
+  html.mobile-clean-chat .screen-header .screen-status {
+    color: #6b7280 !important;
+    font-size: 16px !important;
+  }
+
+  /* Scrollable message area. */
+  html.mobile-clean-chat .chat-thread {
+    box-sizing: border-box !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding:
+      30px
+      24px
+      calc(112px + env(safe-area-inset-bottom, 0px)) !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain !important;
+    scroll-padding-bottom:
+      calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html.mobile-clean-chat .message {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 0 30px !important;
+    padding: 0 !important;
+
+    display: grid !important;
+    grid-template-columns: 48px minmax(0, 1fr) !important;
+    gap: 18px !important;
+    align-items: start !important;
+
+    background: transparent !important;
+    color: #111827 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  html.mobile-clean-chat .message-avatar {
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    background: #050816 !important;
+  }
+
+  html.mobile-clean-chat .message-content,
+  html.mobile-clean-chat .message-body,
+  html.mobile-clean-chat .message-text,
+  html.mobile-clean-chat .message p {
+    margin: 0 !important;
+    color: #111827 !important;
+
+    font-family:
+      -apple-system,
+      BlinkMacSystemFont,
+      "SF Pro Text",
+      "Segoe UI",
+      sans-serif !important;
+
+    font-size: 17px !important;
+    line-height: 1.58 !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.012em !important;
+  }
+
+  html.mobile-clean-chat .message-time,
+  html.mobile-clean-chat .message-timestamp {
+    display: block !important;
+    margin-top: 13px !important;
+    color: #8b95a5 !important;
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+  }
+
+  html.mobile-clean-chat .message-action,
+  html.mobile-clean-chat .message-copy-action,
+  html.mobile-clean-chat .copy-action {
+    display: block !important;
+    margin-top: 14px !important;
+    color: #737d8d !important;
+    font-size: 14px !important;
+  }
+
+  /* Composer spans almost the full viewport and sits at the true bottom. */
+  html.mobile-clean-chat .composer-zone {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+
+    padding:
+      12px
+      20px
+      calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+
+    background:
+      linear-gradient(
+        to top,
+        #ffffff 78%,
+        rgba(255, 255, 255, 0)
+      ) !important;
+
+    z-index: 6000 !important;
+    transform: none !important;
+  }
+
+  html.mobile-clean-chat .composer {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 62px !important;
+    height: 62px !important;
+
+    margin: 0 !important;
+    padding: 7px 8px 7px 10px !important;
+
+    display: grid !important;
+    grid-template-columns:
+      40px
+      minmax(0, 1fr)
+      40px
+      48px !important;
+
+    align-items: center !important;
+    gap: 5px !important;
+
+    overflow: visible !important;
+
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid #dfe4eb !important;
+    border-radius: 31px !important;
+
+    box-shadow:
+      0 9px 30px rgba(15, 23, 42, 0.09),
+      0 2px 8px rgba(15, 23, 42, 0.04) !important;
+  }
+
+  html.mobile-clean-chat #composer-input,
+  html.mobile-clean-chat .composer input,
+  html.mobile-clean-chat .composer textarea {
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 44px !important;
+    max-height: 100px !important;
+
+    margin: 0 !important;
+    padding: 10px 4px !important;
+
+    overflow: hidden !important;
+
+    background: transparent !important;
+    color: #111827 !important;
+    border: 0 !important;
+    outline: 0 !important;
+
+    font-size: 16px !important;
+    line-height: 24px !important;
+  }
+
+  html.mobile-clean-chat #composer-input::placeholder,
+  html.mobile-clean-chat .composer input::placeholder,
+  html.mobile-clean-chat .composer textarea::placeholder {
+    color: #8b95a5 !important;
+    opacity: 1 !important;
+    font-size: 16px !important;
+  }
+
+  html.mobile-clean-chat .composer-tool {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: inline-grid !important;
+    place-items: center !important;
+
+    background: transparent !important;
+    color: #374151 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+  }
+
+  html.mobile-clean-chat .composer-tool:nth-of-type(2),
+  html.mobile-clean-chat .composer-tool:nth-of-type(3) {
+    display: none !important;
+  }
+
+  html.mobile-clean-chat .send-button {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    min-height: 48px !important;
+
+    padding: 0 !important;
+    margin: 0 !important;
+
+    display: inline-grid !important;
+    place-items: center !important;
+
+    color: #ffffff !important;
+    background:
+      linear-gradient(
+        135deg,
+        #377dff 0%,
+        #6546e8 100%
+      ) !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow:
+      0 7px 17px rgba(82, 74, 231, 0.27) !important;
+
+    transform: none !important;
+  }
+
+  html.mobile-clean-chat .quick-examples {
+    display: none !important;
+  }
+
+  /* Keyboard mode. */
+  html.mobile-clean-chat.ios-keyboard-open .composer-zone {
+    bottom:
+      calc(var(--ios-keyboard-height, 0px) + 2px) !important;
+
+    padding-bottom: 6px !important;
+  }
+
+  html.mobile-clean-chat.ios-keyboard-open .chat-thread {
+    padding-bottom:
+      calc(
+        98px +
+        var(--ios-keyboard-height, 0px)
+      ) !important;
+  }
+}
+
+@media (display-mode: standalone) and (max-width: 700px) {
+  html.mobile-clean-chat .composer-zone {
+    padding-bottom:
+      calc(
+        10px +
+        env(safe-area-inset-bottom, 0px)
+      ) !important;
+  }
+}
+
+/* ==========================================================
+   CHAT-2A.4J — Mobile chat actions and edit parity
+   ========================================================== */
+@media (max-width: 700px) {
+  .chat-native-screen .chat-turn__actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    max-width: 100%;
+    margin-top: 8px;
+    opacity: 1;
+  }
+
+  .chat-native-screen .chat-turn--user .chat-turn__actions {
+    justify-content: flex-end;
+  }
+
+  .chat-native-screen .chat-turn__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 64px;
+    min-height: 40px;
+    max-width: 100%;
+    padding: 7px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-2);
+    font: inherit;
+    font-size: 12px;
+    line-height: 1.2;
+    cursor: pointer;
+    opacity: 1;
+    touch-action: manipulation;
+  }
+
+  .chat-native-screen .chat-turn__action:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  .chat-native-screen .chat-turn__action:focus-visible,
+  .chat-native-screen .chat-turn__edit-submit:focus-visible,
+  .chat-native-screen .chat-turn__edit-cancel:focus-visible,
+  .chat-native-screen .chat-turn__edit-input:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .chat-native-screen .chat-turn__action:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+  }
+
+  .chat-native-screen .chat-turn__retry {
+    color: #ef9ba1;
+  }
+
+  .chat-native-screen .chat-turn--user,
+  .chat-native-screen .chat-turn--user .chat-turn__body,
+  .chat-native-screen .chat-turn--user .chat-turn__content,
+  .chat-native-screen .chat-turn__edit-form,
+  .chat-native-screen .chat-turn__edit-label,
+  .chat-native-screen .chat-turn__edit-input,
+  .chat-native-screen .chat-turn__edit-actions {
+    box-sizing: border-box;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .chat-native-screen .chat-turn--user:has(.chat-turn__edit-form) {
+    padding-left: 0;
+  }
+
+  .chat-native-screen
+    .chat-turn--user:has(.chat-turn__edit-form)
+    .chat-turn__body {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .chat-native-screen .chat-turn__edit-form,
+  .chat-native-screen .chat-turn__edit-label,
+  .chat-native-screen .chat-turn__edit-input {
+    width: 100%;
+  }
+
+  .chat-native-screen .chat-turn__edit-form {
+    display: grid;
+    gap: 12px;
+  }
+
+  .chat-native-screen .chat-turn__edit-input {
+    display: block;
+    min-height: 120px;
+    resize: vertical;
+    font-size: 16px;
+  }
+
+  .chat-native-screen .chat-turn__edit-actions {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    width: 100%;
+    gap: 10px;
+  }
+
+  .chat-native-screen .chat-turn__edit-submit,
+  .chat-native-screen .chat-turn__edit-cancel {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}
+
+@media (max-width: 360px) {
+  .chat-native-screen .chat-turn__edit-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-native-screen .chat-turn__action {
+    min-width: 58px;
+    padding-inline: 10px;
+  }
+}
+
+/* ==========================================================
+   CHAT-2A.5 — COMPLETE MOBILE MESSAGE ACTIONS
+   Copy, Edit, Regenerate, Retry and touch interaction parity
+   ========================================================== */
+
+@media (max-width: 700px) {
+  .chat-native-screen .chat-turn {
+    overflow: visible !important;
+  }
+
+  .chat-native-screen .chat-turn__body,
+  .chat-native-screen .chat-turn__content {
+    overflow: visible !important;
+  }
+
+  .chat-native-screen .chat-turn__actions {
+    position: relative !important;
+    z-index: 20 !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 38px !important;
+    max-width: 100% !important;
+    margin-top: 7px !important;
+    padding: 0 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+  }
+
+  .chat-native-screen
+    .chat-turn--user
+    .chat-turn__actions {
+    justify-content: flex-end !important;
+  }
+
+  .chat-native-screen
+    .chat-turn--assistant
+    .chat-turn__actions {
+    justify-content: flex-start !important;
+  }
+
+  .chat-native-screen .chat-turn__action {
+    position: relative !important;
+    z-index: 21 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    box-sizing: border-box !important;
+    min-width: 54px !important;
+    min-height: 38px !important;
+    margin: 0 !important;
+    padding: 7px 10px !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 10px !important;
+    background: rgba(246, 246, 247, 0.96) !important;
+    color: #5f6368 !important;
+    font: inherit !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    transform: none !important;
+  }
+
+  .chat-native-screen .chat-turn__action:active {
+    background: rgba(225, 225, 228, 0.98) !important;
+    transform: scale(0.96) !important;
+  }
+
+  .chat-native-screen
+    .chat-turn__action[data-copy-state="copied"] {
+    background: rgba(231, 247, 237, 0.98) !important;
+    color: #19733b !important;
+  }
+
+  .chat-native-screen .chat-turn__action:disabled {
+    opacity: 0.45 !important;
+    cursor: default !important;
+    pointer-events: none !important;
+  }
+
+  .chat-native-screen .chat-turn__edit-form {
+    position: relative !important;
+    z-index: 22 !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .chat-native-screen .chat-turn__edit-input {
+    display: block !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    min-height: 96px !important;
+    padding: 12px !important;
+    border: 1px solid #d8d8dc !important;
+    border-radius: 14px !important;
+    background: #ffffff !important;
+    color: #1d1d1f !important;
+    font: inherit !important;
+    font-size: 16px !important;
+    line-height: 1.45 !important;
+    resize: vertical !important;
+    -webkit-appearance: none !important;
+  }
+
+  .chat-native-screen .chat-turn__edit-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    margin-top: 9px !important;
+  }
+
+  .chat-native-screen .chat-turn__edit-submit,
+  .chat-native-screen .chat-turn__edit-cancel {
+    min-height: 42px !important;
+    padding: 8px 13px !important;
+    border-radius: 11px !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  .chat-native-screen .chat-turn__edit-submit {
+    border: 0 !important;
+    background: #111111 !important;
+    color: #ffffff !important;
+  }
+
+  .chat-native-screen .chat-turn__edit-cancel {
+    border: 1px solid #dedee2 !important;
+    background: #f5f5f7 !important;
+    color: #4f4f54 !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .chat-native-screen .chat-turn__actions,
+  .chat-native-screen .chat-turn__action {
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* ==========================================================
+   CHAT-2A.5A — FINAL MOBILE ACTION VISIBILITY LOCK
+   ========================================================== */
+
+@media screen and (max-width: 700px) {
+  .chat-native-screen .chat-turn,
+  .chat-native-screen .chat-turn__body,
+  .chat-native-screen .chat-turn__content,
+  .chat-native-screen .chat-turn__footer {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    clip: auto !important;
+    clip-path: none !important;
+  }
+
+  .chat-native-screen .chat-turn__footer {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .chat-native-screen .chat-turn__actions {
+    position: static !important;
+    inset: auto !important;
+    z-index: 50 !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+
+    height: auto !important;
+    min-height: 36px !important;
+    max-height: none !important;
+
+    gap: 6px !important;
+    margin: 7px 0 0 !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+
+    transform: none !important;
+    translate: none !important;
+    scale: 1 !important;
+
+    clip: auto !important;
+    clip-path: none !important;
+    filter: none !important;
+  }
+
+  .chat-native-screen
+    .chat-turn--user
+    .chat-turn__actions {
+    justify-content: flex-end !important;
+  }
+
+  .chat-native-screen
+    .chat-turn--assistant
+    .chat-turn__actions {
+    justify-content: flex-start !important;
+  }
+
+  .chat-native-screen .chat-turn__action,
+  .chat-native-screen button.chat-turn__action {
+    position: static !important;
+    z-index: 51 !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+
+    width: auto !important;
+    min-width: 52px !important;
+    max-width: none !important;
+
+    height: 36px !important;
+    min-height: 36px !important;
+    max-height: none !important;
+
+    margin: 0 !important;
+    padding: 7px 11px !important;
+
+    border: 1px solid #dedee3 !important;
+    border-radius: 10px !important;
+
+    background: #f5f5f7 !important;
+    color: #5f6368 !important;
+
+    font-family: inherit !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    text-indent: 0 !important;
+    white-space: nowrap !important;
+
+    overflow: visible !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+
+    transform: none !important;
+    translate: none !important;
+    scale: 1 !important;
+
+    clip: auto !important;
+    clip-path: none !important;
+    filter: none !important;
+
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+  }
+
+  .chat-native-screen
+    .chat-turn__action:not(:disabled):active {
+    background: #e7e7ea !important;
+    transform: scale(0.96) !important;
+  }
+
+  .chat-native-screen .chat-turn__action:disabled {
+    display: inline-flex !important;
+    visibility: visible !important;
+    opacity: 0.4 !important;
+    pointer-events: none !important;
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .chat-native-screen .chat-turn__actions,
+  .chat-native-screen .chat-turn__action {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  .chat-native-screen .chat-turn__action {
+    display: inline-flex !important;
+  }
+}

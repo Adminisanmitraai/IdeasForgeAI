@@ -13,6 +13,8 @@ import "./styles/globals.css";
 import "./styles/shell.css";
 import "./styles/components.css";
 import "./styles/responsive.css";
+import "./styles/mobile-native-chat.css";
+// Legacy mobile light overlay disabled.
 import "./styles/attachments.css";
 import "./styles/founder-access.css";
 
@@ -22,6 +24,7 @@ import {
   subscribeFounderCatalogue,
 } from "./app/founderModules";
 import { renderShell } from "./components/TerminalShell";
+import { updatePersistentWorkspaceShell } from "./shell/persistentWorkspaceShell";
 import {
   checkArchitectureHealth,
   renderScreen,
@@ -32,11 +35,12 @@ import { workspaceStore } from "./workspace/workspaceStore";
 import { uiStore } from "./store/uiStore";
 
 import "./navigation/founderSwipeNavigation";
-import "./mobile/iosKeyboardViewport";
-import "./mobile/mobileChatTakeover";
+import "./mobile/iosKeyboardViewport";
+// Mobile takeover disabled: native composer is the single input source.
 import "./mobile/mobileChatHeaderActions";
 import "./mobile/mobileChatWrapMenuFix";
-import "./mobile/mobileComposerUiPolish";
+// Legacy mobile light surface disabled.
+// mobileComposerUiPolish disabled: use the native #chat-input composer.
 import {
   initializeFounderAccess,
 } from "./security/founderAccess";
@@ -76,6 +80,29 @@ function showToast(message: string): void {
   toast.classList.add("visible");
 
   window.setTimeout(() => toast.classList.remove("visible"), 2200);
+}
+
+async function copyTextToClipboard(value: string): Promise<void> {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+
+  const fallback = document.createElement("textarea");
+  fallback.value = value;
+  fallback.setAttribute("readonly", "");
+  fallback.style.position = "fixed";
+  fallback.style.opacity = "0";
+  fallback.style.pointerEvents = "none";
+  document.body.appendChild(fallback);
+  fallback.select();
+
+  const copied = document.execCommand("copy");
+  fallback.remove();
+
+  if (!copied) {
+    throw new Error("Clipboard access is unavailable.");
+  }
 }
 
 const DISCOVERY_INTENTS = new Set([
@@ -284,7 +311,11 @@ function render(): void {
     ui.mobileDrawerOpen || ui.mobileContextOpen,
   );
 
-  app.innerHTML = renderShell(route, renderScreen(route));
+  updatePersistentWorkspaceShell(
+    app,
+    route.path,
+    renderShell(route, renderScreen(route)),
+  );
 }
 
 window.addEventListener("hashchange", () => {
@@ -369,47 +400,69 @@ document.addEventListener("keydown", (event) => {
   const target = event.target;
 
   if (!(target instanceof HTMLTextAreaElement)) return;
+
+  if (target.classList.contains("chat-turn__edit-input")) {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      chatStore.cancelUserMessageEdit();
+      return;
+    }
+
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      target.form?.requestSubmit();
+    }
+
+    return;
+  }
+
   if (target.id !== "chat-input") return;
 
   if (event.key === "Enter" && !event.shiftKey) {
     event.preventDefault();
+  event.stopImmediatePropagation();
     target.form?.requestSubmit();
   }
 });
-document.addEventListener("submit", async (event) => {
-  const form = event.target as HTMLFormElement;
-  if (form.id !== "chat-composer") return;
 
-  event.preventDefault();
+let chatRequestInFlight = false;
 
-  const input = document.querySelector<HTMLTextAreaElement>("#chat-input");
-  const message = input?.value.trim();
+interface ChatSendOptions {
+  includePendingAttachments?: boolean;
+  allowCommandDiscovery?: boolean;
+}
 
-  if (!input || !message) return;
-  if (chatStore.getState().status === "sending") return;
+async function completeChatRequest(
+  message: string,
+  options: ChatSendOptions = {},
+): Promise<boolean> {
+  if (
+    chatRequestInFlight ||
+    chatStore.getState().status !== "sending"
+  ) {
+    return false;
+  }
 
-  input.value = "";
-  input.disabled = true;
-
-  chatStore.addUserMessage(message);
-  scrollChatToLatest(true);
+  chatRequestInFlight = true;
 
   try {
-    if (isCommandDiscoveryIntent(message)) {
+    if (
+      options.allowCommandDiscovery &&
+      isCommandDiscoveryIntent(message)
+    ) {
       await handleCommandDiscovery();
     } else {
-      const pendingAttachments = getPendingAttachments();
-
-      const uploadedAttachments =
-        pendingAttachments.length > 0
-          ? await uploadAttachments(pendingAttachments)
-          : [];
-
+      const pendingAttachments = options.includePendingAttachments
+        ? getPendingAttachments()
+        : [];
+      const uploadedAttachments = pendingAttachments.length > 0
+        ? await uploadAttachments(pendingAttachments)
+        : [];
       const response = await chatService.sendMessage(
         message,
-        uploadedAttachments.map(
-          attachment => attachment.id,
-        ),
+        uploadedAttachments.map(attachment => attachment.id),
       );
 
       if (!response.ok || !response.data) {
@@ -417,8 +470,13 @@ document.addEventListener("submit", async (event) => {
       }
 
       chatStore.applyResponse(response.data);
-      clearPendingAttachments();
+
+      if (options.includePendingAttachments) {
+        clearPendingAttachments();
+      }
     }
+
+    return true;
   } catch (error) {
     const detail =
       error instanceof Error
@@ -427,15 +485,110 @@ document.addEventListener("submit", async (event) => {
 
     chatStore.applyError(detail);
     showToast("Live IdeasForgeAI request failed. Please try again.");
+    return false;
   } finally {
-    input.disabled = false;
-    input.focus();
+    chatRequestInFlight = false;
+
+    const activeInput =
+      document.querySelector<HTMLTextAreaElement>("#chat-input");
+
+    if (activeInput) {
+      activeInput.disabled = false;
+      activeInput.focus();
+    }
   }
+}
+
+function focusMessageEditor(messageId: string): void {
+  window.requestAnimationFrame(() => {
+    const editForm = Array.from(
+      document.querySelectorAll<HTMLFormElement>(
+        "[data-message-edit-form='true']",
+      ),
+    ).find(candidate => candidate.dataset.messageId === messageId);
+    const editor = editForm?.querySelector<HTMLTextAreaElement>(
+      ".chat-turn__edit-input",
+    );
+
+    if (!editor) return;
+
+    editor.focus();
+    editor.setSelectionRange(editor.value.length, editor.value.length);
+  });
+}
+
+document.addEventListener("submit", async (event) => {
+  const form = event.target;
+  if (!(form instanceof HTMLFormElement)) return;
+
+  if (form.dataset.messageEditForm === "true") {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
+    const messageId = form.dataset.messageId;
+    const editor = form.querySelector<HTMLTextAreaElement>(
+      ".chat-turn__edit-input",
+    );
+    const message = editor?.value.trim();
+
+    if (!messageId || !editor || !message) {
+      showToast("Edited messages cannot be empty.");
+      return;
+    }
+
+    if (
+      chatRequestInFlight ||
+      chatStore.getState().status === "sending"
+    ) {
+      return;
+    }
+
+    const updatedMessage = chatStore.submitUserMessageEdit(
+      messageId,
+      message,
+    );
+
+    if (!updatedMessage) {
+      showToast("This message is no longer available to edit.");
+      return;
+    }
+
+    scrollChatToLatest(true);
+    await completeChatRequest(updatedMessage.content);
+    return;
+  }
+
+  if (form.id !== "chat-composer") return;
+
+  event.preventDefault();
+  event.stopImmediatePropagation();
+
+  const input = document.querySelector<HTMLTextAreaElement>("#chat-input");
+  const message = input?.value.trim();
+
+  if (!input || !message) return;
+  if (
+    chatRequestInFlight ||
+    chatStore.getState().status === "sending"
+  ) {
+    return;
+  }
+
+  input.value = "";
+  input.disabled = true;
+
+  chatStore.addUserMessage(message);
+  scrollChatToLatest(true);
+
+  await completeChatRequest(message, {
+    includePendingAttachments: true,
+    allowCommandDiscovery: true,
+  });
 });
 
 document.addEventListener("click", async (event) => {
   const target = (event.target as HTMLElement).closest<HTMLElement>(
-    "[data-route], [data-action], [data-right-tab], [data-toast], #check-architecture-health, #chat-attach, #chat-voice",
+    "[data-route], [data-action], [data-message-action], [data-right-tab], [data-toast], #check-architecture-health, #chat-attach, #chat-voice",
   );
 
   if (!target) return;
@@ -449,10 +602,138 @@ document.addEventListener("click", async (event) => {
       ?.click();
     return;
   }
-  if (target.dataset.copyMessage) {
-    const content = decodeURIComponent(target.dataset.copyMessage);
-    await navigator.clipboard.writeText(content);
-    showToast("Response copied.");
+  if (target.dataset.messageAction === "edit") {
+    const messageId = target.dataset.messageId;
+
+    if (
+      !messageId ||
+      chatRequestInFlight ||
+      chatStore.getState().status === "sending"
+    ) {
+      return;
+    }
+
+    if (!chatStore.beginUserMessageEdit(messageId)) {
+      showToast("This user message is no longer available to edit.");
+      return;
+    }
+
+    focusMessageEditor(messageId);
+    return;
+  }
+  if (target.dataset.messageAction === "cancel-edit") {
+    const messageId = target.dataset.messageId;
+
+    if (
+      !messageId ||
+      chatStore.getState().editingMessageId !== messageId
+    ) {
+      return;
+    }
+
+    chatStore.cancelUserMessageEdit();
+    return;
+  }
+  if (
+    target.dataset.messageAction === "regenerate" ||
+    target.dataset.messageAction === "retry"
+  ) {
+    const messageId = target.dataset.messageId;
+
+    if (
+      !messageId ||
+      chatRequestInFlight ||
+      chatStore.getState().status === "sending"
+    ) {
+      return;
+    }
+
+    const userMessage = target.dataset.messageAction === "retry"
+      ? chatStore.prepareFailedAssistantRetry(messageId)
+      : chatStore.prepareAssistantRegeneration(messageId);
+
+    if (!userMessage) {
+      showToast(
+        target.dataset.messageAction === "retry"
+          ? "This failed response is no longer available to retry."
+          : "This response is no longer available to regenerate.",
+      );
+      return;
+    }
+
+    scrollChatToLatest(true);
+    await completeChatRequest(userMessage.content);
+    return;
+  }
+  if (target.dataset.messageAction === "copy-code") {
+    const messageId = target.dataset.messageId;
+    const codeIndex = target.dataset.codeIndex;
+    const message = messageId
+      ? chatStore
+          .getState()
+          .messages.find(candidate => candidate.id === messageId)
+      : undefined;
+    const messageElement = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        ".chat-native-screen .chat-turn[data-message-id]",
+      ),
+    ).find(candidate => candidate.dataset.messageId === messageId);
+    const codeBlock = messageElement
+      ? Array.from(
+          messageElement.querySelectorAll<HTMLElement>(
+            ".chat-code-block[data-code-index]",
+          ),
+        ).find(candidate => candidate.dataset.codeIndex === codeIndex)
+      : undefined;
+    const code = codeBlock?.querySelector<HTMLElement>("pre > code");
+
+    if (!message || !code || !/^\d+$/.test(codeIndex ?? "")) {
+      showToast("Code is no longer available to copy.");
+      return;
+    }
+
+    try {
+      await copyTextToClipboard(code.textContent ?? "");
+      target.textContent = "Copied";
+      target.setAttribute("aria-label", "Code copied");
+      showToast("Code copied.");
+
+      window.setTimeout(() => {
+        if (
+          target.isConnected &&
+          target.dataset.messageId === messageId &&
+          target.dataset.codeIndex === codeIndex
+        ) {
+          target.textContent = "Copy";
+          target.setAttribute("aria-label", "Copy code");
+        }
+      }, 1600);
+    } catch {
+      showToast("Clipboard access is unavailable.");
+    }
+
+    return;
+  }
+  if (target.dataset.messageAction === "copy") {
+    const messageId = target.dataset.messageId;
+    const message = messageId
+      ? chatStore
+          .getState()
+          .messages.find(candidate => candidate.id === messageId)
+      : undefined;
+
+    if (!message) {
+      showToast("Message is no longer available to copy.");
+      return;
+    }
+
+    try {
+      await copyTextToClipboard(message.content);
+      showToast("Message copied.");
+    } catch {
+      showToast("Clipboard access is unavailable.");
+    }
+
     return;
   }
 
@@ -537,6 +818,7 @@ document.addEventListener("keydown", (event) => {
 
   if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
     event.preventDefault();
+  event.stopImmediatePropagation();
     showToast("Global search opens in the next feature phase.");
   }
 });
@@ -562,10 +844,224 @@ window.setInterval(() => {
 }, 30000);
 
 void initializeWorkspaceIntelligence();
+// IF-NATIVE-HEADER-CONTROLLER-BEGIN
+function getNativeChatElement<T extends HTMLElement>(
+  selector: string,
+): T | null {
+  return document.querySelector<T>(selector);
+}
 
+function closeNativeChatMenus(): void {
+  const backdrop =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-menu-backdrop",
+    );
 
+  const sideMenu =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-side-menu",
+    );
 
+  const moreMenu =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-more-menu",
+    );
 
+  if (backdrop) {
+    backdrop.hidden = true;
+  }
 
+  if (sideMenu) {
+    sideMenu.hidden = true;
+    sideMenu.setAttribute("aria-hidden", "true");
+  }
 
+  if (moreMenu) {
+    moreMenu.hidden = true;
+    moreMenu.setAttribute("aria-hidden", "true");
+  }
 
+  document.documentElement.classList.remove(
+    "if-native-menu-open",
+  );
+}
+
+function openNativeSideMenu(): void {
+  const backdrop =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-menu-backdrop",
+    );
+
+  const sideMenu =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-side-menu",
+    );
+
+  if (!backdrop || !sideMenu) {
+    return;
+  }
+
+  const moreMenu =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-more-menu",
+    );
+
+  if (moreMenu) {
+    moreMenu.hidden = true;
+    moreMenu.setAttribute("aria-hidden", "true");
+  }
+
+  backdrop.hidden = false;
+  sideMenu.hidden = false;
+  sideMenu.setAttribute("aria-hidden", "false");
+
+  document.documentElement.classList.add(
+    "if-native-menu-open",
+  );
+}
+
+function openNativeMoreMenu(): void {
+  const backdrop =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-menu-backdrop",
+    );
+
+  const moreMenu =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-more-menu",
+    );
+
+  if (!backdrop || !moreMenu) {
+    return;
+  }
+
+  const sideMenu =
+    getNativeChatElement<HTMLElement>(
+      ".chat-native-side-menu",
+    );
+
+  if (sideMenu) {
+    sideMenu.hidden = true;
+    sideMenu.setAttribute("aria-hidden", "true");
+  }
+
+  backdrop.hidden = false;
+  moreMenu.hidden = false;
+  moreMenu.setAttribute("aria-hidden", "false");
+
+  document.documentElement.classList.add(
+    "if-native-menu-open",
+  );
+}
+
+function startNativeNewChat(): void {
+  chatStore.clear();
+  closeNativeChatMenus();
+  render();
+
+  window.requestAnimationFrame(() => {
+    getNativeChatElement<HTMLTextAreaElement>(
+      "#chat-input",
+    )?.focus();
+  });
+}
+
+document.addEventListener(
+  "click",
+  (event) => {
+    const target =
+      event.target instanceof Element
+        ? event.target
+        : null;
+
+    if (!target) {
+      return;
+    }
+
+    const action = target.closest<HTMLElement>(
+      [
+        '[data-native-menu-toggle="true"]',
+        '[data-native-new-chat="true"]',
+        '[data-native-more-toggle="true"]',
+        '[data-native-menu-close="true"]',
+        '[data-native-refresh-chat="true"]',
+        '[data-native-focus-composer="true"]',
+      ].join(","),
+    );
+
+    if (!action) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    event.stopImmediatePropagation();
+
+    if (
+      action.matches(
+        '[data-native-menu-toggle="true"]',
+      )
+    ) {
+      openNativeSideMenu();
+      return;
+    }
+
+    if (
+      action.matches(
+        '[data-native-new-chat="true"]',
+      )
+    ) {
+      startNativeNewChat();
+      return;
+    }
+
+    if (
+      action.matches(
+        '[data-native-more-toggle="true"]',
+      )
+    ) {
+      openNativeMoreMenu();
+      return;
+    }
+
+    if (
+      action.matches(
+        '[data-native-menu-close="true"]',
+      )
+    ) {
+      closeNativeChatMenus();
+      return;
+    }
+
+    if (
+      action.matches(
+        '[data-native-refresh-chat="true"]',
+      )
+    ) {
+      window.location.reload();
+      return;
+    }
+
+    if (
+      action.matches(
+        '[data-native-focus-composer="true"]',
+      )
+    ) {
+      closeNativeChatMenus();
+
+      window.requestAnimationFrame(() => {
+        getNativeChatElement<HTMLTextAreaElement>(
+          "#chat-input",
+        )?.focus();
+      });
+    }
+  },
+  true,
+);
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeNativeChatMenus();
+  }
+});
+// IF-NATIVE-HEADER-CONTROLLER-END

@@ -1,7 +1,9 @@
 import type { HomeChatResponse } from "../types/chat";
+import { transportFetch } from "./nativeHttpTransport";
+import { runtimeConfig } from "../config/runtime";
 
 const IDEASFORGE_CHAT_ENDPOINT =
-  "https://ideasforgeai-api.onrender.com/api/ideasforge/chat";
+  `${runtimeConfig.apiBaseUrl}/api/ideasforge/chat`;
 
 const FOUNDER_TOKEN_STORAGE_KEY = "if_founder_admin_token";
 
@@ -58,7 +60,9 @@ async function sendMessage(
   }
 
   try {
-    const response = await fetch(
+    alert(`CHAT REQUEST URL: ${IDEASFORGE_CHAT_ENDPOINT}`);
+
+    const response = await transportFetch(
       IDEASFORGE_CHAT_ENDPOINT,
       {
         method: "POST",
@@ -76,6 +80,8 @@ async function sendMessage(
         }),
       },
     );
+
+    alert(`CHAT RESPONSE STATUS: ${response.status}`);
 
     let payload: IdeasForgeChatBackendResponse;
 
@@ -126,6 +132,7 @@ async function sendMessage(
       "IdeasForgeAI chat request failed.",
       error,
     );
+
 
     return {
       ok: false,
