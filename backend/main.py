@@ -70,6 +70,7 @@ app.add_middleware(
         "http://localhost:8088",
         "http://192.168.1.7:8088",
         "http://127.0.0.1:5173",
+        "http://192.168.1.7:5173",
     "http://tauri.localhost",
     "https://tauri.localhost",
     "tauri://localhost",
@@ -2206,14 +2207,14 @@ def _build_deployment_approval_preview(request: DeploymentApprovalPreviewRequest
             "message": "Real deployment requires backend authentication, secure server-side tokens, connected project permission, and Founder/Admin approval.",
         },
         "audit_preview": [
-            "Deployment flow preview opened Ã¢â‚¬â€ allowed",
-            "Deployment approval requested Ã¢â‚¬â€ recorded",
-            "Render API call Ã¢â‚¬â€ blocked",
-            "GitHub deploy action Ã¢â‚¬â€ blocked",
-            "Production promotion Ã¢â‚¬â€ blocked",
-            "Rollback Ã¢â‚¬â€ blocked",
-            "DNS change Ã¢â‚¬â€ blocked",
-            "Secrets access Ã¢â‚¬â€ blocked",
+            "Deployment flow preview opened ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â allowed",
+            "Deployment approval requested ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â recorded",
+            "Render API call ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â blocked",
+            "GitHub deploy action ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â blocked",
+            "Production promotion ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â blocked",
+            "Rollback ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â blocked",
+            "DNS change ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â blocked",
+            "Secrets access ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â blocked",
         ],
         "safety": {
             "render_api_calls": False,
@@ -2985,7 +2986,7 @@ def _mask_ca24_line(line: str, role: str) -> str:
     if any(token in stripped.lower() for token in ["key", "token", "secret", "password", "credential"]):
         return "[protected-sensitive-line]"
     if len(line) > 96:
-        return line[:96] + " Ã¢â‚¬Â¦"
+        return line[:96] + " ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦"
     return line
 
 
@@ -4158,7 +4159,7 @@ def coding_agent_architecture_analyzer_health():
     }
 
 
-# FC-RI-1B — shared repository analysis contract
+# FC-RI-1B â€” shared repository analysis contract
 FORGECODE_REPOSITORY_CONTRACT_VERSION = "forgecode.repository.v1"
 
 
@@ -6331,7 +6332,7 @@ def _ideasforgeai_admin_status_context() -> str:
             title = re.search(r"<title[^>]*>(.*?)</title>", raw or "", re.I | re.S)
             if title:
                 title_text = clean(title.group(1))
-                title_text = title_text.replace("IdeasForgeAI Admin", "").replace("Â·", "").strip()
+                title_text = title_text.replace("IdeasForgeAI Admin", "").replace("Ã‚Â·", "").strip()
                 return title_text or fallback
 
             return fallback
@@ -6415,7 +6416,7 @@ def _ideasforgeai_admin_status_context() -> str:
                 parts.append(f"{accuracy.group(1)} accuracy")
 
             if parts:
-                metrics_text = "Agent metrics: " + " Â· ".join(parts)
+                metrics_text = "Agent metrics: " + " Ã‚Â· ".join(parts)
 
         lines = []
         lines.append("Admin status source: frontend/admin/*.html")
@@ -6937,7 +6938,7 @@ async def _ideasforgeai_chat_cors_middleware(request, call_next):
 
     response.headers["Access-Control-Allow-Origin"] = allow_origin
     response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-IF-Founder-Token"
     response.headers["Access-Control-Max-Age"] = "86400"
 
     return response
@@ -9381,9 +9382,9 @@ def _adm5c3b_norm(value: str) -> str:
         str(value or "")
         .strip()
         .replace("-", "-")
-        .replace("â€“", "-")
-        .replace("â€”", "-")
-        .replace("âˆ’", "-")
+        .replace("Ã¢â‚¬â€œ", "-")
+        .replace("Ã¢â‚¬â€", "-")
+        .replace("Ã¢Ë†â€™", "-")
         .replace("\u00a0", " ")
     )
 
@@ -10522,8 +10523,13 @@ try:
         CORSMiddleware,
         allow_origins=[
             "http://192.168.1.7:5179",
+            "http://192.168.1.7:5173",
             "http://127.0.0.1:5179",
             "http://localhost:5179",
+            "http://localhost:1420",
+            "http://127.0.0.1:1420",
+            "http://tauri.localhost",
+            "tauri://localhost",
             "https://ideasforgeai.com",
             "https://founder.ideasforgeai.com",
             "https://www.ideasforgeai.com",
@@ -10655,7 +10661,7 @@ def _adm5f_is_worker_sensitive_path(path_value: str) -> bool:
     protected_prefixes = (
         "/api/admin",
         "/api/worker",
-        "/api/founder",
+        "/api/founder-worker",
     )
     protected_keywords = (
         "worker",
@@ -10689,7 +10695,7 @@ def _adm5f_boundary_payload(host_value: str) -> Dict[str, Any]:
         "protected_paths": [
             "/api/admin/*",
             "/api/worker/*",
-            "/api/founder/*",
+            "/api/founder-worker/*",
             "job-queue",
             "safe-apply",
             "request-apply",
