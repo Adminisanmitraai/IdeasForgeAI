@@ -4487,3 +4487,60 @@
     justify-content: flex-start !important;
   }
 }
+/* CHAT-2A.7B.15A — ACTION RELIABILITY STATES */
+@media (max-width: 700px) {
+  .chat-mobile-message-action.is-active {
+    background: #ece9ff !important;
+    color: #6556f3 !important;
+  }
+
+  .chat-mobile-message-action.is-active::after {
+    position: absolute !important;
+    right: 4px !important;
+    bottom: 3px !important;
+
+    width: 5px !important;
+    height: 5px !important;
+
+    border-radius: 50% !important;
+    background: currentColor !important;
+
+    content: "" !important;
+  }
+
+  .chat-mobile-message-action.is-selected {
+    background: #ece9ff !important;
+    color: #6556f3 !important;
+  }
+
+  .chat-mobile-action-menu {
+    transform-origin:
+      right bottom !important;
+    animation:
+      chat-mobile-action-menu-open
+      120ms
+      ease-out !important;
+  }
+
+  @keyframes chat-mobile-action-menu-open {
+    from {
+      opacity: 0;
+      transform:
+        translateY(4px)
+        scale(0.97);
+    }
+
+    to {
+      opacity: 1;
+      transform:
+        translateY(0)
+        scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chat-mobile-action-menu {
+      animation: none !important;
+    }
+  }
+}

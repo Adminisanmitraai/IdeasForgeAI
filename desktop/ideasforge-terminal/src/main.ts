@@ -410,6 +410,111 @@ function mobileMessageActionButton(
   `;
 }
 
+const MOBILE_CHAT_FEEDBACK_STORAGE_KEY =
+  "ideasforge-terminal.chat-feedback.v1";
+
+let activeSpeechMessageId: string | undefined;
+
+function loadMobileChatFeedback(): Record<
+  string,
+  "like" | "dislike"
+> {
+  try {
+    const raw = localStorage.getItem(
+      MOBILE_CHAT_FEEDBACK_STORAGE_KEY,
+    );
+
+    if (!raw) {
+      return {};
+    }
+
+    const parsed = JSON.parse(raw);
+
+    if (
+      !parsed ||
+      typeof parsed !== "object" ||
+      Array.isArray(parsed)
+    ) {
+      return {};
+    }
+
+    return parsed as Record<
+      string,
+      "like" | "dislike"
+    >;
+  } catch {
+    return {};
+  }
+}
+
+function persistMobileChatFeedback(
+  messageId: string,
+  selection: "like" | "dislike" | undefined,
+): void {
+  const feedback =
+    loadMobileChatFeedback();
+
+  if (selection) {
+    feedback[messageId] = selection;
+  } else {
+    delete feedback[messageId];
+  }
+
+  localStorage.setItem(
+    MOBILE_CHAT_FEEDBACK_STORAGE_KEY,
+    JSON.stringify(feedback),
+  );
+}
+
+function closeMobileMessageActionMenus(
+  except?: HTMLElement,
+): void {
+  document
+    .querySelectorAll<HTMLElement>(
+      ".chat-mobile-action-menu:not([hidden])",
+    )
+    .forEach((menu) => {
+      if (menu !== except) {
+        menu.hidden = true;
+      }
+    });
+}
+
+function syncMobileMessageActionState(
+  turn: HTMLElement,
+  messageId: string,
+): void {
+  const feedback =
+    loadMobileChatFeedback()[messageId];
+
+  turn
+    .querySelectorAll<HTMLElement>(
+      [
+        "[data-mobile-message-action='like']",
+        "[data-mobile-message-action='dislike']",
+      ].join(","),
+    )
+    .forEach((button) => {
+      button.classList.toggle(
+        "is-selected",
+        button.dataset.mobileMessageAction ===
+          feedback,
+      );
+    });
+
+  const audioButton =
+    turn.querySelector<HTMLElement>(
+      "[data-mobile-message-action='audio']",
+    );
+
+  audioButton?.classList.toggle(
+    "is-active",
+    activeSpeechMessageId === messageId &&
+      "speechSynthesis" in window &&
+      window.speechSynthesis.speaking,
+  );
+}
+
 function enhanceMobileMessageActions(): void {
   if (!window.matchMedia("(max-width: 700px)").matches) {
     return;
@@ -548,6 +653,11 @@ function enhanceMobileMessageActions(): void {
     );
 
     turn.dataset.mobileActionsEnhanced = "true";
+
+    syncMobileMessageActionState(
+      turn,
+      messageId,
+    );
   });
 }
 
@@ -1029,20 +1139,19 @@ document.addEventListener("click", async (event) => {
           `[data-message-action-menu="${message.id}"]`,
         );
 
-      document
-        .querySelectorAll<HTMLElement>(
-          ".chat-mobile-action-menu:not([hidden])",
-        )
-        .forEach((menu) => {
-          if (menu !== selectedMenu) {
-            menu.hidden = true;
-          }
-        });
-
-      if (selectedMenu) {
-        selectedMenu.hidden =
-          !selectedMenu.hidden;
+      if (!selectedMenu) {
+        return;
       }
+
+      const shouldOpen =
+        selectedMenu.hidden;
+
+      closeMobileMessageActionMenus(
+        selectedMenu,
+      );
+
+      selectedMenu.hidden =
+        !shouldOpen;
 
       return;
     }
@@ -1113,15 +1222,79 @@ document.addEventListener("click", async (event) => {
         return;
       }
 
+      const clickedButton = target;
+
+      if (
+        activeSpeechMessageId === message.id &&
+        window.speechSynthesis.speaking
+      ) {
+        window.speechSynthesis.cancel();
+        activeSpeechMessageId = undefined;
+
+        document
+          .querySelectorAll<HTMLElement>(
+            "[data-mobile-message-action='audio']",
+          )
+          .forEach((button) => {
+            button.classList.remove(
+              "is-active",
+            );
+          });
+
+        showToast("Read aloud stopped.");
+        return;
+      }
+
       window.speechSynthesis.cancel();
+
+      document
+        .querySelectorAll<HTMLElement>(
+          "[data-mobile-message-action='audio']",
+        )
+        .forEach((button) => {
+          button.classList.remove(
+            "is-active",
+          );
+        });
 
       const utterance =
         new SpeechSynthesisUtterance(
           message.content,
         );
 
+      activeSpeechMessageId =
+        message.id;
+
+      clickedButton.classList.add(
+        "is-active",
+      );
+
       utterance.rate = 1;
       utterance.pitch = 1;
+
+      const clearSpeechState = (): void => {
+        if (
+          activeSpeechMessageId ===
+          message.id
+        ) {
+          activeSpeechMessageId =
+            undefined;
+        }
+
+        clickedButton.classList.remove(
+          "is-active",
+        );
+      };
+
+      utterance.addEventListener(
+        "end",
+        clearSpeechState,
+      );
+
+      utterance.addEventListener(
+        "error",
+        clearSpeechState,
+      );
 
       window.speechSynthesis.speak(
         utterance,
@@ -1136,6 +1309,19 @@ document.addEventListener("click", async (event) => {
         action === "dislike") &&
       message.role === "assistant"
     ) {
+      const selectedAction =
+        action as "like" | "dislike";
+
+      const wasSelected =
+        target.classList.contains(
+          "is-selected",
+        );
+
+      const nextSelection =
+        wasSelected
+          ? undefined
+          : selectedAction;
+
       const row = target.closest(
         ".chat-turn__actions",
       );
@@ -1147,14 +1333,23 @@ document.addEventListener("click", async (event) => {
         .forEach((button) => {
           button.classList.toggle(
             "is-selected",
-            button === target,
+            button.dataset
+              .mobileMessageAction ===
+              nextSelection,
           );
         });
 
+      persistMobileChatFeedback(
+        message.id,
+        nextSelection,
+      );
+
       showToast(
-        action === "like"
+        nextSelection === "like"
           ? "Response marked helpful."
-          : "Feedback recorded.",
+          : nextSelection === "dislike"
+            ? "Feedback recorded."
+            : "Feedback removed.",
       );
 
       return;
@@ -1647,6 +1842,28 @@ function startNativeNewChat(): void {
 }
 
 document.addEventListener(
+  "pointerdown",
+  (event) => {
+    const target = event.target;
+
+    if (!(target instanceof Element)) {
+      return;
+    }
+
+    if (
+      target.closest(
+        ".chat-mobile-action-overflow",
+      )
+    ) {
+      return;
+    }
+
+    closeMobileMessageActionMenus();
+  },
+  true,
+);
+
+document.addEventListener(
   "click",
   (event) => {
     const target =
@@ -1741,7 +1958,26 @@ document.addEventListener(
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {
+    closeMobileMessageActionMenus();
     closeNativeChatMenus();
+
+    if (
+      "speechSynthesis" in window &&
+      window.speechSynthesis.speaking
+    ) {
+      window.speechSynthesis.cancel();
+      activeSpeechMessageId = undefined;
+
+      document
+        .querySelectorAll<HTMLElement>(
+          "[data-mobile-message-action='audio']",
+        )
+        .forEach((button) => {
+          button.classList.remove(
+            "is-active",
+          );
+        });
+    }
   }
 });
 // IF-NATIVE-HEADER-CONTROLLER-END
