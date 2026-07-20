@@ -39,6 +39,8 @@ import "./mobile/iosKeyboardViewport";
 // Mobile takeover disabled: native composer is the single input source.
 import "./mobile/mobileChatHeaderActions";
 import "./mobile/mobileChatWrapMenuFix";
+import { renderFounderProgress } from "./components/FounderProgress";
+import "./styles/founder-progress.css";
 // Legacy mobile light surface disabled.
 // mobileComposerUiPolish disabled: use the native #chat-input composer.
 import {
@@ -661,6 +663,54 @@ function enhanceMobileMessageActions(): void {
   });
 }
 
+function mountFounderProgress(
+  container: HTMLElement,
+): void {
+  container
+    .querySelectorAll(
+      "[data-founder-progress='true']",
+    )
+    .forEach((existing) => {
+      existing.remove();
+    });
+
+  const markup = renderFounderProgress();
+
+  if (!markup) {
+    return;
+  }
+
+  const headerSelectors = [
+    ".chat-native-header",
+    ".app-header",
+    ".application-header",
+    ".workspace-header",
+    "header",
+  ];
+
+  const header = headerSelectors
+    .map((selector) =>
+      container.querySelector<HTMLElement>(
+        selector,
+      ),
+    )
+    .find(
+      (
+        candidate,
+      ): candidate is HTMLElement =>
+        Boolean(candidate),
+    );
+
+  if (!header) {
+    return;
+  }
+
+  header.insertAdjacentHTML(
+    "afterend",
+    markup,
+  );
+}
+
 function render(): void {
   const route = resolveRoute(currentPath());
   const ui = uiStore.getState();
@@ -684,6 +734,8 @@ function render(): void {
     app.dataset.shellMode = "mobile-chat";
     app.innerHTML = screenMarkup;
 
+    mountFounderProgress(app);
+
     window.requestAnimationFrame(() => {
       enhanceMobileMessageActions();
     });
@@ -698,6 +750,8 @@ function render(): void {
     route.path,
     renderShell(route, screenMarkup),
   );
+
+  mountFounderProgress(app);
 }
 
 const mobileChatShellQuery =
