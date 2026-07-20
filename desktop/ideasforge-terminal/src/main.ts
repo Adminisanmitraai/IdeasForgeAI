@@ -302,6 +302,255 @@ function scrollChatToLatest(force = false): void {
     window.requestAnimationFrame(performScroll);
   });
 }
+function mobileMessageActionIcon(
+  action:
+    | "copy"
+    | "edit"
+    | "regenerate"
+    | "audio"
+    | "like"
+    | "dislike"
+    | "download"
+    | "search-web"
+    | "branch"
+    | "more",
+): string {
+  const icons: Record<string, string> = {
+    copy: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <rect x="8" y="8" width="11" height="11" rx="2"></rect>
+        <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path>
+      </svg>
+    `,
+    edit: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"></path>
+        <path d="m13.5 6.5 4 4"></path>
+      </svg>
+    `,
+    regenerate: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M20 11a8 8 0 1 0-2.3 5.7"></path>
+        <path d="M20 5v6h-6"></path>
+      </svg>
+    `,
+    audio: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M5 9v6h4l5 4V5L9 9H5Z"></path>
+        <path d="M17 9a4 4 0 0 1 0 6"></path>
+        <path d="M19.5 6.5a8 8 0 0 1 0 11"></path>
+      </svg>
+    `,
+    like: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 10v10H3V10h4Z"></path>
+        <path d="M7 18h10a2 2 0 0 0 2-1.6l1-5A2 2 0 0 0 18 9h-4l1-4-1-2-7 7v8Z"></path>
+      </svg>
+    `,
+    dislike: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 14V4H3v10h4Z"></path>
+        <path d="M7 6h10a2 2 0 0 1 2 1.6l1 5A2 2 0 0 1 18 15h-4l1 4-1 2-7-7V6Z"></path>
+      </svg>
+    `,
+    download: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 4v11"></path>
+        <path d="m8 11 4 4 4-4"></path>
+        <path d="M5 20h14"></path>
+      </svg>
+    `,
+    "search-web": `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="11" cy="11" r="6.5"></circle>
+        <path d="m16 16 4 4"></path>
+        <path d="M8.5 11h5M11 8.5v5"></path>
+      </svg>
+    `,
+    branch: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="6" cy="5" r="2"></circle>
+        <circle cx="18" cy="7" r="2"></circle>
+        <circle cx="6" cy="19" r="2"></circle>
+        <path d="M6 7v10"></path>
+        <path d="M8 11h4a6 6 0 0 0 6-2"></path>
+      </svg>
+    `,
+    more: `
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="5" cy="12" r="1.3"></circle>
+        <circle cx="12" cy="12" r="1.3"></circle>
+        <circle cx="19" cy="12" r="1.3"></circle>
+      </svg>
+    `,
+  };
+
+  return icons[action];
+}
+
+function mobileMessageActionButton(
+  action: string,
+  label: string,
+  messageId: string,
+): string {
+  return `
+    <button
+      type="button"
+      class="chat-mobile-message-action"
+      data-mobile-message-action="${action}"
+      data-message-id="${messageId}"
+      aria-label="${label}"
+      title="${label}"
+    >
+      ${mobileMessageActionIcon(
+        action as Parameters<typeof mobileMessageActionIcon>[0],
+      )}
+      <span>${label}</span>
+    </button>
+  `;
+}
+
+function enhanceMobileMessageActions(): void {
+  if (!window.matchMedia("(max-width: 700px)").matches) {
+    return;
+  }
+
+  const turns =
+    document.querySelectorAll<HTMLElement>(
+      ".chat-native-screen .chat-turn[data-message-id]",
+    );
+
+  turns.forEach((turn) => {
+    if (
+      turn.dataset.mobileActionsEnhanced === "true"
+    ) {
+      return;
+    }
+
+    const messageId = turn.dataset.messageId;
+
+    if (!messageId) {
+      return;
+    }
+
+    const message = chatStore
+      .getState()
+      .messages
+      .find((candidate) => candidate.id === messageId);
+
+    if (!message) {
+      return;
+    }
+
+    const existingActions =
+      turn.querySelector<HTMLElement>(
+        ".chat-turn__actions",
+      );
+
+    if (!existingActions) {
+      return;
+    }
+
+    const userActions =
+      mobileMessageActionButton(
+        "copy",
+        "Copy message",
+        messageId,
+      ) +
+      mobileMessageActionButton(
+        "edit",
+        "Edit message",
+        messageId,
+      );
+
+    const assistantActions = `
+      <div class="chat-mobile-primary-actions">
+        ${mobileMessageActionButton(
+          "copy",
+          "Copy response",
+          messageId,
+        )}
+
+        ${mobileMessageActionButton(
+          "audio",
+          "Read aloud",
+          messageId,
+        )}
+
+        ${mobileMessageActionButton(
+          "like",
+          "Good response",
+          messageId,
+        )}
+
+        ${mobileMessageActionButton(
+          "dislike",
+          "Bad response",
+          messageId,
+        )}
+
+        ${mobileMessageActionButton(
+          "regenerate",
+          "Regenerate response",
+          messageId,
+        )}
+
+        <div class="chat-mobile-action-overflow">
+          ${mobileMessageActionButton(
+            "more",
+            "More actions",
+            messageId,
+          )}
+
+          <div
+            class="chat-mobile-action-menu"
+            data-message-action-menu="${messageId}"
+            hidden
+          >
+            <button
+              type="button"
+              data-mobile-message-action="download"
+              data-message-id="${messageId}"
+            >
+              ${mobileMessageActionIcon("download")}
+              <span>Download</span>
+            </button>
+
+            <button
+              type="button"
+              data-mobile-message-action="search-web"
+              data-message-id="${messageId}"
+            >
+              ${mobileMessageActionIcon("search-web")}
+              <span>Search on web</span>
+            </button>
+
+            <button
+              type="button"
+              data-mobile-message-action="branch"
+              data-message-id="${messageId}"
+            >
+              ${mobileMessageActionIcon("branch")}
+              <span>Start new branch</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    existingActions.innerHTML =
+      message.role === "user"
+        ? userActions
+        : assistantActions;
+
+    existingActions.classList.add(
+      "chat-turn__actions--mobile-icons",
+    );
+
+    turn.dataset.mobileActionsEnhanced = "true";
+  });
+}
+
 function render(): void {
   const route = resolveRoute(currentPath());
   const ui = uiStore.getState();
@@ -311,12 +560,45 @@ function render(): void {
     ui.mobileDrawerOpen || ui.mobileContextOpen,
   );
 
+  const screenMarkup = renderScreen(route);
+  const dedicatedMobileChat =
+    route.id === "chat" &&
+    window.matchMedia("(max-width: 700px)").matches;
+
+  document.body.classList.toggle(
+    "mobile-chat-dedicated-shell",
+    dedicatedMobileChat,
+  );
+
+  if (dedicatedMobileChat) {
+    app.dataset.shellMode = "mobile-chat";
+    app.innerHTML = screenMarkup;
+
+    window.requestAnimationFrame(() => {
+      enhanceMobileMessageActions();
+    });
+
+    return;
+  }
+
+  delete app.dataset.shellMode;
+
   updatePersistentWorkspaceShell(
     app,
     route.path,
-    renderShell(route, renderScreen(route)),
+    renderShell(route, screenMarkup),
   );
 }
+
+const mobileChatShellQuery =
+  window.matchMedia("(max-width: 700px)");
+
+mobileChatShellQuery.addEventListener(
+  "change",
+  () => {
+    render();
+  },
+);
 
 window.addEventListener("hashchange", () => {
   uiStore.closeTransientPanels();
@@ -333,6 +615,70 @@ chatStore.subscribe(() => {
 subscribeTerminalStore(render);
 subscribeFounderCatalogue(render);
 
+
+document.addEventListener("input", (event) => {
+  const target = event.target;
+
+  if (
+    !(target instanceof HTMLInputElement) ||
+    target.id !== "chat-native-menu-search"
+  ) {
+    return;
+  }
+
+  const query = target.value
+    .trim()
+    .toLocaleLowerCase();
+
+  const searchableItems =
+    document.querySelectorAll<HTMLElement>(
+      [
+        ".chat-native-project-item",
+        ".chat-native-recent-item",
+      ].join(","),
+    );
+
+  let visibleCount = 0;
+
+  searchableItems.forEach((item) => {
+    const searchableText =
+      (item.textContent ?? "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toLocaleLowerCase();
+
+    const matches =
+      !query ||
+      searchableText.includes(query);
+
+    item.hidden = !matches;
+
+    if (matches) {
+      visibleCount += 1;
+    }
+  });
+
+  const clearButton =
+    document.querySelector<HTMLButtonElement>(
+      "[data-native-clear-search='true']",
+    );
+
+  if (clearButton) {
+    clearButton.hidden = !query;
+  }
+
+  const menuScroll =
+    document.querySelector<HTMLElement>(
+      ".chat-native-side-menu__scroll",
+    );
+
+  if (menuScroll) {
+    menuScroll.dataset.searchEmpty =
+      query && visibleCount === 0
+        ? "true"
+        : "false";
+  }
+});
 
 document.addEventListener("change", (event) => {
   const target = event.target;
@@ -634,10 +980,276 @@ document.addEventListener("submit", async (event) => {
 
 document.addEventListener("click", async (event) => {
   const target = (event.target as HTMLElement).closest<HTMLElement>(
-    "[data-route], [data-action], [data-message-action], [data-right-tab], [data-toast], #check-architecture-health, #chat-attach, #chat-voice, #chat-stop",
+    "[data-route], [data-action], [data-message-action], [data-mobile-message-action], [data-right-tab], [data-toast], [data-native-clear-search], #check-architecture-health, #chat-attach, #chat-voice, #chat-stop",
   );
 
   if (!target) return;
+
+  if (target.dataset.mobileMessageAction) {
+    const action = target.dataset.mobileMessageAction;
+    const messageId = target.dataset.messageId;
+
+    if (
+      action !== "more" &&
+      target.closest(".chat-mobile-action-menu")
+    ) {
+      const menu =
+        target.closest<HTMLElement>(
+          ".chat-mobile-action-menu",
+        );
+
+      if (menu) {
+        menu.hidden = true;
+      }
+    }
+
+    const message = messageId
+      ? chatStore
+          .getState()
+          .messages
+          .find(
+            (candidate) =>
+              candidate.id === messageId,
+          )
+      : undefined;
+
+    if (!message) {
+      showToast(
+        "This message is no longer available.",
+      );
+      return;
+    }
+
+    if (
+      action === "more" &&
+      message.role === "assistant"
+    ) {
+      const selectedMenu =
+        document.querySelector<HTMLElement>(
+          `[data-message-action-menu="${message.id}"]`,
+        );
+
+      document
+        .querySelectorAll<HTMLElement>(
+          ".chat-mobile-action-menu:not([hidden])",
+        )
+        .forEach((menu) => {
+          if (menu !== selectedMenu) {
+            menu.hidden = true;
+          }
+        });
+
+      if (selectedMenu) {
+        selectedMenu.hidden =
+          !selectedMenu.hidden;
+      }
+
+      return;
+    }
+
+    if (action === "copy") {
+      try {
+        await copyTextToClipboard(
+          message.content,
+        );
+        showToast("Message copied.");
+      } catch {
+        showToast(
+          "Clipboard access is unavailable.",
+        );
+      }
+
+      return;
+    }
+
+    if (
+      action === "edit" &&
+      message.role === "user"
+    ) {
+      if (
+        chatStore.beginUserMessageEdit(
+          message.id,
+        )
+      ) {
+        focusMessageEditor(message.id);
+      }
+
+      return;
+    }
+
+    if (
+      action === "regenerate" &&
+      message.role === "assistant"
+    ) {
+      const userMessage =
+        chatStore.prepareAssistantRegeneration(
+          message.id,
+        );
+
+      if (!userMessage) {
+        showToast(
+          "This response cannot be regenerated.",
+        );
+        return;
+      }
+
+      scrollChatToLatest(true);
+      await completeChatRequest(
+        userMessage.content,
+      );
+      return;
+    }
+
+    if (
+      action === "audio" &&
+      message.role === "assistant"
+    ) {
+      if (
+        !("speechSynthesis" in window)
+      ) {
+        showToast(
+          "Read aloud is unavailable in this browser.",
+        );
+        return;
+      }
+
+      window.speechSynthesis.cancel();
+
+      const utterance =
+        new SpeechSynthesisUtterance(
+          message.content,
+        );
+
+      utterance.rate = 1;
+      utterance.pitch = 1;
+
+      window.speechSynthesis.speak(
+        utterance,
+      );
+
+      showToast("Reading response aloud.");
+      return;
+    }
+
+    if (
+      (action === "like" ||
+        action === "dislike") &&
+      message.role === "assistant"
+    ) {
+      const row = target.closest(
+        ".chat-turn__actions",
+      );
+
+      row
+        ?.querySelectorAll<HTMLElement>(
+          "[data-mobile-message-action='like'], [data-mobile-message-action='dislike']",
+        )
+        .forEach((button) => {
+          button.classList.toggle(
+            "is-selected",
+            button === target,
+          );
+        });
+
+      showToast(
+        action === "like"
+          ? "Response marked helpful."
+          : "Feedback recorded.",
+      );
+
+      return;
+    }
+
+    if (
+      action === "download" &&
+      message.role === "assistant"
+    ) {
+      const blob = new Blob(
+        [message.content],
+        {
+          type: "text/plain;charset=utf-8",
+        },
+      );
+
+      const url =
+        URL.createObjectURL(blob);
+
+      const anchor =
+        document.createElement("a");
+
+      anchor.href = url;
+      anchor.download =
+        `ideasforgeai-response-${Date.now()}.txt`;
+
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+
+      URL.revokeObjectURL(url);
+
+      showToast("Response downloaded.");
+      return;
+    }
+
+    if (
+      action === "search-web" &&
+      message.role === "assistant"
+    ) {
+      const query =
+        message.content
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, 500);
+
+      window.open(
+        `https://www.google.com/search?q=${encodeURIComponent(query)}`,
+        "_blank",
+        "noopener,noreferrer",
+      );
+
+      return;
+    }
+
+    if (
+      action === "branch" &&
+      message.role === "assistant"
+    ) {
+      localStorage.setItem(
+        "ideasforge-terminal.branch-source",
+        JSON.stringify({
+          sourceMessageId: message.id,
+          sourceContent: message.content,
+          createdAt:
+            new Date().toISOString(),
+        }),
+      );
+
+      showToast(
+        "Branch point saved. Start a new chat to continue from it.",
+      );
+
+      return;
+    }
+  }
+
+  if (target.matches("[data-native-clear-search='true']")) {
+    const input =
+      document.querySelector<HTMLInputElement>(
+        "#chat-native-menu-search",
+      );
+
+    if (input) {
+      input.value = "";
+      input.dispatchEvent(
+        new Event("input", {
+          bubbles: true,
+        }),
+      );
+      input.focus();
+    }
+
+    return;
+  }
 
   if (target.id === "chat-stop") {
     activeChatAbortController?.abort();
@@ -790,6 +1402,7 @@ document.addEventListener("click", async (event) => {
   }
 
   if (target.dataset.route) {
+    closeNativeChatMenus();
     navigate(target.dataset.route);
     return;
   }
@@ -888,7 +1501,22 @@ if (hasExplicitStartupRoute) {
   enableChatFirstStartup();
 }
 
-window.addEventListener("pageshow", render);
+window.addEventListener("pageshow", () => {
+  render();
+
+  if (resolveRoute(currentPath()).id === "chat") {
+    window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+
+      const stage =
+        document.querySelector<HTMLElement>(".chat-stage");
+
+      if (stage) {
+        stage.scrollTop = 0;
+      }
+    });
+  }
+});
 void initializeFounderCatalogue();
 backendHealthService.check();
 window.setInterval(() => {
