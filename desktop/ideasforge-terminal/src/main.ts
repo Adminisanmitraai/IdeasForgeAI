@@ -2004,10 +2004,24 @@ async function refreshFounderProgressRuntimeSnapshot():
     setFounderProgressRuntimeSnapshot({
       overallProgress:
         result.progress.overall_progress,
+      previousMilestone:
+        result.progress.previous_milestone,
       currentMilestone:
         result.progress.current_milestone,
+      nextMilestone:
+        result.progress.next_milestone,
       showProgress:
         result.progress.show_progress,
+      backendStatus:
+        result.progress.backend_status,
+      frontendStatus:
+        result.progress.frontend_status,
+      runtimeStatus:
+        result.progress.runtime_status,
+      updatedAt:
+        result.progress.updated_at,
+      certified:
+        result.progress.certified,
     });
   } finally {
     founderProgressRefreshInFlight = false;
