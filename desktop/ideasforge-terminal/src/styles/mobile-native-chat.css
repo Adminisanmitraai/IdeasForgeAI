@@ -4544,3 +4544,128 @@
     }
   }
 }
+/* CHAT-2A.7C.2 — LIVE STREAMING EXPERIENCE */
+.chat-turn--streaming {
+  position: relative;
+}
+
+.chat-stream-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  min-height: 24px;
+
+  color: rgba(71, 85, 105, 0.78);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.chat-stream-thinking__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.chat-stream-thinking__dots i {
+  display: block;
+
+  width: 4px;
+  height: 4px;
+
+  border-radius: 50%;
+  background: currentColor;
+
+  animation:
+    chat-stream-dot
+    1.15s
+    ease-in-out
+    infinite;
+
+  opacity: 0.3;
+}
+
+.chat-stream-thinking__dots i:nth-child(2) {
+  animation-delay: 120ms;
+}
+
+.chat-stream-thinking__dots i:nth-child(3) {
+  animation-delay: 240ms;
+}
+
+.chat-stream-cursor {
+  display: inline-block;
+
+  width: 2px;
+  height: 1.05em;
+
+  margin-left: 3px;
+
+  border-radius: 999px;
+  background: #557fd1;
+
+  vertical-align: -0.12em;
+
+  animation:
+    chat-stream-cursor-blink
+    850ms
+    step-end
+    infinite;
+}
+
+@keyframes chat-stream-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+
+  30% {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes chat-stream-cursor-blink {
+  0%,
+  48% {
+    opacity: 1;
+  }
+
+  49%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .chat-stream-thinking {
+    min-height: 22px;
+
+    font-size: 12px;
+  }
+
+  .chat-stream-cursor {
+    width: 2px;
+    height: 1em;
+
+    margin-left: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chat-stream-thinking__dots i,
+  .chat-stream-cursor {
+    animation: none;
+  }
+
+  .chat-stream-thinking__dots i {
+    opacity: 0.55;
+  }
+
+  .chat-stream-cursor {
+    opacity: 1;
+  }
+}

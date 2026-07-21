@@ -712,6 +712,190 @@ function mountFounderProgress(
   );
 }
 
+let streamingScrollFrame: number | undefined;
+
+function findChatTurnByMessageId(
+  messageId: string,
+): HTMLElement | undefined {
+  return Array.from(
+    document.querySelectorAll<HTMLElement>(
+      ".chat-turn[data-message-id]",
+    ),
+  ).find(
+    (turn) =>
+      turn.dataset.messageId === messageId,
+  );
+}
+
+function clearStreamingPresentation(): void {
+  document
+    .querySelectorAll<HTMLElement>(
+      ".chat-turn[data-streaming='true']",
+    )
+    .forEach((turn) => {
+      delete turn.dataset.streaming;
+      delete turn.dataset.streamingEmpty;
+
+      turn.classList.remove(
+        "chat-turn--streaming",
+      );
+
+      turn.removeAttribute("aria-busy");
+
+      turn
+        .querySelectorAll(
+          [
+            ".chat-stream-thinking",
+            ".chat-stream-cursor",
+          ].join(","),
+        )
+        .forEach((element) => {
+          element.remove();
+        });
+    });
+}
+
+function syncStreamingPresentation(): void {
+  clearStreamingPresentation();
+
+  const chatState = chatStore.getState();
+  const messageId = chatState.activeRequestId;
+
+  if (
+    chatState.status !== "sending" ||
+    !messageId
+  ) {
+    return;
+  }
+
+  const message = chatState.messages.find(
+    (candidate) =>
+      candidate.id === messageId,
+  );
+
+  const turn =
+    findChatTurnByMessageId(messageId);
+
+  if (
+    !message ||
+    message.role !== "assistant" ||
+    !turn
+  ) {
+    return;
+  }
+
+  const contentHost =
+    turn.querySelector<HTMLElement>(
+      [
+        ".chat-turn__content",
+        ".chat-turn__body",
+        ".chat-turn__message",
+      ].join(","),
+    ) ?? turn;
+
+  const hasContent =
+    Boolean(message.content.trim());
+
+  turn.dataset.streaming = "true";
+  turn.dataset.streamingEmpty =
+    hasContent ? "false" : "true";
+
+  turn.classList.add(
+    "chat-turn--streaming",
+  );
+
+  turn.setAttribute(
+    "aria-busy",
+    "true",
+  );
+
+  if (!hasContent) {
+    const thinking =
+      document.createElement("div");
+
+    thinking.className =
+      "chat-stream-thinking";
+
+    thinking.setAttribute(
+      "role",
+      "status",
+    );
+
+    thinking.setAttribute(
+      "aria-live",
+      "polite",
+    );
+
+    thinking.innerHTML = `
+      <span>IdeasForgeAI is thinking</span>
+      <span
+        class="chat-stream-thinking__dots"
+        aria-hidden="true"
+      >
+        <i></i><i></i><i></i>
+      </span>
+    `;
+
+    contentHost.appendChild(thinking);
+    return;
+  }
+
+  const cursor =
+    document.createElement("span");
+
+  cursor.className =
+    "chat-stream-cursor";
+
+  cursor.setAttribute(
+    "aria-hidden",
+    "true",
+  );
+
+  contentHost.appendChild(cursor);
+}
+
+function isChatNearBottom(
+  threshold = 160,
+): boolean {
+  const stage =
+    document.querySelector<HTMLElement>(
+      ".chat-native-stage",
+    );
+
+  if (!stage) {
+    return true;
+  }
+
+  const remaining =
+    stage.scrollHeight -
+    stage.scrollTop -
+    stage.clientHeight;
+
+  return remaining <= threshold;
+}
+
+function scheduleStreamingAutoScroll(): void {
+  if (
+    streamingScrollFrame !== undefined
+  ) {
+    return;
+  }
+
+  const shouldFollow =
+    isChatNearBottom();
+
+  streamingScrollFrame =
+    window.requestAnimationFrame(() => {
+      streamingScrollFrame = undefined;
+
+      if (!shouldFollow) {
+        return;
+      }
+
+      scrollChatToLatest(false);
+    });
+}
+
 function render(): void {
   const route = resolveRoute(currentPath());
   const ui = uiStore.getState();
@@ -739,6 +923,7 @@ function render(): void {
 
     window.requestAnimationFrame(() => {
       enhanceMobileMessageActions();
+      syncStreamingPresentation();
     });
 
     return;
@@ -753,6 +938,10 @@ function render(): void {
   );
 
   mountFounderProgress(app);
+
+  window.requestAnimationFrame(() => {
+    syncStreamingPresentation();
+  });
 }
 
 const mobileChatShellQuery =
@@ -989,10 +1178,15 @@ async function completeChatRequest(
           attachmentIds,
           {
             onChunk(chunk) {
-              chatStore.appendAssistantStream(
-                assistantMessage.id,
-                chunk,
-              );
+              const appended =
+                chatStore.appendAssistantStream(
+                  assistantMessage.id,
+                  chunk,
+                );
+
+              if (appended) {
+                scheduleStreamingAutoScroll();
+              }
             },
           },
           activeChatAbortController.signal,
@@ -1043,6 +1237,18 @@ async function completeChatRequest(
 
     return false;
   } finally {
+    if (
+      streamingScrollFrame !== undefined
+    ) {
+      window.cancelAnimationFrame(
+        streamingScrollFrame,
+      );
+
+      streamingScrollFrame = undefined;
+    }
+
+    clearStreamingPresentation();
+
     chatRequestInFlight = false;
     activeChatAbortController = null;
     activeAssistantStreamId = null;
