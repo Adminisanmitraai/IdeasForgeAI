@@ -6,7 +6,7 @@ export interface FounderProgressConfig {
 
 export const founderProgressConfig: FounderProgressConfig = {
   overallProgress: 46,
-  currentMilestone: "FOS-4A.6 Runtime Foundation",
+  currentMilestone: "FOS-4A.6 â€” Final Certification & Freeze",
   showProgress: true,
 };
 
