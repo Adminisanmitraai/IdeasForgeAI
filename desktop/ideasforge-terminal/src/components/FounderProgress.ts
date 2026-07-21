@@ -1,8 +1,4 @@
-import {
-  founderProgressConfig,
-  normalizedFounderProgress,
-  shouldShowFounderProgress,
-} from "../config/founderProgress";
+import { getFounderProgressSnapshot } from "../progress/founderProgressProvider";
 
 function escapeFounderProgressText(value: string): string {
   return value
@@ -14,13 +10,15 @@ function escapeFounderProgressText(value: string): string {
 }
 
 export function renderFounderProgress(): string {
-  if (!shouldShowFounderProgress()) {
+  const snapshot = getFounderProgressSnapshot();
+
+  if (!snapshot.showProgress) {
     return "";
   }
 
-  const progress = normalizedFounderProgress();
+  const progress = snapshot.overallProgress;
   const milestone = escapeFounderProgressText(
-    founderProgressConfig.currentMilestone,
+    snapshot.currentMilestone,
   );
 
   return `

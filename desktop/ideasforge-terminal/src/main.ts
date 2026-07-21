@@ -40,6 +40,7 @@ import "./mobile/iosKeyboardViewport";
 import "./mobile/mobileChatHeaderActions";
 import "./mobile/mobileChatWrapMenuFix";
 import { renderFounderProgress } from "./components/FounderProgress";
+import { subscribeFounderProgress } from "./progress/founderProgressProvider";
 import "./styles/founder-progress.css";
 // Legacy mobile light surface disabled.
 // mobileComposerUiPolish disabled: use the native #chat-input composer.
@@ -778,6 +779,7 @@ chatStore.subscribe(() => {
 });
 subscribeTerminalStore(render);
 subscribeFounderCatalogue(render);
+subscribeFounderProgress(render);
 
 
 document.addEventListener("input", (event) => {
