@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from dataclasses import dataclass
 from typing import Callable
 
@@ -19,7 +21,9 @@ from .models import (
     FounderOSWorkspace,
     FounderOSWorkspaceCatalogueData,
     FounderOSWorkspaceDomain,
-)
+
+    FOUNDER_OS_PROGRESS_CONTRACT_VERSION,
+    FounderOSProgressData,)
 
 ContainerResolver = Callable[[], PlatformServiceContainer]
 StatusResolver = Callable[[], PlatformRegistryStatus]
@@ -129,6 +133,15 @@ _WORKSPACE_DEFINITIONS: tuple[_WorkspaceDefinition, ...] = (
     ),
 )
 
+CERTIFIED_PROGRESS_UPDATED_AT = datetime(
+    2026,
+    7,
+    21,
+    19,
+    31,
+    0,
+    tzinfo=timezone.utc,
+)
 
 class FounderOSReadService:
     """Read-only application service for the initial Founder OS API."""
@@ -209,6 +222,21 @@ class FounderOSReadService:
         )
 
 
+    def progress(self) -> FounderOSProgressData:
+        return FounderOSProgressData(
+            overall_progress=49,
+            current_milestone=(
+                "FOS-UI.3 - Live Runtime Progress Engine"
+            ),
+            show_progress=True,
+            updated_at=CERTIFIED_PROGRESS_UPDATED_AT,
+            source="certified_manifest",
+            contract_version=(
+                FOUNDER_OS_PROGRESS_CONTRACT_VERSION
+            ),
+        )
+
+
 def _contract_version(service: object) -> str:
     direct = getattr(service, "contract_version", "")
     if direct:
@@ -221,6 +249,8 @@ def _contract_version(service: object) -> str:
             return str(value)
 
     return service.__class__.__name__
+
+
 
 
 def _workspace_from_definition(

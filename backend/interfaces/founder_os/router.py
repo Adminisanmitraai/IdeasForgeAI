@@ -49,6 +49,17 @@ def create_founder_os_router(
     def founder_os_workspaces() -> FounderOSResponse:
         return FounderOSResponse(data=selected.workspaces().model_dump())
 
+    @router.get(
+        "/progress",
+        response_model=FounderOSResponse,
+    )
+    def founder_os_progress() -> FounderOSResponse:
+        return FounderOSResponse(
+            data=selected.progress().model_dump(
+                mode="json"
+            )
+        )
+
     return router
 
 

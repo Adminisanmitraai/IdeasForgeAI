@@ -40,7 +40,13 @@ import "./mobile/iosKeyboardViewport";
 import "./mobile/mobileChatHeaderActions";
 import "./mobile/mobileChatWrapMenuFix";
 import { renderFounderProgress } from "./components/FounderProgress";
-import { subscribeFounderProgress } from "./progress/founderProgressProvider";
+import {
+  setFounderProgressRuntimeSnapshot,
+  subscribeFounderProgress,
+} from "./progress/founderProgressProvider";
+import {
+  fetchFounderProgress,
+} from "./services/founderOsApi";
 import "./styles/founder-progress.css";
 // Legacy mobile light surface disabled.
 // mobileComposerUiPolish disabled: use the native #chat-input composer.
@@ -1974,6 +1980,47 @@ window.addEventListener("pageshow", () => {
     });
   }
 });
+const FOUNDER_PROGRESS_POLL_INTERVAL_MS =
+  30_000;
+
+let founderProgressRefreshInFlight = false;
+
+async function refreshFounderProgressRuntimeSnapshot():
+  Promise<void> {
+  if (founderProgressRefreshInFlight) {
+    return;
+  }
+
+  founderProgressRefreshInFlight = true;
+
+  try {
+    const result =
+      await fetchFounderProgress();
+
+    if (!result.ok) {
+      return;
+    }
+
+    setFounderProgressRuntimeSnapshot({
+      overallProgress:
+        result.progress.overall_progress,
+      currentMilestone:
+        result.progress.current_milestone,
+      showProgress:
+        result.progress.show_progress,
+    });
+  } finally {
+    founderProgressRefreshInFlight = false;
+  }
+}
+
+void refreshFounderProgressRuntimeSnapshot();
+
+window.setInterval(() => {
+  void refreshFounderProgressRuntimeSnapshot();
+}, FOUNDER_PROGRESS_POLL_INTERVAL_MS);
+
+
 void initializeFounderCatalogue();
 backendHealthService.check();
 window.setInterval(() => {
