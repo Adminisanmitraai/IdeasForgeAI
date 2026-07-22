@@ -974,7 +974,9 @@ chatStore.subscribe(() => {
 });
 subscribeTerminalStore(render);
 subscribeFounderCatalogue(render);
-subscribeFounderProgress(render);
+subscribeFounderProgress(() => {
+  mountFounderProgress(app);
+});
 
 
 document.addEventListener("input", (event) => {

@@ -224,13 +224,23 @@ class FounderOSReadService:
 
     def progress(self) -> FounderOSProgressData:
         return FounderOSProgressData(
-            overall_progress=49,
-            current_milestone=(
+            overall_progress=51,
+            previous_milestone=(
                 "FOS-UI.3 - Live Runtime Progress Engine"
             ),
+            current_milestone=(
+                "FOS-UI.4 - Live Milestone Intelligence"
+            ),
+            next_milestone=(
+                "FOS-UI.5 - Intelligent Progress Analytics"
+            ),
             show_progress=True,
+            backend_status="healthy",
+            frontend_status="healthy",
+            runtime_status="healthy",
             updated_at=CERTIFIED_PROGRESS_UPDATED_AT,
             source="certified_manifest",
+            certified=True,
             contract_version=(
                 FOUNDER_OS_PROGRESS_CONTRACT_VERSION
             ),

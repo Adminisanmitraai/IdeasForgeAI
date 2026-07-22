@@ -153,24 +153,42 @@ def test_progress_endpoint_returns_certified_manifest():
 
     assert set(data) == {
         "overall_progress",
+        "previous_milestone",
         "current_milestone",
+        "next_milestone",
         "show_progress",
+        "backend_status",
+        "frontend_status",
+        "runtime_status",
         "updated_at",
         "source",
+        "certified",
         "contract_version",
     }
 
-    assert data["overall_progress"] == 49
+    assert data["overall_progress"] == 51
     assert isinstance(data["overall_progress"], int)
     assert (
-        data["current_milestone"]
+        data["previous_milestone"]
         == "FOS-UI.3 - Live Runtime Progress Engine"
     )
+    assert (
+        data["current_milestone"]
+        == "FOS-UI.4 - Live Milestone Intelligence"
+    )
+    assert (
+        data["next_milestone"]
+        == "FOS-UI.5 - Intelligent Progress Analytics"
+    )
     assert data["show_progress"] is True
+    assert data["backend_status"] == "healthy"
+    assert data["frontend_status"] == "healthy"
+    assert data["runtime_status"] == "healthy"
     assert data["source"] == "certified_manifest"
+    assert data["certified"] is True
     assert (
         data["contract_version"]
-        == "founder-os-progress.v1"
+        == "founder-os-progress.v2"
     )
 
     datetime.fromisoformat(
@@ -212,21 +230,27 @@ def test_progress_service_is_read_only_and_deterministic():
     second = service.progress()
 
     assert first == second
-    assert first.overall_progress == 49
+    assert first.overall_progress == 51
     assert first.source == "certified_manifest"
 
 
 def test_progress_contract_rejects_unknown_fields():
     with pytest.raises(ValidationError):
         FounderOSProgressData(
-            overall_progress=47,
-            current_milestone="Milestone",
+            overall_progress=50,
+            previous_milestone="Previous",
+            current_milestone="Current",
+            next_milestone="Next",
             show_progress=True,
+            backend_status="healthy",
+            frontend_status="healthy",
+            runtime_status="healthy",
             updated_at=datetime.fromisoformat(
                 "2026-07-21T19:31:00+00:00"
             ),
             source="certified_manifest",
-            contract_version="founder-os-progress.v1",
+            certified=True,
+            contract_version="founder-os-progress.v2",
             unexpected=True,
         )
 
@@ -241,11 +265,70 @@ def test_progress_contract_rejects_out_of_range_values(
     with pytest.raises(ValidationError):
         FounderOSProgressData(
             overall_progress=value,
-            current_milestone="Milestone",
+            previous_milestone="Previous",
+            current_milestone="Current",
+            next_milestone="Next",
             show_progress=True,
+            backend_status="healthy",
+            frontend_status="healthy",
+            runtime_status="healthy",
             updated_at=datetime.fromisoformat(
                 "2026-07-21T19:31:00+00:00"
             ),
             source="certified_manifest",
-            contract_version="founder-os-progress.v1",
+            certified=True,
+            contract_version="founder-os-progress.v2",
+        )
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "previous_milestone",
+        "current_milestone",
+        "next_milestone",
+    ],
+)
+def test_progress_contract_rejects_empty_milestones(
+    field: str,
+):
+    payload = {
+        "overall_progress": 50,
+        "previous_milestone": "Previous",
+        "current_milestone": "Current",
+        "next_milestone": "Next",
+        "show_progress": True,
+        "backend_status": "healthy",
+        "frontend_status": "healthy",
+        "runtime_status": "healthy",
+        "updated_at": datetime.fromisoformat(
+            "2026-07-21T19:31:00+00:00"
+        ),
+        "source": "certified_manifest",
+        "certified": True,
+        "contract_version": "founder-os-progress.v2",
+    }
+
+    payload[field] = ""
+
+    with pytest.raises(ValidationError):
+        FounderOSProgressData(**payload)
+
+
+def test_progress_contract_rejects_invalid_component_status():
+    with pytest.raises(ValidationError):
+        FounderOSProgressData(
+            overall_progress=50,
+            previous_milestone="Previous",
+            current_milestone="Current",
+            next_milestone="Next",
+            show_progress=True,
+            backend_status="unknown",
+            frontend_status="healthy",
+            runtime_status="healthy",
+            updated_at=datetime.fromisoformat(
+                "2026-07-21T19:31:00+00:00"
+            ),
+            source="certified_manifest",
+            certified=True,
+            contract_version="founder-os-progress.v2",
         )
