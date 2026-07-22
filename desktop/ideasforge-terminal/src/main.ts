@@ -1794,6 +1794,104 @@ document.addEventListener("click", async (event) => {
     await completeChatRequest(userMessage.content);
     return;
   }
+  if (
+    target.dataset.messageAction ===
+    "toggle-code"
+  ) {
+    const messageId =
+      target.dataset.messageId;
+
+    const codeIndex =
+      target.dataset.codeIndex;
+
+    const messageElement =
+      Array.from(
+        document.querySelectorAll<HTMLElement>(
+          ".chat-native-screen .chat-turn[data-message-id]",
+        ),
+      ).find(
+        (candidate) =>
+          candidate.dataset.messageId ===
+          messageId,
+      );
+
+    const codeBlock =
+      messageElement
+        ? Array.from(
+            messageElement.querySelectorAll<HTMLElement>(
+              ".chat-code-block[data-code-index]",
+            ),
+          ).find(
+            (candidate) =>
+              candidate.dataset.codeIndex ===
+              codeIndex,
+          )
+        : undefined;
+
+    if (
+      !codeBlock ||
+      !codeBlock.classList.contains(
+        "chat-code-block--collapsible",
+      )
+    ) {
+      showToast(
+        "This code block is no longer available.",
+      );
+
+      return;
+    }
+
+    const isExpanded =
+      codeBlock.dataset.codeCollapsed !==
+      "true";
+
+    const nextExpanded =
+      !isExpanded;
+
+    codeBlock.dataset.codeCollapsed =
+      nextExpanded ? "false" : "true";
+
+    codeBlock.classList.toggle(
+      "is-expanded",
+      nextExpanded,
+    );
+
+    target.setAttribute(
+      "aria-expanded",
+      nextExpanded ? "true" : "false",
+    );
+
+    target.textContent =
+      nextExpanded
+        ? "Show less"
+        : "Show more";
+
+    const lineCount =
+      codeBlock.dataset.codeLineCount ??
+      "";
+
+    target.setAttribute(
+      "aria-label",
+      nextExpanded
+        ? `Collapse ${lineCount}-line code block`
+        : `Expand ${lineCount}-line code block`,
+    );
+
+    if (!nextExpanded) {
+      codeBlock.scrollIntoView({
+        block: "nearest",
+        behavior:
+          window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+          ).matches
+            ? "auto"
+            : "smooth",
+      });
+    }
+
+    return;
+  }
+
   if (target.dataset.messageAction === "copy-code") {
     const messageId = target.dataset.messageId;
     const codeIndex = target.dataset.codeIndex;

@@ -1,6 +1,31 @@
 import ideasForgeAssistantIcon from "../assets/ideasforgeai-brand-icon.png";
 import DOMPurify from "dompurify";
 import { marked, Renderer } from "marked";
+import hljs from "highlight.js/lib/core";
+import bash from "highlight.js/lib/languages/bash";
+import css from "highlight.js/lib/languages/css";
+import javascript from "highlight.js/lib/languages/javascript";
+import json from "highlight.js/lib/languages/json";
+import markdown from "highlight.js/lib/languages/markdown";
+import plaintext from "highlight.js/lib/languages/plaintext";
+import powershell from "highlight.js/lib/languages/powershell";
+import python from "highlight.js/lib/languages/python";
+import sql from "highlight.js/lib/languages/sql";
+import typescript from "highlight.js/lib/languages/typescript";
+import xml from "highlight.js/lib/languages/xml";
+/* CHAT-2A.7C.5B — REGISTERED CHAT CODE LANGUAGES */
+hljs.registerLanguage("bash", bash);
+hljs.registerLanguage("css", css);
+hljs.registerLanguage("javascript", javascript);
+hljs.registerLanguage("json", json);
+hljs.registerLanguage("markdown", markdown);
+hljs.registerLanguage("plaintext", plaintext);
+hljs.registerLanguage("powershell", powershell);
+hljs.registerLanguage("python", python);
+hljs.registerLanguage("sql", sql);
+hljs.registerLanguage("typescript", typescript);
+hljs.registerLanguage("xml", xml);
+
 import { chatStore } from "../store/chatStore";
 import type { ResolvedRoute } from "../app/routes";
 import {
@@ -142,6 +167,257 @@ function hardenChatMarkdownLinks(html: string): string {
   return template.innerHTML;
 }
 
+function highlightTrustedChatCode(
+  code: HTMLElement,
+  language: string,
+): string {
+  const source = code.textContent ?? "";
+
+  if (!source.trim()) {
+    return language;
+  }
+
+  try {
+    if (
+      language &&
+      hljs.getLanguage(language)
+    ) {
+      const result = hljs.highlight(
+        source,
+        {
+          language,
+          ignoreIllegals: true,
+        },
+      );
+
+      code.innerHTML = result.value;
+      code.classList.add("hljs");
+
+      return language;
+    }
+
+    const result = hljs.highlightAuto(source);
+    const detectedLanguage =
+      result.language?.trim() ?? "";
+
+    code.innerHTML = result.value;
+    code.classList.add("hljs");
+
+    if (
+      detectedLanguage &&
+      !code.classList.contains(
+        `language-${detectedLanguage}`,
+      )
+    ) {
+      code.classList.add(
+        `language-${detectedLanguage}`,
+      );
+    }
+
+    return detectedLanguage;
+  } catch {
+    /*
+     * Preserve the sanitized escaped source when highlighting
+     * cannot complete safely.
+     */
+    return language;
+  }
+}
+function normalizeChatCodeLanguageAlias(
+  language: string,
+): string {
+  const normalized =
+    language.trim().toLowerCase();
+
+  const aliases: Record<string, string> = {
+    cjs: "javascript",
+    htm: "html",
+    html: "html",
+    js: "javascript",
+    jsx: "javascript",
+    md: "markdown",
+    node: "javascript",
+    ps: "powershell",
+    ps1: "powershell",
+    pwsh: "powershell",
+    py: "python",
+    shell: "bash",
+    sh: "bash",
+    text: "plaintext",
+    txt: "plaintext",
+    ts: "typescript",
+    tsx: "typescript",
+    yml: "yaml",
+  };
+
+  return aliases[normalized] ?? normalized;
+}
+
+function inferChatCodeLanguage(
+  source: string,
+): string {
+  const value = source.trim();
+
+  if (!value) {
+    return "plaintext";
+  }
+
+  try {
+    JSON.parse(value);
+    return "json";
+  } catch {
+    // Continue with deterministic syntax checks.
+  }
+
+  if (
+    /<(!doctype|html|head|body|div|span|section|article|main|header|footer|script|style|form|input|button|svg)\b/i.test(
+      value,
+    )
+  ) {
+    return "html";
+  }
+
+  if (
+    /(?:^|\n)\s*(?:\$[\w:]+|param\s*\(|Write-(?:Host|Output|Error)|Get-[A-Z]|Set-[A-Z]|New-[A-Z]|Select-Object|Where-Object|ForEach-Object)\b/m.test(
+      value,
+    )
+  ) {
+    return "powershell";
+  }
+
+  if (
+    /(?:^|\n)\s*(?:def\s+\w+\s*\(|class\s+\w+\s*[:(]|from\s+\w+\s+import\s+|import\s+\w+|print\s*\(|if\s+__name__\s*==)/m.test(
+      value,
+    ) ||
+    /^\s*#.*python/im.test(value)
+  ) {
+    return "python";
+  }
+
+  if (
+    /(?:^|\n)\s*(?:interface\s+\w+|type\s+\w+\s*=|enum\s+\w+|implements\s+\w+|:\s*(?:string|number|boolean|unknown|never)\b)/m.test(
+      value,
+    )
+  ) {
+    return "typescript";
+  }
+
+  if (
+    /(?:console\.(?:log|error|warn)\s*\(|function\s+\w+\s*\(|const\s+\w+\s*=|let\s+\w+\s*=|=>|document\.(?:querySelector|createElement)|window\.)/.test(
+      value,
+    ) ||
+    /^\s*\/\/.*javascript/im.test(value)
+  ) {
+    return "javascript";
+  }
+
+  if (
+    /(?:^|\n)\s*(?:SELECT|INSERT\s+INTO|UPDATE\s+\w+\s+SET|DELETE\s+FROM|CREATE\s+TABLE|ALTER\s+TABLE|WITH\s+\w+\s+AS)\b/im.test(
+      value,
+    )
+  ) {
+    return "sql";
+  }
+
+  if (
+    /^#!\/(?:usr\/bin\/env\s+)?(?:bash|sh)/m.test(
+      value,
+    ) ||
+    /(?:^|\n)\s*(?:echo|sudo|apt(?:-get)?|npm|pnpm|yarn|chmod|mkdir|cp|mv|rm)\s+/m.test(
+      value,
+    )
+  ) {
+    return "bash";
+  }
+
+  if (
+    /(?:^|\n)\s*(?:[.#][\w-]+|[a-z][\w-]*)\s*\{[^}]*\b(?:color|display|margin|padding|width|height|background|font-size)\s*:/ims.test(
+      value,
+    )
+  ) {
+    return "css";
+  }
+
+  if (
+    /(?:^|\n)\s*(?:---|\w[\w-]*:\s*(?:$|[\w"'[{]))/m.test(
+      value,
+    )
+  ) {
+    return "yaml";
+  }
+
+  return "plaintext";
+}
+
+function selectChatCodeLanguage(
+  explicitLanguage: string,
+  detectedLanguage: string,
+  source: string,
+): string {
+  const explicit =
+    normalizeChatCodeLanguageAlias(
+      explicitLanguage,
+    );
+
+  if (
+    explicit &&
+    explicit !== "code" &&
+    explicit !== "plaintext"
+  ) {
+    return explicit;
+  }
+
+  const inferred =
+    inferChatCodeLanguage(source);
+
+  if (
+    inferred &&
+    inferred !== "plaintext"
+  ) {
+    return inferred;
+  }
+
+  const detected =
+    normalizeChatCodeLanguageAlias(
+      detectedLanguage,
+    );
+
+  if (
+    detected &&
+    detected !== "code" &&
+    detected !== "plaintext"
+  ) {
+    return detected;
+  }
+
+  return "plaintext";
+}
+function formatChatCodeLanguage(
+  language: string,
+): string {
+  const normalized =
+    normalizeChatCodeLanguageAlias(
+      language,
+    );
+
+  const labels: Record<string, string> = {
+    bash: "Bash",
+    css: "CSS",
+    html: "HTML",
+    javascript: "JavaScript",
+    json: "JSON",
+    markdown: "Markdown",
+    plaintext: "Plain Text",
+    powershell: "PowerShell",
+    python: "Python",
+    sql: "SQL",
+    typescript: "TypeScript",
+    xml: "XML",
+    yaml: "YAML",
+  };
+
+  return labels[normalized] ?? "Plain Text";
+}
 function addTrustedCodeBlockControls(
   html: string,
   messageId: string,
@@ -164,6 +440,22 @@ function addTrustedCodeBlockControls(
         code.classList.add(`language-${language}`);
       }
 
+      const sourceText =
+        code.textContent ?? "";
+
+      const highlightedLanguage =
+        highlightTrustedChatCode(
+          code,
+          language,
+        );
+
+      const displayLanguage =
+        selectChatCodeLanguage(
+          language,
+          highlightedLanguage,
+          sourceText,
+        );
+
       const wrapper = document.createElement("div");
       wrapper.className = "chat-code-block";
       wrapper.dataset.codeIndex = String(codeIndex);
@@ -177,7 +469,10 @@ function addTrustedCodeBlockControls(
 
       const languageLabel = document.createElement("span");
       languageLabel.className = "chat-code-block__language";
-      languageLabel.textContent = language || "Code";
+      languageLabel.textContent =
+        formatChatCodeLanguage(
+          displayLanguage,
+        );
 
       const copyButton = document.createElement("button");
       copyButton.type = "button";
@@ -189,7 +484,79 @@ function addTrustedCodeBlockControls(
       copyButton.setAttribute("aria-live", "polite");
       copyButton.textContent = "Copy";
 
-      header.append(languageLabel, copyButton);
+      /* CHAT-2A.7D.1B — LONG CODE COLLAPSE */
+      const normalizedCodeSource =
+        (code.textContent ?? "")
+          .replace(/\r\n?/g, "\n");
+
+      const lineCount =
+        normalizedCodeSource.length > 0
+          ? normalizedCodeSource.split("\n").length
+          : 0;
+
+      const isLongCode =
+        lineCount > 25;
+
+      const headerActions =
+        document.createElement("div");
+
+      headerActions.className =
+        "chat-code-block__header-actions";
+
+      if (isLongCode) {
+        wrapper.classList.add(
+          "chat-code-block--collapsible",
+        );
+
+        wrapper.dataset.codeCollapsed =
+          "true";
+
+        wrapper.dataset.codeLineCount =
+          String(lineCount);
+
+        const toggleButton =
+          document.createElement("button");
+
+        toggleButton.type = "button";
+        toggleButton.className =
+          "chat-code-block__expand";
+
+        toggleButton.dataset.messageAction =
+          "toggle-code";
+
+        toggleButton.dataset.messageId =
+          messageId;
+
+        toggleButton.dataset.codeIndex =
+          String(codeIndex);
+
+        toggleButton.setAttribute(
+          "aria-expanded",
+          "false",
+        );
+
+        toggleButton.setAttribute(
+          "aria-label",
+          `Expand ${lineCount}-line code block`,
+        );
+
+        toggleButton.textContent =
+          "Show more";
+
+        headerActions.append(
+          toggleButton,
+        );
+      }
+
+      headerActions.append(
+        copyButton,
+      );
+
+      header.append(
+        languageLabel,
+        headerActions,
+      );
+
       pre.replaceWith(wrapper);
       wrapper.append(header, pre);
     });
@@ -411,8 +778,14 @@ function renderStoredChatMessages(): string {
                 data-message-id="${messageId}"
                 aria-label="Copy ${authorName} message"
               >
-                Copy
-              </button>
+<span class="chat-turn__action-icon" aria-hidden="true">
+  <svg viewBox="0 0 24 24">
+    <rect x="8" y="8" width="11" height="11" rx="2"></rect>
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path>
+  </svg>
+</span>
+<span class="chat-turn__action-label">Copy</span>
+</button>
               ${
                 role === "user" && !isEditing
                   ? `
@@ -423,8 +796,14 @@ function renderStoredChatMessages(): string {
                       data-message-id="${messageId}"
                       aria-label="Edit your message"${disabledAttributes}
                     >
-                      Edit
-                    </button>
+<span class="chat-turn__action-icon" aria-hidden="true">
+  <svg viewBox="0 0 24 24">
+    <path d="M4 20h4l11-11a2.8 2.8 0 0 0-4-4L4 16v4Z"></path>
+    <path d="m13.5 6.5 4 4"></path>
+  </svg>
+</span>
+<span class="chat-turn__action-label">Edit</span>
+</button>
                   `
                   : ""
               }
@@ -440,8 +819,14 @@ function renderStoredChatMessages(): string {
                       data-message-id="${messageId}"
                       aria-label="Regenerate IdeasForgeAI response"${disabledAttributes}
                     >
-                      Regenerate
-                    </button>
+<span class="chat-turn__action-icon" aria-hidden="true">
+  <svg viewBox="0 0 24 24">
+    <path d="M20 11a8 8 0 1 0-2.3 5.7"></path>
+    <path d="M20 5v6h-6"></path>
+  </svg>
+</span>
+<span class="chat-turn__action-label">Regenerate</span>
+</button>
                   `
                   : ""
               }
@@ -455,8 +840,14 @@ function renderStoredChatMessages(): string {
                       data-message-id="${messageId}"
                       aria-label="Retry failed IdeasForgeAI response"${disabledAttributes}
                     >
-                      Retry
-                    </button>
+<span class="chat-turn__action-icon" aria-hidden="true">
+  <svg viewBox="0 0 24 24">
+    <path d="M20 11a8 8 0 1 0-2.3 5.7"></path>
+    <path d="M20 5v6h-6"></path>
+  </svg>
+</span>
+<span class="chat-turn__action-label">Retry</span>
+</button>
                   `
                   : ""
               }
@@ -626,17 +1017,37 @@ function renderChat(): string {
       <span>New chat</span>
     </button>
 
-    <button
-      type="button"
-      class="chat-native-search-action"
-      data-native-focus-composer="true"
+    <label
+      class="chat-native-search-action chat-native-search-field"
+      for="chat-native-menu-search"
     >
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle cx="11" cy="11" r="6.5"></circle>
         <path d="m16 16 4 4"></path>
       </svg>
-      <span>Search chats</span>
-    </button>
+
+      <input
+        id="chat-native-menu-search"
+        type="search"
+        inputmode="search"
+        autocomplete="off"
+        placeholder="Search chats"
+        aria-label="Search chats and projects"
+      />
+
+      <button
+        type="button"
+        class="chat-native-search-clear"
+        data-native-clear-search="true"
+        aria-label="Clear search"
+        title="Clear search"
+        hidden
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7 7l10 10M17 7 7 17"></path>
+        </svg>
+      </button>
+    </label>
   </div>
 
   <div class="chat-native-side-menu__scroll">
@@ -648,7 +1059,9 @@ function renderChat(): string {
           type="button"
           class="chat-native-section-add"
           aria-label="Create project"
-          data-toast="Project creation will be connected next."
+          title="Create project"
+          data-route="/projects"
+          data-native-menu-close="true"
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 5v14M5 12h14"></path>
