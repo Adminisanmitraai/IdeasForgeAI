@@ -7,7 +7,14 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 FOUNDER_OS_API_CONTRACT_VERSION = "founder-os.application-api.v1"
-FOUNDER_OS_PROGRESS_CONTRACT_VERSION = "founder-os-progress.v1"
+FOUNDER_OS_PROGRESS_CONTRACT_VERSION = "founder-os-progress.v2"
+
+
+FounderOSComponentStatus = Literal[
+    "healthy",
+    "degraded",
+    "unavailable",
+]
 
 
 class FounderOSProgressData(BaseModel):
@@ -17,11 +24,17 @@ class FounderOSProgressData(BaseModel):
     )
 
     overall_progress: int = Field(ge=0, le=100)
+    previous_milestone: str = Field(min_length=1)
     current_milestone: str = Field(min_length=1)
+    next_milestone: str = Field(min_length=1)
     show_progress: bool
+    backend_status: FounderOSComponentStatus
+    frontend_status: FounderOSComponentStatus
+    runtime_status: FounderOSComponentStatus
     updated_at: datetime
     source: Literal["certified_manifest"]
-    contract_version: Literal["founder-os-progress.v1"] = (
+    certified: Literal[True] = True
+    contract_version: Literal["founder-os-progress.v2"] = (
         FOUNDER_OS_PROGRESS_CONTRACT_VERSION
     )
 
