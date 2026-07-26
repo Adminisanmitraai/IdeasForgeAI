@@ -1,0 +1,215 @@
+FOS-UI.6 PHASE 2 - DETERMINISTIC RUNTIME PREDICTION ENGINE
+Verified: 2026-07-26
+Project: D:\APPS\IdeasForgeAI
+
+STATUS
+Implementation and required verification complete.
+No Phase 3 work was started.
+
+FILES MODIFIED
+1. desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts
+   - Added immutable deterministic prediction analytics.
+2. desktop/ideasforge-terminal/src/components/FounderProgress.ts
+   - Exposed prediction only through semantic data attributes and existing
+     accessible title text.
+3. FOS-UI.6-PHASE2-RESULT.txt
+   - Added this implementation and verification report.
+
+No API client, CSS, main.ts, backend, chat, Worker, routing,
+authentication, streaming, mobile-native-chat.css, polling, or Founder OS
+contract file was modified by this phase.
+
+PREDICTION ANALYTICS
+The frozen FounderProgressPrediction object contains:
+
+- progressVelocityPerHour
+- remainingProgress
+- etaAvailable
+- estimatedCompletionTime
+- estimatedRemainingDurationMs
+- predictionConfidence
+- stalled
+- insufficientData
+
+All unavailable velocity, duration, and timestamp values are represented as
+null. No Infinity or NaN is exposed.
+
+DETERMINISTIC INPUT RULES
+- Uses only observations where certified is true.
+- Reuses the existing bounded 50-observation cache.
+- Deduplicates prediction evidence by completion percentage and certified
+  timestamp.
+- Ignores uncertified observations.
+- Preserves observation arrival order.
+- Requires at least two unique certified observations.
+- Requires valid timestamps and positive elapsed milliseconds.
+- Does not use polling time, random values, machine learning, or fabricated
+  milestone dates.
+
+DETERMINISTIC FORMULAS
+
+1. Elapsed time
+
+elapsedMilliseconds =
+  latestCertifiedTimestamp - firstCertifiedTimestamp
+
+The value must be finite and greater than zero.
+
+2. Progress delta
+
+progressDelta =
+  latestCertifiedProgress - firstCertifiedProgress
+
+3. Velocity per hour
+
+rawVelocity =
+  progressDelta / elapsedMilliseconds * 3_600_000
+
+Only finite positive velocity is exposed.
+Velocity is bounded by:
+
+MAX_PREDICTION_VELOCITY_PER_HOUR = 100
+
+4. Remaining progress
+
+remainingProgress =
+  clamp(100 - latestCertifiedProgress, 0, 100)
+
+5. Estimated remaining duration
+
+rawRemainingDurationMs =
+  remainingProgress / progressVelocityPerHour * 3_600_000
+
+The duration is rounded up to a whole millisecond and bounded by:
+
+MAX_PREDICTION_DURATION_MS = 365 days
+
+6. Estimated completion time
+
+estimatedCompletionMs =
+  evaluatedAtMs + estimatedRemainingDurationMs
+
+The calculation uses the provider's injectable evaluation time.
+The timestamp must be finite and within the JavaScript Date range before
+conversion to ISO text.
+
+ETA SUPPRESSION RULES
+etaAvailable is false when any of these applies:
+
+- fewer than two unique certified observations
+- invalid timestamp
+- zero or negative elapsed time
+- stale runtime data
+- stable latest certified trend
+- regressing latest certified trend
+- insufficient-data trend
+- stalled progress
+- zero or negative progress delta
+- null or non-finite velocity
+- remaining progress is zero
+- evaluation time is non-finite
+- duration or completion timestamp cannot be represented safely
+
+Duplicate-only history remains insufficient and cannot create ETA.
+
+STALL RULE
+stalled is true only when:
+
+- prediction history is otherwise sufficient
+- the latest two unique certified timestamps are valid and increasing
+- the latest two certified completion percentages are equal
+
+A stalled result suppresses ETA.
+
+CONFIDENCE RULES
+Confidence uses unique certified prediction snapshots only:
+
+- fewer than 2 snapshots: unavailable
+- exactly 2 snapshots: low
+- 3 or 4 snapshots: medium
+- 5 or more snapshots: high
+
+Duplicate and uncertified observations do not increase confidence.
+
+IMMUTABILITY AND LISTENERS
+- Prediction output is frozen with Object.freeze().
+- It is nested inside the existing frozen FounderProgressAnalytics object.
+- Source snapshots and observations are not mutated.
+- Existing normalized-snapshot equality remains unchanged.
+- Exact duplicate runtime snapshots do not append history.
+- Exact duplicate runtime snapshots do not notify listeners.
+- Existing stale-state transition notification behavior is preserved.
+- No unbounded collection was added.
+
+UI
+- Existing markup hierarchy and visible progress layout are unchanged.
+- No panel, row, dashboard, or visible label was added.
+- No CSS was changed.
+- Existing fallback rendering is unchanged.
+- Prediction is exposed on the existing intelligence element through:
+  data-progress-velocity-per-hour
+  data-remaining-progress
+  data-eta-available
+  data-estimated-completion-time
+  data-estimated-remaining-duration-ms
+  data-prediction-confidence
+  data-progress-stalled
+  data-prediction-insufficient-data
+- Existing accessible title text adds either the deterministic velocity and
+  estimated completion or "ETA unavailable".
+- Dynamic title text continues through the existing HTML escaping path.
+
+DETERMINISTIC IMPLEMENTATION CHECKS
+PASS
+
+Verified:
+- one snapshot is insufficient
+- duplicate-only history is insufficient
+- uncertified observations are ignored
+- two advancing snapshots produce exact velocity
+- remaining percentage is exact
+- remaining duration and completion timestamp are deterministic
+- stable history is stalled and suppresses ETA
+- regressing history suppresses ETA
+- stale history suppresses ETA
+- zero elapsed time suppresses ETA
+- confidence is low at 2, medium at 3-4, and high at 5+
+- impossible velocity is bounded
+- impossible duration is bounded
+- prediction output is frozen
+- identical provider state does not notify listeners twice
+- no Infinity or NaN is exposed
+
+VERIFICATION RESULTS
+
+1. python -m pytest backend/tests/test_founder_os_read_api.py -q
+   PASS - 16 passed in 1.54s
+
+2. npx tsc -p tsconfig.active.json --noEmit
+   PASS
+
+3. npm run build
+   PASS
+   - TypeScript passed.
+   - Vite production build passed.
+   - 83 modules transformed.
+   - Production bundle completed in 1.44s.
+
+4. git diff --check -- desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts desktop/ideasforge-terminal/src/components/FounderProgress.ts
+   PASS - no scoped whitespace errors.
+
+SCOPE CONFIRMATIONS
+- Founder OS endpoint and certified response parser are unchanged.
+- Founder OS backend contracts and response schema are unchanged.
+- The 30-second polling interval is unchanged.
+- The existing bounded cache remains capped at 50.
+- No unrelated source modification was made by Phase 2.
+- No backend modification was made by Phase 2.
+- No certified progress or visible milestone was updated.
+- No commit was created.
+- No push was performed.
+
+STOP CONDITION
+Stopped after FOS-UI.6 Phase 2 implementation and verification.
+Phase 3 was not started.
+Awaiting Founder approval.

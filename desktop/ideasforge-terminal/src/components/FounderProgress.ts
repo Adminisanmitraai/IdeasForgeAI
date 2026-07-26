@@ -97,6 +97,17 @@ export function renderFounderProgress(): string {
   const analytics =
     getFounderProgressAnalytics();
 
+  const prediction =
+    analytics.prediction;
+
+  const predictionTitle =
+    prediction.etaAvailable
+      ? [
+          `Velocity: ${prediction.progressVelocityPerHour?.toFixed(2)}% per hour`,
+          `Estimated completion: ${prediction.estimatedCompletionTime}`,
+        ].join(". ")
+      : "ETA unavailable";
+
   const trendTitle =
     escapeFounderProgressText(
       [
@@ -110,6 +121,7 @@ export function renderFounderProgress(): string {
         analytics.healthDegradation.any
           ? "Component health degraded"
           : "Component health unchanged",
+        predictionTitle,
       ].join(". "),
     );
 
@@ -164,6 +176,14 @@ export function renderFounderProgress(): string {
               data-progress-confidence="${analytics.confidenceLevel}"
               data-progress-stale="${analytics.isRuntimeDataStale}"
               data-health-degraded="${analytics.healthDegradation.any}"
+              data-progress-velocity-per-hour="${prediction.progressVelocityPerHour ?? "unavailable"}"
+              data-remaining-progress="${prediction.remainingProgress}"
+              data-eta-available="${prediction.etaAvailable}"
+              data-estimated-completion-time="${prediction.estimatedCompletionTime ?? ""}"
+              data-estimated-remaining-duration-ms="${prediction.estimatedRemainingDurationMs ?? ""}"
+              data-prediction-confidence="${prediction.predictionConfidence}"
+              data-progress-stalled="${prediction.stalled}"
+              data-prediction-insufficient-data="${prediction.insufficientData}"
               title="${trendTitle}"
             >
               <div class="founder-progress__timeline">

@@ -35,6 +35,10 @@ export type FounderProgressConfidence =
   | "medium"
   | "high";
 
+export type FounderPredictionConfidence =
+  | "unavailable"
+  | FounderProgressConfidence;
+
 export type FounderMilestoneState =
   | "completed"
   | "current"
@@ -92,6 +96,21 @@ export interface FounderProgressHealthDegradation {
   any: boolean;
 }
 
+export interface FounderProgressPrediction {
+  readonly progressVelocityPerHour:
+    number | null;
+  readonly remainingProgress: number;
+  readonly etaAvailable: boolean;
+  readonly estimatedCompletionTime:
+    string | null;
+  readonly estimatedRemainingDurationMs:
+    number | null;
+  readonly predictionConfidence:
+    FounderPredictionConfidence;
+  readonly stalled: boolean;
+  readonly insufficientData: boolean;
+}
+
 export interface FounderProgressAnalytics {
   previousMilestone?: string;
   currentMilestone: string;
@@ -113,6 +132,7 @@ export interface FounderProgressAnalytics {
   latestCertifiedSnapshotAgeMs: number | null;
   isRuntimeDataStale: boolean;
   healthDegradation: FounderProgressHealthDegradation;
+  prediction: FounderProgressPrediction;
   certificationState: "certified" | "uncertified";
   certified: boolean;
   sourceOfProgress: FounderProgressDataSource;
@@ -136,6 +156,12 @@ type FounderProgressListener = (
 export const MAX_PROGRESS_OBSERVATIONS = 50;
 export const FOUNDER_PROGRESS_STALE_THRESHOLD_MS =
   5 * 60 * 1_000;
+export const MAX_PREDICTION_VELOCITY_PER_HOUR =
+  100;
+export const MAX_PREDICTION_DURATION_MS =
+  365 * 24 * 60 * 60 * 1_000;
+const MAX_DATE_TIMESTAMP_MS =
+  8_640_000_000_000_000;
 
 const listeners =
   new Set<FounderProgressListener>();
@@ -649,6 +675,210 @@ function healthDegradation(
   });
 }
 
+function predictionConfidence(
+  certifiedSnapshotCount: number,
+): FounderPredictionConfidence {
+  if (certifiedSnapshotCount < 2) {
+    return "unavailable";
+  }
+
+  if (certifiedSnapshotCount < 3) {
+    return "low";
+  }
+
+  if (certifiedSnapshotCount < 5) {
+    return "medium";
+  }
+
+  return "high";
+}
+
+function predictionObservations(
+  observations:
+    readonly FounderProgressObservation[],
+): readonly FounderProgressObservation[] {
+  const unique:
+    FounderProgressObservation[] = [];
+
+  for (const observation of observations) {
+    if (!observation.certified) {
+      continue;
+    }
+
+    const duplicate = unique.some(
+      (candidate) =>
+        candidate.completionPercentage ===
+          observation.completionPercentage &&
+        candidate.timestamp ===
+          observation.timestamp,
+    );
+
+    if (!duplicate) {
+      unique.push(observation);
+    }
+  }
+
+  return unique;
+}
+
+function progressPrediction(
+  fallbackCompletionPercentage: number,
+  observations:
+    readonly FounderProgressObservation[],
+  trend: FounderProgressTrend,
+  isStale: boolean,
+  evaluatedAtMs: number,
+): FounderProgressPrediction {
+  const certifiedObservations =
+    predictionObservations(observations);
+
+  const first =
+    certifiedObservations[0];
+  const latest =
+    certifiedObservations[
+      certifiedObservations.length - 1
+    ];
+  const previous =
+    certifiedObservations[
+      certifiedObservations.length - 2
+    ];
+
+  const latestProgress =
+    normalizeProgress(
+      latest?.completionPercentage ??
+        fallbackCompletionPercentage,
+    );
+
+  const remainingProgress =
+    normalizeProgress(
+      100 - latestProgress,
+    );
+
+  const firstTimestampMs =
+    first?.timestamp
+      ? Date.parse(first.timestamp)
+      : Number.NaN;
+  const latestTimestampMs =
+    latest?.timestamp
+      ? Date.parse(latest.timestamp)
+      : Number.NaN;
+  const previousTimestampMs =
+    previous?.timestamp
+      ? Date.parse(previous.timestamp)
+      : Number.NaN;
+
+  const elapsedMilliseconds =
+    latestTimestampMs -
+    firstTimestampMs;
+
+  const insufficientData =
+    certifiedObservations.length < 2 ||
+    !Number.isFinite(firstTimestampMs) ||
+    !Number.isFinite(latestTimestampMs) ||
+    elapsedMilliseconds <= 0;
+
+  const stalled =
+    !insufficientData &&
+    previous !== undefined &&
+    Number.isFinite(previousTimestampMs) &&
+    latestTimestampMs >
+      previousTimestampMs &&
+    latestProgress ===
+      previous.completionPercentage;
+
+  const progressDelta =
+    insufficientData
+      ? 0
+      : latestProgress -
+        first.completionPercentage;
+
+  const rawVelocity =
+    !insufficientData &&
+    progressDelta > 0
+      ? progressDelta /
+        elapsedMilliseconds *
+        3_600_000
+      : Number.NaN;
+
+  const progressVelocityPerHour =
+    Number.isFinite(rawVelocity) &&
+    rawVelocity > 0
+      ? Math.min(
+          rawVelocity,
+          MAX_PREDICTION_VELOCITY_PER_HOUR,
+        )
+      : null;
+
+  const suppressEta =
+    insufficientData ||
+    isStale ||
+    stalled ||
+    trend.direction === "stable" ||
+    trend.direction === "regressing" ||
+    trend.direction ===
+      "insufficient-data" ||
+    progressVelocityPerHour === null ||
+    remainingProgress <= 0 ||
+    !Number.isFinite(evaluatedAtMs);
+
+  const rawRemainingDurationMs =
+    suppressEta
+      ? Number.NaN
+      : remainingProgress /
+        progressVelocityPerHour *
+        3_600_000;
+
+  const estimatedRemainingDurationMs =
+    Number.isFinite(
+      rawRemainingDurationMs,
+    ) &&
+    rawRemainingDurationMs > 0
+      ? Math.min(
+          Math.ceil(
+            rawRemainingDurationMs,
+          ),
+          MAX_PREDICTION_DURATION_MS,
+        )
+      : null;
+
+  const estimatedCompletionMs =
+    estimatedRemainingDurationMs === null
+      ? Number.NaN
+      : evaluatedAtMs +
+        estimatedRemainingDurationMs;
+
+  const etaAvailable =
+    !suppressEta &&
+    estimatedRemainingDurationMs !== null &&
+    Number.isFinite(
+      estimatedCompletionMs,
+    ) &&
+    Math.abs(estimatedCompletionMs) <=
+      MAX_DATE_TIMESTAMP_MS;
+
+  return Object.freeze({
+    progressVelocityPerHour,
+    remainingProgress,
+    etaAvailable,
+    estimatedCompletionTime:
+      etaAvailable
+        ? new Date(
+            estimatedCompletionMs,
+          ).toISOString()
+        : null,
+    estimatedRemainingDurationMs:
+      etaAvailable
+        ? estimatedRemainingDurationMs
+        : null,
+    predictionConfidence:
+      predictionConfidence(
+        certifiedObservations.length,
+      ),
+    stalled,
+    insufficientData,
+  });
+}
+
 export function calculateFounderProgressAnalytics(
   snapshot: FounderProgressSnapshot,
   observations:
@@ -684,6 +914,15 @@ export function calculateFounderProgressAnalytics(
   const age =
     snapshotAge(
       observations,
+      evaluatedAtMs,
+    );
+
+  const prediction =
+    progressPrediction(
+      completionPercentage,
+      observations,
+      trend,
+      age.stale,
       evaluatedAtMs,
     );
 
@@ -740,6 +979,7 @@ export function calculateFounderProgressAnalytics(
       age.stale,
     healthDegradation:
       healthDegradation(observations),
+    prediction,
     certificationState:
       snapshot.certified
         ? "certified"
