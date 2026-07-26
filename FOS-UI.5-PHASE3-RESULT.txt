@@ -1,0 +1,174 @@
+FOS-UI.5 PHASE 3 - RUNTIME TREND INTELLIGENCE
+Verified: 2026-07-26
+
+STATUS
+Phase 3 implementation is complete.
+The focused Phase 3 TypeScript check, deterministic runtime checks, backend
+tests, Vite production bundle, and scoped whitespace check passed.
+The required full TypeScript command and npm build are blocked by an
+unrelated pre-existing untracked frontend file, documented below.
+
+FILES INSPECTED
+1. desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts
+2. desktop/ideasforge-terminal/src/components/FounderProgress.ts
+3. desktop/ideasforge-terminal/src/services/founderOsApi.ts
+4. desktop/ideasforge-terminal/src/styles/founder-progress.css
+5. desktop/ideasforge-terminal/src/main.ts
+6. desktop/ideasforge-terminal/package.json
+7. desktop/ideasforge-terminal/tsconfig.json
+8. desktop/ideasforge-terminal/tsconfig.active.json
+
+FILES MODIFIED
+1. desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts
+2. desktop/ideasforge-terminal/src/components/FounderProgress.ts
+3. FOS-UI.5-PHASE3-RESULT.txt
+
+No API client, CSS, backend, authentication, chat, message rendering,
+streaming, Worker, routing, or mobile-native-chat.css file was modified by
+Phase 3.
+
+ANALYTICS ADDED
+- Certified-only trend direction:
+  advancing, stable, regressing, or insufficient-data.
+- Exact progress delta between the latest two certified snapshots.
+- Number of certified snapshots retained in the bounded cache.
+- Milestone transition count.
+- Latest milestone change with from, to, and response timestamp.
+- Runtime state matching the certified trend state.
+- Deterministic low, medium, or high confidence.
+- Latest certified snapshot age in milliseconds.
+- Deterministic stale-data state.
+- Backend, frontend, runtime, and aggregate health degradation flags.
+
+BOUNDED-HISTORY BEHAVIOR
+- Reuses the Phase 2 progress observation cache.
+- MAX_PROGRESS_OBSERVATIONS remains 50.
+- Identical observations are not appended twice.
+- Health and certification fields are included in observation identity so
+  real health changes are retained.
+- All trend, transition, confidence, stale, and degradation calculations
+  read the bounded cache without mutating source snapshots.
+- Analytics objects and nested degradation/transition results are frozen.
+
+TREND RULES
+- Fewer than two certified runtime snapshots: insufficient-data.
+- Latest progress greater than previous certified progress: advancing.
+- Latest progress equal to previous certified progress: stable.
+- Latest progress lower than previous certified progress: regressing.
+- Delta is exact subtraction; no time inference, estimation, randomness, or
+  machine learning is used.
+- Uncertified observations are excluded from runtime trend calculations.
+
+CONFIDENCE RULES
+- Fewer than 2 certified snapshots: low.
+- 2 through 4 certified snapshots: medium.
+- 5 or more certified snapshots: high.
+
+STALE-DATA BEHAVIOR
+- Single named threshold:
+  FOUNDER_PROGRESS_STALE_THRESHOLD_MS = 5 minutes.
+- Uses only the latest certified snapshot updatedAt timestamp.
+- Exactly 5 minutes old remains current; older than 5 minutes is stale.
+- Evaluation time is injectable for deterministic checks.
+- A single replaceable stale-transition timer updates stale state even when
+  requests fail, while retaining the last good certified snapshot.
+- The timer performs no polling and no network request.
+- Duplicate successful snapshots refresh cached age without adding history.
+- Listeners are notified on duplicate data only if stale state changes.
+
+HEALTH-DEGRADATION BEHAVIOR
+- Compares the latest certified snapshot with the immediately previous
+  certified snapshot.
+- Severity order is healthy, degraded, unavailable.
+- A degradation is reported only when severity increases.
+- Backend, frontend, and runtime degradation are calculated independently.
+- Original snapshots are not mutated.
+
+UI
+- Existing progress layout and visible text are preserved.
+- No CSS was changed.
+- Runtime intelligence is exposed only through semantic data attributes and
+  accessible title text on the existing intelligence area.
+- No dashboard, new visible row, component move, or mobile height change was
+  introduced.
+- Fallback rendering remains unchanged.
+
+POLLING AND API CONTRACT
+- Founder Progress polling remains 30 seconds (30_000 ms).
+- Endpoint remains GET /api/founder-os/v1/progress.
+- Certified parser remains founder-os-progress.v2 and certified_manifest.
+- No endpoint, URL, authentication, or response-schema change was made.
+- Failed requests still leave the last good certified snapshot intact.
+
+DETERMINISTIC IMPLEMENTATION CHECKS
+PASS
+- insufficient-data with fewer than two certified snapshots
+- advancing, stable, and regressing direction
+- exact positive and negative delta
+- low, medium, and high confidence
+- milestone transition count and latest change
+- exact stale threshold and threshold-plus-one behavior
+- backend health degradation and aggregate degradation
+- duplicate observation suppression
+- identical-state listener suppression
+- 50-entry bounded history
+
+TEST RESULTS
+1. python -m pytest backend/tests/test_founder_os_read_api.py -q
+   PASS - 16 passed in 2.53s
+
+2. python -m pytest backend/tests/test_founder_os_interface_boundaries.py -q
+   PASS - 3 passed in 1.05s
+
+Total required backend tests: 19 passed.
+
+TYPESCRIPT RESULT
+1. Required command:
+   npx tsc -p tsconfig.active.json --noEmit
+   BLOCKED BY PRE-EXISTING UNRELATED WORKTREE FILE
+   - src/screens/renderForgeStructure.ts(57,7): TS6133
+   - frameStations is declared but never read.
+   - renderForgeStructure.ts is untracked and outside the allowed Phase 3
+     files. Phase 3 did not modify it.
+
+2. Focused strict check of both Phase 3 source files:
+   PASS
+   - founderProgressProvider.ts
+   - FounderProgress.ts
+   - ES2020, strict, noUnusedLocals, and noUnusedParameters enabled.
+
+BUILD RESULT
+1. npm run build
+   BLOCKED before Vite by the same unrelated TS6133 error in the untracked
+   src/screens/renderForgeStructure.ts file.
+
+2. Standalone Vite production bundle:
+   PASS
+   - 83 modules transformed.
+   - Production bundle completed in 4.00s.
+
+SCOPED GIT DIFF CHECK
+Command:
+git diff --check -- desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts desktop/ideasforge-terminal/src/components/FounderProgress.ts
+
+PASS - no whitespace errors in the Phase 3 source diff.
+
+REPOSITORY-WIDE GIT DIFF CHECK
+Command:
+git diff --check
+
+BLOCKED BY PRE-EXISTING UNRELATED WORKTREE ISSUE
+- desktop/ideasforge-terminal/src/screens/renderScreen.ts:1903:
+  new blank line at EOF.
+- Phase 3 did not modify this file.
+
+SOURCE CONTROL
+- No commit was created.
+- No push was performed.
+- Backend certified progress was not updated.
+- The visible milestone was not updated.
+- Phase 4 was not started.
+
+STOP CONDITION
+Stopped after Phase 3 implementation and verification.
+Awaiting Founder approval.

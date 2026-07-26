@@ -1,4 +1,5 @@
 import {
+  getFounderProgressAnalytics,
   getFounderProgressSnapshot,
   type FounderProgressStatus,
 } from "../progress/founderProgressProvider";
@@ -93,6 +94,25 @@ export function renderFounderProgress(): string {
       updatedAt,
     );
 
+  const analytics =
+    getFounderProgressAnalytics();
+
+  const trendTitle =
+    escapeFounderProgressText(
+      [
+        `Trend: ${analytics.progressTrend.direction}`,
+        `Delta: ${analytics.progressTrend.delta}`,
+        `Certified snapshots: ${analytics.certifiedSnapshotCount}`,
+        `Confidence: ${analytics.confidenceLevel}`,
+        analytics.isRuntimeDataStale
+          ? "Runtime data is stale"
+          : "Runtime data is current",
+        analytics.healthDegradation.any
+          ? "Component health degraded"
+          : "Component health unchanged",
+      ].join(". "),
+    );
+
   return `
     <section
       class="founder-progress"
@@ -139,6 +159,12 @@ export function renderFounderProgress(): string {
             <div
               class="founder-progress__intelligence"
               aria-label="Milestone intelligence"
+              data-progress-trend="${analytics.progressTrend.direction}"
+              data-progress-delta="${analytics.progressTrend.delta}"
+              data-progress-confidence="${analytics.confidenceLevel}"
+              data-progress-stale="${analytics.isRuntimeDataStale}"
+              data-health-degraded="${analytics.healthDegradation.any}"
+              title="${trendTitle}"
             >
               <div class="founder-progress__timeline">
                 <span title="${previousMilestone}">

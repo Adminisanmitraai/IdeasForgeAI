@@ -25,9 +25,15 @@ export type FounderProgressHealthSummary =
   | "unknown";
 
 export type FounderProgressTrendDirection =
-  | "increasing"
+  | "advancing"
   | "stable"
-  | "decreasing";
+  | "regressing"
+  | "insufficient-data";
+
+export type FounderProgressConfidence =
+  | "low"
+  | "medium"
+  | "high";
 
 export type FounderMilestoneState =
   | "completed"
@@ -73,6 +79,19 @@ export interface FounderProgressTrend {
   currentPercentage: number;
 }
 
+export interface FounderMilestoneChange {
+  from: string;
+  to: string;
+  timestamp?: string;
+}
+
+export interface FounderProgressHealthDegradation {
+  backend: boolean;
+  frontend: boolean;
+  runtime: boolean;
+  any: boolean;
+}
+
 export interface FounderProgressAnalytics {
   previousMilestone?: string;
   currentMilestone: string;
@@ -86,6 +105,14 @@ export interface FounderProgressAnalytics {
   milestoneHistory: readonly FounderMilestoneHistoryEntry[];
   milestoneTimestamps: readonly FounderMilestoneTimestamp[];
   progressTrend: FounderProgressTrend;
+  certifiedSnapshotCount: number;
+  milestoneTransitionCount: number;
+  latestMilestoneChange: FounderMilestoneChange | null;
+  runtimeState: FounderProgressTrendDirection;
+  confidenceLevel: FounderProgressConfidence;
+  latestCertifiedSnapshotAgeMs: number | null;
+  isRuntimeDataStale: boolean;
+  healthDegradation: FounderProgressHealthDegradation;
   certificationState: "certified" | "uncertified";
   certified: boolean;
   sourceOfProgress: FounderProgressDataSource;
@@ -96,13 +123,19 @@ export interface FounderProgressObservation {
   milestone: string;
   completionPercentage: number;
   timestamp?: string;
+  certified: boolean;
+  backendStatus?: FounderProgressStatus;
+  frontendStatus?: FounderProgressStatus;
+  runtimeStatus?: FounderProgressStatus;
 }
 
 type FounderProgressListener = (
   snapshot: FounderProgressSnapshot,
 ) => void;
 
-const MAX_PROGRESS_OBSERVATIONS = 50;
+export const MAX_PROGRESS_OBSERVATIONS = 50;
+export const FOUNDER_PROGRESS_STALE_THRESHOLD_MS =
+  5 * 60 * 1_000;
 
 const listeners =
   new Set<FounderProgressListener>();
@@ -246,6 +279,15 @@ function appendProgressObservation(
       completionPercentage:
         snapshot.overallProgress,
       timestamp: snapshot.updatedAt,
+      certified:
+        snapshot.source === "runtime" &&
+        snapshot.certified === true,
+      backendStatus:
+        snapshot.backendStatus,
+      frontendStatus:
+        snapshot.frontendStatus,
+      runtimeStatus:
+        snapshot.runtimeStatus,
     };
 
   const previous =
@@ -259,7 +301,15 @@ function appendProgressObservation(
     previous.completionPercentage ===
       observation.completionPercentage &&
     previous.timestamp ===
-      observation.timestamp
+      observation.timestamp &&
+    previous.certified ===
+      observation.certified &&
+    previous.backendStatus ===
+      observation.backendStatus &&
+    previous.frontendStatus ===
+      observation.frontendStatus &&
+    previous.runtimeStatus ===
+      observation.runtimeStatus
   ) {
     return;
   }
@@ -362,16 +412,29 @@ function milestoneHistory(
 }
 
 function progressTrend(
-  completionPercentage: number,
+  fallbackCompletionPercentage: number,
   observations:
     readonly FounderProgressObservation[],
 ): FounderProgressTrend {
+  const certifiedObservations =
+    observations.filter(
+      (observation) =>
+        observation.certified,
+    );
+
+  const current =
+    certifiedObservations[
+      certifiedObservations.length - 1
+    ];
+
   const previous =
-    observations.length > 1
-      ? observations[
-          observations.length - 2
-        ]
-      : undefined;
+    certifiedObservations[
+      certifiedObservations.length - 2
+    ];
+
+  const currentPercentage =
+    current?.completionPercentage ??
+    fallbackCompletionPercentage;
 
   const previousPercentage =
     previous?.completionPercentage ?? null;
@@ -379,20 +442,210 @@ function progressTrend(
   const delta =
     previousPercentage === null
       ? 0
-      : completionPercentage -
+      : currentPercentage -
         previousPercentage;
 
   return Object.freeze({
     direction:
-      delta > 0
-        ? "increasing"
-        : delta < 0
-          ? "decreasing"
-          : "stable",
+      certifiedObservations.length < 2
+        ? "insufficient-data"
+        : delta > 0
+          ? "advancing"
+          : delta < 0
+            ? "regressing"
+            : "stable",
     delta,
     previousPercentage,
     currentPercentage:
-      completionPercentage,
+      currentPercentage,
+  });
+}
+
+function milestoneTransitions(
+  observations:
+    readonly FounderProgressObservation[],
+): {
+  count: number;
+  latest: FounderMilestoneChange | null;
+} {
+  const certifiedObservations =
+    observations.filter(
+      (observation) =>
+        observation.certified,
+    );
+
+  let count = 0;
+  let latest:
+    FounderMilestoneChange | null = null;
+
+  for (
+    let index = 1;
+    index < certifiedObservations.length;
+    index += 1
+  ) {
+    const previous =
+      certifiedObservations[index - 1];
+    const current =
+      certifiedObservations[index];
+
+    if (
+      previous.milestone === current.milestone
+    ) {
+      continue;
+    }
+
+    count += 1;
+    latest = Object.freeze({
+      from: previous.milestone,
+      to: current.milestone,
+      timestamp: current.timestamp,
+    });
+  }
+
+  return {
+    count,
+    latest,
+  };
+}
+
+function confidenceLevel(
+  certifiedSnapshotCount: number,
+): FounderProgressConfidence {
+  if (certifiedSnapshotCount < 2) {
+    return "low";
+  }
+
+  if (certifiedSnapshotCount < 5) {
+    return "medium";
+  }
+
+  return "high";
+}
+
+function snapshotAge(
+  observations:
+    readonly FounderProgressObservation[],
+  evaluatedAtMs: number,
+): {
+  ageMs: number | null;
+  stale: boolean;
+} {
+  const latestCertified =
+    [...observations].reverse().find(
+      (observation) =>
+        observation.certified,
+    );
+
+  if (!latestCertified?.timestamp) {
+    return {
+      ageMs: null,
+      stale: false,
+    };
+  }
+
+  const timestampMs =
+    Date.parse(latestCertified.timestamp);
+
+  if (
+    Number.isNaN(timestampMs) ||
+    !Number.isFinite(evaluatedAtMs)
+  ) {
+    return {
+      ageMs: null,
+      stale: false,
+    };
+  }
+
+  const ageMs =
+    Math.max(
+      0,
+      Math.floor(
+        evaluatedAtMs - timestampMs,
+      ),
+    );
+
+  return {
+    ageMs,
+    stale:
+      ageMs >
+      FOUNDER_PROGRESS_STALE_THRESHOLD_MS,
+  };
+}
+
+function statusSeverity(
+  status: FounderProgressStatus | undefined,
+): number | null {
+  switch (status) {
+    case "healthy":
+      return 0;
+    case "degraded":
+      return 1;
+    case "unavailable":
+      return 2;
+    default:
+      return null;
+  }
+}
+
+function statusDegraded(
+  previous: FounderProgressStatus | undefined,
+  current: FounderProgressStatus | undefined,
+): boolean {
+  const previousSeverity =
+    statusSeverity(previous);
+  const currentSeverity =
+    statusSeverity(current);
+
+  return (
+    previousSeverity !== null &&
+    currentSeverity !== null &&
+    currentSeverity > previousSeverity
+  );
+}
+
+function healthDegradation(
+  observations:
+    readonly FounderProgressObservation[],
+): FounderProgressHealthDegradation {
+  const certifiedObservations =
+    observations.filter(
+      (observation) =>
+        observation.certified,
+    );
+
+  const current =
+    certifiedObservations[
+      certifiedObservations.length - 1
+    ];
+  const previous =
+    certifiedObservations[
+      certifiedObservations.length - 2
+    ];
+
+  const backend =
+    statusDegraded(
+      previous?.backendStatus,
+      current?.backendStatus,
+    );
+  const frontend =
+    statusDegraded(
+      previous?.frontendStatus,
+      current?.frontendStatus,
+    );
+  const runtime =
+    statusDegraded(
+      previous?.runtimeStatus,
+      current?.runtimeStatus,
+    );
+
+  return Object.freeze({
+    backend,
+    frontend,
+    runtime,
+    any:
+      backend ||
+      frontend ||
+      runtime,
   });
 }
 
@@ -400,6 +653,7 @@ export function calculateFounderProgressAnalytics(
   snapshot: FounderProgressSnapshot,
   observations:
     readonly FounderProgressObservation[] = [],
+  evaluatedAtMs = Date.now(),
 ): FounderProgressAnalytics {
   const completionPercentage =
     normalizeProgress(
@@ -410,6 +664,27 @@ export function calculateFounderProgressAnalytics(
     milestoneHistory(
       snapshot,
       observations,
+    );
+
+  const certifiedSnapshotCount =
+    observations.filter(
+      (observation) =>
+        observation.certified,
+    ).length;
+
+  const trend =
+    progressTrend(
+      completionPercentage,
+      observations,
+    );
+
+  const transitions =
+    milestoneTransitions(observations);
+
+  const age =
+    snapshotAge(
+      observations,
+      evaluatedAtMs,
     );
 
   return Object.freeze({
@@ -447,10 +722,24 @@ export function calculateFounderProgressAnalytics(
         ),
       ),
     progressTrend:
-      progressTrend(
-        completionPercentage,
-        observations,
+      trend,
+    certifiedSnapshotCount,
+    milestoneTransitionCount:
+      transitions.count,
+    latestMilestoneChange:
+      transitions.latest,
+    runtimeState:
+      trend.direction,
+    confidenceLevel:
+      confidenceLevel(
+        certifiedSnapshotCount,
       ),
+    latestCertifiedSnapshotAgeMs:
+      age.ageMs,
+    isRuntimeDataStale:
+      age.stale,
+    healthDegradation:
+      healthDegradation(observations),
     certificationState:
       snapshot.certified
         ? "certified"
@@ -475,6 +764,90 @@ let currentAnalytics =
     currentSnapshot,
   );
 
+let staleTransitionTimer:
+  ReturnType<typeof globalThis.setTimeout> |
+  undefined;
+
+function clearStaleTransitionTimer(): void {
+  if (staleTransitionTimer === undefined) {
+    return;
+  }
+
+  globalThis.clearTimeout(
+    staleTransitionTimer,
+  );
+  staleTransitionTimer = undefined;
+}
+
+function scheduleStaleTransition(
+  snapshot: FounderProgressSnapshot,
+  evaluatedAtMs: number,
+): void {
+  clearStaleTransitionTimer();
+
+  if (
+    !snapshot.certified ||
+    !snapshot.updatedAt ||
+    currentAnalytics.isRuntimeDataStale
+  ) {
+    return;
+  }
+
+  const updatedAtMs =
+    Date.parse(snapshot.updatedAt);
+
+  if (
+    Number.isNaN(updatedAtMs) ||
+    !Number.isFinite(evaluatedAtMs)
+  ) {
+    return;
+  }
+
+  const delayMs =
+    Math.max(
+      0,
+      updatedAtMs +
+        FOUNDER_PROGRESS_STALE_THRESHOLD_MS +
+        1 -
+        evaluatedAtMs,
+    );
+
+  staleTransitionTimer =
+    globalThis.setTimeout(() => {
+      staleTransitionTimer = undefined;
+
+      if (
+        !snapshotsEqual(
+          currentSnapshot,
+          snapshot,
+        )
+      ) {
+        return;
+      }
+
+      const refreshedAnalytics =
+        calculateFounderProgressAnalytics(
+          currentSnapshot,
+          progressObservations,
+          Date.now(),
+        );
+
+      const staleStateChanged =
+        refreshedAnalytics.isRuntimeDataStale !==
+        currentAnalytics.isRuntimeDataStale;
+
+      currentAnalytics = refreshedAnalytics;
+
+      if (!staleStateChanged) {
+        return;
+      }
+
+      for (const listener of listeners) {
+        listener(currentSnapshot);
+      }
+    }, delayMs);
+}
+
 export function getFounderProgressSnapshot():
   FounderProgressSnapshot {
   return currentSnapshot;
@@ -487,11 +860,49 @@ export function getFounderProgressAnalytics():
 
 export function setFounderProgressRuntimeSnapshot(
   snapshot: FounderProgressRuntimeInput,
+  evaluatedAtMs?: number,
 ): void {
+  const evaluationTime =
+    evaluatedAtMs ?? Date.now();
+
   const next =
     normalizeSnapshot(snapshot, "runtime");
 
   if (snapshotsEqual(currentSnapshot, next)) {
+    const refreshedAnalytics =
+      calculateFounderProgressAnalytics(
+        next,
+        progressObservations,
+        evaluationTime,
+      );
+
+    const staleStateChanged =
+      refreshedAnalytics.isRuntimeDataStale !==
+      currentAnalytics.isRuntimeDataStale;
+
+    currentAnalytics = refreshedAnalytics;
+
+    if (!staleStateChanged) {
+      if (evaluatedAtMs === undefined) {
+        scheduleStaleTransition(
+          next,
+          evaluationTime,
+        );
+      }
+      return;
+    }
+
+    if (evaluatedAtMs === undefined) {
+      scheduleStaleTransition(
+        next,
+        evaluationTime,
+      );
+    }
+
+    for (const listener of listeners) {
+      listener(next);
+    }
+
     return;
   }
 
@@ -502,7 +913,15 @@ export function setFounderProgressRuntimeSnapshot(
     calculateFounderProgressAnalytics(
       next,
       progressObservations,
+      evaluationTime,
     );
+
+  if (evaluatedAtMs === undefined) {
+    scheduleStaleTransition(
+      next,
+      evaluationTime,
+    );
+  }
 
   for (const listener of listeners) {
     listener(next);
@@ -511,6 +930,8 @@ export function setFounderProgressRuntimeSnapshot(
 
 export function clearFounderProgressRuntimeSnapshot():
   void {
+  clearStaleTransitionTimer();
+
   const next =
     normalizeSnapshot(
       founderProgressConfig,
