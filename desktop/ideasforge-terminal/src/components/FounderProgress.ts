@@ -41,13 +41,41 @@ function formatUpdatedAt(
     return "";
   }
 
-  return new Intl.DateTimeFormat(
-    undefined,
-    {
-      dateStyle: "medium",
-      timeStyle: "short",
-    },
-  ).format(date);
+  try {
+    return new Intl.DateTimeFormat(
+      undefined,
+      {
+        dateStyle: "medium",
+        timeStyle: "short",
+      },
+    ).format(date);
+  } catch {
+    return "";
+  }
+}
+
+function formatPredictionCompletion(
+  value: string | null,
+  renderTimeMs: number,
+): string {
+  if (
+    !value ||
+    !Number.isFinite(renderTimeMs)
+  ) {
+    return "";
+  }
+
+  const completionTimeMs =
+    new Date(value).getTime();
+
+  if (
+    !Number.isFinite(completionTimeMs) ||
+    completionTimeMs <= renderTimeMs
+  ) {
+    return "";
+  }
+
+  return formatUpdatedAt(value);
 }
 
 function formatPredictionDuration(
@@ -112,6 +140,16 @@ function formatPredictionVelocity(
     return "";
   }
 
+  const minimumDisplayedVelocityPerHour =
+    0.1;
+
+  if (
+    value <
+    minimumDisplayedVelocityPerHour
+  ) {
+    return "<0.1% per hour";
+  }
+
   return `+${value.toFixed(1)}% per hour`;
 }
 
@@ -131,6 +169,8 @@ function predictionConfidenceLabel(
 }
 
 export function renderFounderProgress(): string {
+  const renderTimeMs = Date.now();
+
   const snapshot =
     getFounderProgressSnapshot();
 
@@ -180,26 +220,42 @@ export function renderFounderProgress(): string {
   const prediction =
     analytics.prediction;
 
-  const predictionDuration =
+  const predictionDurationText =
     formatPredictionDuration(
       prediction.estimatedRemainingDurationMs,
     );
 
-  const predictionCompletion =
-    formatUpdatedAt(
-      prediction.estimatedCompletionTime ??
-        undefined,
+  const predictionCompletionText =
+    formatPredictionCompletion(
+      prediction.estimatedCompletionTime,
+      renderTimeMs,
     );
 
-  const predictionVelocity =
+  const predictionVelocityText =
     formatPredictionVelocity(
       prediction.progressVelocityPerHour,
     );
 
-  const predictionConfidence =
+  const predictionConfidenceText =
     predictionConfidenceLabel(
       prediction.predictionConfidence,
     );
+
+  const validPredictionDuration =
+    prediction.estimatedRemainingDurationMs !==
+      null &&
+    Number.isFinite(
+      prediction.estimatedRemainingDurationMs,
+    ) &&
+    prediction.estimatedRemainingDurationMs > 0;
+
+  const validPredictionVelocity =
+    prediction.progressVelocityPerHour !==
+      null &&
+    Number.isFinite(
+      prediction.progressVelocityPerHour,
+    ) &&
+    prediction.progressVelocityPerHour > 0;
 
   const validRuntimePrediction =
     snapshot.source === "runtime" &&
@@ -215,11 +271,13 @@ export function renderFounderProgress(): string {
     !prediction.insufficientData &&
     analytics.progressTrend.direction ===
       "advancing" &&
+    validPredictionDuration &&
+    validPredictionVelocity &&
     Boolean(
-      predictionDuration &&
-      predictionCompletion &&
-      predictionVelocity &&
-      predictionConfidence,
+      predictionDurationText &&
+      predictionCompletionText &&
+      predictionVelocityText &&
+      predictionConfidenceText,
     );
 
   const unavailableReason =
@@ -237,33 +295,58 @@ export function renderFounderProgress(): string {
               ? "progress is regressing"
               : "an estimate is not available";
 
+  const predictionTitleText =
+    showPrediction
+      ? [
+          `Estimated ${predictionDurationText} remaining`,
+          `Completion ${predictionCompletionText}`,
+          predictionVelocityText,
+          predictionConfidenceText,
+        ].join(". ")
+      : `Prediction unavailable: ${unavailableReason}`;
+
   const predictionTitle =
     escapeFounderProgressText(
-      showPrediction
-        ? [
-            `Estimated ${predictionDuration} remaining`,
-            `Completion ${predictionCompletion}`,
-            predictionVelocity,
-            predictionConfidence,
-          ].join(". ")
-        : `Prediction unavailable: ${unavailableReason}`,
+      predictionTitleText,
     );
+
+  const trendTitleText = [
+    `Trend: ${analytics.progressTrend.direction}`,
+    `Delta: ${analytics.progressTrend.delta}`,
+    `Certified snapshots: ${analytics.certifiedSnapshotCount}`,
+    `Confidence: ${analytics.confidenceLevel}`,
+    analytics.isRuntimeDataStale
+      ? "Runtime data is stale"
+      : "Runtime data is current",
+    analytics.healthDegradation.any
+      ? "Component health degraded"
+      : "Component health unchanged",
+    predictionTitleText,
+  ].join(". ");
 
   const trendTitle =
     escapeFounderProgressText(
-      [
-        `Trend: ${analytics.progressTrend.direction}`,
-        `Delta: ${analytics.progressTrend.delta}`,
-        `Certified snapshots: ${analytics.certifiedSnapshotCount}`,
-        `Confidence: ${analytics.confidenceLevel}`,
-        analytics.isRuntimeDataStale
-          ? "Runtime data is stale"
-          : "Runtime data is current",
-        analytics.healthDegradation.any
-          ? "Component health degraded"
-          : "Component health unchanged",
-        predictionTitle,
-      ].join(". "),
+      trendTitleText,
+    );
+
+  const predictionDuration =
+    escapeFounderProgressText(
+      predictionDurationText,
+    );
+
+  const predictionCompletion =
+    escapeFounderProgressText(
+      predictionCompletionText,
+    );
+
+  const predictionVelocity =
+    escapeFounderProgressText(
+      predictionVelocityText,
+    );
+
+  const predictionConfidence =
+    escapeFounderProgressText(
+      predictionConfidenceText,
     );
 
   return `

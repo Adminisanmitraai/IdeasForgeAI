@@ -1,0 +1,330 @@
+FOS-UI.6 PHASE 3B - PREDICTION VISUALIZATION HARDENING
+=======================================================
+
+Verification timestamp: 2026-07-26 21:02:24 +05:30
+Repository: D:\APPS\IdeasForgeAI
+Baseline commit: 3860145
+Status: IMPLEMENTED AND VERIFIED
+
+SCOPE
+-----
+
+This phase implemented only the four findings certified by
+FOS-UI.6-PHASE3A-INSPECTION.txt:
+
+1. Tiny positive velocity rounding
+2. Single escaping boundary
+3. Past ETA defensive suppression
+4. Narrow mobile clipping hardening
+
+No prediction formula, observation history, listener, backend, contract,
+endpoint, polling, milestone, or certified progress change was made.
+
+FILES INSPECTED
+---------------
+
+- FOS-UI.6-PHASE3A-INSPECTION.txt
+- desktop/ideasforge-terminal/src/components/FounderProgress.ts
+- desktop/ideasforge-terminal/src/styles/founder-progress.css
+- desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts
+- desktop/ideasforge-terminal/src/services/founderOsApi.ts
+- desktop/ideasforge-terminal/src/main.ts
+- desktop/ideasforge-terminal/tsconfig.active.json
+- desktop/ideasforge-terminal/package.json
+- backend/tests/test_founder_os_read_api.py
+- backend/tests/test_founder_os_interface_boundaries.py
+
+FILES MODIFIED
+--------------
+
+- desktop/ideasforge-terminal/src/components/FounderProgress.ts
+- desktop/ideasforge-terminal/src/styles/founder-progress.css
+
+RESULT ARTIFACT CREATED
+-----------------------
+
+- FOS-UI.6-PHASE3B-RESULT.txt
+
+SOURCE BACKUP
+-------------
+
+Backup location:
+
+D:\APPS\IdeasForgeAI\.founder-progress-backups\FOS-UI.6-PHASE3B-20260726-205701
+
+Backup files:
+
+- FounderProgress.ts
+- founder-progress.css
+
+The backup hashes match the recorded before-edit source hashes.
+
+SHA-256 HASHES
+--------------
+
+FounderProgress.ts
+
+Before:
+6124CD0C07F4EB895E3738FA3C65E40132282B13E939D6DA19FE6B2CDC5B58EF
+
+After:
+1944CE136CA2FA49E2F103102C7DCE583A702405081D93958FF8BA652C95C0FD
+
+founder-progress.css
+
+Before:
+578CD2DBCBC53AAD0642F60386921FC5BD6B12B08FE8138D13CEBC7C3118344B
+
+After:
+95893BC3DCD0BEE6D26550719265E7F3D82FE938C39010BE4FB0B5AD183E0907
+
+TINY VELOCITY BEHAVIOR
+----------------------
+
+A single deterministic presentation threshold of 0.1 percent per hour is
+defined in the velocity formatter.
+
+- finite positive velocity below 0.1 renders as "<0.1% per hour"
+- finite positive velocity at or above 0.1 renders with one decimal place
+- zero, negative, NaN, and Infinity return no label and suppress prediction
+- negative zero returns no label
+- the underlying velocity calculation was not changed
+
+This prevents every finite positive velocity from being presented as 0.0.
+
+ESCAPING BEHAVIOR
+-----------------
+
+Prediction formatters now return plain, unescaped text. Prediction title text
+and trend title text are composed from those raw values. Each final value is
+escaped exactly once where it crosses into HTML.
+
+The same raw formatted values feed both visible prediction content and the
+accessible title. Visible dynamic values are independently escaped once at
+their HTML insertion boundary.
+
+Protection remains active for:
+
+- ampersand
+- less-than
+- greater-than
+- double quote
+- single quote
+
+An ampersand in locale-formatted completion text renders as "&amp;" in source,
+never "&amp;amp;". Existing milestone escaping is unchanged.
+
+PAST ETA BEHAVIOR
+-----------------
+
+One render-time timestamp is captured for each component render. Prediction
+completion formatting returns no value when:
+
+- the completion timestamp is missing
+- the render timestamp is non-finite
+- the completion timestamp is invalid or non-finite
+- the completion timestamp is equal to render time
+- the completion timestamp is earlier than render time
+- local date/time formatting throws
+
+Visible prediction also explicitly requires:
+
+- etaAvailable=true
+- finite positive remaining duration
+- finite positive velocity
+- certified runtime certified_manifest data
+- current, advancing, non-stalled, sufficient analytics
+- recognized confidence
+- valid future completion formatting
+
+Invalid analytics are not mutated, repaired, or fabricated. The prediction
+group is omitted entirely when validation fails, leaving no stale accessible
+prediction content.
+
+MOBILE CLIPPING BEHAVIOR
+------------------------
+
+The existing layout and fixed mobile placement are preserved.
+
+Hardening changes:
+
+- prediction row has box-sizing, width, max-width, and min-width containment
+- prediction label remains fixed to its compact intrinsic width
+- prediction metadata can shrink with min-width: 0
+- prediction metadata retains overflow: hidden and text-overflow: ellipsis
+- prediction metadata explicitly remains on one line
+- mobile intelligence content has min-width: 0 and overflow containment
+- mobile intelligence and prediction vertical spacing was reduced from 2px
+  to 1px
+- mobile prediction line-height is compact
+
+No new row, panel, horizontal scrolling rule, card-height increase, layout
+redesign, or desktop geometry change was introduced. The health row and
+current milestone remain present and readable.
+
+DETERMINISTIC VERIFICATION
+--------------------------
+
+An isolated temporary Node/TypeScript harness was used without adding a test
+framework or repository source file. It was deleted immediately after use.
+
+Result:
+
+PASS: 42/42 deterministic Phase 3B checks
+
+Required cases verified:
+
+1. Tiny positive velocity displays <0.1% per hour: PASS
+2. Normal positive velocity displays one decimal: PASS
+3. Zero velocity suppresses prediction: PASS
+4. Negative velocity suppresses prediction: PASS
+5. NaN velocity suppresses prediction: PASS
+6. Infinity velocity suppresses prediction: PASS
+7. Future finite ETA renders: PASS
+8. ETA equal to now suppresses prediction: PASS
+9. Past ETA suppresses prediction: PASS
+10. Invalid ETA suppresses prediction: PASS
+11. Zero remaining duration suppresses prediction: PASS
+12. Negative remaining duration suppresses prediction: PASS
+13. Non-finite remaining duration suppresses prediction: PASS
+14. Stale prediction suppresses visualization: PASS
+15. Stalled prediction suppresses visualization: PASS
+16. Stable trend suppresses visualization: PASS
+17. Regressing trend suppresses visualization: PASS
+18. Insufficient data suppresses visualization: PASS
+19. Fallback data suppresses visualization: PASS
+20. Uncertified data suppresses visualization: PASS
+21. Prediction title content is escaped once: PASS
+22. Ampersand does not become &amp;amp;: PASS
+23. Duration output contains no raw milliseconds: PASS
+24. Mobile prediction line contains overflow protection: PASS
+25. Mobile prediction line contains ellipsis behavior: PASS
+26. No horizontal scrolling rule was introduced: PASS
+27. Existing health indicators remain present: PASS
+28. No component timer was added: PASS
+29. Polling remains 30_000ms: PASS
+30. API endpoint remains /api/founder-os/v1/progress: PASS
+
+Additional cases verified:
+
+- missing/equal/past/invalid/future completion helper behavior
+- velocity threshold boundaries at 0.099 and 0.1
+- negative-zero velocity
+- unknown confidence suppression
+- all five required HTML metacharacters
+- suppressed prediction leaves no role=group content
+- no aria-live prediction system
+
+BACKEND TEST RESULTS
+--------------------
+
+Command:
+
+python -m pytest backend/tests/test_founder_os_read_api.py -q
+
+Result:
+
+PASS - 16 passed in 1.70s
+
+Command:
+
+python -m pytest backend/tests/test_founder_os_interface_boundaries.py -q
+
+Result:
+
+PASS - 3 passed in 0.40s
+
+TYPESCRIPT RESULT
+-----------------
+
+Command:
+
+npx tsc -p tsconfig.active.json --noEmit
+
+Result:
+
+PASS - exit code 0, no diagnostics
+
+PRODUCTION BUILD RESULT
+-----------------------
+
+Command:
+
+npm run build
+
+Result:
+
+PASS
+
+- TypeScript compilation completed
+- Vite 6.4.3 production build completed
+- 84 modules transformed
+- production bundle generated in 1.93s
+
+SCOPED GIT DIFF CHECK
+---------------------
+
+Command:
+
+git diff --check -- desktop/ideasforge-terminal/src/components/FounderProgress.ts desktop/ideasforge-terminal/src/styles/founder-progress.css
+
+Result:
+
+PASS - exit code 0
+
+Git emitted only informational LF-to-CRLF working-copy warnings for the two
+allowed files. No whitespace error was reported.
+
+REPOSITORY-WIDE GIT DIFF CHECK
+------------------------------
+
+Command:
+
+git diff --check
+
+Result:
+
+BLOCKED BY UNRELATED PRE-EXISTING CONTENT - exit code 1
+
+Exact diagnostic:
+
+desktop/ideasforge-terminal/src/screens/renderScreen.ts:1903: new blank line at EOF.
+
+That unrelated file was already modified before Phase 3B and was not changed
+to force the repository-wide check to pass. Git also emitted informational
+LF-to-CRLF warnings for multiple pre-existing dirty files.
+
+UNRELATED BLOCKERS
+------------------
+
+The repository contains extensive pre-existing modified, deleted, and
+untracked work outside Founder Progress. The only verification blocker is the
+repository-wide whitespace diagnostic in renderScreen.ts at line 1903.
+
+desktop/ideasforge-terminal/src/main.ts remains pre-existing modified in git
+status, but its SHA-256 hash is unchanged from the certified Phase 3A
+inspection:
+
+B58ED9329E60D974145DA85FFD75D45AD0C30EC2C34886B9CC6543F6F2E2C4F8
+
+PROTECTION CONFIRMATIONS
+------------------------
+
+- Polling remains 30_000ms (30 seconds).
+- API endpoint remains /api/founder-os/v1/progress.
+- founderOsApi.ts was not modified.
+- founderProgressProvider.ts was not modified.
+- Founder Progress formulas were not modified.
+- Bounded observation history was not modified.
+- Listener behavior was not modified.
+- Backend source and contracts were not modified.
+- No authentication, chat, message rendering, streaming, Worker, routing, or
+  mobile-native-chat.css file was modified.
+- No timer or network request was added.
+- No unrelated source file was modified.
+- No certified progress value was changed.
+- No visible milestone was changed.
+- No file was staged.
+- No commit was created.
+- No push was performed.
+- Phase 3C was not started.

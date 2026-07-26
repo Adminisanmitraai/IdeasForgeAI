@@ -194,6 +194,9 @@
   align-items: center;
   gap: 4px;
 
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
   margin-top: 1px;
   padding-top: 3px;
@@ -208,6 +211,8 @@
 }
 
 .founder-progress__prediction-label {
+  flex: 0 0 auto;
+
   color: rgba(71, 85, 105, 0.72);
   font-weight: 600;
 }
@@ -220,11 +225,14 @@
 }
 
 .founder-progress__prediction-meta {
+  flex: 1 1 auto;
+
   min-width: 0;
   overflow: hidden;
 
   color: rgba(71, 85, 105, 0.62);
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @keyframes founder-progress-enter {
@@ -347,8 +355,11 @@
     .founder-progress__intelligence {
     display: block;
 
-    margin-top: 2px;
-    padding-top: 2px;
+    min-width: 0;
+    margin-top: 1px;
+    padding-top: 1px;
+
+    overflow: hidden;
 
     font-size: 7px;
   }
@@ -371,9 +382,10 @@
 
   body.mobile-chat-dedicated-shell
     .founder-progress__prediction {
-    margin-top: 2px;
-    padding-top: 2px;
+    margin-top: 1px;
+    padding-top: 1px;
 
     font-size: 7px;
+    line-height: 1;
   }
 }
