@@ -106,6 +106,87 @@
   text-overflow: ellipsis;
 }
 
+
+
+.founder-progress__intelligence {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+  align-items: center;
+  gap: 8px;
+
+  margin-top: 4px;
+  padding-top: 4px;
+
+  border-top:
+    1px solid
+    rgba(100, 116, 139, 0.12);
+
+  color: rgba(71, 85, 105, 0.72);
+  font-size: 8px;
+  line-height: 1.2;
+}
+
+.founder-progress__timeline,
+.founder-progress__health {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  min-width: 0;
+}
+
+.founder-progress__timeline span {
+  min-width: 0;
+  max-width: 260px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.founder-progress__health {
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+
+.founder-progress__health span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.founder-progress__health span::before {
+  width: 5px;
+  height: 5px;
+
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.5);
+
+  content: "";
+}
+
+.founder-progress__health
+  span[data-status="healthy"]::before {
+  background: #22c55e;
+}
+
+.founder-progress__health
+  span[data-status="degraded"]::before {
+  background: #f59e0b;
+}
+
+.founder-progress__health
+  span[data-status="unavailable"]::before {
+  background: #ef4444;
+}
+
+.founder-progress__health time {
+  color: rgba(71, 85, 105, 0.62);
+}
+
 @keyframes founder-progress-enter {
   from {
     opacity: 0;
@@ -184,9 +265,9 @@
 
     box-sizing: border-box !important;
     width: auto !important;
-    height: 28px !important;
+    height: auto !important;
     min-height: 28px !important;
-    max-height: 28px !important;
+    max-height: 58px !important;
 
     margin: 2px 0 0 !important;
     padding: 3px 7px !important;
@@ -202,7 +283,7 @@
     .chat-native-stage {
     top:
       calc(
-        104px +
+        134px +
         env(safe-area-inset-top, 0px)
       ) !important;
   }
@@ -218,5 +299,33 @@
     height: 9px !important;
     min-height: 9px !important;
     margin-top: 2px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  body.mobile-chat-dedicated-shell
+    .founder-progress__intelligence {
+    display: block;
+
+    margin-top: 2px;
+    padding-top: 2px;
+
+    font-size: 7px;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .founder-progress__timeline {
+    display: none;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .founder-progress__health {
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .founder-progress__health time {
+    display: none;
   }
 }

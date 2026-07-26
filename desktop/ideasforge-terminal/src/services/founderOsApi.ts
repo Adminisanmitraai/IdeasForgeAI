@@ -18,13 +18,24 @@ export interface FounderWorkspaceRecord {
   execution_boundary: string;
 }
 
+export type FounderProgressComponentStatus =
+  | "healthy"
+  | "degraded"
+  | "unavailable";
+
 export interface FounderProgressRecord {
   overall_progress: number;
+  previous_milestone: string;
   current_milestone: string;
+  next_milestone: string;
   show_progress: boolean;
+  backend_status: FounderProgressComponentStatus;
+  frontend_status: FounderProgressComponentStatus;
+  runtime_status: FounderProgressComponentStatus;
   updated_at: string;
   source: "certified_manifest";
-  contract_version: "founder-os-progress.v1";
+  certified: true;
+  contract_version: "founder-os-progress.v2";
 }
 
 export type FounderProgressResult =
@@ -115,6 +126,16 @@ function parseWorkspace(value: unknown): FounderWorkspaceRecord | null {
   };
 }
 
+function isFounderProgressStatus(
+  value: unknown,
+): value is FounderProgressComponentStatus {
+  return (
+    value === "healthy" ||
+    value === "degraded" ||
+    value === "unavailable"
+  );
+}
+
 function parseFounderProgress(
   payload: unknown,
 ): FounderProgressRecord | null {
@@ -133,24 +154,41 @@ function parseFounderProgress(
     !Number.isInteger(data.overall_progress) ||
     data.overall_progress < 0 ||
     data.overall_progress > 100 ||
+    typeof data.previous_milestone !== "string" ||
+    data.previous_milestone.trim().length === 0 ||
     typeof data.current_milestone !== "string" ||
     data.current_milestone.trim().length === 0 ||
+    typeof data.next_milestone !== "string" ||
+    data.next_milestone.trim().length === 0 ||
     typeof data.show_progress !== "boolean" ||
+    !isFounderProgressStatus(data.backend_status) ||
+    !isFounderProgressStatus(data.frontend_status) ||
+    !isFounderProgressStatus(data.runtime_status) ||
     typeof data.updated_at !== "string" ||
     Number.isNaN(Date.parse(data.updated_at)) ||
     data.source !== "certified_manifest" ||
-    data.contract_version !== "founder-os-progress.v1"
+    data.certified !== true ||
+    data.contract_version !== "founder-os-progress.v2"
   ) {
     return null;
   }
 
   return {
     overall_progress: data.overall_progress,
-    current_milestone: data.current_milestone.trim(),
+    previous_milestone:
+      data.previous_milestone.trim(),
+    current_milestone:
+      data.current_milestone.trim(),
+    next_milestone:
+      data.next_milestone.trim(),
     show_progress: data.show_progress,
+    backend_status: data.backend_status,
+    frontend_status: data.frontend_status,
+    runtime_status: data.runtime_status,
     updated_at: data.updated_at,
     source: "certified_manifest",
-    contract_version: "founder-os-progress.v1",
+    certified: true,
+    contract_version: "founder-os-progress.v2",
   };
 }
 
