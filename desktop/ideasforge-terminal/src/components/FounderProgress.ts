@@ -50,6 +50,86 @@ function formatUpdatedAt(
   ).format(date);
 }
 
+function formatPredictionDuration(
+  value: number | null,
+): string {
+  if (
+    value === null ||
+    !Number.isFinite(value) ||
+    value <= 0
+  ) {
+    return "";
+  }
+
+  if (value < 60_000) {
+    return "under 1 minute";
+  }
+
+  const totalMinutes =
+    Math.ceil(value / 60_000);
+  const days =
+    Math.floor(totalMinutes / 1_440);
+  const hours =
+    Math.floor(
+      totalMinutes % 1_440 / 60,
+    );
+  const minutes =
+    totalMinutes % 60;
+
+  if (days > 0) {
+    return [
+      `${days} ${days === 1 ? "day" : "days"}`,
+      hours > 0
+        ? `${hours} ${hours === 1 ? "hour" : "hours"}`
+        : "",
+    ].filter(Boolean).join(" ");
+  }
+
+  if (hours > 0) {
+    return [
+      `${hours} ${hours === 1 ? "hour" : "hours"}`,
+      minutes > 0
+        ? `${minutes} ${minutes === 1 ? "minute" : "minutes"}`
+        : "",
+    ].filter(Boolean).join(" ");
+  }
+
+  return `${totalMinutes} ${
+    totalMinutes === 1
+      ? "minute"
+      : "minutes"
+  }`;
+}
+
+function formatPredictionVelocity(
+  value: number | null,
+): string {
+  if (
+    value === null ||
+    !Number.isFinite(value) ||
+    value <= 0
+  ) {
+    return "";
+  }
+
+  return `+${value.toFixed(1)}% per hour`;
+}
+
+function predictionConfidenceLabel(
+  value: string,
+): string {
+  switch (value) {
+    case "low":
+      return "Low confidence";
+    case "medium":
+      return "Medium confidence";
+    case "high":
+      return "High confidence";
+    default:
+      return "";
+  }
+}
+
 export function renderFounderProgress(): string {
   const snapshot =
     getFounderProgressSnapshot();
@@ -100,13 +180,74 @@ export function renderFounderProgress(): string {
   const prediction =
     analytics.prediction;
 
+  const predictionDuration =
+    formatPredictionDuration(
+      prediction.estimatedRemainingDurationMs,
+    );
+
+  const predictionCompletion =
+    formatUpdatedAt(
+      prediction.estimatedCompletionTime ??
+        undefined,
+    );
+
+  const predictionVelocity =
+    formatPredictionVelocity(
+      prediction.progressVelocityPerHour,
+    );
+
+  const predictionConfidence =
+    predictionConfidenceLabel(
+      prediction.predictionConfidence,
+    );
+
+  const validRuntimePrediction =
+    snapshot.source === "runtime" &&
+    snapshot.sourceOfProgress ===
+      "certified_manifest" &&
+    snapshot.certified === true;
+
+  const showPrediction =
+    validRuntimePrediction &&
+    prediction.etaAvailable &&
+    !analytics.isRuntimeDataStale &&
+    !prediction.stalled &&
+    !prediction.insufficientData &&
+    analytics.progressTrend.direction ===
+      "advancing" &&
+    Boolean(
+      predictionDuration &&
+      predictionCompletion &&
+      predictionVelocity &&
+      predictionConfidence,
+    );
+
+  const unavailableReason =
+    analytics.isRuntimeDataStale
+      ? "progress data is stale"
+      : prediction.stalled
+        ? "progress is stalled"
+        : prediction.insufficientData
+          ? "more progress history is needed"
+          : analytics.progressTrend.direction ===
+              "stable"
+            ? "progress is stable"
+            : analytics.progressTrend.direction ===
+                "regressing"
+              ? "progress is regressing"
+              : "an estimate is not available";
+
   const predictionTitle =
-    prediction.etaAvailable
-      ? [
-          `Velocity: ${prediction.progressVelocityPerHour?.toFixed(2)}% per hour`,
-          `Estimated completion: ${prediction.estimatedCompletionTime}`,
-        ].join(". ")
-      : "ETA unavailable";
+    escapeFounderProgressText(
+      showPrediction
+        ? [
+            `Estimated ${predictionDuration} remaining`,
+            `Completion ${predictionCompletion}`,
+            predictionVelocity,
+            predictionConfidence,
+          ].join(". ")
+        : `Prediction unavailable: ${unavailableReason}`,
+    );
 
   const trendTitle =
     escapeFounderProgressText(
@@ -224,6 +365,33 @@ export function renderFounderProgress(): string {
                     : ""
                 }
               </div>
+
+              ${
+                showPrediction
+                  ? `
+                    <div
+                      class="founder-progress__prediction"
+                      role="group"
+                      aria-label="${predictionTitle}"
+                      title="${predictionTitle}"
+                    >
+                      <span class="founder-progress__prediction-label">
+                        ETA
+                      </span>
+
+                      <strong>${predictionDuration}</strong>
+
+                      <span class="founder-progress__prediction-meta">
+                        ${predictionCompletion}
+                        &middot;
+                        ${predictionVelocity}
+                        &middot;
+                        ${predictionConfidence}
+                      </span>
+                    </div>
+                  `
+                  : ""
+              }
             </div>
           `
           : ""

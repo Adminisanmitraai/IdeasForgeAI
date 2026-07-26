@@ -187,6 +187,46 @@
   color: rgba(71, 85, 105, 0.62);
 }
 
+.founder-progress__prediction {
+  grid-column: 1 / -1;
+
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  min-width: 0;
+  margin-top: 1px;
+  padding-top: 3px;
+
+  overflow: hidden;
+
+  border-top:
+    1px solid
+    rgba(100, 116, 139, 0.12);
+
+  white-space: nowrap;
+}
+
+.founder-progress__prediction-label {
+  color: rgba(71, 85, 105, 0.72);
+  font-weight: 600;
+}
+
+.founder-progress__prediction strong {
+  flex: 0 0 auto;
+
+  color: rgba(51, 65, 85, 0.82);
+  font-weight: 600;
+}
+
+.founder-progress__prediction-meta {
+  min-width: 0;
+  overflow: hidden;
+
+  color: rgba(71, 85, 105, 0.62);
+  text-overflow: ellipsis;
+}
+
 @keyframes founder-progress-enter {
   from {
     opacity: 0;
@@ -327,5 +367,13 @@
   body.mobile-chat-dedicated-shell
     .founder-progress__health time {
     display: none;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .founder-progress__prediction {
+    margin-top: 2px;
+    padding-top: 2px;
+
+    font-size: 7px;
   }
 }

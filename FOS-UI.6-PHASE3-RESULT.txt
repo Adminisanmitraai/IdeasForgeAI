@@ -1,0 +1,254 @@
+FOS-UI.6 PHASE 3 - RUNTIME PREDICTION VISUALIZATION
+Verified: 2026-07-26
+Project: D:\APPS\IdeasForgeAI
+
+STATUS
+Phase 3 visualization implementation is complete.
+Focused visualization checks, focused TypeScript, backend tests, standalone
+Vite production bundling, and scoped whitespace verification passed.
+The required full TypeScript/npm build is blocked by an unrelated
+pre-existing untracked CAD source file, documented below.
+
+FILES INSPECTED
+1. desktop/ideasforge-terminal/src/components/FounderProgress.ts
+2. desktop/ideasforge-terminal/src/styles/founder-progress.css
+3. desktop/ideasforge-terminal/src/progress/founderProgressProvider.ts
+4. desktop/ideasforge-terminal/src/services/founderOsApi.ts
+5. desktop/ideasforge-terminal/src/main.ts
+
+FILES MODIFIED
+1. desktop/ideasforge-terminal/src/components/FounderProgress.ts
+2. desktop/ideasforge-terminal/src/styles/founder-progress.css
+3. FOS-UI.6-PHASE3-RESULT.txt
+
+The Phase 2 provider and prediction formulas were not modified.
+
+PREDICTION VISUALIZATION
+- Reuses analytics.prediction from the immutable Phase 2 result.
+- Does not independently calculate velocity, ETA, or confidence.
+- Adds one compact prediction line inside the existing intelligence area.
+- Preserves the existing top-level progress, milestone, and health layout.
+- Does not add a panel, dashboard, timer, state store, or network request.
+
+The compact line presents:
+
+- ETA label
+- human-readable remaining duration
+- locally formatted estimated completion date/time
+- compact progress velocity
+- deterministic confidence label
+
+ETA AVAILABILITY
+The visible prediction line renders only when all conditions are true:
+
+- snapshot source is runtime
+- progress source is certified_manifest
+- snapshot is certified
+- Phase 2 etaAvailable is true
+- runtime analytics is not stale
+- prediction is not stalled
+- prediction is not insufficient
+- trend direction is advancing
+- duration formatting is valid
+- completion timestamp formatting is valid
+- velocity formatting is valid
+- confidence formatting is valid
+
+ETA SUPPRESSION
+No visible prediction line renders for:
+
+- etaAvailable = false
+- stale runtime data
+- stalled progress
+- insufficient data
+- stable trend
+- regressing trend
+- invalid/non-finite duration
+- invalid completion timestamp
+- invalid/non-finite velocity
+- fallback source
+- uncertified snapshot
+
+Unavailable prediction never displays a fabricated date, zero duration,
+Infinity, NaN, or raw milliseconds.
+
+An accessible title provides a compact unavailable reason:
+
+- progress data is stale
+- progress is stalled
+- more progress history is needed
+- progress is stable
+- progress is regressing
+- an estimate is not available
+
+DURATION FORMATTING
+The component formats the existing Phase 2 duration without recomputing ETA:
+
+- below 60 seconds: under 1 minute
+- below 1 hour: rounded-up whole minutes
+- below 1 day: hours plus remaining minutes
+- 1 day or more: days plus remaining hours
+
+Verified examples:
+
+- under 1 minute
+- 12 minutes
+- 2 hours 15 minutes
+- 1 day 4 hours
+
+Raw milliseconds remain semantic data only and are never visible text.
+
+COMPLETION-TIME FORMATTING
+- Reads estimatedCompletionTime from the Phase 2 prediction.
+- Validates it through Date before display.
+- Uses the user's local date/time formatting.
+- Invalid timestamps suppress the visible prediction line.
+- No milestone date is invented.
+
+VELOCITY FORMATTING
+- Reads progressVelocityPerHour from Phase 2.
+- Requires a finite value greater than zero.
+- Displays one decimal place:
+  +1.2% per hour
+- Does not display excessive precision.
+
+CONFIDENCE DISPLAY
+Deterministic labels map directly from Phase 2:
+
+- low -> Low confidence
+- medium -> Medium confidence
+- high -> High confidence
+- unavailable/unknown -> no visible prediction line
+
+ACCESSIBILITY
+- The compact prediction is a role=group with a complete aria-label.
+- The same human-readable details are available as title text.
+- Unavailable reasons remain in the existing intelligence title.
+- Dynamic text passes through the existing HTML escaping function.
+- No aria-live region was added.
+- Identical 30-second polls therefore do not create repeated live-region
+  announcements.
+- Provider listener behavior was not changed.
+
+RESPONSIVE BEHAVIOR
+- Prediction remains one no-wrap compact line.
+- Metadata uses overflow hidden and text-overflow ellipsis.
+- No horizontal scrolling is introduced.
+- The line spans the existing intelligence grid on desktop.
+- Dedicated mobile rendering retains the existing 58px maximum card height.
+- Mobile prediction text uses the existing compact 7px intelligence scale.
+- Health indicators remain in their existing row.
+- No mobile offset or stage position was changed.
+- Reduced-motion behavior remains unchanged; no motion was added.
+
+STYLE BEHAVIOR
+- Reuses existing font sizes, colors, border color, and typography.
+- No new color, shadow, radius, animation, or layout system was introduced.
+- CSS changes are limited to the prediction line and mobile compact rule.
+- mobile-native-chat.css was not modified.
+
+FOCUSED VISUALIZATION CHECKS
+PASS
+
+Verified:
+- available ETA renders
+- unavailable ETA does not render prediction details
+- stale prediction is suppressed
+- stalled prediction is suppressed
+- stable prediction is suppressed
+- regressing prediction is suppressed
+- duration formats are human-readable
+- completion formatting requires a valid timestamp
+- velocity is finite and one-decimal compact
+- confidence label is deterministic
+- no aria-live region is present
+- fallback progress/milestone layout remains
+- fallback intelligence and prediction remain absent
+- CSS uses compact grid placement
+- narrow output truncates instead of scrolling/wrapping
+- mobile compact rule is present
+
+BACKEND TEST RESULTS
+1. python -m pytest backend/tests/test_founder_os_read_api.py -q
+   PASS - 16 passed in 1.66s
+
+2. python -m pytest backend/tests/test_founder_os_interface_boundaries.py -q
+   PASS - 3 passed in 0.48s
+
+Total required backend tests: 19 passed.
+
+TYPESCRIPT RESULT
+1. Required command:
+   npx tsc -p tsconfig.active.json --noEmit
+
+   BLOCKED BY PRE-EXISTING UNRELATED UNTRACKED FILE
+
+   src/forgeStructure/cad/CadRenderer.ts:
+   - line 10: TS6133 BUILDING_WIDTH_MM is never read
+   - line 11: TS6133 BUILDING_LENGTH_MM is never read
+   - line 50: TS2367 literal types 14 and 1 have no overlap
+
+   CadRenderer.ts is untracked and outside the allowed Founder Progress
+   files. Phase 3 did not modify it.
+
+2. Focused strict TypeScript check:
+   PASS
+
+   Checked:
+   - FounderProgress.ts
+   - founderProgressProvider.ts
+   - strict
+   - noUnusedLocals
+   - noUnusedParameters
+   - ES2020
+
+BUILD RESULT
+1. npm run build
+   BLOCKED before Vite by the same unrelated CadRenderer.ts TypeScript
+   errors listed above.
+
+2. Standalone Vite production bundle:
+   PASS
+   - 83 modules transformed
+   - completed in 2.13s
+
+SCOPED WHITESPACE RESULT
+Command:
+git diff --check -- desktop/ideasforge-terminal/src/components/FounderProgress.ts desktop/ideasforge-terminal/src/styles/founder-progress.css
+
+PASS - no whitespace errors in the Phase 3 source diff.
+
+REPOSITORY-WIDE WHITESPACE RESULT
+Command:
+git diff --check
+
+BLOCKED BY PRE-EXISTING UNRELATED WORKTREE ISSUE
+
+- desktop/ideasforge-terminal/src/screens/renderScreen.ts:1903:
+  new blank line at EOF
+
+Phase 3 did not modify renderScreen.ts.
+
+API AND POLLING CONFIRMATIONS
+- Endpoint remains /api/founder-os/v1/progress.
+- Contract remains founder-os-progress.v2.
+- No API client or response parser was modified.
+- Founder Progress polling remains 30_000 ms.
+- No network request was added.
+- No backend file or contract was modified.
+
+SCOPE AND SOURCE CONTROL
+- No unrelated file was modified by Phase 3.
+- founderProgressProvider.ts remained unchanged.
+- founderOsApi.ts remained unchanged.
+- main.ts remained unchanged.
+- mobile-native-chat.css remained unchanged.
+- No backend certified progress was updated.
+- The visible milestone was not updated.
+- No commit was created.
+- No push was performed.
+- Phase 4 was not started.
+
+STOP CONDITION
+Stopped after FOS-UI.6 Phase 3 implementation and verification.
+Awaiting Founder approval.
