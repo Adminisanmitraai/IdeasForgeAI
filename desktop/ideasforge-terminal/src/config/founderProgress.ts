@@ -5,8 +5,8 @@
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 47,
-  currentMilestone: "FOS-UI.3 - Live Runtime Progress Engine",
+  overallProgress: 57,
+  currentMilestone: "FOS-UI.6 — Final Prediction Certification",
   showProgress: true,
 };
 
