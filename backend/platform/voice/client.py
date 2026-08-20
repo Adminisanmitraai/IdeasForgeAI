@@ -5,7 +5,7 @@ from typing import Awaitable, Callable, Mapping
 
 from backend.platform.platform_event_model import build_event
 
-from .contracts import VoiceRequest, VoiceResponse
+from .contracts import VoiceRequest, VoiceResponse, VoiceUsage
 from .gateway import VoiceProviderMode, VoiceRoutingDecision
 from .voice_dna import VoiceDNA
 
@@ -78,6 +78,7 @@ class ForgeVoiceServiceClient:
             language=str(raw.get("language", request.language)),
             text=str(raw.get("text", "")),
             output_asset_id=str(raw.get("output_asset_id", "")),
+            usage=VoiceUsage(**dict(raw.get("usage", {}) or {})),
             metadata=dict(raw.get("metadata", {}) or {}),
         )
         return ForgeVoiceClientResult(response, decision.selected_provider_id)

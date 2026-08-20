@@ -1,0 +1,34 @@
+FOS-VOICE.3 — Voice Permission/Consent + Cost Metering + Audit Events
+CERTIFICATION: PASS
+
+Baseline Founder Progress: 83%
+Certified Founder Progress: 85%
+Progress increase: +2%
+Milestone: FOS-VOICE.3 — Voice Permission/Consent + Cost Metering + Audit Events
+
+Implemented
+- Runtime product and restricted-voice permission enforcement.
+- Authorized cloning consent validation and explicit approval gating.
+- Duration/character/local-compute voice cost metering.
+- Cache-hit zero-cost behavior and fallback accounting fields.
+- Project/product/agent/voice/language/session cost attribution.
+- Safe audit events for permission and governed completion.
+- ForgeVoice usage payload normalization into VoiceUsage.
+
+Verification
+- Focused FOS-VOICE.3 + voice/platform regression: 36 passed.
+- Main backend regression: 3942 passed, 9 skipped, 97 subtests passed.
+- Legacy ForgeStructure compatibility slice: 5 passed.
+- Aggregate backend verification: 3947 passed, 9 skipped, 97 subtests passed.
+- Voice-package secret/provider SDK scan: PASS.
+- Production frontend build: PASS.
+
+Safety
+- No STT/TTS models embedded in Founder OS.
+- No provider SDK/API key handling added to voice contracts/governance.
+- Raw Voice DNA reference asset IDs are not emitted in audit records.
+- High-risk cloning cannot execute without valid consent plus explicit approval.
+- No database migration or ForgeCall production behavior changed.
+
+Post-certification production frontend build: PASS.
+Final certification state: PASS at 85%.

@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 83,
-  currentMilestone: "FOS-VOICE.2 - ForgeVoice Gateway Client + Routing Decision Engine",
+  overallProgress: 85,
+  currentMilestone: "FOS-VOICE.3 - Voice Permission/Consent + Cost Metering + Audit Events",
   showProgress: true,
 };
 

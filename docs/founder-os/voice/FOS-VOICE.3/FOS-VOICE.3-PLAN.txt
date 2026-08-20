@@ -1,0 +1,22 @@
+FOS-VOICE.3 — Voice Permission/Consent + Cost Metering + Audit Events
+
+Baseline: 83% certified at FOS-VOICE.2.
+Target after certification: 85% (+2%).
+Progress remains 83% until every acceptance gate passes.
+
+Objective
+Enforce voice permissions before ForgeVoice execution, add duration-aware usage/cost metering, and emit auditable high-risk voice events without exposing raw reference assets or provider credentials.
+
+Scope
+- Runtime product-scope and restricted-use checks.
+- Authorized cloning consent validation and explicit approval gating.
+- STT/TTS duration, character, cache and local-compute cost estimation.
+- Per-project/product/agent/voice/language/session cost records.
+- Safe audit events for permission decisions and governed completion.
+- Normalize ForgeVoice usage payloads into VoiceUsage.
+
+Out of scope
+- Voice DNA database persistence.
+- Real provider billing APIs.
+- ForgeCall production migration.
+- STT/TTS model deployment.
