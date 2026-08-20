@@ -1,0 +1,17 @@
+FOS-VOICE.2 — ForgeVoice Gateway Client + Routing Decision Engine
+
+Baseline: 81% certified at FOS-VOICE.1.
+Target after certification: 83% (+2%).
+Progress remains 81% until all gates pass.
+
+Objective
+Connect Founder OS orchestration to ForgeVoice through a transport-neutral service client and deterministic routing engine, while keeping all STT/TTS/cloning execution outside Founder OS.
+
+Scope
+- local-first routing for DRAFT/STANDARD/REALTIME where eligible;
+- ForgeVoice external/premium preference for PREMIUM/CINEMATIC;
+- language, cost, latency and availability filtering;
+- ordered fallback chain and bounded retry intent;
+- transport-neutral ForgeVoice client with no provider SDK dependency;
+- correlation-aware platform events for route selection, provider failure and completion;
+- normalized ForgeVoice unavailable behavior.

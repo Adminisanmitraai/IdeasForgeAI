@@ -22,3 +22,15 @@ from .voice_dna import (
     VoiceDNA,
     VoiceUsageClass,
 )
+from .client import (
+    FORGEVOICE_CLIENT_VERSION,
+    ForgeVoiceClientResult,
+    ForgeVoiceServiceClient,
+    ForgeVoiceUnavailableError,
+)
+from .routing import VoiceRoutingError, decide_voice_route
+from .orchestration import (
+    VOICE_ORCHESTRATION_VERSION,
+    VoiceOrchestrationResult,
+    orchestrate_voice,
+)

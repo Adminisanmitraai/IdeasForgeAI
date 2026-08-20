@@ -1,0 +1,27 @@
+FOS-VOICE.2 - ForgeVoice Gateway Client + Routing Decision Engine
+
+Baseline Founder Progress: 81%
+Certified Founder Progress: 83%
+Estimated contribution: +2%
+Status: PASS
+
+Implementation certified
+- transport-neutral ForgeVoice service client
+- deterministic local-first routing engine
+- PREMIUM/CINEMATIC external-quality preference
+- language, cost, latency and availability filters
+- ordered provider fallback chain
+- normalized ForgeVoice unavailable error boundary
+- correlation-aware voice route/failure/completion events
+- no provider SDK or direct HTTP dependency in Founder OS voice package
+
+Verification
+- Focused/hardened voice + platform regression: 34 passed.
+- Full backend regression: 3941 passed, 9 skipped, 97 subtests passed.
+- Production frontend build: PASS.
+- Security scan: no OpenAI/ElevenLabs/provider SDK, API key, Authorization header, requests/httpx dependency found in backend/platform/voice.
+- Existing FOS-VOICE.1 contracts and policies remained green.
+
+Certification rule
+No provider model, STT/TTS engine, database migration, or ForgeCall production behavior was added or changed in this phase.
+- Post-certification production frontend build after milestone/progress update: PASS.
