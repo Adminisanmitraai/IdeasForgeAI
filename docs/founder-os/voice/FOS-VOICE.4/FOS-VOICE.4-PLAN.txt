@@ -1,0 +1,27 @@
+FOS-VOICE.4 — Voice DNA Repository + Persistence + Controlled Reference Assets
+
+Baseline: 85% / FOS-VOICE.3
+Estimated certified increase: +2% -> 87%
+
+Scope
+- Durable versioned Voice DNA metadata repository.
+- Preserve consent, cloning/export/reuse flags and product permissions.
+- Project/product-scoped profile reads.
+- Opaque reference asset IDs only; never persist raw reference audio.
+- Least-privilege reference asset resolver contract.
+- No Supabase/database migration in this phase.
+- No provider SDK/model integration.
+- No ForgeCall production behavior change.
+
+Certification gates
+- Voice DNA persistence and hydration tests.
+- Version-history/conflict tests.
+- Product/project access tests.
+- Controlled reference asset safety tests.
+- Existing voice governance/routing regression.
+- Security scan.
+- Full Founder OS backend regression.
+- Production frontend build.
+- Post-certification production build.
+
+Progress remains 85% until all gates pass.

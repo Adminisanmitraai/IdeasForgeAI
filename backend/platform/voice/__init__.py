@@ -54,3 +54,16 @@ from .governance import (
     VoiceGovernanceError,
     orchestrate_governed_voice,
 )
+from .repository import (
+    VOICE_DNA_REPOSITORY_VERSION,
+    VoiceDNAAccessError,
+    VoiceDNANotFoundError,
+    VoiceDNARepository,
+    VoiceDNARepositoryError,
+    VoiceDNAVersionConflictError,
+)
+from .reference_assets import (
+    REFERENCE_ASSET_CONTRACT_VERSION,
+    VoiceReferenceAsset,
+    VoiceReferenceAssetResolver,
+)

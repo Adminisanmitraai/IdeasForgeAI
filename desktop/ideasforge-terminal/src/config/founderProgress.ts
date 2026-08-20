@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 85,
-  currentMilestone: "FOS-VOICE.3 - Voice Permission/Consent + Cost Metering + Audit Events",
+  overallProgress: 87,
+  currentMilestone: "FOS-VOICE.4 - Voice DNA Repository + Persistence + Controlled Reference Assets",
   showProgress: true,
 };
 

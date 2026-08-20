@@ -1,0 +1,31 @@
+FOS-VOICE.4 — Voice DNA Repository + Persistence + Controlled Reference Assets
+
+Baseline: 85% / FOS-VOICE.3
+Certified target: 87% (+2%)
+
+Implementation verified
+- Versioned durable Voice DNA metadata repository.
+- Consent, cloning/export/reuse flags preserved across persistence.
+- Product/project scoped profile reads.
+- Version history and conflict protection.
+- Opaque reference asset identifiers only.
+- Least-privilege reference asset resolver contract.
+- No raw reference audio persistence.
+- No provider SDK/model integration.
+- No ForgeCall production behavior change.
+
+Verification
+- Hardened voice/platform tests: 42 passed.
+- Security scan: PASS.
+- Full backend regression: 3,953 passed, 9 skipped, 97 subtests passed.
+- Production frontend build: PASS.
+
+Certification result: PASS
+Founder Progress after certification: 87%
+Milestone: FOS-VOICE.4 — Voice DNA Repository + Persistence + Controlled Reference Assets
+
+Certification condition
+Progress/milestone update is valid only if the post-certification frontend production build also passes.
+
+Post-certification frontend production build: PASS.
+Final certification status: PASS.
