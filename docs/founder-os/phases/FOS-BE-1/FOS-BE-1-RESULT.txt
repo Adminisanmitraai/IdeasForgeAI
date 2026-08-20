@@ -1,0 +1,33 @@
+FOS-BE-1 — PLATFORM CONTRACTS & COMPOSITION BOUNDARY
+====================================================
+STATUS: PASS
+CERTIFIED PROGRESS: 63%
+PREVIOUS VERIFIED PROGRESS: 60%
+MILESTONE: FOS-BE-1 — Platform Contracts & Composition Boundary
+BRANCH: fos-be-1-platform-contracts
+DEPLOYMENT: NOT PERFORMED / NOT REQUIRED
+
+IMPLEMENTED
+- Canonical Product / Project / Objective operating contracts
+- Agent assignment, Action, Result and Verification contracts
+- Product adapter descriptor and adapter protocol boundary
+- Objective and Action state-transition guards
+- Founder Brain direct-write prohibition
+- Capability and trust-tier enforcement
+- Privileged-action approval enforcement
+- Idempotency/replay guard with collision protection
+- Correlation/audit trace event contract
+- Stable platform error contract
+- Public platform contract exports
+
+VERIFICATION
+- Focused FOS-BE-1 certification suite: 63 passed
+- Full backend regression: 3878 passed, 9 skipped, 97 subtests passed
+- Production TypeScript/Vite build before milestone update: PASS
+- Production TypeScript/Vite build after milestone update: PASS
+
+REPOSITORY NOTE
+The 60% FOS-UI.8 certified state existed in the working tree but had not been committed as a dedicated clean baseline commit. The FOS-BE-1 branch was created while preserving that certified worktree. No unrelated existing working-tree changes were reset or overwritten.
+
+NEXT PHASE
+FOS-BE-2 — Worker Lifecycle & Durable Job Execution

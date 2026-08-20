@@ -1,0 +1,20 @@
+FOS-BE-2 ACCEPTANCE CHECKLIST
+=============================
+[x] Durable job schema and transition guards
+[x] Atomic persistence and exact round-trip verification
+[x] Duplicate submission/replay protection
+[x] Lease ownership and stale-worker fencing
+[x] Retry exhaustion and timeout behavior
+[x] Pause/resume/cancel behavior
+[x] Crash recovery/requeue behavior
+[x] Audit/correlation lineage survives restart
+[x] Focused FOS-BE-2 tests pass
+[x] Existing backend regression passes
+[x] Production frontend build passes before progress update
+[x] Founder Progress remained 63% until functional gates passed
+[x] On PASS only: progress -> 67%
+[x] On PASS only: milestone -> FOS-BE-2 — Worker Lifecycle & Durable Job Execution
+
+[x] Production frontend build passes after progress update
+
+STATUS: PASS

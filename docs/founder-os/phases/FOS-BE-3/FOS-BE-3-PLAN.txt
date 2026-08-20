@@ -1,0 +1,47 @@
+FOS-BE-3 — AGENT ORCHESTRATION & WORKER COORDINATION
+=====================================================
+STATUS: IN PROGRESS
+BASELINE: 67%
+TARGET ON CERTIFIED PASS: 71%
+BRANCH: fos-be-3-agent-orchestration
+
+OBJECTIVE
+Connect specialist-agent selection and dependency-aware coordination to the
+FOS-BE-2 durable worker lifecycle while preserving all FOS-BE-1 governance.
+
+CORE DELIVERY
+- Canonical specialist agent descriptor/capability registry
+- Deterministic task-to-agent selection
+- Capability and trust-tier eligibility filtering
+- Dependency-aware orchestration graph
+- Parallel-ready execution waves for independent tasks
+- Durable-job creation for selected agent assignments
+- Worker routing with lease-safe ownership
+- Block propagation when dependencies fail or are unavailable
+- Deterministic retry/reassignment policy
+- Correlation/audit lineage across objective, task, agent and job
+
+SAFETY / GOVERNANCE
+- Founder Brain does not directly execute product writes
+- Agent selection cannot exceed declared capabilities/trust tier
+- Approval-required actions remain blocked without authorization
+- Orchestration may schedule only durable governed jobs
+- No deployment in this phase unless separately approved
+
+CERTIFICATION GATES
+[ ] Agent registry and immutable capability descriptors
+[ ] Deterministic eligible-agent selection
+[ ] Capability/trust overreach rejection
+[ ] Dependency graph validation and cycle rejection
+[ ] Parallel-ready wave calculation
+[ ] Durable job linkage for assignments
+[ ] Lease-safe worker routing
+[ ] Dependency failure/block propagation
+[ ] Retry/reassignment bounded and deterministic
+[ ] End-to-end correlation/audit lineage
+[ ] Focused FOS-BE-3 tests pass
+[ ] Existing backend regression passes
+[ ] Production frontend build passes
+[ ] Founder Progress remains 67% until every gate passes
+[ ] On PASS only: progress -> 71%
+[ ] On PASS only: milestone -> FOS-BE-3 — Agent Orchestration & Worker Coordination

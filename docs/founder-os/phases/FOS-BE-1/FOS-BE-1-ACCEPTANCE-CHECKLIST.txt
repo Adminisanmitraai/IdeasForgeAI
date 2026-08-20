@@ -1,0 +1,25 @@
+FOS-BE-1 ACCEPTANCE CHECKLIST
+=============================
+[x] Current Founder OS source repository identified
+[x] Working branch created; certified 60% worktree preserved (see result note)
+[x] Core contract types/schemas implemented
+[x] State transition guards implemented
+[x] ApprovalPolicy and ExecutionPolicy available/enforced
+[x] Capability/trust-tier boundary implemented
+[x] Idempotency contract implemented
+[x] Audit event contract implemented
+[x] Stable error contract implemented
+[x] Product adapter boundary defined
+[x] Founder Brain direct-write path prohibited by tests
+[x] Agent capability overreach prohibited by tests
+[x] Duplicate action replay test passes
+[x] Correlation/audit trace test passes
+[x] Existing test suite passes
+[x] New FOS-BE-1 tests pass
+[x] Production build passes
+[x] No deployment required unless separately approved
+[x] Progress remained 60% until all functional gates passed
+[x] On PASS only: progress updated to 63%
+[x] On PASS only: milestone -> FOS-BE-1 — Platform Contracts & Composition Boundary
+
+STATUS: PASS

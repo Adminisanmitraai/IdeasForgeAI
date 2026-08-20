@@ -1,0 +1,25 @@
+FOS-BE-3 — AGENT ORCHESTRATION & WORKER COORDINATION
+=====================================================
+STATUS: PASS
+BASELINE: 67%
+CERTIFIED PROGRESS: 71%
+BRANCH: fos-be-3-agent-orchestration
+
+CERTIFICATION EVIDENCE
+- Expanded focused FOS-BE-3 suite: 125/125 PASS
+- Full backend regression: 3,910 passed
+- Skipped: 9
+- Subtests: 97 passed
+- Production TypeScript/Vite build: PASS
+
+CERTIFIED CAPABILITIES
+- Immutable agent capability/trust descriptors
+- Deterministic specialist-agent selection
+- Dependency-aware execution waves
+- Durable assignment-to-job linkage
+- Lease-safe worker routing
+- Failure/block propagation
+- Bounded deterministic reassignment
+- Objective-level execution supervision
+- Restart-safe supervision persistence
+- Correlation/audit lineage across objective, task, agent, job and worker

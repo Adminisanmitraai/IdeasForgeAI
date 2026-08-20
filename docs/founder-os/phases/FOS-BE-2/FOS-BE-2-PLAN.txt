@@ -1,0 +1,45 @@
+FOS-BE-2 — WORKER LIFECYCLE & DURABLE JOB EXECUTION
+===================================================
+STATUS: IN PROGRESS
+BASELINE: 63%
+TARGET ON CERTIFIED PASS: 67%
+BRANCH: fos-be-2-worker-lifecycle
+
+OBJECTIVE
+Turn the existing simulation-only worker/runtime contracts into a bounded,
+durable job lifecycle without weakening FOS-BE-1 governance boundaries.
+
+CORE DELIVERY
+- Canonical durable Job / Attempt / Lease / Checkpoint records
+- Lifecycle: queued -> leased -> running -> terminal
+- Explicit pause, resume and cancellation semantics
+- Retry policy with bounded attempts and deterministic backoff metadata
+- Timeout/lease-expiry handling
+- Crash/orphan recovery and safe requeue
+- Durable append-only audit lineage
+- Idempotent job submission and terminal-result replay protection
+- Worker ownership/lease fencing to prevent duplicate execution
+- Restart-safe persistence and recovery
+
+SAFETY / GOVERNANCE
+- Founder Brain remains unable to directly execute writes
+- Capability/trust-tier checks remain mandatory
+- Approval-required actions cannot bypass authorization
+- No deployment in this phase unless separately approved
+- Existing product behavior must remain compatible
+
+CERTIFICATION GATES
+[ ] Durable job schema and transition guards
+[ ] Atomic persistence and exact round-trip verification
+[ ] Duplicate submission/replay protection
+[ ] Lease ownership and stale-worker fencing
+[ ] Retry exhaustion and timeout behavior
+[ ] Pause/resume/cancel behavior
+[ ] Crash recovery/requeue behavior
+[ ] Audit/correlation lineage survives restart
+[ ] Focused FOS-BE-2 tests pass
+[ ] Existing backend regression passes
+[ ] Production frontend build passes
+[ ] Founder Progress remains 63% until every gate passes
+[ ] On PASS only: progress -> 67%
+[ ] On PASS only: milestone -> FOS-BE-2 — Worker Lifecycle & Durable Job Execution
