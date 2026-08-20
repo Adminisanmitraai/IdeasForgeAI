@@ -1,0 +1,21 @@
+FOS-VOICE.1 — Voice Capability Contracts + Voice DNA Policy Model
+
+Baseline: 79% certified at FOS-BE-5.
+Target after certification: 81% (+2%).
+Progress remains 79% until all certification gates pass.
+
+Scope
+- Generic voice operation contracts.
+- Provider-independent quality tiers.
+- Voice DNA identity and reuse policy.
+- Consent/cloning/export/product-scope controls.
+- Opaque reference asset identifiers only.
+- ForgeVoice gateway protocol and routing decision contracts.
+
+Explicit exclusions
+- No STT/TTS models in Founder OS.
+- No provider SDK integration.
+- No API credentials.
+- No database migration.
+- No ForgeCall production migration.
+- No raw reference-audio storage or transport.
