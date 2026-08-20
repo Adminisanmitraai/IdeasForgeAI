@@ -18,6 +18,8 @@ from backend import coding_agent_terminal_execution_audit as audit
 from backend import coding_agent_terminal_execution_planner as planner
 from backend import coding_agent_terminal_execution_runtime as runtime
 from backend import coding_agent_terminal_execution_session as session
+from backend.platform.activity_feed import activity_feed
+from backend.platform.platform_event_model import from_terminal_session_event, serialize_event
 
 CONTRACT_VERSION = "forgecode.terminal-api.v1"
 ROUTE_PREFIX = "/api/coding-agent/terminal"
@@ -352,7 +354,16 @@ class TerminalApiController:
             after_sequence=max(0, int(after_sequence)),
             limit=bounded,
         )
-        return _response({"execution_id": execution_id, "events": values, "limit": bounded})
+        occurred_at = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(self.services.clock()))
+        platform_values = [
+            from_terminal_session_event(value, execution_id=execution_id, occurred_at=occurred_at)
+            for value in values
+        ]
+        activity_feed.extend(platform_values)
+        return _response({
+            "execution_id": execution_id, "events": values, "limit": bounded,
+            "platform_events": [serialize_event(value) for value in platform_values],
+        })
 
     async def get_result(self, execution_id: str, request: Request) -> dict[str, Any]:
         self._guard(request)

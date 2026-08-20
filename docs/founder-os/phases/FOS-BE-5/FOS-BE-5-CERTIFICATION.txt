@@ -1,0 +1,29 @@
+FOS-BE-5 — Platform Event Model
+Certification: PASS
+
+Baseline progress: 75%
+Certified progress: 79%
+Progress increase: +4%
+
+Certified scope
+- Versioned Founder OS platform event envelope.
+- Deterministic event IDs and serialization.
+- Correlation, causation, sequence and subject lineage.
+- Bounded payload and metadata handling.
+- Terminal session-event compatibility adapter.
+- Backward-compatible Terminal polling platform_events projection.
+- Chat stream delta adapter preserving plain-text byte transport.
+- In-memory bounded activity-feed projection/store.
+
+Verification evidence
+- FOS-BE-5 focused regression: 98 passed.
+- Full backend regression: 3,927 passed, 9 skipped, 97 subtests passed.
+- Production frontend build: PASS.
+
+Governance
+- No database schema change.
+- No deployment performed.
+- Existing Terminal polling and chat streaming transports remain backward compatible.
+- FOS-ARCH-X confirmed compatibility with the expanded Founder OS architecture.
+- Founder Progress changes only after implementation and verification gates pass.
+- Post-certification production frontend build: PASS.

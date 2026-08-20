@@ -14,6 +14,8 @@ from typing import Generator, List, Optional
 from fastapi import APIRouter, File, Request, UploadFile
 from fastapi.responses import JSONResponse, StreamingResponse
 from pydantic import BaseModel, Field
+from backend.platform.activity_feed import activity_feed
+from backend.platform.platform_event_model import from_chat_delta
 
 
 router = APIRouter(prefix="/api/ideasforge", tags=["IdeasForgeAI Chat"])
@@ -566,6 +568,24 @@ def _stream_openai(
         ).encode("utf-8")
 
 
+def _stream_openai_with_platform_events(
+    req: IdeasForgeChatRequest,
+    attachments: List[AttachmentRecord] | None,
+    correlation_id: str,
+) -> Generator[bytes, None, None]:
+    sequence = 0
+    for chunk in _stream_openai(req, attachments=attachments):
+        sequence += 1
+        event = from_chat_delta(
+            correlation_id=correlation_id,
+            sequence=sequence,
+            text=chunk.decode("utf-8", errors="replace"),
+            occurred_at=time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        )
+        activity_feed.append(event)
+        yield chunk
+
+
 @router.get("/chat/health")
 def chat_health():
     return {
@@ -753,14 +773,18 @@ def chat_stream(
             },
         )
 
+    correlation_id = (
+        request.headers.get("x-if-correlation-id", "").strip()
+        or f"chat-{uuid.uuid4().hex}"
+    )
     return StreamingResponse(
-        _stream_openai(
-            req,
-            attachments=attachments,
+        _stream_openai_with_platform_events(
+            req, attachments, correlation_id,
         ),
         media_type="text/plain; charset=utf-8",
         headers={
             "Cache-Control": "no-cache",
             "X-Accel-Buffering": "no",
+            "X-IF-Correlation-ID": correlation_id,
         },
     )

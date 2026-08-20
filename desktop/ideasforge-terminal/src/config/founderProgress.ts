@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 75,
-  currentMilestone: "FOS-BE-4 — ForgeCode Capability Facade",
+  overallProgress: 79,
+  currentMilestone: "FOS-BE-5 — Platform Event Model",
   showProgress: true,
 };
 

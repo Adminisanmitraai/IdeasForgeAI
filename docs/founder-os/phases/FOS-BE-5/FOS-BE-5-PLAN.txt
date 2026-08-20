@@ -1,0 +1,16 @@
+FOS-BE-5 — Platform Event Model
+
+Baseline: 75% certified at FOS-BE-4.
+Target after certification: 79% (+4%).
+Progress remains 75% until all acceptance gates pass.
+
+Objective
+Introduce a versioned internal Founder OS event envelope and adapt existing Terminal polling and chat streaming into it without breaking existing transports.
+
+Core requirements
+- Stable event_id, event_type, source, timestamp, correlation_id and causation_id.
+- Versioned contract with deterministic serialization.
+- Bounded payload/metadata suitable for activity-feed projection.
+- Terminal session-event adapter preserving execution/session sequence.
+- Chat stream adapter preserving incremental delta order.
+- Activity-feed projection independent of transport implementation.
