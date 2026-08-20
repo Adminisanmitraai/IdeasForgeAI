@@ -1,0 +1,34 @@
+FOS-BE-4 — ForgeCode Capability Facade
+
+Baseline: 71% certified at FOS-BE-3.
+Target after certification: 75% (+4%).
+Progress remains 71% until all acceptance gates pass.
+
+Objective
+Expose stable Founder OS engineering capabilities over the existing Coding Agent modules without leaking their internal implementation contracts.
+
+Facade capabilities
+- inspect_repository: bounded repository understanding and project evidence.
+- discover_validation: stable build/test/typecheck/lint command discovery.
+- preview_change: governed file-edit planning with diff evidence; no mutation.
+- plan_execution: governed terminal execution planning; no process launch.
+- execute_plan: explicit approved execution path using existing runtime controls.
+- report_result: normalized validation/audit result envelope.
+
+Boundaries
+- Reuse existing Coding Agent modules; do not duplicate specialist intelligence.
+- Facade owns stable operation names, request/result envelopes, correlation lineage, and error normalization.
+- Read/preview/plan operations must not mutate the repository.
+- Execution remains approval/policy gated by existing runtime modules.
+- No deployment or database schema change in FOS-BE-4.
+
+Acceptance gates
+1. Stable facade contract and capability catalogue.
+2. Repository inspection and validation discovery adapters.
+3. Change preview and execution-plan adapters.
+4. Approved execution adapter with correlation propagation.
+5. Stable error envelope for validation/policy/runtime failures.
+6. Focused FOS-BE-4 tests PASS.
+7. Full backend regression PASS.
+8. Production frontend build PASS.
+9. Certification record written before progress changes to 75%.

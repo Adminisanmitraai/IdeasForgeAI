@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 71,
-  currentMilestone: "FOS-BE-3 — Agent Orchestration & Worker Coordination",
+  overallProgress: 75,
+  currentMilestone: "FOS-BE-4 — ForgeCode Capability Facade",
   showProgress: true,
 };
 

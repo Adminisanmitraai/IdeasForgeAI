@@ -1,0 +1,28 @@
+FOS-BE-4 — ForgeCode Capability Facade
+Certification: PASS
+
+Baseline progress: 71%
+Certified progress: 75%
+Progress increase: +4%
+
+Certified scope
+- Stable ForgeCode capability catalogue and versioned facade contract.
+- Repository inspection adapter over existing Coding Agent repository intelligence.
+- Build/test/typecheck/lint discovery adapter.
+- Safe non-mutating change preview adapter.
+- Governed terminal execution-plan adapter.
+- Explicit facade authorization before execution.
+- Runtime plan revalidation, repository snapshot verification, executable binding verification, and controlled execution preserved.
+- Normalized result/audit envelope with correlation lineage.
+
+Verification evidence
+- FOS-BE-4/Coding Agent focused regression: 247 passed, 2 skipped.
+- Full backend regression: 3,920 passed, 9 skipped, 97 subtests passed.
+- Production frontend build: PASS.
+- Post-certification production build: PASS.
+
+Governance
+- No database schema change.
+- No deployment performed.
+- Existing Coding Agent specialist intelligence remains authoritative behind the facade.
+- Founder Progress changed only after all required pre-certification gates passed.
