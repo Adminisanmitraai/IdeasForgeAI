@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 97,
-  currentMilestone: "FOS-X-1 - Founder Command Resolver",
+  overallProgress: 99,
+  currentMilestone: "FOS-X-2 - Cross-Product Context + Execution Router",
   showProgress: true,
 };
 

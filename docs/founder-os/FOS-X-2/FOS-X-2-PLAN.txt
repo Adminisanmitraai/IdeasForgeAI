@@ -1,0 +1,18 @@
+FOS-X-2 — Cross-Product Context + Execution Router
+
+Baseline: 97% / FOS-X-1
+Estimated certified increase: +2% -> 99%
+
+Objective
+Connect resolved Founder commands and Project Brain context to existing platform capability, voice, agent and execution boundaries without creating a duplicate executor.
+
+Routing rules
+- read/status/audit/blocker requests remain read-safe
+- ForgeVoice routes to existing voice orchestration
+- other Forge products route through existing agent orchestration
+- explicit capabilities are preserved
+- state-changing operations require the existing approval gate
+- ambiguous project commands are blocked before routing
+- approved writes still produce a route decision; execution remains separately authorized
+
+Certification requires focused route tests, command integration tests, agent/voice regression, approval-bypass tests, platform boundary/security tests, full backend regression, production build and post-certification build.
