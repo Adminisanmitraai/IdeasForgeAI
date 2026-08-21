@@ -1,0 +1,23 @@
+FOS-X-1 — Founder Command Resolver
+
+Baseline: 95% / FOS-BRAIN-2
+Estimated certified increase: +2% -> 97%
+
+Objective
+Resolve short Founder instructions deterministically against Founder Brain context before execution.
+
+Initial commands
+- continue/resume a named or active project
+- start next phase/action
+- explain project status/progress
+- identify active blockers
+- audit/review a project
+
+Safety
+- resolver is read-only and non-executing
+- ambiguous multi-project commands are not guessed
+- resolved/closed blockers are excluded
+- no provider/network/filesystem dependency in the domain resolver
+- execution remains behind existing approval and execution layers
+
+Certification requires focused resolver tests, graph/persistence regression, boundary/security tests, full backend regression, production build and post-certification build.

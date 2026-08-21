@@ -20,15 +20,26 @@ from .chat_context import (
     build_founder_chat_context,
 )
 from .chat_intent import classify_founder_chat_intent
+from .command_resolver import FounderCommandResolution, resolve_founder_command
+from .context_graph import ContextGraph
 from .conversation_plan import (
     FounderBrainConversationPlan,
 )
 from .planner import build_conversation_plan
+from .project_knowledge_graph import ProjectKnowledgeGraph
 from .repository_discovery import (
     FounderBrainRepositoryDiscovery,
 )
 from .repository_discovery_adapter import (
     adapt_repository_discovery_payload,
+)
+from .repository_intelligence_service import (
+    RepositoryIntelligenceService,
+    RepositoryIntelligenceServiceError,
+)
+from .repository_source_adapter import (
+    DEFAULT_PER_FILE_BYTE_LIMIT,
+    DEFAULT_TOTAL_SNAPSHOT_BYTE_LIMIT,
 )
 from .repository_understanding import (
     FounderBrainRepositoryUnderstanding,
@@ -55,6 +66,7 @@ StatusResolver = Callable[[], PlatformRegistryStatus]
 Clock = Callable[[], datetime]
 ContainerResolver = Callable[[], object]
 WorkspaceResolver = Callable[[], object]
+ContextGraphResolver = Callable[[], ContextGraph | None]
 
 _OPERATING_STATES: frozenset[str] = frozenset(
     {
@@ -91,6 +103,10 @@ _DEFAULT_NEXT_ACTION = (
 )
 
 
+class FounderBrainRepositoryIntelligenceError(ValueError):
+    """Raised when Founder Brain cannot build repository intelligence."""
+
+
 def _empty_context() -> Mapping[str, object] | None:
     return None
 
@@ -101,6 +117,10 @@ def _utc_now() -> datetime:
 
 def _founder_os_workspaces() -> object:
     return FounderOSReadService().workspaces()
+
+
+def _empty_context_graph() -> ContextGraph | None:
+    return None
 
 
 class FounderBrainReadService:
@@ -114,11 +134,20 @@ class FounderBrainReadService:
         container_resolver: ContainerResolver = get_platform_services,
         workspace_resolver: WorkspaceResolver = _founder_os_workspaces,
         clock: Clock = _utc_now,
+        repository_intelligence_service: RepositoryIntelligenceService
+        | None = None,
+        context_graph_resolver: ContextGraphResolver = _empty_context_graph,
     ) -> None:
         self._context_resolver = context_resolver
         self._status_resolver = status_resolver
         self._container_resolver = container_resolver
         self._workspace_resolver = workspace_resolver
+        self._context_graph_resolver = context_graph_resolver
+        self._repository_intelligence_service = (
+            repository_intelligence_service
+            if repository_intelligence_service is not None
+            else RepositoryIntelligenceService()
+        )
         self._generated_at = _timestamp(clock())
 
     def state(self) -> FounderBrainOperatingState:
@@ -220,6 +249,18 @@ class FounderBrainReadService:
             intent=intent,
         )
 
+    def resolve_command(self, *, message: object) -> FounderCommandResolution:
+        """Resolve a short Founder instruction against read-only Project Brain context."""
+        state = self.state()
+        graph = self._context_graph()
+        return resolve_founder_command(
+            message,
+            graph=graph,
+            active_project_id=state.project,
+            milestone=state.milestone or "",
+            recommended_next_action=state.recommended_next_action,
+        )
+
     def conversation_plan(
         self,
         *,
@@ -255,6 +296,24 @@ class FounderBrainReadService:
 
         return build_repository_understanding(discovery)
 
+    def get_repository_intelligence(
+        self,
+        discovery: FounderBrainRepositoryDiscovery,
+        *,
+        per_file_byte_limit: int = DEFAULT_PER_FILE_BYTE_LIMIT,
+        total_snapshot_byte_limit: int = DEFAULT_TOTAL_SNAPSHOT_BYTE_LIMIT,
+    ) -> ProjectKnowledgeGraph:
+        """Delegate repository intelligence to the read-only service."""
+
+        try:
+            return self._repository_intelligence_service.build_repository_intelligence(
+                discovery,
+                per_file_byte_limit=per_file_byte_limit,
+                total_snapshot_byte_limit=total_snapshot_byte_limit,
+            )
+        except RepositoryIntelligenceServiceError as error:
+            raise FounderBrainRepositoryIntelligenceError(str(error)) from error
+
     def mission_graph(self) -> FounderBrainMissionGraph:
         try:
             return build_bootstrap_mission_graph(
@@ -279,6 +338,13 @@ class FounderBrainReadService:
         except Exception:
             return {}
         return value if isinstance(value, Mapping) else {}
+
+    def _context_graph(self) -> ContextGraph:
+        try:
+            value = self._context_graph_resolver()
+        except Exception:
+            return ContextGraph()
+        return value if isinstance(value, ContextGraph) else ContextGraph()
 
     def _registry_status(self) -> PlatformRegistryStatus:
         try:

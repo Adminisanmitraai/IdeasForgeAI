@@ -1,0 +1,25 @@
+FOS-X-1 — Founder Command Resolver
+
+Status: CERTIFIED
+Baseline progress: 95%
+Certified increase: +2%
+New overall progress: 97%
+Milestone: FOS-X-1 — Founder Command Resolver
+
+Implemented
+- Deterministic short Founder command classification.
+- Named-project and active-project resolution.
+- Persistent Project Brain context integration through injected read-safe Context Graph resolver.
+- Current milestone and recommended-next-action projection.
+- Active blocker detection with resolved blockers excluded.
+- Ambiguous multi-project requests fail closed instead of guessing.
+- Resolver remains non-executing; execution approval boundaries are unchanged.
+
+Verification
+- Hardened resolver/graph/persistence/boundary: 68/68 PASS.
+- Full backend regression: 3,985 passed / 9 skipped / 97 subtests.
+- Production Founder Terminal build: PASS.
+- Resolver security scan: PASS.
+
+Post-certification gate
+- Production Founder Terminal build after progress/milestone update: PASS.

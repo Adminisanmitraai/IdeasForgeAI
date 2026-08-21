@@ -46,3 +46,17 @@ __all__ = [
     "canonical_project_brain_json",
     "restore_project_brain_snapshot",
 ]
+
+from .command_resolver import (
+    FOUNDER_COMMAND_RESOLVER_VERSION,
+    FounderCommandKind,
+    FounderCommandResolution,
+    resolve_founder_command,
+)
+
+__all__ += (
+    "FOUNDER_COMMAND_RESOLVER_VERSION",
+    "FounderCommandKind",
+    "FounderCommandResolution",
+    "resolve_founder_command",
+)

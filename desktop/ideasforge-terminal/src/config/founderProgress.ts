@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 95,
-  currentMilestone: "FOS-BRAIN-2 - Persistent Project Brain Repository + Migration-Safe Storage",
+  overallProgress: 97,
+  currentMilestone: "FOS-X-1 - Founder Command Resolver",
   showProgress: true,
 };
 
