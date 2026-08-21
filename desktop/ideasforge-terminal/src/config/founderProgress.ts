@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 89,
-  currentMilestone: "FOS-VOICE.5 - ForgeCall Compatibility Adapter + Migration Contract",
+  overallProgress: 92,
+  currentMilestone: "FOS-BRAIN-1 - Universal Entity Contracts + Context Graph Extension",
   showProgress: true,
 };
 
@@ -19,8 +19,5 @@ export function normalizedFounderProgress(): number {
 }
 
 export function shouldShowFounderProgress(): boolean {
-  return (
-    founderProgressConfig.showProgress &&
-    normalizedFounderProgress() < 100
-  );
+  return founderProgressConfig.showProgress && normalizedFounderProgress() < 100;
 }

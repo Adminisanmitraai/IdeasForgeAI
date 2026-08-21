@@ -1,0 +1,34 @@
+FOS-BRAIN-1 — Universal Entity Contracts + Context Graph Extension
+
+Baseline: 89% / FOS-VOICE.5 certified
+Estimated certified contribution: +3% -> 92%
+
+Objective
+Extend the existing Founder Brain and Project Knowledge Graph into a universal project/business context model without rebuilding or duplicating the OS.
+
+Scope
+- Canonical universal entities: company, client, opportunity, project, objective, requirement, task, decision, blocker, artifact, deployment, agent, certification.
+- Deterministic entity IDs.
+- Typed relationships across business, project, execution and artifact context.
+- In-memory Context Graph with deterministic ordering and traversal.
+- Compatibility adapter from existing ProjectKnowledgeGraph.
+- Preserve lineage back to legacy repository nodes/edges.
+- No persistence/database migration in this phase.
+- No changes to execution, approvals, provider routing or product runtime behavior.
+
+Certification gates
+- Universal entity contract tests.
+- Deterministic ID and immutability tests.
+- Typed relationship validation tests.
+- Context Graph traversal/query tests.
+- Legacy ProjectKnowledgeGraph adapter parity tests.
+- Founder Brain package import-boundary tests.
+- Existing Project Knowledge Graph/Mission Graph regression.
+- Full Founder OS backend regression.
+- Production Founder Terminal build.
+- Certification record and post-certification build.
+
+Current implementation gate
+PASS: 44/44 focused universal-context + legacy graph/service tests.
+
+Progress remains 89% until all certification gates pass.
