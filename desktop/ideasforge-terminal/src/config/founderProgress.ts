@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 92,
-  currentMilestone: "FOS-BRAIN-1 - Universal Entity Contracts + Context Graph Extension",
+  overallProgress: 95,
+  currentMilestone: "FOS-BRAIN-2 - Persistent Project Brain Repository + Migration-Safe Storage",
   showProgress: true,
 };
 

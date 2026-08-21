@@ -1,0 +1,30 @@
+FOS-BRAIN-2 — Persistent Project Brain Repository + Migration-Safe Storage
+
+Baseline: 92% / FOS-BRAIN-1
+Estimated certified increase: +3% -> 95%
+
+Scope
+- Durable versioned Context Graph snapshots.
+- Canonical deterministic JSON serialization.
+- SHA-256 integrity verification and fail-closed restore.
+- Atomic local writes inside approved storage boundaries.
+- Idempotent writes when graph content is unchanged.
+- Immutable history when graph content changes.
+- Restart-safe reload and deterministic project listing.
+- Legacy ProjectKnowledgeGraph read fallback without automatic migration.
+- No Supabase migration in this phase.
+- No destructive rewrite of legacy graph files.
+
+Certification gates
+- Persistence/restart tests.
+- Version-history and idempotency tests.
+- Tamper/corruption tests.
+- Storage-boundary tests.
+- Legacy migration-compatibility tests.
+- Founder Brain graph/import regression.
+- No networking/subprocess/database-provider dependency scan.
+- Full backend regression.
+- Production Founder Terminal build.
+- Post-certification production build.
+
+Progress remains 92% until all gates pass.
