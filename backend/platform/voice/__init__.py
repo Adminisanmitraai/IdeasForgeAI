@@ -67,3 +67,16 @@ from .reference_assets import (
     VoiceReferenceAsset,
     VoiceReferenceAssetResolver,
 )
+from .forgecall_adapter import (
+    FORGECALL_ADAPTER_VERSION,
+    ForgeCallCompatibilityResult,
+    ForgeCallMigrationMode,
+    ForgeCallSessionContext,
+    ForgeCallTurn,
+    ForgeCallVoiceAdapter,
+)
+from .forgecall_migration import (
+    FORGECALL_MIGRATION_VERSION,
+    ForgeCallMigrationOutcome,
+    execute_forgecall_migration,
+)

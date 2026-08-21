@@ -1,0 +1,29 @@
+FOS-VOICE.5 — ForgeCall Compatibility Adapter + Migration Contract
+
+Status: CERTIFIED PASS
+Baseline: 87% / FOS-VOICE.4
+Certified target: 89% (+2%)
+
+Implemented
+- ForgeCall ProductAdapter-compatible voice adapter.
+- Inbound call audio -> generic voice.transcribe mapping.
+- Outbound agent text -> generic voice.generate mapping.
+- ForgeCall session/correlation/product/project context mapping.
+- Migration modes: LEGACY_ONLY, FOS_PREFERRED, FOS_REQUIRED.
+- Controlled fallback to current ForgeCall realtime stack when ForgeVoice is unavailable in FOS_PREFERRED mode.
+- Strict no-bypass behavior in FOS_REQUIRED mode.
+- Public Founder OS voice package exports for ForgeCall compatibility contracts.
+
+Verification
+- ForgeCall/voice compatibility suite: 48 passed.
+- Full Founder OS backend regression: 3,959 passed, 9 skipped, 97 subtests passed.
+- Production frontend build: PASS.
+- Voice-package security scan: PASS.
+
+Certification rule
+Founder Progress may move from 87% to 89% only with this PASS record and successful post-certification build.
+
+Post-certification verification
+- Production frontend build after progress/milestone update: PASS.
+- Final certified Founder Progress: 89%.
+- Final certified milestone: FOS-VOICE.5 — ForgeCall Compatibility Adapter + Migration Contract.

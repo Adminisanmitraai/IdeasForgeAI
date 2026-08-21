@@ -1,0 +1,28 @@
+FOS-VOICE.5 — ForgeCall Compatibility Adapter + Migration Contract
+
+Baseline: 87% / FOS-VOICE.4
+Estimated certified increase: +2% -> 89%
+
+Scope
+- Map ForgeCall inbound audio turns to generic voice.transcribe requests.
+- Map ForgeCall outbound text turns to generic voice.generate requests.
+- Preserve call/session/correlation/project/agent/voice context.
+- Support LEGACY_ONLY, FOS_PREFERRED, and FOS_REQUIRED migration modes.
+- Preserve current ForgeCall realtime path as controlled fallback in FOS_PREFERRED.
+- Never silently bypass Founder OS governance in FOS_REQUIRED.
+- Reuse platform ProductAdapter capability shape.
+- No ForgeCall production-stack mutation in this phase.
+
+Certification gates
+- ForgeCall compatibility mapping tests.
+- Legacy-only preservation test.
+- ForgeVoice unavailable fallback test.
+- FOS_REQUIRED no-bypass test.
+- Existing voice governance/routing regression.
+- Platform event/import-boundary regression.
+- Voice-package security scan.
+- Full Founder OS backend regression.
+- Production frontend build.
+- Post-certification production build.
+
+Progress remains 87% until every gate passes.

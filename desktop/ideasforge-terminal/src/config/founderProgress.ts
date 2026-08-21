@@ -5,8 +5,8 @@ export interface FounderProgressConfig {
 }
 
 export const founderProgressConfig: FounderProgressConfig = {
-  overallProgress: 87,
-  currentMilestone: "FOS-VOICE.4 - Voice DNA Repository + Persistence + Controlled Reference Assets",
+  overallProgress: 89,
+  currentMilestone: "FOS-VOICE.5 - ForgeCall Compatibility Adapter + Migration Contract",
   showProgress: true,
 };
 
