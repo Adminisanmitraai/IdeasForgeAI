@@ -1,0 +1,143 @@
+﻿/*
+  FOS-UI.6 Messages
+
+  Future authoritative scope:
+  - chat-turn
+  - assistant and user messages
+  - avatars
+  - message actions
+  - editing controls
+
+  No active rules have been migrated during Phase 2.
+*/
+
+/* FOS-UI.7 PHASE 2F-B2 START: MESSAGE ACTIONS */
+@media (max-width: 700px) {
+  .chat-mobile-message-action {
+    position: relative !important;
+
+    display: inline-grid !important;
+    flex: 0 0 auto !important;
+    place-items: center !important;
+
+    box-sizing: border-box !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+    min-height: 36px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 10px !important;
+
+    background: transparent !important;
+    color: #6d7b8f !important;
+    box-shadow: none !important;
+  }
+
+  .chat-mobile-message-action:hover,
+  .chat-mobile-message-action:active,
+  .chat-mobile-message-action.is-selected {
+    background: #f0efff !important;
+    color: #6556f3 !important;
+  }
+
+  .chat-mobile-message-action:focus-visible {
+    outline: 2px solid #7667f7 !important;
+    outline-offset: 2px !important;
+  }
+
+  .chat-mobile-message-action svg {
+    width: 21px !important;
+    height: 21px !important;
+
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.75 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  .chat-mobile-message-action > span {
+    position: absolute !important;
+
+    width: 1px !important;
+    height: 1px !important;
+
+    margin: -1px !important;
+    padding: 0 !important;
+
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+
+    border: 0 !important;
+  }
+
+  .chat-mobile-message-action {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 auto !important;
+
+    box-sizing: border-box !important;
+    width: 31px !important;
+    min-width: 31px !important;
+    height: 31px !important;
+    min-height: 31px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 8px !important;
+
+    background: transparent !important;
+    color: #718096 !important;
+    box-shadow: none !important;
+  }
+
+  .chat-mobile-message-action svg {
+    width: 18px !important;
+    height: 18px !important;
+
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 1.75 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  .chat-mobile-message-action:hover,
+  .chat-mobile-message-action:active,
+  .chat-mobile-message-action.is-selected {
+    background: #f0efff !important;
+    color: #6556f3 !important;
+  }
+
+  .chat-mobile-message-action.is-active {
+    background: #ece9ff !important;
+    color: #6556f3 !important;
+  }
+
+  .chat-mobile-message-action.is-active::after {
+    position: absolute !important;
+    right: 4px !important;
+    bottom: 3px !important;
+
+    width: 5px !important;
+    height: 5px !important;
+
+    border-radius: 50% !important;
+    background: currentColor !important;
+
+    content: "" !important;
+  }
+
+  .chat-mobile-message-action.is-selected {
+    background: #ece9ff !important;
+    color: #6556f3 !important;
+  }
+}
+/* FOS-UI.7 PHASE 2F-B2 END: MESSAGE ACTIONS */

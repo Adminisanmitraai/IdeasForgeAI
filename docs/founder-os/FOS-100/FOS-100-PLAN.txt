@@ -1,0 +1,22 @@
+FOS-100 — Founder OS v1.0 Final Certification & Release Freeze
+
+Baseline: 99% / FOS-X-2
+Target after full certification: 100%
+
+This phase adds no major architecture. It certifies the existing Founder OS v1.0 surface.
+
+Required gates
+- full backend regression
+- Founder Terminal production build
+- Founder Command Resolver regression
+- Project Brain persistence/restart/tamper recovery tests
+- cross-product routing and approval-bypass prevention tests
+- ForgeVoice governance/fallback/ForgeCall compatibility regression
+- agent/orchestration and execution-boundary regression
+- import-boundary and dependency architecture checks
+- source security scan for API keys, provider secrets and direct unsafe execution paths
+- release-state/progress/milestone consistency audit
+- final UI/responsive visual QA of Founder Terminal
+- post-certification production build
+
+Progress remains 99% until every required release gate passes.

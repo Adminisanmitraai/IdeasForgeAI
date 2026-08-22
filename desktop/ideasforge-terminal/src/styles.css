@@ -1,0 +1,4269 @@
+:root {
+  color: #f7f8fc;
+  background: #05070b;
+  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --bg: #05070b;
+  --surface: #090d15;
+  --surface-2: #0d121e;
+  --surface-3: #121827;
+  --line: #242c3d;
+  --line-soft: #1a2130;
+  --text: #f7f8fc;
+  --muted: #8e98ac;
+  --blue: #4c6fff;
+  --purple: #7758ff;
+  --violet: #9d69ff;
+  --green: #62df83;
+  --yellow: #f3b83d;
+  --red: #ff6476;
+  --shadow: 0 22px 65px rgba(0, 0, 0, 0.38);
+}
+
+* { box-sizing: border-box; }
+html, body, #app { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+body {
+  background:
+    radial-gradient(circle at 34% -20%, rgba(74, 87, 255, 0.11), transparent 32%),
+    radial-gradient(circle at 90% 10%, rgba(120, 72, 255, 0.08), transparent 24%),
+    var(--bg);
+}
+button, input, select, textarea { font: inherit; }
+button { color: inherit; }
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr) 382px;
+  grid-template-rows: 84px minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(3, 6, 12, 0.96), rgba(5, 8, 13, 0.99));
+}
+.app-shell.left-collapsed { grid-template-columns: 78px minmax(0, 1fr) 382px; }
+.app-shell.right-collapsed { grid-template-columns: 264px minmax(0, 1fr) 52px; }
+.app-shell.left-collapsed.right-collapsed { grid-template-columns: 78px minmax(0, 1fr) 52px; }
+
+.top-header {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 0 24px;
+  border-bottom: 1px solid var(--line);
+  background: rgba(5, 8, 14, 0.92);
+  backdrop-filter: blur(20px);
+  z-index: 30;
+}
+button { cursor: pointer; }
+.icon-button, .avatar-button, .brand-button, .header-select, .connection-pill, .nav-item, .sidebar-collapse,
+.right-collapse, .workspace-tabs button, .subtabs button, .ghost-button, .secondary-button, .primary-button,
+.danger-button, .composer-tool, .send-button, .terminal-header button, .menu-row, .accordion-header,
+.mobile-nav button { border: 0; }
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: transparent;
+  color: #c8cfde;
+  font-size: 22px;
+}
+.icon-button:hover, .avatar-button:hover { background: var(--surface-3); }
+
+.brand-button {
+  display: flex;
+  align-items: center;
+  width: 182px;
+  height: 52px;
+  padding: 0;
+  background: transparent;
+}
+.brand-button img {
+  display: block;
+  width: 172px;
+  max-height: 46px;
+  object-fit: contain;
+  object-position: left center;
+}
+.brand-divider { width: 1px; height: 32px; background: var(--line); }
+.product-title { margin-right: 22px; color: #e8ebf4; font-size: 16px; font-weight: 600; white-space: nowrap; }
+
+.header-select, .connection-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 46px;
+  padding: 0 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(180deg, #0e1421, #0b101a);
+  color: #e1e5ef;
+}
+.header-select:hover, .connection-pill:hover { border-color: #38445d; background: #111827; }
+.select-icon { color: #9ca8bd; }
+.purple { color: #b58cff !important; }
+.chevron { margin-left: 8px; color: #8993a7; }
+.header-spacer { flex: 1; }
+.connection-pill { height: 43px; font-size: 13px; }
+
+.status-dot, .mini-dot, .terminal-live i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 12px rgba(98, 223, 131, 0.55);
+}
+.connection-pill.reconnecting .status-dot { background: var(--yellow); }
+.connection-pill.offline .status-dot { background: var(--red); }
+
+.notification-button { position: relative; }
+.notification-dot {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--purple);
+  box-shadow: 0 0 10px var(--purple);
+}
+.avatar-button {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 2px solid #b4bdcf;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f4caa5, #936849);
+  color: #111522;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.left-sidebar {
+  position: relative;
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  padding: 40px 14px 16px;
+  border-right: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(8, 12, 20, 0.98), rgba(5, 9, 15, 0.99));
+  overflow: hidden;
+}
+.sidebar-collapse, .right-collapse {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #0d1320;
+  color: #8792a7;
+  z-index: 2;
+}
+.primary-nav, .secondary-nav { display: grid; gap: 5px; }
+.nav-item {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: transparent;
+  color: #b5bdcd;
+  text-align: left;
+}
+.nav-item:hover { background: #101726; color: white; }
+.nav-item.active {
+  background:
+    radial-gradient(circle at 25% 50%, rgba(76, 111, 255, 0.2), transparent 54%),
+    linear-gradient(90deg, rgba(55, 46, 160, 0.43), rgba(20, 25, 43, 0.84));
+  color: #fff;
+}
+.nav-icon {
+  display: grid;
+  place-items: center;
+  color: #aab3c8;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 18px;
+}
+.nav-item.active .nav-icon { color: #7b70ff; }
+.nav-label { overflow: hidden; font-size: 15px; white-space: nowrap; }
+
+.ghost-card {
+  margin: auto 2px 12px;
+  padding: 15px;
+  border: 1px solid #30394c;
+  border-radius: 13px;
+  background: linear-gradient(145deg, #0d1320, #090e17);
+}
+.ghost-card-heading { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+.ghost-card p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+.ghost-visual {
+  display: grid;
+  place-items: center;
+  height: 82px;
+  color: #7a67ff;
+  font-size: 44px;
+  text-shadow: 0 0 22px #6149ff;
+}
+.left-sidebar.collapsed { padding-inline: 8px; }
+.left-sidebar.collapsed .sidebar-collapse { right: 24px; }
+.left-sidebar.collapsed .nav-item { grid-template-columns: 1fr; padding: 0; }
+.left-sidebar.collapsed .nav-label,
+.left-sidebar.collapsed .ghost-card-heading,
+.left-sidebar.collapsed .ghost-card p,
+.left-sidebar.collapsed .ghost-card .secondary-button { display: none; }
+.left-sidebar.collapsed .ghost-card { padding: 8px; }
+.left-sidebar.collapsed .ghost-visual { height: 46px; font-size: 28px; }
+
+.center-workspace {
+  grid-column: 2;
+  grid-row: 2;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 45% 0%, rgba(51, 58, 147, 0.08), transparent 28%),
+    #05080d;
+}
+.workspace-view {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+.workspace-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(140px, 1fr));
+  flex: 0 0 72px;
+  align-items: end;
+  padding: 0 28px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.workspace-tabs button {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  height: 72px;
+  background: transparent;
+  color: #929bad;
+  font-size: 16px;
+}
+.workspace-tabs button.active { color: #8b72ff; }
+.workspace-tabs button.active::after {
+  position: absolute;
+  right: 16px;
+  bottom: -1px;
+  left: 16px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, #536dff, #8255ff);
+  content: "";
+}
+.workspace-tabs sup { color: var(--yellow); }
+
+.welcome-hero {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  margin: 28px 24px 14px;
+  padding: 24px 34px;
+  border: 1px solid #2f394c;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(85, 80, 255, 0.17), transparent 25%),
+    linear-gradient(145deg, rgba(12, 17, 28, 0.94), rgba(7, 11, 18, 0.97));
+  box-shadow: var(--shadow);
+}
+.welcome-hero img { width: 120px; max-height: 100px; object-fit: contain; object-position: left center; }
+.welcome-hero h1 { margin: 0; color: white; font-size: 24px; letter-spacing: -0.025em; }
+.welcome-hero h1 span { color: var(--yellow); }
+.welcome-hero p { margin: 8px 0 13px; color: #a7afc0; font-size: 15px; }
+.reassurance-chips { display: flex; flex-wrap: wrap; gap: 9px; }
+.reassurance-chips span {
+  padding: 8px 12px;
+  border: 1px solid #263045;
+  border-radius: 10px;
+  background: #0b111d;
+  color: #aeb7c8;
+  font-size: 12px;
+}
+
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 175px;
+  padding: 0 24px 10px;
+  overflow: auto;
+}
+.message {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 14px;
+  padding: 15px 18px;
+  border: 1px solid #20293a;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0c121e, #09101a);
+}
+.message.user { background: linear-gradient(145deg, #101725, #0e1420); }
+.message-avatar {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #5d68ff, #4c32ce);
+  font-size: 11px;
+  font-weight: 800;
+}
+.message.assistant .message-avatar {
+  background: radial-gradient(circle, #5245c7, #10162b);
+  color: #c5adff;
+  font-size: 18px;
+}
+.message-content > p { margin: 0; color: #c8cfdd; line-height: 1.5; }
+
+.inline-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #29334a;
+  border-radius: 11px;
+  background: #0b111b;
+}
+.inline-card > span { color: #9fa8ba; font-size: 12px; }
+.inline-card button { margin-left: auto; border: 0; background: transparent; color: #7ea1ff; }
+.progress-rail {
+  display: grid;
+  grid-template-columns: repeat(7, auto);
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  color: #959fb2;
+  font-size: 11px;
+}
+.progress-rail .done { color: #d6d9e4; }
+.progress-rail .active { color: #a99bff; }
+.thinking .message-content { display: flex; align-items: center; gap: 6px; min-height: 35px; }
+.thinking .message-content span {
+  width: 7px; height: 7px; border-radius: 50%; background: #8977ff; animation: typing 1s infinite alternate;
+}
+.thinking .message-content span:nth-child(2) { animation-delay: 160ms; }
+.thinking .message-content span:nth-child(3) { animation-delay: 320ms; }
+.thinking em { margin-left: 8px; color: #8e98ac; font-size: 12px; }
+@keyframes typing { to { opacity: 0.25; transform: translateY(-4px); } }
+
+.terminal-panel {
+  flex: 0 0 250px;
+  min-height: 210px;
+  margin: 0 24px 12px;
+  border: 1px solid #303a4c;
+  border-radius: 14px;
+  background: #05080d;
+  overflow: hidden;
+}
+.terminal-panel.maximized {
+  position: fixed;
+  inset: 96px 32px 32px;
+  z-index: 80;
+  margin: 0;
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.7), var(--shadow);
+}
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 14px;
+  border-bottom: 1px solid #222b3b;
+  background: #0a0f18;
+  font-size: 12px;
+}
+.terminal-live { display: flex; align-items: center; gap: 6px; color: #a8b1c1; }
+.terminal-spacer { flex: 1; }
+.terminal-header button { padding: 5px 7px; border-radius: 7px; background: transparent; color: #909aae; }
+.terminal-header button:hover { background: #151d2a; color: white; }
+.terminal-body {
+  height: calc(100% - 44px);
+  padding: 13px 18px;
+  overflow: auto;
+  color: #b5bece;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.65;
+}
+.term-command { color: #c083ff; }
+.term-success { color: #7be67d; }
+.term-link { color: #4db4ff; }
+.term-warning { color: #f4c557; }
+.term-error { color: #ff7080; }
+.term-wait, .term-info { color: #9aa4b6; }
+
+.composer-zone {
+  position: sticky;
+  bottom: 0;
+  z-index: 8;
+  margin-top: auto;
+  padding: 0 24px 18px;
+  background: linear-gradient(180deg, transparent, #05080d 20%);
+}
+.composer {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) repeat(3, auto) 58px;
+  align-items: center;
+  gap: 7px;
+  height: 66px;
+  padding: 0 10px 0 13px;
+  border: 1px solid #354057;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #0d1421, #0a101a);
+  box-shadow: var(--shadow);
+}
+.composer input { min-width: 0; border: 0; outline: 0; background: transparent; color: white; font-size: 15px; }
+.composer input::placeholder { color: #717d92; }
+.composer-tool {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  background: transparent;
+  color: #929db1;
+  font-size: 18px;
+}
+.composer-tool:hover { background: #182133; color: white; }
+.send-button {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 46px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #4768ff, #6f48ff);
+  box-shadow: 0 8px 24px rgba(79, 82, 255, 0.3);
+  font-size: 21px;
+}
+.send-button.stop { background: #272e3c; }
+.quick-examples {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px 0;
+  overflow: hidden;
+  color: #707b90;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.quick-examples button { border: 0; background: transparent; color: #6e78ff; }
+
+.right-panel {
+  position: relative;
+  grid-column: 3;
+  grid-row: 2;
+  min-width: 0;
+  min-height: 0;
+  padding: 18px 18px 30px;
+  border-left: 1px solid var(--line);
+  background: linear-gradient(180deg, #070b12, #05090f);
+  overflow: auto;
+}
+.right-collapse { position: sticky; top: 0; float: left; margin: -8px 0 8px -8px; }
+.right-panel.collapsed { padding: 10px; overflow: hidden; }
+.right-panel.collapsed .context-card { display: none; }
+.right-panel.collapsed .right-collapse { right: auto; left: 1px; float: none; }
+
+.context-card {
+  clear: both;
+  margin-bottom: 12px;
+  border: 1px solid #283247;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0e1420, #0a1019);
+  overflow: hidden;
+}
+.accordion-header {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 15px;
+  background: transparent;
+  color: #e5e8f0;
+  text-align: left;
+}
+.accordion-icon { color: #8d7aff; }
+.accordion-badge {
+  padding: 5px 9px;
+  border: 1px solid #34405a;
+  border-radius: 8px;
+  color: #aeb7ca;
+  font-size: 11px;
+}
+.accordion-content { padding: 0 15px 15px; }
+.detail-grid { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 13px; color: #939daf; font-size: 12px; }
+.detail-grid strong { max-width: 190px; overflow: hidden; color: #d9dde7; font-weight: 500; text-overflow: ellipsis; white-space: nowrap; }
+.plan-list { display: grid; gap: 10px; }
+.plan-row { display: grid; grid-template-columns: 18px minmax(0, 1fr) 18px; gap: 7px; color: #99a3b5; font-size: 12px; }
+.plan-row.done span:last-child { color: var(--green); }
+.plan-row.active { color: white; }
+.metric-row { display: flex; justify-content: space-between; margin-bottom: 12px; color: #9ba5b7; font-size: 12px; }
+.button-stack { display: grid; gap: 8px; }
+
+.primary-button, .secondary-button, .ghost-button, .danger-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 9px;
+  font-size: 12px;
+}
+.primary-button { background: linear-gradient(145deg, #4c66ff, #6947ef); color: white; box-shadow: 0 8px 22px rgba(75, 76, 255, 0.2); }
+.secondary-button { border: 1px solid #34415a; background: #111827; color: #d9deea; }
+.ghost-button { border: 1px solid #283247; background: transparent; color: #9ea8bb; }
+.danger-button { border: 1px solid rgba(255, 91, 112, 0.35); background: rgba(255, 80, 101, 0.11); color: #ff8291; }
+.full { width: 100%; }
+
+.approval-orb {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin: 2px 0 11px;
+  border-radius: 50%;
+  background: rgba(90, 70, 255, 0.18);
+  color: #8e78ff;
+  font-size: 24px;
+}
+.approval-card h3 { margin: 0 0 5px; color: #dfe2eb; font-size: 13px; font-weight: 500; }
+.approval-card p { margin: 0 0 13px; color: #8f99ac; font-size: 12px; }
+.approval-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+
+.workspace-titlebar, .screen-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 30px 20px;
+}
+.eyebrow { color: #7b75ff; font-size: 10px; font-weight: 800; letter-spacing: 0.16em; }
+.workspace-titlebar h1, .screen-header h1 { margin: 5px 0 0; font-size: 25px; letter-spacing: -0.03em; }
+.screen-header p { margin: 7px 0 0; color: #8d98ac; font-size: 13px; }
+.title-actions { display: flex; gap: 9px; }
+.subtabs { display: flex; gap: 5px; padding: 0 30px 14px; overflow: auto; }
+.subtabs button, .filter-row button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #8e98aa;
+  white-space: nowrap;
+}
+.subtabs button.active, .filter-row button.active { border-color: #354159; background: #111827; color: white; }
+
+.panel { border: 1px solid #293348; border-radius: 13px; background: #080d15; overflow: hidden; }
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 45px;
+  padding: 0 13px;
+  border-bottom: 1px solid #20293b;
+  color: #cbd1de;
+  font-size: 12px;
+}
+.panel-heading button { border: 0; background: transparent; color: #8c97ab; }
+.coding-grid {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 220px;
+  gap: 12px;
+  min-height: 330px;
+  padding: 0 24px 12px;
+}
+.project-tree { padding-bottom: 10px; }
+.project-tree > button, .component-panel > button, .file-tree > button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 35px;
+  padding: 0 12px;
+  border: 0;
+  background: transparent;
+  color: #919caf;
+  font-size: 11px;
+  text-align: left;
+}
+.project-tree > button.active, .file-tree > button.active { background: #141c2b; color: white; }
+.project-tree .tree-action { margin-top: 8px; color: #718aff; }
+
+.code-editor header, .test-panel header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 13px;
+  border-bottom: 1px solid #20293b;
+  color: #aeb7c8;
+  font-size: 11px;
+}
+.code-editor header button { margin-left: auto; border: 0; background: transparent; color: #748cff; }
+.unsaved-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--yellow); }
+.code-lines {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 0;
+  padding: 14px 0;
+  overflow: auto;
+  color: #abb5c7;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.code-lines > span { padding-right: 8px; color: #4c586d; text-align: right; }
+.code-lines code b { color: #ba77ff; }
+.code-lines code i { color: #72d3a1; font-style: normal; }
+.code-lines code em { color: #ffbd67; font-style: normal; }
+
+.architecture-panel { padding-bottom: 12px; }
+.architecture-node {
+  margin: 12px 14px 0;
+  padding: 10px;
+  border: 1px solid #2d3850;
+  border-radius: 9px;
+  background: #101725;
+  color: #cbd2df;
+  font-size: 11px;
+  text-align: center;
+}
+.architecture-arrow { color: #596579; text-align: center; }
+.architecture-panel .secondary-button { margin: 14px; width: calc(100% - 28px); }
+
+.coding-bottom { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: 12px; padding: 0 24px 24px; }
+.coding-bottom .terminal-panel { margin: 0; }
+.test-panel { padding-bottom: 12px; }
+.test-panel header { justify-content: space-between; }
+.test-panel > div { padding: 7px 13px; color: #99a4b6; font-size: 11px; }
+.test-panel .secondary-button { margin: 10px 12px 0; width: calc(100% - 24px); }
+.status-ok { color: var(--green) !important; }
+
+.design-grid {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 210px;
+  gap: 12px;
+  min-height: 520px;
+  padding: 0 24px 24px;
+}
+.design-controls { padding: 0 12px 12px; }
+.design-controls .panel-heading { margin: 0 -12px; }
+.design-controls textarea {
+  width: 100%;
+  min-height: 105px;
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid #2a354b;
+  border-radius: 9px;
+  outline: 0;
+  background: #0c1320;
+  color: #bac3d2;
+  resize: vertical;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.section-gap { margin-top: 12px !important; }
+.reference-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; padding: 12px 0; }
+.reference-grid div { aspect-ratio: 1; border: 1px solid #2d3850; border-radius: 8px; background: linear-gradient(145deg, #1b2452, #151529 55%, #6d49ff); }
+.swatches { display: flex; gap: 7px; padding: 12px 0; }
+.swatches i { width: 28px; height: 28px; border: 1px solid #39445a; border-radius: 8px; background: #05070b; }
+.swatches i:nth-child(2) { background: #4c6fff; }
+.swatches i:nth-child(3) { background: #7758ff; }
+.swatches i:nth-child(4) { background: #9d69ff; }
+.swatches i:nth-child(5) { background: #f3b83d; }
+.type-sample { color: #939daf; font-size: 12px; }
+.design-canvas { display: flex; flex-direction: column; }
+.canvas-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 44px;
+  padding: 0 10px;
+  border-bottom: 1px solid #20293b;
+}
+.canvas-toolbar button { width: 32px; height: 30px; border: 0; border-radius: 7px; background: transparent; color: #8f9aaf; }
+.canvas-toolbar span { flex: 1; }
+.canvas-stage {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 400px;
+  padding: 24px;
+  background-image: linear-gradient(#111724 1px, transparent 1px), linear-gradient(90deg, #111724 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.concept-frame {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  grid-template-rows: 40px minmax(0, 1fr);
+  width: min(650px, 90%);
+  aspect-ratio: 16 / 10;
+  border: 1px solid #35405a;
+  border-radius: 10px;
+  background: #06090f;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+.concept-top { grid-column: 1 / -1; border-bottom: 1px solid #222b3d; background: #0b1019; }
+.concept-side { border-right: 1px solid #222b3d; background: #080d15; }
+.concept-main { padding: 18px; }
+.concept-hero { height: 26%; border-radius: 8px; background: radial-gradient(circle at 20% 50%, #4a58bc, #141826 45%); }
+.concept-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; height: 25%; margin-top: 9px; }
+.concept-cards i { border: 1px solid #293349; border-radius: 7px; background: #0d1420; }
+.concept-terminal { height: 33%; margin-top: 9px; border: 1px solid #293349; border-radius: 7px; background: repeating-linear-gradient(180deg, #05090f 0 7px, #132016 8px 9px); }
+.component-panel { padding-bottom: 12px; }
+.component-panel > button { border-bottom: 1px solid #111827; }
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 30px 18px;
+}
+.filter-row span { flex: 1; }
+.filter-row input, .file-search input, .global-search input, .settings-form input, .settings-form select, .help-search input {
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid #2c374d;
+  border-radius: 9px;
+  outline: 0;
+  background: #0c121d;
+  color: white;
+}
+
+.project-card-grid, .memory-grid, .help-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 30px 30px;
+}
+.project-card, .memory-card {
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr) auto;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #293348;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0c121e, #080d15);
+}
+.project-icon {
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 11px;
+  background: rgba(82, 71, 255, 0.18);
+  color: #8d76ff;
+  font-size: 20px;
+}
+.project-card h3, .memory-card h3 { margin: 2px 0 5px; font-size: 15px; }
+.project-card p, .memory-card p { margin: 0; color: #8e99ac; font-size: 12px; line-height: 1.5; }
+.health { color: var(--green); font-size: 11px; }
+.project-meta { grid-column: 2 / -1; display: grid; grid-template-columns: auto 1fr auto 1fr; gap: 8px; color: #808b9f; font-size: 11px; }
+.project-meta strong { color: #c7ceda; }
+.card-actions { grid-column: 1 / -1; display: flex; gap: 7px; margin-top: 6px; }
+.card-actions button { min-height: 32px; }
+
+.table-card { margin: 0 30px 30px; }
+.table-head, .table-row {
+  display: grid;
+  grid-template-columns: minmax(200px, 1.5fr) 100px 130px 100px minmax(260px, 1fr);
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 15px;
+  border-bottom: 1px solid #1e2737;
+  color: #9aa4b6;
+  font-size: 11px;
+}
+.table-head { min-height: 44px; background: #0d131f; color: #707c91; font-weight: 700; }
+.table-row > span:first-child { display: grid; gap: 4px; color: #dce0e9; }
+.table-row small { color: #768296; }
+.session-state { width: fit-content; padding: 5px 8px; border-radius: 999px; background: #141c2a; }
+.session-state.running { color: var(--green); }
+.session-state.paused { color: var(--yellow); }
+.session-state.completed { color: #6b8dff; }
+.session-state.failed { color: var(--red); }
+.row-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+.row-actions button { border: 0; background: transparent; color: #778cff; font-size: 10px; }
+
+.file-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr) 270px;
+  gap: 12px;
+  min-height: 560px;
+  padding: 0 24px 24px;
+}
+.file-tree { padding-bottom: 12px; }
+.file-search { display: grid; grid-template-columns: 1fr 38px; gap: 7px; padding: 12px; border-bottom: 1px solid #20293b; }
+.file-search button { border: 0; border-radius: 8px; background: #151d2b; color: #8d98ad; }
+.file-row {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 58px;
+  padding: 0 13px;
+  border: 0;
+  border-bottom: 1px solid #161e2c;
+  background: transparent;
+  color: #8d98ab;
+  text-align: left;
+}
+.file-row.active { background: #111827; }
+.file-row > span:nth-child(2) { display: grid; gap: 4px; }
+.file-row strong { color: #d6dbe5; font-size: 12px; }
+.file-row small { color: #727e92; font-size: 10px; }
+.file-type {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: rgba(73, 103, 255, 0.14);
+  color: #758cff;
+  font-size: 10px;
+}
+.file-preview { padding: 0 12px 12px; }
+.file-preview .panel-heading { margin: 0 -12px; }
+.file-preview h3 { margin: 16px 0 5px; font-size: 14px; }
+.file-preview p { margin: 0; color: #7c879a; font-size: 11px; }
+.file-preview pre {
+  padding: 12px;
+  border: 1px solid #273149;
+  border-radius: 9px;
+  background: #05090f;
+  color: #aeb8c8;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 10px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.memory-card { grid-template-columns: 1fr; }
+.memory-card > div:first-child { display: flex; align-items: center; justify-content: space-between; }
+.memory-icon { color: #8f78ff; font-size: 22px; }
+.pin { color: #777fff; font-size: 10px; }
+
+.ghost-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) 330px;
+  gap: 14px;
+  padding: 0 30px 30px;
+}
+.machine-card { padding: 16px; }
+.machine-status { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; color: #d5dae5; font-size: 13px; }
+.machine-screen {
+  display: grid;
+  place-items: center;
+  min-height: 430px;
+  border: 1px solid #273249;
+  border-radius: 12px;
+  background: radial-gradient(circle at 50% 45%, rgba(70, 78, 185, 0.16), transparent 30%), #05090f;
+}
+.fake-window {
+  width: 78%;
+  aspect-ratio: 16 / 10;
+  border: 1px solid #3a4660;
+  border-radius: 9px;
+  background: #080d15;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.fake-window header, .remote-window header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 8px;
+  border-bottom: 1px solid #20293b;
+  background: #111724;
+}
+.fake-window header span, .remote-window header span { width: 7px; height: 7px; border-radius: 50%; background: #ff697b; }
+.fake-window header span:nth-child(2), .remote-window header span:nth-child(2) { background: #f3b83d; }
+.fake-window header span:nth-child(3), .remote-window header span:nth-child(3) { background: #62df83; }
+.fake-canvas { position: relative; display: grid; grid-template-columns: 22% 1fr; height: calc(100% - 28px); }
+.fake-sidebar { border-right: 1px solid #20293b; background: #0a1019; }
+.fake-content { margin: 14px; border-radius: 7px; background: repeating-linear-gradient(180deg, #0e1522 0 16px, #101b2b 17px 18px); }
+.cursor-indicator {
+  position: absolute;
+  top: 38%;
+  left: 56%;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #7c6cff;
+  border-radius: 50%;
+  box-shadow: 0 0 18px #7564ff;
+  animation: cursorPulse 1.3s infinite;
+}
+@keyframes cursorPulse { 50% { transform: scale(1.4); opacity: 0.55; } }
+.ghost-controls { display: flex; gap: 8px; margin-top: 14px; }
+.ghost-details { display: grid; align-content: start; gap: 12px; }
+.ghost-details section { padding: 15px; }
+.ghost-details h3 { margin: 0 0 14px; font-size: 13px; }
+.mode-choice {
+  display: grid;
+  width: 100%;
+  gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: #a8b1c2;
+  text-align: left;
+}
+.mode-choice.active { border-color: #3a4462; background: #131a2a; color: white; }
+.mode-choice small { color: #707c90; }
+.timeline { display: grid; gap: 12px; }
+.timeline span { position: relative; padding-left: 21px; color: #7d899c; font-size: 11px; }
+.timeline span::before {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #3d485e;
+  border-radius: 50%;
+  content: "";
+}
+.timeline span.done::before { border-color: var(--green); background: var(--green); }
+.timeline span.active { color: white; }
+.timeline span.active::before { border-color: #7d6cff; box-shadow: 0 0 12px #7564ff; }
+
+.help-search {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 8px;
+  max-width: 800px;
+  margin: 0 auto 28px;
+  padding: 0 30px;
+}
+.help-search input { min-height: 48px; }
+.help-search button { border: 0; border-radius: 10px; background: linear-gradient(145deg, #4e69ff, #7048ef); color: white; }
+.help-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.help-card {
+  display: block;
+  min-height: 185px;
+  padding: 18px;
+  border: 1px solid #293348;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #0c121e, #080d15);
+  color: white;
+  text-align: left;
+}
+.help-card > span { color: #8d75ff; font-size: 24px; }
+.help-card h3 { margin: 16px 0 8px; }
+.help-card p { color: #8e99ac; font-size: 12px; line-height: 1.55; }
+.help-card strong { color: #778cff; font-size: 11px; }
+
+.mobile-nav { display: none; }
+
+.overlay-backdrop, .popover-dismiss {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(1, 3, 7, 0.7);
+  backdrop-filter: blur(7px);
+}
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(520px, calc(100vw - 30px));
+  max-height: min(82vh, 760px);
+  border: 1px solid #344057;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #0d1420, #080d15);
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.65);
+  transform: translate(-50%, -50%);
+  overflow: auto;
+}
+.modal.wide { width: min(900px, calc(100vw - 30px)); }
+.modal > header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 58px;
+  padding: 0 18px;
+  border-bottom: 1px solid #273149;
+  background: rgba(13, 20, 32, 0.95);
+  backdrop-filter: blur(15px);
+}
+.modal > header h2 { margin: 0; font-size: 16px; }
+.modal > header button { width: 34px; height: 34px; border: 0; border-radius: 9px; background: transparent; color: #8c97aa; font-size: 24px; }
+.modal-body { padding: 18px; }
+
+.anchored-popover { position: fixed; top: 68px; z-index: 120; }
+.project-anchor { left: 485px; }
+.mode-anchor { left: 740px; }
+.popover-dismiss { z-index: 110; background: transparent; backdrop-filter: none; }
+.popover {
+  position: relative;
+  z-index: 121;
+  width: 330px;
+  padding: 10px;
+  border: 1px solid #344057;
+  border-radius: 13px;
+  background: #0c121e;
+  box-shadow: var(--shadow);
+}
+.popover-title { padding: 7px 10px 10px; color: #737f93; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+.menu-row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 48px;
+  padding: 6px 9px;
+  border-radius: 9px;
+  background: transparent;
+  color: #bdc5d4;
+  text-align: left;
+}
+.menu-row:hover, .menu-row.selected { background: #141c2a; }
+.menu-row > span:nth-child(2) { display: grid; gap: 3px; }
+.menu-row small { color: #737f92; font-size: 10px; }
+.menu-icon { color: #8c78ff; }
+.popover-divider { height: 1px; margin: 7px; background: #242e42; }
+
+.global-search { display: grid; grid-template-columns: 1fr 90px; gap: 8px; }
+.global-search input { min-height: 46px; }
+.global-search button { border: 0; border-radius: 9px; background: linear-gradient(145deg, #5069ff, #704bef); color: white; }
+.search-results, .notification-list { display: grid; gap: 7px; margin-top: 16px; }
+.search-results button, .notification-list button {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 10px;
+  border: 1px solid #263048;
+  border-radius: 10px;
+  background: #0b111b;
+  color: #8d98ab;
+  text-align: left;
+}
+.search-results strong, .notification-list strong { display: block; color: #dce0e9; }
+.search-results small, .notification-list small { color: #758094; font-size: 10px; }
+.notification-symbol {
+  display: grid;
+  place-items: center;
+  width: 35px;
+  height: 35px;
+  border-radius: 9px;
+  background: rgba(90, 73, 255, 0.16);
+  color: #8e78ff;
+}
+
+.profile-modal { display: grid; gap: 8px; text-align: center; }
+.large-avatar {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #f4caa5, #936849);
+  color: #10131c;
+  font-weight: 900;
+}
+.profile-modal h3 { margin: 4px 0 0; }
+.profile-modal p { margin: 0 0 10px; color: #8e98aa; font-size: 12px; }
+.profile-modal button {
+  min-height: 40px;
+  border: 1px solid #283249;
+  border-radius: 9px;
+  background: #0c121d;
+  color: #bdc5d3;
+}
+.profile-modal .danger-text { color: var(--red); }
+
+.settings-form { display: grid; gap: 14px; }
+.settings-form label { display: grid; gap: 7px; color: #969fb0; font-size: 11px; }
+.settings-form input, .settings-form select { width: 100%; }
+.toggle-row { grid-template-columns: 1fr auto !important; align-items: center; min-height: 42px; padding: 0 10px; border: 1px solid #273149; border-radius: 9px; }
+
+.connection-hero { text-align: center; }
+.connection-hero .status-dot { width: 14px; height: 14px; }
+.connection-hero h3 { margin: 10px 0 4px; }
+.connection-hero p { color: #8d98ab; font-size: 12px; }
+.connection-detail .detail-grid { margin: 20px 0; }
+
+.approval-modal { text-align: center; }
+.approval-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(88, 68, 255, 0.18);
+  color: #8c75ff;
+  font-size: 32px;
+}
+.approval-modal h3 { margin-bottom: 10px; }
+.approval-modal ul { display: inline-grid; gap: 8px; padding-left: 20px; color: #aab3c2; font-size: 13px; text-align: left; }
+.approval-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 18px 0; }
+.approval-metrics span { display: grid; gap: 5px; padding: 12px; border: 1px solid #293349; border-radius: 9px; color: #7e899d; font-size: 10px; }
+.approval-metrics strong { color: #d9dee8; font-size: 12px; }
+.approval-button-grid { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 8px; margin-top: 9px; }
+
+.diff-summary { display: flex; gap: 16px; color: #9aa5b7; font-size: 12px; }
+.diff-summary .add, .diff-layout .add { color: var(--green); }
+.diff-summary .delete, .diff-layout .delete { color: var(--red); }
+.diff-layout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  min-height: 360px;
+  margin-top: 14px;
+  border: 1px solid #2b354a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.diff-layout aside { border-right: 1px solid #273149; background: #080d15; }
+.diff-layout aside button {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 42px;
+  padding: 0 10px;
+  border: 0;
+  border-bottom: 1px solid #171f2d;
+  background: transparent;
+  color: #929daf;
+  font-size: 10px;
+}
+.diff-layout aside button.active { background: #131a28; color: white; }
+.diff-layout pre { margin: 0; padding: 18px; overflow: auto; background: #05090f; color: #aab4c5; font: 12px/1.8 "Cascadia Code", Consolas, monospace; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 15px; }
+
+.preview-toolbar { display: flex; gap: 6px; }
+.preview-toolbar span { flex: 1; }
+.preview-toolbar button { min-height: 34px; padding: 0 10px; border: 1px solid #2d374e; border-radius: 8px; background: transparent; color: #8c97aa; }
+.preview-toolbar button.active { background: #151d2b; color: white; }
+.preview-frame { display: grid; place-items: center; min-height: 480px; margin-top: 12px; border: 1px solid #293349; border-radius: 10px; background: #03060a; }
+.preview-app {
+  display: grid;
+  grid-template-columns: 16% minmax(0, 1fr) 22%;
+  grid-template-rows: 12% minmax(0, 1fr);
+  width: 92%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid #37425a;
+  border-radius: 7px;
+  overflow: hidden;
+}
+.preview-top { grid-column: 1 / -1; border-bottom: 1px solid #222b3d; background: #0b1019; }
+.preview-left, .preview-right { background: #080d15; }
+.preview-left { border-right: 1px solid #222b3d; }
+.preview-right { border-left: 1px solid #222b3d; }
+.preview-main { padding: 12px; }
+.preview-hero { height: 24%; border-radius: 6px; background: radial-gradient(circle at 20% 50%, #514cc4, #111623 45%); }
+.preview-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; height: 22%; margin-top: 7px; }
+.preview-cards i, .preview-terminal { border: 1px solid #273149; border-radius: 6px; background: #0c121e; }
+.preview-terminal { height: 38%; margin-top: 7px; background: repeating-linear-gradient(180deg, #05090f 0 7px, #132016 8px 9px); }
+
+.task-detail p { color: #939daf; line-height: 1.55; }
+.task-state { color: var(--green); font-size: 11px; }
+
+.ghost-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 150;
+  display: grid;
+  grid-template-rows: 70px minmax(0, 1fr);
+  background: #03060a;
+}
+.ghost-fullscreen > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid #273149;
+  background: #080d15;
+}
+.ghost-fullscreen > header > div { display: flex; align-items: center; gap: 10px; }
+.ghost-fullscreen small { color: #7d899c; }
+.ghost-full-body { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 14px; min-height: 0; padding: 14px; }
+.remote-desktop, .ghost-full-body > aside { border: 1px solid #293349; border-radius: 12px; background: #070b12; overflow: hidden; }
+.remote-desktop { display: grid; place-items: center; }
+.remote-window {
+  display: grid;
+  grid-template-columns: 180px minmax(0, 1fr);
+  grid-template-rows: 32px minmax(0, 1fr);
+  width: 92%;
+  height: 88%;
+  border: 1px solid #39455f;
+  border-radius: 9px;
+  background: #070b12;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.remote-window header { grid-column: 1 / -1; }
+.remote-window header strong { margin-left: 10px; color: #8f9aaf; font-size: 10px; }
+.remote-window aside { border-right: 1px solid #222b3d; background: #0a1019; }
+.remote-window main { position: relative; padding: 18px; }
+.remote-tabs { width: 45%; height: 20px; border-radius: 5px; background: #121b2a; }
+.remote-code { height: 62%; margin-top: 14px; border-radius: 7px; background: repeating-linear-gradient(180deg, #0b111b 0 12px, #15233c 13px 14px); }
+.remote-terminal { height: 22%; margin-top: 12px; border-radius: 7px; background: repeating-linear-gradient(180deg, #04070b 0 7px, #14301b 8px 9px); }
+.cursor-indicator.big { width: 22px; height: 22px; }
+.ghost-full-body > aside { padding: 18px; }
+.ghost-full-body > aside p { color: #8f99ab; font-size: 12px; line-height: 1.5; }
+.ghost-full-body .timeline { margin: 20px 0; }
+
+.confirm-delete { text-align: center; }
+.danger-symbol {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(255, 87, 108, 0.13);
+  color: var(--red);
+  font-size: 25px;
+  font-weight: 800;
+}
+.confirm-delete p { color: #929daf; font-size: 12px; line-height: 1.55; }
+
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 220;
+  max-width: 390px;
+  padding: 12px 15px;
+  border: 1px solid #3a455c;
+  border-radius: 10px;
+  background: #111827;
+  color: #d7dce6;
+  box-shadow: var(--shadow);
+  font-size: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: 160ms ease;
+}
+.toast.visible { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 1320px) {
+  .app-shell { grid-template-columns: 230px minmax(0, 1fr) 330px; }
+  .app-shell.left-collapsed { grid-template-columns: 72px minmax(0, 1fr) 330px; }
+  .app-shell.right-collapsed { grid-template-columns: 230px minmax(0, 1fr) 48px; }
+  .app-shell.left-collapsed.right-collapsed { grid-template-columns: 72px minmax(0, 1fr) 48px; }
+  .brand-button { width: 155px; }
+  .brand-button img { width: 150px; }
+  .product-title { display: none; }
+  .project-anchor { left: 400px; }
+  .mode-anchor { left: 655px; }
+  .welcome-hero { grid-template-columns: 100px 1fr; }
+  .welcome-hero img { width: 95px; }
+}
+
+@media (max-width: 1120px) {
+  .app-shell { grid-template-columns: 78px minmax(0, 1fr); }
+  .center-workspace { grid-column: 2; }
+  .right-panel {
+    position: fixed;
+    top: 84px;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    width: 360px;
+    box-shadow: -25px 0 70px rgba(0, 0, 0, 0.4);
+  }
+  .right-panel.collapsed { width: 48px; }
+  .left-sidebar .nav-label,
+  .left-sidebar .ghost-card-heading,
+  .left-sidebar .ghost-card p,
+  .left-sidebar .ghost-card .secondary-button { display: none; }
+  .left-sidebar .nav-item { grid-template-columns: 1fr; padding: 0; }
+  .left-sidebar .ghost-card { padding: 8px; }
+  .coding-grid { grid-template-columns: 180px minmax(0, 1fr); }
+  .architecture-panel { display: none; }
+  .design-grid { grid-template-columns: 190px minmax(0, 1fr); }
+  .component-panel { display: none; }
+  .project-card-grid, .memory-grid { grid-template-columns: 1fr; }
+  .file-layout { grid-template-columns: 180px minmax(0, 1fr); }
+  .file-preview { display: none; }
+  .ghost-dashboard { grid-template-columns: 1fr; }
+  .help-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .app-shell, .app-shell.left-collapsed, .app-shell.right-collapsed, .app-shell.left-collapsed.right-collapsed {
+    display: block;
+    padding-top: 62px;
+    padding-bottom: 62px;
+  }
+  .top-header {
+    position: fixed;
+    inset: 0 0 auto;
+    height: 62px;
+    padding: 0 12px;
+  }
+  .top-header .brand-button { width: 142px; }
+  .top-header .brand-button img { width: 136px; }
+  .top-header .brand-divider,
+  .top-header .product-title,
+  .top-header .header-select,
+  .top-header .connection-pill,
+  .top-header .icon-button:nth-last-of-type(2) { display: none; }
+  .top-header .header-spacer { flex: 1; }
+
+  .left-sidebar {
+    position: fixed;
+    top: 62px;
+    bottom: 62px;
+    left: 0;
+    z-index: 70;
+    width: 270px;
+    padding-inline: 14px;
+    transform: translateX(-100%);
+    transition: transform 180ms ease;
+    box-shadow: 20px 0 60px rgba(0, 0, 0, 0.5);
+  }
+  .app-shell:not(.left-collapsed) .left-sidebar { transform: translateX(0); }
+  .left-sidebar .nav-label,
+  .left-sidebar .ghost-card-heading,
+  .left-sidebar .ghost-card p,
+  .left-sidebar .ghost-card .secondary-button { display: block; }
+  .left-sidebar .nav-item { grid-template-columns: 36px 1fr; padding: 0 14px; }
+
+  .center-workspace { width: 100%; height: calc(100vh - 124px); }
+  .right-panel {
+    top: auto;
+    right: 0;
+    bottom: 62px;
+    left: 0;
+    width: 100%;
+    max-height: 70vh;
+    border-top: 1px solid #39445c;
+    border-left: 0;
+    border-radius: 18px 18px 0 0;
+    transform: translateY(100%);
+    transition: transform 180ms ease;
+  }
+  .right-panel:not(.collapsed) { transform: translateY(0); }
+  .right-panel.collapsed {
+    width: 100%;
+    height: 42px;
+    padding: 5px;
+    transform: translateY(0);
+    background: #0a1019;
+  }
+  .right-panel.collapsed .right-collapse { position: static; width: 100%; }
+
+  .mobile-nav {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 90;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 62px;
+    border-top: 1px solid #293349;
+    background: rgba(8, 12, 20, 0.97);
+    backdrop-filter: blur(15px);
+  }
+  .mobile-nav button {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: 3px;
+    background: transparent;
+    color: #707c90;
+  }
+  .mobile-nav button.active { color: #8173ff; }
+  .mobile-nav small { font-size: 9px; }
+
+  .workspace-tabs { flex-basis: 54px; padding-inline: 10px; }
+  .workspace-tabs button { height: 54px; font-size: 12px; }
+  .welcome-hero { grid-template-columns: 72px 1fr; gap: 12px; margin: 12px 10px 8px; padding: 16px; }
+  .welcome-hero img { width: 68px; }
+  .welcome-hero h1 { font-size: 18px; }
+  .welcome-hero p { font-size: 12px; }
+  .reassurance-chips { display: none; }
+
+  .chat-thread { padding-inline: 10px; }
+  .message { grid-template-columns: 30px 1fr; padding: 12px; }
+  .message-avatar { width: 28px; height: 28px; }
+  .inline-card { align-items: flex-start; flex-direction: column; }
+  .inline-card button { margin-left: 0; }
+  .progress-rail { grid-template-columns: 1fr; }
+  .progress-rail b { display: none; }
+
+  .terminal-panel { flex-basis: 210px; margin-inline: 10px; }
+  .terminal-panel.maximized { inset: 62px 0; border-radius: 0; }
+  .composer-zone { padding: 0 10px 10px; }
+  .composer { grid-template-columns: auto 1fr auto auto; height: 58px; }
+  .composer-tool:nth-of-type(2), .composer-tool:nth-of-type(3) { display: none; }
+  .send-button { width: 44px; height: 42px; }
+  .quick-examples { display: none; }
+
+  .workspace-titlebar, .screen-header { padding: 18px 14px 14px; }
+  .workspace-titlebar h1, .screen-header h1 { font-size: 20px; }
+  .title-actions { display: none; }
+  .subtabs, .filter-row { padding-inline: 14px; }
+
+  .coding-grid, .design-grid, .file-layout { display: block; padding: 0 10px 10px; }
+  .project-tree, .design-controls, .file-tree { display: none; }
+  .code-editor, .design-canvas, .file-list { min-height: 430px; }
+  .coding-bottom { display: block; padding: 0 10px 14px; }
+  .test-panel { margin-top: 10px; }
+
+  .project-card-grid, .memory-grid, .help-grid { grid-template-columns: 1fr; padding: 0 14px 20px; }
+  .project-card { grid-template-columns: 42px 1fr; }
+  .health { grid-column: 2; }
+  .project-meta { grid-template-columns: auto 1fr; }
+  .table-card { margin: 0 10px 20px; overflow-x: auto; }
+  .table-head, .table-row { width: 860px; }
+
+  .ghost-dashboard { padding: 0 10px 20px; }
+  .machine-screen { min-height: 280px; }
+  .ghost-full-body { grid-template-columns: 1fr; }
+  .ghost-full-body > aside { display: none; }
+  .remote-window { grid-template-columns: 80px 1fr; }
+
+  .anchored-popover { top: 58px; right: 8px; left: 8px; }
+  .popover { width: 100%; }
+  .approval-metrics, .approval-button-grid { grid-template-columns: 1fr; }
+  .diff-layout { grid-template-columns: 1fr; }
+  .diff-layout aside { display: none; }
+  .modal { max-height: 90vh; }
+  .preview-frame { min-height: 300px; }
+}
+/* FS-UI-1A PHASE 3A — FORGE STRUCTURE SCREEN */
+/* FS-UI-1A PHASE 3A - FORGE STRUCTURE SCREEN */
+.forge-structure-screen {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.forge-structure-hero,
+.forge-structure-project-card,
+.forge-structure-panel,
+.forge-structure-next-phase {
+  border: 1px solid var(--border-color, rgba(127, 127, 127, 0.22));
+  border-radius: 18px;
+  background: var(--panel-background, rgba(255, 255, 255, 0.035));
+}
+
+.forge-structure-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 26px;
+}
+
+.forge-structure-eyebrow,
+.forge-structure-project-card > div > span,
+.forge-structure-panel header span,
+.forge-structure-next-phase > div > span {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 0.62;
+}
+
+.forge-structure-hero h1,
+.forge-structure-project-card h2,
+.forge-structure-next-phase h2 {
+  margin: 0;
+}
+
+.forge-structure-hero p,
+.forge-structure-project-card p,
+.forge-structure-next-phase p {
+  margin: 8px 0 0;
+  line-height: 1.55;
+  opacity: 0.72;
+}
+
+.forge-structure-hero-status {
+  min-width: 190px;
+  align-self: stretch;
+  display: grid;
+  align-content: center;
+  justify-items: end;
+  padding-left: 24px;
+  border-left: 1px solid var(--border-color, rgba(127, 127, 127, 0.22));
+}
+
+.forge-structure-hero-status span,
+.forge-structure-hero-status small {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  opacity: 0.62;
+}
+
+.forge-structure-hero-status strong {
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.forge-structure-project-card {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.1fr) minmax(420px, 1.6fr);
+  gap: 24px;
+  padding: 22px;
+}
+
+.forge-structure-project-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(120px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+
+.forge-structure-project-card dl div {
+  padding: 13px;
+  border-radius: 12px;
+  background: rgba(127, 127, 127, 0.07);
+}
+
+.forge-structure-project-card dt {
+  font-size: 11px;
+  opacity: 0.58;
+}
+
+.forge-structure-project-card dd {
+  margin: 5px 0 0;
+  font-weight: 650;
+}
+
+.forge-structure-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 18px;
+}
+
+.forge-structure-panel {
+  overflow: hidden;
+}
+
+.forge-structure-panel header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border-color, rgba(127, 127, 127, 0.22));
+}
+
+.forge-structure-panel header span {
+  margin: 0;
+}
+
+.forge-structure-panel header strong {
+  font-size: 20px;
+}
+
+.forge-structure-check-list {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 12px;
+  list-style: none;
+}
+
+.forge-structure-check-list li {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.forge-structure-check-list li:hover {
+  background: rgba(127, 127, 127, 0.06);
+}
+
+.forge-structure-check-list i {
+  font-style: normal;
+  font-weight: 800;
+}
+
+.forge-structure-drawing-list {
+  display: grid;
+  padding: 12px;
+}
+
+.forge-structure-drawing-list article {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 10px;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.12);
+}
+
+.forge-structure-drawing-list article:last-child {
+  border-bottom: 0;
+}
+
+.forge-structure-drawing-list code {
+  display: block;
+  margin-top: 5px;
+  font-size: 11px;
+  opacity: 0.62;
+}
+
+.forge-structure-drawing-list article > span {
+  align-self: center;
+  white-space: nowrap;
+  font-size: 11px;
+  opacity: 0.68;
+}
+
+.forge-structure-next-phase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  padding: 22px;
+}
+
+.forge-structure-boundary {
+  padding: 16px;
+  border-radius: 13px;
+  background: rgba(127, 127, 127, 0.07);
+}
+
+.forge-structure-boundary p {
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  /* FS-UI-1A PHASE 3A - FORGE STRUCTURE SCREEN */
+.forge-structure-screen {
+    padding: 14px;
+  }
+
+  .forge-structure-hero,
+  .forge-structure-project-card,
+  .forge-structure-grid,
+  .forge-structure-next-phase {
+    grid-template-columns: 1fr;
+  }
+
+  .forge-structure-hero {
+    display: grid;
+  }
+
+  .forge-structure-hero-status {
+    justify-items: start;
+    padding: 16px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--border-color, rgba(127, 127, 127, 0.22));
+  }
+
+  .forge-structure-project-card dl {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .forge-structure-project-card dl {
+    grid-template-columns: 1fr;
+  }
+
+  .forge-structure-drawing-list article {
+    display: grid;
+  }
+
+  .forge-structure-drawing-list article > span {
+    justify-self: start;
+  }
+}
+
+/* FS-CAD-4A.2A - INTERACTIVE WORKSPACE SHELL */
+.fs-workspace-screen {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  max-width: none;
+  min-height: 100%;
+  margin: 0;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+.fs-workspace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 92px;
+  padding: 18px 22px;
+  border: 1px solid rgba(126, 137, 166, 0.2);
+  border-radius: 16px;
+  background: rgba(10, 16, 31, 0.72);
+}
+
+.fs-workspace-header h1 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.fs-workspace-header p {
+  margin: 8px 0 0;
+  color: rgba(224, 231, 255, 0.68);
+}
+
+.fs-workspace-status {
+  display: grid;
+  justify-items: end;
+  min-width: 180px;
+}
+
+.fs-workspace-status span,
+.fs-workspace-status small {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: rgba(224, 231, 255, 0.58);
+}
+
+.fs-workspace-status strong {
+  margin: 4px 0;
+  font-size: 28px;
+}
+
+.fs-workspace-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(210px, 240px)
+    minmax(0, 1fr)
+    minmax(240px, 290px);
+  min-height: 640px;
+  overflow: hidden;
+  border: 1px solid rgba(126, 137, 166, 0.2);
+  border-radius: 16px;
+  background: #070c17;
+}
+
+.fs-workspace-tree,
+.fs-workspace-inspector {
+  min-width: 0;
+  background: #0a1020;
+}
+
+.fs-workspace-tree {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  border-right: 1px solid rgba(126, 137, 166, 0.16);
+}
+
+.fs-workspace-tree > header,
+.fs-workspace-inspector > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border-bottom: 1px solid rgba(126, 137, 166, 0.14);
+}
+
+.fs-workspace-tree > header span,
+.fs-workspace-inspector > header span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 0.11em;
+  color: rgba(224, 231, 255, 0.54);
+}
+
+.fs-workspace-tree > header strong,
+.fs-workspace-inspector > header strong {
+  font-size: 12px;
+}
+
+.fs-workspace-tree > header button {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(126, 137, 166, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: inherit;
+}
+
+.fs-workspace-tree-scroll {
+  overflow: auto;
+  padding: 9px;
+}
+
+.fs-workspace-tree-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+
+.fs-workspace-tree-item:hover {
+  background: rgba(126, 137, 166, 0.08);
+}
+
+.fs-workspace-tree-item.is-selected {
+  background: rgba(107, 92, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(132, 117, 255, 0.38);
+}
+
+.fs-workspace-tree-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: rgba(126, 137, 166, 0.12);
+  font-size: 10px;
+}
+
+.fs-workspace-tree-copy {
+  min-width: 0;
+}
+
+.fs-workspace-tree-copy strong,
+.fs-workspace-tree-copy small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fs-workspace-tree-copy strong {
+  font-size: 11px;
+}
+
+.fs-workspace-tree-copy small {
+  margin-top: 3px;
+  font-size: 9px;
+  color: rgba(224, 231, 255, 0.52);
+}
+
+.fs-workspace-tree > footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(126, 137, 166, 0.14);
+  font-size: 10px;
+}
+
+.fs-workspace-canvas-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-width: 0;
+  background: #080e1b;
+}
+
+.fs-workspace-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 48px;
+  padding: 7px 10px;
+  border-bottom: 1px solid rgba(126, 137, 166, 0.14);
+}
+
+.fs-workspace-view-tabs,
+.fs-workspace-tools {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.fs-view-control {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fs-view-tab {
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: rgba(224, 231, 255, 0.64);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+#fs-view-plan:checked ~ label[for="fs-view-plan"],
+#fs-view-end:checked ~ label[for="fs-view-end"],
+#fs-view-longitudinal:checked ~ label[for="fs-view-longitudinal"] {
+  background: rgba(107, 92, 255, 0.22);
+  color: #ffffff;
+}
+
+.fs-workspace-tools button,
+.fs-workspace-tools span {
+  display: grid;
+  place-items: center;
+  min-width: 32px;
+  height: 30px;
+  padding: 0 9px;
+  border: 1px solid rgba(126, 137, 166, 0.18);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.025);
+  color: inherit;
+  font-size: 10px;
+}
+
+.fs-workspace-tools button:hover {
+  background: rgba(126, 137, 166, 0.1);
+}
+
+.fs-workspace-canvas-stage {
+  position: relative;
+  display: grid;
+  min-height: 560px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at center,
+      rgba(52, 73, 112, 0.3),
+      transparent 62%
+    ),
+    #070c17;
+}
+
+.fs-view-panel {
+  display: none;
+  min-width: 0;
+  min-height: 560px;
+  padding: 14px;
+  overflow: auto;
+}
+
+.fs-workspace-canvas-panel:has(#fs-view-plan:checked)
+.fs-view-panel-plan,
+.fs-workspace-canvas-panel:has(#fs-view-end:checked)
+.fs-view-panel-end,
+.fs-workspace-canvas-panel:has(#fs-view-longitudinal:checked)
+.fs-view-panel-longitudinal {
+  display: grid;
+  place-items: center;
+}
+
+.fs-engineering-drawing {
+  display: block;
+  width: min(100%, 980px);
+  min-width: 650px;
+  height: auto;
+}
+
+.fs-cad-grid-line {
+  fill: none;
+  stroke: rgba(120, 145, 185, 0.1);
+  stroke-width: 0.7;
+}
+
+.fs-cad-outline,
+.fs-cad-primary,
+.fs-cad-frame line {
+  fill: none;
+  stroke: #dbe7f7;
+  stroke-width: 2;
+  vector-effect: non-scaling-stroke;
+}
+
+.fs-cad-secondary {
+  stroke: rgba(158, 188, 224, 0.58);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.fs-cad-ridge {
+  stroke: #41e1a3;
+  stroke-width: 1.8;
+  vector-effect: non-scaling-stroke;
+}
+
+.fs-cad-ground {
+  stroke: #e0cc52;
+  stroke-width: 1.5;
+}
+
+.fs-cad-bracing {
+  fill: none;
+  stroke: #65a4ff;
+  stroke-width: 1.4;
+}
+
+.fs-cad-dimension {
+  stroke: #f1bb62;
+  stroke-width: 1;
+}
+
+.fs-cad-title,
+.fs-cad-label,
+.fs-cad-frame text,
+.fs-cad-dimension-text,
+.fs-cad-note {
+  fill: #57e4f0;
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+}
+
+.fs-cad-title {
+  font-size: 17px;
+}
+
+.fs-cad-label,
+.fs-cad-frame text {
+  font-size: 9px;
+}
+
+.fs-cad-dimension-text {
+  font-size: 11px;
+}
+
+.fs-cad-note {
+  fill: #e7ad5b;
+  font-size: 9px;
+}
+
+.fs-workspace-canvas-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 9px 12px;
+  border-top: 1px solid rgba(126, 137, 166, 0.14);
+  color: rgba(224, 231, 255, 0.56);
+  font-size: 9px;
+}
+
+.fs-workspace-inspector {
+  overflow: auto;
+  border-left: 1px solid rgba(126, 137, 166, 0.16);
+}
+
+.fs-workspace-inspector section {
+  padding: 15px;
+  border-bottom: 1px solid rgba(126, 137, 166, 0.12);
+}
+
+.fs-workspace-inspector h2 {
+  margin: 0 0 11px;
+  font-size: 11px;
+}
+
+.fs-workspace-inspector dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.fs-workspace-inspector dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fs-workspace-inspector dt,
+.fs-workspace-inspector dd {
+  font-size: 9px;
+}
+
+.fs-workspace-inspector dt {
+  color: rgba(224, 231, 255, 0.52);
+}
+
+.fs-workspace-inspector dd {
+  margin: 0;
+  text-align: right;
+}
+
+.fs-workspace-warning {
+  margin: 12px;
+  border: 1px solid rgba(231, 173, 91, 0.25);
+  border-radius: 11px;
+  background: rgba(231, 173, 91, 0.06);
+}
+
+.fs-workspace-warning p {
+  margin: 0;
+  color: rgba(224, 231, 255, 0.67);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+/* FS-CAD-4A.2B - CANVAS INTERACTION */
+.fs-workspace-canvas-stage {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.fs-workspace-canvas-stage.is-panning {
+  cursor: grabbing;
+}
+
+.fs-engineering-drawing {
+  transform-origin: center center;
+  transition: transform 120ms ease-out;
+  will-change: transform;
+}
+
+.fs-workspace-canvas-stage.is-panning
+.fs-engineering-drawing {
+  transition: none;
+}
+
+.fs-cad-selectable {
+  cursor: pointer;
+  outline: none;
+}
+
+.fs-cad-selectable:hover line,
+.fs-cad-selectable:focus line {
+  stroke: #78b7ff;
+  stroke-width: 3;
+}
+
+.fs-cad-selectable.is-selected line {
+  stroke: #a78bfa;
+  stroke-width: 4;
+}
+
+.fs-cad-selectable.is-selected text {
+  fill: #d8c9ff;
+  font-weight: 700;
+}
+
+@media (max-width: 1180px) {
+  .fs-workspace-layout {
+    grid-template-columns: 210px minmax(0, 1fr);
+  }
+
+  .fs-workspace-inspector {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border-top: 1px solid rgba(126, 137, 166, 0.16);
+    border-left: 0;
+  }
+
+  .fs-workspace-inspector > header {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 760px) {
+  .fs-workspace-screen {
+    padding: 10px;
+  }
+
+  .fs-workspace-header {
+    display: grid;
+  }
+
+  .fs-workspace-status {
+    justify-items: start;
+  }
+
+  .fs-workspace-layout {
+    display: block;
+  }
+
+  .fs-workspace-tree {
+    border-right: 0;
+    border-bottom: 1px solid rgba(126, 137, 166, 0.16);
+  }
+
+  .fs-workspace-tree-scroll {
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .fs-workspace-tree-item {
+    min-width: 180px;
+  }
+
+  .fs-workspace-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .fs-workspace-view-tabs,
+  .fs-workspace-tools {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .fs-workspace-inspector {
+    display: block;
+  }
+
+  .fs-workspace-canvas-footer {
+    flex-wrap: wrap;
+  }
+}
+
+/* FS-CAD-4A.3 PHASE 1 - CANVAS ENGINE */
+.fs-cad-engine-stage {
+  position: relative;
+  display: grid;
+  grid-template-rows:
+    auto minmax(0, 1fr) auto;
+  min-height: 560px;
+  overflow: hidden;
+  background: #070c17;
+}
+
+.fs-cad-engine-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 42px;
+  padding: 6px 10px;
+  border-bottom:
+    1px solid rgba(126, 137, 166, 0.16);
+  background: #0a1020;
+  z-index: 2;
+}
+
+.fs-cad-engine-toolbar button {
+  min-width: 36px;
+  height: 29px;
+  padding: 0 10px;
+  border:
+    1px solid rgba(126, 137, 166, 0.2);
+  border-radius: 7px;
+  background:
+    rgba(255, 255, 255, 0.025);
+  color: inherit;
+  font-size: 10px;
+}
+
+.fs-cad-engine-toolbar button:hover:not(:disabled),
+.fs-cad-engine-toolbar button.is-active {
+  background: rgba(107, 92, 255, 0.2);
+  border-color:
+    rgba(137, 123, 255, 0.48);
+}
+
+.fs-cad-engine-toolbar button:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.fs-cad-engine-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 500px;
+  cursor: crosshair;
+  touch-action: none;
+  background: #070c17;
+}
+
+.fs-cad-engine-canvas.is-panning {
+  cursor: grabbing;
+}
+
+.fs-cad-engine-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 34px;
+  padding: 7px 11px;
+  border-top:
+    1px solid rgba(126, 137, 166, 0.16);
+  background: #0a1020;
+  color: rgba(224, 231, 255, 0.62);
+  font-family:
+    ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
+  font-size: 9px;
+}
+
+.fs-cad-engine-status strong {
+  color: rgba(224, 231, 255, 0.9);
+  font-weight: 500;
+}
+
+@media (max-width: 760px) {
+  .fs-cad-engine-toolbar,
+  .fs-cad-engine-status {
+    overflow-x: auto;
+  }
+
+  .fs-cad-engine-status {
+    justify-content: flex-start;
+    white-space: nowrap;
+  }
+}
+
+/* FS-CAD-4A.3 PHASE 1B.2 - VIEWPORT LAYOUT RECOVERY */
+.fs-workspace-screen {
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.fs-workspace-header {
+  min-height: 70px;
+  padding: 11px 16px;
+}
+
+.fs-workspace-header h1 {
+  font-size: 24px;
+}
+
+.fs-workspace-header p {
+  margin-top: 4px;
+  font-size: 11px;
+}
+
+.fs-workspace-status strong {
+  font-size: 22px;
+}
+
+.fs-workspace-layout {
+  grid-template-columns:
+    minmax(190px, 220px)
+    minmax(0, 1fr)
+    minmax(220px, 265px);
+  height: 100%;
+  min-height: 0;
+}
+
+.fs-workspace-tree {
+  min-height: 0;
+}
+
+.fs-workspace-tree > header,
+.fs-workspace-inspector > header {
+  padding: 9px 11px;
+}
+
+.fs-workspace-tree-scroll {
+  min-height: 0;
+  padding: 6px;
+}
+
+.fs-workspace-tree-item {
+  gap: 7px;
+  padding: 7px 8px;
+}
+
+.fs-workspace-tree-icon {
+  flex-basis: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+.fs-workspace-tree-copy strong {
+  font-size: 10px;
+}
+
+.fs-workspace-tree-copy small {
+  margin-top: 1px;
+  font-size: 8px;
+}
+
+.fs-workspace-tree > footer {
+  padding: 8px 10px;
+}
+
+.fs-workspace-canvas-panel {
+  grid-template-rows: minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+}
+
+.fs-cad-engine-stage {
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fs-cad-engine-toolbar {
+  min-height: 38px;
+  padding: 4px 8px;
+}
+
+.fs-cad-engine-toolbar button {
+  height: 27px;
+  padding: 0 8px;
+}
+
+.fs-cad-engine-canvas {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.fs-cad-engine-status {
+  min-height: 30px;
+  padding: 5px 9px;
+}
+
+.fs-workspace-canvas-footer {
+  display: none;
+}
+
+.fs-workspace-inspector {
+  min-height: 0;
+}
+
+.fs-workspace-inspector section {
+  padding: 10px 11px;
+}
+
+.fs-workspace-inspector h2 {
+  margin-bottom: 7px;
+}
+
+.fs-workspace-warning {
+  margin: 7px;
+}
+
+.fs-workspace-warning p {
+  line-height: 1.4;
+}
+
+@media (max-width: 1180px) {
+  .fs-workspace-layout {
+    grid-template-columns:
+      minmax(180px, 205px)
+      minmax(0, 1fr);
+  }
+
+  .fs-workspace-inspector {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .fs-workspace-screen {
+    height: auto;
+    overflow: visible;
+  }
+
+  .fs-workspace-layout {
+    height: auto;
+  }
+
+  .fs-cad-engine-stage {
+    min-height: 510px;
+  }
+
+  .fs-cad-engine-canvas {
+    min-height: 430px;
+  }
+}
+
+/* FS-CAD-4A.3 PHASE 1C - CAMERA LAYOUT ENCODING RECOVERY */
+.forge-structure-screen.fs-workspace-screen {
+  display: grid;
+  grid-template-rows: auto minmax(430px, 1fr);
+  gap: 10px;
+  height: auto;
+  min-height: calc(100vh - 255px);
+  max-height: none;
+  padding: 10px 12px 18px;
+  overflow: visible;
+}
+
+.forge-structure-screen .fs-workspace-header {
+  position: relative;
+  z-index: 2;
+  min-height: 68px;
+  padding: 10px 15px;
+}
+
+.forge-structure-screen .fs-workspace-header h1 {
+  margin: 0;
+  font-size: 23px;
+  line-height: 1.1;
+}
+
+.forge-structure-screen .fs-workspace-header p {
+  margin: 4px 0 0;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.forge-structure-screen .fs-workspace-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(185px, 215px)
+    minmax(420px, 1fr)
+    minmax(215px, 255px);
+  min-height: 500px;
+  height: calc(100vh - 355px);
+  max-height: 720px;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-workspace-tree,
+.forge-structure-screen .fs-workspace-inspector {
+  min-height: 0;
+  overflow: auto;
+}
+
+.forge-structure-screen .fs-workspace-tree-scroll {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.forge-structure-screen .fs-workspace-canvas-panel {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
+  min-height: 0;
+  height: 100%;
+}
+
+.forge-structure-screen .fs-cad-engine-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.forge-structure-screen .fs-cad-engine-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+}
+
+.forge-structure-screen .fs-cad-engine-toolbar {
+  flex-wrap: wrap;
+  min-height: 38px;
+  padding: 4px 7px;
+}
+
+.forge-structure-screen .fs-cad-engine-status {
+  flex-wrap: wrap;
+  min-height: 30px;
+  padding: 5px 8px;
+}
+
+@media (max-width: 1180px) {
+  .forge-structure-screen .fs-workspace-layout {
+    grid-template-columns:
+      minmax(175px, 200px)
+      minmax(420px, 1fr);
+  }
+
+  .forge-structure-screen .fs-workspace-inspector {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .forge-structure-screen.fs-workspace-screen {
+    min-height: auto;
+    overflow: visible;
+  }
+
+  .forge-structure-screen .fs-workspace-layout {
+    display: block;
+    height: auto;
+    max-height: none;
+  }
+
+  .forge-structure-screen .fs-workspace-tree {
+    max-height: 220px;
+  }
+
+  .forge-structure-screen .fs-cad-engine-stage {
+    min-height: 500px;
+  }
+
+  .forge-structure-screen .fs-cad-engine-canvas {
+    min-height: 420px;
+  }
+}
+
+/* FS-CAD-4A.3 PHASE 1C.1 - FINAL VIEWPORT RECOVERY */
+.forge-structure-screen.fs-workspace-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  height: calc(100vh - 230px);
+  min-height: 520px;
+  padding: 8px 12px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.forge-structure-screen .fs-workspace-header {
+  flex: 0 0 auto;
+  min-height: 62px;
+  padding: 8px 14px;
+}
+
+.forge-structure-screen .fs-workspace-header h1 {
+  font-size: 23px;
+}
+
+.forge-structure-screen .fs-workspace-header p {
+  margin-top: 3px;
+  font-size: 11px;
+}
+
+.forge-structure-screen .fs-workspace-layout {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-columns:
+    minmax(185px, 215px)
+    minmax(0, 1fr)
+    minmax(215px, 255px);
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-workspace-tree,
+.forge-structure-screen .fs-workspace-inspector {
+  min-height: 0;
+  overflow: auto;
+}
+
+.forge-structure-screen .fs-workspace-canvas-panel {
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-cad-engine-stage {
+  flex: 1 1 auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-cad-engine-toolbar {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 4px 7px;
+}
+
+.forge-structure-screen .fs-cad-engine-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  background: #070c17;
+}
+
+.forge-structure-screen .fs-cad-engine-status {
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 4px 8px;
+}
+
+.forge-structure-screen .fs-workspace-canvas-footer {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .forge-structure-screen .fs-workspace-layout {
+    grid-template-columns:
+      minmax(175px, 200px)
+      minmax(0, 1fr);
+  }
+
+  .forge-structure-screen .fs-workspace-inspector {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .forge-structure-screen.fs-workspace-screen {
+    height: auto;
+    min-height: 700px;
+    overflow: visible;
+  }
+
+  .forge-structure-screen .fs-workspace-layout {
+    display: block;
+    overflow: visible;
+  }
+
+  .forge-structure-screen .fs-workspace-tree {
+    max-height: 210px;
+  }
+
+  .forge-structure-screen .fs-cad-engine-stage {
+    min-height: 500px;
+  }
+
+  .forge-structure-screen .fs-cad-engine-canvas {
+    min-height: 430px;
+  }
+}
+
+/* FS-CAD-4A.3 PHASE 1C.2 - EXPLICIT CANVAS HEIGHT */
+.forge-structure-screen.fs-workspace-screen {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 10px 12px 18px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.forge-structure-screen .fs-workspace-header {
+  margin-bottom: 10px;
+}
+
+.forge-structure-screen .fs-workspace-layout {
+  display: grid;
+  grid-template-columns:
+    minmax(185px, 215px)
+    minmax(480px, 1fr)
+    minmax(215px, 255px);
+  width: 100%;
+  height: 520px;
+  min-height: 520px;
+  max-height: 520px;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-workspace-tree,
+.forge-structure-screen .fs-workspace-inspector {
+  height: 520px;
+  min-height: 520px;
+  overflow-y: auto;
+}
+
+.forge-structure-screen .fs-workspace-canvas-panel {
+  display: block;
+  width: 100%;
+  height: 520px;
+  min-height: 520px;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-cad-engine-stage {
+  display: grid;
+  grid-template-rows:
+    38px
+    minmax(430px, 1fr)
+    32px;
+  width: 100%;
+  height: 520px;
+  min-height: 520px;
+  overflow: hidden;
+}
+
+.forge-structure-screen .fs-cad-engine-toolbar {
+  height: 38px;
+  min-height: 38px;
+  box-sizing: border-box;
+}
+
+.forge-structure-screen .fs-cad-engine-canvas {
+  display: block;
+  width: 100%;
+  height: 450px;
+  min-height: 450px;
+  max-height: 450px;
+  box-sizing: border-box;
+}
+
+.forge-structure-screen .fs-cad-engine-status {
+  display: flex;
+  height: 32px;
+  min-height: 32px;
+  box-sizing: border-box;
+}
+
+.forge-structure-screen .fs-workspace-canvas-footer {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .forge-structure-screen .fs-workspace-layout {
+    grid-template-columns:
+      minmax(175px, 200px)
+      minmax(480px, 1fr);
+  }
+
+  .forge-structure-screen .fs-workspace-inspector {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .forge-structure-screen .fs-workspace-layout {
+    display: block;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    overflow: visible;
+  }
+
+  .forge-structure-screen .fs-workspace-tree {
+    height: auto;
+    min-height: 180px;
+    max-height: 220px;
+  }
+
+  .forge-structure-screen .fs-workspace-canvas-panel,
+  .forge-structure-screen .fs-cad-engine-stage {
+    height: 520px;
+    min-height: 520px;
+  }
+
+  .forge-structure-screen .fs-cad-engine-canvas {
+    height: 450px;
+    min-height: 450px;
+  }
+}
+/* FS-CAD-4A.5 PHASE 2A - OBSERVER SOURCE CORRECTION */
+.forge-structure-screen .fs-workspace-layout {
+  height: 520px !important;
+  min-height: 520px !important;
+  max-height: 520px !important;
+  overflow: hidden !important;
+}
+
+.forge-structure-screen .fs-workspace-canvas-panel {
+  display: block !important;
+  width: 100% !important;
+  height: 520px !important;
+  min-height: 520px !important;
+  max-height: 520px !important;
+  overflow: hidden !important;
+}
+
+.forge-structure-screen .fs-cad-engine-stage {
+  display: grid !important;
+  grid-template-rows:
+    38px 450px 32px !important;
+  width: 100% !important;
+  height: 520px !important;
+  min-height: 520px !important;
+  max-height: 520px !important;
+  overflow: hidden !important;
+  contain: size layout paint !important;
+}
+
+.forge-structure-screen .fs-cad-engine-toolbar {
+  grid-row: 1 !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+  box-sizing: border-box !important;
+}
+
+.forge-structure-screen .fs-cad-engine-canvas {
+  grid-row: 2 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 450px !important;
+  min-height: 450px !important;
+  max-height: 450px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
+
+.forge-structure-screen .fs-cad-engine-status {
+  grid-row: 3 !important;
+  display: flex !important;
+  height: 32px !important;
+  min-height: 32px !important;
+  max-height: 32px !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 760px) {
+  .forge-structure-screen .fs-workspace-layout,
+  .forge-structure-screen .fs-workspace-canvas-panel,
+  .forge-structure-screen .fs-cad-engine-stage {
+    height: 520px !important;
+    min-height: 520px !important;
+    max-height: 520px !important;
+  }
+
+  .forge-structure-screen .fs-cad-engine-canvas {
+    height: 450px !important;
+    min-height: 450px !important;
+    max-height: 450px !important;
+  }
+}
+/* FS-CAD-4A.6 PHASE 1 - PORTAL FRAME SELECTION */
+.forge-structure-screen
+.fs-cad-engine-status
+[data-fs-cad-selection] {
+  color: #cabdff;
+  font-weight: 700;
+}
+
+.forge-structure-screen
+[data-fs-selected-frame] {
+  color: #cabdff;
+}
+
+/* FS-CAD-4A.7 PHASE 1B.2B - FOUNDER OS MANAGED CAD WORKSPACE RECOVERY */
+
+.forge-structure-screen.fs-workspace-screen {
+  display: grid !important;
+  grid-template-rows:
+    52px minmax(0, 1fr) !important;
+  gap: 6px !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: calc(100vh - 228px) !important;
+  min-height: 500px !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 6px 8px 8px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.forge-structure-screen
+.fs-workspace-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  width: 100% !important;
+  height: 52px !important;
+  min-height: 52px !important;
+  max-height: 52px !important;
+  margin: 0 !important;
+  padding: 5px 10px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.fs-compact-module-title {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  min-width: 0 !important;
+}
+
+.fs-compact-module-brand {
+  flex: 0 0 auto !important;
+}
+
+.forge-structure-screen
+.fs-compact-module-brand
+.forge-structure-eyebrow {
+  display: block !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+}
+
+.forge-structure-screen
+.fs-compact-module-brand
+h1 {
+  margin: 3px 0 0 !important;
+  font-size: 19px !important;
+  line-height: 1 !important;
+}
+
+.fs-compact-project-summary {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+.fs-compact-project-summary strong {
+  color: #f4f7fc !important;
+  font-size: 10px !important;
+}
+
+.fs-compact-project-summary span {
+  padding: 3px 5px !important;
+  border:
+    1px solid rgba(140, 155, 188, 0.22) !important;
+  border-radius: 4px !important;
+  background:
+    rgba(112, 126, 158, 0.12) !important;
+  color: #b8c2d2 !important;
+  font-size: 8px !important;
+}
+
+.fs-workspace-header-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex: 0 0 auto !important;
+}
+
+.forge-structure-screen
+.fs-workspace-header-actions
+.fs-workspace-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.forge-structure-screen
+.fs-workspace-header-actions
+.fs-workspace-status span {
+  font-size: 8px !important;
+}
+
+.forge-structure-screen
+.fs-workspace-header-actions
+.fs-workspace-status strong {
+  margin: 0 !important;
+  font-size: 11px !important;
+}
+
+.fs-workspace-mode-button {
+  height: 29px !important;
+  min-height: 29px !important;
+  padding: 0 9px !important;
+  border:
+    1px solid rgba(131, 146, 181, 0.35) !important;
+  border-radius: 5px !important;
+  background: #1a2130 !important;
+  color: #edf1f8 !important;
+  font-size: 9px !important;
+  cursor: pointer !important;
+}
+
+.fs-workspace-mode-button:hover {
+  border-color: #7e6be8 !important;
+  background: #2b2651 !important;
+}
+
+.fs-workspace-close-button {
+  border-color:
+    rgba(224, 101, 113, 0.5) !important;
+}
+
+.forge-structure-screen
+.fs-workspace-layout {
+  display: grid !important;
+  grid-template-columns:
+    minmax(165px, 185px)
+    minmax(0, 1fr)
+    minmax(195px, 220px) !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+.forge-structure-screen
+.fs-workspace-tree,
+.forge-structure-screen
+.fs-workspace-inspector {
+  width: auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+}
+
+.forge-structure-screen
+.fs-workspace-canvas-panel {
+  display: flex !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+
+.forge-structure-screen
+.fs-cad-engine-stage {
+  display: grid !important;
+  grid-template-rows:
+    38px minmax(0, 1fr) 30px !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: hidden !important;
+  contain: layout paint !important;
+}
+
+.forge-structure-screen
+.fs-cad-engine-toolbar {
+  grid-row: 1 !important;
+  height: 38px !important;
+  min-height: 38px !important;
+  max-height: 38px !important;
+}
+
+.forge-structure-screen
+.fs-cad-engine-canvas {
+  grid-row: 2 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.forge-structure-screen
+.fs-cad-engine-status {
+  grid-row: 3 !important;
+  display: flex !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  max-height: 30px !important;
+  padding: 4px 7px !important;
+  overflow-x: auto !important;
+  flex-wrap: nowrap !important;
+  white-space: nowrap !important;
+}
+
+/* Expanded workspace remains inside Founder OS. */
+.forge-structure-screen.is-internal-workspace-open {
+  position: fixed !important;
+  z-index: 800 !important;
+  top: 137px !important;
+  right: 328px !important;
+  bottom: 38px !important;
+  left: 248px !important;
+  width: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  padding: 5px !important;
+  overflow: hidden !important;
+  border:
+    1px solid rgba(130, 146, 181, 0.28) !important;
+  background: #070b13 !important;
+  box-shadow:
+    0 0 0 9999px rgba(3, 6, 11, 0.55) !important;
+}
+
+.forge-structure-screen.is-internal-workspace-open
+.fs-workspace-header {
+  height: 46px !important;
+  min-height: 46px !important;
+  max-height: 46px !important;
+}
+
+.forge-structure-screen.is-internal-workspace-open
+.fs-workspace-layout {
+  grid-template-columns:
+    185px minmax(0, 1fr) 220px !important;
+}
+
+@media (max-width: 1180px) {
+  .forge-structure-screen
+  .fs-workspace-layout {
+    grid-template-columns:
+      165px minmax(0, 1fr) !important;
+  }
+
+  .forge-structure-screen
+  .fs-workspace-inspector {
+    display: none !important;
+  }
+
+  .fs-compact-project-summary {
+    display: none !important;
+  }
+
+  .forge-structure-screen.is-internal-workspace-open {
+    right: 6px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .forge-structure-screen.fs-workspace-screen {
+    height: calc(100vh - 165px) !important;
+    min-height: 500px !important;
+  }
+
+  .forge-structure-screen
+  .fs-workspace-layout {
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+  }
+
+  .forge-structure-screen
+  .fs-workspace-tree,
+  .forge-structure-screen
+  .fs-workspace-inspector {
+    display: none !important;
+  }
+
+  .forge-structure-screen.is-internal-workspace-open {
+    inset: 86px 0 48px 0 !important;
+  }
+}
+
+/* FS-CAD-5.0 PHASE 1B - NATIVE CAD WORKSPACE FOUNDATION */
+
+body.fs-native-workspace-open {
+  overflow: hidden !important;
+}
+
+.fs-native-workspace {
+  position: fixed;
+  z-index: 940;
+  top: 137px;
+  right: 0;
+  bottom: 38px;
+  left: 248px;
+  display: grid;
+  grid-template-rows:
+    42px 42px minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-top:
+    1px solid rgba(123, 139, 171, 0.28);
+  background: #080b11;
+  color: #e8edf5;
+  box-sizing: border-box;
+}
+
+.fs-native-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 0 10px;
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.24);
+  background: #131820;
+}
+
+.fs-native-brand,
+.fs-native-title-status {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.fs-native-brand strong {
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.fs-native-brand span {
+  overflow: hidden;
+  color: #b8c2d1;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fs-native-brand small {
+  color: #7f8ca0;
+  font-size: 9px;
+}
+
+.fs-native-title-status {
+  flex: 0 0 auto;
+}
+
+.fs-native-save-state,
+.fs-native-processing-state {
+  font-size: 9px;
+}
+
+.fs-native-save-state {
+  color: #d8a163;
+}
+
+.fs-native-processing-state {
+  color: #7edca0;
+}
+
+.fs-native-title-status button {
+  width: 30px;
+  height: 28px;
+  border:
+    1px solid rgba(224, 105, 116, 0.45);
+  border-radius: 4px;
+  background: #2a1c23;
+  color: #f5dfe2;
+  cursor: pointer;
+}
+
+.fs-native-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 5px 8px;
+  overflow-x: auto;
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.22);
+  background: #171c24;
+}
+
+.fs-native-ribbon-group,
+.fs-native-view-options {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.fs-native-ribbon button {
+  height: 30px;
+  min-width: 30px;
+  padding: 0 9px;
+  border:
+    1px solid rgba(126, 143, 174, 0.28);
+  border-radius: 3px;
+  background: #202733;
+  color: #cdd5e1;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.fs-native-ribbon button:hover,
+.fs-native-ribbon button.is-active {
+  border-color: #7465d9;
+  background: #302a59;
+  color: #ffffff;
+}
+
+.fs-native-ribbon button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.fs-native-ribbon-separator {
+  width: 1px;
+  height: 25px;
+  background:
+    rgba(127, 143, 174, 0.25);
+}
+
+.fs-native-ribbon-spacer {
+  flex: 1 1 auto;
+}
+
+.fs-native-body {
+  display: grid;
+  grid-template-columns:
+    205px minmax(0, 1fr) 245px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.fs-native-model-browser,
+.fs-native-properties {
+  display: grid;
+  grid-template-rows:
+    38px minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #11161e;
+}
+
+.fs-native-model-browser {
+  border-right:
+    1px solid rgba(123, 139, 171, 0.22);
+}
+
+.fs-native-properties {
+  border-left:
+    1px solid rgba(123, 139, 171, 0.22);
+}
+
+.fs-native-model-browser > header,
+.fs-native-properties > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.2);
+  background: #171c24;
+}
+
+.fs-native-model-browser header strong,
+.fs-native-properties header strong {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.fs-native-model-browser header button,
+.fs-native-properties header button {
+  width: 25px;
+  height: 25px;
+  border:
+    1px solid rgba(126, 143, 174, 0.25);
+  border-radius: 3px;
+  background: #202733;
+  color: #cdd5e1;
+}
+
+.fs-native-tree {
+  padding: 7px;
+  overflow-y: auto;
+}
+
+.fs-native-tree button {
+  display: grid;
+  grid-template-columns:
+    14px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+  min-height: 29px;
+  padding: 4px 6px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  color: #aeb8c7;
+  font-size: 9px;
+  text-align: left;
+}
+
+.fs-native-tree button:hover,
+.fs-native-tree button.is-selected {
+  background: #272448;
+  color: #ffffff;
+}
+
+.fs-native-tree small {
+  color: #778398;
+  font-size: 8px;
+}
+
+.fs-native-canvas-region {
+  display: grid;
+  grid-template-rows:
+    minmax(0, 1fr) auto 27px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #05080e;
+}
+
+.fs-native-canvas-stage {
+  position: relative;
+  display: block !important;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #05080e;
+}
+
+.fs-native-canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  background: #05080e;
+}
+
+.fs-native-view-widget {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.fs-native-view-widget > button {
+  width: 52px;
+  height: 42px;
+  border:
+    1px solid rgba(143, 160, 192, 0.45);
+  border-radius: 5px;
+  background:
+    rgba(20, 27, 38, 0.9);
+  color: #e3e9f2;
+  font-size: 9px;
+}
+
+.fs-native-compass {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border:
+    1px solid rgba(143, 160, 192, 0.34);
+  border-radius: 50%;
+  background:
+    rgba(12, 17, 25, 0.78);
+  color: #aeb9ca;
+  font-size: 8px;
+}
+
+.fs-native-compass span {
+  position: absolute;
+}
+
+.fs-native-compass .north {
+  top: 4px;
+  left: 32px;
+}
+
+.fs-native-compass .south {
+  bottom: 4px;
+  left: 32px;
+}
+
+.fs-native-compass .west {
+  top: 29px;
+  left: 5px;
+}
+
+.fs-native-compass .east {
+  top: 29px;
+  right: 5px;
+}
+
+.fs-native-compass i {
+  position: absolute;
+  top: 19px;
+  left: 33px;
+  width: 2px;
+  height: 28px;
+  background: #66d8c1;
+  transform: rotate(0deg);
+  transform-origin: 50% 16px;
+}
+
+.fs-native-composer {
+  display: grid;
+  grid-template-columns:
+    34px minmax(0, 1fr) 38px;
+  align-items: end;
+  gap: 5px;
+  padding: 6px 8px;
+  border-top:
+    1px solid rgba(123, 139, 171, 0.22);
+  background: #10151d;
+}
+
+.fs-native-composer textarea {
+  width: 100%;
+  min-height: 36px;
+  max-height: 100px;
+  padding: 9px 10px;
+  resize: none;
+  border:
+    1px solid rgba(131, 146, 181, 0.36);
+  border-radius: 7px;
+  outline: none;
+  background: #080c13;
+  color: #f0f4fa;
+  font: inherit;
+  font-size: 10px;
+  box-sizing: border-box;
+}
+
+.fs-native-composer textarea:focus {
+  border-color: #7567df;
+}
+
+.fs-native-attach,
+.fs-native-send {
+  width: 34px;
+  height: 34px;
+  border:
+    1px solid rgba(131, 146, 181, 0.34);
+  border-radius: 50%;
+  background: #202733;
+  color: #e4e9f1;
+}
+
+.fs-native-send {
+  background: #6658d8;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.fs-native-statusbar {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  min-width: 0;
+  padding: 0 8px;
+  overflow-x: auto;
+  border-top:
+    1px solid rgba(123, 139, 171, 0.22);
+  background: #171c24;
+  color: #9da9ba;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.fs-native-statusbar strong {
+  color: #d8dfeb;
+}
+
+.fs-native-status-spacer {
+  flex: 1 1 auto;
+}
+
+.fs-native-progress-card {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: min(340px, calc(100% - 28px));
+  padding: 11px;
+  border:
+    1px solid rgba(130, 146, 181, 0.35);
+  border-radius: 8px;
+  background:
+    rgba(16, 22, 31, 0.96);
+  box-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.32);
+}
+
+.fs-native-progress-card header,
+.fs-native-progress-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fs-native-progress-card header strong {
+  font-size: 11px;
+}
+
+.fs-native-progress-card header span,
+.fs-native-progress-card p {
+  color: #aab5c5;
+  font-size: 9px;
+}
+
+.fs-native-progress-track {
+  height: 4px;
+  margin: 9px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #29303d;
+}
+
+.fs-native-progress-track i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #7062df;
+}
+
+.fs-native-progress-card footer {
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.fs-native-progress-card footer button {
+  height: 27px;
+  padding: 0 8px;
+  border:
+    1px solid rgba(131, 146, 181, 0.28);
+  border-radius: 4px;
+  background: #202733;
+  color: #d8dfeb;
+  font-size: 8px;
+}
+
+.fs-native-properties {
+  overflow-y: auto;
+}
+
+.fs-native-properties section {
+  padding: 10px;
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.15);
+}
+
+.fs-native-properties h2 {
+  margin: 0 0 8px;
+  color: #aab6c6;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.fs-native-properties dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+
+.fs-native-properties dl div {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.fs-native-properties dt,
+.fs-native-properties dd {
+  margin: 0;
+  font-size: 8px;
+}
+
+.fs-native-properties dt {
+  color: #7f8c9f;
+}
+
+.fs-native-properties dd {
+  color: #d6deea;
+  text-align: right;
+}
+
+.fs-native-workspace.is-model-browser-collapsed
+.fs-native-body {
+  grid-template-columns:
+    0 minmax(0, 1fr) 245px;
+}
+
+.fs-native-workspace.is-properties-collapsed
+.fs-native-body {
+  grid-template-columns:
+    205px minmax(0, 1fr) 0;
+}
+
+.fs-native-workspace.is-model-browser-collapsed
+.fs-native-model-browser,
+.fs-native-workspace.is-properties-collapsed
+.fs-native-properties {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@media (max-width: 1050px) {
+  .fs-native-workspace {
+    right: 0;
+  }
+
+  .fs-native-body {
+    grid-template-columns:
+      180px minmax(0, 1fr);
+  }
+
+  .fs-native-properties {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .fs-native-workspace {
+    top: 86px;
+    right: 0;
+    bottom: 48px;
+    left: 0;
+    grid-template-rows:
+      42px 40px minmax(0, 1fr);
+  }
+
+  .fs-native-body {
+    grid-template-columns:
+      minmax(0, 1fr);
+  }
+
+  .fs-native-model-browser,
+  .fs-native-properties {
+    display: none;
+  }
+
+  .fs-native-brand span,
+  .fs-native-brand small,
+  .fs-native-save-state {
+    display: none;
+  }
+
+  .fs-native-view-options {
+    display: none;
+  }
+
+  .fs-native-progress-card {
+    right: 8px;
+    bottom: 8px;
+    width: calc(100% - 16px);
+  }
+}
+
+/* FS-CAD-5.0 PHASE 1B.1 - NATIVE WORKSPACE CSS RECOVERY */
+
+body.fs-native-workspace-open {
+  overflow: hidden !important;
+}
+
+.fs-native-workspace {
+  position: fixed !important;
+  z-index: 940 !important;
+  top: 137px !important;
+  right: 0 !important;
+  bottom: 38px !important;
+  left: 248px !important;
+
+  display: grid !important;
+  grid-template-rows:
+    42px 42px minmax(0, 1fr) !important;
+
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+
+  border-top:
+    1px solid rgba(123, 139, 171, 0.28) !important;
+
+  background: #080b11 !important;
+  color: #e8edf5 !important;
+  box-sizing: border-box !important;
+}
+
+.fs-native-titlebar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+  padding: 0 10px !important;
+
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.24) !important;
+
+  background: #131820 !important;
+}
+
+.fs-native-brand,
+.fs-native-title-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+}
+
+.fs-native-title-status {
+  margin-left: auto !important;
+}
+
+.fs-native-title-status button {
+  width: 30px !important;
+  height: 28px !important;
+  border:
+    1px solid rgba(224, 105, 116, 0.5) !important;
+  border-radius: 4px !important;
+  background: #2a1c23 !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+}
+
+.fs-native-ribbon {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  padding: 5px 8px !important;
+  overflow-x: auto !important;
+
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+
+  background: #171c24 !important;
+}
+
+.fs-native-ribbon-group,
+.fs-native-view-options {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.fs-native-ribbon-spacer {
+  flex: 1 1 auto !important;
+}
+
+.fs-native-ribbon-separator {
+  width: 1px !important;
+  height: 25px !important;
+  background:
+    rgba(127, 143, 174, 0.25) !important;
+}
+
+.fs-native-ribbon button {
+  height: 30px !important;
+  padding: 0 9px !important;
+  border:
+    1px solid rgba(126, 143, 174, 0.28) !important;
+  border-radius: 3px !important;
+  background: #202733 !important;
+  color: #cdd5e1 !important;
+  cursor: pointer !important;
+}
+
+.fs-native-ribbon button.is-active,
+.fs-native-ribbon button:hover {
+  border-color: #7465d9 !important;
+  background: #302a59 !important;
+  color: #ffffff !important;
+}
+
+.fs-native-ribbon button:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.fs-native-body {
+  display: grid !important;
+  grid-template-columns:
+    205px minmax(0, 1fr) 245px !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.fs-native-model-browser,
+.fs-native-properties {
+  display: grid !important;
+  grid-template-rows:
+    38px minmax(0, 1fr) !important;
+
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: #11161e !important;
+}
+
+.fs-native-model-browser {
+  border-right:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+}
+
+.fs-native-properties {
+  border-left:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+  overflow-y: auto !important;
+}
+
+.fs-native-model-browser > header,
+.fs-native-properties > header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 8px !important;
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.2) !important;
+  background: #171c24 !important;
+}
+
+.fs-native-tree {
+  padding: 7px !important;
+  overflow-y: auto !important;
+}
+
+.fs-native-tree button {
+  display: grid !important;
+  grid-template-columns:
+    14px minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 5px !important;
+
+  width: 100% !important;
+  min-height: 29px !important;
+  padding: 4px 6px !important;
+
+  border: 0 !important;
+  border-radius: 3px !important;
+  background: transparent !important;
+  color: #aeb8c7 !important;
+  text-align: left !important;
+}
+
+.fs-native-tree button.is-selected,
+.fs-native-tree button:hover {
+  background: #272448 !important;
+  color: #ffffff !important;
+}
+
+.fs-native-canvas-region {
+  display: grid !important;
+  grid-template-rows:
+    minmax(0, 1fr) auto 27px !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  background: #05080e !important;
+}
+
+.fs-native-canvas-stage {
+  position: relative !important;
+  display: block !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.fs-native-canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+  background: #05080e !important;
+}
+
+.fs-native-view-widget {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  z-index: 4 !important;
+  display: grid !important;
+  justify-items: center !important;
+  gap: 8px !important;
+}
+
+.fs-native-compass {
+  position: relative !important;
+  width: 70px !important;
+  height: 70px !important;
+  border:
+    1px solid rgba(143, 160, 192, 0.34) !important;
+  border-radius: 50% !important;
+  background:
+    rgba(12, 17, 25, 0.82) !important;
+}
+
+.fs-native-compass span {
+  position: absolute !important;
+}
+
+.fs-native-compass .north {
+  top: 4px !important;
+  left: 32px !important;
+}
+
+.fs-native-compass .south {
+  bottom: 4px !important;
+  left: 32px !important;
+}
+
+.fs-native-compass .west {
+  top: 29px !important;
+  left: 5px !important;
+}
+
+.fs-native-compass .east {
+  top: 29px !important;
+  right: 5px !important;
+}
+
+.fs-native-composer {
+  display: grid !important;
+  grid-template-columns:
+    34px minmax(0, 1fr) 38px !important;
+  align-items: end !important;
+  gap: 5px !important;
+
+  padding: 6px 8px !important;
+  border-top:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+  background: #10151d !important;
+}
+
+.fs-native-composer textarea {
+  width: 100% !important;
+  min-height: 36px !important;
+  max-height: 100px !important;
+  padding: 9px 10px !important;
+
+  resize: none !important;
+  border:
+    1px solid rgba(131, 146, 181, 0.36) !important;
+  border-radius: 7px !important;
+  outline: none !important;
+
+  background: #080c13 !important;
+  color: #f0f4fa !important;
+  box-sizing: border-box !important;
+}
+
+.fs-native-statusbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 13px !important;
+
+  min-width: 0 !important;
+  padding: 0 8px !important;
+  overflow-x: auto !important;
+
+  border-top:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+
+  background: #171c24 !important;
+  color: #9da9ba !important;
+  white-space: nowrap !important;
+}
+
+.fs-native-status-spacer {
+  flex: 1 1 auto !important;
+}
+
+.fs-native-progress-card {
+  position: absolute !important;
+  right: 14px !important;
+  bottom: 14px !important;
+  z-index: 6 !important;
+
+  width: min(340px, calc(100% - 28px)) !important;
+  padding: 11px !important;
+
+  border:
+    1px solid rgba(130, 146, 181, 0.35) !important;
+  border-radius: 8px !important;
+  background:
+    rgba(16, 22, 31, 0.96) !important;
+}
+
+.fs-native-progress-track {
+  height: 4px !important;
+  margin: 9px 0 !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: #29303d !important;
+}
+
+.fs-native-progress-track i {
+  display: block !important;
+  height: 100% !important;
+  background: #7062df !important;
+}
+
+.fs-native-workspace.is-model-browser-collapsed
+.fs-native-body {
+  grid-template-columns:
+    0 minmax(0, 1fr) 245px !important;
+}
+
+.fs-native-workspace.is-properties-collapsed
+.fs-native-body {
+  grid-template-columns:
+    205px minmax(0, 1fr) 0 !important;
+}
+
+@media (max-width: 1050px) {
+  .fs-native-body {
+    grid-template-columns:
+      180px minmax(0, 1fr) !important;
+  }
+
+  .fs-native-properties {
+    display: none !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .fs-native-workspace {
+    top: 86px !important;
+    right: 0 !important;
+    bottom: 48px !important;
+    left: 0 !important;
+
+    grid-template-rows:
+      42px 40px minmax(0, 1fr) !important;
+  }
+
+  .fs-native-body {
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+  }
+
+  .fs-native-model-browser,
+  .fs-native-properties,
+  .fs-native-view-options {
+    display: none !important;
+  }
+}

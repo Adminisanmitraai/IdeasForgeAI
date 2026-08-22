@@ -1,0 +1,91 @@
+﻿/*
+  FOS-UI.6 Native Mobile Menus
+
+  Future authoritative scope:
+  - backdrop
+  - side menu
+  - overflow menu
+  - message action menu
+  - project and profile rows
+
+  No active rules have been migrated during Phase 2.
+*/
+
+/* FOS-UI.7 PHASE 2F-B2 START: ACTION MENUS */
+@media (max-width: 700px) {
+  .chat-turn__actions--mobile-icons {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 3px !important;
+
+    max-width: 100% !important;
+    min-height: 38px !important;
+
+    margin-top: 8px !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  .chat-turn[data-role="user"]
+    .chat-turn__actions--mobile-icons,
+  .chat-turn--user
+    .chat-turn__actions--mobile-icons {
+    justify-content: flex-end !important;
+  }
+
+  .chat-turn[data-role="assistant"]
+    .chat-turn__actions--mobile-icons,
+  .chat-turn--assistant
+    .chat-turn__actions--mobile-icons {
+    justify-content: flex-start !important;
+  }
+
+  .chat-turn__actions--mobile-icons {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 0 !important;
+
+    min-height: 30px !important;
+    max-width: 100% !important;
+
+    margin-top: 6px !important;
+    padding: 0 !important;
+
+    overflow: visible !important;
+  }
+
+  .chat-mobile-primary-actions {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 1px !important;
+
+    position: relative !important;
+    max-width: 100% !important;
+  }
+
+  .chat-mobile-action-overflow {
+    position: relative !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+  }
+
+  .chat-turn--user
+    .chat-turn__actions--mobile-icons,
+  .chat-turn[data-role="user"]
+    .chat-turn__actions--mobile-icons {
+    justify-content: flex-end !important;
+    gap: 1px !important;
+  }
+
+  .chat-turn--assistant
+    .chat-turn__actions--mobile-icons,
+  .chat-turn[data-role="assistant"]
+    .chat-turn__actions--mobile-icons {
+    justify-content: flex-start !important;
+  }
+}
+/* FOS-UI.7 PHASE 2F-B2 END: ACTION MENUS */

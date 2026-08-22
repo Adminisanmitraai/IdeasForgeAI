@@ -1,0 +1,143 @@
+/*
+ * FOS-UI.7 Phase 2 Safe Area and Keyboard Clearance
+ *
+ * Owns only the final dedicated mobile-shell viewport, composer, and stage
+ * geometry. Runtime keyboard measurement remains in
+ * src/mobile/iosKeyboardViewport.ts.
+ */
+
+/* FOS-UI.7-SAFE-AREA-BEGIN */
+
+@media (max-width: 700px) {
+  body.mobile-chat-dedicated-shell {
+    --chat-active-keyboard-inset: 0px;
+  }
+
+  html.ios-keyboard-open body.mobile-chat-dedicated-shell {
+    --chat-active-keyboard-inset:
+      var(--ios-keyboard-height, 0px);
+  }
+
+  body.mobile-chat-dedicated-shell,
+  body.mobile-chat-dedicated-shell #app {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-native-screen {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    padding-top:
+      calc(72px + env(safe-area-inset-top, 0px))
+      !important;
+    overflow: hidden !important;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-native-header {
+    position: fixed !important;
+    top: 0 !important;
+    right: 0 !important;
+    left: 0 !important;
+    min-height:
+      calc(72px + env(safe-area-inset-top, 0px))
+      !important;
+    padding:
+      calc(10px + env(safe-area-inset-top, 0px))
+      18px
+      10px
+      !important;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-native-stage {
+    position: fixed !important;
+    top:
+      calc(72px + env(safe-area-inset-top, 0px))
+      !important;
+    right: 0 !important;
+    bottom:
+      calc(
+        90px +
+        max(
+          env(safe-area-inset-bottom, 0px),
+          var(--chat-active-keyboard-inset)
+        )
+      )
+      !important;
+    left: 0 !important;
+    min-height: 0 !important;
+    /*
+     * 90px stage inset + 60px content clearance matches the existing
+     * 140px maximum composer footprint and its 10px edge gap.
+     */
+    padding-bottom: 60px !important;
+    scroll-padding-bottom: 60px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-native-composer,
+  body.mobile-chat-dedicated-shell #chat-composer {
+    position: fixed !important;
+    right: 18px !important;
+    bottom:
+      max(
+        10px,
+        env(safe-area-inset-bottom, 0px),
+        var(--chat-active-keyboard-inset)
+      )
+      !important;
+    left: 18px !important;
+    width: auto !important;
+  }
+
+  .chat-native-side-menu {
+    top: 0 !important;
+    bottom: 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  .chat-native-side-menu__scroll {
+    height: 100% !important;
+    min-height: 0 !important;
+    max-height: 100% !important;
+    padding-bottom:
+      calc(
+        96px +
+        env(safe-area-inset-bottom, 0px)
+      )
+      !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  .chat-native-side-menu__footer {
+    bottom:
+      calc(
+        82px +
+        env(safe-area-inset-bottom, 0px)
+      )
+      !important;
+  }
+}
+
+/*
+ * The keyboard controller owns:
+ *
+ * html.ios-keyboard-open
+ * --ios-keyboard-height
+ *
+ * This stylesheet consumes those values without duplicating viewport
+ * calculations or adding a second safe-area offset.
+ */
+
+/* FOS-UI.7-SAFE-AREA-END */

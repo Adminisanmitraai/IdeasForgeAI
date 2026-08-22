@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "include": [
+    "src/main.ts",
+    "src/vite-env.d.ts"
+  ],
+  "exclude": [
+    "src/components/shell.ts",
+    "src/workspaces/**",
+    "src/overlays/**",
+    "src/core/**",
+    "dist",
+    "node_modules"
+  ]
+}

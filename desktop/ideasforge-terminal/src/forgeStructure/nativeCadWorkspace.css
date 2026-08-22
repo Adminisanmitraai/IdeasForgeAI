@@ -1,0 +1,409 @@
+﻿/* FS-CAD-5.0 PHASE 1B.4 — NATIVE WORKSPACE CORE LAYOUT */
+
+body.fs-native-workspace-open {
+  overflow: hidden !important;
+}
+
+.fs-native-workspace {
+  position: fixed !important;
+  z-index: 940 !important;
+
+  top: 137px !important;
+  right: 0 !important;
+  bottom: 38px !important;
+  left: 248px !important;
+
+  display: grid !important;
+  grid-template-rows:
+    42px
+    42px
+    minmax(0, 1fr) !important;
+
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+
+  box-sizing: border-box !important;
+
+  border-top:
+    1px solid rgba(123, 139, 171, 0.28) !important;
+
+  background: #080b11 !important;
+  color: #e8edf5 !important;
+}
+
+.fs-native-titlebar {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 14px !important;
+
+  min-width: 0 !important;
+  padding: 0 10px !important;
+
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.24) !important;
+
+  background: #131820 !important;
+}
+
+.fs-native-brand,
+.fs-native-title-status {
+  display: flex !important;
+  align-items: center !important;
+  gap: 9px !important;
+  min-width: 0 !important;
+}
+
+.fs-native-title-status {
+  margin-left: auto !important;
+}
+
+.fs-native-title-status button {
+  width: 30px !important;
+  height: 28px !important;
+
+  border:
+    1px solid rgba(224, 105, 116, 0.5) !important;
+
+  border-radius: 4px !important;
+  background: #2a1c23 !important;
+  color: #ffffff !important;
+  cursor: pointer !important;
+}
+
+.fs-native-ribbon {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+
+  min-width: 0 !important;
+  padding: 5px 8px !important;
+  overflow-x: auto !important;
+
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+
+  background: #171c24 !important;
+}
+
+.fs-native-ribbon-group,
+.fs-native-view-options {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.fs-native-ribbon-spacer {
+  flex: 1 1 auto !important;
+}
+
+.fs-native-ribbon-separator {
+  width: 1px !important;
+  height: 25px !important;
+  background:
+    rgba(127, 143, 174, 0.25) !important;
+}
+
+.fs-native-ribbon button {
+  height: 30px !important;
+  min-width: 30px !important;
+  padding: 0 9px !important;
+
+  border:
+    1px solid rgba(126, 143, 174, 0.28) !important;
+
+  border-radius: 3px !important;
+  background: #202733 !important;
+  color: #cdd5e1 !important;
+  cursor: pointer !important;
+}
+
+.fs-native-ribbon button.is-active,
+.fs-native-ribbon button:hover {
+  border-color: #7465d9 !important;
+  background: #302a59 !important;
+  color: #ffffff !important;
+}
+
+.fs-native-ribbon button:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.fs-native-body {
+  display: grid !important;
+  grid-template-columns:
+    205px
+    minmax(0, 1fr)
+    245px !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.fs-native-model-browser,
+.fs-native-properties {
+  display: grid !important;
+  grid-template-rows:
+    38px
+    minmax(0, 1fr) !important;
+
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+
+  background: #11161e !important;
+}
+
+.fs-native-model-browser {
+  border-right:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+}
+
+.fs-native-properties {
+  border-left:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+  overflow-y: auto !important;
+}
+
+.fs-native-model-browser > header,
+.fs-native-properties > header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+
+  padding: 0 8px !important;
+
+  border-bottom:
+    1px solid rgba(123, 139, 171, 0.2) !important;
+
+  background: #171c24 !important;
+}
+
+.fs-native-tree {
+  padding: 7px !important;
+  overflow-y: auto !important;
+}
+
+.fs-native-tree button {
+  display: grid !important;
+  grid-template-columns:
+    14px
+    minmax(0, 1fr)
+    auto !important;
+
+  align-items: center !important;
+  gap: 5px !important;
+
+  width: 100% !important;
+  min-height: 29px !important;
+  padding: 4px 6px !important;
+
+  border: 0 !important;
+  border-radius: 3px !important;
+
+  background: transparent !important;
+  color: #aeb8c7 !important;
+  text-align: left !important;
+}
+
+.fs-native-tree button:hover,
+.fs-native-tree button.is-selected {
+  background: #272448 !important;
+  color: #ffffff !important;
+}
+
+.fs-native-canvas-region {
+  display: grid !important;
+  grid-template-rows:
+    minmax(0, 1fr)
+    auto
+    27px !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+
+  background: #05080e !important;
+}
+
+.fs-native-canvas-stage {
+  position: relative !important;
+  display: block !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.fs-native-canvas {
+  display: block !important;
+
+  width: 100% !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-width: none !important;
+  max-height: none !important;
+
+  background: #05080e !important;
+}
+
+.fs-native-view-widget {
+  position: absolute !important;
+  z-index: 4 !important;
+  top: 12px !important;
+  right: 12px !important;
+
+  display: grid !important;
+  justify-items: center !important;
+  gap: 8px !important;
+}
+
+.fs-native-composer {
+  display: grid !important;
+  grid-template-columns:
+    34px
+    minmax(0, 1fr)
+    38px !important;
+
+  align-items: end !important;
+  gap: 5px !important;
+
+  padding: 6px 8px !important;
+
+  border-top:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+
+  background: #10151d !important;
+}
+
+.fs-native-composer textarea {
+  width: 100% !important;
+  min-height: 36px !important;
+  max-height: 100px !important;
+
+  padding: 9px 10px !important;
+  resize: none !important;
+
+  border:
+    1px solid rgba(131, 146, 181, 0.36) !important;
+
+  border-radius: 7px !important;
+  outline: none !important;
+
+  background: #080c13 !important;
+  color: #f0f4fa !important;
+
+  box-sizing: border-box !important;
+}
+
+.fs-native-statusbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 13px !important;
+
+  min-width: 0 !important;
+  padding: 0 8px !important;
+  overflow-x: auto !important;
+
+  border-top:
+    1px solid rgba(123, 139, 171, 0.22) !important;
+
+  background: #171c24 !important;
+  color: #9da9ba !important;
+  white-space: nowrap !important;
+}
+
+.fs-native-status-spacer {
+  flex: 1 1 auto !important;
+}
+
+.fs-native-progress-card {
+  position: absolute !important;
+  z-index: 6 !important;
+  right: 14px !important;
+  bottom: 14px !important;
+
+  width: min(340px, calc(100% - 28px)) !important;
+  padding: 11px !important;
+
+  border:
+    1px solid rgba(130, 146, 181, 0.35) !important;
+
+  border-radius: 8px !important;
+  background:
+    rgba(16, 22, 31, 0.96) !important;
+}
+
+.fs-native-progress-card[hidden] {
+  display: none !important;
+}
+
+.fs-native-workspace.is-model-browser-collapsed
+.fs-native-body {
+  grid-template-columns:
+    0
+    minmax(0, 1fr)
+    245px !important;
+}
+
+.fs-native-workspace.is-properties-collapsed
+.fs-native-body {
+  grid-template-columns:
+    205px
+    minmax(0, 1fr)
+    0 !important;
+}
+
+@media (max-width: 1050px) {
+  .fs-native-body {
+    grid-template-columns:
+      180px
+      minmax(0, 1fr) !important;
+  }
+
+  .fs-native-properties {
+    display: none !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .fs-native-workspace {
+    top: 86px !important;
+    right: 0 !important;
+    bottom: 48px !important;
+    left: 0 !important;
+
+    grid-template-rows:
+      42px
+      40px
+      minmax(0, 1fr) !important;
+  }
+
+  .fs-native-body {
+    grid-template-columns:
+      minmax(0, 1fr) !important;
+  }
+
+  .fs-native-model-browser,
+  .fs-native-properties,
+  .fs-native-view-options {
+    display: none !important;
+  }
+}

@@ -1,0 +1,751 @@
+/*
+ * FOS-UI.6 Mobile Composer
+ *
+ * Authoritative scope introduced in Phase 3C.3A:
+ * - dedicated mobile composer container
+ * - composer visibility and layout
+ * - composer visual surface
+ * - deleted mobile bottom navigation state
+ *
+ * Keyboard measurement remains owned by:
+ * - src/mobile/iosKeyboardViewport.ts
+ * - responsive.css
+ *
+ * Safe-area geometry remains coordinated with:
+ * - 80-safe-area.css
+ */
+
+/* FOS-UI.6-COMPOSER-CONTAINER-BEGIN */
+
+@media (max-width: 700px) {
+  /*
+   * The dedicated mobile chat no longer uses the historical
+   * Terminal / Code / Studio / Tasks bottom navigation.
+   */
+  body.mobile-chat-dedicated-shell .chat-mobile-bottom-nav {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+
+  /*
+   * Final approved dedicated-shell composer surface.
+   *
+   * Bottom safe-area positioning is duplicated intentionally
+   * with 80-safe-area.css during the restoration stage.
+   * Legacy rules are not removed in this phase.
+   */
+  body.mobile-chat-dedicated-shell .chat-native-composer,
+  body.mobile-chat-dedicated-shell #chat-composer {
+    display: flex !important;
+    position: fixed !important;
+
+    right: 18px !important;
+    bottom:
+      max(
+        10px,
+        env(safe-area-inset-bottom, 0px)
+      )
+      !important;
+    left: 18px !important;
+
+    z-index: 230 !important;
+
+    box-sizing: border-box !important;
+    width: auto !important;
+    max-width: none !important;
+    min-height: 64px !important;
+
+    margin: 0 !important;
+    padding: 7px 8px 7px 14px !important;
+
+    border:
+      1px solid rgba(111, 91, 245, 0.25)
+      !important;
+    border-radius: 24px !important;
+
+    background: rgba(255, 255, 255, 0.97) !important;
+
+    box-shadow:
+      0 10px 32px rgba(20, 24, 40, 0.10),
+      0 2px 8px rgba(20, 24, 40, 0.05)
+      !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    translate: none !important;
+    pointer-events: auto !important;
+
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+  }
+
+  /*
+   * Keep the composer reachable while either mobile menu is open.
+   */
+  body:has(.chat-native-side-menu:not([hidden]))
+    .chat-native-composer,
+  body:has(.chat-native-more-menu:not([hidden]))
+    .chat-native-composer {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    z-index: 230 !important;
+  }
+}
+
+/*
+ * Do not add ios-keyboard-open or --ios-keyboard-height rules here.
+ * Those remain under the existing keyboard viewport controller.
+ */
+
+/* FOS-UI.6-COMPOSER-CONTAINER-END */
+/* FOS-UI.6-COMPOSER-CONTROLS-BEGIN */
+
+@media (max-width: 700px) {
+  /*
+   * Final mobile composer focus surface.
+   */
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer:focus-within,
+  body.mobile-chat-dedicated-shell
+    #chat-composer:focus-within {
+    border-color:
+      rgba(108, 92, 231, 0.48)
+      !important;
+
+    box-shadow:
+      0 0 0 3px rgba(108, 92, 231, 0.08),
+      0 12px 32px rgba(0, 0, 0, 0.13)
+      !important;
+  }
+
+  /*
+   * Final approved input geometry.
+   */
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-input,
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    #chat-input {
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 38px !important;
+    max-height: 140px !important;
+
+    margin: 0 !important;
+    padding: 10px 6px !important;
+
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    resize: none !important;
+
+    border: 0 !important;
+    outline: 0 !important;
+    background: transparent !important;
+
+    color: #202124 !important;
+    caret-color: #202124 !important;
+
+    font-family: inherit !important;
+    font-size: 17px !important;
+    font-weight: 400 !important;
+    line-height: 24px !important;
+
+    white-space: pre-wrap !important;
+    overflow-wrap: anywhere !important;
+
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-input::placeholder,
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    #chat-input::placeholder {
+    color: #8a8d94 !important;
+    opacity: 1 !important;
+  }
+
+  /*
+   * Attachment and voice controls.
+   */
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-attach,
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-voice,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-attach,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-voice {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 auto !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    background: transparent !important;
+    color: #5f6368 !important;
+
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-attach:hover,
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-voice:hover,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-attach:hover,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-voice:hover {
+    background:
+      rgba(17, 24, 39, 0.06)
+      !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-attach:active,
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-voice:active,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-attach:active,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    #chat-voice:active {
+    transform: scale(0.94) !important;
+  }
+
+  /*
+   * Final mobile send control.
+   */
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-send,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    .composer-send {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 auto !important;
+
+    width: 42px !important;
+    min-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+
+    cursor: pointer !important;
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .composer-send:disabled,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    .composer-send:disabled {
+    cursor: default !important;
+    opacity: 0.45 !important;
+    pointer-events: none !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    button
+    svg,
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    button
+    svg {
+    display: block !important;
+    width: 20px !important;
+    height: 20px !important;
+    pointer-events: none !important;
+  }
+
+  /*
+   * Attachment preview remains inside composer ownership.
+   */
+  body.mobile-chat-dedicated-shell
+    .chat-native-composer
+    .if-chat-attachments,
+  body.mobile-chat-dedicated-shell
+    #chat-composer
+    .if-chat-attachments {
+    flex: 1 0 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/*
+ * Motion behavior remains owned by 90-motion.css.
+ * Keyboard positioning remains owned by 80-safe-area.css,
+ * responsive.css and iosKeyboardViewport.ts.
+ */
+
+/* FOS-UI.6-COMPOSER-CONTROLS-END */
+/* FOS-UI.6-SLEEK-CHATGPT-COMPOSER-BEGIN */
+@media (max-width: 700px) {
+  /*
+   * Bottom composer tray.
+   * Flat, borderless and attached to the lower interface.
+   */
+  body.mobile-chat-dedicated-shell .chat-native-composer {
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 80 !important;
+
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding:
+      5px
+      8px
+      calc(5px + env(safe-area-inset-bottom, 0px))
+      !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+
+    background: rgba(14, 18, 24, 0.98) !important;
+
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+
+  /*
+   * Main ChatGPT-style input capsule.
+   */
+  body.mobile-chat-dedicated-shell #chat-composer {
+    display: flex !important;
+    align-items: flex-end !important;
+    gap: 5px !important;
+
+    width: 100% !important;
+    min-height: 44px !important;
+    max-height: 150px !important;
+
+    margin: 0 !important;
+    padding: 5px 6px !important;
+
+    border: 0 !important;
+    border-radius: 24px !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+
+    background: #2f2f2f !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-composer:focus-within {
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    background: #333333 !important;
+  }
+
+  /*
+   * Compact textarea.
+   */
+  body.mobile-chat-dedicated-shell #chat-input {
+    flex: 1 1 auto !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 32px !important;
+    max-height: 132px !important;
+
+    margin: 0 !important;
+    padding: 6px 4px !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    resize: none !important;
+
+    background: transparent !important;
+    color: #f4f4f4 !important;
+
+    font-size: 15px !important;
+    font-weight: 400 !important;
+    line-height: 20px !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-input::placeholder {
+    color: rgba(244, 244, 244, 0.5) !important;
+    opacity: 1 !important;
+  }
+
+  /*
+   * Compact attachment and voice controls.
+   */
+  body.mobile-chat-dedicated-shell .composer-attach,
+  body.mobile-chat-dedicated-shell .composer-voice,
+  body.mobile-chat-dedicated-shell #chat-attach,
+  body.mobile-chat-dedicated-shell #chat-voice {
+    flex: 0 0 32px !important;
+
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+
+    margin: 0 !important;
+    padding: 6px !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+
+    background: transparent !important;
+    color: #ededed !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-attach:hover,
+  body.mobile-chat-dedicated-shell .composer-voice:hover,
+  body.mobile-chat-dedicated-shell #chat-attach:hover,
+  body.mobile-chat-dedicated-shell #chat-voice:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  /*
+   * Neutral ChatGPT-style send button.
+   */
+  body.mobile-chat-dedicated-shell .composer-send {
+    flex: 0 0 32px !important;
+
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+
+    margin: 0 !important;
+    padding: 6px !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+
+    background: #f4f4f4 !important;
+    color: #171717 !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-send:hover {
+    background: #ffffff !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-send:active {
+    transform: scale(0.96) !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-send:disabled {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: rgba(255, 255, 255, 0.34) !important;
+    opacity: 1 !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-composer svg {
+    width: 18px !important;
+    height: 18px !important;
+    stroke-width: 1.8 !important;
+  }
+
+  /*
+   * Remove bright blue user-message styling.
+   */
+  body.mobile-chat-dedicated-shell
+    :is(
+      .message.user,
+      .chat-message.user,
+      .chat-message--user,
+      .message-row.user .message-bubble,
+      .message-row.is-user .message-bubble,
+      [data-role="user"] .message-bubble,
+      [data-message-role="user"] .message-bubble
+    ) {
+    background: #2f2f2f !important;
+    color: #f4f4f4 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /*
+   * Keep bottom navigation flush with the screen edge.
+   */
+  body.mobile-chat-dedicated-shell .chat-mobile-bottom-nav {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    margin: 0 !important;
+
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+}
+/* FOS-UI.6-SLEEK-CHATGPT-COMPOSER-END */
+/* FOS-UI.6-MOBILE-COMPOSER-FINAL-POLISH-BEGIN */
+@media (max-width: 700px) {
+  body.mobile-chat-dedicated-shell .chat-native-composer {
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+
+    padding:
+      4px
+      8px
+      calc(5px + env(safe-area-inset-bottom, 0px))
+      !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    background: #ffffff !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-composer {
+    min-height: 42px !important;
+    max-height: 140px !important;
+
+    padding: 4px 5px !important;
+    gap: 4px !important;
+
+    border: 0 !important;
+    border-radius: 22px !important;
+    box-shadow: none !important;
+
+    background: #2f2f2f !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-input {
+    min-height: 32px !important;
+    padding: 6px 3px !important;
+
+    font-size: 15px !important;
+    line-height: 20px !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-attach,
+  body.mobile-chat-dedicated-shell .composer-voice,
+  body.mobile-chat-dedicated-shell #chat-attach,
+  body.mobile-chat-dedicated-shell #chat-voice,
+  body.mobile-chat-dedicated-shell .composer-send {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+
+    padding: 6px !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-send {
+    background: #f4f4f4 !important;
+    color: #111111 !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-composer svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
+/* FOS-UI.6-MOBILE-COMPOSER-FINAL-POLISH-END */
+/* FOS-UI.6-COMPOSER-VISIBILITY-FIX-BEGIN */
+@media (max-width: 700px) {
+  /*
+   * Force the composer into the visible mobile viewport.
+   */
+  body.mobile-chat-dedicated-shell .chat-native-composer,
+  .chat-native-screen .chat-native-composer {
+    position: fixed !important;
+
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    top: auto !important;
+
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+
+    margin: 0 !important;
+    padding:
+      4px
+      8px
+      calc(5px + env(safe-area-inset-bottom, 0px))
+      !important;
+
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+
+    transform: none !important;
+    translate: none !important;
+
+    overflow: visible !important;
+    pointer-events: auto !important;
+
+    background: #ffffff !important;
+    z-index: 2147483000 !important;
+  }
+
+  /*
+   * Keep the compact ChatGPT-style capsule visible.
+   */
+  body.mobile-chat-dedicated-shell #chat-composer,
+  .chat-native-screen #chat-composer {
+    position: relative !important;
+
+    display: flex !important;
+    align-items: flex-end !important;
+
+    width: 100% !important;
+    min-height: 42px !important;
+    max-height: 140px !important;
+
+    margin: 0 !important;
+    padding: 4px 5px !important;
+    gap: 4px !important;
+
+    border: 0 !important;
+    border-radius: 22px !important;
+    box-shadow: none !important;
+
+    background: #2f2f2f !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-input,
+  .chat-native-screen #chat-input {
+    display: block !important;
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+    min-height: 32px !important;
+    max-height: 124px !important;
+
+    padding: 6px 4px !important;
+
+    border: 0 !important;
+    outline: 0 !important;
+    box-shadow: none !important;
+    resize: none !important;
+
+    background: transparent !important;
+    color: #f4f4f4 !important;
+
+    font-size: 15px !important;
+    line-height: 20px !important;
+  }
+
+  /*
+   * Reserve message space so the composer does not cover content.
+   */
+  body.mobile-chat-dedicated-shell .chat-native-stage,
+  .chat-native-screen .chat-native-stage {
+    padding-bottom:
+      calc(
+        62px +
+        env(safe-area-inset-bottom, 0px)
+      )
+      !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-attach,
+  body.mobile-chat-dedicated-shell .composer-voice,
+  body.mobile-chat-dedicated-shell #chat-attach,
+  body.mobile-chat-dedicated-shell #chat-voice,
+  body.mobile-chat-dedicated-shell .composer-send,
+  .chat-native-screen .composer-attach,
+  .chat-native-screen .composer-voice,
+  .chat-native-screen #chat-attach,
+  .chat-native-screen #chat-voice,
+  .chat-native-screen .composer-send {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    flex: 0 0 32px !important;
+
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+    min-height: 32px !important;
+
+    margin: 0 !important;
+    padding: 6px !important;
+
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  body.mobile-chat-dedicated-shell .composer-send,
+  .chat-native-screen .composer-send {
+    background: #f4f4f4 !important;
+    color: #111111 !important;
+  }
+
+  body.mobile-chat-dedicated-shell #chat-composer svg,
+  .chat-native-screen #chat-composer svg {
+    width: 17px !important;
+    height: 17px !important;
+  }
+}
+/* FOS-UI.6-COMPOSER-VISIBILITY-FIX-END */

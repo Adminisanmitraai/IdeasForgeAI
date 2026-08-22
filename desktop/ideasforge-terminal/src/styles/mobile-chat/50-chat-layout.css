@@ -1,0 +1,160 @@
+/*
+ * FOS-UI.7 Phase 2
+ * Dedicated mobile message layout ownership.
+ *
+ * Composer and final viewport geometry remain owned by 80-safe-area.css.
+ */
+
+/* FOS-UI.7-CHAT-LAYOUT-BEGIN */
+@media (max-width: 700px) {
+  body.mobile-chat-dedicated-shell .chat-native-screen {
+    position: relative;
+    min-width: 0;
+    min-height: 100dvh;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-native-stage {
+    min-width: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scroll-padding-top: 18px;
+    padding: 14px 12px 0;
+  }
+
+  /*
+   * These declarations intentionally outrank the active legacy mobile rules.
+   * Width belongs to the body so actions stay attached to their message.
+   */
+  body.mobile-chat-dedicated-shell
+    .chat-native-stage
+    .chat-turn[data-message-role] {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin: 0 0 16px !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-native-stage
+    .chat-turn[data-message-role]:last-of-type {
+    margin-bottom: 8px !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-native-stage
+    .chat-turn--user[data-message-role="user"] {
+    display: flex !important;
+    justify-content: flex-end !important;
+    padding-inline: 44px 0 !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-native-stage
+    .chat-turn--assistant[data-message-role="assistant"] {
+    display: grid !important;
+    grid-template-columns: 26px minmax(0, 1fr) !important;
+    justify-content: stretch !important;
+    padding-inline: 0 28px !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-turn--user
+    .chat-turn__body {
+    width: fit-content !important;
+    min-width: 0 !important;
+    max-width: min(84%, 34rem) !important;
+    margin-left: auto !important;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-turn--assistant
+    .chat-turn__body {
+    width: min(100%, 46rem) !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    margin-right: auto !important;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-turn__content {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+    text-align: left;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-turn__content a {
+    max-width: 100%;
+    overflow-wrap: anywhere !important;
+    word-break: break-word;
+  }
+
+  body.mobile-chat-dedicated-shell
+    .chat-turn__content
+    :not(pre)
+    > code {
+    max-width: 100%;
+    white-space: break-spaces;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-code-block,
+  body.mobile-chat-dedicated-shell .chat-turn__content pre,
+  body.mobile-chat-dedicated-shell .chat-markdown-table-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-turn__content pre code {
+    white-space: pre;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-turn__content img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-turn__content :is(ul, ol),
+  body.mobile-chat-dedicated-shell .chat-turn__content blockquote {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  body.mobile-chat-dedicated-shell .if-chat-attachments,
+  body.mobile-chat-dedicated-shell .if-chat-attachment {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-turn__time {
+    margin-top: 4px;
+    font-size: 11px;
+    line-height: 1.2;
+    opacity: 0.56;
+  }
+
+  body.mobile-chat-dedicated-shell .chat-empty-state {
+    width: min(100%, 360px);
+    max-width: 100%;
+    margin: auto;
+    padding: 24px 20px 96px;
+    box-sizing: border-box;
+    text-align: center;
+  }
+}
+/* FOS-UI.7-CHAT-LAYOUT-END */

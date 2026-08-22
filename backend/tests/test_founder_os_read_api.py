@@ -166,21 +166,21 @@ def test_progress_endpoint_returns_certified_manifest():
         "contract_version",
     }
 
-    assert data["overall_progress"] == 51
+    assert data["overall_progress"] == 100
     assert isinstance(data["overall_progress"], int)
     assert (
         data["previous_milestone"]
-        == "FOS-UI.3 - Live Runtime Progress Engine"
+        == "FOS-X-2 - Cross-Product Context + Execution Router"
     )
     assert (
         data["current_milestone"]
-        == "FOS-UI.4 - Live Milestone Intelligence"
+        == "FOS-100 - Founder OS v1.0 Final Certification & Release Freeze"
     )
     assert (
         data["next_milestone"]
-        == "FOS-UI.5 - Intelligent Progress Analytics"
+        == "FOS-2.0 - Future Evolution Track"
     )
-    assert data["show_progress"] is True
+    assert data["show_progress"] is False
     assert data["backend_status"] == "healthy"
     assert data["frontend_status"] == "healthy"
     assert data["runtime_status"] == "healthy"
@@ -230,7 +230,7 @@ def test_progress_service_is_read_only_and_deterministic():
     second = service.progress()
 
     assert first == second
-    assert first.overall_progress == 51
+    assert first.overall_progress == 100
     assert first.source == "certified_manifest"
 
 

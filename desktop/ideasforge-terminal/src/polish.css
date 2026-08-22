@@ -1,0 +1,599 @@
+/* IdeasForge Terminal — Phase 2A consolidated visual polish */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2e384c transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: #2e384c;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #3b4861;
+}
+
+.ui-icon {
+  display: block;
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+
+.app-shell {
+  grid-template-columns: 246px minmax(0, 1fr) 320px;
+  grid-template-rows: 72px minmax(0, 1fr);
+}
+
+.app-shell.left-collapsed {
+  grid-template-columns: 70px minmax(0, 1fr) 320px;
+}
+
+.app-shell.right-collapsed {
+  grid-template-columns: 246px minmax(0, 1fr) 46px;
+}
+
+.app-shell.left-collapsed.right-collapsed {
+  grid-template-columns: 70px minmax(0, 1fr) 46px;
+}
+
+.top-header {
+  gap: 10px;
+  padding: 0 18px;
+}
+
+.brand-button {
+  width: 166px;
+  height: 46px;
+}
+
+.brand-button img {
+  width: 158px;
+  height: 40px;
+  max-height: 40px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.brand-divider {
+  height: 28px;
+}
+
+.product-title {
+  margin-right: 12px;
+  font-size: 15px;
+}
+
+.header-select {
+  height: 42px;
+  padding: 0 13px;
+  border-radius: 11px;
+  font-size: 13px;
+}
+
+.project-select {
+  min-width: 190px;
+}
+
+.intelligence-select {
+  min-width: 184px;
+}
+
+.connection-pill {
+  height: 40px;
+  padding: 0 13px;
+}
+
+.icon-button {
+  width: 38px;
+  height: 38px;
+}
+
+.avatar-button {
+  width: 40px;
+  height: 40px;
+}
+
+.select-icon,
+.chevron,
+.accordion-chevron {
+  display: grid;
+  place-items: center;
+}
+
+.select-icon .ui-icon {
+  width: 17px;
+  height: 17px;
+}
+
+.chevron .ui-icon,
+.accordion-chevron .ui-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.left-sidebar {
+  padding: 38px 10px 12px;
+}
+
+.sidebar-collapse {
+  top: 8px;
+  right: 8px;
+}
+
+.nav-item {
+  position: relative;
+  min-height: 50px;
+  padding: 0 12px;
+  gap: 10px;
+}
+
+.nav-item::before {
+  position: absolute;
+  top: 11px;
+  bottom: 11px;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: transparent;
+  content: "";
+}
+
+.nav-item.active::before {
+  background: linear-gradient(180deg, #5f72ff, #8d5dff);
+  box-shadow: 0 0 12px rgba(112, 87, 255, 0.72);
+}
+
+.nav-icon .ui-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-label {
+  font-size: 14px;
+}
+
+.left-sidebar.collapsed {
+  padding-inline: 8px;
+}
+
+.left-sidebar.collapsed .sidebar-collapse {
+  right: 21px;
+}
+
+.left-sidebar.collapsed .nav-item {
+  min-height: 50px;
+}
+
+.left-sidebar.collapsed .nav-icon .ui-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.ghost-card {
+  margin-bottom: 8px;
+  padding: 13px;
+}
+
+.ghost-visual {
+  height: 64px;
+}
+
+.ghost-svg {
+  width: 44px;
+  height: 44px;
+  color: #8a70ff;
+  filter: drop-shadow(0 0 12px rgba(112, 84, 255, 0.6));
+}
+
+.left-sidebar.collapsed .ghost-card {
+  margin-inline: 1px;
+}
+
+.left-sidebar.collapsed .ghost-visual {
+  height: 42px;
+}
+
+.left-sidebar.collapsed .ghost-svg {
+  width: 29px;
+  height: 29px;
+}
+
+.workspace-tabs {
+  flex-basis: 58px;
+  padding: 0 20px;
+}
+
+.workspace-tabs button {
+  height: 58px;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.workspace-tabs button .ui-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.workspace-tabs button.active::after {
+  right: 30%;
+  left: 30%;
+}
+
+.chat-view {
+  overflow: hidden;
+}
+
+.welcome-hero {
+  grid-template-columns: 86px minmax(0, 1fr);
+  gap: 19px;
+  min-height: 132px;
+  margin: 18px 18px 10px;
+  padding: 18px 24px;
+}
+
+.welcome-hero .welcome-mark {
+  width: 78px;
+  height: 78px;
+  max-height: 78px;
+  object-fit: contain;
+}
+
+.welcome-hero h1 {
+  font-size: 22px;
+  font-weight: 680;
+}
+
+.welcome-hero p {
+  margin: 6px 0 11px;
+  font-size: 14px;
+}
+
+.reassurance-chips {
+  gap: 7px;
+}
+
+.reassurance-chips span {
+  padding: 7px 10px;
+  font-size: 11px;
+}
+
+.chat-thread {
+  flex: 1 1 auto;
+  min-height: 132px;
+  padding: 0 18px 9px;
+  overscroll-behavior: contain;
+}
+
+.message {
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
+  padding: 13px 15px;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.message-content > p {
+  font-size: 13.5px;
+  line-height: 1.52;
+}
+
+.inline-card {
+  gap: 12px;
+  padding: 11px 12px;
+}
+
+.progress-rail {
+  gap: 8px;
+  font-size: 11px;
+}
+
+.terminal-panel {
+  flex: 0 0 192px;
+  min-height: 192px;
+  margin: 0 18px 10px;
+}
+
+.terminal-header {
+  height: 42px;
+  padding: 0 13px;
+}
+
+.terminal-header .ui-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.terminal-body {
+  height: calc(100% - 42px);
+  min-height: 148px;
+  padding: 12px 16px;
+  font-size: 12.5px;
+  line-height: 1.58;
+}
+
+.composer-zone {
+  flex: 0 0 auto;
+  padding: 0 18px 14px;
+}
+
+.composer {
+  height: 60px;
+  grid-template-columns: auto minmax(0, 1fr) repeat(3, auto) 50px;
+  border-radius: 14px;
+}
+
+.composer input {
+  font-size: 14px;
+}
+
+.composer-tool {
+  width: 34px;
+  height: 34px;
+}
+
+.composer-tool .ui-icon {
+  width: 19px;
+  height: 19px;
+}
+
+.send-button {
+  width: 46px;
+  height: 44px;
+}
+
+.send-button .ui-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.quick-examples {
+  min-height: 26px;
+  padding-top: 8px;
+}
+
+.right-panel {
+  padding: 14px 13px 22px;
+}
+
+.right-collapse {
+  margin: -5px 0 7px -4px;
+}
+
+.context-card {
+  margin-bottom: 9px;
+}
+
+.accordion-header {
+  min-height: 48px;
+  padding: 0 13px;
+  font-size: 13px;
+}
+
+.accordion-icon .ui-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.accordion-content {
+  padding: 0 13px 13px;
+}
+
+.detail-grid {
+  gap: 11px;
+  font-size: 11.5px;
+}
+
+.plan-list {
+  gap: 8px;
+}
+
+.plan-row {
+  font-size: 11.5px;
+}
+
+.approval-orb {
+  width: 44px;
+  height: 44px;
+}
+
+.approval-orb .ui-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.popover .ui-icon,
+.menu-row .ui-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.mobile-nav .ui-icon {
+  width: 20px;
+  height: 20px;
+}
+
+@media (max-height: 820px) and (min-width: 761px) {
+  .app-shell {
+    grid-template-rows: 68px minmax(0, 1fr);
+  }
+
+  .top-header {
+    padding-inline: 16px;
+  }
+
+  .workspace-tabs {
+    flex-basis: 52px;
+  }
+
+  .workspace-tabs button {
+    height: 52px;
+  }
+
+  .welcome-hero {
+    grid-template-columns: 72px minmax(0, 1fr);
+    min-height: 114px;
+    margin-top: 12px;
+    padding: 13px 20px;
+  }
+
+  .welcome-hero .welcome-mark {
+    width: 66px;
+    height: 66px;
+  }
+
+  .welcome-hero h1 {
+    font-size: 20px;
+  }
+
+  .welcome-hero p {
+    margin: 4px 0 8px;
+    font-size: 13px;
+  }
+
+  .reassurance-chips span {
+    padding: 6px 9px;
+    font-size: 10.5px;
+  }
+
+  .chat-thread {
+    min-height: 120px;
+  }
+
+  .message {
+    padding-block: 11px;
+  }
+
+  .terminal-panel {
+    flex-basis: 174px;
+    min-height: 174px;
+  }
+
+  .terminal-body {
+    min-height: 132px;
+  }
+
+  .composer-zone {
+    padding-bottom: 10px;
+  }
+
+  .composer {
+    height: 56px;
+  }
+
+  .quick-examples {
+    max-width: 100%;
+  }
+
+  .quick-examples button:nth-of-type(n + 5),
+  .quick-examples span:nth-of-type(n + 5) {
+    display: none;
+  }
+}
+
+@media (max-width: 1320px) {
+  .app-shell {
+    grid-template-columns: 222px minmax(0, 1fr) 304px;
+  }
+
+  .app-shell.left-collapsed {
+    grid-template-columns: 68px minmax(0, 1fr) 304px;
+  }
+
+  .app-shell.right-collapsed {
+    grid-template-columns: 222px minmax(0, 1fr) 44px;
+  }
+
+  .app-shell.left-collapsed.right-collapsed {
+    grid-template-columns: 68px minmax(0, 1fr) 44px;
+  }
+
+  .brand-button {
+    width: 148px;
+  }
+
+  .brand-button img {
+    width: 142px;
+  }
+
+  .project-select {
+    min-width: 172px;
+  }
+
+  .intelligence-select {
+    min-width: 166px;
+  }
+
+  .welcome-hero {
+    grid-template-columns: 76px 1fr;
+  }
+
+  .welcome-hero .welcome-mark {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+@media (max-width: 1120px) {
+  .app-shell {
+    grid-template-columns: 68px minmax(0, 1fr);
+  }
+
+  .right-panel {
+    top: 72px;
+    width: 320px;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell,
+  .app-shell.left-collapsed,
+  .app-shell.right-collapsed,
+  .app-shell.left-collapsed.right-collapsed {
+    padding-top: 60px;
+  }
+
+  .top-header {
+    height: 60px;
+  }
+
+  .top-header .brand-button {
+    width: 146px;
+  }
+
+  .top-header .brand-button img {
+    width: 140px;
+  }
+
+  .center-workspace {
+    height: calc(100vh - 122px);
+  }
+
+  .welcome-hero {
+    grid-template-columns: 62px 1fr;
+    min-height: 104px;
+  }
+
+  .welcome-hero .welcome-mark {
+    width: 58px;
+    height: 58px;
+  }
+
+  .terminal-panel {
+    min-height: 190px;
+    flex-basis: 190px;
+  }
+}
