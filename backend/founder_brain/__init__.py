@@ -204,3 +204,15 @@ __all__ += (
     "reflect_on_decision",
     "propose_reflection_candidate",
 )
+
+from .cognitive_state import (
+    FOUNDER_COGNITIVE_STATE_VERSION,
+    FounderCognitiveState,
+    synthesize_founder_cognitive_state,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_STATE_VERSION",
+    "FounderCognitiveState",
+    "synthesize_founder_cognitive_state",
+)
