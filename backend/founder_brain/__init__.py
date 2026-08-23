@@ -84,3 +84,31 @@ __all__ += (
     "active_preferences",
     "validate_cognitive_profile",
 )
+
+from .cognitive_memory_repository import (
+    FOUNDER_COGNITIVE_REPOSITORY_VERSION,
+    CognitiveMemoryCorruptionError,
+    CognitiveMemoryRepositoryError,
+    CognitiveMemorySnapshot,
+    build_cognitive_memory_snapshot,
+    restore_cognitive_memory_snapshot,
+    validate_snapshot_chain,
+)
+from .cognitive_projection import (
+    FOUNDER_COGNITIVE_PROJECTION_VERSION,
+    FounderLearningProjection,
+    project_founder_learning,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_REPOSITORY_VERSION",
+    "CognitiveMemorySnapshot",
+    "CognitiveMemoryRepositoryError",
+    "CognitiveMemoryCorruptionError",
+    "build_cognitive_memory_snapshot",
+    "restore_cognitive_memory_snapshot",
+    "validate_snapshot_chain",
+    "FOUNDER_COGNITIVE_PROJECTION_VERSION",
+    "FounderLearningProjection",
+    "project_founder_learning",
+)
