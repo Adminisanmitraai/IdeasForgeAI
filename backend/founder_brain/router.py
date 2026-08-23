@@ -5,7 +5,7 @@ import os
 import os
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel, ConfigDict
 
 from .repository_router import create_repository_router
@@ -43,6 +43,11 @@ class CognitiveCandidateRequest(BaseModel):
     source_id: str
     observed_at: str
     project_ids: list[str] = []
+
+def _require_review_key(value: str | None) -> None:
+    expected = os.getenv("FORGEBRAIN_REVIEW_API_KEY", "").strip()
+    if not expected or value != expected:
+        raise HTTPException(status_code=403, detail="review access denied")
 
 class CognitiveReviewRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -93,7 +98,8 @@ def create_founder_brain_router(
         )
 
     @router.get("/cognitive/candidates", response_model=FounderBrainResponse)
-    def cognitive_candidates(status: str = "pending") -> FounderBrainResponse:
+    def cognitive_candidates(status: str = "pending", x_forgebrain_review_key: str | None = Header(default=None)) -> FounderBrainResponse:
+        _require_review_key(x_forgebrain_review_key)
         founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
         try:
             rows = SupabaseCognitiveMemoryRepository().list_candidates(founder_id, status=status)
@@ -102,7 +108,8 @@ def create_founder_brain_router(
             raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     @router.post("/cognitive/candidates", response_model=FounderBrainResponse)
-    def cognitive_candidate_create(request: CognitiveCandidateRequest) -> FounderBrainResponse:
+    def cognitive_candidate_create(request: CognitiveCandidateRequest, x_forgebrain_review_key: str | None = Header(default=None)) -> FounderBrainResponse:
+        _require_review_key(x_forgebrain_review_key)
         founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
         repo = SupabaseCognitiveMemoryRepository()
         try:
@@ -117,7 +124,8 @@ def create_founder_brain_router(
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @router.post("/cognitive/candidates/{candidate_id}/review", response_model=FounderBrainResponse)
-    def cognitive_candidate_review(candidate_id: str, request: CognitiveReviewRequest) -> FounderBrainResponse:
+    def cognitive_candidate_review(candidate_id: str, request: CognitiveReviewRequest, x_forgebrain_review_key: str | None = Header(default=None)) -> FounderBrainResponse:
+        _require_review_key(x_forgebrain_review_key)
         founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
         repo = SupabaseCognitiveMemoryRepository()
         try:
