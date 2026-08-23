@@ -136,3 +136,23 @@ __all__ += (
     "propose_candidate_lesson",
     "promote_candidate_lesson",
 )
+
+from .cognitive_patterns import (
+    FOUNDER_PATTERN_INTELLIGENCE_VERSION,
+    AssumptionFailurePattern,
+    ConfidenceCalibration,
+    EvidenceTrace,
+    FounderPatternReport,
+    PreferenceStabilityPattern,
+    analyze_founder_patterns,
+)
+
+__all__ += (
+    "FOUNDER_PATTERN_INTELLIGENCE_VERSION",
+    "EvidenceTrace",
+    "ConfidenceCalibration",
+    "AssumptionFailurePattern",
+    "PreferenceStabilityPattern",
+    "FounderPatternReport",
+    "analyze_founder_patterns",
+)
