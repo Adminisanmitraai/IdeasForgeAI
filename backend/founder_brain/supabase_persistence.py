@@ -222,6 +222,16 @@ class SupabaseCognitiveMemoryRepository:
         if len(rows) != 1:
             raise SupabasePersistenceError("candidate review status transition failed")
 
+    def list_snapshots(self, founder_id: str, *, limit: int = 100) -> tuple[CognitiveMemorySnapshot, ...]:
+        query = parse.urlencode({
+            "select": "snapshot_sha256,founder_id,version,stored_at,schema_version,profile_json,profile_sha256,previous_snapshot_sha256",
+            "founder_id": f"eq.{founder_id}",
+            "order": "version.asc",
+            "limit": str(max(1, min(limit, 500))),
+        })
+        rows = _get_json(self._config, "fb_cognitive_snapshots", query)
+        return tuple(_snapshot_from_row(row) for row in rows)
+
     def latest_snapshot(self, founder_id: str) -> CognitiveMemorySnapshot | None:
         query = parse.urlencode({
             "select": "snapshot_sha256,founder_id,version,stored_at,schema_version,profile_json,profile_sha256,previous_snapshot_sha256",

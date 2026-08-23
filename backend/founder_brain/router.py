@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 import os
-
-import os
+from dataclasses import asdict
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Header
 from pydantic import BaseModel, ConfigDict
 
 from .repository_router import create_repository_router
-
-from fastapi import APIRouter, HTTPException
 
 from .models import (
     FOUNDER_BRAIN_API_CONTRACT_VERSION,
@@ -27,11 +24,8 @@ from .service import FounderBrainReadService
 from .cognitive_manifest import cognitive_capability_manifest
 from .cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from .cognitive_review import CandidateReviewDecision, CandidateReviewDisposition, PromotionMetadata, CognitiveReviewError, review_and_promote_candidate
+from .cognitive_temporal import analyze_cognitive_timeline
 from .supabase_persistence import SupabaseCognitiveMemoryRepository, SupabasePersistenceError
-from .supabase_persistence import (
-    SupabaseCognitiveMemoryRepository,
-    SupabasePersistenceError,
-)
 
 ROUTE_PREFIX = "/api/founder-brain/v1"
 
@@ -148,6 +142,27 @@ def create_founder_brain_router(
             return FounderBrainResponse(data={"candidate_id": candidate_id, "disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_version": None if result.snapshot is None else result.snapshot.version, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256})
         except (SupabasePersistenceError, CognitiveReviewError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @router.get("/cognitive/temporal", response_model=FounderBrainResponse)
+    def cognitive_temporal(x_forgebrain_review_key: str | None = Header(default=None)) -> FounderBrainResponse:
+        _require_review_key(x_forgebrain_review_key)
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        try:
+            snapshots = SupabaseCognitiveMemoryRepository().list_snapshots(founder_id)
+            if not snapshots:
+                raise SupabasePersistenceError("persistent cognitive baseline is missing")
+            report = analyze_cognitive_timeline(snapshots)
+            return FounderBrainResponse(data={
+                "founder_id": report.founder_id,
+                "from_version": report.from_version,
+                "to_version": report.to_version,
+                "change_count": report.change_count,
+                "stability_score": report.stability_score,
+                "changes": [asdict(change) for change in report.changes],
+                "schema_version": report.schema_version,
+            })
+        except (SupabasePersistenceError, ValueError) as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
 
     @router.get("/cognitive/manifest", response_model=FounderBrainResponse)
     def founder_brain_cognitive_manifest() -> FounderBrainResponse:

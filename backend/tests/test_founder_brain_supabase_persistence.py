@@ -104,3 +104,25 @@ def test_bootstrap_empty_profile_writes_only_when_missing(monkeypatch):
     assert snapshot.profile.founder_id == "founder-1"
     assert snapshot.profile.evidence == ()
     assert len(calls) == 1
+
+
+def test_list_snapshots_returns_integrity_validated_chain(monkeypatch):
+    p1 = FounderCognitiveProfile(founder_id="founder-1", generated_at="2026-08-23T10:00:00Z")
+    s1 = build_cognitive_memory_snapshot(p1, version=1, stored_at="2026-08-23T10:00:00Z")
+    p2 = p1.model_copy(update={"generated_at": "2026-08-23T11:00:00Z"})
+    s2 = build_cognitive_memory_snapshot(
+        p2, version=2, stored_at="2026-08-23T11:00:00Z",
+        previous_snapshot_sha256=s1.snapshot_sha256,
+    )
+    rows = []
+    for snapshot in (s1, s2):
+        row = snapshot.to_dict()
+        row["profile_json"] = row.pop("profile")
+        row["stored_at"] = row["stored_at"].replace("Z", "+00:00")
+        rows.append(row)
+    monkeypatch.setattr(
+        "backend.founder_brain.supabase_persistence._get_json",
+        lambda config, table, query: rows,
+    )
+    restored = _repo().list_snapshots("founder-1")
+    assert restored == (s1, s2)
