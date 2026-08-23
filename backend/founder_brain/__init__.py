@@ -172,3 +172,19 @@ __all__ += (
     "CognitiveDecisionAdvice",
     "advise_decision",
 )
+
+from .decision_simulation import (
+    FOUNDER_DECISION_SIMULATION_VERSION,
+    AlternativeAssessment,
+    DecisionAlternative,
+    DecisionComparison,
+    compare_decision_alternatives,
+)
+
+__all__ += (
+    "FOUNDER_DECISION_SIMULATION_VERSION",
+    "DecisionAlternative",
+    "AlternativeAssessment",
+    "DecisionComparison",
+    "compare_decision_alternatives",
+)
