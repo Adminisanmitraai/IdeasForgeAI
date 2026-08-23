@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import os
+
+import os
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel, ConfigDict
 
 from .repository_router import create_repository_router
 
@@ -22,12 +25,41 @@ from .chat_intent import (
 )
 from .service import FounderBrainReadService
 from .cognitive_manifest import cognitive_capability_manifest
+from .cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
+from .cognitive_review import CandidateReviewDecision, CandidateReviewDisposition, PromotionMetadata, CognitiveReviewError, review_and_promote_candidate
+from .supabase_persistence import SupabaseCognitiveMemoryRepository, SupabasePersistenceError
 from .supabase_persistence import (
     SupabaseCognitiveMemoryRepository,
     SupabasePersistenceError,
 )
 
 ROUTE_PREFIX = "/api/founder-brain/v1"
+
+class CognitiveCandidateRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    candidate_id: str
+    text: str
+    source_type: str
+    source_id: str
+    observed_at: str
+    project_ids: list[str] = []
+
+class CognitiveReviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    disposition: CandidateReviewDisposition
+    reviewer_id: str
+    reviewed_at: str
+    rationale: str
+    conflict_resolution: str = ""
+    memory_id: str | None = None
+    domain_or_scope: str = ""
+    strength_or_confidence: float = 0.7
+    title: str = ""
+    problem: str = ""
+    options_considered: list[str] = []
+    chosen_option: str = ""
+    expected_outcome: str = ""
+    related_decision_ids: list[str] = []
 
 
 def create_founder_brain_router(
@@ -59,6 +91,55 @@ def create_founder_brain_router(
         return FounderBrainResponse(
             data=selected.capabilities().model_dump(mode="json")
         )
+
+    @router.get("/cognitive/candidates", response_model=FounderBrainResponse)
+    def cognitive_candidates(status: str = "pending") -> FounderBrainResponse:
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        try:
+            rows = SupabaseCognitiveMemoryRepository().list_candidates(founder_id, status=status)
+            return FounderBrainResponse(data={"founder_id": founder_id, "status": status, "count": len(rows), "candidates": rows})
+        except SupabasePersistenceError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    @router.post("/cognitive/candidates", response_model=FounderBrainResponse)
+    def cognitive_candidate_create(request: CognitiveCandidateRequest) -> FounderBrainResponse:
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        repo = SupabaseCognitiveMemoryRepository()
+        try:
+            snapshot = repo.latest_snapshot(founder_id)
+            if snapshot is None:
+                raise SupabasePersistenceError("persistent cognitive baseline is missing")
+            candidate = ingest_cognitive_candidate(snapshot.profile, CognitiveIngestionSource(source_type=request.source_type, source_id=request.source_id, observed_at=request.observed_at, text=request.text, project_ids=tuple(request.project_ids)), candidate_id=request.candidate_id)
+            repo.save_candidate(founder_id, candidate)
+            repo.append_audit_event(event_id=f"candidate:{candidate.candidate_id}:queued", founder_id=founder_id, event_type="candidate.queued", occurred_at=request.observed_at, subject_id=candidate.candidate_id, metadata={"kind": candidate.kind.value, "confidence": candidate.confidence})
+            return FounderBrainResponse(data={"candidate_id": candidate.candidate_id, "kind": candidate.kind.value, "confidence": candidate.confidence, "review_status": "pending", "promotion_allowed": False})
+        except (SupabasePersistenceError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @router.post("/cognitive/candidates/{candidate_id}/review", response_model=FounderBrainResponse)
+    def cognitive_candidate_review(candidate_id: str, request: CognitiveReviewRequest) -> FounderBrainResponse:
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        repo = SupabaseCognitiveMemoryRepository()
+        try:
+            candidate = repo.get_candidate(founder_id, candidate_id)
+            snapshot = repo.latest_snapshot(founder_id)
+            if candidate is None or snapshot is None:
+                raise CognitiveReviewError("candidate or cognitive baseline not found")
+            review = CandidateReviewDecision(candidate_id=candidate_id, disposition=request.disposition, reviewer_id=request.reviewer_id, reviewed_at=request.reviewed_at, rationale=request.rationale, conflict_resolution=request.conflict_resolution)
+            metadata = None
+            if request.disposition is CandidateReviewDisposition.ACCEPT:
+                if not request.memory_id:
+                    raise CognitiveReviewError("accepted candidate requires memory_id")
+                metadata = PromotionMetadata(memory_id=request.memory_id, domain_or_scope=request.domain_or_scope, strength_or_confidence=request.strength_or_confidence, title=request.title, problem=request.problem, options_considered=tuple(request.options_considered), chosen_option=request.chosen_option, rationale=request.rationale, expected_outcome=request.expected_outcome, related_decision_ids=tuple(request.related_decision_ids))
+            result = review_and_promote_candidate(snapshot.profile, candidate, review, metadata, previous_snapshot=snapshot)
+            if result.snapshot is not None:
+                repo.save_snapshot(result.snapshot)
+            repo.save_review(founder_id, review, promoted_memory_id=result.promoted_memory_id, snapshot_sha256=None if result.snapshot is None else result.snapshot.snapshot_sha256)
+            repo.update_candidate_review_status(founder_id, candidate_id, request.disposition)
+            repo.append_audit_event(event_id=f"candidate:{candidate_id}:review:{request.reviewed_at}", founder_id=founder_id, event_type="candidate.reviewed", occurred_at=request.reviewed_at, subject_id=candidate_id, metadata={"disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256})
+            return FounderBrainResponse(data={"candidate_id": candidate_id, "disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_version": None if result.snapshot is None else result.snapshot.version, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256})
+        except (SupabasePersistenceError, CognitiveReviewError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @router.get("/cognitive/manifest", response_model=FounderBrainResponse)
     def founder_brain_cognitive_manifest() -> FounderBrainResponse:

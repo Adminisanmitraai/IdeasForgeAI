@@ -6,13 +6,13 @@ from dataclasses import dataclass
 from typing import Any, Callable
 from urllib import error, parse, request
 
-from .cognitive_ingestion import CognitiveMemoryCandidate
+from .cognitive_ingestion import CandidateMemoryKind, CognitiveMemoryCandidate
 from .cognitive_memory import FounderCognitiveProfile
 from .cognitive_memory_repository import (
     CognitiveMemorySnapshot,
     build_cognitive_memory_snapshot,
 )
-from .cognitive_review import CandidateReviewDecision
+from .cognitive_review import CandidateReviewDecision, CandidateReviewDisposition
 
 FORGEBRAIN_SUPABASE_PERSISTENCE_VERSION = "forgebrain.supabase-persistence.v1"
 
@@ -71,6 +71,24 @@ def _post_json(
     data = json.loads(raw or "[]")
     if not isinstance(data, list):
         raise SupabasePersistenceError("Supabase returned an invalid write response")
+    return data
+
+
+def _patch_json(config: SupabasePersistenceConfig, table: str, query: str, payload: dict[str, Any]) -> list[dict[str, Any]]:
+    url = f"{config.url}/rest/v1/{parse.quote(table)}?{query}"
+    body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+    req = request.Request(url, data=body, headers=_headers(config), method="PATCH")
+    try:
+        with request.urlopen(req, timeout=config.timeout_seconds) as response:
+            raw = response.read().decode("utf-8")
+    except error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise SupabasePersistenceError(f"Supabase update failed: HTTP {exc.code}: {detail}") from exc
+    except error.URLError as exc:
+        raise SupabasePersistenceError(f"Supabase update failed: {exc.reason}") from exc
+    data = json.loads(raw or "[]")
+    if not isinstance(data, list):
+        raise SupabasePersistenceError("Supabase returned an invalid update response")
     return data
 
 
@@ -176,6 +194,33 @@ class SupabaseCognitiveMemoryRepository:
         }
         _post_json(self._config, "fb_cognitive_reviews", payload)
         return PersistenceWriteResult("fb_cognitive_reviews", review_id, "stored")
+
+    def list_candidates(self, founder_id: str, *, status: str = "pending", limit: int = 100) -> list[dict[str, Any]]:
+        query = parse.urlencode({
+            "select": "candidate_id,founder_id,kind,statement,confidence,source_type,source_id,observed_at,project_ids,duplicate_memory_ids,contradiction_memory_ids,review_status,created_at",
+            "founder_id": f"eq.{founder_id}",
+            "review_status": f"eq.{status}",
+            "order": "created_at.asc",
+            "limit": str(max(1, min(limit, 500))),
+        })
+        return _get_json(self._config, "fb_cognitive_candidates", query)
+
+    def get_candidate(self, founder_id: str, candidate_id: str) -> CognitiveMemoryCandidate | None:
+        query = parse.urlencode({"select": "candidate_id,kind,statement,confidence,source_type,source_id,observed_at,project_ids,duplicate_memory_ids,contradiction_memory_ids,review_status", "founder_id": f"eq.{founder_id}", "candidate_id": f"eq.{candidate_id}", "limit": "1"})
+        rows = _get_json(self._config, "fb_cognitive_candidates", query)
+        if not rows:
+            return None
+        row = rows[0]
+        if row.get("review_status") != "pending":
+            raise SupabasePersistenceError("candidate is not pending review")
+        return CognitiveMemoryCandidate(candidate_id=row["candidate_id"], kind=CandidateMemoryKind(row["kind"]), statement=row["statement"], confidence=float(row["confidence"]), source_type=row["source_type"], source_id=row["source_id"], observed_at=_canonical_utc_text(row["observed_at"]), project_ids=tuple(row.get("project_ids") or ()), duplicate_memory_ids=tuple(row.get("duplicate_memory_ids") or ()), contradiction_memory_ids=tuple(row.get("contradiction_memory_ids") or ()))
+
+    def update_candidate_review_status(self, founder_id: str, candidate_id: str, disposition: CandidateReviewDisposition) -> None:
+        status = {CandidateReviewDisposition.ACCEPT: "accepted", CandidateReviewDisposition.REJECT: "rejected", CandidateReviewDisposition.DEFER: "deferred"}[disposition]
+        query = parse.urlencode({"founder_id": f"eq.{founder_id}", "candidate_id": f"eq.{candidate_id}", "review_status": "eq.pending"})
+        rows = _patch_json(self._config, "fb_cognitive_candidates", query, {"review_status": status})
+        if len(rows) != 1:
+            raise SupabasePersistenceError("candidate review status transition failed")
 
     def latest_snapshot(self, founder_id: str) -> CognitiveMemorySnapshot | None:
         query = parse.urlencode({
