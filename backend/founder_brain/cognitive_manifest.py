@@ -4,6 +4,7 @@ from dataclasses import dataclass, asdict
 
 from .cognitive_advisor import FOUNDER_COGNITIVE_ADVISOR_VERSION
 from .cognitive_context import FOUNDER_COGNITIVE_CONTEXT_VERSION
+from .cognitive_conflicts import FOUNDER_COGNITIVE_CONFLICT_VERSION
 from .cognitive_evolution import FOUNDER_COGNITIVE_EVOLUTION_VERSION
 from .cognitive_ingestion import FOUNDER_COGNITIVE_INGESTION_VERSION
 from .cognitive_memory import FOUNDER_COGNITIVE_MEMORY_SCHEMA_VERSION
@@ -42,6 +43,7 @@ def cognitive_capability_manifest() -> dict[str, object]:
         CognitiveCapability("context", "Cognitive Context Injection", FOUNDER_COGNITIVE_CONTEXT_VERSION),
         CognitiveCapability("ingestion", "Memory Ingestion", FOUNDER_COGNITIVE_INGESTION_VERSION),
         CognitiveCapability("review", "Controlled Memory Promotion", FOUNDER_COGNITIVE_REVIEW_VERSION),
+        CognitiveCapability("conflicts", "Contradiction Lifecycle & Supersession", FOUNDER_COGNITIVE_CONFLICT_VERSION),
         CognitiveCapability("temporal", "Temporal Cognitive Intelligence", FOUNDER_COGNITIVE_TEMPORAL_VERSION),
     )
     return {

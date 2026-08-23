@@ -39,6 +39,9 @@ create table if not exists public.fb_cognitive_reviews (
   reviewed_at timestamptz not null,
   rationale text not null,
   conflict_resolution text not null default '',
+  conflict_action text check (conflict_action is null or conflict_action in ('supersede','contextual_exception','retain_both','require_clarification')),
+  conflict_target_memory_ids text[] not null default '{}',
+  conflict_context_note text not null default '',
   promoted_memory_id text,
   snapshot_sha256 text references public.fb_cognitive_snapshots(snapshot_sha256),
   created_at timestamptz not null default now()

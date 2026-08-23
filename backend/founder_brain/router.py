@@ -24,6 +24,7 @@ from .service import FounderBrainReadService
 from .cognitive_manifest import cognitive_capability_manifest
 from .cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from .cognitive_review import CandidateReviewDecision, CandidateReviewDisposition, PromotionMetadata, CognitiveReviewError, review_and_promote_candidate
+from .cognitive_conflicts import ConflictResolutionAction
 from .cognitive_temporal import analyze_cognitive_timeline
 from .supabase_persistence import SupabaseCognitiveMemoryRepository, SupabasePersistenceError
 
@@ -50,6 +51,9 @@ class CognitiveReviewRequest(BaseModel):
     reviewed_at: str
     rationale: str
     conflict_resolution: str = ""
+    conflict_action: ConflictResolutionAction | None = None
+    conflict_target_memory_ids: list[str] = []
+    conflict_context_note: str = ""
     memory_id: str | None = None
     domain_or_scope: str = ""
     strength_or_confidence: float = 0.7
@@ -127,7 +131,7 @@ def create_founder_brain_router(
             snapshot = repo.latest_snapshot(founder_id)
             if candidate is None or snapshot is None:
                 raise CognitiveReviewError("candidate or cognitive baseline not found")
-            review = CandidateReviewDecision(candidate_id=candidate_id, disposition=request.disposition, reviewer_id=request.reviewer_id, reviewed_at=request.reviewed_at, rationale=request.rationale, conflict_resolution=request.conflict_resolution)
+            review = CandidateReviewDecision(candidate_id=candidate_id, disposition=request.disposition, reviewer_id=request.reviewer_id, reviewed_at=request.reviewed_at, rationale=request.rationale, conflict_resolution=request.conflict_resolution, conflict_action=request.conflict_action, conflict_target_memory_ids=tuple(request.conflict_target_memory_ids), conflict_context_note=request.conflict_context_note)
             metadata = None
             if request.disposition is CandidateReviewDisposition.ACCEPT:
                 if not request.memory_id:
@@ -138,7 +142,7 @@ def create_founder_brain_router(
                 repo.save_snapshot(result.snapshot)
             repo.save_review(founder_id, review, promoted_memory_id=result.promoted_memory_id, snapshot_sha256=None if result.snapshot is None else result.snapshot.snapshot_sha256)
             repo.update_candidate_review_status(founder_id, candidate_id, request.disposition)
-            repo.append_audit_event(event_id=f"candidate:{candidate_id}:review:{request.reviewed_at}", founder_id=founder_id, event_type="candidate.reviewed", occurred_at=request.reviewed_at, subject_id=candidate_id, metadata={"disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256})
+            repo.append_audit_event(event_id=f"candidate:{candidate_id}:review:{request.reviewed_at}", founder_id=founder_id, event_type="candidate.reviewed", occurred_at=request.reviewed_at, subject_id=candidate_id, metadata={"disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256, "conflict_action": None if request.conflict_action is None else request.conflict_action.value, "conflict_target_memory_ids": request.conflict_target_memory_ids, "conflict_context_note": request.conflict_context_note})
             return FounderBrainResponse(data={"candidate_id": candidate_id, "disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_version": None if result.snapshot is None else result.snapshot.version, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256})
         except (SupabasePersistenceError, CognitiveReviewError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc

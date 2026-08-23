@@ -4,6 +4,7 @@ from backend.founder_brain.cognitive_ingestion import (
     CandidateMemoryKind, CognitiveMemoryCandidate,
 )
 from backend.founder_brain.cognitive_memory import FounderCognitiveProfile
+from backend.founder_brain.cognitive_conflicts import ConflictResolutionAction
 from backend.founder_brain.cognitive_review import (
     CandidateReviewDecision, CandidateReviewDisposition,
     CognitiveReviewError, PromotionMetadata, review_and_promote_candidate,
@@ -107,3 +108,44 @@ def test_decision_promotion_requires_structured_review_metadata():
     )
     assert result.profile.decisions[0].decision_id == "d1"
     assert result.profile.decisions[0].related_project_ids == ("forgebrain",)
+
+
+def test_contradiction_supersede_marks_old_memory_and_promotes_new():
+    from backend.founder_brain.cognitive_memory import FounderPreferenceMemory
+    profile = FounderCognitiveProfile(
+        founder_id="f1", generated_at="t0",
+        preferences=(FounderPreferenceMemory(
+            preference_id="pref-old", domain="architecture",
+            statement="I prefer direct integrations", strength=0.8, updated_at="t0",
+        ),),
+    )
+    candidate = _candidate(
+        statement="I no longer prefer direct integrations",
+        contradiction_memory_ids=("pref-old",),
+    )
+    review = _review(
+        conflict_resolution="shared gateway supersedes direct integrations",
+        conflict_action=ConflictResolutionAction.SUPERSEDE,
+        conflict_target_memory_ids=("pref-old",),
+    )
+    result = review_and_promote_candidate(
+        profile, candidate, review,
+        PromotionMetadata(memory_id="pref-new", domain_or_scope="architecture"),
+    )
+    old = next(x for x in result.profile.preferences if x.preference_id == "pref-old")
+    new = next(x for x in result.profile.preferences if x.preference_id == "pref-new")
+    assert old.status == "superseded"
+    assert new.status == "active"
+
+
+def test_contradiction_clarification_cannot_be_accepted():
+    candidate = _candidate(contradiction_memory_ids=("pref-old",))
+    review = _review(
+        conflict_resolution="needs founder clarification",
+        conflict_action=ConflictResolutionAction.REQUIRE_CLARIFICATION,
+        conflict_target_memory_ids=("pref-old",),
+    )
+    with pytest.raises(CognitiveReviewError, match="clarification requires defer"):
+        review_and_promote_candidate(
+            _profile(), candidate, review, PromotionMetadata(memory_id="pref-new")
+        )

@@ -8,6 +8,7 @@ from backend.founder_brain.cognitive_memory_repository import build_cognitive_me
 from backend.founder_brain.cognitive_review import (
     CandidateReviewDecision, CandidateReviewDisposition,
 )
+from backend.founder_brain.cognitive_conflicts import ConflictResolutionAction
 from backend.founder_brain.supabase_persistence import (
     SupabaseCognitiveMemoryRepository, SupabasePersistenceConfig,
     SupabasePersistenceError,
@@ -126,3 +127,24 @@ def test_list_snapshots_returns_integrity_validated_chain(monkeypatch):
     )
     restored = _repo().list_snapshots("founder-1")
     assert restored == (s1, s2)
+
+
+def test_review_write_persists_typed_conflict_resolution(monkeypatch):
+    captured = {}
+    monkeypatch.setattr(
+        "backend.founder_brain.supabase_persistence._post_json",
+        lambda config, table, payload: captured.update({"table": table, "payload": payload}) or [payload],
+    )
+    review = CandidateReviewDecision(
+        candidate_id="c-conflict", disposition=CandidateReviewDisposition.ACCEPT,
+        reviewer_id="founder-1", reviewed_at="now", rationale="confirmed",
+        conflict_resolution="new preference replaces old preference",
+        conflict_action=ConflictResolutionAction.SUPERSEDE,
+        conflict_target_memory_ids=("pref-old",),
+        conflict_context_note="global replacement",
+    )
+    _repo().save_review("founder-1", review)
+    payload = captured["payload"]
+    assert payload["conflict_action"] == "supersede"
+    assert payload["conflict_target_memory_ids"] == ["pref-old"]
+    assert payload["conflict_context_note"] == "global replacement"

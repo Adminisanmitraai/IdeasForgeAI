@@ -189,6 +189,9 @@ class SupabaseCognitiveMemoryRepository:
             "reviewed_at": review.reviewed_at,
             "rationale": review.rationale,
             "conflict_resolution": review.conflict_resolution,
+            "conflict_action": None if review.conflict_action is None else review.conflict_action.value,
+            "conflict_target_memory_ids": list(review.conflict_target_memory_ids),
+            "conflict_context_note": review.conflict_context_note,
             "promoted_memory_id": promoted_memory_id,
             "snapshot_sha256": snapshot_sha256,
         }

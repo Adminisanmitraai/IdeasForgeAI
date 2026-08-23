@@ -5,6 +5,11 @@ from enum import Enum
 from typing import Mapping
 
 from .cognitive_ingestion import CandidateMemoryKind, CognitiveMemoryCandidate
+from .cognitive_conflicts import (
+    CognitiveConflictResolution,
+    ConflictResolutionAction,
+    resolve_candidate_conflicts,
+)
 from .cognitive_memory import (
     CognitiveEvidence,
     FounderAssumptionMemory,
@@ -36,6 +41,9 @@ class CandidateReviewDecision:
     reviewed_at: str
     rationale: str
     conflict_resolution: str = ""
+    conflict_action: ConflictResolutionAction | None = None
+    conflict_target_memory_ids: tuple[str, ...] = ()
+    conflict_context_note: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -77,6 +85,10 @@ def _validate_review(candidate: CognitiveMemoryCandidate, review: CandidateRevie
             raise CognitiveReviewError("unknown candidate cannot be promoted")
         if (candidate.duplicate_memory_ids or candidate.contradiction_memory_ids) and not review.conflict_resolution.strip():
             raise CognitiveReviewError("duplicate or contradiction requires explicit conflict resolution")
+        if candidate.contradiction_memory_ids and review.conflict_action is None:
+            raise CognitiveReviewError("contradiction requires explicit conflict action")
+        if review.conflict_action is ConflictResolutionAction.REQUIRE_CLARIFICATION:
+            raise CognitiveReviewError("clarification requires defer, not accept")
 
 
 def _append_evidence(
@@ -197,7 +209,21 @@ def review_and_promote_candidate(
         )
     if metadata is None:
         raise CognitiveReviewError("accepted candidate requires promotion metadata")
-    evolved, evidence_id = _append_evidence(profile, candidate)
+    base_profile = profile
+    if candidate.contradiction_memory_ids:
+        conflict = resolve_candidate_conflicts(
+            profile, candidate,
+            CognitiveConflictResolution(
+                action=review.conflict_action,
+                target_memory_ids=review.conflict_target_memory_ids,
+                rationale=review.conflict_resolution,
+                context_note=review.conflict_context_note,
+            ),
+        )
+        if not conflict.promotion_allowed:
+            raise CognitiveReviewError("conflict resolution does not permit promotion")
+        base_profile = conflict.profile
+    evolved, evidence_id = _append_evidence(base_profile, candidate)
     evolved = _promote_entity(
         evolved, candidate, metadata, evidence_id=evidence_id, reviewed_at=review.reviewed_at
     )
