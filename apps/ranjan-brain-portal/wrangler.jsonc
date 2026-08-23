@@ -1,0 +1,9 @@
+{
+  "$schema": "../../desktop/ideasforge-terminal/node_modules/wrangler/config-schema.json",
+  "name": "ranjan-forgebrain",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-08-23",
+  "routes": [
+    { "pattern": "ranjan.ideasforgeai.com", "custom_domain": true }
+  ]
+}
