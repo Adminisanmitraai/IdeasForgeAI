@@ -270,3 +270,19 @@ __all__ += (
     "CognitiveReviewError",
     "review_and_promote_candidate",
 )
+
+from .supabase_persistence import (
+    FORGEBRAIN_SUPABASE_PERSISTENCE_VERSION,
+    PersistenceWriteResult,
+    SupabaseCognitiveMemoryRepository,
+    SupabasePersistenceConfig,
+    SupabasePersistenceError,
+)
+
+__all__ += (
+    "FORGEBRAIN_SUPABASE_PERSISTENCE_VERSION",
+    "SupabasePersistenceError",
+    "SupabasePersistenceConfig",
+    "PersistenceWriteResult",
+    "SupabaseCognitiveMemoryRepository",
+)
