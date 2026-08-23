@@ -25,7 +25,9 @@ from .cognitive_manifest import cognitive_capability_manifest
 from .cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from .cognitive_review import CandidateReviewDecision, CandidateReviewDisposition, PromotionMetadata, CognitiveReviewError, review_and_promote_candidate
 from .cognitive_conflicts import ConflictResolutionAction
+from .cognitive_confidence import CognitiveConfidenceError, apply_confidence_adjustment, assess_memory_confidence
 from .cognitive_temporal import analyze_cognitive_timeline
+from .cognitive_memory_repository import build_cognitive_memory_snapshot
 from .supabase_persistence import SupabaseCognitiveMemoryRepository, SupabasePersistenceError
 
 ROUTE_PREFIX = "/api/founder-brain/v1"
@@ -63,6 +65,16 @@ class CognitiveReviewRequest(BaseModel):
     chosen_option: str = ""
     expected_outcome: str = ""
     related_decision_ids: list[str] = []
+
+
+class CognitiveConfidenceAdjustmentRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    memory_type: str
+    memory_id: str
+    new_confidence: float
+    approved_at: str
+    reviewer_id: str
+    rationale: str
 
 
 def create_founder_brain_router(
@@ -145,6 +157,39 @@ def create_founder_brain_router(
             repo.append_audit_event(event_id=f"candidate:{candidate_id}:review:{request.reviewed_at}", founder_id=founder_id, event_type="candidate.reviewed", occurred_at=request.reviewed_at, subject_id=candidate_id, metadata={"disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256, "conflict_action": None if request.conflict_action is None else request.conflict_action.value, "conflict_target_memory_ids": request.conflict_target_memory_ids, "conflict_context_note": request.conflict_context_note})
             return FounderBrainResponse(data={"candidate_id": candidate_id, "disposition": request.disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_version": None if result.snapshot is None else result.snapshot.version, "snapshot_sha256": None if result.snapshot is None else result.snapshot.snapshot_sha256})
         except (SupabasePersistenceError, CognitiveReviewError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    @router.get("/cognitive/confidence", response_model=FounderBrainResponse)
+    def cognitive_confidence(x_forgebrain_review_key: str | None = Header(default=None)) -> FounderBrainResponse:
+        _require_review_key(x_forgebrain_review_key)
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        try:
+            snapshot = SupabaseCognitiveMemoryRepository().latest_snapshot(founder_id)
+            if snapshot is None:
+                raise SupabasePersistenceError("persistent cognitive baseline is missing")
+            as_of = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+            rows = assess_memory_confidence(snapshot.profile, as_of=as_of)
+            return FounderBrainResponse(data={"founder_id": founder_id, "snapshot_version": snapshot.version, "as_of": as_of, "assessment_count": len(rows), "assessments": [asdict(row) for row in rows], "automatic_mutation": False})
+        except SupabasePersistenceError as exc:
+            raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+    @router.post("/cognitive/confidence/adjust", response_model=FounderBrainResponse)
+    def cognitive_confidence_adjust(request: CognitiveConfidenceAdjustmentRequest, x_forgebrain_review_key: str | None = Header(default=None)) -> FounderBrainResponse:
+        _require_review_key(x_forgebrain_review_key)
+        if not request.reviewer_id.strip() or not request.rationale.strip():
+            raise HTTPException(status_code=422, detail="reviewer and rationale are required")
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        repo = SupabaseCognitiveMemoryRepository()
+        try:
+            previous = repo.latest_snapshot(founder_id)
+            if previous is None:
+                raise SupabasePersistenceError("persistent cognitive baseline is missing")
+            evolved = apply_confidence_adjustment(previous.profile, memory_type=request.memory_type, memory_id=request.memory_id, new_confidence=request.new_confidence, updated_at=request.approved_at)
+            snapshot = build_cognitive_memory_snapshot(evolved, version=previous.version + 1, stored_at=request.approved_at, previous_snapshot_sha256=previous.snapshot_sha256)
+            repo.save_snapshot(snapshot)
+            repo.append_audit_event(event_id=f"confidence:{request.memory_type}:{request.memory_id}:{request.approved_at}", founder_id=founder_id, event_type="memory.confidence_adjusted", occurred_at=request.approved_at, subject_id=request.memory_id, metadata={"memory_type": request.memory_type, "new_confidence": request.new_confidence, "reviewer_id": request.reviewer_id, "rationale": request.rationale, "snapshot_sha256": snapshot.snapshot_sha256})
+            return FounderBrainResponse(data={"memory_type": request.memory_type, "memory_id": request.memory_id, "new_confidence": request.new_confidence, "snapshot_version": snapshot.version, "snapshot_sha256": snapshot.snapshot_sha256})
+        except (SupabasePersistenceError, CognitiveConfidenceError, ValueError) as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @router.get("/cognitive/temporal", response_model=FounderBrainResponse)
