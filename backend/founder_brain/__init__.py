@@ -250,3 +250,23 @@ __all__ += (
     "classify_candidate_kind",
     "ingest_cognitive_candidate",
 )
+
+from .cognitive_review import (
+    FOUNDER_COGNITIVE_REVIEW_VERSION,
+    CandidateReviewDisposition,
+    CandidateReviewDecision,
+    PromotionMetadata,
+    ControlledPromotionResult,
+    CognitiveReviewError,
+    review_and_promote_candidate,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_REVIEW_VERSION",
+    "CandidateReviewDisposition",
+    "CandidateReviewDecision",
+    "PromotionMetadata",
+    "ControlledPromotionResult",
+    "CognitiveReviewError",
+    "review_and_promote_candidate",
+)
