@@ -4,6 +4,9 @@
   "main": "src/worker.js",
   "compatibility_date": "2026-08-23",
   "routes": [
-    { "pattern": "ranjan.ideasforgeai.com/*", "zone_name": "ideasforgeai.com" }
+    {
+      "pattern": "ranjan.ideasforgeai.com/*",
+      "zone_name": "ideasforgeai.com"
+    }
   ]
 }
