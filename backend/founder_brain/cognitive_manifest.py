@@ -45,7 +45,7 @@ def cognitive_capability_manifest() -> dict[str, object]:
     return {
         "schema_version": FOUNDER_COGNITIVE_MANIFEST_VERSION,
         "program": "ForgeBrain 2.0",
-        "phase": "FB-2.1 — Cognitive Memory & Founder Model",
+        "phase": "FB-2.1 - Cognitive Memory & Founder Model",
         "capabilities": [asdict(item) for item in capabilities],
         "capability_count": len(capabilities),
         "execution_allowed": False,
