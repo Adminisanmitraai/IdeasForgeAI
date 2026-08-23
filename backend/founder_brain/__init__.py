@@ -60,3 +60,27 @@ __all__ += (
     "FounderCommandResolution",
     "resolve_founder_command",
 )
+
+from .cognitive_memory import (
+    FOUNDER_COGNITIVE_MEMORY_SCHEMA_VERSION,
+    CognitiveEvidence,
+    FounderAssumptionMemory,
+    FounderCognitiveProfile,
+    FounderDecisionMemory,
+    FounderLessonMemory,
+    FounderPreferenceMemory,
+    active_preferences,
+    validate_cognitive_profile,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_MEMORY_SCHEMA_VERSION",
+    "CognitiveEvidence",
+    "FounderPreferenceMemory",
+    "FounderAssumptionMemory",
+    "FounderDecisionMemory",
+    "FounderLessonMemory",
+    "FounderCognitiveProfile",
+    "active_preferences",
+    "validate_cognitive_profile",
+)
