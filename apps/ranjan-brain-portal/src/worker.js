@@ -4,21 +4,22 @@ async function proxyBrain(request, url) {
   const suffix = url.pathname.replace('/api/brain', '');
   const target = new URL('/api/founder-brain/v1' + suffix, API_ORIGIN);
   target.search = url.search;
-  const headers = new Headers(request.headers);
-  headers.set('host', target.host);
+  const headers = new Headers({ accept: 'application/json' });
   const init = { method: request.method, headers, redirect: 'follow' };
-  if (!['GET', 'HEAD'].includes(request.method)) init.body = request.body;
+  if (!['GET', 'HEAD'].includes(request.method)) {
+    headers.set('content-type', request.headers.get('content-type') || 'application/json');
+    init.body = await request.arrayBuffer();
+  }
   const response = await fetch(target, init);
   const out = new Headers(response.headers);
   out.set('cache-control', 'no-store');
   out.set('x-forgebrain-proxy', 'ranjan-forgebrain');
   return new Response(response.body, { status: response.status, headers: out });
 }
-
 const page = `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Ranjan · ForgeBrain 2.0</title>
+<title>Ranjan - ForgeBrain 2.0</title>
 <meta name="theme-color" content="#071018"/>
 <style>
 :root{--bg:#071018;--panel:#0b1620;--line:#1c3140;--text:#edf7fb;--muted:#8da3b0;--cyan:#4bd6f2;--green:#5ae38b}
@@ -43,15 +44,15 @@ button,input{font:inherit}.app{min-height:100vh;display:grid;grid-template-colum
 @media(max-width:520px){.capgrid{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
 </style></head><body><div class="app">
 <aside class="side"><div class="brand">FORGEBRAIN <small>PRIVATE FOUNDER WORKSPACE</small></div><div class="nav"><button class="active">Brain</button><button>Memory</button><button>Decisions</button><button>Projects</button><button>Review</button><button>Capabilities</button></div></aside>
-<main class="main"><div class="top"><div><div class="kicker">Ranjan · Cognitive Operating Layer</div><div class="title">ForgeBrain 2.0</div><div class="sub" id="phase">Connecting to brain…</div></div><div class="status"><span class="dot"></span><span id="live">Checking live API</span></div></div>
-<div class="grid"><section class="card"><h3>Brain console</h3><div class="chat"><div class="messages" id="messages"><div class="msg ai">ForgeBrain is connected in read-only mode. Ask about current state, mission, plans, or current capabilities.</div></div><form class="composer" id="chat"><input id="prompt" autocomplete="off" placeholder="Ask ForgeBrain…"/><button>Ask</button></form></div></section>
-<section class="card"><h3>Current state</h3><div class="metric" id="state">—</div><div class="muted" id="mission">Loading mission…</div><div class="row" style="margin-top:16px"><div class="mini"><b id="caps">—</b><span>Cognitive capabilities</span></div><div class="mini"><b id="mode">—</b><span>Operating mode</span></div></div><div class="notice">Persistent personal memory is not yet connected to Supabase. This live portal currently exposes governed, read-only ForgeBrain capabilities and planning.</div></section></div>
-<section class="card" style="margin-top:18px"><h3>FB-2.1 cognitive capabilities</h3><div class="capgrid" id="capgrid"><div class="muted">Loading capability manifest…</div></div></section>
+<main class="main"><div class="top"><div><div class="kicker">Ranjan - Cognitive Operating Layer</div><div class="title">ForgeBrain 2.0</div><div class="sub" id="phase">Connecting to brain...</div></div><div class="status"><span class="dot"></span><span id="live">Checking live API</span></div></div>
+<div class="grid"><section class="card"><h3>Brain console</h3><div class="chat"><div class="messages" id="messages"><div class="msg ai">ForgeBrain is connected in read-only mode. Ask about current state, mission, plans, or current capabilities.</div></div><form class="composer" id="chat"><input id="prompt" autocomplete="off" placeholder="Ask ForgeBrain..."/><button>Ask</button></form></div></section>
+<section class="card"><h3>Current state</h3><div class="metric" id="state">--</div><div class="muted" id="mission">Loading mission...</div><div class="row" style="margin-top:16px"><div class="mini"><b id="caps">--</b><span>Cognitive capabilities</span></div><div class="mini"><b id="mode">--</b><span>Operating mode</span></div></div><div class="notice">Persistent personal memory is not yet connected to Supabase. This live portal currently exposes governed, read-only ForgeBrain capabilities and planning.</div></section></div>
+<section class="card" style="margin-top:18px"><h3>FB-2.1 cognitive capabilities</h3><div class="capgrid" id="capgrid"><div class="muted">Loading capability manifestâ€¦</div></div></section>
 </main></div><script>
-const api='/api/brain', byId=id=>document.getElementById(id);
+const api='https://ideasforgeai-api.onrender.com/api/founder-brain/v1', byId=id=>document.getElementById(id);
 async function json(path,options){const r=await fetch(api+path,options);if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-async function load(){try{const [manifest,state,mission]=await Promise.all([json('/cognitive/manifest'),json('/state'),json('/mission')]);const m=manifest.data||{},s=state.data||{},ms=mission.data||{};byId('phase').textContent=m.phase||'ForgeBrain 2.0';byId('live').textContent='Live API connected';byId('state').textContent=s.operating_state||'ready';byId('mode').textContent=(s.operating_mode||'read_only').replace('_',' ');byId('mission').textContent=ms.mission||s.mission||'Build IdeasForgeAI';byId('caps').textContent=m.capability_count??0;const items=m.capabilities||[];byId('capgrid').innerHTML=items.map(x=>'<div class="cap"><b>'+esc(x.title)+'</b><small>'+esc(x.capability_id)+' · '+esc(x.version)+'</small><span class="pill">'+esc(x.status)+'</span></div>').join('')||'<div class="muted">No capabilities returned.</div>';}catch(e){byId('live').textContent='API unavailable';byId('live').className='error';byId('phase').textContent='ForgeBrain connection unavailable';}}
+async function load(){try{const [manifest,state,mission]=await Promise.all([json('/cognitive/manifest'),json('/state'),json('/mission')]);const m=manifest.data||{},s=state.data||{},ms=mission.data||{};byId('phase').textContent=m.phase||'ForgeBrain 2.0';byId('live').textContent='Live API connected';byId('state').textContent=s.operating_state||'ready';byId('mode').textContent=(s.operating_mode||'read_only').replace('_',' ');byId('mission').textContent=ms.mission||s.mission||'Build IdeasForgeAI';byId('caps').textContent=m.capability_count??0;const items=m.capabilities||[];byId('capgrid').innerHTML=items.map(x=>'<div class="cap"><b>'+esc(x.title)+'</b><small>'+esc(x.capability_id)+' - '+esc(x.version)+'</small><span class="pill">'+esc(x.status)+'</span></div>').join('')||'<div class="muted">No capabilities returned.</div>';}catch(e){byId('live').textContent='API unavailable';byId('live').className='error';byId('phase').textContent='ForgeBrain connection unavailable';}}
 function add(text,cls){const d=document.createElement('div');d.className='msg '+cls;d.textContent=text;byId('messages').appendChild(d);byId('messages').scrollTop=byId('messages').scrollHeight;}
 byId('chat').addEventListener('submit',async e=>{e.preventDefault();const input=byId('prompt'),text=input.value.trim();if(!text)return;add(text,'you');input.value='';try{const res=await json('/chat/plan',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({message:text})});const d=res.data||{};let out=d.response||d.summary||d.recommended_next_action||'';if(!out)out='Intent understood. This portal is currently read-only; execution remains governed.';add(out,'ai');}catch(err){add('ForgeBrain could not complete that planning request: '+err.message,'ai');}});
 load();
