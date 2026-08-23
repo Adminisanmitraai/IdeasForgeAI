@@ -156,3 +156,19 @@ __all__ += (
     "FounderPatternReport",
     "analyze_founder_patterns",
 )
+
+from .cognitive_advisor import (
+    FOUNDER_COGNITIVE_ADVISOR_VERSION,
+    AdvisorFinding,
+    CognitiveDecisionAdvice,
+    DecisionProposal,
+    advise_decision,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_ADVISOR_VERSION",
+    "DecisionProposal",
+    "AdvisorFinding",
+    "CognitiveDecisionAdvice",
+    "advise_decision",
+)
