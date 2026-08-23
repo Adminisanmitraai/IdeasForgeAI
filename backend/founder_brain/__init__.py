@@ -232,3 +232,21 @@ __all__ += (
     "build_cognitive_context",
     "safe_empty_cognitive_context",
 )
+
+from .cognitive_ingestion import (
+    FOUNDER_COGNITIVE_INGESTION_VERSION,
+    CandidateMemoryKind,
+    CognitiveIngestionSource,
+    CognitiveMemoryCandidate,
+    classify_candidate_kind,
+    ingest_cognitive_candidate,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_INGESTION_VERSION",
+    "CandidateMemoryKind",
+    "CognitiveIngestionSource",
+    "CognitiveMemoryCandidate",
+    "classify_candidate_kind",
+    "ingest_cognitive_candidate",
+)
