@@ -91,12 +91,21 @@ def _get_json(config: SupabasePersistenceConfig, table: str, query: str) -> list
     return data
 
 
+def _canonical_utc_text(value: Any) -> str:
+    text = str(value)
+    if text.endswith("+00:00"):
+        return text[:-6] + "Z"
+    if text.endswith("+00"):
+        return text[:-3] + "Z"
+    return text
+
+
 def _snapshot_from_row(row: dict[str, Any]) -> CognitiveMemorySnapshot:
     profile = FounderCognitiveProfile.model_validate(row["profile_json"])
     snapshot = build_cognitive_memory_snapshot(
         profile,
         version=int(row["version"]),
-        stored_at=str(row["stored_at"]),
+        stored_at=_canonical_utc_text(row["stored_at"]),
         previous_snapshot_sha256=row.get("previous_snapshot_sha256"),
     )
     if snapshot.profile_sha256 != row["profile_sha256"] or snapshot.snapshot_sha256 != row["snapshot_sha256"]:

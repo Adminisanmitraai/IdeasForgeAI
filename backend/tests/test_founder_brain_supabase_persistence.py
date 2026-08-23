@@ -81,10 +81,11 @@ def test_review_write_links_promotion_and_snapshot(monkeypatch):
 
 
 def test_latest_snapshot_validates_integrity(monkeypatch):
-    profile = FounderCognitiveProfile(founder_id="founder-1", generated_at="now")
-    snapshot = build_cognitive_memory_snapshot(profile, version=1, stored_at="now")
+    profile = FounderCognitiveProfile(founder_id="founder-1", generated_at="2026-08-23T10:00:00Z")
+    snapshot = build_cognitive_memory_snapshot(profile, version=1, stored_at="2026-08-23T10:00:00Z")
     row = snapshot.to_dict()
     row["profile_json"] = row.pop("profile")
+    row["stored_at"] = "2026-08-23T10:00:00+00:00"
     monkeypatch.setattr(
         "backend.founder_brain.supabase_persistence._get_json",
         lambda config, table, query: [row],
