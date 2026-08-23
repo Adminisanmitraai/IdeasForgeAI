@@ -1328,6 +1328,12 @@ class AIChatRequest(BaseModel):
     idea: Optional[str] = None
 
 
+class PersonalBrainCompanionRequest(BaseModel):
+    message: str
+    history: List[Dict[str, str]] = Field(default_factory=list)
+    language: Optional[str] = "auto"
+
+
 class StudioChatRequest(BaseModel):
     message: str
     mode: Optional[str] = "local-product-plan"
@@ -4560,6 +4566,26 @@ User message: {request.message}
             {"role": "user", "content": user_context},
         ]
     )
+
+
+@app.post("/api/personal-brain/companion")
+def personal_brain_companion(request: PersonalBrainCompanionRequest):
+    provider = OpenAIProvider()
+    system_prompt = """
+You are Ranjan's Personal Brain companion: warm, capable, grounded, casual, and conversational.
+Answer the actual question directly. Keep spoken replies concise by default: usually 1-4 short sentences.
+Continue naturally from recent conversation history. Reply in the language the user uses, including natural Hindi-English or Bengali-English code-switching when appropriate.
+Be emotionally aware without pretending to be human or conscious. Do not claim actions you did not perform or expose secrets.
+"""
+    recent = request.history[-10:]
+    messages = [{"role": "system", "content": system_prompt}]
+    for item in recent:
+        role = item.get("role", "user")
+        content = item.get("content", "").strip()
+        if role in {"user", "assistant"} and content:
+            messages.append({"role": role, "content": content[:4000]})
+    messages.append({"role": "user", "content": request.message})
+    return provider.chat(messages)
 
 
 @app.get("/api/projects")
