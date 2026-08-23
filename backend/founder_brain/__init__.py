@@ -188,3 +188,19 @@ __all__ += (
     "DecisionComparison",
     "compare_decision_alternatives",
 )
+
+from .cognitive_reflection import (
+    FOUNDER_COGNITIVE_REFLECTION_VERSION,
+    DecisionReflection,
+    ReflectionCandidate,
+    propose_reflection_candidate,
+    reflect_on_decision,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_REFLECTION_VERSION",
+    "DecisionReflection",
+    "ReflectionCandidate",
+    "reflect_on_decision",
+    "propose_reflection_candidate",
+)
