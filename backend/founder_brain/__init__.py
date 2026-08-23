@@ -112,3 +112,27 @@ __all__ += (
     "FounderLearningProjection",
     "project_founder_learning",
 )
+
+from .cognitive_evolution import (
+    FOUNDER_COGNITIVE_EVOLUTION_VERSION,
+    CandidateLesson,
+    CognitiveEvolutionError,
+    add_evidence,
+    promote_candidate_lesson,
+    propose_candidate_lesson,
+    record_decision_outcome,
+    supersede_assumption,
+    supersede_preference,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_EVOLUTION_VERSION",
+    "CognitiveEvolutionError",
+    "CandidateLesson",
+    "add_evidence",
+    "record_decision_outcome",
+    "supersede_preference",
+    "supersede_assumption",
+    "propose_candidate_lesson",
+    "promote_candidate_lesson",
+)
