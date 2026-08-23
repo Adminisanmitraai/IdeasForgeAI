@@ -21,6 +21,13 @@ from .chat_context import (
 )
 from .chat_intent import classify_founder_chat_intent
 from .command_resolver import FounderCommandResolution, resolve_founder_command
+from .cognitive_context import (
+    CognitiveContextQuery,
+    FounderCognitiveContext,
+    build_cognitive_context,
+    safe_empty_cognitive_context,
+)
+from .cognitive_memory import FounderCognitiveProfile
 from .context_graph import ContextGraph
 from .conversation_plan import (
     FounderBrainConversationPlan,
@@ -67,6 +74,7 @@ Clock = Callable[[], datetime]
 ContainerResolver = Callable[[], object]
 WorkspaceResolver = Callable[[], object]
 ContextGraphResolver = Callable[[], ContextGraph | None]
+CognitiveProfileResolver = Callable[[], FounderCognitiveProfile | None]
 
 _OPERATING_STATES: frozenset[str] = frozenset(
     {
@@ -137,12 +145,14 @@ class FounderBrainReadService:
         repository_intelligence_service: RepositoryIntelligenceService
         | None = None,
         context_graph_resolver: ContextGraphResolver = _empty_context_graph,
+        cognitive_profile_resolver: CognitiveProfileResolver | None = None,
     ) -> None:
         self._context_resolver = context_resolver
         self._status_resolver = status_resolver
         self._container_resolver = container_resolver
         self._workspace_resolver = workspace_resolver
         self._context_graph_resolver = context_graph_resolver
+        self._cognitive_profile_resolver = cognitive_profile_resolver
         self._repository_intelligence_service = (
             repository_intelligence_service
             if repository_intelligence_service is not None
@@ -261,6 +271,28 @@ class FounderBrainReadService:
             recommended_next_action=state.recommended_next_action,
         )
 
+    def cognitive_context(
+        self,
+        *,
+        message: object,
+        project_ids: tuple[str, ...] = (),
+        max_items_per_category: int = 5,
+    ) -> FounderCognitiveContext:
+        """Return relevance-filtered founder cognition for read-only reasoning."""
+        normalized = _safe_text(message, limit=2048)
+        if not normalized:
+            raise ValueError("cognitive context message must not be empty")
+        profile = self._cognitive_profile()
+        if profile is None:
+            return safe_empty_cognitive_context(normalized)
+        return build_cognitive_context(
+            profile,
+            CognitiveContextQuery(
+                message=normalized,
+                project_ids=tuple(project_ids),
+                max_items_per_category=max_items_per_category,
+            ),
+        )
     def conversation_plan(
         self,
         *,
@@ -346,6 +378,14 @@ class FounderBrainReadService:
             return ContextGraph()
         return value if isinstance(value, ContextGraph) else ContextGraph()
 
+    def _cognitive_profile(self) -> FounderCognitiveProfile | None:
+        if self._cognitive_profile_resolver is None:
+            return None
+        try:
+            value = self._cognitive_profile_resolver()
+        except Exception:
+            return None
+        return value if isinstance(value, FounderCognitiveProfile) else None
     def _registry_status(self) -> PlatformRegistryStatus:
         try:
             return self._status_resolver()

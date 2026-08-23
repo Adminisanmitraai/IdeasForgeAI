@@ -216,3 +216,19 @@ __all__ += (
     "FounderCognitiveState",
     "synthesize_founder_cognitive_state",
 )
+
+from .cognitive_context import (
+    FOUNDER_COGNITIVE_CONTEXT_VERSION,
+    CognitiveContextQuery,
+    FounderCognitiveContext,
+    build_cognitive_context,
+    safe_empty_cognitive_context,
+)
+
+__all__ += (
+    "FOUNDER_COGNITIVE_CONTEXT_VERSION",
+    "CognitiveContextQuery",
+    "FounderCognitiveContext",
+    "build_cognitive_context",
+    "safe_empty_cognitive_context",
+)
