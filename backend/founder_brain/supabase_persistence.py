@@ -7,7 +7,11 @@ from typing import Any, Callable
 from urllib import error, parse, request
 
 from .cognitive_ingestion import CognitiveMemoryCandidate
-from .cognitive_memory_repository import CognitiveMemorySnapshot
+from .cognitive_memory import FounderCognitiveProfile
+from .cognitive_memory_repository import (
+    CognitiveMemorySnapshot,
+    build_cognitive_memory_snapshot,
+)
 from .cognitive_review import CandidateReviewDecision
 
 FORGEBRAIN_SUPABASE_PERSISTENCE_VERSION = "forgebrain.supabase-persistence.v1"
@@ -68,6 +72,36 @@ def _post_json(
     if not isinstance(data, list):
         raise SupabasePersistenceError("Supabase returned an invalid write response")
     return data
+
+
+def _get_json(config: SupabasePersistenceConfig, table: str, query: str) -> list[dict[str, Any]]:
+    url = f"{config.url}/rest/v1/{parse.quote(table)}?{query}"
+    req = request.Request(url, headers=_headers(config), method="GET")
+    try:
+        with request.urlopen(req, timeout=config.timeout_seconds) as response:
+            raw = response.read().decode("utf-8")
+    except error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")
+        raise SupabasePersistenceError(f"Supabase read failed: HTTP {exc.code}: {detail}") from exc
+    except error.URLError as exc:
+        raise SupabasePersistenceError(f"Supabase read failed: {exc.reason}") from exc
+    data = json.loads(raw or "[]")
+    if not isinstance(data, list):
+        raise SupabasePersistenceError("Supabase returned an invalid read response")
+    return data
+
+
+def _snapshot_from_row(row: dict[str, Any]) -> CognitiveMemorySnapshot:
+    profile = FounderCognitiveProfile.model_validate(row["profile_json"])
+    snapshot = build_cognitive_memory_snapshot(
+        profile,
+        version=int(row["version"]),
+        stored_at=str(row["stored_at"]),
+        previous_snapshot_sha256=row.get("previous_snapshot_sha256"),
+    )
+    if snapshot.profile_sha256 != row["profile_sha256"] or snapshot.snapshot_sha256 != row["snapshot_sha256"]:
+        raise SupabasePersistenceError("Stored cognitive snapshot failed integrity validation")
+    return snapshot
 
 
 class SupabaseCognitiveMemoryRepository:
@@ -134,6 +168,27 @@ class SupabaseCognitiveMemoryRepository:
         _post_json(self._config, "fb_cognitive_reviews", payload)
         return PersistenceWriteResult("fb_cognitive_reviews", review_id, "stored")
 
+    def latest_snapshot(self, founder_id: str) -> CognitiveMemorySnapshot | None:
+        query = parse.urlencode({
+            "select": "snapshot_sha256,founder_id,version,stored_at,schema_version,profile_json,profile_sha256,previous_snapshot_sha256",
+            "founder_id": f"eq.{founder_id}",
+            "order": "version.desc",
+            "limit": "1",
+        })
+        rows = _get_json(self._config, "fb_cognitive_snapshots", query)
+        if not rows:
+            return None
+        return _snapshot_from_row(rows[0])
+
+    def bootstrap_empty_profile(self, *, founder_id: str, stored_at: str) -> CognitiveMemorySnapshot:
+        existing = self.latest_snapshot(founder_id)
+        if existing is not None:
+            return existing
+        profile = FounderCognitiveProfile(founder_id=founder_id, generated_at=stored_at)
+        snapshot = build_cognitive_memory_snapshot(profile, version=1, stored_at=stored_at)
+        self.save_snapshot(snapshot)
+        return snapshot
+
     def append_audit_event(
         self,
         *,
@@ -163,3 +218,4 @@ __all__ = [
     "PersistenceWriteResult",
     "SupabaseCognitiveMemoryRepository",
 ]
+

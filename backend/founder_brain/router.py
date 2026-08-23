@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import os
+from datetime import datetime, timezone
+
 from fastapi import APIRouter, HTTPException
 
 from .repository_router import create_repository_router
@@ -19,6 +22,10 @@ from .chat_intent import (
 )
 from .service import FounderBrainReadService
 from .cognitive_manifest import cognitive_capability_manifest
+from .supabase_persistence import (
+    SupabaseCognitiveMemoryRepository,
+    SupabasePersistenceError,
+)
 
 ROUTE_PREFIX = "/api/founder-brain/v1"
 
@@ -56,6 +63,42 @@ def create_founder_brain_router(
     @router.get("/cognitive/manifest", response_model=FounderBrainResponse)
     def founder_brain_cognitive_manifest() -> FounderBrainResponse:
         return FounderBrainResponse(data=cognitive_capability_manifest())
+
+    @router.get("/cognitive/persistence/status", response_model=FounderBrainResponse)
+    def founder_brain_persistence_status() -> FounderBrainResponse:
+        try:
+            repository = SupabaseCognitiveMemoryRepository()
+            founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+            snapshot = repository.latest_snapshot(founder_id)
+        except SupabasePersistenceError as error:
+            return FounderBrainResponse(data={"configured": False, "healthy": False, "detail": str(error)})
+        return FounderBrainResponse(data={
+            "configured": True,
+            "healthy": True,
+            "founder_id": founder_id,
+            "snapshot_version": None if snapshot is None else snapshot.version,
+            "snapshot_sha256": None if snapshot is None else snapshot.snapshot_sha256,
+            "persistent_memory_active": snapshot is not None,
+        })
+
+    @router.post("/cognitive/persistence/bootstrap", response_model=FounderBrainResponse)
+    def founder_brain_persistence_bootstrap() -> FounderBrainResponse:
+        if os.getenv("FORGEBRAIN_PERSISTENCE_BOOTSTRAP_ENABLED", "").lower() != "true":
+            raise HTTPException(status_code=403, detail="persistence bootstrap is disabled")
+        founder_id = os.getenv("FORGEBRAIN_FOUNDER_ID", "ranjan").strip() or "ranjan"
+        stored_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+        try:
+            snapshot = SupabaseCognitiveMemoryRepository().bootstrap_empty_profile(
+                founder_id=founder_id, stored_at=stored_at
+            )
+        except SupabasePersistenceError as error:
+            raise HTTPException(status_code=503, detail=str(error)) from error
+        return FounderBrainResponse(data={
+            "founder_id": founder_id,
+            "snapshot_version": snapshot.version,
+            "snapshot_sha256": snapshot.snapshot_sha256,
+            "empty_baseline": not any((snapshot.profile.evidence, snapshot.profile.preferences, snapshot.profile.assumptions, snapshot.profile.decisions, snapshot.profile.lessons)),
+        })
 
     @router.post("/cognitive/context", response_model=FounderBrainResponse)
     def founder_brain_cognitive_context(request: FounderBrainChatRequest) -> FounderBrainResponse:

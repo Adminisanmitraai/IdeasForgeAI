@@ -78,3 +78,28 @@ def test_review_write_links_promotion_and_snapshot(monkeypatch):
     assert result.table == "fb_cognitive_reviews"
     assert captured["payload"]["promoted_memory_id"] == "pref-2"
     assert captured["payload"]["snapshot_sha256"] == "abc"
+
+
+def test_latest_snapshot_validates_integrity(monkeypatch):
+    profile = FounderCognitiveProfile(founder_id="founder-1", generated_at="now")
+    snapshot = build_cognitive_memory_snapshot(profile, version=1, stored_at="now")
+    row = snapshot.to_dict()
+    row["profile_json"] = row.pop("profile")
+    monkeypatch.setattr(
+        "backend.founder_brain.supabase_persistence._get_json",
+        lambda config, table, query: [row],
+    )
+    restored = _repo().latest_snapshot("founder-1")
+    assert restored == snapshot
+
+
+def test_bootstrap_empty_profile_writes_only_when_missing(monkeypatch):
+    calls = []
+    repo = _repo()
+    monkeypatch.setattr(repo, "latest_snapshot", lambda founder_id: None)
+    monkeypatch.setattr(repo, "save_snapshot", lambda snapshot: calls.append(snapshot))
+    snapshot = repo.bootstrap_empty_profile(founder_id="founder-1", stored_at="now")
+    assert snapshot.version == 1
+    assert snapshot.profile.founder_id == "founder-1"
+    assert snapshot.profile.evidence == ()
+    assert len(calls) == 1
