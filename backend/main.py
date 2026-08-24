@@ -5,7 +5,7 @@ import re
 import subprocess
 from typing import Any, Dict, List, Literal, Optional
 
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -19,7 +19,7 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
-from backend.personal_brain_memory import capture_candidate, memory_status, recall_context
+from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_context, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -1333,6 +1333,30 @@ class PersonalBrainCompanionRequest(BaseModel):
     message: str
     history: List[Dict[str, str]] = Field(default_factory=list)
     language: Optional[str] = "auto"
+
+
+class PersonalBrainMemoryReviewRequest(BaseModel):
+    disposition: Literal["accept", "reject", "defer"]
+    reviewer_id: str = "personal-brain"
+    rationale: str
+    conflict_resolution: str = ""
+    conflict_action: Optional[str] = None
+    conflict_target_memory_ids: List[str] = Field(default_factory=list)
+    conflict_context_note: str = ""
+    memory_id: Optional[str] = None
+    domain_or_scope: str = "personal"
+    strength_or_confidence: float = 0.75
+    title: str = ""
+    problem: str = ""
+    options_considered: List[str] = Field(default_factory=list)
+    chosen_option: str = ""
+    expected_outcome: str = ""
+    related_decision_ids: List[str] = Field(default_factory=list)
+
+
+class PersonalBrainMemoryCorrectionRequest(BaseModel):
+    text: str
+    source_id: Optional[str] = None
 
 
 class StudioChatRequest(BaseModel):
@@ -4572,6 +4596,39 @@ User message: {request.message}
 @app.get("/api/personal-brain/memory/status")
 def personal_brain_memory_status():
     return memory_status()
+
+
+def _require_personal_memory_review_key(value: Optional[str]) -> None:
+    expected = os.getenv("FORGEBRAIN_REVIEW_API_KEY", "").strip()
+    if not expected or value != expected:
+        raise HTTPException(status_code=403, detail="memory review access denied")
+
+
+@app.get("/api/personal-brain/memory/candidates")
+def personal_brain_memory_candidates(status: str = "pending", x_review_key: Optional[str] = Header(default=None, alias="X-ForgeBrain-Review-Key")):
+    _require_personal_memory_review_key(x_review_key)
+    try:
+        return list_memory_candidates(status)
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+
+
+@app.post("/api/personal-brain/memory/candidates/{candidate_id}/review")
+def personal_brain_memory_review(candidate_id: str, request: PersonalBrainMemoryReviewRequest, x_review_key: Optional[str] = Header(default=None, alias="X-ForgeBrain-Review-Key")):
+    _require_personal_memory_review_key(x_review_key)
+    try:
+        return review_memory_candidate(candidate_id, request.model_dump())
+    except (ValueError, RuntimeError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@app.post("/api/personal-brain/memory/corrections")
+def personal_brain_memory_correction(request: PersonalBrainMemoryCorrectionRequest, x_review_key: Optional[str] = Header(default=None, alias="X-ForgeBrain-Review-Key")):
+    _require_personal_memory_review_key(x_review_key)
+    candidate = submit_memory_correction(request.text, source_id=request.source_id)
+    if candidate is None:
+        raise HTTPException(status_code=422, detail="correction was not eligible for memory review")
+    return {"status": "queued", "candidate": candidate}
 
 
 @app.post("/api/personal-brain/companion")

@@ -15,6 +15,11 @@ from backend.founder_brain.supabase_persistence import (
     SupabaseCognitiveMemoryRepository,
     SupabasePersistenceError,
 )
+from backend.founder_brain.cognitive_review import (
+    CandidateReviewDecision, CandidateReviewDisposition, CognitiveReviewError,
+    PromotionMetadata, review_and_promote_candidate,
+)
+from backend.founder_brain.cognitive_conflicts import ConflictResolutionAction
 
 PERSONAL_BRAIN_MEMORY_VERSION = "personal-brain.memory.v1"
 DEFAULT_FOUNDER_ID = "ranjan"
@@ -116,7 +121,52 @@ __all__ = [
     "PERSONAL_BRAIN_MEMORY_VERSION",
     "recall_context",
     "capture_candidate",
+    "list_memory_candidates",
+    "review_memory_candidate",
+    "submit_memory_correction",
+    "memory_status",
 ]
+
+
+def list_memory_candidates(status: str = "pending") -> dict[str, object]:
+    repo = SupabaseCognitiveMemoryRepository()
+    rows = repo.list_candidates(_founder_id(), status=status, limit=100)
+    return {"status": status, "count": len(rows), "candidates": rows}
+
+
+def review_memory_candidate(candidate_id: str, payload: dict[str, object]) -> dict[str, object]:
+    repo = SupabaseCognitiveMemoryRepository()
+    founder_id = _founder_id()
+    candidate = repo.get_candidate(founder_id, candidate_id)
+    snapshot = repo.latest_snapshot(founder_id)
+    if candidate is None or snapshot is None:
+        raise CognitiveReviewError("candidate or cognitive baseline not found")
+    disposition = CandidateReviewDisposition(str(payload.get("disposition", "defer")))
+    review = CandidateReviewDecision(
+        candidate_id=candidate_id, disposition=disposition,
+        reviewer_id=str(payload.get("reviewer_id", "personal-brain")),
+        reviewed_at=str(payload.get("reviewed_at") or datetime.now(timezone.utc).isoformat()),
+        rationale=str(payload.get("rationale", "Personal Brain memory review")),
+        conflict_resolution=str(payload.get("conflict_resolution", "")),
+        conflict_action=(ConflictResolutionAction(str(payload["conflict_action"])) if payload.get("conflict_action") else None),
+        conflict_target_memory_ids=tuple(payload.get("conflict_target_memory_ids") or ()),
+        conflict_context_note=str(payload.get("conflict_context_note", "")),
+    )
+    metadata = None
+    if disposition is CandidateReviewDisposition.ACCEPT:
+        memory_id = str(payload.get("memory_id") or f"pb-memory:{uuid4().hex}")
+        metadata = PromotionMetadata(memory_id=memory_id, domain_or_scope=str(payload.get("domain_or_scope", "personal")), strength_or_confidence=float(payload.get("strength_or_confidence", 0.75)), title=str(payload.get("title", "")), problem=str(payload.get("problem", "")), options_considered=tuple(payload.get("options_considered") or ()), chosen_option=str(payload.get("chosen_option", "")), rationale=review.rationale, expected_outcome=str(payload.get("expected_outcome", "")), related_decision_ids=tuple(payload.get("related_decision_ids") or ()))
+    result = review_and_promote_candidate(snapshot.profile, candidate, review, metadata, previous_snapshot=snapshot)
+    if result.snapshot is not None:
+        repo.save_snapshot(result.snapshot)
+    repo.save_review(founder_id, review, promoted_memory_id=result.promoted_memory_id, snapshot_sha256=None if result.snapshot is None else result.snapshot.snapshot_sha256)
+    repo.update_candidate_review_status(founder_id, candidate_id, disposition)
+    repo.append_audit_event(event_id=f"pb-review:{candidate_id}:{review.reviewed_at}", founder_id=founder_id, event_type="personal_brain.memory.reviewed", occurred_at=review.reviewed_at, subject_id=candidate_id, metadata={"disposition": disposition.value, "promoted_memory_id": result.promoted_memory_id})
+    return {"candidate_id": candidate_id, "disposition": disposition.value, "promoted_memory_id": result.promoted_memory_id, "snapshot_version": None if result.snapshot is None else result.snapshot.version}
+
+
+def submit_memory_correction(text: str, *, source_id: str | None = None) -> dict[str, object] | None:
+    return capture_candidate(text, source_id=source_id or f"pb-correction:{uuid4().hex}")
 
 
 def memory_status() -> dict[str, object]:
