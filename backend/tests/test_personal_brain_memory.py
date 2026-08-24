@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -154,3 +154,47 @@ def test_unrelated_memory_is_suppressed():
     with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
         rows = rank_recalled_memories("What is the weather on Mars?")
     assert rows == ()
+
+
+def test_parse_explicit_memory_commands():
+    assert parse_memory_command("Remember that I prefer concise answers") == {"action":"remember","subject":"I prefer concise answers","explicit":True}
+    assert parse_memory_command("What do you remember about voice replies?")["action"] == "recall"
+    assert parse_memory_command("Forget that old preference")["action"] == "forget"
+    assert parse_memory_command("That's no longer true: I prefer long replies")["action"] == "correct"
+
+
+def test_normal_chat_is_not_a_memory_command():
+    assert parse_memory_command("Tell me what we should build next") is None
+
+
+def test_recall_command_uses_reviewed_memory_only():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        result = handle_memory_command("What do you remember about spoken replies?")
+    assert result["action"] == "recall"
+    assert result["count"] >= 1
+
+
+def test_forget_requires_reviewed_supersession():
+    result = handle_memory_command("Forget that old preference")
+    assert result["requires_review"] is True
+    assert result["mutation"] == "supersession"
+    assert result["queued"] is False
+
+
+def test_companion_remember_command_uses_memory_control_path():
+    from backend import main as main_module
+    request = SimpleNamespace(message="Remember that I prefer concise replies", history=[])
+    with patch.object(main_module, "handle_memory_command", return_value={"action":"remember","queued":True}):
+        result = main_module.personal_brain_companion(request)
+    assert result["model"] == "memory-control"
+    assert "queued" in result["message"].lower()
+
+
+def test_companion_normal_chat_falls_through_to_provider():
+    from backend import main as main_module
+    request = SimpleNamespace(message="What should we build next?", history=[])
+    fake_provider = SimpleNamespace(chat=lambda messages: {"status":"success","message":"normal reply"})
+    with patch.object(main_module, "handle_memory_command", return_value=None), patch.object(main_module, "OpenAIProvider", return_value=fake_provider), patch.object(main_module, "recall_bundle", return_value={"memories":(),"count":0,"cross_session":False}):
+        result = main_module.personal_brain_companion(request)
+    assert result["message"] == "normal reply"
+    assert result["persistent_memory_used"] is False

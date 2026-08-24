@@ -19,7 +19,7 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
-from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, review_memory_candidate, submit_memory_correction
+from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, handle_memory_command, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -4634,6 +4634,20 @@ def personal_brain_memory_correction(request: PersonalBrainMemoryCorrectionReque
 @app.post("/api/personal-brain/companion")
 def personal_brain_companion(request: PersonalBrainCompanionRequest):
     provider = OpenAIProvider()
+    memory_command = handle_memory_command(request.message)
+    if memory_command:
+        action = str(memory_command.get("action", ""))
+        if action == "recall":
+            memories = list(memory_command.get("memories") or ())
+            if not memories:
+                return {"status":"success","model":"memory-control","message":"I don’t have a reviewed memory about that yet.","memory_command":memory_command}
+            return {"status":"success","model":"memory-control","message":"Here’s what I currently have as reviewed memory: " + "; ".join(memories),"memory_command":memory_command}
+        if action == "remember":
+            queued = bool(memory_command.get("queued"))
+            message = "I’ve queued that for memory review." if queued else "I couldn’t safely queue that as a lasting memory yet."
+            return {"status":"success","model":"memory-control","message":message,"memory_command":memory_command}
+        if action in {"forget", "correct"}:
+            return {"status":"success","model":"memory-control","message":"I’ll treat that as a memory correction and keep the old record until the reviewed supersession is approved.","memory_command":memory_command}
     system_prompt = """
 You are Ranjan's Personal Brain companion: warm, grounded, perceptive, and easy to talk with.
 Talk like a trusted everyday companion, not a formal assistant, coach, therapist, or customer-support bot.

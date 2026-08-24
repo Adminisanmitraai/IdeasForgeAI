@@ -106,6 +106,33 @@ def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
     }
 
 
+
+def parse_memory_command(message: str) -> dict[str, object] | None:
+    text = message.strip()
+    low = text.lower()
+    rules = (("remember", r"^(?:please\s+)?remember(?:\s+that)?\s+(.+)$"), ("recall", r"^(?:what do you remember about|what do you know about)\s+(.+?)[?]?$"), ("forget", r"^(?:please\s+)?forget(?:\s+that|\s+about)?\s+(.+)$"), ("correct", r"^(?:correct that|that(?:'s| is) no longer true|update that)[:,-]?\s*(.*)$"))
+    for action, pattern in rules:
+        match = re.match(pattern, text, re.I)
+        if match:
+            subject = (match.group(1) if match.lastindex else "").strip()
+            return {"action": action, "subject": subject, "explicit": True}
+    return None
+
+
+def handle_memory_command(message: str) -> dict[str, object] | None:
+    command = parse_memory_command(message)
+    if command is None: return None
+    action, subject = str(command["action"]), str(command["subject"])
+    if action == "recall":
+        bundle = recall_bundle(subject or message)
+        return {**command, **bundle}
+    if action == "remember":
+        candidate = capture_candidate(subject or message, source_id=f"pb-explicit:{uuid4().hex}")
+        return {**command, "candidate": candidate, "queued": candidate is not None}
+    if action in {"correct", "forget"}:
+        return {**command, "requires_review": True, "mutation": "supersession", "queued": False}
+    return command
+
 def _contains_sensitive_marker(message: str) -> bool:
     value = message.lower()
     return any(marker in value for marker in SENSITIVE_MARKERS)
@@ -155,6 +182,8 @@ __all__ = [
     "recall_context",
     "recall_bundle",
     "rank_recalled_memories",
+    "parse_memory_command",
+    "handle_memory_command",
     "capture_candidate",
     "list_memory_candidates",
     "review_memory_candidate",
