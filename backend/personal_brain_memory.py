@@ -22,6 +22,7 @@ from backend.founder_brain.cognitive_review import (
 from backend.founder_brain.cognitive_conflicts import ConflictResolutionAction
 
 PERSONAL_BRAIN_MEMORY_VERSION = "personal-brain.memory.v1"
+CROSS_SESSION_RECALL_VERSION = "personal-brain.recall.v2"
 DEFAULT_FOUNDER_ID = "ranjan"
 SENSITIVE_MARKERS = (
     "password", "passcode", "api key", "secret key", "service role",
@@ -73,6 +74,16 @@ def recall_context(message: str, *, limit: int = 6) -> tuple[str, ...]:
     return tuple(f"{kind}: {statement}" for kind, statement, _ in selected)
 
 
+def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
+    memories = recall_context(message, limit=limit)
+    return {
+        "version": CROSS_SESSION_RECALL_VERSION,
+        "memories": memories,
+        "count": len(memories),
+        "cross_session": bool(memories),
+    }
+
+
 def _contains_sensitive_marker(message: str) -> bool:
     value = message.lower()
     return any(marker in value for marker in SENSITIVE_MARKERS)
@@ -120,6 +131,7 @@ def capture_candidate(message: str, *, source_id: str | None = None) -> dict[str
 __all__ = [
     "PERSONAL_BRAIN_MEMORY_VERSION",
     "recall_context",
+    "recall_bundle",
     "capture_candidate",
     "list_memory_candidates",
     "review_memory_candidate",

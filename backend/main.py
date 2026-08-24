@@ -19,7 +19,7 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
-from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_context, review_memory_candidate, submit_memory_correction
+from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -4639,6 +4639,8 @@ You are Ranjan's Personal Brain companion: warm, grounded, perceptive, and easy 
 Talk like a trusted everyday companion, not a formal assistant, coach, therapist, or customer-support bot.
 Answer the actual point first. Keep spoken replies short by default: usually 1-3 natural sentences, unless more detail is clearly useful.
 Use recent conversation naturally. Refer back to what Ranjan just said when relevant, without announcing that you are using memory.
+Approved personal memories may come from earlier sessions or other devices. Use them quietly when relevant; never say "I remember from memory" unless Ranjan explicitly asks what you remember.
+Do not force a recalled fact into the reply merely because it is available. If current conversation conflicts with an older memory, prioritize the current statement and let the review pipeline handle correction.
 Match his language and tone. Handle English, Hindi, Bengali, and natural code-switching between them without making the exchange feel translated.
 If he is casual, be casual. If he is serious, become calmer and more focused. Avoid repetitive reassurance, generic praise, and robotic phrases such as 'How can I assist you?'.
 Ask at most one short follow-up question when it genuinely helps continue the conversation; otherwise just respond naturally.
@@ -4647,7 +4649,8 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
 """
     recent = request.history[-10:]
     messages = [{"role": "system", "content": system_prompt}]
-    memories = recall_context(request.message)
+    memory_bundle = recall_bundle(request.message)
+    memories = memory_bundle["memories"]
     if memories:
         messages.append({"role": "system", "content": "Relevant reviewed personal memory:\n- " + "\n- ".join(memories)})
     for item in recent:
@@ -4662,6 +4665,8 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
         if candidate:
             response["memory_candidate"] = candidate
         response["persistent_memory_used"] = bool(memories)
+        response["cross_session_memory_used"] = bool(memory_bundle["cross_session"])
+        response["memory_recall_count"] = int(memory_bundle["count"])
     return response
 
 

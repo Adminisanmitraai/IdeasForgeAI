@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_context, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -123,3 +123,20 @@ def test_correction_is_queued_as_new_candidate():
     assert result is not None
     assert result["review_required"] is True
     assert len(FakeRepo.saved) == 1
+
+
+def test_cross_session_bundle_marks_reviewed_recall():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        bundle = recall_bundle("Please keep the spoken reply short")
+    assert bundle["cross_session"] is True
+    assert bundle["count"] >= 1
+    assert "short natural spoken replies" in bundle["memories"][0]
+
+
+def test_cross_session_bundle_is_empty_without_snapshot():
+    class EmptyRepo:
+        def latest_snapshot(self, founder_id): return None
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", EmptyRepo):
+        bundle = recall_bundle("Anything")
+    assert bundle["cross_session"] is False
+    assert bundle["count"] == 0
