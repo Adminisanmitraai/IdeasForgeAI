@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -140,3 +140,17 @@ def test_cross_session_bundle_is_empty_without_snapshot():
         bundle = recall_bundle("Anything")
     assert bundle["cross_session"] is False
     assert bundle["count"] == 0
+
+
+def test_relevance_ranking_prefers_matching_memory():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        rows = rank_recalled_memories("Keep the spoken reply short and natural")
+    assert rows
+    assert rows[0]["kind"] == "preference"
+    assert rows[0]["score"] >= 0.26
+
+
+def test_unrelated_memory_is_suppressed():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        rows = rank_recalled_memories("What is the weather on Mars?")
+    assert rows == ()

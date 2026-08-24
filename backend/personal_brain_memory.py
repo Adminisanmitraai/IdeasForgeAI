@@ -34,44 +34,66 @@ def _founder_id() -> str:
     return os.getenv("PERSONAL_BRAIN_FOUNDER_ID", DEFAULT_FOUNDER_ID).strip() or DEFAULT_FOUNDER_ID
 
 def _tokens(value: str) -> set[str]:
-    return {x for x in re.findall(r"[a-z0-9]+", value.lower()) if len(x) > 2}
+    canonical = {"spoken":"speak","speaking":"speak","speaks":"speak","replies":"reply","responses":"reply","respond":"reply","responding":"reply"}
+    tokens = []
+    for raw in re.findall(r"[a-z0-9]+", value.lower()):
+        if len(raw) <= 2: continue
+        tokens.append(canonical.get(raw, raw[:-1] if raw.endswith("s") and len(raw) > 4 else raw))
+    return set(tokens)
 
 
-def _memory_rows(profile: FounderCognitiveProfile) -> list[tuple[str, str, float]]:
-    rows: list[tuple[str, str, float]] = []
-    rows.extend(("preference", x.statement, x.strength) for x in profile.preferences if x.status == "active")
-    rows.extend(("lesson", x.statement, x.confidence) for x in profile.lessons if x.status == "active")
-    rows.extend(("assumption", x.statement, x.confidence) for x in profile.assumptions if x.status not in {"refuted", "superseded"})
-    rows.extend(
-        ("decision", f"{x.title}: chose {x.chosen_option}. {x.rationale}".strip(), x.confidence_at_decision)
-        for x in profile.decisions
-    )
+def _memory_rows(profile: FounderCognitiveProfile) -> list[dict[str, object]]:
+    rows: list[dict[str, object]] = []
+    rows.extend({"kind":"preference","statement":x.statement,"confidence":x.strength,"updated_at":x.updated_at} for x in profile.preferences if x.status == "active")
+    rows.extend({"kind":"lesson","statement":x.statement,"confidence":x.confidence,"updated_at":x.updated_at} for x in profile.lessons if x.status == "active")
+    rows.extend({"kind":"assumption","statement":x.statement,"confidence":x.confidence,"updated_at":x.updated_at} for x in profile.assumptions if x.status not in {"refuted", "superseded"})
+    rows.extend({"kind":"decision","statement":f"{x.title}: chose {x.chosen_option}. {x.rationale}".strip(),"confidence":x.confidence_at_decision,"updated_at":x.created_at} for x in profile.decisions)
     return rows
 
 
-def _relevance(query: str, statement: str, confidence: float) -> float:
+def _freshness(updated_at: object) -> float:
+    try:
+        value = str(updated_at or "").replace("Z", "+00:00")
+        dt = datetime.fromisoformat(value)
+        if dt.tzinfo is None: dt = dt.replace(tzinfo=timezone.utc)
+        days = max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 86400.0)
+        return max(0.0, 1.0 - min(days, 365.0) / 365.0)
+    except Exception:
+        return 0.35
+
+
+def _relevance(query: str, row: dict[str, object]) -> float:
+    statement = str(row["statement"]); confidence = float(row["confidence"])
     q, s = _tokens(query), _tokens(statement)
     overlap = (len(q & s) / max(1, len(q))) if q else 0.0
-    return overlap * 0.75 + confidence * 0.25
+    if overlap <= 0.0:
+        return 0.0
+    kind_bonus = {"preference":0.08,"decision":0.05,"lesson":0.04,"assumption":0.0}.get(str(row["kind"]),0.0)
+    return overlap * 0.62 + confidence * 0.23 + _freshness(row.get("updated_at")) * 0.10 + kind_bonus
+
+
+def rank_recalled_memories(message: str, *, limit: int = 6) -> tuple[dict[str, object], ...]:
+    try:
+        snapshot = SupabaseCognitiveMemoryRepository().latest_snapshot(_founder_id())
+    except SupabasePersistenceError:
+        return ()
+    if snapshot is None: return ()
+    ranked = sorted(_memory_rows(snapshot.profile), key=lambda row: _relevance(message, row), reverse=True)
+    chosen=[]; seen=set()
+    for row in ranked:
+        normalized=" ".join(_tokens(str(row["statement"])))
+        if normalized in seen: continue
+        score=_relevance(message,row)
+        if score < 0.26: continue
+        seen.add(normalized)
+        chosen.append({**row,"score":round(score,4)})
+        if len(chosen) >= limit: break
+    return tuple(chosen)
 
 
 def recall_context(message: str, *, limit: int = 6) -> tuple[str, ...]:
-    try:
-        repo = SupabaseCognitiveMemoryRepository()
-        snapshot = repo.latest_snapshot(_founder_id())
-    except SupabasePersistenceError:
-        return ()
-    if snapshot is None:
-        return ()
-    ranked = sorted(
-        _memory_rows(snapshot.profile),
-        key=lambda row: _relevance(message, row[1], row[2]),
-        reverse=True,
-    )
-    selected = [row for row in ranked if _relevance(message, row[1], row[2]) >= 0.18][:limit]
-    if not selected:
-        selected = [row for row in ranked if row[2] >= 0.8][: min(3, limit)]
-    return tuple(f"{kind}: {statement}" for kind, statement, _ in selected)
+    ranked = rank_recalled_memories(message, limit=limit)
+    return tuple(f"{row['kind']}: {row['statement']}" for row in ranked)
 
 
 def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
@@ -132,6 +154,7 @@ __all__ = [
     "PERSONAL_BRAIN_MEMORY_VERSION",
     "recall_context",
     "recall_bundle",
+    "rank_recalled_memories",
     "capture_candidate",
     "list_memory_candidates",
     "review_memory_candidate",
