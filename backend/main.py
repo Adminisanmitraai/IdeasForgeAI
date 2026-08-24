@@ -19,6 +19,7 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
+from backend.personal_brain_memory import capture_candidate, memory_status, recall_context
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -4568,6 +4569,11 @@ User message: {request.message}
     )
 
 
+@app.get("/api/personal-brain/memory/status")
+def personal_brain_memory_status():
+    return memory_status()
+
+
 @app.post("/api/personal-brain/companion")
 def personal_brain_companion(request: PersonalBrainCompanionRequest):
     provider = OpenAIProvider()
@@ -4584,13 +4590,22 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
 """
     recent = request.history[-10:]
     messages = [{"role": "system", "content": system_prompt}]
+    memories = recall_context(request.message)
+    if memories:
+        messages.append({"role": "system", "content": "Relevant reviewed personal memory:\n- " + "\n- ".join(memories)})
     for item in recent:
         role = item.get("role", "user")
         content = item.get("content", "").strip()
         if role in {"user", "assistant"} and content:
             messages.append({"role": role, "content": content[:4000]})
     messages.append({"role": "user", "content": request.message})
-    return provider.chat(messages)
+    response = provider.chat(messages)
+    candidate = capture_candidate(request.message)
+    if isinstance(response, dict):
+        if candidate:
+            response["memory_candidate"] = candidate
+        response["persistent_memory_used"] = bool(memories)
+    return response
 
 
 @app.get("/api/projects")
