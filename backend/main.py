@@ -19,7 +19,7 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
-from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, handle_memory_command, review_memory_candidate, submit_memory_correction
+from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, handle_memory_command, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -4666,8 +4666,12 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
     memory_bundle = recall_bundle(request.message)
     memories = memory_bundle["memories"]
     continuity = relationship_continuity(request.message)
+    proactive = proactive_signals(request.message)
     if memories:
         messages.append({"role": "system", "content": "Relevant reviewed personal memory:\n- " + "\n- ".join(memories) + "\nUse this as quiet relationship continuity; do not recite it as a profile."})
+    if proactive["should_surface"]:
+        hints = "\n".join(f"- {item['kind']}: {item['statement']}" for item in proactive["signals"])
+        messages.append({"role": "system", "content": "Potentially useful proactive context for this turn:\n" + hints + "\nSurface at most one point only if it genuinely helps the current conversation. Do not interrupt, alarm, or manufacture urgency."})
     for item in recent:
         role = item.get("role", "user")
         content = item.get("content", "").strip()
@@ -4683,6 +4687,8 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
         response["cross_session_memory_used"] = bool(memory_bundle["cross_session"])
         response["memory_recall_count"] = int(memory_bundle["count"])
         response["relationship_continuity_used"] = bool(continuity["continuity_available"])
+        response["proactive_context_available"] = bool(proactive["should_surface"])
+        response["proactive_signal_count"] = int(proactive["count"])
     return response
 
 

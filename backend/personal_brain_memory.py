@@ -112,6 +112,28 @@ def relationship_continuity(message: str, *, limit: int = 8) -> dict[str, object
         "count": sum(len(v) for v in grouped.values()),
     }
 
+
+def proactive_signals(message: str, *, limit: int = 3) -> dict[str, object]:
+    ranked = rank_recalled_memories(message, limit=max(limit * 3, 6))
+    signals = []
+    for row in ranked:
+        score = float(row.get("score", 0.0))
+        kind = str(row.get("kind", ""))
+        if score < 0.58:
+            continue
+        if kind not in {"decision", "lesson", "assumption", "preference"}:
+            continue
+        priority = "high" if score >= 0.72 and kind in {"decision", "assumption"} else "normal"
+        signals.append({"kind": kind, "statement": str(row.get("statement", "")), "score": score, "priority": priority})
+        if len(signals) >= limit:
+            break
+    return {
+        "version": "personal-brain.proactive.v1",
+        "should_surface": bool(signals),
+        "signals": tuple(signals),
+        "count": len(signals),
+    }
+
 def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
     memories = recall_context(message, limit=limit)
     return {
@@ -198,6 +220,7 @@ __all__ = [
     "recall_context",
     "recall_bundle",
     "relationship_continuity",
+    "proactive_signals",
     "rank_recalled_memories",
     "parse_memory_command",
     "handle_memory_command",

@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -212,4 +212,19 @@ def test_relationship_continuity_does_not_force_unrelated_history():
     with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
         result = relationship_continuity("quantum submarine maintenance")
     assert result["continuity_available"] is False
+    assert result["count"] == 0
+
+
+def test_proactive_signals_surface_only_strong_relevant_context():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        result = proactive_signals("spoken replies")
+    assert result["should_surface"] is True
+    assert result["count"] >= 1
+    assert all(item["score"] >= 0.58 for item in result["signals"])
+
+
+def test_proactive_signals_suppress_unrelated_memory():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        result = proactive_signals("quantum submarine maintenance")
+    assert result["should_surface"] is False
     assert result["count"] == 0
