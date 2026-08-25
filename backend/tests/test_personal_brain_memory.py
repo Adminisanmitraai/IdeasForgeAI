@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -198,3 +198,18 @@ def test_companion_normal_chat_falls_through_to_provider():
         result = main_module.personal_brain_companion(request)
     assert result["message"] == "normal reply"
     assert result["persistent_memory_used"] is False
+
+
+def test_relationship_continuity_groups_relevant_long_term_memory():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        result = relationship_continuity("spoken replies")
+    assert result["continuity_available"] is True
+    assert result["count"] >= 1
+    assert any("short natural spoken replies" in x for x in result["context"]["preferences"])
+
+
+def test_relationship_continuity_does_not_force_unrelated_history():
+    with patch("backend.personal_brain_memory.SupabaseCognitiveMemoryRepository", FakeRepo):
+        result = relationship_continuity("quantum submarine maintenance")
+    assert result["continuity_available"] is False
+    assert result["count"] == 0

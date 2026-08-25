@@ -96,6 +96,22 @@ def recall_context(message: str, *, limit: int = 6) -> tuple[str, ...]:
     return tuple(f"{row['kind']}: {row['statement']}" for row in ranked)
 
 
+
+def relationship_continuity(message: str, *, limit: int = 8) -> dict[str, object]:
+    memories = recall_context(message, limit=limit)
+    grouped: dict[str, list[str]] = {"preferences": [], "decisions": [], "lessons": [], "assumptions": []}
+    for memory in memories:
+        kind, _, statement = memory.partition(": ")
+        key = {"preference":"preferences","decision":"decisions","lesson":"lessons","assumption":"assumptions"}.get(kind)
+        if key and statement:
+            grouped[key].append(statement)
+    return {
+        "version": "personal-brain.relationship.v1",
+        "continuity_available": any(grouped.values()),
+        "context": grouped,
+        "count": sum(len(v) for v in grouped.values()),
+    }
+
 def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
     memories = recall_context(message, limit=limit)
     return {
@@ -181,6 +197,7 @@ __all__ = [
     "PERSONAL_BRAIN_MEMORY_VERSION",
     "recall_context",
     "recall_bundle",
+    "relationship_continuity",
     "rank_recalled_memories",
     "parse_memory_command",
     "handle_memory_command",
