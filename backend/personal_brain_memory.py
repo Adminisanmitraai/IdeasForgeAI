@@ -134,6 +134,31 @@ def proactive_signals(message: str, *, limit: int = 3) -> dict[str, object]:
         "count": len(signals),
     }
 
+
+def unresolved_context(message: str, *, limit: int = 3) -> dict[str, object]:
+    ranked = rank_recalled_memories(message, limit=max(limit * 4, 8))
+    items = []
+    for row in ranked:
+        kind = str(row.get("kind", ""))
+        score = float(row.get("score", 0.0))
+        statement = str(row.get("statement", "")).strip()
+        if kind not in {"decision", "assumption"} or score < 0.52 or not statement:
+            continue
+        lower = statement.lower()
+        resolved_markers = ("completed", "done", "closed", "resolved", "shipped", "finalized", "cancelled", "canceled")
+        if any(marker in lower for marker in resolved_markers):
+            continue
+        follow_up = "revisit" if kind == "decision" else "recheck"
+        items.append({"kind": kind, "statement": statement, "score": score, "follow_up": follow_up})
+        if len(items) >= limit:
+            break
+    return {
+        "version": "personal-brain.unresolved.v1",
+        "has_unresolved": bool(items),
+        "items": tuple(items),
+        "count": len(items),
+    }
+
 def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
     memories = recall_context(message, limit=limit)
     return {
@@ -221,6 +246,7 @@ __all__ = [
     "recall_bundle",
     "relationship_continuity",
     "proactive_signals",
+    "unresolved_context",
     "rank_recalled_memories",
     "parse_memory_command",
     "handle_memory_command",

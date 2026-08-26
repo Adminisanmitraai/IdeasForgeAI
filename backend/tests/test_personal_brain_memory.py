@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -228,3 +228,39 @@ def test_proactive_signals_suppress_unrelated_memory():
         result = proactive_signals("quantum submarine maintenance")
     assert result["should_surface"] is False
     assert result["count"] == 0
+
+
+def test_unresolved_context_surfaces_open_decision_and_assumption():
+    rows = (
+        {"kind":"decision","statement":"Voice rollout: chose staged launch","score":0.71},
+        {"kind":"assumption","statement":"Assume mobile latency remains acceptable","score":0.66},
+        {"kind":"preference","statement":"Prefers concise replies","score":0.9},
+    )
+    with patch("backend.personal_brain_memory.rank_recalled_memories", return_value=rows):
+        result = unresolved_context("voice rollout latency")
+    assert result["has_unresolved"] is True
+    assert result["count"] == 2
+    assert {item["follow_up"] for item in result["items"]} == {"revisit", "recheck"}
+
+
+def test_unresolved_context_suppresses_resolved_or_weak_items():
+    rows = (
+        {"kind":"decision","statement":"Voice rollout completed and closed","score":0.84},
+        {"kind":"assumption","statement":"Old latency assumption","score":0.31},
+    )
+    with patch("backend.personal_brain_memory.rank_recalled_memories", return_value=rows):
+        result = unresolved_context("voice rollout latency")
+    assert result["has_unresolved"] is False
+    assert result["count"] == 0
+
+
+def test_companion_exposes_unresolved_flags_without_private_payload():
+    from backend import main as main_module
+    request = SimpleNamespace(message="Should we revisit the voice rollout?", history=[])
+    fake_provider = SimpleNamespace(chat=lambda messages: {"status":"success","message":"brief follow-up"})
+    unresolved = {"has_unresolved":True,"count":1,"items":({"kind":"decision","statement":"Voice rollout staged launch","score":0.7,"follow_up":"revisit"},)}
+    with patch.object(main_module, "handle_memory_command", return_value=None), patch.object(main_module, "OpenAIProvider", return_value=fake_provider), patch.object(main_module, "recall_bundle", return_value={"memories":(),"count":0,"cross_session":False}), patch.object(main_module, "relationship_continuity", return_value={"continuity_available":False}), patch.object(main_module, "proactive_signals", return_value={"should_surface":False,"count":0,"signals":()}), patch.object(main_module, "unresolved_context", return_value=unresolved), patch.object(main_module, "capture_candidate", return_value=None):
+        result = main_module.personal_brain_companion(request)
+    assert result["unresolved_context_available"] is True
+    assert result["unresolved_context_count"] == 1
+    assert "items" not in result
