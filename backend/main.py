@@ -79,6 +79,7 @@ app.add_middleware(
         "https://www.ideasforgeai.com",
         "https://ideasforgeai.com",
         "https://founder.ideasforgeai.com",
+        "https://studio.ideasforgeai.com",
         "https://ranjan.ideasforgeai.com",
         "null",
     ],
@@ -7051,6 +7052,7 @@ from starlette.responses import Response as _IFChatCorsResponse
 _IF_ALLOWED_CHAT_ORIGINS = {
     "https://ideasforgeai.com",
     "https://founder.ideasforgeai.com",
+    "https://studio.ideasforgeai.com",
         "https://ranjan.ideasforgeai.com",
     "https://www.ideasforgeai.com",
     "https://ideasforgeai-web.onrender.com",
@@ -10670,6 +10672,7 @@ try:
             "tauri://localhost",
             "https://ideasforgeai.com",
             "https://founder.ideasforgeai.com",
+            "https://studio.ideasforgeai.com",
         "https://ranjan.ideasforgeai.com",
             "https://www.ideasforgeai.com",
         ],
