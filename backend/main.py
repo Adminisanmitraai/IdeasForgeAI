@@ -1,4 +1,5 @@
 from dataclasses import asdict
+from contextlib import asynccontextmanager
 import json
 import os
 import re
@@ -19,6 +20,9 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
+from backend.forge_commander.gateway_api import router as forge_commander_gateway_router
+from backend.forge_commander.mcp_app import mcp_server
+from backend.forge_commander.mcp_app import mcp_app as forge_commander_mcp_app
 from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, handle_memory_command, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
@@ -56,10 +60,16 @@ ensure_project_folders()
 BACKEND_GENERATED_APPS_DIR.mkdir(parents=True, exist_ok=True)
 product_brain = ProductBrainWorkflow()
 
+@asynccontextmanager
+async def app_lifespan(app):
+    async with mcp_server.session_manager.run():
+        yield
+
 app = FastAPI(
     title="IdeasForgeAI",
     description="AI Product Factory backend.",
     version="0.2.0",
+    lifespan=app_lifespan,
 )
 
 app.add_middleware(
@@ -1260,6 +1270,8 @@ app.include_router(create_founder_os_router())
 
 # FOS-1B.1-BEGIN: Founder Brain read-only operating-state registration
 app.include_router(create_founder_brain_router())
+app.include_router(forge_commander_gateway_router)
+app.mount("/forge-commander", forge_commander_mcp_app)
 # FOS-1B.1-END: Founder Brain read-only operating-state registration
 
 app.include_router(health_router)
