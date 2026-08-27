@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import hmac
+import os
+import time
 from fastapi import APIRouter, Header, HTTPException, WebSocket, WebSocketDisconnect
 
 from .cloud_device_registry import DeviceSession
 from .cloud_task_channel import DeviceTaskResultEnvelope
 from .gateway_auth import parse_bearer_principal
+from .device_auth import issue_device_token, parse_device_token
 from .gateway_session_manager import GatewaySessionManager, LiveGatewaySession
 
 FORGE_COMMANDER_GATEWAY_API_VERSION = "forge-commander.gateway-api.v1"
@@ -25,10 +29,28 @@ def list_mcp_tools(authorization: str | None = Header(default=None)):
     return {"owner_subject": principal.owner_subject, "tools": [
         "list_devices", "get_device_status", "run_device_task",
     ]}
+@router.post("/device/enroll")
+def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(default=None)):
+    expected = os.getenv("FORGE_COMMANDER_ENROLLMENT_BOOTSTRAP_SECRET", "")
+    presented = (x_forge_enrollment_secret or "").strip()
+    if not expected or not presented or not hmac.compare_digest(presented, expected):
+        raise HTTPException(status_code=401, detail="invalid_enrollment_secret")
+    owner = str(payload.get("owner_subject", "")).strip()
+    device_id = str(payload.get("device_id", "")).strip()
+    if not owner or not device_id:
+        raise HTTPException(status_code=400, detail="owner_subject_and_device_id_required")
+    signing_key = os.getenv("FORGE_COMMANDER_GATEWAY_SIGNING_KEY", "")
+    if not signing_key:
+        raise HTTPException(status_code=503, detail="gateway_signing_unavailable")
+    expires_at = int(time.time()) + 90 * 24 * 60 * 60
+    token = issue_device_token(owner, device_id, signing_key=signing_key, expires_at=expires_at)
+    return {"enrolled": True, "owner_subject": owner, "device_id": device_id,
+            "device_token": token, "expires_at": expires_at}
+
 @router.websocket("/device/ws/{device_id}")
 async def device_ws(websocket: WebSocket, device_id: str):
     token = websocket.query_params.get("token", "")
-    principal = parse_bearer_principal(f"Bearer {token}" if token else "")
+    principal = parse_device_token(token, expected_device_id=device_id)
     if principal is None:
         await websocket.close(code=4401)
         return
