@@ -15,6 +15,20 @@ from .gateway_session_manager import GatewaySessionManager
 FORGE_COMMANDER_MCP_SERVER_VERSION = "forge-commander.mcp-server.v1"
 
 
+def _csv_env(name: str) -> list[str]:
+    return [item.strip() for item in os.getenv(name, "").split(",") if item.strip()]
+
+
+def _host_allowlist() -> list[str]:
+    hosts: list[str] = []
+    for host in _csv_env("FORGE_COMMANDER_MCP_ALLOWED_HOSTS"):
+        if host not in hosts:
+            hosts.append(host)
+        if ":" not in host and f"{host}:*" not in hosts:
+            hosts.append(f"{host}:*")
+    return hosts
+
+
 def _owner_from_context(ctx: Context) -> str:
     req = ctx.request_context.request if ctx.request_context else None
     authorization = req.headers.get("authorization", "") if req is not None else ""
@@ -27,6 +41,8 @@ def build_mcp_server(manager: GatewaySessionManager) -> FastMCP:
     test_mode = os.getenv("FORGE_COMMANDER_MCP_TEST_MODE", "").lower() in {"1", "true", "yes"}
     security = TransportSecuritySettings(
         enable_dns_rebinding_protection=not test_mode,
+        allowed_hosts=_host_allowlist(),
+        allowed_origins=_csv_env("FORGE_COMMANDER_MCP_ALLOWED_ORIGINS"),
     )
     mcp = FastMCP(
         "ForgeCommander", instructions="Governed access to enrolled Forge devices.",
