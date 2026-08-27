@@ -179,6 +179,20 @@ def proactive_timing(message: str, recent_history: list[dict[str, str]] | tuple[
         return {"version":"personal-brain.timing.v1","should_surface_now":True,"reason":"relevant_unresolved" if kind in {"decision","assumption"} else "high_value_context","selected":item}
     return {"version":"personal-brain.timing.v1","should_surface_now":False,"reason":"cooldown_or_low_priority","selected":None}
 
+def proactive_permission(message: str, recent_history: list[dict[str, str]] | tuple[dict[str, str], ...] = ()) -> dict[str, object]:
+    """PB-COMPANION.5D: prevent proactive context from interrupting explicit control or urgent/direct turns."""
+    timing = proactive_timing(message, recent_history)
+    if not timing.get("should_surface_now"):
+        return {**timing, "version":"personal-brain.permission.v1", "allowed":False}
+    low = message.strip().lower()
+    if parse_memory_command(message) is not None:
+        return {**timing, "version":"personal-brain.permission.v1", "allowed":False, "should_surface_now":False, "reason":"explicit_memory_control"}
+    blockers = ("urgent", "emergency", "right now", "immediately", "stop", "cancel", "don't", "do not")
+    if any(token in low for token in blockers):
+        return {**timing, "version":"personal-brain.permission.v1", "allowed":False, "should_surface_now":False, "reason":"direct_turn_priority"}
+    return {**timing, "version":"personal-brain.permission.v1", "allowed":True}
+
+
 def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
     memories = recall_context(message, limit=limit)
     return {
@@ -268,6 +282,7 @@ __all__ = [
     "proactive_signals",
     "unresolved_context",
     "proactive_timing",
+    "proactive_permission",
     "rank_recalled_memories",
     "parse_memory_command",
     "handle_memory_command",

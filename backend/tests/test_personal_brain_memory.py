@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, proactive_permission, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -288,3 +288,27 @@ def test_proactive_timing_suppresses_weak_context():
     with patch("backend.personal_brain_memory.unresolved_context", return_value=unresolved), patch("backend.personal_brain_memory.proactive_signals", return_value={"signals":(),"count":0,"should_surface":False}):
         result=proactive_timing("mobile latency", [])
     assert result["should_surface_now"] is False
+
+
+def test_proactive_permission_allows_natural_follow_up():
+    timed={"should_surface_now":True,"reason":"relevant_unresolved","selected":{"kind":"decision","statement":"Voice rollout staged launch","score":0.74}}
+    with patch("backend.personal_brain_memory.proactive_timing", return_value=timed):
+        result=proactive_permission("How is the voice rollout going?", [])
+    assert result["allowed"] is True
+    assert result["should_surface_now"] is True
+
+
+def test_proactive_permission_suppresses_explicit_memory_control():
+    timed={"should_surface_now":True,"reason":"relevant_unresolved","selected":{"kind":"decision","statement":"Voice rollout staged launch","score":0.74}}
+    with patch("backend.personal_brain_memory.proactive_timing", return_value=timed):
+        result=proactive_permission("Remember that voice rollout is paused", [])
+    assert result["allowed"] is False
+    assert result["reason"] == "explicit_memory_control"
+
+
+def test_proactive_permission_prioritizes_urgent_direct_turn():
+    timed={"should_surface_now":True,"reason":"relevant_unresolved","selected":{"kind":"decision","statement":"Voice rollout staged launch","score":0.74}}
+    with patch("backend.personal_brain_memory.proactive_timing", return_value=timed):
+        result=proactive_permission("Stop the rollout immediately", [])
+    assert result["allowed"] is False
+    assert result["reason"] == "direct_turn_priority"

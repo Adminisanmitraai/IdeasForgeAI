@@ -23,7 +23,7 @@ from backend.founder_brain.router import create_founder_brain_router
 from backend.forge_commander.gateway_api import router as forge_commander_gateway_router
 from backend.forge_commander.mcp_app import mcp_server
 from backend.forge_commander.mcp_app import mcp_app as forge_commander_mcp_app
-from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, handle_memory_command, review_memory_candidate, submit_memory_correction
+from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, proactive_permission, handle_memory_command, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -4681,7 +4681,7 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
     continuity = relationship_continuity(request.message)
     proactive = proactive_signals(request.message)
     unresolved = unresolved_context(request.message)
-    timing = proactive_timing(request.message, recent)
+    timing = proactive_permission(request.message, recent)
     if memories:
         messages.append({"role": "system", "content": "Relevant reviewed personal memory:\n- " + "\n- ".join(memories) + "\nUse this as quiet relationship continuity; do not recite it as a profile."})
     if timing["should_surface_now"] and timing.get("selected"):
