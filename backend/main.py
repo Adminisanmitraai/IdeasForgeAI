@@ -11148,9 +11148,10 @@ async def forge_studio_pixel_map(payload: _ForgeStudioPixelMapRequest):
         'Analyze this presentation slide image for reconstruction in an editable slide editor. '
         'Return ONLY valid JSON shaped as {"elements":[{"type":"text|image|shape|icon|chart|table|region",'
         '"text":"","label":"","bbox":{"x":0,"y":0,"w":0,"h":0},'
-        '"style":{"align":"left|center|right","weight":"normal|bold","size":"small|medium|large","color":"#RRGGBB"},"z":0}]}. '
-        'bbox values are percentages from 0 to 100. Detect meaningful text blocks separately and transcribe visible text accurately. '
-        'Detect major photos, illustrations, icons, charts, tables, colored panels and shapes as separate regions.'
+        '"style":{"align":"left|center|right","weight":"normal|bold","size":"small|medium|large","color":"#RRGGBB","family":"Arial","font_size_pct":3.2,"line_height":1.1,"letter_spacing":0,"background_color":"#FFFFFF","border_color":"#000000","border_width":0,"radius_pct":0,"opacity":1,"rotation":0},"confidence":0.9,"z":0}]}. '
+        'bbox values are percentages from 0 to 100. Detect every meaningful text block separately and transcribe visible text exactly. '
+        'Estimate typography and geometry as closely as possible: font family class, font size as percent of slide height, weight, alignment, line height, letter spacing, text color, fill, border, radius, opacity, rotation and z-order. '
+        'Detect major photos, illustrations, icons, charts, tables, colored panels and shapes as separate regions. Use confidence from 0 to 1 for each element.'
     )
 
     body={
