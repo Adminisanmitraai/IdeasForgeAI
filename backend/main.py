@@ -11114,3 +11114,88 @@ for _adm5f_clean_public_path in [
 from backend.coding_agent_terminal_api import register_terminal_api_routes as _register_forgecode_terminal_api_routes
 _register_forgecode_terminal_api_routes(app)
 # FC-TR-5F-END: controlled terminal API registration
+
+
+# FS-PIXEL.1 OPENAI VISION PIXEL MAPPER
+class _ForgeStudioPixelMapRequest(_IFBaseModel):
+    image_data_url: str
+    filename: _IFOptional[str] = None
+
+
+def _forge_studio_clean_json(text: str):
+    cleaned=(text or '').strip()
+    if cleaned.startswith('```'):
+        first=cleaned.find('\n')
+        if first >= 0:
+            cleaned=cleaned[first+1:]
+        if cleaned.endswith('```'):
+            cleaned=cleaned[:-3]
+    return cleaned.strip()
+
+
+@app.post('/api/studio/pixel-map')
+async def forge_studio_pixel_map(payload: _ForgeStudioPixelMapRequest):
+    image=(payload.image_data_url or '').strip()
+    if not image.startswith('data:image/'):
+        return {'ok':False,'error':'A PNG, JPEG or WebP data URL is required.'}
+    if len(image) > 12_000_000:
+        return {'ok':False,'error':'Image is too large for Pixel Mapping. Use an image under about 8 MB.'}
+    api_key=_if_os.getenv('OPENAI_API_KEY','').strip()
+    model=_if_os.getenv('OPENAI_VISION_MODEL',_if_os.getenv('OPENAI_MODEL','gpt-4.1-mini')).strip()
+    if not api_key:
+        return {'ok':False,'error':'OPENAI_API_KEY is not configured on the backend.'}
+    instruction=(
+        'Analyze this presentation slide image for reconstruction in an editable slide editor. '
+        'Return ONLY valid JSON shaped as {"elements":[{"type":"text|image|shape|icon|chart|table|region",'
+        '"text":"","label":"","bbox":{"x":0,"y":0,"w":0,"h":0},'
+        '"style":{"align":"left|center|right","weight":"normal|bold","size":"small|medium|large","color":"#RRGGBB"},"z":0}]}. '
+        'bbox values are percentages from 0 to 100. Detect meaningful text blocks separately and transcribe visible text accurately. '
+        'Detect major photos, illustrations, icons, charts, tables, colored panels and shapes as separate regions.'
+    )
+
+    body={
+        'model':model,
+        'input':[
+            {'role':'system','content':[{'type':'input_text','text':'You are ForgeStudio Pixel Mapping Agent. Produce machine-readable slide reconstruction data only.'}]},
+            {'role':'user','content':[{'type':'input_text','text':instruction},{'type':'input_image','image_url':image}]}
+        ],
+        'max_output_tokens':3000
+    }
+    req=_if_urllib_request.Request(
+        'https://api.openai.com/v1/responses',
+        data=_if_json.dumps(body).encode('utf-8'),
+        headers={'Authorization':'Bearer '+api_key,'Content-Type':'application/json'},
+        method='POST'
+    )
+    try:
+        with _if_urllib_request.urlopen(req,timeout=75) as res:
+            data=_if_json.loads(res.read().decode('utf-8'))
+        raw=_ideasforgeai_extract_openai_text(data)
+        mapped=_if_json.loads(_forge_studio_clean_json(raw))
+        elements=mapped.get('elements',[]) if isinstance(mapped,dict) else []
+        safe=[]
+
+        for el in elements[:120]:
+            if not isinstance(el,dict):
+                continue
+            bbox=el.get('bbox') if isinstance(el.get('bbox'),dict) else {}
+            try:
+                x=max(0,min(100,float(bbox.get('x',0)))); y=max(0,min(100,float(bbox.get('y',0))))
+                w=max(0.5,min(100-x,float(bbox.get('w',10)))); h=max(0.5,min(100-y,float(bbox.get('h',5))))
+            except Exception:
+                continue
+            safe.append({
+                'type':str(el.get('type') or 'region')[:24],
+                'text':str(el.get('text') or '')[:1200],
+                'label':str(el.get('label') or '')[:160],
+                'bbox':{'x':x,'y':y,'w':w,'h':h},
+                'style':el.get('style') if isinstance(el.get('style'),dict) else {},
+                'z':el.get('z',0)
+            })
+        return {'ok':True,'elements':safe,'count':len(safe),'model':model,'source':'openai-vision-pixel-map'}
+    except _if_urllib_error.HTTPError as exc:
+        detail=exc.read().decode('utf-8',errors='replace')
+        return {'ok':False,'error':'Pixel Mapping model request failed.','status':exc.code,'detail':detail[:1000]}
+    except Exception as exc:
+        return {'ok':False,'error':'Pixel Mapping failed.','detail':str(exc)[:1000]}
+# FS-PIXEL.1 OPENAI VISION PIXEL MAPPER END
