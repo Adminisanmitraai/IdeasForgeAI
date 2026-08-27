@@ -33,7 +33,7 @@ def list_mcp_tools(authorization: str | None = Header(default=None)):
 @router.post("/device/enroll")
 def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(default=None)):
     configured_hash = os.getenv("FORGE_COMMANDER_ENROLLMENT_BOOTSTRAP_SHA256", "")
-    allowed_hashes = tuple(x for x in (configured_hash, "ea6dc2e09f925a19c7a4b49f073cc15351e4cc2175ec8071b5dc60fdc7d45091") if x)
+    allowed_hashes = (configured_hash,) if configured_hash else ()
     presented = (x_forge_enrollment_secret or "").strip()
     presented_hash = sha256(presented.encode("utf-8")).hexdigest() if presented else ""
     if not presented_hash or not any(hmac.compare_digest(presented_hash, candidate) for candidate in allowed_hashes):
