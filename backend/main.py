@@ -72,6 +72,15 @@ app = FastAPI(
     lifespan=app_lifespan,
 )
 
+@app.get("/.well-known/oauth-protected-resource/forge-commander/mcp", include_in_schema=False)
+async def forge_commander_oauth_protected_resource_metadata():
+    return {
+        "resource": "https://commander.ideasforgeai.com/forge-commander/mcp",
+        "authorization_servers": ["https://commander.ideasforgeai.com/forge-commander"],
+        "scopes_supported": ["forge.devices.read"],
+        "bearer_methods_supported": ["header"],
+    }
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
