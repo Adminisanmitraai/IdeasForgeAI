@@ -28,7 +28,6 @@ def _utc_now() -> str:
 def _connect_url(config: AgentConnectionConfig) -> str:
     from urllib.parse import urlencode
     query = urlencode({
-        "token": config.bearer_token,
         "session_id": config.session_id,
         "instance_id": config.instance_id,
     })
@@ -43,7 +42,10 @@ async def _heartbeat_loop(ws, seconds: float) -> None:
 
 async def run_agent_once(config: AgentConnectionConfig, handler: TaskHandler) -> dict:
     url = _connect_url(config)
-    async with websockets.connect(url, open_timeout=10, close_timeout=5) as ws:
+    async with websockets.connect(
+        url, additional_headers={"Authorization": f"Bearer {config.bearer_token}"},
+        open_timeout=10, close_timeout=5,
+    ) as ws:
         heartbeat = asyncio.create_task(_heartbeat_loop(ws, config.heartbeat_seconds))
         try:
             while True:

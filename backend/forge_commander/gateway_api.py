@@ -51,7 +51,8 @@ def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(
 
 @router.websocket("/device/ws/{device_id}")
 async def device_ws(websocket: WebSocket, device_id: str):
-    token = websocket.query_params.get("token", "")
+    authorization = websocket.headers.get("authorization", "")
+    token = authorization[7:].strip() if authorization.startswith("Bearer ") else ""
     principal = parse_device_token(token, expected_device_id=device_id)
     if principal is None:
         await websocket.close(code=4401)
