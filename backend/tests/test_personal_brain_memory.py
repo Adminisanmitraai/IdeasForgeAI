@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -264,3 +264,27 @@ def test_companion_exposes_unresolved_flags_without_private_payload():
     assert result["unresolved_context_available"] is True
     assert result["unresolved_context_count"] == 1
     assert "items" not in result
+
+
+def test_proactive_timing_surfaces_strong_unresolved_item():
+    unresolved={"has_unresolved":True,"items":({"kind":"decision","statement":"Voice rollout staged launch","score":0.74,"follow_up":"revisit"},),"count":1}
+    with patch("backend.personal_brain_memory.unresolved_context", return_value=unresolved), patch("backend.personal_brain_memory.proactive_signals", return_value={"signals":(),"count":0,"should_surface":False}):
+        result=proactive_timing("voice rollout", [])
+    assert result["should_surface_now"] is True
+    assert result["selected"]["kind"] == "decision"
+
+
+def test_proactive_timing_suppresses_recently_raised_topic():
+    unresolved={"has_unresolved":True,"items":({"kind":"decision","statement":"Voice rollout staged launch","score":0.78,"follow_up":"revisit"},),"count":1}
+    history=[{"role":"assistant","content":"We should revisit the voice rollout staged launch before expanding it."}]
+    with patch("backend.personal_brain_memory.unresolved_context", return_value=unresolved), patch("backend.personal_brain_memory.proactive_signals", return_value={"signals":(),"count":0,"should_surface":False}):
+        result=proactive_timing("voice rollout", history)
+    assert result["should_surface_now"] is False
+    assert result["reason"] == "cooldown_or_low_priority"
+
+
+def test_proactive_timing_suppresses_weak_context():
+    unresolved={"has_unresolved":True,"items":({"kind":"assumption","statement":"Mobile latency acceptable","score":0.55,"follow_up":"recheck"},),"count":1}
+    with patch("backend.personal_brain_memory.unresolved_context", return_value=unresolved), patch("backend.personal_brain_memory.proactive_signals", return_value={"signals":(),"count":0,"should_surface":False}):
+        result=proactive_timing("mobile latency", [])
+    assert result["should_surface_now"] is False

@@ -159,6 +159,26 @@ def unresolved_context(message: str, *, limit: int = 3) -> dict[str, object]:
         "count": len(items),
     }
 
+
+def proactive_timing(message: str, recent_history: list[dict[str, str]] | tuple[dict[str, str], ...] = ()) -> dict[str, object]:
+    unresolved = unresolved_context(message, limit=3)
+    proactive = proactive_signals(message, limit=3)
+    candidates = list(unresolved.get("items", ())) or list(proactive.get("signals", ()))
+    if not candidates:
+        return {"version":"personal-brain.timing.v1","should_surface_now":False,"reason":"no_relevant_signal","selected":None}
+    recent_assistant = " ".join(str(x.get("content", "")) for x in recent_history[-6:] if x.get("role") == "assistant").lower()
+    for item in candidates:
+        statement = str(item.get("statement", "")).strip()
+        score = float(item.get("score", 0.0))
+        kind = str(item.get("kind", ""))
+        tokens = [t for t in _tokens(statement) if len(t) > 3]
+        repeated = bool(tokens) and sum(1 for t in tokens if t in recent_assistant) >= min(2, len(tokens))
+        threshold = 0.62 if kind in {"decision", "assumption"} else 0.68
+        if repeated or score < threshold:
+            continue
+        return {"version":"personal-brain.timing.v1","should_surface_now":True,"reason":"relevant_unresolved" if kind in {"decision","assumption"} else "high_value_context","selected":item}
+    return {"version":"personal-brain.timing.v1","should_surface_now":False,"reason":"cooldown_or_low_priority","selected":None}
+
 def recall_bundle(message: str, *, limit: int = 6) -> dict[str, object]:
     memories = recall_context(message, limit=limit)
     return {
@@ -247,6 +267,7 @@ __all__ = [
     "relationship_continuity",
     "proactive_signals",
     "unresolved_context",
+    "proactive_timing",
     "rank_recalled_memories",
     "parse_memory_command",
     "handle_memory_command",

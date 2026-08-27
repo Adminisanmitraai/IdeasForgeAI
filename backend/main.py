@@ -19,7 +19,7 @@ from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
-from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, unresolved_context, handle_memory_command, review_memory_candidate, submit_memory_correction
+from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, handle_memory_command, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
 from backend.coding_agent_repository_intelligence import (
@@ -4669,14 +4669,12 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
     continuity = relationship_continuity(request.message)
     proactive = proactive_signals(request.message)
     unresolved = unresolved_context(request.message)
+    timing = proactive_timing(request.message, recent)
     if memories:
         messages.append({"role": "system", "content": "Relevant reviewed personal memory:\n- " + "\n- ".join(memories) + "\nUse this as quiet relationship continuity; do not recite it as a profile."})
-    if proactive["should_surface"]:
-        hints = "\n".join(f"- {item['kind']}: {item['statement']}" for item in proactive["signals"])
-        messages.append({"role": "system", "content": "Potentially useful proactive context for this turn:\n" + hints + "\nSurface at most one point only if it genuinely helps the current conversation. Do not interrupt, alarm, or manufacture urgency."})
-    if unresolved["has_unresolved"]:
-        followups = "\n".join(f"- {item['kind']}: {item['statement']}" for item in unresolved["items"])
-        messages.append({"role": "system", "content": "Relevant unresolved context that may deserve a light follow-up:\n" + followups + "\nMention at most one only if the current topic naturally reconnects to it. Never present it as overdue or urgent unless the user said so."})
+    if timing["should_surface_now"] and timing.get("selected"):
+        selected = timing["selected"]
+        messages.append({"role": "system", "content": f"One proactive context item is timely for this turn: {selected['kind']}: {selected['statement']}\nMention it only if it fits naturally after answering the user's main point. Do not repeat it if the recent conversation already covered it, and never manufacture urgency."})
     for item in recent:
         role = item.get("role", "user")
         content = item.get("content", "").strip()
@@ -4696,6 +4694,8 @@ Be emotionally aware without pretending to be human, conscious, or physically pr
         response["proactive_signal_count"] = int(proactive["count"])
         response["unresolved_context_available"] = bool(unresolved["has_unresolved"])
         response["unresolved_context_count"] = int(unresolved["count"])
+        response["proactive_surface_now"] = bool(timing["should_surface_now"])
+        response["proactive_surface_reason"] = str(timing["reason"])
     return response
 
 
