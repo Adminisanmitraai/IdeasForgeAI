@@ -167,6 +167,9 @@ def _safe_read_path(raw: str) -> Path:
     return p
 
 def _parse_request_instruction(message: dict) -> dict:
+    structured = message.get("request")
+    if isinstance(structured, dict):
+        return structured
     try:
         data = json.loads(str(message.get("instruction") or "{}"))
         return data if isinstance(data, dict) else {}

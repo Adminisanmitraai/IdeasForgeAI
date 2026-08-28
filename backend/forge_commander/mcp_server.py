@@ -118,6 +118,7 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
             instruction=instruction,
             required_capability=capability,
             approval_required=False,
+            request=request,
         )
         await manager.dispatch(envelope)
         result = await manager.wait_result(envelope.task_id, timeout_seconds=20.0)
