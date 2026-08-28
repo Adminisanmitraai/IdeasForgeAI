@@ -20,7 +20,7 @@ def test_run_device_task_is_mutating_and_device_scoped():
 
 
 def test_write_tools_are_separate_and_destructive():
-    for name in ("write_file_text", "run_terminal_profile"):
+    for name in ("write_file_text", "delete_file", "run_terminal_profile"):
         spec = tool_spec(name)
         assert spec.read_only is False
         assert spec.destructive is True

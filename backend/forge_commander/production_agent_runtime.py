@@ -212,7 +212,16 @@ def _file_or_terminal_payload(capability: str, request: dict) -> dict:
 
 
 async def _safe_handler(message: dict) -> dict:
-    capability = str(message.get("required_capability") or "").strip()
+    aliases = {
+        "write_file_text": "file.write_text",
+        "delete_file": "file.delete",
+        "run_terminal_profile": "terminal.execute_profile",
+        "file_read_text": "file.read_text",
+        "file_list": "file.list",
+        "terminal_read": "terminal.query",
+    }
+    raw_capability = str(message.get("required_capability") or "").strip()
+    capability = aliases.get(raw_capability, raw_capability)
     write_capabilities = {"file.write_text", "file.delete", "terminal.execute_profile"}
     if capability in write_capabilities:
         decision = authorize_write_action(

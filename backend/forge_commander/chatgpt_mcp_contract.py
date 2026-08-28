@@ -6,7 +6,7 @@ from typing import Literal
 FORGE_COMMANDER_CHATGPT_MCP_VERSION = "forge-commander.chatgpt-mcp.v1"
 ToolName = Literal[
     "list_devices", "get_device_status", "run_device_task",
-    "write_file_text", "run_terminal_profile",
+    "write_file_text", "delete_file", "run_terminal_profile",
 ]
 
 @dataclass(frozen=True, slots=True)
@@ -39,6 +39,11 @@ def forge_commander_tool_specs() -> tuple[McpToolSpec, ...]:
         McpToolSpec(
             "write_file_text",
             "Write bounded text inside an approved root after explicit user approval.",
+            False, True, False, True,
+        ),
+        McpToolSpec(
+            "delete_file",
+            "Delete one allowlisted file after explicit user approval.",
             False, True, False, True,
         ),
         McpToolSpec(

@@ -121,6 +121,20 @@ def test_approval_retry_keeps_task_identity():
     assert pending.task_id == approved.task_id
 
 
+def test_mcp_tool_name_alias_reaches_write_handler(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "backend.forge_commander.approval_actions.allowed_write_roots",
+        lambda: (tmp_path.resolve(),),
+    )
+    target = tmp_path / "alias.txt"
+    result = asyncio.run(_safe_handler(_message(
+        "write_file_text", granted=True,
+        request={"path": str(target), "content": "alias-ok"},
+    )))
+    assert result["succeeded"] is True
+    assert target.read_text(encoding="utf-8") == "alias-ok"
+
+
 def test_approved_delete_is_audited_and_removes_only_file(tmp_path, monkeypatch):
     monkeypatch.setattr(
         "backend.forge_commander.approval_actions.allowed_write_roots",

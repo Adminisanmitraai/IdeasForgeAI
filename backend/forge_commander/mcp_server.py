@@ -21,6 +21,20 @@ from .gateway_session_manager import GatewaySessionManager
 
 FORGE_COMMANDER_MCP_SERVER_VERSION = "forge-commander.mcp-server.v1"
 
+_CAPABILITY_ALIASES = {
+    "write_file_text": "file.write_text",
+    "delete_file": "file.delete",
+    "run_terminal_profile": "terminal.execute_profile",
+    "file_read_text": "file.read_text",
+    "file_list": "file.list",
+    "terminal_read": "terminal.query",
+}
+
+
+def _canonical_capability(value: str) -> str:
+    normalized = value.strip()
+    return _CAPABILITY_ALIASES.get(normalized, normalized)
+
 
 def _csv_env(name: str) -> list[str]:
     return [item.strip() for item in os.getenv(name, "").split(",") if item.strip()]
@@ -192,9 +206,21 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
     async def run_device_task(device_id: str, instruction: str,
                               required_capability: str = "gui_control",
                               approval_required: bool = True,
+                              approval_granted: bool = False,
                               ctx: Context | None = None) -> dict[str, Any]:
         if ctx is None:
             raise PermissionError("missing request context")
+        capability = _canonical_capability(required_capability)
+        if capability in {"file.write_text", "file.delete", "terminal.execute_profile"}:
+            try:
+                request = json.loads(instruction)
+            except (TypeError, json.JSONDecodeError):
+                return {"succeeded": False, "reason": "structured_request_required"}
+            if not isinstance(request, dict):
+                return {"succeeded": False, "reason": "structured_request_required"}
+            return await _dispatch_approved(
+                device_id, capability, request, approval_granted, ctx,
+            )
         access = _oauth_access()
         if "forge.devices.control" not in access.scopes:
             return {"succeeded": False, "reason": "oauth_control_scope_required"}
@@ -204,8 +230,9 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
             return {"succeeded": False, "reason": "device_not_online"}
         envelope = build_task_envelope(
             live.session, instruction=instruction,
-            required_capability=required_capability,
+            required_capability=capability,
             approval_required=approval_required,
+            approval_granted=approval_granted,
         )
         await manager.dispatch(envelope)
         result = await manager.wait_result(envelope.task_id, timeout_seconds=20.0)

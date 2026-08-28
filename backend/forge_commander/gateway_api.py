@@ -28,8 +28,11 @@ def list_mcp_tools(authorization: str | None = Header(default=None)):
     if principal is None:
         raise HTTPException(status_code=401, detail="unauthorized")
     return {"owner_subject": principal.owner_subject, "tools": [
-        "list_devices", "get_device_status", "run_device_task",
-        "write_file_text", "run_terminal_profile",
+        "list_devices", "get_device_status",
+        "device_identity", "device_resources", "device_runtime", "device_hardware",
+        "device_storage", "device_processes", "device_network", "device_software",
+        "device_dev_environment", "file_list", "file_read_text", "terminal_read",
+        "run_device_task", "write_file_text", "delete_file", "run_terminal_profile",
     ]}
 @router.post("/device/enroll")
 def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(default=None)):
