@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import html
+import json
 import os
 from typing import Any
 
@@ -106,14 +107,15 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return {"device_id": device_id, "online": True, "session_id": live.session.session_id,
                 "last_heartbeat_at": live.last_heartbeat_at}
 
-    async def _run_read_only_probe(device_id: str, capability: str, ctx: Context) -> dict[str, Any]:
+    async def _run_read_only_probe(device_id: str, capability: str, ctx: Context, request: dict[str, Any] | None = None) -> dict[str, Any]:
         owner = _owner_from_context(ctx)
         live = manager.get(device_id)
         if live is None or live.session.owner_subject != owner:
             return {"succeeded": False, "reason": "device_not_online"}
+        instruction = json.dumps(request, separators=(",", ":")) if request is not None else f"Read-only ForgeCommander probe: {capability}"
         envelope = build_task_envelope(
             live.session,
-            instruction=f"Read-only ForgeCommander probe: {capability}",
+            instruction=instruction,
             required_capability=capability,
             approval_required=False,
         )
@@ -168,6 +170,22 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
     async def device_dev_environment(device_id: str, ctx: Context) -> dict[str, Any]:
         """Read availability of common development tools."""
         return await _run_read_only_probe(device_id, "device.dev_environment", ctx)
+
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def file_list(device_id: str, path: str, ctx: Context) -> dict[str, Any]:
+        """List up to 100 entries in an allowed local directory; no file content is read."""
+        return await _run_read_only_probe(device_id, "file.list", ctx, {"path": path})
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def file_read_text(device_id: str, path: str, ctx: Context) -> dict[str, Any]:
+        """Read an allowlisted text file up to 64 KB; sensitive credential paths are blocked."""
+        return await _run_read_only_probe(device_id, "file.read_text", ctx, {"path": path})
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def terminal_read(device_id: str, profile: str, cwd: str, ctx: Context) -> dict[str, Any]:
+        """Run a fixed read-only diagnostic profile such as git_status or python_version; arbitrary commands are not accepted."""
+        return await _run_read_only_probe(device_id, "terminal.query", ctx, {"profile": profile, "cwd": cwd})
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
     async def run_device_task(device_id: str, instruction: str,

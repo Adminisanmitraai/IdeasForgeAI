@@ -146,6 +146,67 @@ def _read_only_payload(capability: str) -> dict:
     raise ValueError("capability_not_allowlisted")
 
 
+def _allowed_read_roots() -> tuple[Path, ...]:
+    roots = [Path.home().resolve()]
+    apps = Path(r"D:\\APPS")
+    if apps.exists():
+        roots.append(apps.resolve())
+    return tuple(roots)
+
+def _safe_read_path(raw: str) -> Path:
+    p = Path(raw).expanduser().resolve()
+    if not any(p == root or root in p.parents for root in _allowed_read_roots()):
+        raise PermissionError("path_outside_allowed_roots")
+    lowered = {part.lower() for part in p.parts}
+    blocked_parts = {".ssh", ".aws", ".gnupg", "secrets", "credentials"}
+    if lowered & blocked_parts:
+        raise PermissionError("sensitive_path_blocked")
+    name = p.name.lower()
+    if name == ".env" or any(x in name for x in ("secret", "token", "credential", "private_key")) or p.suffix.lower() in {".pem", ".key", ".pfx", ".p12"}:
+        raise PermissionError("sensitive_file_blocked")
+    return p
+
+def _parse_request_instruction(message: dict) -> dict:
+    try:
+        data = json.loads(str(message.get("instruction") or "{}"))
+        return data if isinstance(data, dict) else {}
+    except Exception:
+        return {}
+
+def _file_or_terminal_payload(capability: str, request: dict) -> dict:
+    if capability == "file.list":
+        p = _safe_read_path(str(request.get("path") or ""))
+        if not p.is_dir(): raise ValueError("directory_required")
+        entries=[]
+        for child in sorted(p.iterdir(), key=lambda x: (not x.is_dir(), x.name.lower()))[:100]:
+            entries.append({"name": child.name, "type": "directory" if child.is_dir() else "file", "size": child.stat().st_size if child.is_file() else None})
+        return {"path": str(p), "entries": entries, "truncated": len(entries) >= 100}
+    if capability == "file.read_text":
+        p = _safe_read_path(str(request.get("path") or ""))
+        if not p.is_file(): raise ValueError("file_required")
+        if p.stat().st_size > 65536: raise ValueError("file_too_large")
+        if p.suffix.lower() not in {".txt", ".md", ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".py", ".js", ".ts", ".tsx", ".jsx", ".css", ".html", ".sql", ".log"}:
+            raise ValueError("text_extension_not_allowlisted")
+        return {"path": str(p), "content": p.read_text(encoding="utf-8", errors="replace")[:65536]}
+    if capability == "terminal.query":
+        profile = str(request.get("profile") or "")
+        commands = {
+            "git_status": ["git", "status", "--short", "--branch"],
+            "git_branch": ["git", "branch", "--show-current"],
+            "git_version": ["git", "--version"],
+            "python_version": ["python", "--version"],
+            "node_version": ["node", "--version"],
+            "npm_version": ["npm", "--version"],
+        }
+        if profile not in commands: raise PermissionError("terminal_profile_not_allowlisted")
+        cwd_raw = str(request.get("cwd") or Path.home())
+        cwd = _safe_read_path(cwd_raw)
+        if not cwd.is_dir(): raise ValueError("cwd_directory_required")
+        out = subprocess.run(commands[profile], cwd=str(cwd), capture_output=True, text=True, timeout=8, shell=False)
+        return {"profile": profile, "cwd": str(cwd), "exit_code": out.returncode, "stdout": out.stdout[:32768], "stderr": out.stderr[:8192]}
+    raise ValueError("capability_not_allowlisted")
+
+
 async def _safe_handler(message: dict) -> dict:
     capability = str(message.get("required_capability") or "").strip()
     if message.get("approval_required", True):
@@ -154,14 +215,17 @@ async def _safe_handler(message: dict) -> dict:
             "reason": "read_only_capability_requires_approval_false",
             "output": {"task_id": message.get("task_id"), "capability": capability},
         }
-    if capability not in {"device.identity", "device.resources", "device.runtime", "device.hardware", "device.storage", "device.processes", "device.network", "device.software", "device.dev_environment"}:
+    if capability not in {"device.identity", "device.resources", "device.runtime", "device.hardware", "device.storage", "device.processes", "device.network", "device.software", "device.dev_environment", "file.list", "file.read_text", "terminal.query"}:
         return {
             "succeeded": False,
             "reason": "capability_not_allowlisted",
             "output": {"task_id": message.get("task_id"), "capability": capability},
         }
     try:
-        payload = _read_only_payload(capability)
+        if capability in {"file.list", "file.read_text", "terminal.query"}:
+            payload = _file_or_terminal_payload(capability, _parse_request_instruction(message))
+        else:
+            payload = _read_only_payload(capability)
     except Exception as exc:
         return {
             "succeeded": False,
