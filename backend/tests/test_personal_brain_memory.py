@@ -7,7 +7,7 @@ from backend.founder_brain.cognitive_memory import (
 )
 from backend.founder_brain.cognitive_ingestion import CognitiveIngestionSource, ingest_cognitive_candidate
 from backend.founder_brain.cognitive_memory_repository import build_cognitive_memory_snapshot
-from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, proactive_permission, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
+from backend.personal_brain_memory import (capture_candidate, recall_bundle, recall_context, rank_recalled_memories, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, proactive_permission, situational_continuity, parse_memory_command, handle_memory_command, list_memory_candidates, review_memory_candidate, submit_memory_correction)
 
 
 def _profile():
@@ -312,3 +312,41 @@ def test_proactive_permission_prioritizes_urgent_direct_turn():
         result=proactive_permission("Stop the rollout immediately", [])
     assert result["allowed"] is False
     assert result["reason"] == "direct_turn_priority"
+
+
+def test_situational_continuity_detects_transient_frustration_without_private_payload():
+    result = situational_continuity("This is not working again and I am frustrated", [])
+    assert result["available"] is True
+    assert result["state"] == "frustrated"
+    assert result["guidance"] == "calm_direct"
+    assert "statement" not in result
+
+
+def test_situational_continuity_uses_recent_user_context():
+    history = [{"role":"user","content":"I am exhausted after a long day"},{"role":"assistant","content":"Okay."}]
+    result = situational_continuity("Can we keep this short?", history)
+    assert result["state"] == "tired"
+    assert result["guidance"] == "brief_low_load"
+
+
+def test_situational_continuity_stays_neutral_without_signal():
+    result = situational_continuity("What is next for the project?", [])
+    assert result["available"] is False
+    assert result["state"] == "neutral"
+
+
+def test_companion_uses_situational_guidance_without_exposing_state_payload():
+    from backend import main as main_module
+    request = SimpleNamespace(message="This is not working again and I am frustrated", history=[])
+    captured = {}
+    def fake_chat(messages):
+        captured["messages"] = messages
+        return {"status":"success","message":"I see the issue. Let us fix the failing step first."}
+    fake_provider = SimpleNamespace(chat=fake_chat)
+    situation = {"available":True,"state":"frustrated","confidence":0.79,"guidance":"calm_direct"}
+    with patch.object(main_module, "handle_memory_command", return_value=None), patch.object(main_module, "OpenAIProvider", return_value=fake_provider), patch.object(main_module, "recall_bundle", return_value={"memories":(),"count":0,"cross_session":False}), patch.object(main_module, "relationship_continuity", return_value={"continuity_available":False}), patch.object(main_module, "proactive_signals", return_value={"should_surface":False,"count":0,"signals":()}), patch.object(main_module, "unresolved_context", return_value={"has_unresolved":False,"count":0,"items":()}), patch.object(main_module, "proactive_permission", return_value={"should_surface_now":False,"reason":"no_relevant_signal","selected":None}), patch.object(main_module, "situational_continuity", return_value=situation), patch.object(main_module, "capture_candidate", return_value=None):
+        result = main_module.personal_brain_companion(request)
+    assert result["situational_continuity_used"] is True
+    assert "situational_state" not in result
+    assert "frustrated" not in str(result)
+    assert any("Adapt tone quietly" in item.get("content", "") for item in captured["messages"] if item.get("role") == "system")

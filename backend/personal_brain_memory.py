@@ -281,6 +281,7 @@ __all__ = [
     "relationship_continuity",
     "proactive_signals",
     "unresolved_context",
+    "situational_continuity",
     "proactive_timing",
     "proactive_permission",
     "rank_recalled_memories",
@@ -354,3 +355,21 @@ def memory_status() -> dict[str, object]:
         "snapshot_version": None if snapshot is None else snapshot.version,
         "pending_candidates": len(pending),
     }
+
+
+def situational_continuity(message: str, recent_history: list[dict[str, str]] | tuple[dict[str, str], ...] = ()) -> dict[str, object]:
+    """PB-COMPANION.6A: infer transient conversational state without persisting it as memory."""
+    text = " ".join([*(str(x.get("content", "")) for x in recent_history[-4:] if x.get("role") == "user"), message]).lower()
+    cues = {
+        "frustrated": ("frustrated", "annoyed", "irritated", "fed up", "not working", "again"),
+        "worried": ("worried", "anxious", "concerned", "nervous", "afraid", "scared"),
+        "excited": ("excited", "great news", "amazing", "fantastic", "finally worked", "love this"),
+        "tired": ("tired", "exhausted", "drained", "sleepy", "long day"),
+        "urgent": ("urgent", "emergency", "immediately", "right now", "asap"),
+    }
+    scored = [(state, sum(1 for cue in markers if cue in text)) for state, markers in cues.items()]
+    state, score = max(scored, key=lambda item: item[1])
+    if score <= 0:
+        return {"version":"personal-brain.situation.v1","available":False,"state":"neutral","confidence":0.0,"guidance":"natural"}
+    guidance = {"frustrated":"calm_direct","worried":"calm_grounded","excited":"warm_positive","tired":"brief_low_load","urgent":"direct_priority"}[state]
+    return {"version":"personal-brain.situation.v1","available":True,"state":state,"confidence":min(0.9, 0.55 + 0.12 * score),"guidance":guidance}
