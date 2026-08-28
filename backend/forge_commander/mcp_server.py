@@ -106,6 +106,39 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return {"device_id": device_id, "online": True, "session_id": live.session.session_id,
                 "last_heartbeat_at": live.last_heartbeat_at}
 
+    async def _run_read_only_probe(device_id: str, capability: str, ctx: Context) -> dict[str, Any]:
+        owner = _owner_from_context(ctx)
+        live = manager.get(device_id)
+        if live is None or live.session.owner_subject != owner:
+            return {"succeeded": False, "reason": "device_not_online"}
+        envelope = build_task_envelope(
+            live.session,
+            instruction=f"Read-only ForgeCommander probe: {capability}",
+            required_capability=capability,
+            approval_required=False,
+        )
+        await manager.dispatch(envelope)
+        result = await manager.wait_result(envelope.task_id, timeout_seconds=20.0)
+        if result is None:
+            return {"succeeded": False, "reason": "device_result_timeout", "task_id": envelope.task_id}
+        return {"succeeded": result.succeeded, "reason": result.reason,
+                "output": result.output, "task_id": result.task_id}
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_identity(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read basic device identity such as hostname, OS, and architecture."""
+        return await _run_read_only_probe(device_id, "device.identity", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_resources(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read CPU, memory, and disk resource information from the device."""
+        return await _run_read_only_probe(device_id, "device.resources", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_runtime(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read ForgeCommander runtime information from the device."""
+        return await _run_read_only_probe(device_id, "device.runtime", ctx)
+
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
     async def run_device_task(device_id: str, instruction: str,
                               required_capability: str = "gui_control",
