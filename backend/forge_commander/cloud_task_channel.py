@@ -37,8 +37,11 @@ def build_task_envelope(session: DeviceSession, *, instruction: str,
     text = instruction.strip()
     if not text:
         raise ValueError("instruction is required")
+    # Approval is a state transition for the same request, not a new task.
+    # Keep the task identity stable when approval_granted changes so the
+    # approved retry resumes the audit/task the owner actually reviewed.
     digest = sha256(
-        f"{session.session_id}\n{text}\n{required_capability}\n{approval_required}\n{approval_granted}".encode("utf-8")
+        f"{session.session_id}\n{text}\n{required_capability}\n{approval_required}".encode("utf-8")
     ).hexdigest()[:20]
     return DeviceTaskEnvelope(
         f"fc-task-{digest}", session.owner_subject, session.device_id,

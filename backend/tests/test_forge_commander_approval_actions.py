@@ -2,6 +2,8 @@ import asyncio
 import json
 
 from backend.forge_commander.approval_actions import authorize_write_action
+from backend.forge_commander.cloud_device_registry import DeviceSession
+from backend.forge_commander.cloud_task_channel import build_task_envelope
 from backend.forge_commander.production_agent_runtime import _safe_handler
 
 
@@ -30,6 +32,7 @@ def test_write_action_requires_both_required_and_granted():
     assert bypass.reason == "write_action_must_require_approval"
     assert allowed.allowed is True
     assert allowed.audit_id.startswith("fc-audit-")
+    assert missing.audit_id == allowed.audit_id
 
 
 def test_unapproved_write_is_rejected_without_touching_disk(tmp_path):
@@ -77,9 +80,58 @@ def test_sensitive_paths_and_arbitrary_terminal_profiles_are_blocked(tmp_path, m
     assert terminal_result["reason"] == "terminal_profile_not_allowlisted"
 
 
+def test_git_diff_check_profile_is_allowlisted(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "backend.forge_commander.approval_actions.allowed_write_roots",
+        lambda: (tmp_path.resolve(),),
+    )
+    result = asyncio.run(_safe_handler(_message(
+        "terminal.execute_profile", granted=True,
+        request={"cwd": str(tmp_path), "profile": "git_diff_check"},
+    )))
+    assert result["reason"] == "approved_action_ok"
+    assert result["output"]["data"]["profile"] == "git_diff_check"
+    assert result["output"]["data"]["exit_code"] in {0, 129}
+
+
 def test_read_only_capability_cannot_receive_write_approval():
     result = asyncio.run(_safe_handler(_message(
         "device.identity", required=True, granted=True,
     )))
     assert result["succeeded"] is False
     assert result["reason"] == "read_only_capability_requires_approval_false"
+
+
+def test_approval_retry_keeps_task_identity():
+    session = DeviceSession(
+        session_id="session-1", device_id="device-1", owner_subject="owner-1",
+        instance_id="instance-1", connected_at="2026-08-28T00:00:00+00:00",
+        heartbeat_at="2026-08-28T00:00:00+00:00",
+    )
+    pending = build_task_envelope(
+        session, instruction='{"path":"C:/temp/cert.txt","content":"ok"}',
+        required_capability="file.write_text", approval_required=True,
+        approval_granted=False,
+    )
+    approved = build_task_envelope(
+        session, instruction='{"path":"C:/temp/cert.txt","content":"ok"}',
+        required_capability="file.write_text", approval_required=True,
+        approval_granted=True,
+    )
+    assert pending.task_id == approved.task_id
+
+
+def test_approved_delete_is_audited_and_removes_only_file(tmp_path, monkeypatch):
+    monkeypatch.setattr(
+        "backend.forge_commander.approval_actions.allowed_write_roots",
+        lambda: (tmp_path.resolve(),),
+    )
+    target = tmp_path / "certification.txt"
+    target.write_text("temporary", encoding="utf-8")
+    result = asyncio.run(_safe_handler(_message(
+        "file.delete", granted=True, request={"path": str(target)},
+    )))
+    assert result["succeeded"] is True
+    assert result["output"]["data"]["deleted"] is True
+    assert result["output"]["data"]["previous_sha256"]
+    assert not target.exists()

@@ -255,10 +255,23 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
     @mcp.tool(annotations=ToolAnnotations(
         readOnlyHint=False, destructiveHint=True, idempotentHint=False,
     ))
+    async def delete_file(device_id: str, path: str,
+                          approval_granted: bool = False,
+                          ctx: Context | None = None) -> dict[str, Any]:
+        """Delete one allowlisted file after explicit approval; directories and sensitive paths are blocked."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(
+            device_id, "file.delete", {"path": path}, approval_granted, ctx,
+        )
+
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=False, destructiveHint=True, idempotentHint=False,
+    ))
     async def run_terminal_profile(device_id: str, profile: str, cwd: str,
                                    approval_granted: bool = False,
                                    ctx: Context | None = None) -> dict[str, Any]:
-        """Run an allowlisted terminal profile after explicit approval."""
+        """Run an approval-gated profile: forge_commander_tests, python_compile, or git_diff_check."""
         if ctx is None:
             raise PermissionError("missing request context")
         return await _dispatch_approved(

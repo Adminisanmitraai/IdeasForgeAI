@@ -21,7 +21,7 @@ class ApprovalActionDecision:
 
 def authorize_write_action(*, task_id: str, capability: str,
                            approval_required: bool, approval_granted: bool) -> ApprovalActionDecision:
-    if capability not in {"file.write_text", "terminal.execute_profile"}:
+    if capability not in {"file.write_text", "file.delete", "terminal.execute_profile"}:
         reason = "write_capability_not_allowlisted"
     elif not approval_required:
         reason = "write_action_must_require_approval"
@@ -29,9 +29,8 @@ def authorize_write_action(*, task_id: str, capability: str,
         reason = "explicit_approval_required"
     else:
         reason = "write_action_authorized"
-    digest = sha256(
-        f"{task_id}\n{capability}\n{approval_required}\n{approval_granted}\n{reason}".encode()
-    ).hexdigest()[:20]
+    # One request keeps one audit identity across pending and approved states.
+    digest = sha256(f"{task_id}\n{capability}".encode()).hexdigest()[:20]
     return ApprovalActionDecision(
         allowed=reason == "write_action_authorized",
         reason=reason,
@@ -84,6 +83,15 @@ def execute_approved_action(capability: str, request: dict) -> dict:
         return {
             "path": str(path), "bytes_written": len(encoded), "created": not existed,
             "previous_sha256": previous_hash, "sha256": sha256(encoded).hexdigest(),
+        }
+    if capability == "file.delete":
+        path = safe_write_path(str(request.get("path") or ""))
+        if not path.is_file():
+            raise ValueError("file_required")
+        previous_hash = sha256(path.read_bytes()).hexdigest()
+        path.unlink()
+        return {
+            "path": str(path), "deleted": True, "previous_sha256": previous_hash,
         }
     if capability == "terminal.execute_profile":
         profile = str(request.get("profile") or "")
