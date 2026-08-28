@@ -31,3 +31,30 @@ def test_file_read_text_enforces_64k(monkeypatch, tmp_path):
     target.write_text("x" * 65537, encoding="utf-8")
     with pytest.raises(ValueError, match="file_too_large"):
         runtime._file_or_terminal_payload("file.read_text", {"path": str(target)})
+
+def test_safe_handler_reports_file_too_large_without_content(monkeypatch, tmp_path):
+    import asyncio
+    _allow(monkeypatch, tmp_path)
+    target = tmp_path / "large.txt"
+    target.write_text("x" * 65537, encoding="utf-8")
+    result = asyncio.run(runtime._safe_handler({
+        "task_id": "t-large", "required_capability": "file.read_text",
+        "approval_required": False, "request": {"path": str(target)},
+    }))
+    assert result["succeeded"] is False
+    assert result["reason"] == "file_too_large"
+    assert "content" not in result["output"]
+
+
+def test_safe_handler_reports_sensitive_block_without_content(monkeypatch, tmp_path):
+    import asyncio
+    _allow(monkeypatch, tmp_path)
+    target = tmp_path / ".env"
+    target.write_text("SECRET=nope", encoding="utf-8")
+    result = asyncio.run(runtime._safe_handler({
+        "task_id": "t-secret", "required_capability": "file.read_text",
+        "approval_required": False, "request": {"path": str(target)},
+    }))
+    assert result["succeeded"] is False
+    assert result["reason"] == "sensitive_file_blocked"
+    assert "content" not in result["output"]

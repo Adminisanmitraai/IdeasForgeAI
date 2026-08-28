@@ -229,6 +229,13 @@ async def _safe_handler(message: dict) -> dict:
             payload = _file_or_terminal_payload(capability, _parse_request_instruction(message))
         else:
             payload = _read_only_payload(capability)
+    except (PermissionError, ValueError) as exc:
+        reason = str(exc) or "read_only_probe_failed"
+        return {
+            "succeeded": False,
+            "reason": reason,
+            "output": {"error": type(exc).__name__, "capability": capability},
+        }
     except Exception as exc:
         return {
             "succeeded": False,
