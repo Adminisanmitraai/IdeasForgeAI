@@ -139,6 +139,36 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         """Read ForgeCommander runtime information from the device."""
         return await _run_read_only_probe(device_id, "device.runtime", ctx)
 
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_hardware(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read CPU architecture and graphics hardware summary."""
+        return await _run_read_only_probe(device_id, "device.hardware", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_storage(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read mounted storage volumes and free capacity."""
+        return await _run_read_only_probe(device_id, "device.storage", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_processes(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read a bounded process summary without command-line arguments."""
+        return await _run_read_only_probe(device_id, "device.processes", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_network(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read local hostname and bounded interface address information."""
+        return await _run_read_only_probe(device_id, "device.network", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_software(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read a bounded installed-software inventory."""
+        return await _run_read_only_probe(device_id, "device.software", ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def device_dev_environment(device_id: str, ctx: Context) -> dict[str, Any]:
+        """Read availability of common development tools."""
+        return await _run_read_only_probe(device_id, "device.dev_environment", ctx)
+
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
     async def run_device_task(device_id: str, instruction: str,
                               required_capability: str = "gui_control",

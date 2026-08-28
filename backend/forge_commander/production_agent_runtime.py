@@ -7,6 +7,7 @@ import socket
 import uuid
 import platform
 import shutil
+import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -93,6 +94,55 @@ def _read_only_payload(capability: str) -> dict:
             except Exception:
                 pass
         return data
+    if capability == "device.hardware":
+        data = {"cpu_count": os.cpu_count(), "machine": platform.machine(), "processor": platform.processor()}
+        if platform.system() == "Windows":
+            ps = "Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name"
+            out = subprocess.run(["powershell.exe", "-NoProfile", "-Command", ps], capture_output=True, text=True, timeout=8)
+            data["gpus"] = [x.strip() for x in out.stdout.splitlines() if x.strip()][:8]
+        return data
+    if capability == "device.storage":
+        roots = []
+        if platform.system() == "Windows":
+            for letter in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+                root = f"{letter}:\\"
+                if Path(root).exists():
+                    try:
+                        u = shutil.disk_usage(root)
+                        roots.append({"root": root, "total": int(u.total), "free": int(u.free)})
+                    except OSError:
+                        pass
+        return {"volumes": roots[:16]}
+    if capability == "device.processes":
+        if platform.system() != "Windows":
+            return {"processes": []}
+        ps = "Get-Process | Sort-Object CPU -Descending | Select-Object -First 40 Id,ProcessName,CPU,WorkingSet | ConvertTo-Json -Compress"
+        out = subprocess.run(["powershell.exe", "-NoProfile", "-Command", ps], capture_output=True, text=True, timeout=8)
+        try:
+            rows = json.loads(out.stdout or "[]")
+            if isinstance(rows, dict): rows = [rows]
+        except Exception:
+            rows = []
+        return {"processes": rows}
+    if capability == "device.network":
+        return {"hostname": socket.gethostname(), "addresses": sorted({x[4][0] for x in socket.getaddrinfo(socket.gethostname(), None) if x and x[4]})[:16]}
+    if capability == "device.software":
+        if platform.system() != "Windows":
+            return {"software": []}
+        ps = "$p='HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*','HKLM:\\Software\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\*'; Get-ItemProperty $p -ErrorAction SilentlyContinue | Where-Object DisplayName | Sort-Object DisplayName -Unique | Select-Object -First 80 DisplayName,DisplayVersion,Publisher | ConvertTo-Json -Compress"
+        out = subprocess.run(["powershell.exe", "-NoProfile", "-Command", ps], capture_output=True, text=True, timeout=10)
+        try:
+            rows = json.loads(out.stdout or "[]")
+            if isinstance(rows, dict): rows = [rows]
+        except Exception:
+            rows = []
+        return {"software": rows}
+    if capability == "device.dev_environment":
+        tools = {}
+        for name in ("python", "node", "npm", "git", "docker", "code"):
+            path = shutil.which(name)
+            tools[name] = {"available": bool(path), "path": path} if path else {"available": False}
+        return {"tools": tools, "python_version": platform.python_version()}
     raise ValueError("capability_not_allowlisted")
 
 
@@ -104,7 +154,7 @@ async def _safe_handler(message: dict) -> dict:
             "reason": "read_only_capability_requires_approval_false",
             "output": {"task_id": message.get("task_id"), "capability": capability},
         }
-    if capability not in {"device.identity", "device.resources", "device.runtime"}:
+    if capability not in {"device.identity", "device.resources", "device.runtime", "device.hardware", "device.storage", "device.processes", "device.network", "device.software", "device.dev_environment"}:
         return {
             "succeeded": False,
             "reason": "capability_not_allowlisted",
