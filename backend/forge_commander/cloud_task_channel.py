@@ -17,6 +17,7 @@ class DeviceTaskEnvelope:
     required_capability: str
     approval_required: bool
     request: dict | None = None
+    approval_granted: bool = False
 
 @dataclass(frozen=True, slots=True)
 class DeviceTaskResultEnvelope:
@@ -31,16 +32,18 @@ class DeviceTaskResultEnvelope:
 def build_task_envelope(session: DeviceSession, *, instruction: str,
                         required_capability: str,
                         approval_required: bool = True,
-                        request: dict | None = None) -> DeviceTaskEnvelope:
+                        request: dict | None = None,
+                        approval_granted: bool = False) -> DeviceTaskEnvelope:
     text = instruction.strip()
     if not text:
         raise ValueError("instruction is required")
     digest = sha256(
-        f"{session.session_id}\n{text}\n{required_capability}".encode("utf-8")
+        f"{session.session_id}\n{text}\n{required_capability}\n{approval_required}\n{approval_granted}".encode("utf-8")
     ).hexdigest()[:20]
     return DeviceTaskEnvelope(
         f"fc-task-{digest}", session.owner_subject, session.device_id,
         session.session_id, text, required_capability, approval_required, request,
+        approval_granted,
     )
 
 def validate_task_result(task: DeviceTaskEnvelope,

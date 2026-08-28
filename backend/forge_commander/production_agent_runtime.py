@@ -13,6 +13,7 @@ from pathlib import Path
 
 import websockets
 
+from .approval_actions import authorize_write_action, execute_approved_action
 from .device_agent_client import AgentConnectionConfig, _heartbeat_loop, _connect_url
 
 FORGE_COMMANDER_PRODUCTION_AGENT_RUNTIME_VERSION = "forge-commander.production-agent-runtime.v1"
@@ -212,6 +213,28 @@ def _file_or_terminal_payload(capability: str, request: dict) -> dict:
 
 async def _safe_handler(message: dict) -> dict:
     capability = str(message.get("required_capability") or "").strip()
+    write_capabilities = {"file.write_text", "terminal.execute_profile"}
+    if capability in write_capabilities:
+        decision = authorize_write_action(
+            task_id=str(message.get("task_id") or ""), capability=capability,
+            approval_required=bool(message.get("approval_required", True)),
+            approval_granted=bool(message.get("approval_granted", False)),
+        )
+        audit = {"audit_id": decision.audit_id, "capability": capability,
+                 "approval_required": True,
+                 "approval_granted": bool(message.get("approval_granted", False))}
+        if not decision.allowed:
+            return {"succeeded": False, "reason": decision.reason, "output": audit}
+        try:
+            payload = execute_approved_action(capability, _parse_request_instruction(message))
+        except (PermissionError, ValueError) as exc:
+            return {"succeeded": False, "reason": str(exc),
+                    "output": {**audit, "error": type(exc).__name__}}
+        except Exception as exc:
+            return {"succeeded": False, "reason": "approved_action_failed",
+                    "output": {**audit, "error": type(exc).__name__}}
+        return {"succeeded": True, "reason": "approved_action_ok",
+                "output": {**audit, "data": payload}}
     if message.get("approval_required", True):
         return {
             "succeeded": False,

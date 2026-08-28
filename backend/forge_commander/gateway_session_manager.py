@@ -51,6 +51,7 @@ class GatewaySessionManager:
             "required_capability": envelope.required_capability,
             "approval_required": envelope.approval_required,
             "request": envelope.request,
+            "approval_granted": envelope.approval_granted,
         })
 
     def accept_result(self, result: DeviceTaskResultEnvelope) -> None:

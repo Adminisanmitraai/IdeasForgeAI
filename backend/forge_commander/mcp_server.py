@@ -214,6 +214,58 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return {"succeeded": result.succeeded, "reason": result.reason,
                 "output": result.output, "task_id": result.task_id}
 
+    async def _dispatch_approved(device_id: str, capability: str,
+                                 request: dict[str, Any],
+                                 approval_granted: bool,
+                                 ctx: Context) -> dict[str, Any]:
+        access = _oauth_access()
+        if "forge.devices.control" not in access.scopes:
+            return {"succeeded": False, "reason": "oauth_control_scope_required"}
+        owner = str(access.subject)
+        live = manager.get(device_id)
+        if live is None or live.session.owner_subject != owner:
+            return {"succeeded": False, "reason": "device_not_online"}
+        envelope = build_task_envelope(
+            live.session, instruction=json.dumps(request, separators=(",", ":")),
+            required_capability=capability, approval_required=True,
+            request=request, approval_granted=approval_granted,
+        )
+        await manager.dispatch(envelope)
+        result = await manager.wait_result(envelope.task_id, timeout_seconds=120.0)
+        if result is None:
+            return {"succeeded": False, "reason": "device_result_timeout",
+                    "task_id": envelope.task_id}
+        return {"succeeded": result.succeeded, "reason": result.reason,
+                "output": result.output, "task_id": result.task_id}
+
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=False, destructiveHint=True, idempotentHint=False,
+    ))
+    async def write_file_text(device_id: str, path: str, content: str,
+                              approval_granted: bool = False,
+                              ctx: Context | None = None) -> dict[str, Any]:
+        """Write bounded text in an approved root after explicit approval."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(
+            device_id, "file.write_text", {"path": path, "content": content},
+            approval_granted, ctx,
+        )
+
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=False, destructiveHint=True, idempotentHint=False,
+    ))
+    async def run_terminal_profile(device_id: str, profile: str, cwd: str,
+                                   approval_granted: bool = False,
+                                   ctx: Context | None = None) -> dict[str, Any]:
+        """Run an allowlisted terminal profile after explicit approval."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(
+            device_id, "terminal.execute_profile", {"profile": profile, "cwd": cwd},
+            approval_granted, ctx,
+        )
+
     return mcp
 
 __all__ = ["FORGE_COMMANDER_MCP_SERVER_VERSION", "build_mcp_server"]

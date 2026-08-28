@@ -29,6 +29,7 @@ def list_mcp_tools(authorization: str | None = Header(default=None)):
         raise HTTPException(status_code=401, detail="unauthorized")
     return {"owner_subject": principal.owner_subject, "tools": [
         "list_devices", "get_device_status", "run_device_task",
+        "write_file_text", "run_terminal_profile",
     ]}
 @router.post("/device/enroll")
 def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(default=None)):
@@ -77,6 +78,7 @@ async def device_ws(websocket: WebSocket, device_id: str):
             if message.get("type") == "heartbeat":
                 heartbeat_at = message.get("at", datetime.now(timezone.utc).isoformat())
                 session_manager.heartbeat(device_id, session_id, heartbeat_at)
+                await websocket.send_json({"type": "heartbeat_ack", "at": heartbeat_at})
             elif message.get("type") == "result":
                 session_manager.accept_result(DeviceTaskResultEnvelope(
                     task_id=str(message.get("task_id", "")), device_id=device_id,
