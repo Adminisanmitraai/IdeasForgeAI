@@ -21,8 +21,9 @@ from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
 from backend.founder_brain.router import create_founder_brain_router
 from backend.forge_commander.gateway_api import router as forge_commander_gateway_router
-from backend.forge_commander.mcp_app import mcp_server
+from backend.forge_commander.mcp_app import mcp_server, mcp_server_v2
 from backend.forge_commander.mcp_app import mcp_app as forge_commander_mcp_app
+from backend.forge_commander.mcp_app import mcp_app_v2 as forge_commander_mcp_app_v2
 from backend.personal_brain_memory import capture_candidate, list_memory_candidates, memory_status, recall_bundle, recall_context, relationship_continuity, proactive_signals, unresolved_context, proactive_timing, proactive_permission, situational_continuity, handle_memory_command, review_memory_candidate, submit_memory_correction
 from backend.core.ai_provider import OpenAIProvider
 from backend.core.project_paths import GENERATED_APPS_DIR, PROJECT_ROOT, ensure_project_folders
@@ -63,7 +64,8 @@ product_brain = ProductBrainWorkflow()
 @asynccontextmanager
 async def app_lifespan(app):
     async with mcp_server.session_manager.run():
-        yield
+        async with mcp_server_v2.session_manager.run():
+            yield
 
 app = FastAPI(
     title="IdeasForgeAI",
@@ -77,7 +79,16 @@ async def forge_commander_oauth_protected_resource_metadata():
     return {
         "resource": "https://commander.ideasforgeai.com/forge-commander/mcp",
         "authorization_servers": ["https://commander.ideasforgeai.com/forge-commander"],
-        "scopes_supported": ["forge.devices.read"],
+        "scopes_supported": ["forge.devices.read", "forge.devices.control"],
+        "bearer_methods_supported": ["header"],
+    }
+
+@app.get("/.well-known/oauth-protected-resource/forge-commander-v2/mcp", include_in_schema=False)
+async def forge_commander_v2_oauth_protected_resource_metadata():
+    return {
+        "resource": "https://commander.ideasforgeai.com/forge-commander-v2/mcp",
+        "authorization_servers": ["https://commander.ideasforgeai.com/forge-commander"],
+        "scopes_supported": ["forge.devices.read", "forge.devices.control"],
         "bearer_methods_supported": ["header"],
     }
 
@@ -1281,6 +1292,7 @@ app.include_router(create_founder_os_router())
 app.include_router(create_founder_brain_router())
 app.include_router(forge_commander_gateway_router)
 app.mount("/forge-commander", forge_commander_mcp_app)
+app.mount("/forge-commander-v2", forge_commander_mcp_app_v2)
 # FOS-1B.1-END: Founder Brain read-only operating-state registration
 
 app.include_router(health_router)

@@ -59,7 +59,9 @@ def _oauth_access():
 def _owner_from_context(ctx: Context) -> str:
     return str(_oauth_access().subject)
 
-def build_mcp_server(manager: GatewaySessionManager) -> FastMCP:
+def build_mcp_server(manager: GatewaySessionManager, *,
+                     server_name: str = "ForgeCommander",
+                     resource_url: str | None = None) -> FastMCP:
     test_mode = os.getenv("FORGE_COMMANDER_MCP_TEST_MODE", "").lower() in {"1", "true", "yes"}
     security = TransportSecuritySettings(
         enable_dns_rebinding_protection=not test_mode,
@@ -67,7 +69,7 @@ def build_mcp_server(manager: GatewaySessionManager) -> FastMCP:
         allowed_origins=_csv_env("FORGE_COMMANDER_MCP_ALLOWED_ORIGINS"),
     )
     issuer = os.getenv("FORGE_COMMANDER_OAUTH_ISSUER", "https://commander.ideasforgeai.com/forge-commander").rstrip("/")
-    resource = os.getenv("FORGE_COMMANDER_OAUTH_RESOURCE", issuer + "/mcp")
+    resource = resource_url or os.getenv("FORGE_COMMANDER_OAUTH_RESOURCE", issuer + "/mcp")
     provider = ForgeCommanderOAuthProvider(issuer)
     auth = AuthSettings(
         issuer_url=AnyHttpUrl(issuer), resource_server_url=AnyHttpUrl(resource),
@@ -77,7 +79,7 @@ def build_mcp_server(manager: GatewaySessionManager) -> FastMCP:
         ), required_scopes=["forge.devices.read"],
     )
     mcp = FastMCP(
-        "ForgeCommander", instructions="Governed access to enrolled Forge devices.",
+        server_name, instructions="Governed access to enrolled Forge devices.",
         auth_server_provider=provider, auth=auth,
         stateless_http=True, json_response=True, transport_security=security,
     )
