@@ -40,6 +40,16 @@ def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(
     allowed_hashes = (configured_hash,) if configured_hash else ()
     presented = (x_forge_enrollment_secret or "").strip()
     presented_hash = sha256(presented.encode("utf-8")).hexdigest() if presented else ""
+
+    print(
+        "FC_AUTH_R1C_R2",
+        "env_present=", bool(configured_hash),
+        "env_len=", len(configured_hash),
+        "env_suffix=", configured_hash[-6:] if configured_hash else "EMPTY",
+        "presented_len=", len(presented),
+        "presented_hash_suffix=", presented_hash[-6:] if presented_hash else "EMPTY",
+        flush=True,
+    )
     if not presented_hash or not any(hmac.compare_digest(presented_hash, candidate) for candidate in allowed_hashes):
         raise HTTPException(status_code=401, detail="invalid_enrollment_secret")
     owner = str(payload.get("owner_subject", "")).strip()
