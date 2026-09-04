@@ -20,10 +20,17 @@ class GatewaySessionManager:
         self._sessions: dict[str, LiveGatewaySession] = {}
         self._pending_results: dict[str, DeviceTaskResultEnvelope] = {}
     def attach(self, live: LiveGatewaySession) -> None:
-        existing = self._sessions.get(live.session.device_id)
+        device_id = live.session.device_id
+        existing = self._sessions.get(device_id)
+
+        # A successfully authenticated reconnect supersedes the previous
+        # transport for the same enrolled device.  detach() is session-id
+        # guarded, so the superseded handler cannot remove this replacement.
         if existing and existing.session.session_id != live.session.session_id:
-            raise ValueError("device already has a live gateway session")
-        self._sessions[live.session.device_id] = live
+            self._sessions[device_id] = live
+            return
+
+        self._sessions[device_id] = live
 
     def detach(self, device_id: str, session_id: str) -> None:
         existing = self._sessions.get(device_id)
