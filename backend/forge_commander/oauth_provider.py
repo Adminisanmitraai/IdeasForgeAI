@@ -97,11 +97,12 @@ class ForgeCommanderOAuthProvider(
         if data is None:
             return None
         data.pop("k", None); data.pop("exp", None); data.pop("jti", None)
+        data["client_id"] = client_id
         try:
             info = OAuthClientInformationFull.model_validate(data)
-        except Exception:
+        except Exception as exc:
+            print(f"[forge-oauth] get_client reject reason=model_validation error={type(exc).__name__}")
             return None
-        info.client_id = client_id
         info.client_id_issued_at = int(time.time())
         if info.token_endpoint_auth_method != "none":
             info.client_secret = _client_secret(client_id)
