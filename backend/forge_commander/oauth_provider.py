@@ -112,7 +112,21 @@ class ForgeCommanderOAuthProvider(
         for redirect_uri in client_info.redirect_uris or []:
             parsed = urlparse(str(redirect_uri))
             host = (parsed.hostname or "").lower()
-            if parsed.scheme != "https" or not any(host == h or host.endswith("." + h) for h in allowed_hosts):
+            trusted_web = (
+                parsed.scheme == "https"
+                and any(host == h or host.endswith("." + h) for h in allowed_hosts)
+            )
+            trusted_forgepc_loopback = (
+                parsed.scheme == "http"
+                and host == "127.0.0.1"
+                and parsed.port is not None
+                and 1024 <= parsed.port <= 65535
+                and parsed.path == "/forgepc/oauth/callback"
+                and not parsed.params
+                and not parsed.query
+                and not parsed.fragment
+            )
+            if not (trusted_web or trusted_forgepc_loopback):
                 raise ValueError("untrusted OAuth redirect URI")
         payload = _client_payload(client_info)
         client_id = "fc-client." + _seal("client", payload, 365 * 24 * 3600)
