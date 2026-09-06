@@ -46,15 +46,47 @@ def _seal(kind: str, payload: dict[str, Any], ttl: int) -> str:
 def _open(token: str, kind: str) -> dict[str, Any] | None:
     try:
         raw, provided = token.split(".", 1)
-        expected = _b64(hmac.new(_key(), raw.encode("ascii"), hashlib.sha256).digest())
-        if not hmac.compare_digest(provided, expected):
-            return None
-        data = json.loads(_unb64(raw))
-        if data.get("k") != kind or int(data.get("exp", 0)) <= int(time.time()):
-            return None
-        return data
-    except Exception:
+    except ValueError:
+        print("[forge-oauth] open reject reason=malformed_token")
         return None
+
+    try:
+        expected = _b64(
+            hmac.new(
+                _key(),
+                raw.encode("ascii"),
+                hashlib.sha256,
+            ).digest()
+        )
+    except Exception:
+        print("[forge-oauth] open reject reason=hmac_compute")
+        return None
+
+    if not hmac.compare_digest(provided, expected):
+        print("[forge-oauth] open reject reason=signature_mismatch")
+        return None
+
+    try:
+        data = json.loads(_unb64(raw))
+    except Exception:
+        print("[forge-oauth] open reject reason=payload_decode")
+        return None
+
+    if data.get("k") != kind:
+        print("[forge-oauth] open reject reason=wrong_kind")
+        return None
+
+    try:
+        exp = int(data.get("exp", 0))
+    except Exception:
+        print("[forge-oauth] open reject reason=invalid_expiry")
+        return None
+
+    if exp <= int(time.time()):
+        print("[forge-oauth] open reject reason=expired")
+        return None
+
+    return data
 
 
 def _client_payload(info: OAuthClientInformationFull) -> dict[str, Any]:
