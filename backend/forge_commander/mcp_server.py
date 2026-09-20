@@ -28,6 +28,9 @@ _CAPABILITY_ALIASES = {
     "file_read_text": "file.read_text",
     "file_list": "file.list",
     "terminal_read": "terminal.query",
+    "deployment_action_validate": "deployment_action_validate",
+    "deployment_action_execute": "deployment_action_execute",
+    "deployment_artifact_attest": "deployment_artifact_attest",
 }
 
 
@@ -213,7 +216,7 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         if ctx is None:
             raise PermissionError("missing request context")
         capability = _canonical_capability(required_capability)
-        if capability in {"file.write_text", "file.delete", "terminal.execute_profile"}:
+        if capability in {"file.write_text", "file.delete", "terminal.execute_profile", "deployment_action_execute"}:
             try:
                 request = json.loads(instruction)
             except (TypeError, json.JSONDecodeError):
@@ -266,6 +269,29 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
                     "task_id": envelope.task_id}
         return {"succeeded": result.succeeded, "reason": result.reason,
                 "output": result.output, "task_id": result.task_id}
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def deployment_artifact_attest(device_id: str, project_root: str, artifact_path: str,
+                                         ctx: Context) -> dict[str, Any]:
+        """Compute the SHA-256 of an allowlisted deployment artifact without executing deployment."""
+        return await _run_read_only_probe(device_id, "deployment_artifact_attest", ctx,
+                                          {"project_root": project_root, "artifact_path": artifact_path})
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    async def deployment_action_validate(device_id: str, request: dict[str, Any],
+                                         ctx: Context) -> dict[str, Any]:
+        """Validate an exact governed deployment action without executing it."""
+        return await _run_read_only_probe(device_id, "deployment_action_validate", ctx, request)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
+    async def deployment_action_execute(device_id: str, request: dict[str, Any],
+                                        approval_granted: bool = False,
+                                        ctx: Context | None = None) -> dict[str, Any]:
+        """Execute a validated allowlisted deployment action after explicit approval."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(device_id, "deployment_action_execute", request,
+                                        approval_granted, ctx)
 
     @mcp.tool(annotations=ToolAnnotations(
         readOnlyHint=False, destructiveHint=True, idempotentHint=False,
