@@ -59,6 +59,21 @@ def _oauth_access():
         raise PermissionError("unauthorized")
     return token
 
+def _oauth_access_metadata() -> dict[str, Any]:
+    """Return non-secret metadata for the credential already authenticated by FastMCP."""
+    access = _oauth_access()
+    resource = getattr(access, "resource", None)
+    return {
+        "credential_source": "mcp_request_auth_context",
+        "credential_mechanism": "fastmcp_oauth_provider",
+        "token_type": "oauth_access_token",
+        "token_kind": "access",
+        "token_material_exposed": False,
+        "subject_present": bool(getattr(access, "subject", None)),
+        "scopes": sorted(str(scope) for scope in (getattr(access, "scopes", None) or [])),
+        "resource": str(resource) if resource is not None else None,
+    }
+
 def _owner_from_context(ctx: Context) -> str:
     return str(_oauth_access().subject)
 
@@ -118,13 +133,24 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return {"devices": devices}
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
-    def get_device_status(device_id: str, ctx: Context) -> dict[str, Any]:
+    async def get_device_status(device_id: str, ctx: Context) -> dict[str, Any]:
         owner = _owner_from_context(ctx)
         live = manager.get(device_id)
+        registered_tools = await mcp.list_tools()
+        registry_names = sorted(str(tool.name) for tool in registered_tools)
+        registry = {
+            "server_version": FORGE_COMMANDER_MCP_SERVER_VERSION,
+            "server_name": server_name,
+            "resource": resource,
+            "tool_count": len(registry_names),
+            "tool_names": registry_names,
+            "auth": _oauth_access_metadata(),
+        }
         if live is None or live.session.owner_subject != owner:
-            return {"device_id": device_id, "online": False}
+            return {"device_id": device_id, "online": False, "mcp_runtime_registry": registry}
         return {"device_id": device_id, "online": True, "session_id": live.session.session_id,
-                "last_heartbeat_at": live.last_heartbeat_at}
+                "last_heartbeat_at": live.last_heartbeat_at,
+                "mcp_runtime_registry": registry}
 
     async def _run_read_only_probe(device_id: str, capability: str, ctx: Context, request: dict[str, Any] | None = None) -> dict[str, Any]:
         owner = _owner_from_context(ctx)
