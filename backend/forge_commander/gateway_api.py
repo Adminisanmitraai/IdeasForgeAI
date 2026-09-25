@@ -9,7 +9,7 @@ from hashlib import sha256
 from fastapi import APIRouter, Header, HTTPException, WebSocket, WebSocketDisconnect
 
 from .cloud_device_registry import DeviceSession
-from .cloud_task_channel import DeviceTaskResultEnvelope
+from .cloud_task_channel import DeviceTaskResultEnvelope, build_task_envelope
 from .gateway_auth import parse_bearer_principal
 from .device_auth import issue_device_token, parse_device_token
 from .gateway_session_manager import GatewaySessionManager, LiveGatewaySession
@@ -90,6 +90,36 @@ def device_peers(authorization: str | None = Header(default=None)):
         "owner_subject": principal.owner_subject,
         "requesting_device_id": principal.device_id,
         "devices": peers,
+    }
+
+@router.get("/device/peers/{device_id}/hardware")
+async def device_peer_hardware(device_id: str, authorization: str | None = Header(default=None)):
+    token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
+    principal = parse_device_token(token)
+    if principal is None:
+        raise HTTPException(status_code=401, detail="unauthorized")
+    live = session_manager.get(device_id)
+    if live is None or live.session.owner_subject != principal.owner_subject:
+        raise HTTPException(status_code=404, detail="peer_not_found")
+    task = build_task_envelope(
+        live.session,
+        instruction="Read training-worker hardware capability.",
+        required_capability="device.hardware",
+        approval_required=False,
+        request={"capability": "device.hardware"},
+        approval_granted=False,
+    )
+    await session_manager.dispatch(task)
+    result = await session_manager.wait_result(task.task_id, timeout_seconds=10.0)
+    if result is None:
+        raise HTTPException(status_code=504, detail="peer_hardware_timeout")
+    if not result.succeeded:
+        raise HTTPException(status_code=502, detail=result.reason or "peer_hardware_failed")
+    output = result.output if isinstance(result.output, dict) else {}
+    return {
+        "device_id": device_id,
+        "online": True,
+        "hardware": output.get("data", {}),
     }
 
 @router.get("/mcp/tools")
