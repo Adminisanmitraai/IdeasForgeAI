@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 import base64
 import binascii
 import hmac
+import json
 import os
 import secrets
 import tempfile
@@ -227,6 +228,99 @@ def device_voice_transcribe(
                 os.unlink(temp_path)
             except OSError:
                 pass
+
+
+@router.post("/device/voice/respond")
+def device_voice_respond(
+    payload: dict,
+    authorization: str | None = Header(default=None),
+):
+    principal = _device_principal_from_header(authorization)
+
+    message = str(payload.get("message", "")).strip()
+    if not message:
+        raise HTTPException(status_code=400, detail="message_required")
+    if len(message) > 4000:
+        raise HTTPException(status_code=413, detail="message_too_large")
+
+    history = payload.get("history") or []
+    if not isinstance(history, list):
+        raise HTTPException(status_code=400, detail="history_must_be_list")
+    clean_history = []
+    for item in history[-8:]:
+        if not isinstance(item, dict):
+            continue
+        role = str(item.get("role", "")).strip().lower()
+        content = str(item.get("content", "")).strip()
+        if role not in {"user", "assistant"} or not content:
+            continue
+        clean_history.append({"role": role, "content": content[:2500]})
+
+    context = payload.get("context") or {}
+    if not isinstance(context, dict):
+        context = {}
+    safe_context = {
+        "product": str(context.get("product", "ForgeWa Personal Assistant"))[:200],
+        "current_work": str(context.get("current_work", ""))[:1200],
+        "execution_mode": "read_only",
+    }
+
+    if not os.getenv("OPENAI_API_KEY", "").strip():
+        raise HTTPException(status_code=503, detail="conversation_provider_unavailable")
+
+    from openai import (
+        APIConnectionError,
+        APITimeoutError,
+        AuthenticationError,
+        OpenAI,
+        OpenAIError,
+        RateLimitError,
+    )
+
+    instructions = (
+        "You are ForgeWa, the user's personal AI assistant inside IdeasForgeAI. "
+        "Answer the user's actual question directly and naturally. "
+        "Do not return a plan, routing instruction, meta-commentary, or generic placeholder. "
+        "Use the supplied current context when relevant. "
+        "Keep replies concise enough for spoken conversation unless the user asks for detail. "
+        "This endpoint is read-only: never claim that you executed a computer action, changed files, "
+        "or performed a tool operation. If an action is requested, explain what you can prepare and "
+        "that execution remains behind the governed approval path."
+    )
+
+    conversation = {
+        "context": safe_context,
+        "history": clean_history,
+        "user_message": message,
+    }
+
+    try:
+        client = OpenAI(timeout=45)
+        response = client.responses.create(
+            model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+            instructions=instructions,
+            input=json.dumps(conversation, ensure_ascii=False),
+        )
+        reply = str(getattr(response, "output_text", "") or "").strip()
+        if not reply:
+            raise HTTPException(status_code=502, detail="conversation_empty")
+        return {
+            "ok": True,
+            "reply": reply,
+            "model": os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+            "device_id": principal.device_id,
+            "execution_mode": "read_only",
+        }
+    except AuthenticationError:
+        raise HTTPException(status_code=502, detail="conversation_auth_failed")
+    except RateLimitError:
+        raise HTTPException(status_code=429, detail="conversation_rate_limited")
+    except APITimeoutError:
+        raise HTTPException(status_code=504, detail="conversation_timeout")
+    except APIConnectionError:
+        raise HTTPException(status_code=503, detail="conversation_connection_failed")
+    except OpenAIError:
+        raise HTTPException(status_code=502, detail="conversation_provider_failed")
 
 
 async def _dispatch_peer_training(
