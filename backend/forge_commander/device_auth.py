@@ -36,8 +36,14 @@ def issue_device_token(owner_subject: str, device_id: str, *, signing_key: str, 
     sig = hmac.new(device_key.encode("utf-8"), payload.encode("ascii"), sha256).digest()
     return f"{payload}.{_b64url(sig)}"
 
-def parse_device_token(token: str, *, expected_device_id: str, signing_key: str | None = None,
-                       now_epoch: int | None = None) -> DevicePrincipal | None:
+
+def parse_device_token(
+    token: str,
+    *,
+    expected_device_id: str | None = None,
+    signing_key: str | None = None,
+    now_epoch: int | None = None,
+) -> DevicePrincipal | None:
     key = signing_key or os.getenv("FORGE_COMMANDER_GATEWAY_SIGNING_KEY", "")
     if not token or not key or "." not in token:
         return None
@@ -53,10 +59,16 @@ def parse_device_token(token: str, *, expected_device_id: str, signing_key: str 
     except Exception:
         return None
     now = int(time.time()) if now_epoch is None else int(now_epoch)
-    if expires_at <= now or device != expected_device_id or not owner.strip():
+    if expires_at <= now or not owner.strip():
+        return None
+    if expected_device_id is not None and device != expected_device_id:
         return None
     return DevicePrincipal(owner.strip(), device, expires_at)
 
 
-__all__ = ["FORGE_COMMANDER_DEVICE_AUTH_VERSION", "DevicePrincipal",
-           "issue_device_token", "parse_device_token"]
+__all__ = [
+    "FORGE_COMMANDER_DEVICE_AUTH_VERSION",
+    "DevicePrincipal",
+    "issue_device_token",
+    "parse_device_token",
+]

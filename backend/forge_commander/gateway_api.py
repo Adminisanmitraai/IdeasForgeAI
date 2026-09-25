@@ -22,6 +22,27 @@ session_manager = GatewaySessionManager()
 def gateway_health():
     return {"ok": True, "service": "forge-commander-gateway"}
 
+@router.get("/device/peers")
+def device_peers(authorization: str | None = Header(default=None)):
+    token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
+    principal = parse_device_token(token)
+    if principal is None:
+        raise HTTPException(status_code=401, detail="unauthorized")
+    peers = [
+        {
+            "device_id": live.session.device_id,
+            "session_id": live.session.session_id,
+            "online": True,
+            "last_heartbeat_at": live.last_heartbeat_at,
+        }
+        for live in session_manager.live_sessions(owner_subject=principal.owner_subject)
+    ]
+    return {
+        "owner_subject": principal.owner_subject,
+        "requesting_device_id": principal.device_id,
+        "devices": peers,
+    }
+
 @router.get("/mcp/tools")
 def list_mcp_tools(authorization: str | None = Header(default=None)):
     principal = parse_bearer_principal(authorization or "")
