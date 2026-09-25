@@ -285,6 +285,8 @@ def device_voice_respond(
         "Do not return a plan, routing instruction, meta-commentary, or generic placeholder. "
         "Use the supplied current context when relevant. "
         "Keep replies concise enough for spoken conversation unless the user asks for detail. "
+        "Reply in the same language as the user. For Hindi use natural Hindi, for Bengali use natural Bengali, "
+        "and for mixed Hinglish or Bengali-English preserve the user's natural language mix where practical. "
         "This endpoint is read-only: never claim that you executed a computer action, changed files, "
         "or performed a tool operation. If an action is requested, explain what you can prepare and "
         "that execution remains behind the governed approval path."
