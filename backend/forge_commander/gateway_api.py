@@ -122,6 +122,140 @@ async def device_peer_hardware(device_id: str, authorization: str | None = Heade
         "hardware": output.get("data", {}),
     }
 
+
+def _device_principal_from_header(authorization: str | None):
+    token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
+    principal = parse_device_token(token)
+    if principal is None:
+        raise HTTPException(status_code=401, detail="unauthorized")
+    return principal
+
+
+async def _dispatch_peer_training(
+    device_id: str,
+    *,
+    principal,
+    capability: str,
+    request: dict,
+    approval_required: bool,
+    approval_granted: bool,
+    timeout_seconds: float = 15.0,
+):
+    live = session_manager.get(device_id)
+    if live is None or live.session.owner_subject != principal.owner_subject:
+        raise HTTPException(status_code=404, detail="peer_not_found")
+    task = build_task_envelope(
+        live.session,
+        instruction=f"ForgeWa training task: {capability}",
+        required_capability=capability,
+        approval_required=approval_required,
+        request=request,
+        approval_granted=approval_granted,
+    )
+    await session_manager.dispatch(task)
+    result = await session_manager.wait_result(task.task_id, timeout_seconds=timeout_seconds)
+    if result is None:
+        raise HTTPException(status_code=504, detail=f"{capability}_timeout")
+    output = result.output if isinstance(result.output, dict) else {}
+    if not result.succeeded:
+        return {
+            "device_id": device_id,
+            "succeeded": False,
+            "reason": result.reason or f"{capability}_failed",
+            "output": output,
+        }
+    return {
+        "device_id": device_id,
+        "succeeded": True,
+        "reason": result.reason,
+        "output": output,
+    }
+
+
+@router.get("/device/peers/{device_id}/training/environment")
+async def device_peer_training_environment(
+    device_id: str,
+    authorization: str | None = Header(default=None),
+):
+    principal = _device_principal_from_header(authorization)
+    return await _dispatch_peer_training(
+        device_id,
+        principal=principal,
+        capability="training.environment",
+        request={"job_kind": "cuda_smoke"},
+        approval_required=False,
+        approval_granted=False,
+    )
+
+
+@router.get("/device/peers/{device_id}/training/status")
+async def device_peer_training_status(
+    device_id: str,
+    authorization: str | None = Header(default=None),
+):
+    principal = _device_principal_from_header(authorization)
+    return await _dispatch_peer_training(
+        device_id,
+        principal=principal,
+        capability="training.status",
+        request={},
+        approval_required=False,
+        approval_granted=False,
+    )
+
+
+@router.post("/device/peers/{device_id}/training/start")
+async def device_peer_training_start(
+    device_id: str,
+    payload: dict,
+    authorization: str | None = Header(default=None),
+):
+    principal = _device_principal_from_header(authorization)
+    if str(payload.get("confirm", "")) != "START_TRAINING":
+        raise HTTPException(status_code=400, detail="explicit_training_confirmation_required")
+    job_kind = str(payload.get("job_kind", "cuda_smoke")).strip()
+    if job_kind != "cuda_smoke":
+        raise HTTPException(status_code=400, detail="unsupported_job_kind")
+    steps = max(20, min(int(payload.get("steps", 120)), 500))
+    checkpoint_every = max(10, min(int(payload.get("checkpoint_every", 30)), steps))
+    request = {
+        "job_kind": "cuda_smoke",
+        "project_id": str(payload.get("project_id", "brain"))[:64],
+        "steps": steps,
+        "checkpoint_every": checkpoint_every,
+        "min_free_vram_mb": max(1024, min(int(payload.get("min_free_vram_mb", 4096)), 15000)),
+    }
+    return await _dispatch_peer_training(
+        device_id,
+        principal=principal,
+        capability="training.start",
+        request=request,
+        approval_required=True,
+        approval_granted=True,
+        timeout_seconds=20.0,
+    )
+
+
+@router.post("/device/peers/{device_id}/training/cancel")
+async def device_peer_training_cancel(
+    device_id: str,
+    payload: dict,
+    authorization: str | None = Header(default=None),
+):
+    principal = _device_principal_from_header(authorization)
+    if str(payload.get("confirm", "")) != "CANCEL_TRAINING":
+        raise HTTPException(status_code=400, detail="explicit_cancel_confirmation_required")
+    return await _dispatch_peer_training(
+        device_id,
+        principal=principal,
+        capability="training.cancel",
+        request={"job_id": str(payload.get("job_id", ""))[:128]},
+        approval_required=True,
+        approval_granted=True,
+        timeout_seconds=15.0,
+    )
+
+
 @router.get("/mcp/tools")
 def list_mcp_tools(authorization: str | None = Header(default=None)):
     principal = parse_bearer_principal(authorization or "")
