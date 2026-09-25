@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import base64
+import binascii
 import hmac
 import os
 import secrets
+import tempfile
 import time
 from hashlib import sha256
 from fastapi import APIRouter, Header, HTTPException, WebSocket, WebSocketDisconnect
@@ -129,6 +132,101 @@ def _device_principal_from_header(authorization: str | None):
     if principal is None:
         raise HTTPException(status_code=401, detail="unauthorized")
     return principal
+
+
+_VOICE_AUDIO_MIME_SUFFIX = {
+    "audio/webm": ".webm",
+    "audio/wav": ".wav",
+    "audio/x-wav": ".wav",
+    "audio/mpeg": ".mp3",
+    "audio/mp4": ".m4a",
+    "audio/ogg": ".ogg",
+}
+_MAX_VOICE_AUDIO_BYTES = 8 * 1024 * 1024
+
+
+@router.post("/device/voice/transcribe")
+def device_voice_transcribe(
+    payload: dict,
+    authorization: str | None = Header(default=None),
+):
+    principal = _device_principal_from_header(authorization)
+    encoded = str(payload.get("audio_base64", "")).strip()
+    mime_type = str(payload.get("mime_type", "audio/webm")).strip().lower()
+    language_hint = str(payload.get("language_hint", "en")).strip().lower()
+
+    if not encoded:
+        raise HTTPException(status_code=400, detail="audio_base64_required")
+    suffix = _VOICE_AUDIO_MIME_SUFFIX.get(mime_type)
+    if suffix is None:
+        raise HTTPException(status_code=400, detail="unsupported_audio_mime")
+    if len(encoded) > (_MAX_VOICE_AUDIO_BYTES * 2):
+        raise HTTPException(status_code=413, detail="audio_payload_too_large")
+
+    try:
+        audio_bytes = base64.b64decode(encoded, validate=True)
+    except (binascii.Error, ValueError):
+        raise HTTPException(status_code=400, detail="audio_base64_invalid")
+    if not audio_bytes:
+        raise HTTPException(status_code=400, detail="audio_empty")
+    if len(audio_bytes) > _MAX_VOICE_AUDIO_BYTES:
+        raise HTTPException(status_code=413, detail="audio_payload_too_large")
+    if not os.getenv("OPENAI_API_KEY", "").strip():
+        raise HTTPException(status_code=503, detail="transcription_provider_unavailable")
+
+    temp_path = ""
+    try:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as handle:
+            handle.write(audio_bytes)
+            temp_path = handle.name
+
+        from openai import (
+            APIConnectionError,
+            APITimeoutError,
+            AuthenticationError,
+            OpenAI,
+            OpenAIError,
+            RateLimitError,
+        )
+
+        client = OpenAI(timeout=45)
+        with open(temp_path, "rb") as audio_file:
+            kwargs = {
+                "model": os.getenv("OPENAI_TRANSCRIBE_MODEL", "gpt-4o-transcribe"),
+                "file": audio_file,
+            }
+            if language_hint in {"en", "hi", "bn"}:
+                kwargs["language"] = language_hint
+            result = client.audio.transcriptions.create(**kwargs)
+
+        text = str(getattr(result, "text", "") or "").strip()
+        if not text:
+            raise HTTPException(status_code=422, detail="transcription_empty")
+        return {
+            "ok": True,
+            "text": text,
+            "provider": "openai",
+            "model": os.getenv("OPENAI_TRANSCRIBE_MODEL", "gpt-4o-transcribe"),
+            "language_hint": language_hint,
+            "device_id": principal.device_id,
+            "audio_persisted": False,
+        }
+    except AuthenticationError:
+        raise HTTPException(status_code=502, detail="transcription_auth_failed")
+    except RateLimitError:
+        raise HTTPException(status_code=429, detail="transcription_rate_limited")
+    except APITimeoutError:
+        raise HTTPException(status_code=504, detail="transcription_timeout")
+    except APIConnectionError:
+        raise HTTPException(status_code=503, detail="transcription_connection_failed")
+    except OpenAIError:
+        raise HTTPException(status_code=502, detail="transcription_provider_failed")
+    finally:
+        if temp_path:
+            try:
+                os.unlink(temp_path)
+            except OSError:
+                pass
 
 
 async def _dispatch_peer_training(
