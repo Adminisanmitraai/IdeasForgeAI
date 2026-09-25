@@ -154,7 +154,7 @@ def device_voice_transcribe(
     principal = _device_principal_from_header(authorization)
     encoded = str(payload.get("audio_base64", "")).strip()
     mime_type = str(payload.get("mime_type", "audio/webm")).strip().lower()
-    language_hint = str(payload.get("language_hint", "en")).strip().lower()
+    language_hint = str(payload.get("language_hint", "auto")).strip().lower()
 
     if not encoded:
         raise HTTPException(status_code=400, detail="audio_base64_required")
@@ -198,6 +198,8 @@ def device_voice_transcribe(
             }
             if language_hint in {"en", "hi", "bn"}:
                 kwargs["language"] = language_hint
+            elif language_hint not in {"auto", ""}:
+                raise HTTPException(status_code=400, detail="unsupported_language_hint")
             result = client.audio.transcriptions.create(**kwargs)
 
         text = str(getattr(result, "text", "") or "").strip()
