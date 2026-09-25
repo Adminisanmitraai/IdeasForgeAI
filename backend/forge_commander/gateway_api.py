@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import hmac
 import os
+import secrets
 import time
 from hashlib import sha256
 from fastapi import APIRouter, Header, HTTPException, WebSocket, WebSocketDisconnect
@@ -17,10 +18,58 @@ FORGE_COMMANDER_GATEWAY_API_VERSION = "forge-commander.gateway-api.v1"
 
 router = APIRouter(prefix="/forge-commander", tags=["forge-commander"])
 session_manager = GatewaySessionManager()
+_PAIRING_TICKETS: dict[str, tuple[str, int]] = {}
+
+def _purge_pairing_tickets(now: int) -> None:
+    for digest, (_, expires_at) in list(_PAIRING_TICKETS.items()):
+        if expires_at <= now:
+            _PAIRING_TICKETS.pop(digest, None)
 
 @router.get("/health")
 def gateway_health():
     return {"ok": True, "service": "forge-commander-gateway"}
+
+@router.post("/device/pairing-ticket")
+def create_pairing_ticket(authorization: str | None = Header(default=None)):
+    token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
+    principal = parse_device_token(token)
+    if principal is None:
+        raise HTTPException(status_code=401, detail="unauthorized")
+    now = int(time.time())
+    _purge_pairing_tickets(now)
+    code = secrets.token_urlsafe(24)
+    digest = sha256(code.encode("utf-8")).hexdigest()
+    expires_at = now + 600
+    _PAIRING_TICKETS[digest] = (principal.owner_subject, expires_at)
+    return {"pairing_code": code, "expires_at": expires_at, "ttl_seconds": 600}
+
+@router.post("/device/pair")
+def pair_device(payload: dict):
+    code = str(payload.get("pairing_code", "")).strip()
+    device_id = str(payload.get("device_id", "")).strip()
+    if not code or not device_id:
+        raise HTTPException(status_code=400, detail="pairing_code_and_device_id_required")
+    now = int(time.time())
+    _purge_pairing_tickets(now)
+    digest = sha256(code.encode("utf-8")).hexdigest()
+    ticket = _PAIRING_TICKETS.pop(digest, None)
+    if ticket is None:
+        raise HTTPException(status_code=401, detail="invalid_or_expired_pairing_code")
+    owner_subject, expires_at = ticket
+    if expires_at <= now:
+        raise HTTPException(status_code=401, detail="invalid_or_expired_pairing_code")
+    signing_key = os.getenv("FORGE_COMMANDER_GATEWAY_SIGNING_KEY", "")
+    if not signing_key:
+        raise HTTPException(status_code=503, detail="gateway_signing_unavailable")
+    device_expires_at = now + 90 * 24 * 60 * 60
+    token = issue_device_token(owner_subject, device_id, signing_key=signing_key, expires_at=device_expires_at)
+    return {
+        "enrolled": True,
+        "owner_subject": owner_subject,
+        "device_id": device_id,
+        "device_token": token,
+        "expires_at": device_expires_at,
+    }
 
 @router.get("/device/peers")
 def device_peers(authorization: str | None = Header(default=None)):

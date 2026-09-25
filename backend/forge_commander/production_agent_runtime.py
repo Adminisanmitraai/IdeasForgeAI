@@ -101,6 +101,36 @@ def _read_only_payload(capability: str) -> dict:
             ps = "Get-CimInstance Win32_VideoController | Select-Object -ExpandProperty Name"
             out = subprocess.run(["powershell.exe", "-NoProfile", "-Command", ps], capture_output=True, text=True, timeout=8)
             data["gpus"] = [x.strip() for x in out.stdout.splitlines() if x.strip()][:8]
+            smi = shutil.which("nvidia-smi")
+            data["nvidia_smi_available"] = bool(smi)
+            data["cuda_available"] = False
+            data["gpu_details"] = []
+            if smi:
+                probe = subprocess.run(
+                    [smi, "--query-gpu=name,memory.total,memory.free,driver_version", "--format=csv,noheader,nounits"],
+                    capture_output=True, text=True, timeout=8,
+                )
+                if probe.returncode == 0:
+                    details = []
+                    for line in probe.stdout.splitlines()[:8]:
+                        parts = [x.strip() for x in line.split(",")]
+                        if len(parts) >= 4:
+                            try:
+                                total_mb = int(parts[1])
+                            except ValueError:
+                                total_mb = None
+                            try:
+                                free_mb = int(parts[2])
+                            except ValueError:
+                                free_mb = None
+                            details.append({
+                                "name": parts[0],
+                                "memory_total_mb": total_mb,
+                                "memory_free_mb": free_mb,
+                                "driver_version": parts[3],
+                            })
+                    data["gpu_details"] = details
+                    data["cuda_available"] = bool(details)
         return data
     if capability == "device.storage":
         roots = []
