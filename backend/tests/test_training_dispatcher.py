@@ -56,3 +56,27 @@ def test_best_capable_worker_is_deterministic():
 def test_equal_capacity_tiebreaks_by_worker_id():
     workers = [_worker("worker-b"), _worker("worker-a")]
     assert select_worker(_spec(), workers).worker_id == "worker-a"
+
+
+def test_general_control_rtx_identity_is_never_training_eligible():
+    general = WorkerRecord(
+        worker_id="fc-win-ea1660dd214d4096b1cd", role="general_control",
+        last_heartbeat_at="2026-09-27T02:00:00+00:00", state="online",
+        accelerator="cuda", device_name="NVIDIA GeForce RTX 5080", vram_mb=16303,
+    )
+    assert worker_matches(_spec(), general) is False
+    decision = select_worker(_spec(), [general])
+    assert decision.eligible is False
+    assert decision.reason == "no_training_role_workers"
+
+
+def test_dedicated_rtx_worker_wins_even_beside_general_control_identity():
+    general = WorkerRecord(
+        worker_id="fc-win-ea1660dd214d4096b1cd", role="general_control",
+        last_heartbeat_at="2026-09-27T02:00:00+00:00", state="online",
+        accelerator="cuda", device_name="NVIDIA GeForce RTX 5080", vram_mb=24000,
+    )
+    dedicated = _worker("fc-rtx-e413f31e9d66e1265697", vram=16303)
+    decision = select_worker(_spec(), [general, dedicated])
+    assert decision.eligible is True
+    assert decision.worker_id == "fc-rtx-e413f31e9d66e1265697"
