@@ -208,12 +208,31 @@ def device_voice_transcribe(
         text = str(getattr(result, "text", "") or "").strip()
         if not text:
             raise HTTPException(status_code=422, detail="transcription_empty")
+        latin_enforced = False
+        if language_hint == "en":
+            letters = [ch for ch in text if ch.isalpha()]
+            latin_letters = [ch for ch in letters if ("A" <= ch <= "Z") or ("a" <= ch <= "z")]
+            if letters and (len(latin_letters) / len(letters)) < 0.60:
+                correction = client.responses.create(
+                    model=os.getenv("OPENAI_VOICE_RESPONSE_MODEL", "gpt-4.1-mini"),
+                    instructions=(
+                        "Convert this speech transcript into the English words the speaker most likely said. "
+                        "Return only English Latin-script transcription, not an answer or translation. "
+                        "Preserve the assistant name exactly as ForgeWa when applicable."
+                    ),
+                    input=text,
+                )
+                corrected = str(getattr(correction, "output_text", "") or "").strip()
+                if corrected:
+                    text = corrected
+                    latin_enforced = True
         return {
             "ok": True,
             "text": text,
             "provider": "openai",
             "model": os.getenv("OPENAI_TRANSCRIBE_MODEL", "gpt-4o-transcribe"),
             "language_hint": language_hint,
+            "latin_enforced": latin_enforced,
             "device_id": principal.device_id,
             "audio_persisted": False,
         }
