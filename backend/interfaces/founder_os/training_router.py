@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from datetime import datetime, timezone
 import hmac
 import os
@@ -51,6 +51,23 @@ def create_training_certification_router(root: str | Path) -> APIRouter:
     registry = TrainingJobRegistry(root)
     telemetry = TrainingTelemetryStore(root)
     router = APIRouter(prefix=ROUTE_PREFIX, tags=["Forge AI Factory Certification"])
+
+    bootstrap_job_id = os.getenv("FORGE_AI_FACTORY_CERTIFICATION_JOB_ID", "").strip()
+    bootstrap_action = os.getenv("FORGE_AI_FACTORY_CERTIFICATION_ACTION", "").strip().lower()
+    if bootstrap_job_id and re.fullmatch(r"cert-[A-Za-z0-9_-]+", bootstrap_job_id):
+        paths = [root / "jobs" / f"{bootstrap_job_id}.json", root / "training_specs" / f"{bootstrap_job_id}.json", root / "training_telemetry" / f"{bootstrap_job_id}.json"]
+        if bootstrap_action == "delete":
+            for path in paths:
+                if path.exists():
+                    path.unlink()
+        elif bootstrap_action == "create":
+            now = datetime.now(timezone.utc).isoformat()
+            spec = TrainingJobSpec(job_id=bootstrap_job_id, model_ref="certification://synthetic-model", dataset_ref="certification://synthetic-dataset", requested_accelerator="cuda", requested_vram_mb=0)
+            registry.submit(spec, idempotency_key=f"certification:{bootstrap_job_id}", correlation_id=f"certification:{bootstrap_job_id}", created_at=now)
+            try:
+                telemetry.get(bootstrap_job_id)
+            except ValueError:
+                telemetry.put(TrainingTelemetry(job_id=bootstrap_job_id, worker_id="certification-fixture", recorded_at=now, epoch=2, step=70, total_steps=100, progress_percent=70.0, loss=0.21, metrics={"accuracy": 0.88}, checkpoint_id="cert-checkpoint-70", checkpoint_ref="certification://checkpoint/70", gpu_utilization_percent=0.0, gpu_memory_used_mb=0, gpu_memory_total_mb=0))
 
     def require_token(value: str | None) -> None:
         configured = os.getenv("FORGE_AI_FACTORY_CERTIFICATION_TOKEN", "").strip()
