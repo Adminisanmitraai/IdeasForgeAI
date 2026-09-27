@@ -19,7 +19,7 @@ from backend.agents.pixel_matched_page_converter_agent import PixelMatchedPageCo
 from backend.agents.visual_design_engine_agent import VisualDesignEngineAgent
 from backend.api.health import router as health_router
 from backend.interfaces.founder_os.router import create_founder_os_router
-from backend.interfaces.founder_os.training_router import create_training_read_router
+from backend.interfaces.founder_os.training_router import create_training_certification_router, create_training_read_router
 from backend.founder_brain.router import create_founder_brain_router
 from backend.forge_commander.gateway_api import router as forge_commander_gateway_router
 from backend.forge_commander.mcp_app import mcp_server, mcp_server_v2
@@ -1289,6 +1289,7 @@ async def studio_v4_product_flow(request: Request):
 # FOS-1A.1-BEGIN: Founder OS read-only API registration
 app.include_router(create_founder_os_router())
 app.include_router(create_training_read_router(TRAINING_STATE_ROOT))
+app.include_router(create_training_certification_router(TRAINING_STATE_ROOT))
 # FOS-1A.1-END: Founder OS read-only API registration
 
 # FOS-1B.1-BEGIN: Founder Brain read-only operating-state registration
