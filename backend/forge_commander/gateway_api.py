@@ -200,6 +200,9 @@ def device_voice_transcribe(
                 kwargs["language"] = language_hint
             elif language_hint not in {"auto", ""}:
                 raise HTTPException(status_code=400, detail="unsupported_language_hint")
+            transcription_prompt = str(payload.get("transcription_prompt", "")).strip()
+            if transcription_prompt:
+                kwargs["prompt"] = transcription_prompt[:1000]
             result = client.audio.transcriptions.create(**kwargs)
 
         text = str(getattr(result, "text", "") or "").strip()
