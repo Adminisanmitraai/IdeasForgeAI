@@ -516,6 +516,40 @@ def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(
     return {"enrolled": True, "owner_subject": owner, "device_id": device_id,
             "device_token": token, "expires_at": expires_at}
 
+@router.post("/device/action")
+async def device_action(payload: dict, authorization: str | None = Header(default=None)):
+    token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
+    principal = parse_device_token(token)
+    if principal is None:
+        raise HTTPException(status_code=401, detail="unauthorized")
+    device_id = str(payload.get("device_id") or "").strip()
+    instruction = str(payload.get("instruction") or "").strip()
+    if not device_id or device_id != principal.device_id:
+        raise HTTPException(status_code=403, detail="same_device_only")
+    if str(payload.get("required_capability") or "") != "gui_control":
+        raise HTTPException(status_code=403, detail="gui_control_only")
+    if payload.get("approval_required") is not True or payload.get("approval_granted") is not True:
+        raise HTTPException(status_code=403, detail="explicit_approval_required")
+    live = session_manager.get(device_id)
+    if live is None or live.session.owner_subject != principal.owner_subject:
+        raise HTTPException(status_code=409, detail="device_not_online")
+    try:
+        envelope = build_task_envelope(
+            live.session,
+            instruction=instruction,
+            required_capability="gui_control",
+            approval_required=True,
+            approval_granted=True,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    await session_manager.dispatch(envelope)
+    result = await session_manager.wait_result(envelope.task_id, timeout_seconds=20.0)
+    if result is None:
+        return {"succeeded": False, "reason": "device_result_timeout", "task_id": envelope.task_id}
+    return {"succeeded": result.succeeded, "reason": result.reason, "output": result.output, "task_id": result.task_id}
+
+
 @router.websocket("/device/ws/{device_id}")
 async def device_ws(websocket: WebSocket, device_id: str):
     authorization = websocket.headers.get("authorization", "")
