@@ -19,6 +19,7 @@ class GatewaySessionManager:
     def __init__(self) -> None:
         self._sessions: dict[str, LiveGatewaySession] = {}
         self._pending_results: dict[str, DeviceTaskResultEnvelope] = {}
+        self._inflight_tasks: dict[str, tuple[str, str]] = {}
     def attach(self, live: LiveGatewaySession) -> None:
         device_id = live.session.device_id
         existing = self._sessions.get(device_id)
@@ -36,6 +37,11 @@ class GatewaySessionManager:
         existing = self._sessions.get(device_id)
         if existing and existing.session.session_id == session_id:
             self._sessions.pop(device_id, None)
+            stale = [task_id for task_id, binding in self._inflight_tasks.items()
+                     if binding == (device_id, session_id)]
+            for task_id in stale:
+                self._inflight_tasks.pop(task_id, None)
+                self._pending_results.pop(task_id, None)
 
     def heartbeat(self, device_id: str, session_id: str, at: str) -> None:
         live = self._sessions.get(device_id)
@@ -49,22 +55,34 @@ class GatewaySessionManager:
         live = self._sessions.get(envelope.device_id)
         if not live or live.session.session_id != envelope.session_id:
             raise ValueError("target device session is not connected")
-        await live.transport.send_json({
-            "type": "task",
-            "task_id": envelope.task_id,
-            "device_id": envelope.device_id,
-            "session_id": envelope.session_id,
-            "instruction": envelope.instruction,
-            "required_capability": envelope.required_capability,
-            "approval_required": envelope.approval_required,
-            "request": envelope.request,
-            "approval_granted": envelope.approval_granted,
-        })
+        self._inflight_tasks[envelope.task_id] = (
+            envelope.device_id, envelope.session_id,
+        )
+        try:
+            await live.transport.send_json({
+                "type": "task",
+                "task_id": envelope.task_id,
+                "device_id": envelope.device_id,
+                "session_id": envelope.session_id,
+                "instruction": envelope.instruction,
+                "required_capability": envelope.required_capability,
+                "approval_required": envelope.approval_required,
+                "request": envelope.request,
+                "approval_granted": envelope.approval_granted,
+                "task_authorization": envelope.task_authorization,
+            })
+        except Exception:
+            self._inflight_tasks.pop(envelope.task_id, None)
+            self._pending_results.pop(envelope.task_id, None)
+            raise
 
     def accept_result(self, result: DeviceTaskResultEnvelope) -> None:
         live = self._sessions.get(result.device_id)
         if not live or live.session.session_id != result.session_id:
             raise ValueError("result session does not match live gateway session")
+        binding = self._inflight_tasks.get(result.task_id)
+        if binding != (result.device_id, result.session_id):
+            return
         self._pending_results[result.task_id] = result
 
     def pop_result(self, task_id: str) -> DeviceTaskResultEnvelope | None:
@@ -91,8 +109,11 @@ async def _wait_result(self: GatewaySessionManager, task_id: str,
     while asyncio.get_running_loop().time() < deadline:
         result = self.pop_result(task_id)
         if result is not None:
+            self._inflight_tasks.pop(task_id, None)
             return result
         await asyncio.sleep(poll_seconds)
+    self._inflight_tasks.pop(task_id, None)
+    self._pending_results.pop(task_id, None)
     return None
 
 GatewaySessionManager.live_sessions = _live_sessions
