@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from hashlib import sha256
+from secrets import token_hex
 
 from .cloud_device_registry import DeviceSession
 
@@ -18,6 +19,7 @@ class DeviceTaskEnvelope:
     approval_required: bool
     request: dict | None = None
     approval_granted: bool = False
+    task_authorization: str | None = None
 
 @dataclass(frozen=True, slots=True)
 class DeviceTaskResultEnvelope:
@@ -33,20 +35,26 @@ def build_task_envelope(session: DeviceSession, *, instruction: str,
                         required_capability: str,
                         approval_required: bool = True,
                         request: dict | None = None,
-                        approval_granted: bool = False) -> DeviceTaskEnvelope:
+                        approval_granted: bool = False,
+                        task_authorization: str | None = None) -> DeviceTaskEnvelope:
     text = instruction.strip()
     if not text:
         raise ValueError("instruction is required")
-    # Approval is a state transition for the same request, not a new task.
-    # Keep the task identity stable when approval_granted changes so the
-    # approved retry resumes the audit/task the owner actually reviewed.
-    digest = sha256(
-        f"{session.session_id}\n{text}\n{required_capability}\n{approval_required}".encode("utf-8")
-    ).hexdigest()[:20]
+    # Approval-bound writes keep deterministic identity across pending -> approved
+    # retries. Read-only dispatches are fresh so delayed prior results cannot
+    # satisfy later identical probes in the same live session.
+    if approval_required:
+        digest = sha256(
+            f"{session.session_id}\n{text}\n{required_capability}\n{approval_required}".encode("utf-8")
+        ).hexdigest()[:20]
+    else:
+        digest = sha256(
+            f"{session.session_id}\n{text}\n{required_capability}\n{approval_required}\n{token_hex(16)}".encode("utf-8")
+        ).hexdigest()[:20]
     return DeviceTaskEnvelope(
         f"fc-task-{digest}", session.owner_subject, session.device_id,
         session.session_id, text, required_capability, approval_required, request,
-        approval_granted,
+        approval_granted, task_authorization,
     )
 
 def validate_task_result(task: DeviceTaskEnvelope,
