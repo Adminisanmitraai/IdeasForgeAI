@@ -17,6 +17,8 @@ from .cloud_task_channel import DeviceTaskResultEnvelope, build_task_envelope
 from .gateway_auth import parse_bearer_principal
 from .device_auth import issue_device_token, parse_device_token
 from .gateway_session_manager import GatewaySessionManager, LiveGatewaySession
+from .task_authorization import issue_task_authorization, validate_task_authorization
+from .task_authorization_asymmetric import issue as issue_task_authorization_ed25519, validate as validate_task_authorization_ed25519
 
 FORGE_COMMANDER_GATEWAY_API_VERSION = "forge-commander.gateway-api.v1"
 
@@ -516,6 +518,44 @@ def enroll_device(payload: dict, x_forge_enrollment_secret: str | None = Header(
     return {"enrolled": True, "owner_subject": owner, "device_id": device_id,
             "device_token": token, "expires_at": expires_at}
 
+
+@router.post("/task-authorization/issue")
+def issue_task_authorization_api(payload: dict, authorization: str | None = Header(default=None)):
+    token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
+    principal = parse_device_token(token)
+    if principal is None:
+        raise HTTPException(status_code=401, detail="unauthorized")
+    private_pem = os.getenv("FORGE_COMMANDER_TASK_AUTH_ED25519_PRIVATE_KEY_PEM", "").replace("\\n","\n").encode()
+    signing_key = os.getenv("FORGE_COMMANDER_TASK_AUTH_SIGNING_KEY", "")
+    if not private_pem and not signing_key:
+        raise HTTPException(status_code=503, detail="task_authorization_signing_unavailable")
+    task_id = str(payload.get("task_id") or "").strip()
+    environment = str(payload.get("environment") or "").strip()
+    project_root = str(payload.get("project_root") or "").strip()
+    applications = payload.get("applications")
+    allowed_actions = payload.get("allowed_actions")
+    ttl_seconds = int(payload.get("ttl_seconds") or 0)
+    if not task_id or environment not in {"training", "test", "staging"}:
+        raise HTTPException(status_code=403, detail="task_authorization_environment_denied")
+    if not project_root or not isinstance(applications, list) or not applications:
+        raise HTTPException(status_code=400, detail="task_authorization_scope_invalid")
+    safe_actions = {"app.open", "browser.open_url", "window.focus", "window.minimize", "screen.capture", "file.open"}
+    if not isinstance(allowed_actions, list) or not allowed_actions or not set(allowed_actions) <= safe_actions:
+        raise HTTPException(status_code=403, detail="task_authorization_action_denied")
+    if ttl_seconds < 60 or ttl_seconds > 900:
+        raise HTTPException(status_code=400, detail="task_authorization_ttl_invalid")
+    now = int(time.time())
+    authorization_id = "fc-ta-" + sha256(f"{principal.owner_subject}\n{principal.device_id}\n{task_id}\n{now}".encode()).hexdigest()[:20]
+    claims = {"authorization_id":authorization_id,"task_id":task_id,"owner_subject":principal.owner_subject,
+        "device_id":principal.device_id,"environment":environment,"project_root":project_root,
+        "applications":applications,"allowed_actions":allowed_actions,"issued_at":now,"expires_at":now+ttl_seconds}
+    try:
+        task_token = issue_task_authorization_ed25519(claims, private_pem) if private_pem else issue_task_authorization(claims, signing_key=signing_key)
+    except (PermissionError, ValueError) as exc:
+        raise HTTPException(status_code=403, detail=str(exc)) from exc
+    return {"authorization_id":authorization_id,"task_authorization":task_token,
+            "expires_at":claims["expires_at"],"device_id":principal.device_id}
+
 @router.post("/device/action")
 async def device_action(payload: dict, authorization: str | None = Header(default=None)):
     token = authorization[7:].strip() if (authorization or "").startswith("Bearer ") else ""
@@ -528,26 +568,49 @@ async def device_action(payload: dict, authorization: str | None = Header(defaul
         raise HTTPException(status_code=403, detail="same_device_only")
     if str(payload.get("required_capability") or "") != "gui_control":
         raise HTTPException(status_code=403, detail="gui_control_only")
-    if payload.get("approval_required") is not True or payload.get("approval_granted") is not True:
-        raise HTTPException(status_code=403, detail="explicit_approval_required")
     live = session_manager.get(device_id)
     if live is None or live.session.owner_subject != principal.owner_subject:
         raise HTTPException(status_code=409, detail="device_not_online")
+    explicit_approval = payload.get("approval_required") is True and payload.get("approval_granted") is True
+    task_authorization = str(payload.get("task_authorization") or "").strip() or None
+    if not explicit_approval:
+        if not task_authorization:
+            raise HTTPException(status_code=403, detail="explicit_or_task_authorization_required")
+        public_pem = os.getenv("FORGE_COMMANDER_TASK_AUTH_ED25519_PUBLIC_KEY_PEM", "").replace("\\n","\n").encode()
+        signing_key = os.getenv("FORGE_COMMANDER_TASK_AUTH_SIGNING_KEY", "")
+        if not public_pem and not signing_key:
+            raise HTTPException(status_code=503, detail="task_authorization_signing_unavailable")
+        request = payload.get("request") if isinstance(payload.get("request"), dict) else {}
+        action_id = str(request.get("capabilityId") or "").strip()
+        params = request.get("parameters") if isinstance(request.get("parameters"), dict) else {}
+        artifact_path = str(params.get("path") or "").strip() or None if action_id == "file.open" else None
+        try:
+            if public_pem:
+                claims = validate_task_authorization_ed25519(task_authorization, public_pem,
+                    owner_subject=principal.owner_subject, device_id=device_id, action=action_id)
+                if artifact_path:
+                    from pathlib import Path
+                    root = Path(str(claims.get("project_root") or "")).resolve()
+                    artifact = Path(artifact_path).resolve()
+                    if artifact != root and root not in artifact.parents:
+                        raise PermissionError("artifact_outside_authorized_project")
+            else:
+                validate_task_authorization(task_authorization, signing_key=signing_key,
+                    owner_subject=principal.owner_subject, device_id=device_id,
+                    action=action_id, artifact_path=artifact_path)
+        except (PermissionError, ValueError) as exc:
+            raise HTTPException(status_code=403, detail=str(exc)) from exc
     try:
-        envelope = build_task_envelope(
-            live.session,
-            instruction=instruction,
-            required_capability="gui_control",
-            approval_required=True,
-            approval_granted=True,
-        )
+        envelope = build_task_envelope(live.session,instruction=instruction,required_capability="gui_control",
+            approval_required=True,request=payload.get("request") if isinstance(payload.get("request"),dict) else None,
+            approval_granted=explicit_approval,task_authorization=task_authorization)
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     await session_manager.dispatch(envelope)
     result = await session_manager.wait_result(envelope.task_id, timeout_seconds=20.0)
     if result is None:
-        return {"succeeded": False, "reason": "device_result_timeout", "task_id": envelope.task_id}
-    return {"succeeded": result.succeeded, "reason": result.reason, "output": result.output, "task_id": result.task_id}
+        return {"succeeded":False,"reason":"device_result_timeout","task_id":envelope.task_id}
+    return {"succeeded":result.succeeded,"reason":result.reason,"output":result.output,"task_id":result.task_id}
 
 
 @router.websocket("/device/ws/{device_id}")
