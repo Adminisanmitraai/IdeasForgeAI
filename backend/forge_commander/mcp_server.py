@@ -124,6 +124,11 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return RedirectResponse(redirect, status_code=302, headers={"Cache-Control":"no-store"})
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
+    def connector_snapshot_probe() -> dict[str, str]:
+        """Return a static read-only marker for connector tool-discovery certification."""
+        return {"status": "ok", "marker": "r1a-r1-r7-r2-r4-r3"}
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
     def list_devices(ctx: Context) -> dict[str, Any]:
         owner = _owner_from_context(ctx)
         devices = [
