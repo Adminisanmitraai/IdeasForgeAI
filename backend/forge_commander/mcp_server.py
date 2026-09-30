@@ -139,12 +139,31 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         live = manager.get(device_id)
         registered_tools = await mcp.list_tools()
         registry_names = sorted(str(tool.name) for tool in registered_tools)
+        diagnostic_names = {
+            "deployment_action_execute",
+            "security_surface_patch_execute",
+            "governed_patch_execute_probe",
+        }
+        diagnostic_tools = {}
+        for tool in registered_tools:
+            if str(tool.name) not in diagnostic_names:
+                continue
+            if hasattr(tool, "model_dump"):
+                diagnostic_tools[str(tool.name)] = tool.model_dump(mode="json")
+            else:
+                diagnostic_tools[str(tool.name)] = {
+                    "name": str(tool.name),
+                    "description": getattr(tool, "description", None),
+                    "inputSchema": getattr(tool, "inputSchema", None),
+                    "annotations": getattr(tool, "annotations", None),
+                }
         registry = {
             "server_version": FORGE_COMMANDER_MCP_SERVER_VERSION,
             "server_name": server_name,
             "resource": resource,
             "tool_count": len(registry_names),
             "tool_names": registry_names,
+            "diagnostic_tool_definitions": diagnostic_tools,
             "auth": _oauth_access_metadata(),
         }
         if live is None or live.session.owner_subject != owner:
