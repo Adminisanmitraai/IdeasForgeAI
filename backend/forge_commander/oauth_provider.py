@@ -172,9 +172,19 @@ class ForgeCommanderOAuthProvider(
         expected_hash = os.getenv("FORGE_COMMANDER_OAUTH_OWNER_SECRET_SHA256", "")
         owner_subject = os.getenv("FORGE_COMMANDER_OAUTH_OWNER_SUBJECT", "").strip()
         presented_hash = hashlib.sha256(owner_secret.encode("utf-8")).hexdigest()
+        # Safe production diagnostic: report only configuration shape/presence.
+        # Never log the owner secret, presented hash, or configured hash value.
+        print(
+            "[forge-oauth] owner_config "
+            f"expected_hash_present={bool(expected_hash)} "
+            f"expected_hash_length={len(expected_hash)} "
+            f"owner_subject_present={bool(owner_subject)} "
+            f"resource={data.get('resource') if data else None}"
+        )
         if data is None or not expected_hash or not owner_subject:
             return None
         if not hmac.compare_digest(presented_hash, expected_hash):
+            print("[forge-oauth] approve reject reason=owner_secret_hash_mismatch")
             return None
         code = _seal("code", {
             "client_id": data["client_id"], "scopes": data.get("scopes", []),
