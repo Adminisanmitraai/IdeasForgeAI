@@ -31,6 +31,7 @@ _CAPABILITY_ALIASES = {
     "deployment_action_validate": "deployment_action_validate",
     "deployment_action_execute": "deployment_action_execute",
     "deployment_artifact_attest": "deployment_artifact_attest",
+    "security_surface_patch_execute": "security_surface_patch_execute",
 }
 
 
@@ -317,6 +318,16 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         if ctx is None:
             raise PermissionError("missing request context")
         return await _dispatch_approved(device_id, "deployment_action_execute", request,
+                                        approval_granted, ctx)
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
+    async def security_surface_patch_execute(device_id: str, request: dict[str, Any],
+                                             approval_granted: bool = False,
+                                             ctx: Context | None = None) -> dict[str, Any]:
+        """Execute an exact governed security-surface patch after explicit approval."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(device_id, "security_surface_patch_execute", request,
                                         approval_granted, ctx)
 
     @mcp.tool(annotations=ToolAnnotations(
