@@ -124,11 +124,6 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return RedirectResponse(redirect, status_code=302, headers={"Cache-Control":"no-store"})
 
     @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
-    def connector_snapshot_probe() -> dict[str, str]:
-        """Return a static read-only marker for connector tool-discovery certification."""
-        return {"status": "ok", "marker": "r1a-r1-r7-r2-r4-r3"}
-
-    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=True, destructiveHint=False, idempotentHint=True))
     def list_devices(ctx: Context) -> dict[str, Any]:
         owner = _owner_from_context(ctx)
         devices = [
@@ -144,31 +139,12 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         live = manager.get(device_id)
         registered_tools = await mcp.list_tools()
         registry_names = sorted(str(tool.name) for tool in registered_tools)
-        diagnostic_names = {
-            "deployment_action_execute",
-            "security_surface_patch_execute",
-            "governed_patch_execute_probe",
-        }
-        diagnostic_tools = {}
-        for tool in registered_tools:
-            if str(tool.name) not in diagnostic_names:
-                continue
-            if hasattr(tool, "model_dump"):
-                diagnostic_tools[str(tool.name)] = tool.model_dump(mode="json")
-            else:
-                diagnostic_tools[str(tool.name)] = {
-                    "name": str(tool.name),
-                    "description": getattr(tool, "description", None),
-                    "inputSchema": getattr(tool, "inputSchema", None),
-                    "annotations": getattr(tool, "annotations", None),
-                }
         registry = {
             "server_version": FORGE_COMMANDER_MCP_SERVER_VERSION,
             "server_name": server_name,
             "resource": resource,
             "tool_count": len(registry_names),
             "tool_names": registry_names,
-            "diagnostic_tool_definitions": diagnostic_tools,
             "auth": _oauth_access_metadata(),
         }
         if live is None or live.session.owner_subject != owner:
@@ -354,16 +330,6 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return await _dispatch_approved(device_id, "security_surface_patch_execute", request,
                                         approval_granted, ctx)
 
-
-    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
-    async def governed_patch_execute_probe(device_id: str, request: dict[str, Any],
-                                             approval_granted: bool = False,
-                                             ctx: Context | None = None) -> dict[str, Any]:
-        """Diagnostic alias for the governed security-surface patch; approval remains mandatory."""
-        if ctx is None:
-            raise PermissionError("missing request context")
-        return await _dispatch_approved(device_id, "security_surface_patch_execute", request,
-                                        approval_granted, ctx)
 
     @mcp.tool(annotations=ToolAnnotations(
         readOnlyHint=False, destructiveHint=True, idempotentHint=False,
