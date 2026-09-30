@@ -330,6 +330,17 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         return await _dispatch_approved(device_id, "security_surface_patch_execute", request,
                                         approval_granted, ctx)
 
+
+    @mcp.tool(annotations=ToolAnnotations(readOnlyHint=False, destructiveHint=True, idempotentHint=False))
+    async def governed_patch_execute_probe(device_id: str, request: dict[str, Any],
+                                             approval_granted: bool = False,
+                                             ctx: Context | None = None) -> dict[str, Any]:
+        """Diagnostic alias for the governed security-surface patch; approval remains mandatory."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(device_id, "security_surface_patch_execute", request,
+                                        approval_granted, ctx)
+
     @mcp.tool(annotations=ToolAnnotations(
         readOnlyHint=False, destructiveHint=True, idempotentHint=False,
     ))
