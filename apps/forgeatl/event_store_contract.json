@@ -1,0 +1,78 @@
+{
+  "schema_version": "forgeatl.event-store.v1",
+  "activation": "disabled",
+  "storage_semantics": {
+    "append_only": true,
+    "immutable_event_ids": true,
+    "replay_order": [
+      "sequence",
+      "timestamp"
+    ],
+    "payloads_by_reference": true,
+    "no_hidden_teacher_exam_events": true
+  },
+  "event": {
+    "required": [
+      "event_id",
+      "sequence",
+      "student_id",
+      "session_id",
+      "timestamp",
+      "phase",
+      "actor",
+      "event_type",
+      "summary",
+      "payload_ref",
+      "correlation_id"
+    ],
+    "actors": [
+      "teacher",
+      "student",
+      "examiner",
+      "truth",
+      "challenge",
+      "system"
+    ],
+    "phases": [
+      "curriculum_generation",
+      "data_generation",
+      "learning",
+      "training",
+      "examination",
+      "evaluation",
+      "challenge",
+      "certification",
+      "idle"
+    ]
+  },
+  "exam_boundary": {
+    "teacher_assistance": false,
+    "teacher_events_allowed_during_exam": false,
+    "examiner_visible": true,
+    "truth_visible": true,
+    "challenge_visible": true,
+    "boundary_violation_result": "FAIL_CLOSED"
+  },
+  "replay": {
+    "required": [
+      "student_id",
+      "session_id",
+      "from_sequence",
+      "to_sequence"
+    ],
+    "must_reconstruct": [
+      "inputs",
+      "student_responses",
+      "tool_actions",
+      "artifacts",
+      "truth_checks",
+      "scores",
+      "failures",
+      "checkpoint_refs"
+    ]
+  },
+  "privacy": {
+    "secrets_in_payloads": false,
+    "credentials_in_events": false
+  }
+}
