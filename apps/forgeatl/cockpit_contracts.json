@@ -1,0 +1,121 @@
+{
+  "schema_version": "forgeatl.cockpit.v1",
+  "activation": "disabled",
+  "cockpit_snapshot": {
+    "required": [
+      "student_id",
+      "captured_at",
+      "state",
+      "model_version",
+      "mastery_summary",
+      "current_feed",
+      "exam_summary",
+      "failure_summary",
+      "timeline_cursor",
+      "compute_summary"
+    ]
+  },
+  "current_feed": {
+    "required": [
+      "phase",
+      "activity_id",
+      "started_at",
+      "actor",
+      "input_ref",
+      "response_ref",
+      "tool_actions",
+      "truth_checks"
+    ],
+    "allowed_phases": [
+      "curriculum_generation",
+      "data_generation",
+      "learning",
+      "training",
+      "examination",
+      "evaluation",
+      "challenge",
+      "certification",
+      "idle"
+    ]
+  },
+  "student_response": {
+    "required": [
+      "response_id",
+      "activity_id",
+      "student_id",
+      "created_at",
+      "response_type",
+      "content_ref",
+      "tool_action_refs",
+      "artifact_refs"
+    ],
+    "response_types": [
+      "text",
+      "structured",
+      "code",
+      "cad_action",
+      "image_action",
+      "simulation_action",
+      "research_action"
+    ]
+  },
+  "mastery": {
+    "required": [
+      "student_id",
+      "competency_id",
+      "score",
+      "score_kind",
+      "confidence",
+      "evidence_count",
+      "updated_at",
+      "trend"
+    ],
+    "score_range": [
+      0,
+      100
+    ],
+    "score_kinds": [
+      "deterministic",
+      "rubric",
+      "hybrid"
+    ],
+    "subjective_rule": "rubric scores must retain evaluator and rubric references"
+  },
+  "failure_cluster": {
+    "required": [
+      "cluster_id",
+      "student_id",
+      "competency_id",
+      "label",
+      "failure_count",
+      "severity",
+      "first_seen_at",
+      "last_seen_at",
+      "evidence_refs",
+      "recommended_intervention"
+    ]
+  },
+  "timeline_event": {
+    "required": [
+      "timeline_id",
+      "student_id",
+      "occurred_at",
+      "phase",
+      "event_ref",
+      "checkpoint_ref",
+      "mastery_delta",
+      "regression_flags"
+    ]
+  },
+  "regression": {
+    "required": [
+      "competency_id",
+      "previous_score",
+      "current_score",
+      "delta",
+      "evidence_refs",
+      "detected_at",
+      "status"
+    ]
+  }
+}
