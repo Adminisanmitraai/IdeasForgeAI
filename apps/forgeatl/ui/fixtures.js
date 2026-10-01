@@ -1,0 +1,3 @@
+window.FORGEATL_FIXTURE={mode:"certified-read-fixture",activation:"disabled",students:[
+["creative-director","ForgeCreativeDirector","creative_design"],["cad","ForgeCAD","engineering_cad"],["science","ForgeScience","general_science"],["medical","ForgeMedical","biomedical_research"],["agri","ForgeAgri","agricultural_research"],["robot","ForgeRobot","robotics_research"],["ai","ForgeAI","ai_research"],["education","ForgeEducation","learning_science"],["ayurveda","ForgeAyurveda","traditional_medicine_research"]
+].map(([id,name,domain])=>({id,name,domain,state:"idle",activity:null,exam:null,mastery:[],failures:[],timeline:[],replay:[]}))};
