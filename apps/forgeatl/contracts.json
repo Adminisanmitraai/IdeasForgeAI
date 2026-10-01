@@ -1,0 +1,123 @@
+{
+  "schema_version": "forgeatl.contracts.v1",
+  "production_activation": false,
+  "student_states": [
+    "idle",
+    "curriculum_generation",
+    "data_generation",
+    "learning",
+    "training",
+    "examination",
+    "evaluation",
+    "challenge",
+    "certification",
+    "paused",
+    "failed"
+  ],
+  "student": {
+    "required": [
+      "student_id",
+      "name",
+      "domain",
+      "state",
+      "model_version",
+      "mastery",
+      "competencies",
+      "current_activity",
+      "compute_assignment"
+    ]
+  },
+  "competency": {
+    "required": [
+      "competency_id",
+      "name",
+      "mastery_score",
+      "attempts",
+      "passes",
+      "failures",
+      "last_exam_at",
+      "trend"
+    ]
+  },
+  "live_event": {
+    "required": [
+      "event_id",
+      "student_id",
+      "timestamp",
+      "phase",
+      "actor",
+      "event_type",
+      "summary",
+      "payload_ref"
+    ],
+    "actors": [
+      "teacher",
+      "student",
+      "examiner",
+      "truth",
+      "challenge",
+      "system"
+    ]
+  },
+  "exam": {
+    "required": [
+      "exam_id",
+      "student_id",
+      "difficulty",
+      "teacher_assistance",
+      "task_ref",
+      "started_at",
+      "status",
+      "rubric",
+      "truth_checks",
+      "result"
+    ]
+  },
+  "compute_request": {
+    "required": [
+      "job_id",
+      "student_id",
+      "workload",
+      "min_vram_gb",
+      "capabilities",
+      "priority",
+      "estimated_duration_minutes"
+    ]
+  },
+  "compute_node": {
+    "required": [
+      "node_id",
+      "provider_type",
+      "location_type",
+      "gpu_model",
+      "gpu_count",
+      "vram_gb_per_gpu",
+      "capabilities",
+      "status",
+      "telemetry",
+      "cost_policy"
+    ]
+  },
+  "provider_types": [
+    "local_nvidia",
+    "forgepc_node",
+    "cloud_adapter",
+    "cluster_adapter"
+  ],
+  "location_types": [
+    "physical",
+    "cloud"
+  ],
+  "cost_policy": {
+    "approval_thresholds_inr": {
+      "automatic_below": 500,
+      "notify_below": 5000,
+      "approval_required_at_or_above": 5000
+    }
+  },
+  "audit": {
+    "immutable_event_stream": true,
+    "replay_required": true,
+    "teacher_hidden_during_exam": true
+  }
+}
