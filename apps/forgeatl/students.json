@@ -1,0 +1,104 @@
+{
+  "schema_version": "forgeatl.students.v1",
+  "students": [
+    {
+      "student_id": "creative-director",
+      "name": "ForgeCreativeDirector",
+      "domain": "creative_design",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "cad",
+      "name": "ForgeCAD",
+      "domain": "engineering_cad",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "science",
+      "name": "ForgeScience",
+      "domain": "general_science",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "medical",
+      "name": "ForgeMedical",
+      "domain": "biomedical_research",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "agri",
+      "name": "ForgeAgri",
+      "domain": "agricultural_research",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "robot",
+      "name": "ForgeRobot",
+      "domain": "robotics_research",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "ai",
+      "name": "ForgeAI",
+      "domain": "ai_research",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "education",
+      "name": "ForgeEducation",
+      "domain": "learning_science",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    },
+    {
+      "student_id": "ayurveda",
+      "name": "ForgeAyurveda",
+      "domain": "traditional_medicine_research",
+      "state": "idle",
+      "model_version": "unassigned",
+      "mastery": null,
+      "competencies": [],
+      "current_activity": null,
+      "compute_assignment": null
+    }
+  ]
+}
