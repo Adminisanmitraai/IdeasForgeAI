@@ -1,0 +1,555 @@
+{
+  "schema_version": "forgeatl.student-profiles.v1",
+  "activation": "disabled",
+  "profiles": [
+    {
+      "student_id": "creative-director",
+      "name": "ForgeCreativeDirector",
+      "domain": "creative_design",
+      "competencies": [
+        {
+          "competency_id": "creative_direction",
+          "label": "creative direction",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "storytelling",
+          "label": "storytelling",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "brand_strategy",
+          "label": "brand strategy",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "spatial_planning",
+          "label": "spatial planning",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "autocad",
+          "label": "autocad",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "illustrator",
+          "label": "illustrator",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "photoshop",
+          "label": "photoshop",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "presentation_design",
+          "label": "presentation design",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "client_revision",
+          "label": "client revision",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "cad",
+      "name": "ForgeCAD",
+      "domain": "engineering_cad",
+      "competencies": [
+        {
+          "competency_id": "geometry",
+          "label": "geometry",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "dimensions",
+          "label": "dimensions",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "tolerances",
+          "label": "tolerances",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "layers",
+          "label": "layers",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "blocks",
+          "label": "blocks",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "hatching",
+          "label": "hatching",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "spatial_constraints",
+          "label": "spatial constraints",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "drawing_validation",
+          "label": "drawing validation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "cad_tool_use",
+          "label": "cad tool use",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "science",
+      "name": "ForgeScience",
+      "domain": "general_science",
+      "competencies": [
+        {
+          "competency_id": "scientific_method",
+          "label": "scientific method",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "statistics",
+          "label": "statistics",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "causal_reasoning",
+          "label": "causal reasoning",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "physics",
+          "label": "physics",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "chemistry",
+          "label": "chemistry",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "biology",
+          "label": "biology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "experimental_design",
+          "label": "experimental design",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "literature_analysis",
+          "label": "literature analysis",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "reproducibility",
+          "label": "reproducibility",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "medical",
+      "name": "ForgeMedical",
+      "domain": "biomedical_research",
+      "competencies": [
+        {
+          "competency_id": "literature_reasoning",
+          "label": "literature reasoning",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "biostatistics",
+          "label": "biostatistics",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "molecular_biology",
+          "label": "molecular biology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "pharmacology",
+          "label": "pharmacology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "experimental_design",
+          "label": "experimental design",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "evidence_grading",
+          "label": "evidence grading",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "toxicology",
+          "label": "toxicology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "hypothesis_generation",
+          "label": "hypothesis generation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "reproducibility",
+          "label": "reproducibility",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "agri",
+      "name": "ForgeAgri",
+      "domain": "agricultural_research",
+      "competencies": [
+        {
+          "competency_id": "plant_biology",
+          "label": "plant biology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "soil_science",
+          "label": "soil science",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "plant_pathology",
+          "label": "plant pathology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "genetics",
+          "label": "genetics",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "climate",
+          "label": "climate",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "sensor_interpretation",
+          "label": "sensor interpretation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "experiment_design",
+          "label": "experiment design",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "yield_modeling",
+          "label": "yield modeling",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "evidence_quality",
+          "label": "evidence quality",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "robot",
+      "name": "ForgeRobot",
+      "domain": "robotics_research",
+      "competencies": [
+        {
+          "competency_id": "vision",
+          "label": "vision",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "kinematics",
+          "label": "kinematics",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "dynamics",
+          "label": "dynamics",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "control",
+          "label": "control",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "navigation",
+          "label": "navigation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "manipulation",
+          "label": "manipulation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "cad",
+          "label": "cad",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "simulation",
+          "label": "simulation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "safety",
+          "label": "safety",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "ai",
+      "name": "ForgeAI",
+      "domain": "ai_research",
+      "competencies": [
+        {
+          "competency_id": "architecture",
+          "label": "architecture",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "training",
+          "label": "training",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "fine_tuning",
+          "label": "fine tuning",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "reinforcement_learning",
+          "label": "reinforcement learning",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "evaluation",
+          "label": "evaluation",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "agents",
+          "label": "agents",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "inference",
+          "label": "inference",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "optimization",
+          "label": "optimization",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "coding",
+          "label": "coding",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "education",
+      "name": "ForgeEducation",
+      "domain": "learning_science",
+      "competencies": [
+        {
+          "competency_id": "knowledge_assessment",
+          "label": "knowledge assessment",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "competency_mapping",
+          "label": "competency mapping",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "pedagogy",
+          "label": "pedagogy",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "adaptive_difficulty",
+          "label": "adaptive difficulty",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "misconception_detection",
+          "label": "misconception detection",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "exercise_design",
+          "label": "exercise design",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "retention_testing",
+          "label": "retention testing",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "learning_measurement",
+          "label": "learning measurement",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "evidence_quality",
+          "label": "evidence quality",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    },
+    {
+      "student_id": "ayurveda",
+      "name": "ForgeAyurveda",
+      "domain": "traditional_medicine_research",
+      "competencies": [
+        {
+          "competency_id": "classical_provenance",
+          "label": "classical provenance",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "botanical_authentication",
+          "label": "botanical authentication",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "phytochemistry",
+          "label": "phytochemistry",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "evidence_grading",
+          "label": "evidence grading",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "formulation_analysis",
+          "label": "formulation analysis",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "toxicology",
+          "label": "toxicology",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "interaction_safety",
+          "label": "interaction safety",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "experimental_design",
+          "label": "experimental design",
+          "rating": null,
+          "evidence_required": true
+        },
+        {
+          "competency_id": "uncertainty",
+          "label": "uncertainty",
+          "rating": null,
+          "evidence_required": true
+        }
+      ]
+    }
+  ]
+}
