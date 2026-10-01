@@ -24,7 +24,15 @@ def test_rejects_long_interval(tmp_path):
         assert str(exc)=="interval_out_of_bounds"
 
 def test_other_app_creates_no_timeline(monkeypatch,tmp_path):
-    monkeypatch.setattr(b,"read_foreground_context",lambda: b.ForegroundContext(1,2,"Notes","notepad.exe") if hasattr(b,"ForegroundContext") else None)
+    from observation import ForegroundContext
+    monkeypatch.setattr(b,"read_foreground_context",lambda: ForegroundContext(1,2,"Notes","notepad.exe"))
+    monkeypatch.setattr(b.time,"sleep",lambda _: None)
+    p=tmp_path/"timeline.jsonl"
+    result=b.run_bounded_session(p,2,0)
+    assert result["samples"]==2
+    assert all(item["supported_foreground"] is False for item in result["observations"])
+    assert all(item["event_kinds"]==[] for item in result["observations"])
+    assert not p.exists()
 def test_fixed_supported_observation(monkeypatch,tmp_path):
     from observation import ForegroundContext
     monkeypatch.setattr(b,"read_foreground_context",lambda: ForegroundContext(10,20,"A.dwg - AutoCAD","acad.exe"))
