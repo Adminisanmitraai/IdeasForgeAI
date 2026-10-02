@@ -4,56 +4,99 @@
     {
       "capability_id": "general_compute",
       "description": "General deterministic and orchestration compute.",
-      "provider_types": ["cpu", "gpu"],
+      "provider_types": [
+        "cpu",
+        "gpu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "tensor_fp32",
       "description": "FP32 tensor and matrix operations.",
-      "provider_types": ["cpu", "gpu", "npu"],
+      "provider_types": [
+        "cpu",
+        "gpu",
+        "npu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "tensor_fp16",
       "description": "FP16 tensor operations for AI workloads.",
-      "provider_types": ["gpu", "npu"],
+      "provider_types": [
+        "gpu",
+        "npu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "tensor_bf16",
       "description": "BF16 tensor operations where supported.",
-      "provider_types": ["gpu", "npu"],
+      "provider_types": [
+        "gpu",
+        "npu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "low_power_inference",
       "description": "Power-efficient neural-network inference.",
-      "provider_types": ["npu", "gpu"],
+      "provider_types": [
+        "npu",
+        "gpu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "parallel_training",
       "description": "Parallel compute suitable for model training workloads.",
-      "provider_types": ["gpu"],
+      "provider_types": [
+        "gpu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "large_memory_compute",
       "description": "Compute requiring comparatively large addressable memory.",
-      "provider_types": ["cpu", "gpu"],
+      "provider_types": [
+        "cpu",
+        "gpu"
+      ],
       "status": "active_contract"
     },
     {
       "capability_id": "quantum_circuit_execution",
       "description": "Execution of quantum circuits on a QPU provider.",
-      "provider_types": ["qpu"],
+      "provider_types": [
+        "qpu"
+      ],
       "status": "future_reserved"
     },
     {
       "capability_id": "quantum_hybrid_workflow",
       "description": "Hybrid classical/quantum workflow participation.",
-      "provider_types": ["cpu", "gpu", "qpu"],
+      "provider_types": [
+        "cpu",
+        "gpu",
+        "qpu"
+      ],
       "status": "future_reserved"
+    },
+    {
+      "capability_id": "cuda_compute",
+      "description": "CUDA-compatible GPU compute capability.",
+      "provider_types": [
+        "gpu"
+      ],
+      "status": "active_contract"
+    },
+    {
+      "capability_id": "rocm_compute",
+      "description": "ROCm-compatible GPU compute capability.",
+      "provider_types": [
+        "gpu"
+      ],
+      "status": "active_contract"
     }
   ]
 }
