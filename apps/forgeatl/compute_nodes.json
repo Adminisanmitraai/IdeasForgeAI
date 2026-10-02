@@ -1,0 +1,131 @@
+{
+  "schema_version": "forgeatl.compute-nodes.v1",
+  "fixture_mode": true,
+  "nodes": [
+    {
+      "node_id": "fixture-physical-gpu-01",
+      "provider_type": "gpu",
+      "location_type": "physical",
+      "display_name": "Physical GPU Fixture",
+      "hardware_label": "unbound-gpu",
+      "capabilities": ["general_compute", "tensor_fp32", "tensor_fp16", "tensor_bf16", "parallel_training", "large_memory_compute"],
+      "memory_gb": 32,
+      "availability": "declared",
+      "execution_enabled": false,
+      "health": "unknown",
+      "telemetry": {
+        "observed_at": null,
+        "source": "static_fixture",
+        "load_percent": null,
+        "memory_used_gb": null,
+        "memory_total_gb": 32,
+        "temperature_c": null
+      },
+      "cost": {
+        "currency": "INR",
+        "estimated_per_hour": null,
+        "source": "unconfigured"
+      }
+    },
+    {
+      "node_id": "fixture-cloud-gpu-01",
+      "provider_type": "gpu",
+      "location_type": "cloud",
+      "display_name": "Cloud GPU Fixture",
+      "hardware_label": "unbound-cloud-gpu",
+      "capabilities": ["general_compute", "tensor_fp32", "tensor_fp16", "tensor_bf16", "parallel_training", "large_memory_compute"],
+      "memory_gb": 80,
+      "availability": "declared",
+      "execution_enabled": false,
+      "health": "unknown",
+      "telemetry": {
+        "observed_at": null,
+        "source": "static_fixture",
+        "load_percent": null,
+        "memory_used_gb": null,
+        "memory_total_gb": 80,
+        "temperature_c": null
+      },
+      "cost": {
+        "currency": "INR",
+        "estimated_per_hour": null,
+        "source": "unconfigured"
+      }
+    },
+    {
+      "node_id": "fixture-cpu-01",
+      "provider_type": "cpu",
+      "location_type": "physical",
+      "display_name": "CPU Provider Fixture",
+      "hardware_label": "unbound-cpu",
+      "capabilities": ["general_compute", "tensor_fp32", "large_memory_compute"],
+      "memory_gb": 128,
+      "availability": "declared",
+      "execution_enabled": false,
+      "health": "unknown",
+      "telemetry": {
+        "observed_at": null,
+        "source": "static_fixture",
+        "load_percent": null,
+        "memory_used_gb": null,
+        "memory_total_gb": 128,
+        "temperature_c": null
+      },
+      "cost": {
+        "currency": "INR",
+        "estimated_per_hour": null,
+        "source": "unconfigured"
+      }
+    },
+    {
+      "node_id": "fixture-npu-01",
+      "provider_type": "npu",
+      "location_type": "physical",
+      "display_name": "NPU Provider Fixture",
+      "hardware_label": "unbound-npu",
+      "capabilities": ["tensor_fp32", "tensor_fp16", "tensor_bf16", "low_power_inference"],
+      "memory_gb": 16,
+      "availability": "declared",
+      "execution_enabled": false,
+      "health": "unknown",
+      "telemetry": {
+        "observed_at": null,
+        "source": "static_fixture",
+        "load_percent": null,
+        "memory_used_gb": null,
+        "memory_total_gb": 16,
+        "temperature_c": null
+      },
+      "cost": {
+        "currency": "INR",
+        "estimated_per_hour": null,
+        "source": "unconfigured"
+      }
+    },
+    {
+      "node_id": "future-qpu-provider-01",
+      "provider_type": "qpu",
+      "location_type": "cloud",
+      "display_name": "Future QPU Provider Contract",
+      "hardware_label": "future-unbound-qpu",
+      "capabilities": ["quantum_circuit_execution", "quantum_hybrid_workflow"],
+      "memory_gb": 0,
+      "availability": "future",
+      "execution_enabled": false,
+      "health": "future",
+      "telemetry": {
+        "observed_at": null,
+        "source": "future_contract",
+        "load_percent": null,
+        "memory_used_gb": null,
+        "memory_total_gb": 0,
+        "temperature_c": null
+      },
+      "cost": {
+        "currency": "INR",
+        "estimated_per_hour": null,
+        "source": "future_unconfigured"
+      }
+    }
+  ]
+}
