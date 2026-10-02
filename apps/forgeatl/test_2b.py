@@ -57,6 +57,19 @@ sample_observation = {
                 "availableGpuCounts": None,
             },
         },
+        {
+            "id": "AMD Instinct MI350 OAM",
+            "displayName": "MI350X",
+            "memoryInGb": 294,
+            "secureCloud": True,
+            "communityCloud": False,
+            "lowestPrice": {
+                "stockStatus": "Low",
+                "uninterruptablePrice": 0.5,
+                "minimumBidPrice": 0.5,
+                "availableGpuCounts": None,
+            },
+        },
     ],
 }
 
@@ -68,7 +81,7 @@ requirement = {
     "request_id": "req-2b-dry-run",
     "requester_id": "science",
     "workload_type": "research_training_candidate",
-    "capabilities": ["parallel_training", "large_memory_compute"],
+    "capabilities": ["parallel_training", "large_memory_compute", "cuda_compute"],
     "memory_gb_min": 80,
     "precision": "provider-neutral",
     "latency_class": "batch",
@@ -103,16 +116,23 @@ checks["live_shape_normalization"] = (
     normalized["fixture_mode"] is False
     and normalized["provider"] == "runpod"
     and normalized["provider_health"]["status"] == "healthy"
-    and len(nodes) == 2
+    and len(nodes) == 3
 )
 
 h100 = by_label["NVIDIA H100 80GB HBM3"]
-rtx4090 = by_label["NVIDIA GeForce RTX 4090"]
+rtx4090 = by_label["NVIDIA GeForce RTX 4090"]\nmi350 = by_label["AMD Instinct MI350 OAM"]
 checks["vram_and_availability"] = (
     h100["memory_gb"] == 80
     and h100["availability"] == "available"
     and rtx4090["memory_gb"] == 24
     and rtx4090["availability"] == "unknown"
+)
+
+checks["compute_capability_routing"] = (
+    "cuda_compute" in h100["capabilities"]
+    and "rocm_compute" not in h100["capabilities"]
+    and "rocm_compute" in mi350["capabilities"]
+    and "cuda_compute" not in mi350["capabilities"]
 )
 
 checks["health_truthfulness"] = (
