@@ -70,7 +70,7 @@ def _request_json(
     timeout_seconds: int = 15,
 ) -> Any:
     encoded = None if body is None else json.dumps(body).encode("utf-8")
-    request_headers = {"Accept": "application/json"}
+    request_headers = {"Accept": "application/json", "User-Agent": "Mozilla/5.0 ForgeATL-ReadOnly/2B"}
     if body is not None:
         request_headers["Content-Type"] = "application/json"
     if headers:
