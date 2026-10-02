@@ -65,7 +65,7 @@ class SessionStore:
         if path.is_symlink() or path.stat().st_size > 65536:
             raise ValueError("invalid_history_summary")
         record = json.loads(path.read_text(encoding="utf-8"))
-        if record.get("run_id") != run_id or record.get("observe_only") is not True or record.get("autonomous_actions") is not False:
+        if not isinstance(record, dict) or record.get("run_id") != run_id or record.get("observe_only") is not True or record.get("autonomous_actions") is not False:
             raise ValueError("invalid_history_identity")
         timeline = folder / "teacher_timeline.jsonl"
         if timeline.is_symlink() or (timeline.exists() and timeline.stat().st_size > 2_000_000):
