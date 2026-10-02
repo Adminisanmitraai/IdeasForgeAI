@@ -27,7 +27,7 @@ requirement = {
     "request_id": "live-probe-2b",
     "requester_id": "science",
     "workload_type": "research_training_candidate",
-    "capabilities": ["parallel_training", "large_memory_compute"],
+    "capabilities": ["parallel_training", "large_memory_compute", "cuda_compute"],
     "memory_gb_min": 80,
     "precision": "provider-neutral",
     "latency_class": "batch",
