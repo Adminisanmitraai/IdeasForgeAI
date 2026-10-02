@@ -63,3 +63,16 @@ class ObservationTracker:
             self.timeline.append(event)
         self.last_context=ctx
         return tuple(events)
+
+    def close(self, occurred_at: str | None=None, *, reason: str="bounded_stop"):
+        """Close only the recorded observation session; never close an application."""
+        if self.session is None:
+            self.last_context = None
+            return ()
+        if self.last_context is None:
+            raise RuntimeError("active_session_context_missing")
+        event = build_event(self.session, self.last_context, "session_end", occurred_at, end_reason=reason)
+        self.timeline.append(event)
+        self.session = None
+        self.last_context = None
+        return (event,)
