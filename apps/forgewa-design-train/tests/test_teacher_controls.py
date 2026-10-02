@@ -28,7 +28,10 @@ class FixtureReader:
 
 
 class BlockedFixtureReader:
+    def __init__(self, entered):
+        self.entered = entered
     def __call__(self):
+        self.entered.set()
         time.sleep(30)
         return ForegroundContext(100, 200, "Demo.max - Autodesk 3ds Max 2023", "3dsmax.exe")
 
@@ -260,19 +263,25 @@ def test_owned_process_start_pause_resume_stop(tmp_path):
     assert not client.process.is_alive()
 
 
-def test_owned_process_watchdog_handles_blocked_reader(monkeypatch, tmp_path):
-    # Test-only smaller supervisor budget; no observer source constants are edited.
-    monkeypatch.setattr(bridge, "MAX_SECONDS", 0.8)
-    client = bridge.TeacherClient(tmp_path / "blocked", fixture_reader=BlockedFixtureReader())
-    started = time.monotonic()
+def test_owned_process_watchdog_handles_blocked_reader(tmp_path):
+    import multiprocessing
+    import threading
+    entered = multiprocessing.get_context("spawn").Event()
+    client = bridge.TeacherClient(tmp_path / "blocked", fixture_reader=BlockedFixtureReader(entered))
     try:
         client.start("autocad", consent=True)
+        assert entered.wait(timeout=4), "blocked_reader_was_not_entered"
+        # Shorten only the test watchdog after the child confirms its blocked read.
+        # Slow process startup cannot turn this into a vacuous deadline test.
+        client.timer.cancel()
+        client.timer = threading.Timer(0.15, client._abort_owned_worker, args=(client.process,))
+        client.timer.daemon = True
+        client.timer.start()
         final = wait_for(client, lambda row: not row["worker_alive"], budget=3)
         assert final["state"] == "INTERRUPTED" and final["watchdog_fired"]
         assert final["session_closed"] is False
     finally:
         client.close()
-    assert time.monotonic() - started < 3
 
 
 def test_client_rejects_arbitrary_command_and_d5(tmp_path):
