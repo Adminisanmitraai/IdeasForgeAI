@@ -160,13 +160,18 @@ def _availability(stock_status: Any) -> str:
     return "unknown"
 
 
-def _capabilities(memory_gb: int) -> list[str]:
+def _capabilities(memory_gb: int, provider_id: str) -> list[str]:
     values = [
         "general_compute",
         "tensor_fp32",
         "tensor_fp16",
         "parallel_training",
     ]
+    normalized_id = provider_id.upper()
+    if normalized_id.startswith("NVIDIA "):
+        values.append("cuda_compute")
+    elif normalized_id.startswith("AMD "):
+        values.append("rocm_compute")
     if memory_gb >= 48:
         values.append("large_memory_compute")
     return values
@@ -201,7 +206,7 @@ def normalize_gpu_catalog(observation: dict[str, Any]) -> dict[str, Any]:
                 "location_type": "cloud",
                 "display_name": f"RunPod {display_name}",
                 "hardware_label": provider_id,
-                "capabilities": _capabilities(memory_gb),
+                "capabilities": _capabilities(memory_gb, provider_id),
                 "memory_gb": memory_gb,
                 "availability": _availability(stock_status),
                 "execution_enabled": False,
