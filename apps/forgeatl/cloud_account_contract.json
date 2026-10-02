@@ -1,0 +1,86 @@
+{
+  "schema_version": "forgeatl.cloud-account-inventory.v1",
+  "milestone": "FORGE-ATL.2C",
+  "provider": "runpod",
+  "activation": {
+    "create_enabled": false,
+    "start_enabled": false,
+    "stop_enabled": false,
+    "restart_enabled": false,
+    "delete_enabled": false,
+    "job_execution_enabled": false,
+    "training_enabled": false,
+    "teacher_enabled": false,
+    "production_binding_enabled": false
+  },
+  "credential_boundary": {
+    "environment_variable": "RUNPOD_API_KEY",
+    "required": true,
+    "missing_behavior": "skip_fail_closed",
+    "persist_in_repository": false,
+    "emit_value": false
+  },
+  "inventory": {
+    "endpoint": "https://api.runpod.io/v2/pods",
+    "method": "GET",
+    "include_cluster_pods": false,
+    "page_limit": 100,
+    "pagination": "cursor",
+    "read_only": true
+  },
+  "pod_normalization": {
+    "provider_type": "gpu",
+    "location_type": "cloud",
+    "memory_semantics": "per_gpu_vram_gb",
+    "aggregate_vram_metadata": true,
+    "execution_enabled": false,
+    "status_map": {
+      "RUNNING": {
+        "availability": "busy",
+        "health": "healthy"
+      },
+      "STARTING": {
+        "availability": "busy",
+        "health": "unknown"
+      },
+      "PROVISIONING": {
+        "availability": "busy",
+        "health": "unknown"
+      },
+      "EXITED": {
+        "availability": "declared",
+        "health": "unknown"
+      },
+      "ERROR": {
+        "availability": "offline",
+        "health": "degraded"
+      },
+      "TERMINATED": {
+        "availability": "offline",
+        "health": "offline"
+      }
+    }
+  },
+  "runtime_projection": {
+    "gpu_load_percent": "average runtime.gpus[].util when present",
+    "gpu_memory_util_percent": "average runtime.gpus[].memoryUtil when present",
+    "memory_used_gb": null,
+    "temperature_c": null,
+    "uptime_seconds": "runtime.uptime when present",
+    "truth_rule": "do not infer unavailable metrics"
+  },
+  "cost_binding": {
+    "currency": "USD",
+    "unit": "pod_hour",
+    "source_field": "cost",
+    "stopped_or_terminated_expected_zero": true
+  },
+  "compute_fabric_merge": {
+    "catalog_nodes_retained": true,
+    "account_nodes_added": true,
+    "account_node_prefix": "runpod-pod::",
+    "dry_run_only": true,
+    "assignment_authority": false,
+    "execution_authority": false
+  }
+}
