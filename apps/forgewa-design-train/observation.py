@@ -44,6 +44,7 @@ class TrainingEvent:
     project_ref: str | None
     observe_only: bool = True
     autonomous_actions: bool = False
+    end_reason: str | None = None
 
 @dataclass(frozen=True)
 class TrainingSession:
@@ -64,7 +65,28 @@ def detect_application(executable: str) -> Application:
             return app  # type: ignore[return-value]
     return "other"
 
+def _autocad_drawing_name(title: str) -> str | None:
+    """Extract a title-derived drawing-name hint, not a verified file path."""
+    text = title.strip()
+    text = re.sub(r"^(?:Autodesk\s+)?AutoCAD(?:\s+(?:LT|Architecture|Mechanical|Electrical|MEP|Civil\s+3D))?(?:\s+\d{4})?\s*[-\u2013\u2014]\s*", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s+[-\u2013\u2014]\s+(?:Autodesk\s+)?AutoCAD\b.*$", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\s*(?:\[(?:read[- ]only)\]|\((?:read[- ]only)\))\s*$", "", text, flags=re.IGNORECASE)
+    text = text.strip().rstrip("*").strip()
+    if text.startswith("[") and text.endswith("]"):
+        text = text[1:-1].strip()
+    if len(text) >= 2 and text[0] == text[-1] == chr(34):
+        text = text[1:-1].strip()
+    text = text.rstrip("*").strip()
+    name = re.split(r"[\\/]", text)[-1].strip()
+    if len(re.findall(r"\.(?:dwg|dxf)(?![A-Za-z0-9_])", name, re.IGNORECASE)) != 1:
+        return None
+    if not re.fullmatch(r'[^<>:"/\\|?*\x00-\x1f]+\.(?:dwg|dxf)', name, re.IGNORECASE):
+        return None
+    return name
+
 def correlate_project(application: Application, title: str) -> str | None:
+    if application == "autocad":
+        return _autocad_drawing_name(title)
     exts=PROJECT_EXTENSIONS.get(application,())
     for ext in exts:
         m=re.search(r"([^\\/:*?\"<>|]+%s)" % re.escape(ext), title, re.IGNORECASE)
@@ -81,13 +103,15 @@ def build_session(ctx: ForegroundContext, occurred_at: str | None=None) -> Train
     digest=sha256(f"{app}\n{ctx.pid}\n{ctx.hwnd}\n{ts}".encode()).hexdigest()[:20]
     return TrainingSession(f"fw-train-{digest}",app,ts,project)
 
-def build_event(session: TrainingSession, ctx: ForegroundContext, kind: EventKind, occurred_at: str | None=None) -> TrainingEvent:
+def build_event(session: TrainingSession, ctx: ForegroundContext, kind: EventKind, occurred_at: str | None=None, *, end_reason: str | None=None) -> TrainingEvent:
+    if end_reason is not None and (kind != "session_end" or end_reason not in {"bounded_stop", "observer_error"}):
+        raise ValueError("invalid_session_end_reason")
     if not session.observe_only or session.autonomous_actions:
         raise PermissionError("teacher_mode_boundary_violation")
     ts=occurred_at or utc_now()
     project=correlate_project(session.application,ctx.title) or session.project_ref
     digest=sha256(f"{session.session_id}\n{kind}\n{ctx.hwnd}\n{ctx.pid}\n{ctx.title}\n{ts}".encode()).hexdigest()[:20]
-    return TrainingEvent(f"fw-event-{digest}",session.session_id,ts,kind,session.application,ctx.hwnd,ctx.pid,ctx.title,ctx.executable,project)
+    return TrainingEvent(f"fw-event-{digest}",session.session_id,ts,kind,session.application,ctx.hwnd,ctx.pid,ctx.title,ctx.executable,project,end_reason=end_reason)
 
 class TeacherTimeline:
     def __init__(self, path: str|Path):
