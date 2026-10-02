@@ -67,8 +67,10 @@ class TeacherClient:
                        "autonomous_actions": False, "production_activation": False}
         self._lock = threading.Lock()
 
-    def _abort_owned_worker(self):
+    def _abort_owned_worker(self, owned=None):
         with self._lock:
+            if owned is not None and owned is not self.process:
+                return
             if self.process is not None and self.process.is_alive():
                 self.watchdog_fired = True
                 self.process.terminate()
@@ -97,7 +99,7 @@ class TeacherClient:
                                                        self.started + MAX_SECONDS, self.fixture_reader), daemon=True)
         self.process.start()
         child.close()
-        self.timer = threading.Timer(max(0.0, MAX_SECONDS - (time.monotonic() - self.started)), self._abort_owned_worker)
+        self.timer = threading.Timer(max(0.0, MAX_SECONDS - (time.monotonic() - self.started)), self._abort_owned_worker, args=(self.process,))
         self.timer.daemon = True
         self.timer.start()
         return self.poll()
