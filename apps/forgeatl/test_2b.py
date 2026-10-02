@@ -120,7 +120,8 @@ checks["live_shape_normalization"] = (
 )
 
 h100 = by_label["NVIDIA H100 80GB HBM3"]
-rtx4090 = by_label["NVIDIA GeForce RTX 4090"]\nmi350 = by_label["AMD Instinct MI350 OAM"]
+rtx4090 = by_label["NVIDIA GeForce RTX 4090"]
+mi350 = by_label["AMD Instinct MI350 OAM"]
 checks["vram_and_availability"] = (
     h100["memory_gb"] == 80
     and h100["availability"] == "available"
