@@ -1,0 +1,67 @@
+{
+  "schema_version": "forgeatl.cloud-provider.v1",
+  "milestone": "FORGE-ATL.2B",
+  "adapter_id": "runpod-readonly-v1",
+  "provider": "runpod",
+  "activation": {
+    "instance_provisioning_enabled": false,
+    "instance_mutation_enabled": false,
+    "job_execution_enabled": false,
+    "training_enabled": false,
+    "teacher_enabled": false,
+    "production_binding_enabled": false
+  },
+  "credential_boundary": {
+    "environment_variable": "RUNPOD_API_KEY",
+    "persist_in_repository": false,
+    "emit_value_in_logs": false,
+    "emit_value_in_snapshots": false,
+    "required_for_public_catalog": false,
+    "required_for_account_inventory": true
+  },
+  "public_catalog": {
+    "transport": "https",
+    "method": "POST",
+    "endpoint": "https://api.runpod.io/graphql",
+    "operation_kind": "graphql_query_only",
+    "mutation_allowed": false,
+    "gpu_count": 1
+  },
+  "authenticated_account_inventory": {
+    "transport": "https",
+    "method": "GET",
+    "endpoint": "https://api.runpod.io/v2/pods",
+    "mutation_allowed": false,
+    "missing_credential_behavior": "skip_fail_closed"
+  },
+  "normalization": {
+    "provider_type": "gpu",
+    "location_type": "cloud",
+    "execution_enabled": false,
+    "availability_map": {
+      "high": "available",
+      "medium": "available",
+      "low": "available",
+      "none": "unknown",
+      "null": "unknown",
+      "other": "unknown"
+    },
+    "node_health": "unknown",
+    "provider_health_source": "catalog_request_success",
+    "telemetry_source": "runpod_live_catalog"
+  },
+  "cost_metadata": {
+    "currency": "USD",
+    "unit": "gpu_hour",
+    "on_demand_field": "uninterruptablePrice",
+    "bid_floor_field": "minimumBidPrice",
+    "budget_enforcement": "not_enabled_in_2b"
+  },
+  "dry_run": {
+    "uses_compute_fabric_registry": true,
+    "available_only": true,
+    "candidate_is_not_assignment": true,
+    "candidate_is_not_provisioning": true,
+    "candidate_is_not_execution_authority": true
+  }
+}
