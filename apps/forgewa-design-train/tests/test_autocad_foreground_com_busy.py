@@ -12,6 +12,7 @@ def binding(fg,pids):
     b=n.WindowsBinding.__new__(n.WindowsBinding)
     b.hwnd=100; b.document_hwnd=101; b.pid=7; b.u=U(fg)
     b.window_pid=lambda hwnd:pids.get(hwnd,0)
+    b.process_image_name=lambda pid:"acad.exe" if pid==7 else "other.exe" if pid else None
     return b
 
 def test_main_hwnd_foreground_is_active():
@@ -20,7 +21,7 @@ def test_main_hwnd_foreground_is_active():
 def test_child_hwnd_same_bound_acad_pid_is_active():
     b=binding(555,{100:7,101:7,555:7})
     assert b.active()
-    assert b.foreground_identity()=={"foreground_hwnd":555,"foreground_pid":7,"bound_pid":7,"same_bound_pid":True}
+    assert b.foreground_identity()=={"foreground_hwnd":555,"foreground_pid":7,"foreground_image":"acad.exe","bound_pid":7,"same_bound_pid":True}
 
 @pytest.mark.parametrize("fg,pids",[(555,{100:7,101:7,555:8}),(0,{100:7,101:7}),(555,{100:8,101:7,555:7})])
 def test_non_bound_pid_or_broken_binding_rejected(fg,pids):
