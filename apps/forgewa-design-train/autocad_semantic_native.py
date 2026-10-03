@@ -64,10 +64,34 @@ class WindowsBinding:
         self.u.GetWindowThreadProcessId(hwnd, ctypes.byref(pid))
         return pid.value
 
+    def foreground_hwnd(self):
+        return int(self.u.GetForegroundWindow() or 0)
+
     def active(self):
-        return (int(self.u.GetForegroundWindow() or 0) == self.hwnd and
+        foreground = self.foreground_hwnd()
+        return (bool(foreground) and self.window_pid(foreground) == self.pid and
                 bool(self.u.IsWindow(self.document_hwnd)) and
                 self.window_pid(self.hwnd) == self.pid)
+
+    def foreground_identity(self):
+        foreground = self.foreground_hwnd()
+        return {'foreground_hwnd': foreground,
+                'foreground_pid': self.window_pid(foreground) if foreground else 0,
+                'bound_pid': self.pid,
+                'same_bound_pid': bool(foreground) and self.window_pid(foreground) == self.pid}
+
+
+def classify_com_exception(exc):
+    """Return a sanitized category only; never persist COM messages or arguments."""
+    if type(exc).__name__ != 'com_error':
+        return None
+    value = getattr(exc, 'hresult', None)
+    if value is None and getattr(exc, 'args', None):
+        value = exc.args[0] if isinstance(exc.args[0], int) else None
+    if value is None:
+        return 'other_com'
+    unsigned = int(value) & 0xffffffff
+    return {0x80010001:'call_rejected', 0x8001010A:'retry_later'}.get(unsigned,'other_com')
 
 
 class AutoCADCmdNamesPoller:
@@ -81,6 +105,8 @@ class AutoCADCmdNamesPoller:
         self.initialized = False
         self.released = False
         self.polls = self.events = 0
+        self.foreground_gaps = self.com_missing_samples = 0
+        self.last_com_category = None
         self.next_poll = 0.0
         if active_object is None or dispatcher is None:
             import pythoncom
@@ -103,7 +129,8 @@ class AutoCADCmdNamesPoller:
             self.metadata = {'source':'cmdnames_poll','system_variable':'CMDNAMES',
                 'poll_interval_seconds':POLL_INTERVAL_SECONDS,'main_hwnd':self.binding.hwnd,
                 'document_hwnd':self.binding.document_hwnd,'pid':self.binding.pid,
-                'document_token':self.token,'connection_point':False,'callbacks':False}
+                'document_token':self.token,'foreground_policy':'same_bound_acad_pid',
+                'connection_point':False,'callbacks':False}
         except Exception:
             self.close()
             raise
@@ -113,13 +140,23 @@ class AutoCADCmdNamesPoller:
         if not self.retain or now >= self.deadline:
             return ()
         if not self.binding.active():
+            self.foreground_gaps += 1
             self.detector.interrupt()
             return ()
         if now < self.next_poll:
             return ()
         self.next_poll = now + POLL_INTERVAL_SECONDS
         self.polls += 1
-        raw = self.doc.GetVariable('CMDNAMES')
+        try:
+            raw = self.doc.GetVariable('CMDNAMES')
+        except Exception as exc:
+            category = classify_com_exception(exc)
+            if category not in {'call_rejected','retry_later'}:
+                raise
+            self.com_missing_samples += 1
+            self.last_com_category = category
+            self.detector.interrupt()
+            return ()
         rows = self.detector.feed(raw)
         self.events += len(rows)
         return rows
