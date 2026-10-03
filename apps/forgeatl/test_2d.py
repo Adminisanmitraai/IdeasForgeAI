@@ -108,7 +108,7 @@ checks["live_telemetry_normalization"] = (
     and rtx["availability"] == "available"
     and h100["telemetry"]["load_percent"] == 90.0
     and h100["telemetry"]["memory_used_gb"] == 72.0
-    and h100["temperature_c"] if False else True
+    and h100["telemetry"]["temperature_c"] == 71.0
 )
 
 checks["availability_and_health_truth"] = (
