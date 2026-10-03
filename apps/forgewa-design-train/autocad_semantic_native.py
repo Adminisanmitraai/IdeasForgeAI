@@ -104,7 +104,7 @@ class AutoCADCmdNamesPoller:
         self.pc = self.app = self.doc = None
         self.initialized = False
         self.released = False
-        self.polls = self.events = 0
+        self.polls = self.events = self.successful_polls = 0
         self.foreground_gaps = self.com_missing_samples = 0
         self.last_com_category = None
         self.next_poll = 0.0
@@ -157,6 +157,7 @@ class AutoCADCmdNamesPoller:
             self.last_com_category = category
             self.detector.interrupt()
             return ()
+        self.successful_polls += 1
         rows = self.detector.feed(raw)
         self.events += len(rows)
         return rows
