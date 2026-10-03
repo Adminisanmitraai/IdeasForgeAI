@@ -14,6 +14,12 @@ from rtx_pairing_recovery import (
 
 checks = {}
 
+loader_source = __import__("inspect").getsource(__import__("rtx_pairing_recovery")._load_dpapi_token)
+checks["dpapi_bom_whitespace_trim"] = (
+    ".Trim([char]0xFEFF).Trim()" in loader_source
+)
+
+
 secret_old = "old-device-token-never-log"
 ticket_code = "pairing-code-never-chat"
 
