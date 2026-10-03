@@ -29,7 +29,7 @@ def test_frame_source_crops_selected_window(tmp_path):
 
 def test_frame_source_writes_nothing_for_other_app(tmp_path):
     src=s.SelectedWindowFrameSource("autocad",tmp_path,lambda:ctx("notepad.exe","secret"),lambda _:FakeImage(),rect)
-    assert src.capture("before") is None and not tmp_path.exists()
+    assert src.capture("before") is None and list(tmp_path.iterdir())==[]
 
 class Keys:
     def __init__(self,down=()): self.down=set(down)
