@@ -36,10 +36,12 @@ def run_probe(output_path:str|Path, *, consent:bool, source_factory=AutoCADCmdNa
             try: released=source.close()
             except Exception as exc:
                 error=error or type(exc).__name__
+    polls=getattr(source,'polls',0) if source else 0
+    binding_gaps=getattr(getattr(source,'detector',None),'gaps',0) if source else 0
     result={'schema':'forgewa.cmdnames-baseline-probe.v1',
-        'status':'PASS' if error is None and released and len(events)==0 else 'FAIL',
+        'status':'PASS' if error is None and released and len(events)==0 and polls>0 and binding_gaps==0 else 'FAIL',
         'error_type':error,'events':events,'event_count':len(events),
-        'poll_count':getattr(source,'polls',0) if source else 0,
+        'poll_count':polls,'binding_gaps':binding_gaps,
         'source_released':released,'observe_only':True,'autonomous_actions':False,
         'frames_enabled':False,'interactions_enabled':False,'command_injection':False,
         'raw_text_recording':False,'production_activation':False,
