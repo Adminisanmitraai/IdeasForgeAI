@@ -57,7 +57,7 @@ def _load_dpapi_token(path: Path) -> str:
     if not path.exists():
         raise PairingRecoveryError("device_token_missing")
     script = (
-        "$e=Get-Content -Raw -LiteralPath '" + str(path).replace("'", "''") + "';"
+        "$e=(Get-Content -Raw -LiteralPath '" + str(path).replace("'", "''") + "').Trim([char]0xFEFF).Trim();"
         "$s=ConvertTo-SecureString $e;"
         "$b=[Runtime.InteropServices.Marshal]::SecureStringToBSTR($s);"
         "try{[Runtime.InteropServices.Marshal]::PtrToStringBSTR($b)}finally{"
