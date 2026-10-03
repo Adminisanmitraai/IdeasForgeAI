@@ -38,12 +38,12 @@ def selected_foreground(application:str, reader:Callable=read_foreground_context
                           rect.left,rect.top,rect.right,rect.bottom)
 
 class SelectedWindowFrameSource:
-    def __init__(self,application:str,frame_root:str|Path,reader:Callable=read_foreground_context,grabber=None):
+    def __init__(self,application:str,frame_root:str|Path,reader:Callable=read_foreground_context,grabber=None,rect_reader=None):
         if application not in {"autocad","3dsmax"}: raise ValueError("unsupported_application")
-        self.application=application; self.root=Path(frame_root).resolve(); self.reader=reader; self.grabber=grabber
+        self.application=application; self.root=Path(frame_root).resolve(); self.reader=reader; self.grabber=grabber; self.rect_reader=rect_reader
         self.sequence=0
     def capture(self,phase:str):
-        window=selected_foreground(self.application,self.reader)
+        window=selected_foreground(self.application,self.reader,self.rect_reader)
         if window is None: return None
         grab=self.grabber
         if grab is None:
@@ -59,7 +59,7 @@ class SelectedWindowFrameSource:
 
 class SafeWindowsInputPoller:
     """Edge detector only. It never calls SetWindowsHookEx, GetKeyboardState, ToUnicode or SendInput."""
-    def __init__(self,application:str,reader:Callable=read_foreground_context,key_state=None,cursor=None):
+    def __init__(self,application:str,reader:Callable=read_foreground_context,key_state=None,cursor=None,rect_reader=None):
         self.application=application; self.reader=reader
         self.key_state=key_state or ctypes.windll.user32.GetAsyncKeyState
         self.cursor=cursor or self._cursor
@@ -69,7 +69,7 @@ class SafeWindowsInputPoller:
         point=wintypes.POINT(); ctypes.windll.user32.GetCursorPos(ctypes.byref(point)); return point.x,point.y
     def _down(self,vk:int)->bool: return bool(self.key_state(vk)&0x8000)
     def poll(self):
-        window=selected_foreground(self.application,self.reader)
+        window=selected_foreground(self.application,self.reader,self.rect_reader)
         if window is None:
             self.previous.clear(); return ()
         events=[]
