@@ -218,6 +218,9 @@ class DeviceFabricRegistry:
         self._records[key] = updated
         return updated
 
+    def get_device(self, owner_subject: str, device_id: str) -> DeviceFabricRecord | None:
+        return self._records.get(self._key(owner_subject, device_id))
+
     def list_devices(self, owner_subject: str, *, online_only: bool = False) -> tuple[DeviceFabricRecord, ...]:
         owner = _required(owner_subject, "owner_subject")
         records = [
