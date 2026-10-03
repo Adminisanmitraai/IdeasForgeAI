@@ -98,6 +98,7 @@ def discover_physical_nvidia(
     if not nvidia_smi:
         return {
             "provider": "physical_nvidia",
+            "source": "local_nvidia_smi",
             "status": "no_nvidia_smi",
             "observed_at": None,
             "hostname": hostname or platform.node(),
@@ -149,6 +150,7 @@ def discover_physical_nvidia(
 
     return {
         "provider": "physical_nvidia",
+        "source": "local_nvidia_smi",
         "status": "observed",
         "observed_at": _utc_now(),
         "hostname": hostname or platform.node(),
@@ -178,6 +180,38 @@ def _capabilities(memory_gb: float | None) -> list[str]:
     if memory_gb is not None and memory_gb >= 48:
         values.append("large_memory_compute")
     return values
+
+
+def observation_from_forgepc_snapshot(snapshot: dict[str, Any]) -> dict[str, Any]:
+    gpus = snapshot.get("gpus")
+    if not isinstance(gpus, list):
+        raise PhysicalNvidiaError("ForgePC snapshot gpus must be a list")
+    normalized_gpus: list[dict[str, Any]] = []
+    for item in gpus:
+        if not isinstance(item, dict):
+            continue
+        normalized_gpus.append(
+            {
+                "index": item.get("index", 0),
+                "name": item.get("name"),
+                "uuid": item.get("uuid"),
+                "memory_total_gb": item.get("memory_total_gb"),
+                "memory_used_gb": item.get("memory_used_gb"),
+                "utilization_gpu_percent": item.get("utilization_gpu_percent"),
+                "temperature_c": item.get("temperature_c"),
+                "driver_version": item.get("driver_version"),
+                "performance_state": item.get("performance_state"),
+            }
+        )
+    return {
+        "provider": "physical_nvidia",
+        "source": "forgepc_readonly_snapshot",
+        "status": "observed",
+        "observed_at": snapshot.get("observed_at") or _utc_now(),
+        "hostname": snapshot.get("hostname") or snapshot.get("device_id") or "forgepc-node",
+        "cuda_version": snapshot.get("cuda_version"),
+        "gpus": normalized_gpus,
+    }
 
 
 def normalize_physical_nvidia(observation: dict[str, Any]) -> dict[str, Any]:
@@ -240,7 +274,11 @@ def normalize_physical_nvidia(observation: dict[str, Any]) -> dict[str, Any]:
                     "driver_version": gpu.get("driver_version"),
                     "cuda_version": cuda_version,
                     "performance_state": gpu.get("performance_state"),
-                    "discovery_tool": "nvidia-smi",
+                    "discovery_tool": (
+                        "nvidia-smi"
+                        if observation.get("source") == "local_nvidia_smi"
+                        else "forgepc_readonly_snapshot"
+                    ),
                 },
             }
         )
