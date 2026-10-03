@@ -23,6 +23,7 @@ FORGE_COMMANDER_MCP_SERVER_VERSION = "forge-commander.mcp-server.v1"
 
 _CAPABILITY_ALIASES = {
     "write_file_text": "file.write_text",
+    "file_replace_text": "file.replace_text",
     "delete_file": "file.delete",
     "run_terminal_profile": "terminal.execute_profile",
     "file_read_text": "file.read_text",
@@ -243,7 +244,7 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
         if ctx is None:
             raise PermissionError("missing request context")
         capability = _canonical_capability(required_capability)
-        if capability in {"file.write_text", "file.delete", "terminal.execute_profile", "deployment_action_execute"}:
+        if capability in {"file.write_text", "file.replace_text", "file.delete", "terminal.execute_profile", "deployment_action_execute"}:
             try:
                 request = json.loads(instruction)
             except (TypeError, json.JSONDecodeError):
@@ -342,6 +343,21 @@ input,button{{width:100%;box-sizing:border-box;padding:12px;margin-top:12px;bord
             raise PermissionError("missing request context")
         return await _dispatch_approved(
             device_id, "file.write_text", {"path": path, "content": content},
+            approval_granted, ctx,
+        )
+
+    @mcp.tool(annotations=ToolAnnotations(
+        readOnlyHint=False, destructiveHint=True, idempotentHint=False,
+    ))
+    async def file_replace_text(device_id: str, path: str, old_text: str, new_text: str,
+                                expected_count: int = 1, approval_granted: bool = False,
+                                ctx: Context | None = None) -> dict[str, Any]:
+        """Replace exactly one bounded text fragment in an allowlisted file after explicit approval."""
+        if ctx is None:
+            raise PermissionError("missing request context")
+        return await _dispatch_approved(
+            device_id, "file.replace_text",
+            {"path": path, "old_text": old_text, "new_text": new_text, "expected_count": expected_count},
             approval_granted, ctx,
         )
 
