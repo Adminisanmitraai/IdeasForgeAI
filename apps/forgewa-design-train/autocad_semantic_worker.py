@@ -1,6 +1,5 @@
 """Owned, finite semantic observer. No command injection or application control."""
 from __future__ import annotations
-from dataclasses import asdict
 import hashlib
 import json
 import multiprocessing as mp
@@ -15,15 +14,16 @@ def worker(connection, directory, absolute_deadline, factories=None):
     directory = Path(directory)
     subscription = correlator = None
     reason, error, detached = 'time_limit', None, False
+    created = False
     before = None
     try:
         from autocad_semantic_native import AutoCADSubscription, WindowEvidenceSource, ScopedInteractions
         Sub, Frames, Inputs = factories or (AutoCADSubscription, WindowEvidenceSource, ScopedInteractions)
         directory.mkdir(parents=True, exist_ok=False)
+        created = True
         def write(name, record):
             with (directory/name).open('a', encoding='utf-8') as out:
                 out.write(json.dumps(record, sort_keys=True, allow_nan=False)+'\n')
-        # Leave margin for Unadvise and final evidence; parent still enforces its own deadline.
         deadline = absolute_deadline - 0.35
         subscription = Sub(deadline=deadline, consent=True)
         frames = Frames(subscription, directory/'frames', deadline)
@@ -50,7 +50,7 @@ def worker(connection, directory, absolute_deadline, factories=None):
             if subscription.queue.gaps != last_gaps:
                 correlator.interrupt('event_or_focus_gap')
                 before = None
-                events = ()  # Drop the whole uncertain batch rather than invent ordering.
+                events = ()
                 last_gaps = subscription.queue.gaps
             if not subscription.binding.active():
                 correlator.interrupt('foreground_lost')
@@ -79,10 +79,18 @@ def worker(connection, directory, absolute_deadline, factories=None):
     except Exception as exc:
         reason, error = 'observer_error', type(exc).__name__
     finally:
-        if correlator:
-            correlator.interrupt(reason)
-        if subscription:
-            detached = subscription.close()
+        # Evidence failures must never prevent the COM listener from detaching.
+        try:
+            if correlator:
+                correlator.interrupt(reason)
+        except Exception as exc:
+            reason, error = 'final_evidence_error', type(exc).__name__
+        finally:
+            if subscription:
+                try:
+                    detached = subscription.close()
+                except Exception as exc:
+                    reason, error, detached = 'unsubscribe_error', type(exc).__name__, False
         status = {'state':'STOPPED' if reason=='user_stop' else 'COMPLETED' if reason in {'time_limit','step_limit'} else 'ERROR',
             'stop_reason':reason,'error_type':error,'run_dir':str(directory),
             'commands':subscription.queue.accepted if subscription and subscription.queue else 0,
@@ -91,18 +99,25 @@ def worker(connection, directory, absolute_deadline, factories=None):
             'unmatched_end_events':correlator.unmatched if correlator else 0,
             'subscription_detached':detached,'observe_only':True,'autonomous_actions':False,
             'command_injection':False,'raw_text_recording':False,'production_activation':False,
-            'source':'fixture' if factories else 'live_activex', 'command_success_inferred':False}
+            'source':'fixture' if factories else 'live_activex', 'command_success_inferred':False,
+            'binding':getattr(subscription,'metadata',None), 'summary_saved':False}
         if subscription and not detached:
             status.update(state='ERROR',stop_reason='unsubscribe_not_confirmed')
-        if directory.exists():
-            hashes = {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in directory.glob('*.jsonl')}
-            status['evidence_sha256'] = hashes
-            (directory/'summary.json').write_text(json.dumps(status,indent=2),encoding='utf-8')
+        if created:
+            try:
+                hashes = {p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in directory.glob('*.jsonl')}
+                status['evidence_sha256'] = hashes
+                status['summary_saved'] = True
+                with (directory/'summary.json').open('x', encoding='utf-8') as stream:
+                    stream.write(json.dumps(status,indent=2))
+            except Exception as exc:
+                status.update(state='ERROR',stop_reason='summary_write_error',summary_saved=False,error_type=type(exc).__name__)
         try:
             connection.send(status)
         except (BrokenPipeError, EOFError, OSError):
             pass
-        connection.close()
+        finally:
+            connection.close()
 
 
 class SemanticClient:
