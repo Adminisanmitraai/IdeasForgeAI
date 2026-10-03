@@ -142,6 +142,10 @@ class SemanticCorrelator:
               first.observation.application != 'autocad' or after.observation.application != 'autocad' or
               first.observation.project_hint != after.observation.project_hint):
             reason = 'frame_context_mismatch'
+        elif event.name.startswith('-'):
+            # Preserve the true command name in the span; do not relabel it or
+            # bypass the stricter identifier contract of the earlier step model.
+            reason = 'command_identifier_outside_legacy_step_contract'
         elif self.steps >= MAX_STEPS:
             reason = 'step_limit'
         span = {'command': event.name, 'begin_event': asdict(begin), 'end_event': asdict(event),
@@ -175,7 +179,6 @@ class SemanticCorrelator:
             return False
         if event.kind == 'shortcut' and event.shortcut not in {'ctrl+s','ctrl+z','ctrl+y','ctrl+c','ctrl+v','ctrl+x','ctrl+a'}:
             return False
-        # Whitelist projection: no arbitrary payload fields are retained.
         item['interactions'].append({'kind': event.kind, 'button': event.button if event.kind == 'mouse_click' else None,
             'shortcut': event.shortcut if event.kind == 'shortcut' else None,
             'x_norm': event.x_norm if event.kind == 'mouse_click' else None,
