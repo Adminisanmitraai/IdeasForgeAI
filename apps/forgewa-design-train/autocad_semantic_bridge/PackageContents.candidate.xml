@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0"
+  AppVersion="0.1.0"
+  ProductCode="{4D9239D7-0A2E-4E17-BF3D-37E3463AFB02}"
+  Name="ForgeWa AutoCAD Semantic Bridge">
+  <CompanyDetails Name="IdeasForgeAI" />
+  <Components>
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R24.3" SeriesMax="R24.3" />
+    <ComponentEntry
+      AppName="ForgeWa AutoCAD Semantic Bridge"
+      ModuleName="./Contents/ForgeWa.AutoCAD.Semantic.dll"
+      AppDescription="Read-only names-only command lifecycle bridge"
+      LoadOnAutoCADStartup="True" />
+  </Components>
+</ApplicationPackage>
