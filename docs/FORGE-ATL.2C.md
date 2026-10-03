@@ -1,6 +1,6 @@
 # FORGE-ATL.2C — Credentialed Cloud GPU Account Inventory
 
-Status: STATIC CERTIFIED PASS / LIVE CREDENTIAL GATE PENDING
+Status: CERTIFIED PASS — LIVE ACCOUNT INVENTORY
 
 Provider: RunPod
 Base: FORGE-ATL.2B certified head 41d75bec07ceee0a754ed9c552b765df5104d656
@@ -18,16 +18,17 @@ Base: FORGE-ATL.2B certified head 41d75bec07ceee0a754ed9c552b765df5104d656
 - Dry-run matching against existing account Pods.
 - No create/start/stop/restart/delete/execute/train surface.
 
-## Current live gate
-The live 2C account probe ran with credential.present=false.
+## Live account certification
+The bounded authenticated 2C account probe ran successfully with credential.present=true and value_exposed=false.
 Result:
-- inventory_status=skipped_no_credential
+- inventory_status=read_only_inventory
 - account_pod_nodes=0
-- inventory_pages=0
+- inventory_pages=1
 - existing_pod_dry_run_match_count=0
 - public live catalog nodes retained in merged fabric=49
+- execution_authority=false
 
-No account-specific claim has been made.
+The RunPod account currently returned zero existing Pods. This is a successful authenticated inventory result, not a missing-credential or provider failure. No account mutation was attempted.
 
 ## Truthful telemetry rules
 RUNNING Pods may expose runtime.gpus[].util and runtime.gpus[].memoryUtil.
@@ -61,8 +62,8 @@ FORGE-ATL.2C fixed checks: PASS.
 - read-only surface
 - no secret persistence
 
-## Completion gate
-FORGE-ATL.2C becomes fully live-certified only after an approved RUNPOD_API_KEY is supplied through the environment and one bounded read-only account inventory probe returns successfully.
+## Completion
+FORGE-ATL.2C is fully live-certified. The approved RUNPOD_API_KEY was supplied through the User environment, copied only into the isolated certification process, and one bounded authenticated GET-only account inventory probe returned successfully.
 
 ## Explicit non-goals
 No RunPod Pod creation.
