@@ -116,8 +116,14 @@ class AutoCADSubscription:
             self.queue = CommandQueue(self.token, time.monotonic, self.binding.active, deadline, retain=retain)
             queue, binding = self.queue, self.binding
             class Sink:
-                _com_interfaces_ = [pythoncom.IID_IDispatch, pythoncom.MakeIID(EVENT_IID)]
+                _com_interfaces_ = [pythoncom.IID_IDispatch]
                 _public_methods_ = []
+                def _query_interface_(self, iid):
+                    # Standard pywin32 genpy event-sink pattern for a dispatch-only IID.
+                    # This is an in-memory adapter; it does not register a COM server.
+                    if iid == pythoncom.MakeIID(EVENT_IID):
+                        return util.wrap(self, usePolicy=NamesOnlyPolicy)
+                    return 0
             class NamesOnlyPolicy(policy.DesignatedWrapPolicy):
                 def _invokeex_(self, dispid, lcid, flags, args, kwargs, provider):
                     # Do not forward, stringify or log other event arguments (LISP/save text/etc.).
