@@ -6,8 +6,9 @@ from typing import Any
 
 from .cloud_device_registry import DeviceSession
 from .cloud_task_channel import DeviceTaskEnvelope, DeviceTaskResultEnvelope
+from .device_fabric_registry import CapabilityDescriptor, DeviceFabricRegistry, DeviceIdentity
 
-FORGE_COMMANDER_GATEWAY_SESSION_MANAGER_VERSION = "forge-commander.gateway-session-manager.v1"
+FORGE_COMMANDER_GATEWAY_SESSION_MANAGER_VERSION = "forge-commander.gateway-session-manager.v2"
 
 @dataclass
 class LiveGatewaySession:
@@ -20,8 +21,21 @@ class GatewaySessionManager:
         self._sessions: dict[str, LiveGatewaySession] = {}
         self._pending_results: dict[str, DeviceTaskResultEnvelope] = {}
         self._inflight_tasks: dict[str, tuple[str, str]] = {}
+        self.device_fabric_registry = DeviceFabricRegistry()
+
     def attach(self, live: LiveGatewaySession) -> None:
         device_id = live.session.device_id
+        owner_subject = live.session.owner_subject
+        if self.device_fabric_registry.get_device(owner_subject, device_id) is None:
+            self.device_fabric_registry.upsert_identity(
+                DeviceIdentity(device_id=device_id, owner_subject=owner_subject)
+            )
+        self.device_fabric_registry.attach_session(
+            owner_subject,
+            device_id,
+            live.session.session_id,
+            heartbeat_at=live.last_heartbeat_at,
+        )
         existing = self._sessions.get(device_id)
 
         # A successfully authenticated reconnect supersedes the previous
@@ -36,6 +50,9 @@ class GatewaySessionManager:
     def detach(self, device_id: str, session_id: str) -> None:
         existing = self._sessions.get(device_id)
         if existing and existing.session.session_id == session_id:
+            self.device_fabric_registry.detach_session(
+                existing.session.owner_subject, device_id, session_id
+            )
             self._sessions.pop(device_id, None)
             stale = [task_id for task_id, binding in self._inflight_tasks.items()
                      if binding == (device_id, session_id)]
@@ -48,9 +65,66 @@ class GatewaySessionManager:
         if not live or live.session.session_id != session_id:
             raise ValueError("gateway session not found")
         live.last_heartbeat_at = at
+        self.device_fabric_registry.heartbeat(
+            live.session.owner_subject,
+            device_id,
+            session_id,
+            heartbeat_at=at,
+        )
 
     def get(self, device_id: str) -> LiveGatewaySession | None:
         return self._sessions.get(device_id)
+
+    def announce_device_profile(
+        self,
+        device_id: str,
+        session_id: str,
+        *,
+        identity: dict[str, Any] | None,
+        capabilities: list[dict[str, Any]],
+    ):
+        live = self._sessions.get(device_id)
+        if not live or live.session.session_id != session_id:
+            raise ValueError("gateway session not found")
+        profile = identity if isinstance(identity, dict) else {}
+        role_tags = profile.get("role_tags") or ()
+        if not isinstance(role_tags, (list, tuple)):
+            raise ValueError("role_tags_invalid")
+        registered = self.device_fabric_registry.upsert_identity(
+            DeviceIdentity(
+                device_id=device_id,
+                owner_subject=live.session.owner_subject,
+                device_class=str(profile.get("device_class") or "unknown"),
+                display_name=str(profile.get("display_name") or device_id),
+                platform=str(profile.get("platform") or "unknown"),
+                architecture=str(profile.get("architecture") or "unknown"),
+                role_tags=tuple(str(item) for item in role_tags),
+            )
+        )
+        descriptors: list[CapabilityDescriptor] = []
+        for raw in capabilities:
+            if not isinstance(raw, dict):
+                raise ValueError("capability_descriptor_invalid")
+            metadata = raw.get("metadata") or {}
+            if not isinstance(metadata, dict):
+                raise ValueError("capability_metadata_invalid")
+            descriptors.append(
+                CapabilityDescriptor(
+                    capability_id=str(raw.get("capability_id") or ""),
+                    execution_mode=str(raw.get("execution_mode") or ""),
+                    state=str(raw.get("state") or "available"),
+                    source=str(raw.get("source") or "device_announcement"),
+                    metadata=metadata,
+                )
+            )
+        if registered.presence.session_id != session_id:
+            raise ValueError("device_session_not_current")
+        return self.device_fabric_registry.announce_capabilities(
+            live.session.owner_subject,
+            device_id,
+            descriptors,
+            replace_existing=True,
+        )
     async def dispatch(self, envelope: DeviceTaskEnvelope) -> None:
         live = self._sessions.get(envelope.device_id)
         if not live or live.session.session_id != envelope.session_id:
