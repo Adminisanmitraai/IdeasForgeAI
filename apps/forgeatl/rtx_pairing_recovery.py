@@ -11,7 +11,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-from rtx_node_enrollment_preflight import stable_windows_device_id
+from rtx_node_enrollment_preflight import enrollment_preflight
 
 
 DEFAULT_HTTP_BASE = "https://ideasforgeai-api.onrender.com/forge-commander"
@@ -108,9 +108,11 @@ def request_pairing_ticket(
     *,
     existing_token_file: Path,
     http_base: str = DEFAULT_HTTP_BASE,
+    token_loader=_load_dpapi_token,
+    request_func=_request_json,
 ) -> dict[str, Any]:
-    token = _load_dpapi_token(existing_token_file)
-    response = _request_json(
+    token = token_loader(existing_token_file)
+    response = request_func(
         f"{http_base.rstrip('/')}/device/pairing-ticket",
         method="POST",
         bearer_token=token,
@@ -138,11 +140,21 @@ def consume_pairing_ticket(
     project_root: Path,
     http_base: str = DEFAULT_HTTP_BASE,
     ws_url: str = DEFAULT_WS_URL,
+    preflight_func=enrollment_preflight,
+    request_func=_request_json,
+    save_token_func=_save_dpapi_token,
 ) -> dict[str, Any]:
-    derived_device_id = stable_windows_device_id()
-    if current_device_id and current_device_id.strip() == derived_device_id:
-        raise PairingRecoveryError("derived_device_id_matches_existing")
-    response = _request_json(
+    preflight = preflight_func(existing_device_id=current_device_id)
+    if preflight.get("nvidia_smi_present") is not True:
+        raise PairingRecoveryError("nvidia_not_present")
+    if int(preflight.get("nvidia_gpu_count") or 0) < 1:
+        raise PairingRecoveryError("nvidia_gpu_not_found")
+    if preflight.get("ready_for_distinct_enrollment") is not True:
+        raise PairingRecoveryError("distinct_device_identity_required")
+    derived_device_id = str(preflight.get("derived_device_id") or "").strip()
+    if not derived_device_id:
+        raise PairingRecoveryError("derived_device_id_missing")
+    response = request_func(
         f"{http_base.rstrip('/')}/device/pair",
         method="POST",
         body={"pairing_code": pairing_code.strip(), "device_id": derived_device_id},
@@ -158,7 +170,7 @@ def consume_pairing_ticket(
         raise PairingRecoveryError("pairing_response_incomplete")
 
     token_path = state_dir / "device-token.dpapi"
-    _save_dpapi_token(token, token_path)
+    save_token_func(token, token_path)
 
     config = {
         "device_id": derived_device_id,
