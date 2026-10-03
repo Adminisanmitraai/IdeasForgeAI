@@ -48,7 +48,7 @@ class SemanticPanel:
         phase = status['state']
         self.start_button.configure(state='normal' if self.consent.get() and not alive else 'disabled')
         self.stop_button.configure(state='normal' if alive else 'disabled')
-        self.heading.set({'IDLE':'IDLE - NOT SUBSCRIBED / NOT CAPTURING','STARTING':'CONNECTING READ-ONLY TO EXISTING AUTOCAD',
+        self.heading.set({'IDLE':'IDLE - NOT POLLING / NOT CAPTURING','STARTING':'CONNECTING READ-ONLY TO EXISTING AUTOCAD',
             'ARMED':'ARMED - SWITCH TO AUTOCAD','OBSERVING':'POLLING CMDNAMES + WINDOW FRAMES',
             'WAITING_FOR_AUTOCAD':'WAITING FOR SELECTED AUTOCAD WINDOW','COMPLETED':'AUTOMATICALLY STOPPED',
             'STOPPED':'STOPPED BY USER','ERROR':'STOPPED WITH ERROR','INTERRUPTED':'INTERRUPTED - NOT CERTIFIED'}.get(phase,phase))
