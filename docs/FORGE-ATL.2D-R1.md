@@ -46,3 +46,6 @@ No training started.
 No Teacher activated.
 No driver/configuration changed.
 No production service changed.
+
+## Re-attempt — 2026-10-03
+User reported the RTX device connected. Connector re-attestation still exposed only device fc-win-01e79233a6a6bf3bdc89 (hostname Ranjan), whose live hardware remained AMD Radeon (TM) R9 M360 + Intel(R) HD Graphics 530. Desktop Commander exposed no online RTX device and showed the Ranjan Desktop Commander device offline. Therefore no NVIDIA telemetry was read and the completion gate remains pending. Zero execution/training/Teacher activation preserved.
