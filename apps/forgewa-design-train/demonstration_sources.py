@@ -25,17 +25,24 @@ class SelectedWindow:
     hwnd:int; pid:int; title:str; application:str; project_hint:str|None
     left:int; top:int; right:int; bottom:int
 
-def selected_foreground(application:str, reader:Callable=read_foreground_context)->SelectedWindow|None:
+def selected_foreground(application:str, reader:Callable=read_foreground_context, rect_reader=None)->SelectedWindow|None:
     ctx=reader()
     if detect_application(ctx.executable)!=application:
         return None
-    rect=wintypes.RECT()
-    if not ctypes.windll.user32.GetWindowRect(ctx.hwnd,ctypes.byref(rect)):
+    if rect_reader is None:
+        def rect_reader(hwnd):
+            rect=wintypes.RECT()
+            if not ctypes.windll.user32.GetWindowRect(hwnd,ctypes.byref(rect)):
+                return None
+            return rect.left,rect.top,rect.right,rect.bottom
+    bounds=rect_reader(ctx.hwnd)
+    if not bounds:
         return None
-    if rect.right<=rect.left or rect.bottom<=rect.top:
+    left,top,right,bottom=bounds
+    if right<=left or bottom<=top:
         return None
     return SelectedWindow(ctx.hwnd,ctx.pid,ctx.title,application,correlate_project(application,ctx.title),
-                          rect.left,rect.top,rect.right,rect.bottom)
+                          left,top,right,bottom)
 
 class SelectedWindowFrameSource:
     def __init__(self,application:str,frame_root:str|Path,reader:Callable=read_foreground_context,grabber=None,rect_reader=None):
@@ -60,7 +67,7 @@ class SelectedWindowFrameSource:
 class SafeWindowsInputPoller:
     """Edge detector only. It never calls SetWindowsHookEx, GetKeyboardState, ToUnicode or SendInput."""
     def __init__(self,application:str,reader:Callable=read_foreground_context,key_state=None,cursor=None,rect_reader=None):
-        self.application=application; self.reader=reader
+        self.application=application; self.reader=reader; self.rect_reader=rect_reader
         self.key_state=key_state or ctypes.windll.user32.GetAsyncKeyState
         self.cursor=cursor or self._cursor
         self.previous={}
