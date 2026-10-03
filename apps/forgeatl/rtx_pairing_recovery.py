@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import hmac
 import os
 import socket
 import subprocess
@@ -83,14 +84,16 @@ def _save_dpapi_token(token: str, path: Path) -> None:
     if not token.strip():
         raise PairingRecoveryError("paired_token_empty")
     path.parent.mkdir(parents=True, exist_ok=True)
+    literal_path = str(path).replace("'", "''")
     script = (
         "$p=[Console]::In.ReadToEnd();"
+        "if([string]::IsNullOrWhiteSpace($p)){exit 41};"
         "$s=ConvertTo-SecureString $p -AsPlainText -Force;"
         "$e=ConvertFrom-SecureString $s;"
-        "[IO.File]::WriteAllText($args[0],$e,[Text.Encoding]::UTF8)"
+        f"[IO.File]::WriteAllText('{literal_path}',$e,[Text.Encoding]::UTF8);"
     )
     result = subprocess.run(
-        ["powershell.exe", "-NoProfile", "-Command", script, str(path)],
+        ["powershell.exe", "-NoProfile", "-Command", script],
         input=token,
         capture_output=True,
         text=True,
@@ -100,8 +103,15 @@ def _save_dpapi_token(token: str, path: Path) -> None:
         check=False,
         shell=False,
     )
-    if result.returncode != 0:
+    if result.returncode != 0 or not path.exists() or path.stat().st_size <= 0:
         raise PairingRecoveryError("paired_token_encrypt_failed")
+    round_trip = _load_dpapi_token(path)
+    if not hmac.compare_digest(round_trip, token):
+        try:
+            path.unlink()
+        except OSError:
+            pass
+        raise PairingRecoveryError("paired_token_round_trip_failed")
 
 
 def request_pairing_ticket(
