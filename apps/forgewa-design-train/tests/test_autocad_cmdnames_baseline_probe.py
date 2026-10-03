@@ -17,6 +17,7 @@ class Source:
         assert consent is True
         self.deadline=deadline; self.clock=clock; self.polls=0; self.events=0
         self.metadata={'source':'fixture_cmdnames','callbacks':False,'connection_point':False}
+        self.detector=type('Detector',(),{'gaps':0})()
         self.closed=False; Source.last=self
     def poll(self):
         self.polls+=1; return ()
@@ -61,3 +62,21 @@ def test_source_error_fails_but_still_releases(tmp_path,monkeypatch):
     c=Clock(); result=p.run_probe(tmp_path/'x.json',consent=True,source_factory=Bad,clock=c,sleep=c.sleep)
     assert result['status']=='FAIL' and result['error_type']=='RuntimeError'
     assert result['source_released'] and Bad.last.closed
+
+
+def test_zero_polls_cannot_pass_baseline(tmp_path,monkeypatch):
+    class NoPoll(Source):
+        def poll(self): return ()
+    monkeypatch.setattr(p,'PROBE_SECONDS',.06)
+    c=Clock(); result=p.run_probe(tmp_path/'x.json',consent=True,source_factory=NoPoll,clock=c,sleep=c.sleep)
+    assert result['status']=='FAIL' and result['poll_count']==0
+
+def test_foreground_binding_gap_cannot_pass_baseline(tmp_path,monkeypatch):
+    class Gap(Source):
+        def poll(self):
+            self.polls+=1
+            self.detector.gaps=1
+            return ()
+    monkeypatch.setattr(p,'PROBE_SECONDS',.06)
+    c=Clock(); result=p.run_probe(tmp_path/'x.json',consent=True,source_factory=Gap,clock=c,sleep=c.sleep)
+    assert result['status']=='FAIL' and result['binding_gaps']==1
