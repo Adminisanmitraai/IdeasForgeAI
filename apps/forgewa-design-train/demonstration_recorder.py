@@ -51,7 +51,9 @@ class BoundedDemonstrationRecorder:
             self.correlator.observe_action(event)
             step=self.correlator.complete_after(after)
             self.timeline.append(step); self.steps+=1
-            self.latest_before=after; self.last_frame_at=self.clock()
+            # An AFTER frame cannot become the next step's BEFORE frame.
+            # Require a fresh selected-app BEFORE capture; events arriving sooner are skipped.
+            self.latest_before=None; self.last_frame_at=self.clock()
             if self.steps>=MAX_STEPS: return self.stop("step_limit")
         return self.snapshot()
 
