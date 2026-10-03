@@ -103,3 +103,23 @@ def test_recorder_autocad_first():
 def test_static_boundaries():
     assert s.OBSERVE_ONLY and not s.AUTONOMOUS_ACTIONS and s.SELECTED_APP_ONLY
     assert not s.RAW_KEYSTROKES and not s.INPUT_INJECTION
+
+def test_rapid_second_action_without_fresh_before_is_skipped_not_error(tmp_path):
+    class BurstActions:
+        def __init__(self): self.calls=0
+        def poll(self):
+            self.calls+=1
+            return (event(),event()) if self.calls==1 else ()
+    c=Clock(); r=BoundedDemonstrationRecorder("autocad",Frames(),BurstActions(),tmp_path/"steps.jsonl",c)
+    r.start(consent=True,session_id="s"); r.tick()
+    assert r.state=="RUNNING" and r.steps==1 and r.latest_before is None
+    c.t=.1; r.tick()
+    assert r.state=="RUNNING" and r.steps==1
+
+def test_fresh_before_is_required_for_next_step(tmp_path):
+    c=Clock(); actions=Actions([event(),event()])
+    r=BoundedDemonstrationRecorder("autocad",Frames(),actions,tmp_path/"steps.jsonl",c)
+    r.start(consent=True,session_id="s"); r.tick()
+    assert r.steps==1 and r.latest_before is None
+    c.t=.6; r.tick()
+    assert r.steps==2 and r.state=="RUNNING"
