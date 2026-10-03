@@ -67,11 +67,30 @@ class WindowsBinding:
     def foreground_hwnd(self):
         return int(self.u.GetForegroundWindow() or 0)
 
-    def active(self):
+    def binding_state(self):
         foreground = self.foreground_hwnd()
-        return (bool(foreground) and self.window_pid(foreground) == self.pid and
-                bool(self.u.IsWindow(self.document_hwnd)) and
-                self.window_pid(self.hwnd) == self.pid)
+        foreground_pid = self.window_pid(foreground) if foreground else 0
+        main_pid = self.window_pid(self.hwnd) if self.hwnd else 0
+        document_valid = bool(self.u.IsWindow(self.document_hwnd))
+        document_pid = self.window_pid(self.document_hwnd) if document_valid else 0
+        return {
+            'foreground_hwnd': foreground,
+            'foreground_pid': foreground_pid,
+            'foreground_owned': bool(foreground) and foreground_pid == self.pid,
+            'main_hwnd': self.hwnd,
+            'main_pid': main_pid,
+            'main_pid_integrity': main_pid == self.pid,
+            'document_hwnd': self.document_hwnd,
+            'document_valid': document_valid,
+            'document_pid': document_pid,
+            'document_pid_integrity': document_valid and document_pid == self.pid,
+            'bound_pid': self.pid,
+        }
+
+    def active(self):
+        state = self.binding_state()
+        return (state['foreground_owned'] and state['main_pid_integrity'] and
+                state['document_valid'] and state['document_pid_integrity'])
 
     def process_image_name(self, pid):
         if not pid:
