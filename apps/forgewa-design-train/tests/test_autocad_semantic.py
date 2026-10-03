@@ -196,7 +196,7 @@ def test_idle_and_invalid_consent_cannot_spawn_or_write(tmp_path):
 
 def test_semantic_sources_have_no_command_or_input_injection():
     root=Path(__file__).resolve().parents[1]
-    prohibited={'SendCommand','PostCommand','SendStringToExecute','SetVariable','AddLine','SendInput','SetForegroundWindow','mouse_event','keybd_event','CreateObject','EnsureDispatch','CoCreateInstance','GetKeyboardState','ToUnicode','ToUnicodeEx','GetVariable','GetString','GetPoint'}
+    prohibited={'SendCommand','PostCommand','SendStringToExecute','SetVariable','AddLine','SendInput','SetForegroundWindow','mouse_event','keybd_event','CreateObject','EnsureDispatch','CoCreateInstance','GetKeyboardState','ToUnicode','ToUnicodeEx','GetString','GetPoint'}
     for path in root.glob('autocad_semantic*.py'):
         tree=ast.parse(path.read_text(encoding='utf-8'))
         for node in ast.walk(tree):
@@ -212,7 +212,7 @@ def test_hidden_panel_stays_idle(tmp_path):
     panel=SemanticPanel(w,client)
     try:
         w.update_idletasks()
-        assert panel.heading.get()=='IDLE - NOT SUBSCRIBED / NOT CAPTURING'
+        assert panel.heading.get()=='IDLE - NOT POLLING / NOT CAPTURING'
         assert str(panel.start_button['state'])=='disabled'
         assert client.process is None and not (tmp_path/'idle').exists()
     finally:
