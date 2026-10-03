@@ -1,0 +1,57 @@
+{
+  "schema_version": "forgeatl.physical-nvidia.v1",
+  "milestone": "FORGE-ATL.2D",
+  "provider": "physical_nvidia",
+  "activation": {
+    "job_execution_enabled": false,
+    "training_enabled": false,
+    "teacher_enabled": false,
+    "application_control_enabled": false,
+    "production_binding_enabled": false
+  },
+  "discovery": {
+    "tool": "nvidia-smi",
+    "read_only": true,
+    "shell_execution": false,
+    "allowed_operations": [
+      "fixed_gpu_query",
+      "fixed_driver_cuda_header_query"
+    ],
+    "missing_tool_behavior": "no_nvidia_node_discovered",
+    "no_driver_install": true,
+    "no_service_restart": true
+  },
+  "node_normalization": {
+    "provider_type": "gpu",
+    "location_type": "physical",
+    "execution_enabled": false,
+    "memory_semantics": "per_gpu_vram_gb",
+    "availability_rule": {
+      "busy_if_gpu_load_percent_at_or_above": 85,
+      "busy_if_memory_util_percent_at_or_above": 90,
+      "otherwise": "available"
+    },
+    "health_rule": "unknown_without_model-specific diagnostic evidence"
+  },
+  "telemetry": {
+    "gpu_model": true,
+    "gpu_uuid": true,
+    "vram_total_gb": true,
+    "vram_used_gb": true,
+    "gpu_load_percent": true,
+    "temperature_c": true,
+    "driver_version": true,
+    "cuda_version": true,
+    "performance_state": true
+  },
+  "cost": {
+    "currency": "INR",
+    "estimated_per_hour": null,
+    "source": "physical_not_metered"
+  },
+  "dry_run": {
+    "uses_compute_fabric_registry": true,
+    "candidate_is_not_assignment": true,
+    "candidate_is_not_execution_authority": true
+  }
+}
