@@ -23,7 +23,7 @@ def test_no_editor_prompt_or_command_execution_api():
 
 def test_only_name_and_lifecycle_fields_are_written():
     s=text()
-    assert '"command_name"' in s and '"phase"' in s and '"drawing_hint"' in s
+    assert '\\"command_name\\":' in s and '\\"phase\\":' in s and '\\"drawing_hint\\":' in s
     for bad in ["argument","prompt_text","typed_text","coordinates"]:
         assert bad not in s.lower()
 
