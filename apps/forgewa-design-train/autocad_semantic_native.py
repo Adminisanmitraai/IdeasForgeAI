@@ -73,12 +73,29 @@ class WindowsBinding:
                 bool(self.u.IsWindow(self.document_hwnd)) and
                 self.window_pid(self.hwnd) == self.pid)
 
+    def process_image_name(self, pid):
+        if not pid:
+            return None
+        handle = self.k.OpenProcess(0x1000, False, pid)
+        if not handle:
+            return None
+        try:
+            size = wintypes.DWORD(32768)
+            buf = ctypes.create_unicode_buffer(size.value)
+            if not self.k.QueryFullProcessImageNameW(handle,0,buf,ctypes.byref(size)):
+                return None
+            return PureWindowsPath(buf.value).name.lower()
+        finally:
+            self.k.CloseHandle(handle)
+
     def foreground_identity(self):
         foreground = self.foreground_hwnd()
+        pid = self.window_pid(foreground) if foreground else 0
         return {'foreground_hwnd': foreground,
-                'foreground_pid': self.window_pid(foreground) if foreground else 0,
+                'foreground_pid': pid,
+                'foreground_image': self.process_image_name(pid),
                 'bound_pid': self.pid,
-                'same_bound_pid': bool(foreground) and self.window_pid(foreground) == self.pid}
+                'same_bound_pid': bool(foreground) and pid == self.pid}
 
 
 def classify_com_exception(exc):
