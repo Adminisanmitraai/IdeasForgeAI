@@ -19,6 +19,14 @@ checks["dpapi_bom_whitespace_trim"] = (
     ".Trim([char]0xFEFF).Trim()" in loader_source
 )
 
+save_source = __import__("inspect").getsource(__import__("rtx_pairing_recovery")._save_dpapi_token)
+checks["dpapi_save_no_powershell_args"] = (
+    "$args[0]" not in save_source
+    and "WriteAllText" in save_source
+    and "compare_digest" in save_source
+    and "paired_token_round_trip_failed" in save_source
+)
+
 
 secret_old = "old-device-token-never-log"
 ticket_code = "pairing-code-never-chat"
