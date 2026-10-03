@@ -19,7 +19,11 @@
     ],
     "missing_tool_behavior": "no_nvidia_node_discovered",
     "no_driver_install": true,
-    "no_service_restart": true
+    "no_service_restart": true,
+    "accepted_sources": [
+      "local_nvidia_smi",
+      "forgepc_readonly_snapshot"
+    ]
   },
   "node_normalization": {
     "provider_type": "gpu",
