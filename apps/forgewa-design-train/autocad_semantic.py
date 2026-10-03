@@ -32,7 +32,7 @@ class CommandEvent:
     monotonic_at: float
     occurred_at: str
     document_token: str
-    source: str = 'autocad_activex_document_event'
+    source: str = 'autocad_cmdnames_poll'
 
 
 @dataclass(frozen=True)
@@ -84,6 +84,86 @@ class CommandQueue:
 
     def close(self):
         self.active = False
+
+
+def parse_cmdnames(value):
+    """Normalize a CMDNAMES snapshot into an allowlisted command stack.
+
+    AutoCAD uses apostrophes between ordinary and transparent commands.
+    None means unsafe/unknown snapshot and must cause a correlation gap.
+    """
+    if type(value) is not str or len(value) > 256:
+        return None
+    if value == '':
+        return ()
+    parts = value.split("'")
+    if not parts or any(not part for part in parts):
+        return None
+    normalized = tuple(command_name(part) for part in parts)
+    return normalized if all(normalized) else None
+
+
+class CmdNamesTransitionDetector:
+    """Derive conservative begin/end transitions from read-only CMDNAMES snapshots.
+
+    The first sample establishes a baseline only. A non-empty initial baseline is
+    treated as pre-existing until it returns to idle. Direct root replacement is
+    ambiguous at polling resolution and therefore resynchronizes without events.
+    """
+    def __init__(self, token, *, clock, occurred_at=None):
+        self.token, self.clock = token, clock
+        self.occurred_at = occurred_at or (lambda: datetime.now(timezone.utc).isoformat())
+        self.previous = None
+        self.sequence = 0
+        self.ready = False
+        self.gaps = 0
+
+    def _event(self, phase, name, at):
+        self.sequence += 1
+        return CommandEvent(self.sequence, phase, name, at, self.occurred_at(), self.token)
+
+    def feed(self, raw_value):
+        now = self.clock()
+        stack = parse_cmdnames(raw_value)
+        if stack is None:
+            self.previous = None
+            self.ready = False
+            self.gaps += 1
+            return ()
+        if self.previous is None:
+            self.previous = stack
+            self.ready = not stack
+            return ()
+        old = self.previous
+        if not self.ready:
+            self.previous = stack
+            if not stack:
+                self.ready = True
+            return ()
+        if old == stack:
+            return ()
+        common = 0
+        while common < min(len(old), len(stack)) and old[common] == stack[common]:
+            common += 1
+        # A changed root means one or more transitions may have happened between
+        # polls. Do not fabricate exact boundaries.
+        if old and stack and common == 0:
+            self.previous = stack
+            self.ready = False
+            self.gaps += 1
+            return ()
+        events = []
+        for name in reversed(old[common:]):
+            events.append(self._event('end', name, now))
+        for name in stack[common:]:
+            events.append(self._event('begin', name, now))
+        self.previous = stack
+        return tuple(events)
+
+    def interrupt(self):
+        self.previous = None
+        self.ready = False
+        self.gaps += 1
 
 
 class SemanticCorrelator:
