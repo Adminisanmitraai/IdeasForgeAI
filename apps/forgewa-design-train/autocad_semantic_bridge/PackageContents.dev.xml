@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0"
+  AppVersion="0.1.0"
+  ProductCode="{2A87B09C-7A8D-4C5E-9B93-FA7B7B43E7D1}"
+  Name="ForgeWa AutoCAD Semantic Bridge — DEVELOPMENT ONLY">
+  <CompanyDetails Name="ForgeWa Development Only" />
+  <Components>
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R24.3" SeriesMax="R24.3" />
+    <ComponentEntry
+      AppName="ForgeWa Semantic Bridge DEV — LOCAL TEST ONLY"
+      ModuleName="./Contents/ForgeWa.AutoCAD.Semantic.DEV.dll"
+      AppDescription="Development-only read-only names-only semantic bridge"
+      LoadOnAutoCADStartup="False" />
+  </Components>
+</ApplicationPackage>
