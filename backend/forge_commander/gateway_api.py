@@ -177,20 +177,21 @@ def device_voice_transcribe(
     if not os.getenv("OPENAI_API_KEY", "").strip():
         raise HTTPException(status_code=503, detail="transcription_provider_unavailable")
 
+    from openai import (
+        APIConnectionError,
+        APITimeoutError,
+        AuthenticationError,
+        OpenAI,
+        OpenAIError,
+        RateLimitError,
+    )
+
     temp_path = ""
     try:
         with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as handle:
-            handle.write(audio_bytes)
+            # Track the path before writing so even a partial write is cleaned up.
             temp_path = handle.name
-
-        from openai import (
-            APIConnectionError,
-            APITimeoutError,
-            AuthenticationError,
-            OpenAI,
-            OpenAIError,
-            RateLimitError,
-        )
+            handle.write(audio_bytes)
 
         client = OpenAI(timeout=45)
         with open(temp_path, "rb") as audio_file:
@@ -248,6 +249,8 @@ def device_voice_transcribe(
         raise HTTPException(status_code=503, detail="transcription_connection_failed")
     except OpenAIError:
         raise HTTPException(status_code=502, detail="transcription_provider_failed")
+    except OSError:
+        raise HTTPException(status_code=503, detail="transcription_audio_unavailable")
     finally:
         if temp_path:
             try:
