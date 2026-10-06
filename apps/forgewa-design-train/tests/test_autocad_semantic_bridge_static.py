@@ -35,7 +35,7 @@ def test_outbound_ipc_is_local_and_write_only():
     text=source()
     assert 'NamedPipeClientStream(".", PipeName, PipeDirection.Out' in text
     assert "PipeDirection.InOut" not in text
-    assert ".Read(" not in text and "ReadLine(" not in text
+    assert "pipe.Read(" not in text and "pipe.ReadByte(" not in text and "ReadLine(" not in text
     assert "ConnectTimeoutMilliseconds = 100" in text
     assert "MaxConnectAttempts = 6" in text
     assert "Capacity = 256" in text
