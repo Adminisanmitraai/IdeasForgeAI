@@ -1,6 +1,7 @@
 """R3-R3 bounded recorder driven by native AutoCAD semantic lifecycle."""
 from __future__ import annotations
 import json,time
+from datetime import datetime
 from pathlib import Path
 from native_demonstration_correlation import NativeStepCorrelator,NativeDemonstrationTimeline,native_event
 
@@ -58,17 +59,27 @@ class NativeBoundedDemonstrationRecorder:
         if not active and (self.latest_before is None or now-self.last_frame_at>=FRAME_REFRESH_SECONDS):
             frame=self.frames.capture("before")
             if frame is not None:self.latest_before=frame;self.last_frame_at=now
-        for interaction in self.interactions.poll():
-            self.correlator.interaction(interaction)
-        for semantic in self.semantics.poll():
+        semantic_rows=self.semantics.poll()
+        interaction_rows=self.interactions.poll()
+        def stamp(value):
+            try:return datetime.fromisoformat(value.replace("Z","+00:00")).timestamp()
+            except (ValueError,AttributeError):raise ValueError("invalid_event_timestamp")
+        merged=[]
+        for semantic in semantic_rows:
+            priority=0 if semantic.phase=="start" else 2
+            merged.append((stamp(semantic.received_at),priority,"semantic",semantic))
+        for interaction in interaction_rows:
+            merged.append((stamp(interaction.occurred_at),1,"interaction",interaction))
+        for _,_,kind,event in sorted(merged,key=lambda row:(row[0],row[1])):
             if self.clock()>=self.deadline:return self.stop("time_limit")
-            if semantic.phase=="start":
+            if kind=="interaction":
+                self.correlator.interaction(event);continue
+            if event.phase=="start":
                 if self.latest_before is None: continue
                 self.correlator.arm_before(self.latest_before)
-                self.correlator.semantic(semantic)
-                continue
+                self.correlator.semantic(event);continue
             if self.correlator.start is None: continue
-            terminal=self.correlator.semantic(semantic)
+            terminal=self.correlator.semantic(event)
             after=self.frames.capture("after")
             if after is None:
                 self.correlator.cancel_pending();self.latest_before=None;continue
