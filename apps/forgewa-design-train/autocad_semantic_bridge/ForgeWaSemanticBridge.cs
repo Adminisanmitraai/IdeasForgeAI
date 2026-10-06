@@ -187,7 +187,10 @@ namespace ForgeWa.AutoCAD.Semantic
 
         internal BridgeSender() : this(new NamedPipeBridgeTransport()) { }
         internal BridgeSender(IBridgeTransport transport)
-        { this.transport = transport ?? throw new ArgumentNullException("transport"); }
+        {
+            if (transport == null) throw new ArgumentNullException("transport");
+            this.transport = transport;
+        }
 
         internal void Start()
         {
