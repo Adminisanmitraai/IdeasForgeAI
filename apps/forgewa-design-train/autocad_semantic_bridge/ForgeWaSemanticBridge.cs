@@ -112,15 +112,82 @@ namespace ForgeWa.AutoCAD.Semantic
         }
     }
 
+    internal interface IBridgeTransport : IDisposable
+    {
+        bool IsConnected { get; }
+        bool TryConnect(int timeoutMilliseconds);
+        bool TryWrite(byte[] bytes);
+        void Disconnect();
+    }
+
+    internal sealed class NamedPipeBridgeTransport : IBridgeTransport
+    {
+        private NamedPipeClientStream pipe;
+        internal const string PipeName = "ForgeWa.AutoCAD.Semantic.v1";
+        public bool IsConnected { get { return pipe != null && pipe.IsConnected; } }
+
+        public bool TryConnect(int timeoutMilliseconds)
+        {
+            Disconnect();
+            try
+            {
+                pipe = new NamedPipeClientStream(".", PipeName, PipeDirection.Out, PipeOptions.Asynchronous);
+                pipe.Connect(timeoutMilliseconds);
+                return pipe.IsConnected;
+            }
+            catch (IOException) { Disconnect(); return false; }
+            catch (TimeoutException) { Disconnect(); return false; }
+            catch (UnauthorizedAccessException) { Disconnect(); return false; }
+        }
+
+        public bool TryWrite(byte[] bytes)
+        {
+            if (!IsConnected) return false;
+            try
+            {
+                pipe.Write(bytes, 0, bytes.Length);
+                pipe.Flush();
+                return true;
+            }
+            catch (IOException) { Disconnect(); return false; }
+            catch (ObjectDisposedException) { Disconnect(); return false; }
+        }
+
+        public void Disconnect()
+        {
+            if (pipe != null) { try { pipe.Dispose(); } catch { } pipe = null; }
+        }
+        public void Dispose() { Disconnect(); }
+    }
+
+    internal sealed class DeliverySnapshot
+    {
+        internal readonly long Delivered;
+        internal readonly long Dropped;
+        internal readonly long Retries;
+        internal DeliverySnapshot(long delivered, long dropped, long retries)
+        { Delivered = delivered; Dropped = dropped; Retries = retries; }
+    }
+
     internal sealed class BridgeSender : IDisposable
     {
-        internal const string PipeName = "ForgeWa.AutoCAD.Semantic.v1";
-        private const int Capacity = 256;
+        internal const string PipeName = NamedPipeBridgeTransport.PipeName;
+        internal const int Capacity = 256;
+        internal const int ConnectTimeoutMilliseconds = 100;
+        internal const int MaxConnectAttempts = 6;
         private readonly object gate = new object();
         private readonly Queue<BridgeRecord> queue = new Queue<BridgeRecord>();
         private readonly AutoResetEvent signal = new AutoResetEvent(false);
+        private readonly IBridgeTransport transport;
         private Thread thread;
         private volatile bool stopping;
+        private long delivered;
+        private long dropped;
+        private long retries;
+
+        internal BridgeSender() : this(new NamedPipeBridgeTransport()) { }
+        internal BridgeSender(IBridgeTransport transport)
+        { this.transport = transport ?? throw new ArgumentNullException("transport"); }
 
         internal void Start()
         {
@@ -135,11 +202,23 @@ namespace ForgeWa.AutoCAD.Semantic
         {
             lock (gate)
             {
-                if (stopping || queue.Count >= Capacity) return false;
+                if (stopping || queue.Count >= Capacity)
+                {
+                    Interlocked.Increment(ref dropped);
+                    return false;
+                }
                 queue.Enqueue(record);
             }
             signal.Set();
             return true;
+        }
+
+        internal DeliverySnapshot Snapshot()
+        {
+            return new DeliverySnapshot(
+                Interlocked.Read(ref delivered),
+                Interlocked.Read(ref dropped),
+                Interlocked.Read(ref retries));
         }
 
         private void Run()
@@ -149,35 +228,45 @@ namespace ForgeWa.AutoCAD.Semantic
                 BridgeRecord record = null;
                 lock (gate) { if (queue.Count > 0) record = queue.Dequeue(); }
                 if (record == null) { signal.WaitOne(250); continue; }
-                TrySend(record);
+                SendAtMostOnce(record);
             }
         }
 
-        private static void TrySend(BridgeRecord record)
+        private void SendAtMostOnce(BridgeRecord record)
         {
-            try
+            if (!transport.IsConnected)
             {
-                using (NamedPipeClientStream pipe = new NamedPipeClientStream(
-                    ".", PipeName, PipeDirection.Out, PipeOptions.Asynchronous))
+                bool connected = false;
+                for (int attempt = 1; attempt <= MaxConnectAttempts && !stopping; attempt++)
                 {
-                    pipe.Connect(25);
-                    byte[] bytes = Encoding.UTF8.GetBytes(record.ToJson() + "\n");
-                    pipe.Write(bytes, 0, bytes.Length);
-                    pipe.Flush();
+                    if (transport.TryConnect(ConnectTimeoutMilliseconds)) { connected = true; break; }
+                    if (attempt < MaxConnectAttempts)
+                    {
+                        Interlocked.Increment(ref retries);
+                        Thread.Sleep(25);
+                    }
                 }
+                if (!connected) { Interlocked.Increment(ref dropped); return; }
             }
-            catch (IOException) { }
-            catch (TimeoutException) { }
-            catch (UnauthorizedAccessException) { }
+
+            byte[] bytes = Encoding.UTF8.GetBytes(record.ToJson() + "\n");
+            // Never retry an ambiguous write: preserving at-most-once semantics is safer
+            // than risking duplicate command lifecycle records.
+            if (transport.TryWrite(bytes))
+                Interlocked.Increment(ref delivered);
+            else
+                Interlocked.Increment(ref dropped);
         }
 
         public void Dispose()
         {
             stopping = true;
             signal.Set();
-            if (thread != null) thread.Join(300);
+            if (thread != null) thread.Join(1000);
+            transport.Dispose();
             signal.Dispose();
             thread = null;
         }
     }
+
 }
