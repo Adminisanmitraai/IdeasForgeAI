@@ -22,10 +22,13 @@ class Semantics:
     def __init__(self,rows=()):self.rows=list(rows)
     def poll(self):
         out=tuple(self.rows);self.rows=[];return out
-def ev(seq,phase,cmd="LINE"):
-    return n.native_event({"v":1,"seq":seq,"phase":phase,"command":cmd,"received":f"t{seq}"})
-def click():
-    return d.safe_input_event(application="autocad",kind="mouse_click",button="left",x_norm=.2,y_norm=.3,occurred_at="t")
+def ev(seq,phase,cmd="LINE",second=None):
+    s=seq if second is None else second
+    return n.native_event({"v":1,"seq":seq,"phase":phase,"command":cmd,
+        "received":f"2026-10-06T09:00:{s:02d}+05:30"})
+def click(second=2):
+    return d.safe_input_event(application="autocad",kind="mouse_click",button="left",
+        x_norm=.2,y_norm=.3,occurred_at=f"2026-10-06T09:00:{second:02d}+05:30")
 
 def test_jsonl_source_skips_history_and_accepts_only_new_valid(tmp_path):
     p=tmp_path/"events.jsonl"
@@ -43,13 +46,14 @@ def test_recorder_requires_consent(tmp_path):
     with pytest.raises(PermissionError):rec.start(consent=False,session_id="s")
 
 def test_completed_native_span_builds_teacher_step(tmp_path):
-    c=Clock();sem=Semantics([ev(1,"start"),ev(2,"end")])
-    rec=r.NativeBoundedDemonstrationRecorder(Frames(),Interactions([click()]),sem,tmp_path/"steps.jsonl",c)
+    c=Clock();sem=Semantics([ev(1,"start",second=1),ev(3,"end",second=3)])
+    rec=r.NativeBoundedDemonstrationRecorder(Frames(),Interactions([click(2)]),sem,tmp_path/"steps.jsonl",c)
     rec.start(consent=True,session_id="s");rec.tick();rec.stop()
     row=json.loads((tmp_path/"steps.jsonl").read_text())
     assert row["command_name"]=="LINE" and row["command_terminal_phase"]=="end"
     assert row["semantic_authority"]=="autocad_inprocess_native_bridge_v1"
     assert row["observe_only"] is True and row["autonomous_actions"] is False
+    assert len(row["interactions"])==1 and row["interactions"][0]["kind"]=="mouse_click"
 
 def test_cancel_native_span_preserves_cancel(tmp_path):
     rec=r.NativeBoundedDemonstrationRecorder(Frames(),Interactions(),Semantics([ev(1,"start"),ev(2,"cancel")]),tmp_path/"s.jsonl",Clock())
@@ -57,7 +61,8 @@ def test_cancel_native_span_preserves_cancel(tmp_path):
     assert json.loads((tmp_path/"s.jsonl").read_text())["command_terminal_phase"]=="cancel"
 
 def test_interaction_before_native_start_not_attached(tmp_path):
-    rec=r.NativeBoundedDemonstrationRecorder(Frames(),Interactions([click()]),Semantics([ev(1,"start"),ev(2,"end")]),tmp_path/"s.jsonl",Clock())
+    rec=r.NativeBoundedDemonstrationRecorder(Frames(),Interactions([click(1)]),
+        Semantics([ev(2,"start",second=2),ev(3,"end",second=3)]),tmp_path/"s.jsonl",Clock())
     rec.start(consent=True,session_id="s");rec.tick()
     assert json.loads((tmp_path/"s.jsonl").read_text())["interactions"]==[]
 
@@ -69,3 +74,11 @@ def test_deadline_stops_before_sources(tmp_path):
 
 def test_static_boundaries():
     assert r.OBSERVE_ONLY and not r.AUTONOMOUS_ACTIONS
+
+def test_fast_burst_is_correlated_chronologically(tmp_path):
+    sem=Semantics([ev(10,"start",second=10),ev(12,"end",second=12)])
+    rec=r.NativeBoundedDemonstrationRecorder(Frames(),Interactions([click(11)]),sem,tmp_path/"burst.jsonl",Clock())
+    rec.start(consent=True,session_id="s");rec.tick()
+    row=json.loads((tmp_path/"burst.jsonl").read_text())
+    assert row["native_start_sequence"]==10 and row["native_terminal_sequence"]==12
+    assert len(row["interactions"])==1
