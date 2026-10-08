@@ -196,6 +196,8 @@ def consume_pairing_ticket(
 
     launcher = (
         "import asyncio\n"
+        "import sys\n"
+        f"sys.path.insert(0, {str(project_root)!r})\n"
         "from backend.forge_commander.production_agent_runtime import "
         "ProductionAgentConfig, run_persistent_agent\n\n"
         f"config = ProductionAgentConfig(\n"
