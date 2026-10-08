@@ -226,6 +226,50 @@ def consume_pairing_ticket(
     }
 
 
+def repair_existing_launcher(*, state_dir: Path) -> dict[str, Any]:
+    config_path = state_dir / "agent-config.json"
+    if not config_path.exists():
+        raise PairingRecoveryError("agent_config_missing")
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise PairingRecoveryError("agent_config_invalid") from exc
+
+    required = ["device_id", "owner_subject", "gateway_ws_url", "credential_file", "project_root"]
+    missing = [key for key in required if not str(config.get(key) or "").strip()]
+    if missing:
+        raise PairingRecoveryError("agent_config_incomplete")
+
+    project_root = str(Path(config["project_root"]))
+    launcher = (
+        "import asyncio\n"
+        "import sys\n"
+        f"sys.path.insert(0, {project_root!r})\n"
+        "from backend.forge_commander.production_agent_runtime import "
+        "ProductionAgentConfig, run_persistent_agent\n\n"
+        "config = ProductionAgentConfig(\n"
+        f"    gateway_ws_url={str(config['gateway_ws_url'])!r},\n"
+        f"    device_id={str(config['device_id'])!r},\n"
+        f"    owner_subject={str(config['owner_subject'])!r},\n"
+        f"    credential_file={str(config['credential_file'])!r},\n"
+        "    heartbeat_seconds=15.0,\n"
+        "    reconnect_min_seconds=2.0,\n"
+        "    reconnect_max_seconds=60.0,\n"
+        ")\n\n"
+        "asyncio.run(run_persistent_agent(config))\n"
+    )
+    launcher_path = state_dir / "agent-launcher.py"
+    launcher_path.write_text(launcher, encoding="utf-8")
+    return {
+        "launcher_repaired": True,
+        "device_id": str(config["device_id"]),
+        "project_root": project_root,
+        "launcher_path": str(launcher_path),
+        "token_read": False,
+        "token_exposed": False,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     sub = parser.add_subparsers(dest="command", required=True)
@@ -240,6 +284,9 @@ def main() -> int:
     pair.add_argument("--project-root", required=True)
     pair.add_argument("--existing-device-id")
 
+    repair = sub.add_parser("repair-launcher")
+    repair.add_argument("--state-dir", required=True)
+
     args = parser.parse_args()
 
     if args.command == "issue-ticket":
@@ -251,6 +298,11 @@ def main() -> int:
             "ttl_seconds": result.get("ttl_seconds"),
             "pairing_code_exposed": False,
         }, indent=2))
+        return 0
+
+    if args.command == "repair-launcher":
+        result = repair_existing_launcher(state_dir=Path(args.state_dir))
+        print(json.dumps(result, indent=2))
         return 0
 
     code = Path(args.pairing_code_file).read_text(encoding="utf-8").strip()
