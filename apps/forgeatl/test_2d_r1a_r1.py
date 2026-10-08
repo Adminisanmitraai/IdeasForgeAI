@@ -7,6 +7,7 @@ from pathlib import Path
 from rtx_pairing_recovery import (
     PairingRecoveryError,
     consume_pairing_ticket,
+    repair_existing_launcher,
     request_pairing_ticket,
     write_pairing_ticket_file,
 )
@@ -160,6 +161,29 @@ with tempfile.TemporaryDirectory() as td:
         and "sys.path.insert(0" in launcher_text
         and str(project_root) in launcher_text
         and result["session_started"] is False
+    )
+
+
+with tempfile.TemporaryDirectory() as td:
+    state_dir = Path(td) / "state"
+    state_dir.mkdir()
+    config = {
+        "device_id": new_device_id,
+        "owner_subject": "ranjan",
+        "gateway_ws_url": "wss://example.invalid/ws",
+        "credential_file": str(state_dir / "device-token.dpapi"),
+        "project_root": r"C:\IdeasForgeAI-ForgeATL",
+    }
+    (state_dir / "agent-config.json").write_text(json.dumps(config), encoding="utf-8")
+    repaired = repair_existing_launcher(state_dir=state_dir)
+    repaired_text = (state_dir / "agent-launcher.py").read_text(encoding="utf-8")
+    checks["repair_launcher_no_token_read"] = (
+        repaired["launcher_repaired"] is True
+        and repaired["token_read"] is False
+        and repaired["token_exposed"] is False
+        and "sys.path.insert(0" in repaired_text
+        and r"C:\IdeasForgeAI-ForgeATL" in repaired_text
+        and new_device_id in repaired_text
     )
 
 
