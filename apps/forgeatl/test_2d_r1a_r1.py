@@ -157,6 +157,8 @@ with tempfile.TemporaryDirectory() as td:
         new_device_id in config_text
         and new_device_id in launcher_text
         and "run_persistent_agent" in launcher_text
+        and "sys.path.insert(0" in launcher_text
+        and str(project_root) in launcher_text
         and result["session_started"] is False
     )
 
