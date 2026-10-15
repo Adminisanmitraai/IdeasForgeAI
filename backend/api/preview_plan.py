@@ -1,6 +1,9 @@
-﻿import json
+import json
+
 import os
 from uuid import uuid4
+
+from backend.core.openai_model_options import response_model_options
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -15,7 +18,7 @@ router = APIRouter(prefix="/api", tags=["Phase 26E preview generator"])
 PHASE_26E = "26E"
 SERVICE_NAME = "ideasforgeai-backend"
 OPENAI_TIMEOUT_SECONDS = 45
-DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
+DEFAULT_OPENAI_MODEL = "gpt-6-luna"
 MAX_PREVIEW_INPUT_LENGTH = 20000
 MAX_REFERENCE_IMAGE_TEXT_LENGTH = 1200
 REFERENCE_IMAGE_KEYS = {"referenceImage", "reference_image", "imageReference", "image_metadata"}
@@ -550,7 +553,7 @@ async def generate_preview_plan(request: Request):
 
         client = OpenAI(timeout=OPENAI_TIMEOUT_SECONDS)
         response = client.responses.create(
-            model=os.getenv("OPENAI_MODEL", DEFAULT_OPENAI_MODEL),
+            **response_model_options(os.getenv("OPENAI_MODEL", DEFAULT_OPENAI_MODEL)),
             instructions=PREVIEW_SYSTEM_INSTRUCTION,
             input=json.dumps(prompt, ensure_ascii=False, default=str),
         )

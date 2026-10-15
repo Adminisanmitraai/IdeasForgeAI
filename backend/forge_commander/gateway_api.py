@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from backend.core.openai_model_options import response_model_options
+
 from datetime import datetime, timezone
 import base64
 import binascii
@@ -216,7 +218,7 @@ def device_voice_transcribe(
             latin_letters = [ch for ch in letters if ("A" <= ch <= "Z") or ("a" <= ch <= "z")]
             if letters and (len(latin_letters) / len(letters)) < 0.60:
                 correction = client.responses.create(
-                    model=os.getenv("OPENAI_VOICE_RESPONSE_MODEL", "gpt-4.1-mini"),
+                    **response_model_options(os.getenv("OPENAI_VOICE_RESPONSE_MODEL", "gpt-6-luna")),
                     instructions=(
                         "Convert this speech transcript into the English words the speaker most likely said. "
                         "Return only English Latin-script transcription, not an answer or translation. "
@@ -325,7 +327,7 @@ def device_voice_respond(
     try:
         client = OpenAI(timeout=45)
         response = client.responses.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+            **response_model_options(os.getenv("OPENAI_MODEL", "gpt-6-luna")),
             instructions=instructions,
             input=json.dumps(conversation, ensure_ascii=False),
         )
@@ -335,7 +337,7 @@ def device_voice_respond(
         return {
             "ok": True,
             "reply": reply,
-            "model": os.getenv("OPENAI_MODEL", "gpt-4.1-mini"),
+            "model": os.getenv("OPENAI_MODEL", "gpt-6-luna"),
             "device_id": principal.device_id,
             "execution_mode": "read_only",
         }

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from backend.core.openai_model_options import response_model_options
+
 import base64
 import json
 import os
@@ -21,7 +23,7 @@ from backend.platform.platform_event_model import from_chat_delta
 router = APIRouter(prefix="/api/ideasforge", tags=["IdeasForgeAI Chat"])
 
 OPENAI_RESPONSES_URL = "https://api.openai.com/v1/responses"
-DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+DEFAULT_MODEL = os.getenv("OPENAI_MODEL", "gpt-6-luna")
 
 MAX_ATTACHMENT_COUNT = 5
 MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024
@@ -365,7 +367,7 @@ def _openai_payload(
     selected_attachments = attachments or []
 
     return {
-        "model": os.getenv("OPENAI_MODEL", DEFAULT_MODEL),
+        **response_model_options(os.getenv("OPENAI_MODEL", DEFAULT_MODEL)),
         "instructions": _instructions(req.mode),
         "input": _openai_input(req, selected_attachments),
         "stream": stream,
