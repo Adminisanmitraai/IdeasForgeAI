@@ -28,7 +28,7 @@ router = APIRouter(prefix="/forgehr", tags=["ForgeHR assistant"])
 SUPABASE_URL = "https://vamfnpumwvipnedkzffu.supabase.co"
 HEADERS = {"Cache-Control": "private, no-store, max-age=0"}
 DEPARTMENTS = {"hr": "HR", "admin": "Admin", "it": "IT", "accounts": "Accounts"}
-MAX_CHAT_BYTES = 24_000
+MAX_CHAT_BYTES = 128_000
 MAX_AUDIO_BYTES = 8 * 1024 * 1024
 _provider_slots = BoundedSemaphore(4)
 _quota_lock = Lock()
@@ -182,7 +182,7 @@ def _context(credentials: dict, identity: dict, question: Question):
         employee_id = employee["id"]
         if question.department == "hr":
             specs = [
-                ("employee_leave_requests", "leave_type,start_date,end_date,status", "Your recent leave requests", "/app/employee/requests", {}),
+                ("employee_leave_requests", "leave_type,start_date,end_date,status", "Your recent leave requests", "/app/employee/requests", {"order": "submitted_at.desc"}),
                 ("employee_onboarding_cases", "status,completion_percent,joining_date", "Your onboarding", "/app/employee/onboarding", {}),
                 ("employee_documents", "title,verification_status,acknowledgement_required,acknowledged_at", "Your document status", "/app/employee/documents", {}),
             ]

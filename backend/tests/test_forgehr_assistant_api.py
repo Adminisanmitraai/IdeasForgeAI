@@ -38,7 +38,7 @@ class AssistantTests(unittest.TestCase):
     def test_bounds_and_department_are_enforced(self):
         for values in [{"department": "payroll-admin"}, {"message": " "}, {"message": "x" * 2001}]:
             self.assertEqual(client.post("/forgehr/chat", json={**QUESTION, **values}, headers=REQUEST_HEADERS).status_code, 400)
-        self.assertEqual(client.post("/forgehr/chat", content=b"x" * 24001, headers=REQUEST_HEADERS).status_code, 413)
+        self.assertEqual(client.post("/forgehr/chat", content=b"x" * 128001, headers=REQUEST_HEADERS).status_code, 413)
 
     def test_revoked_or_foreign_membership_is_denied(self):
         with patch.object(assistant, "_json_request", return_value={"id": USER}), patch.object(assistant, "_rows", return_value=[]) as rows:
@@ -81,6 +81,24 @@ class AssistantTests(unittest.TestCase):
         self.assertEqual(payslip[2]["status"], "eq.published")
         self.assertEqual(payslip[3], 3)
         self.assertNotIn("employees", json.dumps(context))
+
+    def test_leave_history_is_ordered_before_limiting(self):
+        queries = []
+        def rows(credentials, table, columns, filters, limit=20):
+            queries.append((table, filters, limit))
+            return [{"id": EMPLOYEE}] if table == "employees" else []
+        with patch.object(assistant, "_rows", side_effect=rows):
+            assistant._context(CREDS, IDENTITY, assistant.Question(**QUESTION))
+        leave = next(q for q in queries if q[0] == "employee_leave_requests")
+        self.assertEqual(leave[1]["order"], "submitted_at.desc")
+        self.assertEqual(leave[2], 10)
+
+    def test_full_multilingual_history_fits_transport_limit(self):
+        with patch.object(assistant, "_identity", return_value=IDENTITY), patch.object(assistant, "_context", return_value=({"evidence": []}, [])), patch.object(assistant, "_provider_json", return_value={"output": []}):
+            for language, character in [("hi-IN", "ह"), ("bn-IN", "ব")]:
+                data = {**QUESTION, "language": language, "message": character * 2000, "history": [{"role": "user", "content": character * 2000}] * 8}
+                response = client.post("/forgehr/chat", json=data, headers=REQUEST_HEADERS)
+                self.assertNotEqual(response.status_code, 413)
 
     def test_it_requests_do_not_retrieve_payroll(self):
         tables = []
