@@ -149,6 +149,34 @@ class AssistantTests(unittest.TestCase):
             assistant._take_quota(USER)
         self.assertEqual(caught.exception.status_code, 429)
 
+    def test_speech_requires_auth_and_verified_membership(self):
+        data = {"organization_id": ORG, "text": "Hello", "language": "en-IN", "sdp": "fixture-offer"}
+        with patch.object(assistant, "_speech_session") as provider:
+            self.assertEqual(client.post("/forgehr/speak", json=data).status_code, 401)
+            with patch.object(assistant, "_identity", side_effect=HTTPException(403, "Denied")):
+                self.assertEqual(client.post("/forgehr/speak", json=data, headers=REQUEST_HEADERS).status_code, 403)
+        provider.assert_not_called()
+
+    def test_speech_uses_only_the_server_selected_live_model(self):
+        data = {"organization_id": ORG, "text": "Hello", "language": "en-IN", "sdp": "fixture-offer"}
+        result = {"session": {"id": "live_fixture"}, "transport": {"type": "webrtc", "sdp": "fixture-answer"}}
+        with patch.object(assistant, "_identity", return_value=IDENTITY), patch.object(assistant, "_provider_json", return_value=result) as provider:
+            response = client.post("/forgehr/speak", json=data, headers=REQUEST_HEADERS)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["model"], "gpt-live-1")
+        self.assertIn("no-store", response.headers["cache-control"])
+        self.assertEqual(provider.call_args.args[0], "live/sessions")
+        payload = json.loads(provider.call_args.args[1])
+        self.assertEqual(payload["session"]["model"], "gpt-live-1")
+        self.assertFalse(payload["session"]["store"])
+        self.assertEqual(payload["session"]["delegation"], {"type": "client"})
+        self.assertNotIn("tools", payload["session"])
+
+    def test_speech_bounds_language_and_extra_context_are_rejected(self):
+        data = {"organization_id": ORG, "text": "Hello", "language": "en-IN", "sdp": "fixture-offer"}
+        for extra in [{"text": "x" * 6001}, {"language": "unknown"}, {"role": "owner"}]:
+            self.assertEqual(client.post("/forgehr/speak", json={**data, **extra}, headers=REQUEST_HEADERS).status_code, 400)
+
     def test_voice_rejects_unsigned_unsupported_and_empty_recordings(self):
         headers = {**REQUEST_HEADERS, "Content-Type": "audio/mp4", "X-ForgeHR-Organization": ORG}
         self.assertEqual(client.post("/forgehr/transcribe", content=b"audio").status_code, 401)
