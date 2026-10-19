@@ -788,3 +788,8 @@ def chat_stream(
             "X-IF-Correlation-ID": correlation_id,
         },
     )
+
+# ForgeHR uses its own authenticated, record-scoped path and no activity feed.
+from backend.forgehr_assistant_api import router as forgehr_assistant_router
+router.include_router(forgehr_assistant_router)
+
