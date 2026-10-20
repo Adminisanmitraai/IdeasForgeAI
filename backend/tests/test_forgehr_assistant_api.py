@@ -195,3 +195,50 @@ class AssistantTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ProjectContextTests(unittest.TestCase):
+    def test_project_reads_use_caller_token_tenant_and_bounded_safe_columns(self):
+        calls = []
+        def rows(credentials, table, columns, filters, limit=20):
+            calls.append((credentials, table, columns, filters, limit))
+            if table == "work_tasks":
+                return [{"id": str(i), "title": "SAMPLE task", "is_demo": True} for i in range(11)]
+            return []
+        with patch.object(assistant, "_rows", side_effect=rows):
+            context, sources = assistant._context(CREDS, IDENTITY, assistant.Question(**QUESTION))
+        project_calls = [c for c in calls if c[1].startswith("work_")]
+        self.assertEqual(len(project_calls), 4)
+        for credentials, _, columns, filters, limit in project_calls:
+            self.assertIs(credentials, CREDS)
+            self.assertEqual(filters["organization_id"], f"eq.{ORG}")
+            self.assertEqual(limit, 11)
+            self.assertIn("id", columns.split(","))
+            self.assertNotIn("effort_minutes", columns)
+        task_evidence = next(e for e in context["evidence"] if e["label"].startswith("Accessible project tasks"))
+        self.assertEqual(len(task_evidence["records"]), 10)
+        self.assertTrue(any("older records" in u for u in context["unavailable"]))
+        self.assertTrue(any(s["href"] == "/app/projects" for s in sources))
+
+    def test_auditor_does_not_fetch_project_records(self):
+        with patch.object(assistant, "_rows", return_value=[]) as rows:
+            assistant._context(CREDS, {**IDENTITY, "role": "auditor"}, assistant.Question(**QUESTION))
+        self.assertFalse(any(c.args[1].startswith("work_") for c in rows.call_args_list))
+
+    def test_project_permission_failure_is_not_empty_success(self):
+        def rows(credentials, table, columns, filters, limit=20):
+            if table.startswith("work_"):
+                raise OSError("permission or connection failed")
+            return []
+        with patch.object(assistant, "_rows", side_effect=rows):
+            context, sources = assistant._context(CREDS, IDENTITY, assistant.Question(**QUESTION))
+        self.assertTrue(any("projects could not be verified" in u for u in context["unavailable"]))
+        self.assertFalse(any(s["href"] == "/app/projects" for s in sources))
+
+    def test_oversized_project_evidence_reports_omissions(self):
+        def rows(credentials, table, columns, filters, limit=20):
+            return [{"id": str(i), "summary": "x" * 1500} for i in range(10)] if table == "work_daily_updates" else []
+        with patch.object(assistant, "_rows", side_effect=rows):
+            context, _ = assistant._context(CREDS, IDENTITY, assistant.Question(**QUESTION))
+        self.assertTrue(any("shortened" in u for u in context["unavailable"]))
+        self.assertLess(len(json.dumps(context["evidence"])), 18000)
