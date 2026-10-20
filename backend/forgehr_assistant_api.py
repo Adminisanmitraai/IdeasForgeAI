@@ -567,3 +567,9 @@ async def conversation(request: Request):
         raise HTTPException(400, "Please select a valid voice conversation.") from None
     result = await run_in_threadpool(_conversation, question, credentials)
     return JSONResponse(result, headers=HEADERS)
+
+
+# Separate bounded Demo task-drafting surface; the conversational assistant stays read-only.
+from backend.forgehr_task_agent import router as task_agent_router
+router.include_router(task_agent_router)
+
