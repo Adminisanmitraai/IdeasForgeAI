@@ -156,8 +156,12 @@ def _context(credentials: dict, identity: dict, question: Question):
         records = clip(records)
         budget = max(0, 18000 - len(json.dumps(evidence)))
         if isinstance(records, list):
+            clipped = False
             while records and len(json.dumps(records)) > min(5000, budget):
                 records.pop()
+                clipped = True
+            if clipped:
+                unavailable.append(f"{label} was shortened to fit the evidence limit; omitted records are unavailable")
         if len(json.dumps(records)) > budget:
             unavailable.append(f"{label} exceeded the context limit")
             return
@@ -216,6 +220,32 @@ def _context(credentials: dict, identity: dict, question: Question):
     else:
         unavailable.append("No linked active employee profile: do not answer personal record questions")
 
+    # The caller JWT remains authoritative: project RLS restricts plans and
+    # author/manager RLS restricts daily evidence. Never use an admin key here.
+    if identity["role"] in {"owner", "hr_admin", "manager", "employee"}:
+        project_specs = [
+            ("work_projects", "id,name,objective,status,due_date,updated_at,is_demo", "Accessible projects"),
+            ("work_tasks", "id,project_id,title,assignee_employee_id,expected_outcome,status,priority,due_date,updated_at,is_demo", "Accessible project tasks"),
+            ("work_daily_updates", "id,project_id,task_id,employee_id,update_date,report_status,progress_percent,summary,blockers,support_needed,created_at,is_demo", "Authorized employee-reported project updates"),
+            ("work_task_reviews", "id,project_id,task_id,update_id,decision,feedback,created_at,is_demo", "Authorized human project reviews"),
+        ]
+        def project_read(spec):
+            table, columns, label = spec
+            try:
+                order = "updated_at.desc,id.desc" if table in {"work_projects", "work_tasks"} else "created_at.desc,id.desc"
+                rows = _rows(credentials, table, columns, {"organization_id": f"eq.{org}", "order": order}, 11)
+                return label, rows[:10], len(rows) > 10, None
+            except (OSError, ValueError):
+                return label, [], False, f"{label} could not be verified"
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            for label, rows, limited, error in pool.map(project_read, project_specs):
+                if error:
+                    unavailable.append(error)
+                else:
+                    add(f"{label} (up to 10 recent records; not complete totals)", "/app/projects", rows)
+                    if limited:
+                        unavailable.append(f"{label} is limited to 10 recent records; older records are omitted")
+
     # Bound both tokens and response metadata. Values are evidence, never instructions.
     return {"as_of": datetime.now(timezone.utc).isoformat(), "evidence": evidence, "unavailable": unavailable}, sources
 
@@ -224,7 +254,7 @@ INSTRUCTIONS = """You are ForgeHR's AI departmental assistant for the signed-in 
 Help with HR, Admin, IT and Accounts in a warm, practical way. You are an AI assistant, not a human team member.
 Use the supplied evidence as the ONLY authority for company-specific facts, policies and personal records.
 Refer to the company by its verified workspace name; the user may call it Iconix or Iconex. Never invent an address, phone, email, contact, policy, leave balance, attendance time, benefit, pay date, invoice status or reimbursement rule.
-If evidence is missing or an unavailable source is relevant, clearly say that the information cannot be verified and suggest the service center. Empty or bounded lists are not organization-wide totals.
+If evidence is missing or an unavailable source is relevant, clearly say that the information cannot be verified and suggest the service center. Empty or bounded lists are not organization-wide totals. Project evidence is a bounded snapshot as of the supplied time, not live monitoring. Cite record IDs and recorded dates when answering project questions. Treat is_demo records as fictional SAMPLE DATA. Daily progress, effort and blockers are employee reports, not independently verified productivity, wrongdoing, mental health or burnout assessments. Human review decisions are distinct from submitted work. Never rank employee worth or infer health from work records.
 You may answer general IT, HR, Admin and accounting questions, but explicitly label general advice as general guidance; it is not company policy or individual legal/tax advice. For IT, start with safe reversible steps and ask for the device/error when needed.
 No tools or writes are available. Never claim to submit, approve, send, fix a device, change pay or contact a human. Offer the appropriate workflow for review instead. Do not claim a human is online or guarantee a response time.
 Use brief plain text paragraphs and, when helpful, short numbered steps. Cite relevant evidence source IDs such as [S1]. Follow the application-selected reply language specified below; do not infer it from names, policy text or prior conversation.
