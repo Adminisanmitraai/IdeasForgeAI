@@ -35,7 +35,11 @@ class ConversationTests(unittest.TestCase):
         with patch.object(assistant, '_identity', return_value={**IDENTITY, 'role': 'owner'}) as identity, patch.object(assistant, '_rows', side_effect=rows), patch.object(assistant, '_provider_json', return_value=PROVIDER) as provider:
             result = assistant._conversation(assistant.ConversationQuestion(**BODY), CREDS)
         identity.assert_called_once_with(CREDS, ORG)
-        for _, filters, _ in queries: self.assertEqual(filters['organization_id'], 'eq.' + ORG)
+        for table, filters, limit in queries:
+            if table == 'profiles':
+                self.assertEqual(filters, {'user_id': 'eq.' + USER}); self.assertEqual(limit, 1)
+            else:
+                self.assertEqual(filters['organization_id'], 'eq.' + ORG)
         employee = next(q for q in queries if q[0] == 'employees')
         self.assertEqual(employee[1]['user_id'], 'eq.' + USER)
         payslip = next(q for q in queries if q[0] == 'employee_payslips')
@@ -55,10 +59,11 @@ class ConversationTests(unittest.TestCase):
     def test_each_language_and_department_uses_server_context_and_fixed_provider(self):
         for language in ['en-IN', 'hi-IN', 'bn-IN']:
             for department in ['hr', 'admin', 'it', 'accounts']:
-                with self.subTest(language=language, department=department), patch.object(assistant, '_identity', return_value=IDENTITY), patch.object(assistant, '_context', return_value=({'as_of':'fixture', 'evidence':[], 'unavailable':['Policies unavailable']}, [])) as context, patch.object(assistant, '_provider_json', return_value=PROVIDER) as provider:
+                with self.subTest(language=language, department=department), patch.object(assistant, '_identity', return_value=IDENTITY), patch.object(assistant, '_rows', return_value=[]), patch.object(assistant, '_context', return_value=({'as_of':'fixture', 'evidence':[], 'unavailable':['Policies unavailable']}, [])) as context, patch.object(assistant, '_provider_json', return_value=PROVIDER) as provider:
                     assistant._quotas.clear()
                     result = assistant._conversation(assistant.ConversationQuestion(**{**BODY, 'language':language, 'department':department}), CREDS)
                     self.assertEqual(context.call_args.args[2].department, department)
                     self.assertEqual(provider.call_args.args[0], 'live/sessions')
                     payload = json.loads(provider.call_args.args[1]); self.assertIn(assistant.LANGUAGE_NAMES[language], payload['session']['instructions'])
                     self.assertIn('Policies unavailable', json.dumps(payload)); self.assertEqual(result['asOf'], 'fixture')
+
