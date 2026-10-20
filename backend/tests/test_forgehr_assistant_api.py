@@ -193,10 +193,6 @@ class AssistantTests(unittest.TestCase):
         self.assertIn(b"fixture-audio", provider.call_args.args[1])
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ProjectContextTests(unittest.TestCase):
     def test_project_reads_use_caller_token_tenant_and_bounded_safe_columns(self):
         calls = []
@@ -246,3 +242,7 @@ class ProjectContextTests(unittest.TestCase):
             context, _ = assistant._context(CREDS, IDENTITY, assistant.Question(**QUESTION))
         self.assertTrue(any("shortened" in u for u in context["unavailable"]))
         self.assertLess(len(json.dumps(context["evidence"])), 18000)
+
+
+if __name__ == "__main__":
+    unittest.main()
