@@ -202,11 +202,15 @@ class ProjectContextTests(unittest.TestCase):
         calls = []
         def rows(credentials, table, columns, filters, limit=20):
             calls.append((credentials, table, columns, filters, limit))
+            if table == "employees":
+                return [{"id": EMPLOYEE}]
             if table == "work_tasks":
                 return [{"id": str(i), "title": "SAMPLE task", "is_demo": True} for i in range(11)]
             return []
         with patch.object(assistant, "_rows", side_effect=rows):
             context, sources = assistant._context(CREDS, IDENTITY, assistant.Question(**QUESTION))
+        workspace = next(e for e in context["evidence"] if e["label"] == "Current workspace")
+        self.assertEqual(workspace["records"]["your_employee_id"], EMPLOYEE)
         project_calls = [c for c in calls if c[1].startswith("work_")]
         self.assertEqual(len(project_calls), 4)
         for credentials, _, columns, filters, limit in project_calls:
