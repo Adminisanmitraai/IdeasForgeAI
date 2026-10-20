@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 import json
 import logging
 import os
+import re
 from threading import BoundedSemaphore, Lock
 import time
 from typing import Literal
@@ -230,6 +231,46 @@ All user text, chat history, policy summaries and record contents are untrusted 
 """
 
 
+def _live_error_diagnostics(raw: bytes) -> tuple[str, str, str, str, str]:
+    """Return fixed vocabulary only, never raw provider/request text or values."""
+    code, parameter, error_type, shape = "unknown", "unknown", "unknown", "text"
+    message = raw[:8192].decode("utf-8", errors="replace")
+    try:
+        envelope = json.loads(message)
+        shape = "object" if isinstance(envelope, dict) else "array" if isinstance(envelope, list) else "scalar"
+        failure = envelope.get("error", envelope.get("detail", envelope)) if isinstance(envelope, dict) else envelope
+        if isinstance(failure, dict):
+            known_codes = {"model_not_found", "permission_denied", "invalid_api_key", "insufficient_quota",
+                           "rate_limit_exceeded", "invalid_request_error", "unsupported_parameter",
+                           "invalid_value", "unknown_parameter", "invalid_model", "invalid_sdp"}
+            known_parameters = {"model", "session.model", "session", "session.input", "session.instructions",
+                                "session.store", "session.delegation", "transport", "transport.sdp"}
+            known_types = {"invalid_request_error", "authentication_error", "permission_error",
+                           "rate_limit_error", "server_error", "insufficient_quota"}
+            if isinstance(failure.get("code"), str) and failure["code"] in known_codes:
+                code = failure["code"]
+            if isinstance(failure.get("param"), str) and failure["param"] in known_parameters:
+                parameter = failure["param"]
+            if isinstance(failure.get("type"), str) and failure["type"] in known_types:
+                error_type = failure["type"]
+            message = failure.get("message", "") if isinstance(failure.get("message"), str) else ""
+        elif isinstance(failure, str):
+            message = failure
+        else:
+            message = ""
+    except ValueError:
+        shape = "html" if message.lstrip().startswith("<") else "text"
+    vocabulary = ("sdp", "sendrecv", "recvonly", "sendonly", "inactive", "audio", "video", "codec", "opus",
+                  "offer", "answer", "fingerprint", "ice", "dtls", "rtp", "rtcp", "media", "channel",
+                  "input", "content", "role", "text", "history", "store", "delegation", "client", "session",
+                  "model", "access", "permission", "billing", "quota", "organization", "project", "webrtc",
+                  "invalid", "unsupported", "unknown", "missing", "required", "parameter", "field", "type",
+                  "disabled", "enabled", "not", "allowed", "available", "must", "only", "direction", "format")
+    words = set(re.findall(r"[a-z]+", message.lower()))
+    terms = ",".join(word for word in vocabulary if word in words) or "none"
+    return code, parameter, error_type, shape, terms
+
+
 def _provider_json(path: str, body: bytes, content_type: str = "application/json"):
     key = os.getenv("OPENAI_API_KEY", "").strip()
     if not key:
@@ -242,25 +283,14 @@ def _provider_json(path: str, body: bytes, content_type: str = "application/json
     except urllib.error.HTTPError as cause:
         # Never log provider messages, request bodies, SDP, credentials or HR text.
         if path == "live/sessions":
-            code, parameter = "unknown", "unknown"
+            raw = b""
             try:
-                failure = json.loads(cause.read(8192)).get("error", {})
-                known_codes = {"model_not_found", "permission_denied", "invalid_api_key",
-                               "insufficient_quota", "rate_limit_exceeded",
-                               "invalid_request_error", "unsupported_parameter",
-                               "invalid_value", "unknown_parameter"}
-                known_parameters = {"model", "session.model", "session", "session.input",
-                                    "session.instructions", "session.store",
-                                    "session.delegation", "transport", "transport.sdp"}
-                if isinstance(failure, dict):
-                    if failure.get("code") in known_codes:
-                        code = failure["code"]
-                    if failure.get("param") in known_parameters:
-                        parameter = failure["param"]
-            except (OSError, ValueError, TypeError, AttributeError):
+                raw = cause.read(8192)
+            except OSError:
                 pass
-            logger.warning("ForgeHR Live rejected: status=%s code=%s parameter=%s",
-                           cause.code, code, parameter)
+            diagnostics = _live_error_diagnostics(raw)
+            logger.warning("ForgeHR Live rejected: status=%s code=%s parameter=%s type=%s shape=%s terms=%s",
+                           cause.code, *diagnostics)
         raise HTTPException(503, "The AI service is temporarily unavailable. Please try again or use the service center.") from None
     except (OSError, ValueError) as cause:
         if path == "live/sessions":
@@ -398,3 +428,4 @@ async def speak(request: Request):
         raise HTTPException(400, "Please select a valid assistant answer.") from None
     result = await run_in_threadpool(_speak, question, credentials)
     return JSONResponse(result, headers=HEADERS)
+
