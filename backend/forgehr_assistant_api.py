@@ -22,6 +22,8 @@ import urllib.parse
 import urllib.request
 from uuid import UUID, uuid4
 
+from backend import forgehr_demo_guide
+
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, ValidationError
@@ -101,7 +103,7 @@ def _identity(credentials: dict, organization_id: str) -> dict:
     except (ValueError, KeyError, TypeError, OSError):
         raise HTTPException(503, "Your ForgeHR session could not be verified.") from None
     try:
-        memberships = _rows(credentials, "organization_memberships", "organization_id,role,organizations!inner(name,status)", {
+        memberships = _rows(credentials, "organization_memberships", "organization_id,role,organizations!inner(name,status,slug)", {
             "user_id": f"eq.{user_id}", "organization_id": f"eq.{organization_id}",
             "status": "eq.active", "organizations.status": "eq.active",
         }, 1)
@@ -113,7 +115,7 @@ def _identity(credentials: dict, organization_id: str) -> dict:
     organization = membership.get("organizations") or {}
     if organization.get("status") != "active":
         raise HTTPException(403, "Active workspace membership is required.")
-    return {"user_id": user_id, "role": membership["role"], "organization_id": organization_id, "company": organization.get("name", "Your organization")}
+    return {"user_id": user_id, "role": membership["role"], "organization_id": organization_id, "company": organization.get("name", "Your organization"), "demo_guide": organization.get("slug") == "forgehr-demo"}
 
 
 def _take_quota(user_id: str):
@@ -139,6 +141,8 @@ GUIDES = {
 
 
 def _context(credentials: dict, identity: dict, question: Question):
+    if identity.get("demo_guide") is True:
+        return forgehr_demo_guide.context(question.department)
     org = identity["organization_id"]
     unavailable: list[str] = []
     sources: list[dict] = []
@@ -376,7 +380,7 @@ def _answer(question: Question, credentials: dict):
         raise HTTPException(429, "The assistant is busy. Please try again shortly.")
     try:
         context, sources = _context(credentials, identity, question)
-        payload = {"model": os.getenv("FORGEHR_ASSISTANT_MODEL") or os.getenv("OPENAI_MODEL") or "gpt-4.1-mini", "store": False, "max_output_tokens": 900, "instructions": INSTRUCTIONS + "\n" + _reply_language(question.language),
+        payload = {"model": os.getenv("FORGEHR_ASSISTANT_MODEL") or os.getenv("OPENAI_MODEL") or "gpt-4.1-mini", "store": False, "max_output_tokens": 900, "instructions": (forgehr_demo_guide.INSTRUCTIONS if identity.get("demo_guide") is True else INSTRUCTIONS) + "\n" + _reply_language(question.language),
                    "input": [{"role": "user", "content": json.dumps({"department": DEPARTMENTS[question.department], "language": question.language, "verified_evidence": context, "untrusted_chat_history": [turn.model_dump() for turn in question.history], "question": question.message}, ensure_ascii=False)}]}
         data = _provider_json("responses", json.dumps(payload).encode())
         if data.get("status") == "incomplete":
@@ -526,7 +530,7 @@ def _conversation(question: ConversationQuestion, credentials: dict):
         lookup = Question(organization_id=question.organization_id, department=question.department,
                           language=question.language, message="Start a departmental voice conversation.")
         context, sources = _context(credentials, identity, lookup)
-        instructions = (INSTRUCTIONS + "\n" + _reply_language(question.language) +
+        instructions = ((forgehr_demo_guide.INSTRUCTIONS if identity.get("demo_guide") is True else INSTRUCTIONS) + "\n" + _reply_language(question.language) +
             "\nThis is a continuous voice conversation, not a read-aloud task. Speak naturally in short replies, "
             "listen to follow-up questions, and allow the user to interrupt. "
             "Speak only in " + LANGUAGE_NAMES[question.language] + ". "
@@ -542,7 +546,7 @@ def _conversation(question: ConversationQuestion, credentials: dict):
                 {"type": "message", "role": "developer", "content": [{"type": "input_text", "text":
                     "Begin now with a brief greeting in " + LANGUAGE_NAMES[question.language] +
                     ", identify yourself as ForgeHR's " + DEPARTMENTS[question.department] +
-                    " AI assistant, and ask how you can help. Then listen. Do not read the record snapshot aloud."}]},
+                    " AI assistant, and ask how you can help. Then listen. Do not read the record snapshot aloud." if not identity.get("demo_guide") else "Begin with a brief greeting in " + LANGUAGE_NAMES[question.language] + ", introduce yourself as Gauri, ForgeHR AI Demo Manager, and ask which role and business workflow the visitor wants to explore. Then listen."}]},
                 {"type": "message", "role": "user", "content": [{"type": "input_text", "text":
                     json.dumps({"department": DEPARTMENTS[question.department], "verified_record_snapshot": context}, ensure_ascii=False)}]},
             ]}, "transport": {"type": "webrtc", "sdp": question.sdp}}
@@ -572,4 +576,5 @@ async def conversation(request: Request):
 # Separate bounded Demo task-drafting surface; the conversational assistant stays read-only.
 from backend.forgehr_task_agent import router as task_agent_router
 router.include_router(task_agent_router)
+
 
