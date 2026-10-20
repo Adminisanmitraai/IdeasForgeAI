@@ -4,10 +4,10 @@ import json
 import os
 import threading
 import time
-from typing import Literal
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 router = APIRouter()
 Section = Literal['overview', 'employees', 'requests', 'onboarding', 'payroll', 'documents', 'projects', 'automation']
@@ -30,6 +30,13 @@ class Answer(BaseModel):
     model_config = ConfigDict(extra='forbid')
     answer: str = Field(min_length=1, max_length=1800)
     section: Section | None
+
+
+class DemoSpeech(BaseModel):
+    model_config = ConfigDict(extra='forbid', str_strip_whitespace=True)
+    text: str = Field(min_length=1, max_length=1800)
+    language: Literal['en-IN', 'hi-IN', 'bn-IN'] = 'en-IN'
+    sdp: Annotated[str, StringConstraints(strip_whitespace=False)] = Field(min_length=10, max_length=20000)
 
 
 INSTRUCTIONS = '''You are Gauri, ForgeHR's AI sales and public demo guide, distinct from human Gauri.
@@ -72,14 +79,18 @@ def _quota():
         _calls.append(now)
 
 
-@router.post('/public-demo/chat')
-async def chat(request: Request):
+def _proxy_access(request: Request):
     secret = os.getenv('FORGEHR_PUBLIC_DEMO_PROXY_SECRET', '')
     supplied = request.headers.get('x-forgehr-demo-secret', '')
     if os.getenv('FORGEHR_PUBLIC_DEMO_ENABLED') != 'true' or len(secret) < 32:
         raise HTTPException(503, 'Dynamic demo is disabled.')
     if not hmac.compare_digest(secret.encode(), supplied.encode()):
         raise HTTPException(403, 'Demo proxy access required.')
+
+
+@router.post('/public-demo/chat')
+async def chat(request: Request):
+    _proxy_access(request)
     raw = bytearray()
     async for part in request.stream():
         raw.extend(part)
@@ -109,5 +120,35 @@ async def chat(request: Request):
             return Answer.model_validate_json(text).model_dump()
         except ValueError:
             raise HTTPException(503, 'Demo answer could not be verified.') from None
+    finally:
+        _slots.release()
+
+
+@router.post('/public-demo/speak')
+async def speak(request: Request):
+    _proxy_access(request)
+    # Independent release switch: public sessions need an explicit billing decision.
+    if os.getenv('FORGEHR_PUBLIC_DEMO_VOICE_ENABLED') != 'true':
+        raise HTTPException(503, 'Demo voice is disabled.')
+    raw = bytearray()
+    async for part in request.stream():
+        raw.extend(part)
+        if len(raw) > 40000:
+            raise HTTPException(413, 'Request too large.')
+    try:
+        question = DemoSpeech.model_validate_json(raw)
+    except ValueError:
+        raise HTTPException(422, 'Invalid demo speech request.') from None
+    if not _slots.acquire(blocking=False):
+        raise HTTPException(429, 'Demo busy.')
+    try:
+        _quota()
+        from backend.forgehr_assistant_api import SpeechContent, _speech_session
+        from starlette.concurrency import run_in_threadpool
+        from starlette.responses import JSONResponse
+        # Same read-aloud model/session configuration as the original assistant.
+        # No workspace lookup, user token, microphone, or action tools are supplied.
+        result = await run_in_threadpool(_speech_session, SpeechContent.model_validate(question.model_dump()))
+        return JSONResponse(result, headers={'Cache-Control': 'no-store'})
     finally:
         _slots.release()
