@@ -82,6 +82,72 @@ class AssistantTests(unittest.TestCase):
         self.assertEqual(payslip[3], 3)
         self.assertNotIn("employees", json.dumps(context))
 
+    def test_accounts_financial_evidence_scope_for_every_role(self):
+        for role in ["owner", "hr_admin", "manager", "employee", "auditor"]:
+            queries = []
+            def rows(credentials, table, columns, filters, limit=20):
+                self.assertEqual(credentials, CREDS)
+                queries.append((table, filters))
+                if table == "employees":
+                    return [{"id": EMPLOYEE}]
+                if table == "employee_payslips":
+                    own = {"id": "own", "organization_id": ORG, "employee_id": EMPLOYEE,
+                           "status": "published", "days_paid": 20, "bank_details": "secret"}
+                    return [own, {**own, "id": "foreign", "organization_id": USER},
+                            {**own, "id": "other", "employee_id": USER},
+                            {**own, "id": "draft", "status": "draft"}]
+                if table == "employee_service_requests":
+                    own = {"id": "own-ticket", "organization_id": ORG,
+                           "employee_id": EMPLOYEE, "status": "resolved", "details": "secret"}
+                    return [own, {**own, "id": "foreign-ticket", "organization_id": USER},
+                            {**own, "id": "other-ticket", "employee_id": USER}]
+                return []
+            with self.subTest(role=role), patch.object(assistant, "_rows", side_effect=rows):
+                context, sources = assistant._context(CREDS, {**IDENTITY, "role": role},
+                    assistant.Question(**{**QUESTION, "department": "accounts"}))
+            evidence = next(e for e in context["evidence"] if e["label"].startswith("Your published payslips"))
+            self.assertEqual(evidence["records"], [{"id": "own", "days_paid": 20}])
+            self.assertNotIn("bank_details", json.dumps(context))
+            tickets = next(e for e in context["evidence"] if e["label"] == "Your recent service requests")
+            self.assertEqual(tickets["records"], [{"id": "own-ticket", "status": "resolved"}])
+            self.assertTrue(any(s["id"] == evidence["source"] for s in sources))
+            for table, filters in queries:
+                self.assertEqual(filters["organization_id"], f"eq.{ORG}")
+                if table in {"employee_payslips", "employee_service_requests"}:
+                    self.assertEqual(filters["employee_id"], f"eq.{EMPLOYEE}")
+            self.assertFalse({"payroll_runs", "employee_compensation", "invoices", "reimbursements"}
+                             & {q[0] for q in queries})
+
+    def test_accounts_missing_profile_does_not_query_financial_records(self):
+        with patch.object(assistant, "_rows", return_value=[]) as rows:
+            context, _ = assistant._context(CREDS, IDENTITY,
+                assistant.Question(**{**QUESTION, "department": "accounts"}))
+        self.assertNotIn("employee_payslips", [c.args[1] for c in rows.call_args_list])
+        self.assertIn("not integrated", " ".join(context["unavailable"]))
+
+    def test_accounts_read_denial_is_not_no_pay(self):
+        def rows(credentials, table, columns, filters, limit=20):
+            if table == "employees":
+                return [{"id": EMPLOYEE}]
+            if table == "employee_payslips":
+                raise OSError("denied")
+            return []
+        with patch.object(assistant, "_rows", side_effect=rows):
+            context, _ = assistant._context(CREDS, IDENTITY,
+                assistant.Question(**{**QUESTION, "department": "accounts"}))
+        self.assertTrue(any("payslips" in item and "could not be loaded" in item
+                            for item in context["unavailable"]))
+        self.assertFalse(any(e["label"].startswith("Your published payslips") for e in context["evidence"]))
+
+    def test_accounts_evidence_does_not_confirm_settlement(self):
+        with patch.object(assistant, "_rows", return_value=[]):
+            context, _ = assistant._context(CREDS, IDENTITY,
+                assistant.Question(**{**QUESTION, "department": "accounts"}))
+        boundary = next(e for e in context["evidence"] if e["label"] == "Accounts evidence boundaries")
+        self.assertIn("bank settlement", boundary["records"]["not_connected"])
+        self.assertIn("not proof of payment", boundary["records"]["interpretation"])
+        self.assertIn("support progress only", assistant.INSTRUCTIONS)
+
     def test_leave_history_is_ordered_before_limiting(self):
         queries = []
         def rows(credentials, table, columns, filters, limit=20):
