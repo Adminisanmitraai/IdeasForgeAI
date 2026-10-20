@@ -16,7 +16,7 @@ from .cloud_device_registry import DeviceSession
 from .cloud_task_channel import DeviceTaskResultEnvelope, build_task_envelope
 from .gateway_auth import parse_bearer_principal
 from .device_auth import issue_device_token, parse_device_token
-from .gateway_session_manager import GatewaySessionManager, LiveGatewaySession
+from .gateway_session_manager import GatewaySessionManager, LiveGatewaySession, StaleGatewaySession
 from .task_authorization import issue_task_authorization, validate_task_authorization
 from .task_authorization_asymmetric import issue as issue_task_authorization_ed25519, validate as validate_task_authorization_ed25519
 
@@ -637,6 +637,9 @@ async def device_ws(websocket: WebSocket, device_id: str):
         session_manager.attach(LiveGatewaySession(session, websocket, now))
         while True:
             message = await websocket.receive_json()
+            live = session_manager.get(device_id)
+            if live is None or live.session.session_id != session_id or live.transport is not websocket:
+                raise StaleGatewaySession("gateway session not found")
             if message.get("type") == "heartbeat":
                 heartbeat_at = message.get("at", datetime.now(timezone.utc).isoformat())
                 session_manager.heartbeat(device_id, session_id, heartbeat_at)
@@ -647,9 +650,16 @@ async def device_ws(websocket: WebSocket, device_id: str):
                     session_id=session_id, succeeded=bool(message.get("succeeded")),
                     reason=str(message.get("reason", "device_result")), output=message.get("output"),
                 ))
+    except StaleGatewaySession:
+        # A reconnect can replace this socket while its old heartbeat/result is
+        # still in flight. Never acknowledge it or detach the replacement.
+        await websocket.close(code=4409, reason="device_session_replaced")
     except WebSocketDisconnect:
-        session_manager.detach(device_id, session_id)
+        pass
+    finally:
+        session_manager.detach(device_id, session_id, transport=websocket)
 
 __all__ = [
     "FORGE_COMMANDER_GATEWAY_API_VERSION", "router", "session_manager",
 ]
+

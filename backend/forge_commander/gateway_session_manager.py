@@ -9,6 +9,9 @@ from .cloud_task_channel import DeviceTaskEnvelope, DeviceTaskResultEnvelope
 
 FORGE_COMMANDER_GATEWAY_SESSION_MANAGER_VERSION = "forge-commander.gateway-session-manager.v1"
 
+class StaleGatewaySession(ValueError):
+    """An authenticated transport has been superseded or detached."""
+
 @dataclass
 class LiveGatewaySession:
     session: DeviceSession
@@ -33,9 +36,9 @@ class GatewaySessionManager:
 
         self._sessions[device_id] = live
 
-    def detach(self, device_id: str, session_id: str) -> None:
+    def detach(self, device_id: str, session_id: str, *, transport: Any = None) -> None:
         existing = self._sessions.get(device_id)
-        if existing and existing.session.session_id == session_id:
+        if existing and existing.session.session_id == session_id and (transport is None or existing.transport is transport):
             self._sessions.pop(device_id, None)
             stale = [task_id for task_id, binding in self._inflight_tasks.items()
                      if binding == (device_id, session_id)]
@@ -46,7 +49,7 @@ class GatewaySessionManager:
     def heartbeat(self, device_id: str, session_id: str, at: str) -> None:
         live = self._sessions.get(device_id)
         if not live or live.session.session_id != session_id:
-            raise ValueError("gateway session not found")
+            raise StaleGatewaySession("gateway session not found")
         live.last_heartbeat_at = at
 
     def get(self, device_id: str) -> LiveGatewaySession | None:
@@ -79,7 +82,7 @@ class GatewaySessionManager:
     def accept_result(self, result: DeviceTaskResultEnvelope) -> None:
         live = self._sessions.get(result.device_id)
         if not live or live.session.session_id != result.session_id:
-            raise ValueError("result session does not match live gateway session")
+            raise StaleGatewaySession("result session does not match live gateway session")
         binding = self._inflight_tasks.get(result.task_id)
         if binding != (result.device_id, result.session_id):
             return
@@ -118,3 +121,4 @@ async def _wait_result(self: GatewaySessionManager, task_id: str,
 
 GatewaySessionManager.live_sessions = _live_sessions
 GatewaySessionManager.wait_result = _wait_result
+
