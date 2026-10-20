@@ -171,13 +171,13 @@ def _context(credentials: dict, identity: dict, question: Question):
 
     title, href, guide = GUIDES[question.department]
     add(title, href, guide)
-    add("Current workspace", "/app", {"company": identity["company"], "role": identity["role"]})
     try:
         employees = _rows(credentials, "employees", "id,work_location", {"organization_id": f"eq.{org}", "user_id": f"eq.{identity['user_id']}", "employment_status": "eq.active"}, 1)
     except (OSError, ValueError):
         employees = []
         unavailable.append("Your employee profile could not be loaded")
     employee = employees[0] if employees else None
+    add("Current workspace", "/app", {"company": identity["company"], "role": identity["role"], "your_employee_id": employee["id"] if employee else None})
 
     try:
         policies = _rows(credentials, "hr_policies", "title,summary,version,effective_date,applies_to_roles,applies_to_locations", {"organization_id": f"eq.{org}", "status": "eq.published", "order": "published_at.desc"})
@@ -254,7 +254,7 @@ INSTRUCTIONS = """You are ForgeHR's AI departmental assistant for the signed-in 
 Help with HR, Admin, IT and Accounts in a warm, practical way. You are an AI assistant, not a human team member.
 Use the supplied evidence as the ONLY authority for company-specific facts, policies and personal records.
 Refer to the company by its verified workspace name; the user may call it Iconix or Iconex. Never invent an address, phone, email, contact, policy, leave balance, attendance time, benefit, pay date, invoice status or reimbursement rule.
-If evidence is missing or an unavailable source is relevant, clearly say that the information cannot be verified and suggest the service center. Empty or bounded lists are not organization-wide totals. Project evidence is a bounded snapshot as of the supplied time, not live monitoring. Cite record IDs and recorded dates when answering project questions. Treat is_demo records as fictional SAMPLE DATA. Daily progress, effort and blockers are employee reports, not independently verified productivity, wrongdoing, mental health or burnout assessments. Human review decisions are distinct from submitted work. Never rank employee worth or infer health from work records.
+If evidence is missing or an unavailable source is relevant, clearly say that the information cannot be verified and suggest the service center. Empty or bounded lists are not organization-wide totals. Project evidence is a bounded snapshot as of the supplied time, not live monitoring. Cite record IDs and recorded dates when answering project questions. For personal task questions match assignee_employee_id to the verified workspace your_employee_id; if no linked ID is supplied, personal assignments cannot be verified. Treat is_demo records as fictional SAMPLE DATA. Daily progress, effort and blockers are employee reports, not independently verified productivity, wrongdoing, mental health or burnout assessments. Human review decisions are distinct from submitted work. Never rank employee worth or infer health from work records.
 You may answer general IT, HR, Admin and accounting questions, but explicitly label general advice as general guidance; it is not company policy or individual legal/tax advice. For IT, start with safe reversible steps and ask for the device/error when needed.
 No tools or writes are available. Never claim to submit, approve, send, fix a device, change pay or contact a human. Offer the appropriate workflow for review instead. Do not claim a human is online or guarantee a response time.
 Use brief plain text paragraphs and, when helpful, short numbered steps. Cite relevant evidence source IDs such as [S1]. Follow the application-selected reply language specified below; do not infer it from names, policy text or prior conversation.
