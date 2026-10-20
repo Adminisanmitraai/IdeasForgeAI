@@ -129,7 +129,7 @@ GUIDES = {
     "hr": ("HR workflows", "/app/employee/requests", "Use Leave & attendance to submit leave or an attendance correction; the approval outcome comes from HR. Onboarding, documents, performance and learning each have a workspace. The day assistant compares recorded attendance against an assigned shift, not physical office presence."),
     "admin": ("Admin help", "/app/employee/service", "Use the service center for profile corrections, employment letters, equipment and workplace requests. Explain the issue, select a request type and review before submitting. No office hours, holiday calendar, contacts or company benefits are assumed."),
     "it": ("IT help", "/app/desktop-setup", "Desktop setup handles optional startup check-in. Downloads contains installers. Equipment and access issues can be raised in the service center. Enrollment does not authorize screen monitoring or remote control. Ask about the device, operating system and exact error before troubleshooting. Never ask for passwords, OTPs or API keys."),
-    "accounts": ("Accounts help", "/app/employee/payroll", "Published payslips are under My payroll. A payroll query can be raised in the service center. Recorded payroll is manually reviewed; this is not a statutory tax engine. Expense reimbursement, invoice payment schedules, tax advice and company approval limits require a published policy or the Accounts team."),
+    "accounts": ("Accounts help", "/app/employee/payroll", "Published payslips are under My payroll. A payroll query can be raised in the service center. Recorded payroll is manually reviewed; this is not a statutory tax engine. Published payslips are payroll records, not confirmation of bank payment. Your service requests show ticket progress, not reimbursement approval or settlement. Invoice registers, reimbursement records, payment schedules and ledgers are not connected. Published policies can explain rules, but cannot establish a transaction status."),
 }
 
 
@@ -171,12 +171,20 @@ def _context(credentials: dict, identity: dict, question: Question):
     employee = employees[0] if employees else None
 
     try:
-        policies = _rows(credentials, "hr_policies", "title,summary,version,effective_date,applies_to_roles,applies_to_locations", {"organization_id": f"eq.{org}", "status": "eq.published", "order": "published_at.desc"})
+        policies = _rows(credentials, "hr_policies", "id,title,summary,version,effective_date,applies_to_roles,applies_to_locations", {"organization_id": f"eq.{org}", "status": "eq.published", "order": "published_at.desc"})
         today = datetime.now(timezone.utc).date().isoformat()
         applicable = [p for p in policies if (not p.get("applies_to_roles") or identity["role"] in p["applies_to_roles"]) and (not p.get("applies_to_locations") or (employee and employee.get("work_location") in p["applies_to_locations"])) and (not p.get("effective_date") or p["effective_date"] <= today)]
         add("Published company policies (up to 20 recent records)", "/app/employee/documents", applicable)
     except (OSError, ValueError, TypeError):
         unavailable.append("Published company policies are unavailable; do not infer their contents")
+
+    if question.department == "accounts":
+        add("Accounts evidence boundaries", "/app/employee/payroll", {
+            "scope": "Own published payslips and own service tickets only, including for owners and HR admins",
+            "not_connected": ["invoice register", "expense reimbursement register", "payment schedule", "accounting ledger", "bank settlement"],
+            "interpretation": "A published payslip is not proof of payment. A resolved service ticket is not proof of reimbursement or settlement. Policies describe rules, not transaction status. No company-wide totals can be established.",
+        })
+        unavailable.append("Invoice, reimbursement, payment schedule, ledger and bank settlement records are not integrated")
 
     if employee:
         employee_id = employee["id"]
@@ -187,17 +195,31 @@ def _context(credentials: dict, identity: dict, question: Question):
                 ("employee_documents", "title,verification_status,acknowledgement_required,acknowledged_at", "Your document status", "/app/employee/documents", {}),
             ]
         elif question.department == "accounts":
-            specs = [("employee_payslips", "currency,gross_pay,deductions,net_pay,published_at", "Your published payslips (up to 3 recent records)", "/app/employee/payroll", {"status": "eq.published", "order": "published_at.desc"})]
+            specs = [("employee_payslips", "id,organization_id,employee_id,status,currency,gross_pay,deductions,net_pay,days_paid,lop_days,published_at", "Your published payslips (up to 3 recent records)", "/app/employee/payroll", {"status": "eq.published", "order": "published_at.desc"})]
         elif question.department == "it":
             specs = [("employee_assets", "asset_type,status,assigned_on", "Your assigned equipment", "/app/employee/service", {})]
         else:
             specs = []
-        specs.append(("employee_service_requests", "request_type,subject,status,resolution_note,submitted_at", "Your recent service requests", "/app/employee/service", {"order": "submitted_at.desc"}))
+        specs.append(("employee_service_requests", ("id,organization_id,employee_id,updated_at," if question.department == "accounts" else "") + "request_type,subject,status,resolution_note,submitted_at", "Your recent service requests", "/app/employee/service", {"order": "submitted_at.desc"}))
 
         def read(spec):
             table, columns, label, path, filters = spec
             try:
                 rows = _rows(credentials, table, columns, {"organization_id": f"eq.{org}", "employee_id": f"eq.{employee_id}", **filters}, 3 if table == "employee_payslips" else 10)
+                if table == "employee_payslips":
+                    # RLS plus explicit filters are primary controls. Recheck before
+                    # exposing money to the provider, even if an upstream read misbehaves.
+                    rows = [row for row in rows if row.get("organization_id") == org
+                            and row.get("employee_id") == employee_id
+                            and row.get("status") == "published"]
+                    rows = [{key: row[key] for key in (
+                        "id", "currency", "gross_pay", "deductions", "net_pay",
+                        "days_paid", "lop_days", "published_at") if key in row} for row in rows]
+                elif table == "employee_service_requests" and question.department == "accounts":
+                    rows = [{key: row[key] for key in (
+                        "id", "request_type", "subject", "status", "resolution_note",
+                        "submitted_at", "updated_at") if key in row} for row in rows
+                        if row.get("organization_id") == org and row.get("employee_id") == employee_id]
                 return label, path, rows, None
             except (OSError, ValueError):
                 return label, path, None, f"{label} could not be loaded"
@@ -219,7 +241,7 @@ INSTRUCTIONS = """You are ForgeHR's AI departmental assistant for the signed-in 
 Help with HR, Admin, IT and Accounts in a warm, practical way. You are an AI assistant, not a human team member.
 Use the supplied evidence as the ONLY authority for company-specific facts, policies and personal records.
 Refer to the company by its verified workspace name; the user may call it Iconix or Iconex. Never invent an address, phone, email, contact, policy, leave balance, attendance time, benefit, pay date, invoice status or reimbursement rule.
-If evidence is missing or an unavailable source is relevant, clearly say that the information cannot be verified and suggest the service center. Empty or bounded lists are not organization-wide totals.
+If evidence is missing or an unavailable source is relevant, clearly say that the information cannot be verified and suggest the service center. Empty or bounded lists are not organization-wide totals. For Accounts, name the payslip ID/publication date or policy title/version when available alongside its source ID. Published payslips do not confirm bank payment; paid days are payroll inputs, not settlement evidence. Service-request status/resolution notes show support progress only, never verified invoice, reimbursement approval or payment status. No role grants broader financial access through choosing Accounts mode.
 You may answer general IT, HR, Admin and accounting questions, but explicitly label general advice as general guidance; it is not company policy or individual legal/tax advice. For IT, start with safe reversible steps and ask for the device/error when needed.
 No tools or writes are available. Never claim to submit, approve, send, fix a device, change pay or contact a human. Offer the appropriate workflow for review instead. Do not claim a human is online or guarantee a response time.
 Use brief plain text paragraphs and, when helpful, short numbered steps. Cite relevant evidence source IDs such as [S1]. Reply in the selected language unless the user asks otherwise.
