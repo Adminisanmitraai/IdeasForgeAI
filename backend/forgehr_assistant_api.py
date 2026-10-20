@@ -15,7 +15,7 @@ import os
 import re
 from threading import BoundedSemaphore, Lock
 import time
-from typing import Literal
+from typing import Annotated, Literal
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -23,7 +23,7 @@ from uuid import UUID, uuid4
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, ValidationError
 from starlette.concurrency import run_in_threadpool
 
 logger = logging.getLogger(__name__)
@@ -389,7 +389,8 @@ class SpeechQuestion(BaseModel):
     organization_id: UUID
     text: str = Field(min_length=1, max_length=6000)
     language: Literal["en-IN", "hi-IN", "bn-IN"] = "en-IN"
-    sdp: str = Field(min_length=10, max_length=20000)
+    # SDP is wire-format data: its terminal CRLF must survive validation.
+    sdp: Annotated[str, StringConstraints(strip_whitespace=False)] = Field(min_length=10, max_length=20000)
 
 
 def _speech_session(question: SpeechQuestion) -> dict:
