@@ -10,6 +10,7 @@ from collections import OrderedDict
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
 import json
+import logging
 import os
 from threading import BoundedSemaphore, Lock
 import time
@@ -23,6 +24,8 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from starlette.concurrency import run_in_threadpool
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/forgehr", tags=["ForgeHR assistant"])
 SUPABASE_URL = "https://vamfnpumwvipnedkzffu.supabase.co"
@@ -236,7 +239,33 @@ def _provider_json(path: str, body: bytes, content_type: str = "application/json
         if not isinstance(result, dict):
             raise ValueError("Invalid provider response")
         return result
-    except (OSError, ValueError):
+    except urllib.error.HTTPError as cause:
+        # Never log provider messages, request bodies, SDP, credentials or HR text.
+        if path == "live/sessions":
+            code, parameter = "unknown", "unknown"
+            try:
+                failure = json.loads(cause.read(8192)).get("error", {})
+                known_codes = {"model_not_found", "permission_denied", "invalid_api_key",
+                               "insufficient_quota", "rate_limit_exceeded",
+                               "invalid_request_error", "unsupported_parameter",
+                               "invalid_value", "unknown_parameter"}
+                known_parameters = {"model", "session.model", "session", "session.input",
+                                    "session.instructions", "session.store",
+                                    "session.delegation", "transport", "transport.sdp"}
+                if isinstance(failure, dict):
+                    if failure.get("code") in known_codes:
+                        code = failure["code"]
+                    if failure.get("param") in known_parameters:
+                        parameter = failure["param"]
+            except (OSError, ValueError, TypeError, AttributeError):
+                pass
+            logger.warning("ForgeHR Live rejected: status=%s code=%s parameter=%s",
+                           cause.code, code, parameter)
+        raise HTTPException(503, "The AI service is temporarily unavailable. Please try again or use the service center.") from None
+    except (OSError, ValueError) as cause:
+        if path == "live/sessions":
+            logger.warning("ForgeHR Live failed before a valid response: category=%s",
+                           "transport" if isinstance(cause, OSError) else "invalid_response")
         raise HTTPException(503, "The AI service is temporarily unavailable. Please try again or use the service center.") from None
 
 
