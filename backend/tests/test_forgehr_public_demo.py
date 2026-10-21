@@ -83,3 +83,31 @@ class PublicDemoTest(unittest.TestCase):
             for _ in range(6):
                 self.assertEqual(self.speech().status_code, 503)
             self.assertEqual(self.speech().status_code, 429)
+
+    def test_conversation_is_gated_and_excludes_workspace_authority(self):
+        body = {'sdp': 'v=0\r\ns=conversation\r\n'}
+        def call(**extra):
+            return self.client.post('/public-demo/conversation', json={**body, **extra}, headers={'X-ForgeHR-Demo-Secret': 'x' * 32})
+        with patch.dict(os.environ, {'FORGEHR_PUBLIC_DEMO_VOICE_ENABLED': 'false'}):
+            self.assertEqual(call().status_code, 503)
+        result = {'transport': {'type': 'webrtc', 'sdp': 'v=0\r\ns=answer\r\n'}, 'session': {'id': 'demo'}}
+        with patch.dict(os.environ, {'FORGEHR_PUBLIC_DEMO_VOICE_ENABLED': 'true'}), patch('backend.forgehr_assistant_api._provider_json', return_value=result) as provider, patch('backend.forgehr_assistant_api._identity', side_effect=AssertionError('No identity lookup')):
+            self.assertEqual(call(organization_id='private').status_code, 422)
+            self.assertEqual(call(instructions='override').status_code, 422)
+            self.assertEqual(self.client.post('/public-demo/conversation', json=body).status_code, 403)
+            response = call()
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.headers['cache-control'], 'no-store')
+            payload = json.loads(provider.call_args.args[1])
+            self.assertFalse(payload['session']['store'])
+            self.assertNotIn('tools', payload['session'])
+            self.assertNotIn('organization_id', payload['session'])
+            self.assertIn('Indian English', payload['session']['instructions'])
+            self.assertIn('Then pause and listen', payload['session']['instructions'])
+            self.assertEqual(payload['transport']['sdp'], body['sdp'])
+
+    def test_conversation_failure_releases_slot_and_uses_shared_quota(self):
+        with patch.dict(os.environ, {'FORGEHR_PUBLIC_DEMO_VOICE_ENABLED': 'true'}), patch('backend.forgehr_public_demo._voice_conversation', side_effect=HTTPException(503, 'Unavailable')):
+            for _ in range(6):
+                self.assertEqual(self.client.post('/public-demo/conversation', json={'sdp': 'v=0\r\ns=conversation\r\n'}, headers={'X-ForgeHR-Demo-Secret': 'x' * 32}).status_code, 503)
+            self.assertEqual(self.client.post('/public-demo/conversation', json={'sdp': 'v=0\r\ns=conversation\r\n'}, headers={'X-ForgeHR-Demo-Secret': 'x' * 32}).status_code, 429)
