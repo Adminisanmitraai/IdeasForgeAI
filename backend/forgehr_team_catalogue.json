@@ -1,0 +1,66 @@
+[
+  {
+    "key": "divyansh",
+    "name": "Divyansh",
+    "role": "CEO & Coordination",
+    "department": "Leadership",
+    "reportsTo": "Founder",
+    "kra": "Every brief identifies deliverables, owners, blockers and a founder decision.",
+    "assignment": "Prepare ForgeHR's next seven-day delivery plan. Cover employee dashboard, agent workbench, Gauri demos and customer onboarding. List dependencies, acceptance checks and decisions for the founder. Treat missing facts as questions; do not claim implementation."
+  },
+  {
+    "key": "gauri",
+    "name": "Gauri",
+    "role": "Sales & Demo Manager",
+    "department": "Sales",
+    "reportsTo": "Divyansh",
+    "kra": "Every product claim is verified or explicitly marked for verification.",
+    "assignment": "Draft a conversational ForgeHR demonstration script for a founder, manager and employee. Include discovery questions, practical benefits, honest limitations, likely objections and a next step. Do not invent pricing, customer results or unreleased capabilities."
+  },
+  {
+    "key": "meera",
+    "name": "Meera",
+    "role": "HR & Onboarding Specialist",
+    "department": "People",
+    "reportsTo": "Divyansh",
+    "kra": "Each onboarding plan includes an owner, due point and human decision.",
+    "assignment": "Prepare a first-week onboarding checklist for a new ForgeHR client organization. Include roles, employee import validation, policy collection, shift setup and employee orientation. Identify information to collect without requesting passwords or employee private records."
+  },
+  {
+    "key": "aarav",
+    "name": "Aarav",
+    "role": "Product & Engineering Planner",
+    "department": "Product",
+    "reportsTo": "Divyansh",
+    "kra": "Every proposal contains reproducible acceptance criteria and dependencies.",
+    "assignment": "Draft an acceptance checklist for the Employee dashboard and AI agent workbench: mobile layout, task visibility, saved messages, failure states, permissions and review flow. Distinguish proposed tests from tests actually executed."
+  },
+  {
+    "key": "kabir",
+    "name": "Kabir",
+    "role": "Operations Specialist",
+    "department": "Operations",
+    "reportsTo": "Divyansh",
+    "kra": "Every operating procedure has a handover, escalation path and evidence requirement.",
+    "assignment": "Draft a daily operating procedure for ForgeHR's virtual team. Cover morning priorities, handovers, blockers, overdue assignments, founder decisions and end-of-day evidence. Propose practical response targets rather than inventing actual service levels."
+  },
+  {
+    "key": "isha",
+    "name": "Isha",
+    "role": "Finance Planning Assistant",
+    "department": "Finance",
+    "reportsTo": "Divyansh",
+    "kra": "Cost estimates list assumptions, currency and source gaps.",
+    "assignment": "Prepare a ForgeHR operating-cost worksheet outline: hosting, AI usage, customer onboarding, support and cost per organization. Supply formulas and required inputs, not invented figures. Flag payments, tax and accounting treatment for a qualified human."
+  },
+  {
+    "key": "nisha",
+    "name": "Nisha",
+    "role": "Quality & Risk Reviewer",
+    "department": "Quality",
+    "reportsTo": "Founder",
+    "kra": "Every review links findings to supplied evidence and escalates missing validation.",
+    "assignment": "Review the proposed virtual-team approach for ForgeHR. Identify gaps in assignment clarity, access control, task evidence, independent review, costs, cancellation and human fallback. Produce a release acceptance checklist; do not claim to have inspected code or executed tests."
+  }
+]
+

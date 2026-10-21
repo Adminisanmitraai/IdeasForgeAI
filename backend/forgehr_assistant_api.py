@@ -585,3 +585,6 @@ router.include_router(task_agent_router)
 # Public guide has no workspace tools; disabled until explicitly configured.
 from backend.forgehr_public_demo import router as public_demo_router
 router.include_router(public_demo_router)
+
+from backend.forgehr_agent_team import router as agent_team_router
+router.include_router(agent_team_router)
