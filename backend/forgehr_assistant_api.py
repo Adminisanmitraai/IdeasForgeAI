@@ -463,16 +463,19 @@ async def transcribe(request: Request):
     return JSONResponse(result, headers=HEADERS)
 
 
-class SpeechQuestion(BaseModel):
+class SpeechContent(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
-    organization_id: UUID
     text: str = Field(min_length=1, max_length=6000)
     language: Literal["en-IN", "hi-IN", "bn-IN"] = "en-IN"
     # SDP is wire-format data: its terminal CRLF must survive validation.
     sdp: Annotated[str, StringConstraints(strip_whitespace=False)] = Field(min_length=10, max_length=20000)
 
 
-def _speech_session(question: SpeechQuestion) -> dict:
+class SpeechQuestion(SpeechContent):
+    organization_id: UUID
+
+
+def _speech_session(question: SpeechContent) -> dict:
     if not _has_expected_script(question.text, question.language):
         raise HTTPException(422, "The answer did not match the selected language. Please ask again before playing it.")
     # Only the server chooses the model, instructions, voice and delegation.
