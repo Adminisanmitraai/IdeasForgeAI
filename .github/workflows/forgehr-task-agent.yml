@@ -1,10 +1,10 @@
 name: ForgeHR Demo task agent
 on:
   pull_request:
-    paths: ['backend/forgehr_public_demo.py', 'backend/tests/test_forgehr_public_demo.py', 'backend/forgehr_task_agent.py', 'backend/forgehr_demo_guide.py', 'backend/tests/test_forgehr_demo_guide.py', 'backend/forgehr_assistant_api.py', 'backend/tests/test_forgehr_task_agent.py', '.github/workflows/forgehr-task-agent.yml']
+    paths: ['backend/forgehr_agent_team.py', 'backend/forgehr_team_catalogue.json', 'backend/tests/test_forgehr_agent_team.py', 'backend/forgehr_public_demo.py', 'backend/tests/test_forgehr_public_demo.py', 'backend/forgehr_task_agent.py', 'backend/forgehr_demo_guide.py', 'backend/tests/test_forgehr_demo_guide.py', 'backend/forgehr_assistant_api.py', 'backend/tests/test_forgehr_task_agent.py', '.github/workflows/forgehr-task-agent.yml']
   push:
     branches: [main]
-    paths: ['backend/forgehr_public_demo.py', 'backend/tests/test_forgehr_public_demo.py', 'backend/forgehr_task_agent.py', 'backend/forgehr_demo_guide.py', 'backend/tests/test_forgehr_demo_guide.py', 'backend/forgehr_assistant_api.py', 'backend/tests/test_forgehr_task_agent.py', '.github/workflows/forgehr-task-agent.yml']
+    paths: ['backend/forgehr_agent_team.py', 'backend/forgehr_team_catalogue.json', 'backend/tests/test_forgehr_agent_team.py', 'backend/forgehr_public_demo.py', 'backend/tests/test_forgehr_public_demo.py', 'backend/forgehr_task_agent.py', 'backend/forgehr_demo_guide.py', 'backend/tests/test_forgehr_demo_guide.py', 'backend/forgehr_assistant_api.py', 'backend/tests/test_forgehr_task_agent.py', '.github/workflows/forgehr-task-agent.yml']
 permissions:
   contents: read
 jobs:
