@@ -1,6 +1,9 @@
-﻿import json
+import json
+
 import os
 from uuid import uuid4
+
+from backend.core.openai_model_options import response_model_options
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
@@ -12,7 +15,7 @@ router = APIRouter(prefix="/api", tags=["Phase 27A universal sector classifier"]
 PHASE_27A = "27A"
 SERVICE_NAME = "ideasforgeai-backend"
 OPENAI_TIMEOUT_SECONDS = 35
-DEFAULT_OPENAI_MODEL = "gpt-4.1-mini"
+DEFAULT_OPENAI_MODEL = "gpt-6-luna"
 MAX_IDEA_LENGTH = 12000
 
 BLOCKED_PAYLOAD_FIELDS = {
@@ -231,7 +234,7 @@ async def classify_sector(request: Request):
 
         client = OpenAI(timeout=OPENAI_TIMEOUT_SECONDS)
         response = client.responses.create(
-            model=os.getenv("OPENAI_MODEL", DEFAULT_OPENAI_MODEL),
+            **response_model_options(os.getenv("OPENAI_MODEL", DEFAULT_OPENAI_MODEL)),
             instructions=SECTOR_SYSTEM_INSTRUCTION,
             input=json.dumps(prompt, ensure_ascii=False),
         )

@@ -35,7 +35,7 @@ load_dotenv(PROJECT_ROOT / ".env")
 class OpenAIProvider:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
+        self.model = os.getenv("OPENAI_MODEL", "gpt-6-luna").strip()
 
     def is_configured(self) -> bool:
         return bool(self.api_key)

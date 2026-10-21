@@ -6191,7 +6191,7 @@ async def ideasforgeai_chat(payload: _IdeasForgeAIChatRequest):
         }
 
     api_key = _if_os.getenv("OPENAI_API_KEY", "").strip()
-    model = _if_os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
+    model = _if_os.getenv("OPENAI_MODEL", "gpt-6-luna").strip()
 
     if not api_key:
         return {
@@ -6221,8 +6221,10 @@ async def ideasforgeai_chat(payload: _IdeasForgeAIChatRequest):
     openai_input.extend(clean_history)
     openai_input.append({"role": "user", "content": user_message})
 
+    from backend.core.openai_model_options import response_model_options
+
     body = {
-        "model": model,
+        **response_model_options(model),
         "input": openai_input,
         "temperature": 0.35,
         "max_output_tokens": 900
@@ -6380,7 +6382,7 @@ def _ideasforgeai_call_openai(message: str, page: str, mode: str, route: str) ->
     if not api_key:
         raise RuntimeError("OPENAI_API_KEY is missing")
 
-    model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip() or "gpt-4.1-mini"
+    model = os.getenv("OPENAI_MODEL", "gpt-6-luna").strip() or "gpt-6-luna"
     web_enabled = os.getenv("ENABLE_WEB_RESEARCH", "false").lower() == "true"
     provider = os.getenv("WEB_SEARCH_PROVIDER", "none")
 
@@ -6411,6 +6413,7 @@ def _ideasforgeai_call_openai(message: str, page: str, mode: str, route: str) ->
 
     payload = {
         "model": model,
+        **({"reasoning_effort": "none"} if model == "gpt-6-luna" else {}),
         "messages": messages,
         "max_completion_tokens": 1000,}
 
@@ -10605,7 +10608,7 @@ if _if_chatkit_import_error_value is None:
 
     _if_chatkit_agent = Agent(
         name="IdeasForgeAI",
-        model="gpt-4.1-mini",
+        model="gpt-6-luna",
         instructions=(
             "You are IdeasForgeAI, an expert AI product assistant. "
             "Help users create apps, websites, code plans, designs, documents, workflows, and professional outputs. "
@@ -11182,7 +11185,7 @@ async def forge_studio_pixel_map(payload: _ForgeStudioPixelMapRequest):
     if len(image) > 12_000_000:
         return {'ok':False,'error':'Image is too large for Pixel Mapping. Use an image under about 8 MB.'}
     api_key=_if_os.getenv('OPENAI_API_KEY','').strip()
-    model=_if_os.getenv('OPENAI_VISION_MODEL',_if_os.getenv('OPENAI_MODEL','gpt-4.1-mini')).strip()
+    model=_if_os.getenv('OPENAI_VISION_MODEL',_if_os.getenv('OPENAI_MODEL','gpt-6-luna')).strip()
     if not api_key:
         return {'ok':False,'error':'OPENAI_API_KEY is not configured on the backend.'}
     instruction=(
@@ -11195,8 +11198,10 @@ async def forge_studio_pixel_map(payload: _ForgeStudioPixelMapRequest):
         'Detect major photos, illustrations, icons, charts, tables, colored panels and shapes as separate regions. Use confidence from 0 to 1 for each element.'
     )
 
+    from backend.core.openai_model_options import response_model_options
+
     body={
-        'model':model,
+        **response_model_options(model),
         'input':[
             {'role':'system','content':[{'type':'input_text','text':'You are ForgeStudio Pixel Mapping Agent. Produce machine-readable slide reconstruction data only.'}]},
             {'role':'user','content':[{'type':'input_text','text':instruction},{'type':'input_image','image_url':image}]}

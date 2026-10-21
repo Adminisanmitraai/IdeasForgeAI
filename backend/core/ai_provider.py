@@ -1,11 +1,14 @@
-﻿import os
+import os
+
 from typing import Dict, List
+
+from backend.core.openai_model_options import response_model_options
 
 
 class OpenAIProvider:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY", "").strip()
-        self.model = os.getenv("OPENAI_MODEL", "gpt-4.1-mini").strip()
+        self.model = os.getenv("OPENAI_MODEL", "gpt-6-luna").strip()
 
     def is_configured(self) -> bool:
         return bool(self.api_key)
@@ -29,7 +32,7 @@ class OpenAIProvider:
                 prompt += f"{role.upper()}: {content}\n\n"
 
             response = client.responses.create(
-                model=self.model,
+                **response_model_options(self.model),
                 input=prompt,
             )
 
