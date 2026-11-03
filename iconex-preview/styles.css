@@ -35,3 +35,8 @@
 .project-card[hidden]{display:none!important}
 @media(max-width:900px){.case-grid{grid-template-columns:1fr}.case-visual{height:430px}.gallery-toolbar>div{flex:1;min-width:140px}}
 @media(max-width:650px){.gallery-toolbar{gap:10px}.gallery-toolbar>div{min-width:calc(50% - 5px)}.gallery-toolbar .reset-gallery{width:100%}.case-visual{height:300px}.case-phases{grid-template-columns:1fr;gap:15px;margin:50px 0 25px}}
+
+/* Uploaded ICONEX logo asset: preserve artwork proportions */
+.nav .logo.logo-image{display:flex;align-items:center;width:220px;max-width:29vw;flex:none;line-height:1;letter-spacing:normal}
+.nav .logo.logo-image img{display:block;width:100%;height:auto;object-fit:contain}
+@media(max-width:740px){.nav .logo.logo-image{width:185px;max-width:58vw}}
