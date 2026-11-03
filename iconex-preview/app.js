@@ -27,7 +27,55 @@ const serviceCards=()=>'<div class="service-grid">'+services.map((s,i)=>'<articl
 const sectionVisuals={services:{src:"./assets/services.webp",alt:"AI-generated exhibition design capabilities montage in blue and white"},portfolio:{src:"./assets/portfolio.webp",alt:"AI-generated mining, energy and exhibition environment concept montage"},process:{src:"./assets/design-process.webp",alt:"AI-generated 3D exhibition design planning visual"},industry:{src:"./assets/concept-energy.webp",alt:"AI-generated renewable energy exhibition concept"},about:{src:"./assets/concept-lounge.webp",alt:"AI-generated exhibition meeting lounge concept"}};
 const sectionImage=kind=>{const a=sectionVisuals[kind];return '<figure class="editorial-visual editorial-'+kind+'"><img src="'+a.src+'" alt="'+a.alt+'" loading="lazy" decoding="async" width="1200" height="675"><figcaption>Illustrative AI-generated exhibition concept · Not a completed ICONEX project</figcaption></figure>'};
 const portfolio=(limited)=>'<div class="portfolio-grid">'+(limited?concepts.slice(0,3):concepts).map(tile).join('')+'</div>';
-function home(){return '<section class="hero-reinvent"><div class="hero-noise" aria-hidden="true"></div><div class="shell hero-wrapper"><div class="hero-topline"><span>ICONEX / DESIGN. BUILD. EXPERIENCE.</span><span>EXHIBITION SPACES / INDIA</span></div><div class="hero-copy">'+label('Exhibition stand design & event environments')+'<h1>Exhibition spaces<br><em>designed for your brand.</em></h1><p>Explore stand design, 3D visualisation, branding and build planning for trade shows, corporate exhibitions and industry events.</p><div class="hero-actions">'+button('Discuss your exhibition','/quote')+button('Our design process','/process',true)+'</div></div><div class="hero-sculpture hero-photo-frame"><img class="hero-photo" src="./assets/hero.webp" alt="AI-generated ICONEX blue-and-white architectural exhibition stand concept" decoding="async" fetchpriority="high" width="1672" height="941"><span class="hero-photo-caption">Illustrative concept · AI-generated</span><div class="sculpture-floor"></div><div class="sculpture-shadow"></div><div class="sculpture-frame frame-1"></div><div class="sculpture-frame frame-2"></div><div class="sculpture-frame frame-3"></div><div class="sculpture-column"></div><div class="sculpture-plinth"></div><div class="sculpture-sign">ICONEX</div></div><div class="hero-bottom"><span>01 / EXHIBITION DESIGN CONCEPT</span><span>SCROLL TO EXPLORE ↓</span></div></div></section>'+
+
+/* ICONEX three-slide hero: approved brand identity and 4D process */
+function heroSlider(){
+  const slides=[
+    '<div class="iconex-slide active" id="iconex-slide-1" role="group" aria-roledescription="slide" aria-label="Slide 1 of 3" aria-hidden="false">'+
+      '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("The three I’s of iCONEX")+
+        '<h1 class="iconex-hero-title three-i"><span><b class="initial-i">I</b>nspire,</span><em><b class="initial-i">I</b>nnovate,</em><span><b class="initial-i">I</b>mplement.</span></h1>'+
+        '<p>Our guiding principles for developing conferences, exhibitions and professional industry experiences.</p>'+
+        '<div class="hero-actions">'+button("Contact Us","/contact")+
+          '<a class="action action-ghost" href="https://www.iconexglobal.com/events/all-events" target="_blank" rel="noopener noreferrer"><span>Upcoming Events</span><span aria-hidden="true">↗</span></a></div>'+
+      '</div><figure class="iconex-slide-visual"><img src="./assets/hero.webp" alt="Concept rendering of a blue-and-white exhibition pavilion, not a completed ICONEX project" width="1672" height="941" fetchpriority="high"><figcaption>Illustrative exhibition concept · AI-generated</figcaption></figure></div>'+
+    '</div>',
+    '<div class="iconex-slide" id="iconex-slide-2" role="group" aria-roledescription="slide" aria-label="Slide 2 of 3" aria-hidden="true" inert>'+
+      '<div class="iconex-slide-inner shell iconex-slide-method"><div class="iconex-slide-copy iconex-method-copy">'+label("Our approach")+
+        '<h2 class="iconex-hero-title method-heading">The 4D methodology<br><em>of iCONEX.</em></h2>'+
+        '<p>Four connected stages help structure event briefs, creative development and agreed delivery responsibilities.</p>'+
+        '<ol class="methodology-stages" aria-label="The four methodology stages in order">'+
+          '<li><span class="stage-num">01</span><strong>DISCOVER</strong></li>'+
+          '<li><span class="stage-num">02</span><strong>DESIGN</strong></li>'+
+          '<li><span class="stage-num">03</span><strong>DEVELOP</strong></li>'+
+          '<li class="stage-deliver"><span class="stage-num">04</span><strong>DELIVER</strong></li>'+
+        '</ol>'+
+      '</div></div>'+
+    '</div>',
+    '<div class="iconex-slide" id="iconex-slide-3" role="group" aria-roledescription="slide" aria-label="Slide 3 of 3" aria-hidden="true" inert>'+
+      '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("Integrated event services")+
+        '<h2 class="iconex-hero-title one-partner">ONE PARTNER,<br><em>EVERY STAGE.</em></h2>'+
+        '<p>From research and programme planning through stakeholder coordination and event management, explore ICONEX’s stated service capabilities.</p>'+
+        '<div class="hero-actions">'+button("Explore Services","/services")+button("Contact Us","/contact",true)+'</div>'+
+      '</div><figure class="iconex-slide-visual"><img src="./assets/services.webp" alt="AI-generated exhibition spaces and services concept montage" width="1672" height="941" loading="lazy"><figcaption>Illustrative exhibition concepts · AI-generated</figcaption></figure></div>'+
+    '</div>'
+  ];
+  return '<section class="iconex-carousel" id="iconex-carousel" aria-label="ICONEX featured messages" aria-roledescription="carousel">'+
+    '<div class="iconex-slide-stack">'+slides.join("")+'</div>'+
+    '<div class="shell iconex-carousel-controls" aria-label="Hero slideshow controls">'+
+      '<span class="iconex-slide-counter" id="iconex-slide-counter" aria-live="off">01 / 03</span>'+
+      '<div class="iconex-dots" role="group" aria-label="Choose a slide">'+
+        [0,1,2].map(i=>'<button type="button" class="iconex-dot'+(i===0?' active':'')+'" aria-label="Show slide '+(i+1)+'" aria-current="'+(i===0?'true':'false')+'" data-slide="'+i+'"></button>').join("")+
+      '</div>'+
+      '<div class="iconex-arrows">'+
+        '<button type="button" class="iconex-arrow" data-hero-prev aria-label="Previous slide">←</button>'+
+        '<button type="button" class="iconex-arrow" data-hero-next aria-label="Next slide">→</button>'+
+        '<button type="button" class="iconex-pause" data-hero-pause aria-label="Pause automatic slides" aria-pressed="false">Pause</button>'+
+      '</div>'+
+    '</div>'+
+  '</section>';
+}
+
+function home(){return heroSlider()+
 '<section class="manifesto section"><div class="shell manifesto-grid"><div>'+label('Design for the exhibition floor')+'<span class="oversized-marker">01</span></div><div><h2>Exhibition design with<br><em>clear business purpose.</em></h2><p>An effective exhibition stand must communicate the brand, support product presentation and provide room for meaningful business conversations. Our proposed design approach considers these priorities alongside the practical requirements of the venue.</p><a class="underlink" href="#/about">About ICONEX '+arrow+'</a></div></div></section>'+
 '<section class="section services-section"><div class="shell"><div class="section-heading">'+label('01 / What we do')+'<div class="heading-row"><h2>Services for every stage<br><em>of exhibition planning.</em></h2><p>Review the proposed design, visualisation, fabrication coordination, event branding and installation services for your next exhibition.</p></div></div>'+sectionImage('services')+serviceCards()+'</div></section>'+
 '<section class="section projects-section"><div class="shell"><div class="section-heading">'+label('02 / Exhibition concept studies')+'<div class="heading-row"><h2>Exhibition concepts<br><em>with a clear purpose.</em></h2><p>Explore illustrative stand and pavilion concepts showing different approaches to layouts, branding, displays and visitor experience. These are not completed ICONEX projects.</p></div></div>'+portfolio(true)+'<div class="section-end">'+button('View concept studies','/projects',true)+'</div></div></section>'+
@@ -47,8 +95,81 @@ function quote(){return intro('09 / Start a project','Request an exhibition<br><
 function legal(){return intro('Legal & privacy','Responsible<br><em>by design.</em>','Publication requires approved legal notices covering the actual company entity, services, jurisdictions and data practices.','LEGAL')+'<section class="section"><div class="shell"><div class="verification">VERIFICATION REQUIRED: Privacy Policy, Terms of Use, Cookie Notice, data retention, processors and company legal disclosures. No legal compliance is claimed.</div></div></section>';}
 function projectDetail(index){const i=Number(index)-1,p=concepts[i];if(!p)return intro('Project concept','Concept not found.','Return to the concept gallery.','404')+closing();return intro('Spatial studies / '+String(i+1).padStart(2,'0'),esc(p.n).replace(' ','<br><em>')+'</em>',esc(p.desc),'CONCEPT')+'<section class="section case-study"><div class="shell"><div class="case-back"><a href="#/projects">← Back to the concept gallery</a></div><div class="case-grid"><div class="case-visual concept-art '+p.shade+'"><img class="case-photo" src="'+p.image+'" alt="'+esc(p.alt)+'" loading="lazy" decoding="async" width="900" height="506"><span class="art-tag">AI-GENERATED CONCEPT — NOT A BUILT PROJECT</span></div><aside class="case-facts"><span class="eyebrow">Study notes</span><h2>Concept objectives and planning.</h2><dl><div><dt>Sector</dt><dd>'+esc(p.cat)+'</dd></div><div><dt>Format</dt><dd>'+esc(p.type)+'</dd></div><div><dt>Scale</dt><dd>'+esc(p.size)+' concept, dimensions unspecified</dd></div><div><dt>Status</dt><dd>Creative study only</dd></div></dl><p>'+esc(p.desc)+'</p></aside></div><div class="case-phases"><article><span>01 / INTENT</span><h3>Define the stand objectives.</h3><p>Identify priority audiences, product displays, meeting needs and intended visitor movement.</p></article><article><span>02 / SPACE</span><h3>Develop the spatial layout.</h3><p>Consider visibility, entry points, circulation, presentation areas and brand graphics.</p></article><article><span>03 / DEVELOPMENT</span><h3>Assess technical feasibility.</h3><p>Review relevant venue rules, technical drawings, materials and delivery scope if the concept advances.</p></article></div><div class="verification">This is an original design study for website demonstration. No client, venue, construction, delivery or project result is claimed. Approved ICONEX renders and site photographs must replace these assets before publication as completed work.</div></div></section>'+closing();}
 const routes={'/':home,'/about':about,'/services':servicesPage,'/projects':projectsPage,'/industries':industries,'/capabilities':capabilities,'/process':process,'/insights':insights,'/contact':contact,'/quote':quote,'/legal':legal};
+
+let heroSliderCleanup=()=>{};
+function disposeHeroSlider(){heroSliderCleanup();heroSliderCleanup=()=>{};}
+function setupHeroSlider(){
+  const root=document.getElementById('iconex-carousel');
+  if(!root)return;
+  const slides=[...root.querySelectorAll('.iconex-slide')];
+  const dots=[...root.querySelectorAll('.iconex-dot')];
+  const counter=root.querySelector('#iconex-slide-counter');
+  const pauseButton=root.querySelector('[data-hero-pause]');
+  const motion=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let index=0,timer=null,userPaused=false,pointerPaused=false,focusPaused=false;
+  function stop(){if(timer!==null){window.clearInterval(timer);timer=null;}}
+  function canPlay(){return !userPaused&&!pointerPaused&&!focusPaused&&!document.hidden&&!motion.matches;}
+  function show(n){
+    index=(n+slides.length)%slides.length;
+    slides.forEach((slide,i)=>{
+      const active=i===index;
+      slide.classList.toggle('active',active);
+      slide.setAttribute('aria-hidden',String(!active));
+      slide.inert=!active;
+    });
+    dots.forEach((dot,i)=>{
+      dot.classList.toggle('active',i===index);
+      dot.setAttribute('aria-current',i===index?'true':'false');
+    });
+    counter.textContent=String(index+1).padStart(2,'0')+' / 03';
+  }
+  function schedule(){stop();if(canPlay())timer=window.setInterval(()=>show(index+1),5000);}
+  function select(n){show(n);schedule();}
+  function prev(){select(index-1);}
+  function next(){select(index+1);}
+  const prevButton=root.querySelector('[data-hero-prev]');
+  const nextButton=root.querySelector('[data-hero-next]');
+  prevButton.addEventListener('click',prev);
+  nextButton.addEventListener('click',next);
+  const dotHandlers=dots.map((dot,i)=>{const cb=()=>select(i);dot.addEventListener('click',cb);return cb;});
+  function togglePause(){
+    userPaused=!userPaused;
+    pauseButton.setAttribute('aria-pressed',String(userPaused));
+    pauseButton.setAttribute('aria-label',userPaused?'Resume automatic slides':'Pause automatic slides');
+    pauseButton.textContent=userPaused?'Play':'Pause';
+    schedule();
+  }
+  function mouseEnter(){pointerPaused=true;schedule();}
+  function mouseLeave(){pointerPaused=false;schedule();}
+  function focusIn(){focusPaused=true;schedule();}
+  function focusOut(event){if(!root.contains(event.relatedTarget)){focusPaused=false;schedule();}}
+  function visibility(){schedule();}
+  function motionChange(){schedule();}
+  pauseButton.addEventListener('click',togglePause);
+  root.addEventListener('mouseenter',mouseEnter);
+  root.addEventListener('mouseleave',mouseLeave);
+  root.addEventListener('focusin',focusIn);
+  root.addEventListener('focusout',focusOut);
+  document.addEventListener('visibilitychange',visibility);
+  motion.addEventListener('change',motionChange);
+  show(0);schedule();
+  heroSliderCleanup=()=>{
+    stop();
+    prevButton.removeEventListener('click',prev);
+    nextButton.removeEventListener('click',next);
+    dots.forEach((dot,i)=>dot.removeEventListener('click',dotHandlers[i]));
+    pauseButton.removeEventListener('click',togglePause);
+    root.removeEventListener('mouseenter',mouseEnter);
+    root.removeEventListener('mouseleave',mouseLeave);
+    root.removeEventListener('focusin',focusIn);
+    root.removeEventListener('focusout',focusOut);
+    document.removeEventListener('visibilitychange',visibility);
+    motion.removeEventListener('change',motionChange);
+  };
+}
+
 const main=document.getElementById('main');
-function render(){let path=decodeURIComponent(location.hash.replace(/^#/,'')||'/');const fn=routes[path];const detail=path.match(/^\/project\/(\d+)$/);main.innerHTML=detail?projectDetail(detail[1]):fn?fn():intro('404','Nothing here.','The page you requested is unavailable.','404')+'<div class="shell section">'+button('Back to home','/')+'</div>';document.title=(path==='/'?'Exhibition Design & Services':path.slice(1).replace(/^\w/,a=>a.toUpperCase()))+' | ICONEX Preview';document.querySelectorAll('#links a').forEach(a=>{if(a.getAttribute('href')==='#'+path)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});const menu=document.getElementById('links'),toggle=document.getElementById('menu');menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');window.scrollTo(0,0);}
+function render(){disposeHeroSlider();let path=decodeURIComponent(location.hash.replace(/^#/,'')||'/');const fn=routes[path];const detail=path.match(/^\/project\/(\d+)$/);main.innerHTML=detail?projectDetail(detail[1]):fn?fn():intro('404','Nothing here.','The page you requested is unavailable.','404')+'<div class="shell section">'+button('Back to home','/')+'</div>';document.title=(path==='/'?'Exhibition Design & Services':path.slice(1).replace(/^\w/,a=>a.toUpperCase()))+' | ICONEX Preview';document.querySelectorAll('#links a').forEach(a=>{if(a.getAttribute('href')==='#'+path)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});const menu=document.getElementById('links'),toggle=document.getElementById('menu');menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');window.scrollTo(0,0);if(path==='/')setupHeroSlider();}
 document.getElementById('menu').addEventListener('click',()=>{const nav=document.getElementById('links'),open=nav.classList.toggle('open');document.getElementById('menu').setAttribute('aria-expanded',String(open));});
 function applyGalleryFilters(){const filters={industry:document.getElementById('industryFilter')?.value||'All',type:document.getElementById('typeFilter')?.value||'All',size:document.getElementById('sizeFilter')?.value||'All'};let count=0;document.querySelectorAll('.project-card').forEach(card=>{const show=Object.entries(filters).every(([k,v])=>v==='All'||card.dataset[k]===v);card.hidden=!show;if(show)count++});const el=document.getElementById('galleryCount');if(el)el.textContent=count?count+' concept '+(count===1?'study':'studies'):'No matching concepts. Adjust the filters.';}
 document.addEventListener('change',e=>{if(e.target.matches('[data-gallery-filter]'))applyGalleryFilters()});
