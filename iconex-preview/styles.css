@@ -40,3 +40,101 @@
 .nav .logo.logo-image{display:flex;align-items:center;width:220px;max-width:29vw;flex:none;line-height:1;letter-spacing:normal}
 .nav .logo.logo-image img{display:block;width:100%;height:auto;object-fit:contain}
 @media(max-width:740px){.nav .logo.logo-image{width:185px;max-width:58vw}}
+
+
+/* ============================================================
+   ICONEX TWO-COLOR BRAND THEME · 2026-11-03
+   Original layout, typography, logo artwork and copy untouched.
+   Only #374B8C, white, and alpha blends of these two hues.
+   ============================================================ */
+:root{
+  --brand:#374B8C; --white:#FFFFFF;
+  --ink:#374B8C; --paper:#FFFFFF; --ochre:#374B8C; --copper:#374B8C;
+  --muted:#374B8C; --line:rgba(55,75,140,.16); --blue:#374B8C; --dark:#374B8C;
+  --brand-wash:rgba(55,75,140,.045); --brand-tint:rgba(55,75,140,.085);
+  --brand-rule:rgba(55,75,140,.16); --brand-soft:rgba(55,75,140,.42);
+}
+body{background:#fff;color:var(--brand)}
+.banner{background:var(--brand);color:#fff}
+.header{background:rgba(255,255,255,.97);border-bottom-color:var(--brand-rule)}
+.logo,.nav nav a,.nav nav a[aria-current=page]{color:var(--brand)}
+.nav nav a:hover,a:hover{color:var(--brand)}
+.nav .cta{background:var(--brand);color:#fff}
+.nav .cta:hover{background:linear-gradient(115deg,var(--brand),rgba(55,75,140,.88));color:#fff}
+.menu{color:var(--brand);border-color:var(--brand-rule);background:#fff}
+.eyebrow,.underlink,.mini-link,.case-link,.hero-index,.project-meta{color:var(--brand)}
+.eyeline{background:currentColor}
+.action{background:var(--brand);color:#fff;border-color:var(--brand)}
+.action:hover{background:linear-gradient(115deg,var(--brand),rgba(55,75,140,.84));color:#fff}
+.action-ghost{background:transparent;color:var(--brand);border-color:var(--brand-soft)}
+.action-ghost:hover{background:var(--brand-wash);color:var(--brand)}
+.hero-reinvent{background:linear-gradient(118deg,#374B8C 0%,#374B8C 36%,rgba(55,75,140,.90) 72%,rgba(55,75,140,.80) 100%);color:#fff}
+.hero-noise{background:repeating-linear-gradient(90deg,transparent 0 120px,rgba(255,255,255,.035) 121px 122px),linear-gradient(145deg,rgba(255,255,255,.08),transparent 55%)}
+.hero-topline,.hero-bottom{color:rgba(255,255,255,.77)}
+.hero-bottom{border-color:rgba(255,255,255,.19)}
+.hero-copy h1 em,.inner-hero h1 em,.statement-section h2 em{color:#fff}
+.hero-copy p{color:rgba(255,255,255,.82)}
+.hero-copy .eyebrow{color:#fff}
+.hero-copy .action{background:#fff;color:var(--brand);border-color:#fff}
+.hero-copy .action:hover{background:rgba(255,255,255,.9);color:var(--brand)}
+.hero-copy .action-ghost{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
+.hero-copy .action-ghost:hover{background:rgba(255,255,255,.14);color:#fff}
+.hero-sculpture{filter:drop-shadow(22px 32px 25px rgba(55,75,140,.34))}
+.sculpture-floor{background:linear-gradient(150deg,rgba(255,255,255,.85),rgba(255,255,255,.44) 48%,rgba(55,75,140,.45));border-color:rgba(255,255,255,.7)}
+.sculpture-shadow{background:rgba(55,75,140,.3)}
+.sculpture-frame{border-color:rgba(255,255,255,.89);box-shadow:inset 12px 12px 20px rgba(55,75,140,.12),18px 12px 0 rgba(55,75,140,.48)}
+.sculpture-frame.frame-2{border-color:rgba(255,255,255,.52)}
+.sculpture-frame.frame-3{border-color:rgba(255,255,255,.73)}
+.sculpture-column{background:linear-gradient(130deg,rgba(255,255,255,.89),rgba(255,255,255,.55),rgba(55,75,140,.8));box-shadow:16px 18px 0 rgba(55,75,140,.35)}
+.sculpture-plinth{background:linear-gradient(130deg,#fff,rgba(255,255,255,.55));box-shadow:12px 10px rgba(55,75,140,.45)}
+.sculpture-sign{color:#fff}
+.manifesto,.projects-section,.process-section,.case-study{background:#fff}
+.manifesto-grid p,.heading-row p,.project-info p,.service-item p,.step p,.case-facts p,.case-phases p{color:rgba(55,75,140,.82)}
+.oversized-marker{color:rgba(55,75,140,.16)}
+.services-section,.audience-section{background:var(--brand-wash)}
+.service-grid{border-color:var(--brand-rule)}
+.service-item{background:rgba(255,255,255,.78);border-color:var(--brand-rule)}
+.service-item:hover{background:#fff}
+.service-top,.service-top span,.service-item h3,.service-item .mini-link{color:var(--brand)}
+.project-overline,.project-meta,.project-info h3{color:var(--brand)}
+.project-overline,.industry-list,.industry-list a,.step,.case-phases,.case-facts dl,.case-facts dl>div{border-color:var(--brand-rule)}
+.project-card .concept-art,.concept-art{background:linear-gradient(135deg,rgba(55,75,140,.58),#374B8C) !important}
+.concept-art.sage{background:linear-gradient(140deg,rgba(255,255,255,.26),#374B8C 85%) !important}
+.concept-art.blue{background:linear-gradient(130deg,#374B8C,rgba(55,75,140,.68)) !important}
+.concept-art.umber{background:linear-gradient(130deg,rgba(255,255,255,.3),#374B8C 82%) !important}
+.render-slab{background:linear-gradient(110deg,#fff,rgba(255,255,255,.42))}
+.render-roof{background:linear-gradient(125deg,#fff,rgba(55,75,140,.58))}
+.render-wall{background:linear-gradient(110deg,rgba(255,255,255,.86),rgba(55,75,140,.44) 48%,#374B8C);border-left-color:#fff;border-right-color:rgba(255,255,255,.72)}
+.render-desk{background:linear-gradient(120deg,#fff,rgba(255,255,255,.54));box-shadow:10px 10px rgba(55,75,140,.4)}
+.render-line{background:#fff;box-shadow:0 22px rgba(255,255,255,.35),0 44px rgba(255,255,255,.25)}
+.art-tag{background:rgba(55,75,140,.92);color:#fff}
+.statement-section{background:linear-gradient(132deg,#374B8C,rgba(55,75,140,.86));color:#fff}
+.statement-index,.statement-section p{color:rgba(255,255,255,.78)}
+.giant-x{color:rgba(255,255,255,.075)}
+.process-section{background:#fff}
+.step span,.case-phases span,.gallery-count{color:var(--brand)}
+.industry-list a:hover{background:var(--brand-tint)}
+.industry-list a span,.industry-list a strong{color:var(--brand)}
+.closing{background:linear-gradient(130deg,rgba(55,75,140,.08),rgba(55,75,140,.16));color:var(--brand)}
+.closing .eyebrow,.closing p{color:var(--brand)}
+.closing .action{background:var(--brand);color:#fff;border-color:var(--brand)}
+.inner-hero{background:linear-gradient(110deg,#374B8C,rgba(55,75,140,.84));color:#fff}
+.inner-hero .eyebrow,.inner-hero p,.inner-hero .hero-index{color:rgba(255,255,255,.86)}
+.verification{background:var(--brand-wash);border-left-color:var(--brand);color:var(--brand)}
+.filter,.reset-gallery{background:#fff;color:var(--brand);border-color:var(--brand-rule)}
+.filter.active,.filter[aria-pressed=true],.reset-gallery:hover{background:var(--brand);color:#fff}
+.gallery-toolbar{border-color:var(--brand-rule)}
+.gallery-toolbar label,.case-facts dt,.case-back a{color:var(--brand)}
+.gallery-toolbar select{background-color:#fff;border-color:var(--brand-rule);color:var(--brand);
+background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='m1 1 4 4 4-4' fill='none' stroke='%23374B8C' stroke-width='1.5'/%3E%3C/svg%3E")}
+.case-link{border-bottom-color:var(--brand);color:var(--brand)}
+.case-facts dd,.case-phases h3{color:var(--brand)}
+.quote-form{background:#fff;border-color:var(--brand-rule)}
+.quote-form h3,.formrow label,.form-eyebrow,.quote-form>p{color:var(--brand)}
+.formrow input,.formrow textarea{background:#fff;color:var(--brand);border-color:var(--brand-rule)}
+.formrow input::placeholder,.formrow textarea::placeholder{color:rgba(55,75,140,.57)}
+.footer{background:var(--brand);color:#fff}
+.footer h2,.footgrid strong,.footer a{color:#fff}
+.footer p,.footbase{color:rgba(255,255,255,.78)}
+.footbase{border-color:rgba(255,255,255,.25)}
+@media(prefers-reduced-motion:reduce){.action:hover{transform:none}}
