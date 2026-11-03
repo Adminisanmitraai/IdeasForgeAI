@@ -138,3 +138,26 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 .footer p,.footbase{color:rgba(255,255,255,.78)}
 .footbase{border-color:rgba(255,255,255,.25)}
 @media(prefers-reduced-motion:reduce){.action:hover{transform:none}}
+
+/* ICONEX imagery milestone — preserve blue/white brand and existing structure */
+.hero-photo-frame{overflow:hidden;isolation:isolate;border:1px solid rgba(255,255,255,.24);background:rgba(55,75,140,.18);box-shadow:0 28px 65px rgba(55,75,140,.28)}
+.hero-photo-frame>.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;display:block;z-index:1}
+.hero-photo-frame>.hero-photo-caption{position:absolute;right:15px;bottom:16px;z-index:3;background:rgba(55,75,140,.84);color:#fff;padding:7px 10px;font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.hero-photo-frame>:not(.hero-photo):not(.hero-photo-caption){display:none!important}
+.hero-photo-frame:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(55,75,140,.26),transparent 58%);z-index:2;pointer-events:none}
+.editorial-visual{position:relative;margin:0 0 46px;background:rgba(55,75,140,.04);border:1px solid rgba(55,75,140,.13);overflow:hidden}
+.editorial-visual img{display:block;width:100%;height:auto;max-height:480px;aspect-ratio:16/9;object-fit:cover;object-position:center}
+.editorial-visual figcaption{padding:11px 15px;background:#fff;color:#374B8C;font-size:10px;line-height:1.5;letter-spacing:.07em;text-transform:uppercase}
+.editorial-about{margin-top:26px}
+.editorial-about img{max-height:300px;aspect-ratio:4/3;object-fit:cover}
+.editorial-industry img,.editorial-process img{max-height:380px}
+.editorial-portfolio img{max-height:450px}
+.project-image,.case-visual{isolation:isolate;position:relative}
+.project-photo,.case-photo{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center;z-index:2;transition:transform .35s ease}
+.project-card:hover .project-photo{transform:scale(1.025)}
+.project-image .art-tag,.case-visual .art-tag{z-index:5;background:rgba(55,75,140,.88);max-width:calc(100% - 28px);line-height:1.4}
+.case-photo{object-position:center}
+.case-link{display:inline-flex;margin-top:20px;gap:10px}
+@media(max-width:960px){.hero-photo-frame{opacity:.68}.editorial-visual img{max-height:360px}}
+@media(max-width:740px){.hero-photo-frame{width:85%;right:-28%;bottom:45px;opacity:.42;border:0;box-shadow:none}.hero-photo-caption{display:none}.editorial-visual{margin-bottom:26px}.editorial-visual img{max-height:265px}.editorial-about img{max-height:250px}.project-photo,.case-photo{object-position:center}}
+@media(prefers-reduced-motion:reduce){.project-photo,.case-photo{transition:none}.project-card:hover .project-photo{transform:none}}
