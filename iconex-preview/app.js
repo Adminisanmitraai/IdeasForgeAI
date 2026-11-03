@@ -32,17 +32,17 @@ const portfolio=(limited)=>'<div class="portfolio-grid">'+(limited?concepts.slic
 function heroSlider(){
   const slides=[
     '<div class="iconex-slide active" id="iconex-slide-1" role="group" aria-roledescription="slide" aria-label="Slide 1 of 3" aria-hidden="false">'+
-      '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("The three I’s of iCONEX")+
-        '<h1 class="iconex-hero-title three-i"><span><b class="initial-i">I</b>nspire,</span><em><b class="initial-i">I</b>nnovate,</em><span><b class="initial-i">I</b>mplement.</span></h1>'+
-        '<p>Our guiding principles for developing conferences, exhibitions and professional industry experiences.</p>'+
+      '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("THE THREE I\u0027S OF iCONEX")+
+        '<h1 class="iconex-hero-title three-i"><span><b class="initial-i">I</b>nspire, </span><em><b class="initial-i">I</b>nnovate, </em><span><b class="initial-i">I</b>mplement.</span></h1>'+
+        '<p>We specialize in organizing international conferences, exhibitions, and summits for governments and major industries, connecting stakeholders across borders to accelerate a sustainable future.</p>'+
         '<div class="hero-actions">'+button("Contact Us","/contact")+
           '<a class="action action-ghost" href="https://www.iconexglobal.com/events/all-events" target="_blank" rel="noopener noreferrer"><span>Upcoming Events</span><span aria-hidden="true">↗</span></a></div>'+
       '</div><figure class="iconex-slide-visual"><img src="./assets/hero.webp" alt="Concept rendering of a blue-and-white exhibition pavilion, not a completed ICONEX project" width="1672" height="941" fetchpriority="high"><figcaption>Illustrative exhibition concept · AI-generated</figcaption></figure></div>'+
     '</div>',
     '<div class="iconex-slide" id="iconex-slide-2" role="group" aria-roledescription="slide" aria-label="Slide 2 of 3" aria-hidden="true" inert>'+
       '<div class="iconex-slide-inner shell iconex-slide-method"><div class="iconex-slide-copy iconex-method-copy">'+label("Our approach")+
-        '<h2 class="iconex-hero-title method-heading">The 4D methodology<br><em>of iCONEX.</em></h2>'+
-        '<p>Four connected stages help structure event briefs, creative development and agreed delivery responsibilities.</p>'+
+        '<h2 class="iconex-hero-title method-heading">The 4D methodology <br><em>of iCONEX.</em></h2>'+
+        '<p>Our engineered framework transforms event briefs into reality. From clarifying audience priorities to coordinating structures and executing on the exhibition floor, we ensure every stage delivers measurable impact.</p>'+
         '<ol class="methodology-stages" aria-label="The four methodology stages in order">'+
           '<li><span class="stage-num">01</span><strong>DISCOVER</strong></li>'+
           '<li><span class="stage-num">02</span><strong>DESIGN</strong></li>'+
@@ -53,8 +53,8 @@ function heroSlider(){
     '</div>',
     '<div class="iconex-slide" id="iconex-slide-3" role="group" aria-roledescription="slide" aria-label="Slide 3 of 3" aria-hidden="true" inert>'+
       '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("Integrated event services")+
-        '<h2 class="iconex-hero-title one-partner">ONE PARTNER,<br><em>EVERY STAGE.</em></h2>'+
-        '<p>From research and programme planning through stakeholder coordination and event management, explore ICONEX’s stated service capabilities.</p>'+
+        '<h2 class="iconex-hero-title one-partner">ONE PARTNER, <br><em>EVERY STAGE.</em></h2>'+
+        '<p>Leverage our comprehensive capabilities. We seamlessly integrate high-impact architecture, immersive digital displays, and dedicated business interaction zones to elevate your global brand presence.</p>'+
         '<div class="hero-actions">'+button("Explore Services","/services")+button("Contact Us","/contact",true)+'</div>'+
       '</div><figure class="iconex-slide-visual"><img src="./assets/services.webp" alt="AI-generated exhibition spaces and services concept montage" width="1672" height="941" loading="lazy"><figcaption>Illustrative exhibition concepts · AI-generated</figcaption></figure></div>'+
     '</div>'
