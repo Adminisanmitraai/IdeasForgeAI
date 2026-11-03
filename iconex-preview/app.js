@@ -33,7 +33,7 @@ function heroSlider(){
   const slides=[
     '<div class="iconex-slide active" id="iconex-slide-1" role="group" aria-roledescription="slide" aria-label="Slide 1 of 3" aria-hidden="false">'+
       '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("THE THREE I\u0027S OF iCONEX")+
-        '<h1 class="iconex-hero-title three-i"><span><b class="initial-i">I</b>nspire, </span><em><b class="initial-i">I</b>nnovate, </em><span><b class="initial-i">I</b>mplement.</span></h1>'+
+        '<h1 class="iconex-hero-title three-i"><span><b class="initial-i">I</b>nspire, </span><span><b class="initial-i">I</b>nnovate, </span><span><b class="initial-i">I</b>mplement.</span></h1>'+
         '<p>We specialize in organizing international conferences, exhibitions, and summits for governments and major industries, connecting stakeholders across borders to accelerate a sustainable future.</p>'+
         '<div class="hero-actions">'+button("Contact Us","/contact")+
           '<a class="action action-ghost" href="https://www.iconexglobal.com/events/all-events" target="_blank" rel="noopener noreferrer"><span>Upcoming Events</span><span aria-hidden="true">↗</span></a></div>'+
