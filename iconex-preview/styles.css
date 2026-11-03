@@ -349,3 +349,20 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
  .iconex-slide.active{transition:none;transform:none}
  .iconex-dot{transition:none}
 }
+
+
+/* 4D accessibility refinement: preserve sequential reading order and logo red */
+.methodology-stages .stage-deliver strong{font-size:max(19px,1.8vw);font-weight:800}
+@media(max-width:560px){
+  .iconex-slide-stack,.iconex-slide-inner{min-height:835px}
+  .iconex-method-copy{padding-bottom:10px}
+  .method-heading{font-size:clamp(37px,8.4vw,49px)}
+  .methodology-stages{grid-template-columns:1fr;gap:7px;margin-top:18px}
+  .methodology-stages li{min-height:67px;padding:10px 16px;flex-direction:row;align-items:center;gap:17px}
+  .methodology-stages .stage-num{min-width:25px}
+  .methodology-stages strong,.methodology-stages .stage-deliver strong{font-size:19px}
+  .methodology-stages li:nth-child(1):after,
+  .methodology-stages li:nth-child(2):after,
+  .methodology-stages li:nth-child(3):after{content:"↓";display:grid;position:absolute;left:50%;right:auto;top:auto;bottom:-16px;transform:translateX(-50%);background:#fff;color:#374B8C;z-index:4;width:24px;height:24px}
+  .methodology-stages li:nth-child(2):before{display:none}
+}
