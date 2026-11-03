@@ -420,3 +420,21 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
  .discovery-card,.discovery-photo img{transition:none}
  .discovery-card:hover,.discovery-card:hover img{transform:none}
 }
+
+
+/* F1 responsive/navigation repairs: keep approved layout and branding */
+@media (min-width:741px) and (max-width:1120px){
+ .nav{gap:16px}
+ .nav .menu{display:block;margin-left:auto;min-height:44px;min-width:88px;white-space:nowrap}
+ .nav nav{display:none;position:absolute;left:0;right:0;top:100%;z-index:50;margin:0;padding:18px max(22px,5.8vw);background:#fff;border-bottom:1px solid rgba(55,75,140,.16);box-shadow:0 18px 28px rgba(55,75,140,.11);align-items:stretch;flex-direction:column;gap:0;max-height:calc(100vh - 120px);overflow-y:auto}
+ .nav nav.open{display:flex}
+ .nav nav a{font-size:13px;padding:12px 2px;border-bottom:1px solid rgba(55,75,140,.10)}
+ .nav .cta{display:inline-flex;margin-left:0;min-height:44px}
+}
+@media(max-width:740px){
+ .nav nav{max-height:calc(100vh - 92px);overflow-y:auto}
+ .nav .menu{min-height:44px}
+}
+@media(max-width:420px){
+ .nav .logo.logo-image{width:164px;max-width:51vw}
+}
