@@ -53,7 +53,7 @@ function heroSlider(){
     '</div>',
     '<div class="iconex-slide" id="iconex-slide-3" role="group" aria-roledescription="slide" aria-label="Slide 3 of 3" aria-hidden="true" inert>'+
       '<div class="iconex-slide-inner shell"><div class="iconex-slide-copy">'+label("Integrated event services")+
-        '<h2 class="iconex-hero-title one-partner">ONE PARTNER, <br><em>EVERY STAGE.</em></h2>'+
+        '<h2 class="iconex-hero-title one-partner">One Partner, <br><em>Every Stage.</em></h2>'+
         '<p>Leverage our comprehensive capabilities. We seamlessly integrate high-impact architecture, immersive digital displays, and dedicated business interaction zones to elevate your global brand presence.</p>'+
         '<div class="hero-actions">'+button("Explore Services","/services")+button("Contact Us","/contact",true)+'</div>'+
       '</div><figure class="iconex-slide-visual"><img src="./assets/services.webp" alt="AI-generated exhibition spaces and services concept montage" width="1672" height="941" loading="lazy"><figcaption>Illustrative exhibition concepts · AI-generated</figcaption></figure></div>'+
