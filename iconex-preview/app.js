@@ -196,9 +196,23 @@ function setupHeroSlider(){
 
 const main=document.getElementById('main');
 function render(){disposeHeroSlider();let path=decodeURIComponent(location.hash.replace(/^#/,'')||'/');const fn=routes[path];const detail=path.match(/^\/project\/(\d+)$/);main.innerHTML=detail?projectDetail(detail[1]):fn?fn():intro('404','Nothing here.','The page you requested is unavailable.','404')+'<div class="shell section">'+button('Back to home','/')+'</div>';document.title=(path==='/'?'Exhibition Design & Services':path.slice(1).replace(/^\w/,a=>a.toUpperCase()))+' | ICONEX Preview';document.querySelectorAll('#links a').forEach(a=>{if(a.getAttribute('href')==='#'+path)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});const menu=document.getElementById('links'),toggle=document.getElementById('menu');menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');window.scrollTo(0,0);if(path==='/')setupHeroSlider();}
-document.getElementById('menu').addEventListener('click',()=>{const nav=document.getElementById('links'),open=nav.classList.toggle('open');document.getElementById('menu').setAttribute('aria-expanded',String(open));});
+const navToggle=document.getElementById('menu');
+const navPanel=document.getElementById('links');
+function closeMobileNav(returnFocus=false){
+ navPanel.classList.remove('open');
+ navToggle.setAttribute('aria-expanded','false');
+ if(returnFocus)navToggle.focus();
+}
+navToggle.addEventListener('click',()=>{
+ const open=navPanel.classList.toggle('open');
+ navToggle.setAttribute('aria-expanded',String(open));
+ if(open)navPanel.querySelector('a')?.focus();
+});
+document.addEventListener('pointerdown',event=>{
+ if(navPanel.classList.contains('open')&&!navPanel.contains(event.target)&&!navToggle.contains(event.target))closeMobileNav();
+});
 function applyGalleryFilters(){const filters={industry:document.getElementById('industryFilter')?.value||'All',type:document.getElementById('typeFilter')?.value||'All',size:document.getElementById('sizeFilter')?.value||'All'};let count=0;document.querySelectorAll('.project-card').forEach(card=>{const show=Object.entries(filters).every(([k,v])=>v==='All'||card.dataset[k]===v);card.hidden=!show;if(show)count++});const el=document.getElementById('galleryCount');if(el)el.textContent=count?count+' concept '+(count===1?'study':'studies'):'No matching concepts. Adjust the filters.';}
 document.addEventListener('change',e=>{if(e.target.matches('[data-gallery-filter]'))applyGalleryFilters()});
 document.addEventListener('click',e=>{if(e.target.id==='resetGallery'){document.querySelectorAll('[data-gallery-filter]').forEach(s=>s.value='All');applyGalleryFilters()}});
-document.addEventListener('keydown',event=>{if(event.key==='Escape'){document.getElementById('links').classList.remove('open');document.getElementById('menu').setAttribute('aria-expanded','false');}});
-window.addEventListener('hashchange',render);render();
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&navPanel.classList.contains('open')){closeMobileNav(true);}});
+window.addEventListener('hashchange',()=>{render();main.focus({preventScroll:true});});render();
