@@ -438,3 +438,9 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 @media(max-width:420px){
  .nav .logo.logo-image{width:164px;max-width:51vw}
 }
+
+/* Accommodate approved longer hero copy at tablet widths without changing typography or columns */
+@media(min-width:741px) and (max-width:980px){
+ .iconex-slide-stack{min-height:730px}
+ .iconex-slide-inner{min-height:730px;padding-bottom:115px}
+}
