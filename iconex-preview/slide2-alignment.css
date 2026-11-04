@@ -1,0 +1,103 @@
+/* Slide 2 only: equal 4D cells, matched label baselines and ordered connectors.
+   No changes to Slide 1, Slide 3, copy, colours or carousel behaviour. */
+#iconex-slide-2 .methodology-stages {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  padding: 0;
+  list-style: none;
+  box-sizing: border-box;
+}
+#iconex-slide-2 .methodology-stages > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 14px 30px;
+  align-content: center;
+  justify-items: start;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 124px;
+  margin: 0;
+  padding: 22px 24px;
+  box-sizing: border-box;
+  border: 0;
+  border-right: 1px solid rgba(55, 75, 140, .14);
+  background: #ffffff;
+  text-align: left;
+}
+#iconex-slide-2 .methodology-stages > li:last-child { border-right: 0; }
+#iconex-slide-2 .methodology-stages .stage-num {
+  display: block;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  font-size: 11px;
+  line-height: 14px;
+}
+#iconex-slide-2 .methodology-stages strong,
+#iconex-slide-2 .methodology-stages .stage-deliver strong {
+  display: block;
+  margin: 0;
+  padding: 0;
+  font-family: 'Manrope', Arial, sans-serif;
+  font-size: clamp(19px, 1.65vw, 23px);
+  font-weight: 700;
+  line-height: 30px;
+  letter-spacing: .035em;
+  white-space: nowrap;
+}
+#iconex-slide-2 .methodology-stages > li::before,
+#iconex-slide-2 .methodology-stages > li::after {
+  content: none;
+  display: none;
+}
+#iconex-slide-2 .methodology-stages > li:not(:last-child)::after {
+  content: '\2192';
+  position: absolute;
+  display: grid;
+  place-items: center;
+  top: calc(50% + 13px);
+  right: -13px;
+  bottom: auto;
+  left: auto;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: #ffffff;
+  color: #374b8c;
+  font: 400 20px/1 Arial, sans-serif;
+  z-index: 3;
+  pointer-events: none;
+}
+@media (min-width: 741px) and (max-width: 980px) {
+  #iconex-slide-2 .methodology-stages > li { padding-inline: 18px; }
+}
+@media (max-width: 740px) {
+  #iconex-slide-2 .methodology-stages { grid-template-columns: 1fr; gap: 8px; }
+  #iconex-slide-2 .methodology-stages > li {
+    grid-template-columns: 26px minmax(0, 1fr);
+    grid-template-rows: 30px;
+    gap: 16px;
+    min-height: 68px;
+    padding: 18px 22px;
+    border: 0;
+  }
+  #iconex-slide-2 .methodology-stages strong,
+  #iconex-slide-2 .methodology-stages .stage-deliver strong { font-size: 20px; }
+  #iconex-slide-2 .methodology-stages > li:not(:last-child)::after {
+    content: '\2193';
+    top: auto;
+    right: auto;
+    bottom: -17px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
