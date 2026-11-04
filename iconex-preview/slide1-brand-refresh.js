@@ -1,7 +1,7 @@
 /* ICONEX: scoped Slide 1 replacement. Original routes, timer and slides 2/3 remain owned by app.js. */
 (function () {
   'use strict';
-  const VERSION = '20261104-brand374b8c-v1';
+  const VERSION = '20261104-brand374b8c-v2-plain-bold';
   const original = window.heroSlider;
   if (typeof original !== 'function' || original.iconexBrandVersion === VERSION) return;
 
@@ -25,9 +25,9 @@
   function content() {
     return `<div class="s1-brand-grid">
       <div class="s1-brand-copy">
-        <h1 class="s1-visually-hidden">Inspire, Innovate, Implement.</h1>
+        <h1 class="s1-visually-hidden">Inspire, Innovate, Implement</h1>
         <ul class="s1-brand-list" aria-label="Our guiding principles">
-          <li>Inspire</li><li>Innovate</li><li>Implement.</li>
+          <li>Inspire</li><li>Innovate</li><li>Implement</li>
         </ul>
         <p class="s1-brand-description">We specialize in organizing international conferences, exhibitions, and summits for governments and major industries, connecting stakeholders across borders to accelerate a sustainable future.</p>
         <div class="s1-brand-actions">
