@@ -448,3 +448,175 @@ background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 /* Hero heading typography consistency — no content or layout redesign */
 .three-i>span{font-family:'Manrope',Arial,sans-serif;font-style:normal;font-weight:700;letter-spacing:-.055em}
 .one-partner em{font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:500;letter-spacing:-.025em;line-height:1.08}
+
+
+/* ICONEX GEOMETRIC MOSAIC — blue/white photo treatment
+   Preserves existing layout and type; photo framing only.
+*/
+:root {
+  --mosaic-blue: #374b8c;
+  --mosaic-white: #ffffff;
+  --mosaic-frost: rgba(255,255,255,.68);
+  --mosaic-edge: rgba(55,75,140,.16);
+  --mosaic-gradient: linear-gradient(132deg,
+    #374b8c 0%,
+    rgba(55,75,140,.88) 27%,
+    rgba(55,75,140,.55) 54%,
+    rgba(255,255,255,.72) 78%,
+    #ffffff 100%);
+}
+.iconex-slide-visual.mosaic-stage{
+  isolation:isolate;
+  overflow:hidden;
+  background:var(--mosaic-gradient);
+  border:1px solid rgba(255,255,255,.48);
+}
+.mosaic-stage::before{
+  content:"";position:absolute;z-index:0;inset:-20% -24%;
+  background:linear-gradient(118deg,
+    rgba(255,255,255,.88),
+    rgba(255,255,255,.08) 40%,
+    rgba(55,75,140,.55) 78%,
+    rgba(55,75,140,.87));
+  transform:skew(-15deg);
+}
+.mosaic-stage::after{
+  content:"";position:absolute;z-index:3;
+  width:58%;height:65%;right:-31%;top:-34%;
+  background:linear-gradient(140deg,
+    rgba(255,255,255,.65),rgba(255,255,255,.12) 48%,
+    rgba(55,75,140,.40));
+  transform:rotate(45deg);
+  pointer-events:none;
+}
+.mosaic-stage .mosaic-main{
+  position:absolute;inset:5% 11% 5% 3%;z-index:1;
+  clip-path:polygon(0 0,100% 0,100% 76%,77% 100%,0 100%);
+  overflow:hidden;
+  box-shadow:0 12px 35px rgba(55,75,140,.18);
+}
+.mosaic-stage .mosaic-main img{
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  display:block;transform:scale(1.03);
+}
+.mosaic-stage .mosaic-inset{
+  position:absolute;z-index:2;right:1.5%;bottom:18%;
+  width:31%;aspect-ratio:1;transform:rotate(45deg);
+  overflow:hidden;
+  border:4px solid rgba(255,255,255,.93);
+  box-shadow:0 12px 26px rgba(55,75,140,.2);
+  background:#374b8c;
+}
+.mosaic-stage .mosaic-inset img{
+  width:145%;height:145%;
+  max-width:none;max-height:none;
+  object-fit:cover;
+  position:absolute;top:-22.5%;left:-22.5%;
+  transform:rotate(-45deg) scale(1.15);
+  display:block;
+}
+.mosaic-stage .mosaic-crest{
+  position:absolute;z-index:2;left:-14%;bottom:-41%;
+  width:54%;aspect-ratio:1;transform:rotate(45deg);
+  border:2px solid rgba(255,255,255,.56);
+  background:linear-gradient(115deg,
+    rgba(255,255,255,.26),rgba(55,75,140,.16) 55%,
+    rgba(255,255,255,.63));
+  pointer-events:none;
+}
+.mosaic-stage>figcaption{z-index:5;left:14px;right:auto;bottom:11px}
+.mosaic-stage .mosaic-main img,
+.mosaic-stage .mosaic-inset img{transition:transform .45s ease}
+.mosaic-stage:hover .mosaic-main img{transform:scale(1.075)}
+/* Soft diamond and diagonal framing for editorial imagery. */
+.editorial-visual.mosaic-editorial{
+  isolation:isolate;
+  background:var(--mosaic-gradient);
+  padding:clamp(8px,1.4vw,18px);
+  border:1px solid var(--mosaic-edge);
+}
+.mosaic-editorial .mosaic-editorial-main{
+  display:block;position:relative;
+  width:100%;min-width:0;overflow:hidden;
+  clip-path:polygon(0 0,100% 0,100% 83%,86% 100%,0 100%);
+  background:#374b8c;
+}
+.mosaic-editorial .mosaic-editorial-main img{
+  display:block;width:100%;height:auto;
+  aspect-ratio:16/9;object-fit:cover;
+}
+.mosaic-editorial .mosaic-editorial-diamond{
+  position:absolute;z-index:1;right:-6%;top:-18%;
+  width:24%;aspect-ratio:1;transform:rotate(45deg);
+  border:2px solid rgba(255,255,255,.66);
+  background:linear-gradient(120deg,
+    rgba(55,75,140,.35),rgba(255,255,255,.34) 50%,
+    rgba(255,255,255,.82));
+  pointer-events:none;
+}
+.mosaic-editorial figcaption{position:relative;z-index:3}
+/* Photo cards keep their original dimensions, titles and controls. */
+.project-image.mosaic-project,.case-visual.mosaic-project{
+  isolation:isolate;background:var(--mosaic-gradient);
+}
+.mosaic-project .mosaic-project-plane{
+  position:absolute;inset:0;z-index:0;
+  background:linear-gradient(140deg,
+    rgba(55,75,140,.08),rgba(255,255,255,.76) 50%,
+    rgba(55,75,140,.46));
+}
+.mosaic-project .project-photo,.mosaic-project .case-photo{
+  inset:4% 7% 4% 4%;
+  width:89%;height:92%;
+  clip-path:polygon(0 0,100% 0,100% 80%,81% 100%,0 100%);
+  z-index:2;
+}
+.mosaic-project::before{
+  content:"";position:absolute;right:-12%;top:-23%;
+  width:43%;aspect-ratio:1;transform:rotate(45deg);
+  background:linear-gradient(110deg,
+    rgba(255,255,255,.80),rgba(55,75,140,.14) 55%,
+    rgba(55,75,140,.49));
+  border:1px solid rgba(255,255,255,.82);z-index:1;
+  pointer-events:none;
+}
+.mosaic-project::after{
+  content:"";position:absolute;left:-13%;bottom:-35%;
+  width:46%;aspect-ratio:1;transform:rotate(45deg);
+  border:2px solid rgba(255,255,255,.67);
+  background:linear-gradient(100deg,
+    rgba(255,255,255,.05),rgba(55,75,140,.36));
+  z-index:3;pointer-events:none;
+}
+.mosaic-project .art-tag{left:14px;bottom:14px;z-index:5}
+.discovery-photo.mosaic-discovery{
+  isolation:isolate;
+  background:var(--mosaic-gradient);
+  padding:clamp(5px,1vw,10px);
+}
+.mosaic-discovery img{
+  width:100%;height:100%;
+  clip-path:polygon(0 0,100% 0,100% 77%,80% 100%,0 100%);
+}
+.mosaic-discovery::after{
+  content:"";position:absolute;z-index:1;
+  right:-10%;top:-38%;width:48%;aspect-ratio:1;
+  transform:rotate(45deg);pointer-events:none;
+  border:1px solid rgba(255,255,255,.85);
+  background:linear-gradient(125deg,
+    rgba(255,255,255,.68),rgba(55,75,140,.25));
+}
+.discovery-photo.mosaic-discovery span{z-index:3}
+@media(max-width:740px){
+ .mosaic-stage .mosaic-main{inset:4% 8% 4% 2%}
+ .mosaic-stage .mosaic-inset{width:29%;right:1%;bottom:21%;border-width:2px}
+ .mosaic-stage .mosaic-crest{opacity:.5}
+ .mosaic-editorial .mosaic-editorial-diamond{width:25%;right:-10%}
+ .mosaic-project .project-photo,.mosaic-project .case-photo{
+   inset:3% 5%;width:90%;height:94%;
+ }
+}
+@media(prefers-reduced-motion:reduce){
+ .mosaic-stage .mosaic-main img,.mosaic-stage .mosaic-inset img{transition:none}
+ .mosaic-stage:hover .mosaic-main img{transform:scale(1.03)}
+}
