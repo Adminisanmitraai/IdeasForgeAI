@@ -40,16 +40,13 @@
   color: #ffffff;
   font-family: 'Manrope', Arial, sans-serif;
   font-size: clamp(42px, 4.3vw, 66px);
-  font-weight: 400;
+  font-weight: 700;
   font-style: normal;
   line-height: 1.13;
   letter-spacing: -.035em;
 }
 #iconex-slide-1.s1-brand-final .s1-brand-list li {
-  display: grid;
-  grid-template-columns: .16em minmax(0, 1fr);
-  gap: .4em;
-  align-items: center;
+  display: block;
   color: #ffffff;
   margin: 0;
   padding: 0;
@@ -57,13 +54,8 @@
   letter-spacing: inherit;
 }
 #iconex-slide-1.s1-brand-final .s1-brand-list li::before {
-  content: '';
-  display: block;
-  width: .15em;
-  height: .15em;
-  border-radius: 50%;
-  background: #ffffff;
-  border: 0;
+  content: none;
+  display: none;
 }
 #iconex-slide-1.s1-brand-final .s1-brand-description {
   margin: 0;
