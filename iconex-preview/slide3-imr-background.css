@@ -1,0 +1,54 @@
+/* Slide 3 only: original supplied IMR concept image with a transparent brand-blue blend.
+   No changes to copy, typography, buttons, shared carousel rules, or other slides. */
+#iconex-slide-3 {
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #374b8c;
+}
+#iconex-slide-3::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("./assets/imr-slide3-background.avif");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  opacity: .84;
+}
+#iconex-slide-3::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(55,75,140,.98) 0%,
+    rgba(55,75,140,.96) 22%,
+    rgba(55,75,140,.90) 40%,
+    rgba(55,75,140,.79) 52%,
+    rgba(55,75,140,.35) 72%,
+    rgba(255,255,255,.07) 100%);
+}
+#iconex-slide-3 > .iconex-slide-inner {
+  position: relative;
+  z-index: 2;
+}
+/* The image now fills the background instead of a separate right-hand card. */
+#iconex-slide-3 .iconex-slide-visual {
+  display: none;
+}
+@media (max-width: 740px) {
+  #iconex-slide-3::before {
+    background-position: 62% center;
+  }
+  #iconex-slide-3::after {
+    background: linear-gradient(180deg,
+      rgba(55,75,140,.98) 0%,
+      rgba(55,75,140,.94) 32%,
+      rgba(55,75,140,.91) 57%,
+      rgba(55,75,140,.72) 78%,
+      rgba(55,75,140,.38) 100%);
+  }
+}
