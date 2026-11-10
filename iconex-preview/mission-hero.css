@@ -25,7 +25,7 @@
 #iconex-mission-hero .ix-mission-media { z-index: -3; }
 #iconex-mission-hero .ix-mission-media img { display: block; position: absolute; width: 100%; height: 100%; object-fit: cover; }
 #iconex-mission-hero .ix-mission-summit { inset: 0; object-position: 50% 45%; }
-#iconex-mission-hero .ix-mission-pavilion {
+#iconex-mission-hero .ix-mission-media .ix-mission-pavilion {
   inset: 0 0 0 auto;
   width: 46%;
   object-position: 63% 50%;
@@ -155,7 +155,7 @@
   #iconex-mission-hero .ix-mission-actions { flex-direction: column; gap: 16px; margin-top: 36px; }
   #iconex-mission-hero .ix-mission-button { width: 100%; min-height: 54px; font-size: 14px; padding-inline: 18px; }
   #iconex-mission-hero .ix-mission-scroll { bottom: 22px; }
-  #iconex-mission-hero .ix-mission-pavilion { display: none; }
+  #iconex-mission-hero .ix-mission-media .ix-mission-pavilion { display: none; }
   #iconex-mission-hero .ix-mission-summit { object-position: 58% 50%; }
   #methodology.ix-methodology { padding: 64px 24px; scroll-margin-top: 100px; }
   #methodology .ix-methodology-stages { grid-template-columns: 1fr; margin-top: 30px; }
