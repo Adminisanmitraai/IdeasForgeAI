@@ -1,0 +1,167 @@
+/* Section 4 only. Intentional 3 x 2 desktop layout gives long institutional
+   labels and the exhibition-area unit room to breathe. */
+#iconex-impact-metrics {
+  --impact-navy: #07152b;
+  --impact-gold: #c59b27;
+  background: var(--impact-navy);
+  color: #ffffff;
+  isolation: isolate;
+  scroll-margin-top: 112px;
+  font-family: 'Manrope', 'Inter', Arial, sans-serif;
+}
+#iconex-impact-metrics, #iconex-impact-metrics * { box-sizing: border-box; }
+#iconex-impact-metrics .ix-impact-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 64px 24px;
+}
+#iconex-impact-metrics .ix-impact-intro { text-align: center; margin-bottom: 36px; }
+#iconex-impact-metrics .ix-impact-overline {
+  color: #c59b27;
+  margin: 0 0 12px;
+  font: 600 12px/1.6 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: .15em;
+}
+#iconex-impact-metrics h2 {
+  margin: 0;
+  color: #ffffff;
+  font: 700 clamp(28px, 3vw, 40px)/1.2 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: -.025em;
+}
+#iconex-impact-metrics .ix-impact-panel {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(30, 41, 59, .8);
+  border-top-color: rgba(197, 155, 39, .3);
+  border-radius: 16px;
+  background: rgba(11, 30, 63, .45);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(232, 193, 90, .08), 0 16px 40px rgba(0, 0, 0, .08);
+}
+#iconex-impact-metrics .ix-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px 16px;
+  margin: 0;
+  padding: 24px 8px;
+}
+#iconex-impact-metrics .ix-impact-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  border-radius: 8px;
+  transition: background-color .3s ease, box-shadow .3s ease;
+}
+#iconex-impact-metrics .ix-impact-value {
+  order: -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: baseline;
+  align-content: flex-start;
+  gap: 3px 6px;
+  min-height: 78px;
+  width: 100%;
+  margin: 0 0 14px;
+  font-variant-numeric: tabular-nums;
+}
+#iconex-impact-metrics .ix-impact-figure { display: inline-flex; align-items: baseline; gap: 2px; white-space: nowrap; }
+#iconex-impact-metrics .ix-impact-number {
+  display: inline-grid;
+  font: 800 clamp(30px, 7vw, 34px)/1.1 'Manrope', 'Inter', Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.035em;
+  color: #e8c15a;
+}
+/* Invisible final value reserves the full number width while counting. */
+#iconex-impact-metrics .ix-impact-number::before { content: attr(data-final); visibility: hidden; grid-area: 1 / 1; }
+#iconex-impact-metrics .ix-impact-current { grid-area: 1 / 1; justify-self: end; transition: filter .3s ease; }
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  #iconex-impact-metrics .ix-impact-current {
+    background: linear-gradient(135deg, #ffffff 30%, #e8c15a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+#iconex-impact-metrics .ix-impact-plus, #iconex-impact-metrics .ix-impact-unit {
+  color: #c59b27;
+  font: 600 22px/1.1 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: -.02em;
+  white-space: nowrap;
+}
+#iconex-impact-metrics .ix-impact-unit { flex-basis: 100%; }
+#iconex-impact-metrics .ix-impact-label {
+  min-height: 4.2em;
+  width: 100%;
+  color: #ffffff;
+  font: 600 13px/1.4 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  overflow-wrap: normal;
+  margin: 0;
+}
+#iconex-impact-metrics .ix-impact-context {
+  color: #94a3b8;
+  font: 400 12px/1.6 'Manrope', 'Inter', Arial, sans-serif;
+  margin: 4px 0 0;
+  max-width: 100%;
+}
+#iconex-impact-metrics .ix-impact-sr {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+@media (hover: hover) and (pointer: fine) {
+  #iconex-impact-metrics .ix-impact-stat:hover { background: rgba(197, 155, 39, .04); box-shadow: 0 0 28px rgba(197, 155, 39, .06); }
+  #iconex-impact-metrics .ix-impact-stat:hover .ix-impact-current { filter: drop-shadow(0 0 10px rgba(232, 193, 90, .28)); }
+}
+@media (min-width: 768px) {
+  #iconex-impact-metrics .ix-impact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 24px; padding: 32px 16px; }
+  #iconex-impact-metrics .ix-impact-stat { padding-inline: 4px; }
+  #iconex-impact-metrics .ix-impact-number { font-size: clamp(38px, 3.6vw, 46px); }
+  #iconex-impact-metrics .ix-impact-plus, #iconex-impact-metrics .ix-impact-unit { font-size: 24px; }
+  #iconex-impact-metrics .ix-impact-label { min-height: 2.8em; }
+}
+@media (min-width: 1024px) {
+  #iconex-impact-metrics .ix-impact-inner { padding-inline: 32px; }
+  #iconex-impact-metrics .ix-impact-grid { gap: 0; padding: 12px 0; }
+  #iconex-impact-metrics .ix-impact-stat { padding: 24px 22px; border-radius: 0; }
+  #iconex-impact-metrics .ix-impact-stat:not(:nth-child(3n)) { border-right: 1px solid rgba(30, 41, 59, .8); }
+  #iconex-impact-metrics .ix-impact-stat:nth-child(n+4) { border-top: 1px solid rgba(30, 41, 59, .6); }
+  #iconex-impact-metrics .ix-impact-number { font-size: clamp(38px, 3.6vw, 46px); }
+  #iconex-impact-metrics .ix-impact-plus, #iconex-impact-metrics .ix-impact-unit { font-size: clamp(22px, 2vw, 26px); }
+  #iconex-impact-metrics .ix-impact-value { flex-wrap: nowrap; min-height: 56px; }
+  #iconex-impact-metrics .ix-impact-unit { flex-basis: auto; }
+  #iconex-impact-metrics .ix-impact-label { font-size: 14px; min-height: 2.8em; }
+}
+@media (max-width: 380px) {
+  #iconex-impact-metrics .ix-impact-grid { padding-inline: 4px; }
+  #iconex-impact-metrics .ix-impact-number { font-size: 30px; }
+  #iconex-impact-metrics .ix-impact-label { letter-spacing: .02em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #iconex-impact-metrics *, #iconex-impact-metrics *::before { transition: none !important; animation: none !important; }
+}
+@media (forced-colors: active) {
+  #iconex-impact-metrics .ix-impact-current { color: CanvasText; -webkit-text-fill-color: CanvasText; background: none; }
+}
+@media print {
+  #iconex-impact-metrics .ix-impact-current { display: none; }
+  #iconex-impact-metrics .ix-impact-number::before { visibility: visible; }
+}
