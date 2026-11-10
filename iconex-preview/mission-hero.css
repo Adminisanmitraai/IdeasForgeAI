@@ -1,0 +1,174 @@
+/* Section 2: mission-led hero, isolated from the existing header and page styles. */
+#iconex-mission-hero {
+  --mission-navy: #07152b;
+  --mission-navy-soft: #0b1e3f;
+  --mission-gold: #d4af37;
+  --mission-cta: #c59b27;
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  min-height: max(640px, calc(100svh - 92px));
+  box-sizing: border-box;
+  padding: 86px 24px 116px;
+  overflow: hidden;
+  color: #ffffff;
+  background: radial-gradient(ellipse at 50% 22%, #0b1e3f 0%, #07152b 82%);
+  font-family: 'Manrope', 'Inter', Arial, sans-serif;
+}
+#iconex-mission-hero *, #methodology * { box-sizing: border-box; }
+#iconex-mission-hero .ix-mission-media,
+#iconex-mission-hero .ix-mission-scrim,
+#iconex-mission-hero .ix-mission-geometry { position: absolute; inset: 0; pointer-events: none; }
+#iconex-mission-hero .ix-mission-media { z-index: -3; }
+#iconex-mission-hero .ix-mission-media img { display: block; position: absolute; width: 100%; height: 100%; object-fit: cover; }
+#iconex-mission-hero .ix-mission-summit { inset: 0; object-position: 50% 45%; }
+#iconex-mission-hero .ix-mission-pavilion {
+  inset: 0 0 0 auto;
+  width: 46%;
+  object-position: 63% 50%;
+  opacity: .52;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 65%);
+  mask-image: linear-gradient(90deg, transparent, #000 65%);
+}
+#iconex-mission-hero .ix-mission-scrim {
+  z-index: -2;
+  background: linear-gradient(180deg, rgba(7,21,43,.75) 0%, rgba(7,21,43,.95) 100%);
+}
+#iconex-mission-hero .ix-mission-geometry {
+  z-index: -1;
+  opacity: .32;
+  background-image: linear-gradient(118deg, transparent 70%, rgba(212,175,55,.13) 70.08%, transparent 70.16%), linear-gradient(62deg, transparent 23%, rgba(255,255,255,.09) 23.08%, transparent 23.16%);
+}
+#iconex-mission-hero .ix-mission-content { position: relative; width: 100%; max-width: 1080px; margin: 0 auto; text-align: center; }
+#iconex-mission-hero .ix-mission-badge {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0 0 26px;
+  padding: 11px 18px;
+  border: 1px solid rgba(212,175,55,.25);
+  border-radius: 999px;
+  color: #d4af37;
+  background: rgba(7,21,43,.6);
+  font: 600 12px/1.7 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+#iconex-mission-hero .ix-mission-title {
+  max-width: 1050px;
+  margin: 0 auto;
+  color: #ffffff;
+  font: 800 clamp(54px,4.4vw,64px)/1.15 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+#iconex-mission-hero .ix-mission-title span { color: #e8c15a; }
+@supports ((background-clip: text) or (-webkit-background-clip: text)) {
+  #iconex-mission-hero .ix-mission-title span {
+    background: linear-gradient(90deg, #ffffff, #e8c15a);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+#iconex-mission-hero .ix-mission-lead {
+  max-width: 760px;
+  margin: 26px auto 0;
+  color: #cbd5e1;
+  font: 400 clamp(18px,1.35vw,20px)/1.65 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: 0;
+  text-wrap: pretty;
+}
+#iconex-mission-hero .ix-mission-actions { display: flex; align-items: stretch; justify-content: center; flex-wrap: wrap; gap: 16px; margin-top: 36px; }
+#iconex-mission-hero .ix-mission-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 14px 28px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font: 600 15px/1.5 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: .01em;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease, border-color .2s ease;
+}
+#iconex-mission-hero .ix-mission-primary { background: #c59b27; color: #07152b; }
+#iconex-mission-hero .ix-mission-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(197,155,39,.35); }
+#iconex-mission-hero .ix-mission-secondary { padding-inline: 26px; border-color: rgba(255,255,255,.25); background: transparent; color: #ffffff; }
+#iconex-mission-hero .ix-mission-secondary:hover { background: rgba(255,255,255,.08); border-color: #ffffff; }
+#iconex-mission-hero a:focus-visible { outline: 3px solid #ffffff; outline-offset: 5px; }
+#iconex-mission-hero .ix-mission-scroll {
+  position: absolute;
+  bottom: 23px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 52px;
+  color: #cbd5e1;
+  text-decoration: none;
+}
+#iconex-mission-hero .ix-mission-scroll-label { font-size: 10px; font-weight: 500; letter-spacing: .2em; white-space: nowrap; }
+#iconex-mission-hero .ix-mission-scroll svg { stroke: #d4af37; stroke-width: 1.6; fill: none; }
+#iconex-mission-hero[data-entrance='true'] .ix-mission-badge { animation: ix-mission-badge-in .6s ease .1s both; }
+#iconex-mission-hero[data-entrance='true'] .ix-mission-title { animation: ix-mission-rise .65s ease .25s both; }
+#iconex-mission-hero[data-entrance='true'] .ix-mission-lead { animation: ix-mission-rise .65s ease .4s both; }
+#iconex-mission-hero[data-entrance='true'] .ix-mission-actions { animation: ix-mission-rise .65s ease .55s both; }
+#iconex-mission-hero[data-entrance='true'] .ix-mission-scroll svg { animation: ix-mission-chevron 2s ease-in-out 1.3s 2; }
+@keyframes ix-mission-badge-in { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes ix-mission-rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+@keyframes ix-mission-chevron { 0%,100% { transform: translateY(0); } 50% { transform: translateY(5px); } }
+/* Keep the existing 4D explanation as a real, accessible scroll destination. */
+#methodology.ix-methodology { position: relative; background: #ffffff; color: #374b8c; padding: 92px 24px; scroll-margin-top: 112px; font-family: 'Manrope', 'Inter', Arial, sans-serif; }
+#methodology.ix-methodology:focus-visible { outline: 3px solid #c59b27; outline-offset: -6px; }
+#methodology .ix-methodology-inner { max-width: 1160px; margin: 0 auto; }
+#methodology .ix-methodology-overline { display: block; color: #374b8c; font-size: 12px; font-weight: 600; letter-spacing: .18em; }
+#methodology h2 { margin: 18px 0 22px; max-width: 960px; color: #374b8c; font: 700 clamp(32px,3.1vw,46px)/1.2 'Manrope', 'Inter', Arial, sans-serif; letter-spacing: -.035em; }
+#methodology .ix-methodology-intro p { max-width: 760px; color: #374b8c; font-size: 16px; line-height: 1.7; margin: 0; }
+#methodology .ix-methodology-stages { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); list-style: none; margin: 40px 0 0; padding: 0; border: 1px solid rgba(55,75,140,.18); }
+#methodology .ix-methodology-stages li { position: relative; display: grid; align-content: center; gap: 14px; min-width: 0; min-height: 126px; padding: 22px 28px; border-right: 1px solid rgba(55,75,140,.18); background: #ffffff; }
+#methodology .ix-methodology-stages li:last-child { border: 0; }
+#methodology .ix-methodology-number { font-size: 11px; font-weight: 600; letter-spacing: .14em; color: #374b8c; }
+#methodology .ix-methodology-stages strong { font-size: clamp(17px,1.6vw,23px); line-height: 1.2; font-weight: 700; letter-spacing: .02em; color: #374b8c; }
+#methodology .ix-methodology-stages .ix-methodology-deliver { color: #ed1c24; }
+#methodology .ix-methodology-arrow { position: absolute; right: -13px; top: 50%; z-index: 1; display: grid; place-items: center; width: 26px; height: 26px; background: #ffffff; color: #374b8c; transform: translateY(-50%); font-size: 22px; }
+@media (min-width:768px) and (max-width:1023px) {
+  #iconex-mission-hero { min-height: calc(100svh - 80px); padding: 76px 32px 110px; }
+  #iconex-mission-hero .ix-mission-title { font-size: clamp(40px,4.7vw,48px); }
+  #iconex-mission-hero .ix-mission-lead { font-size: 18px; }
+  #methodology .ix-methodology-stages li { padding-inline: 19px; }
+}
+@media (max-width:767px) {
+  #iconex-mission-hero { min-height: 100vh; min-height: 100svh; padding: 64px 24px 116px; }
+  #iconex-mission-hero .ix-mission-badge { font-size: 12px; line-height: 1.75; letter-spacing: .18em; padding: 10px 14px; margin-bottom: 24px; border-radius: 18px; }
+  #iconex-mission-hero .ix-mission-title { font-size: clamp(32px,8.4vw,36px); line-height: 1.15; letter-spacing: -.035em; }
+  #iconex-mission-hero .ix-mission-lead { margin-top: 24px; font-size: clamp(15px,4vw,16px); line-height: 1.65; }
+  #iconex-mission-hero .ix-mission-actions { flex-direction: column; gap: 16px; margin-top: 36px; }
+  #iconex-mission-hero .ix-mission-button { width: 100%; min-height: 54px; font-size: 14px; padding-inline: 18px; }
+  #iconex-mission-hero .ix-mission-scroll { bottom: 22px; }
+  #iconex-mission-hero .ix-mission-pavilion { display: none; }
+  #iconex-mission-hero .ix-mission-summit { object-position: 58% 50%; }
+  #methodology.ix-methodology { padding: 64px 24px; scroll-margin-top: 100px; }
+  #methodology .ix-methodology-stages { grid-template-columns: 1fr; margin-top: 30px; }
+  #methodology .ix-methodology-stages li { min-height: 82px; display: flex; align-items: center; gap: 22px; padding: 24px; border-right: 0; border-bottom: 1px solid rgba(55,75,140,.18); }
+  #methodology .ix-methodology-stages strong { font-size: 20px; }
+  #methodology .ix-methodology-arrow { right: auto; top: auto; left: 50%; bottom: -13px; transform: translateX(-50%) rotate(90deg); }
+}
+@media (prefers-reduced-motion:reduce) {
+  #iconex-mission-hero *, #iconex-mission-hero *::before, #iconex-mission-hero *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  #iconex-mission-hero .ix-mission-primary:hover { transform: none; }
+}
+@media (forced-colors:active) {
+  #iconex-mission-hero .ix-mission-title span { background: none; -webkit-text-fill-color: CanvasText; color: CanvasText; }
+  #iconex-mission-hero .ix-mission-media, #iconex-mission-hero .ix-mission-scrim, #iconex-mission-hero .ix-mission-geometry { display: none; }
+  #iconex-mission-hero .ix-mission-button { border: 1px solid ButtonText; }
+}
