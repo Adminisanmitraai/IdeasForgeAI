@@ -1,0 +1,165 @@
+/* Section 5 only. No shared header, hero, philosophy or metric selectors. */
+#methodology.ix-4d-method {
+  --ix4d-gold: #c59b27;
+  --ix4d-light-gold: #e8c15a;
+  --ix4d-rule: rgba(197,155,39,.32);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #ffffff;
+  background: linear-gradient(180deg, #07152b 0%, #0a192f 100%);
+  scroll-margin-top: 112px;
+  font-family: 'Manrope', 'Inter', Arial, sans-serif;
+}
+#methodology.ix-4d-method *, #methodology.ix-4d-method *::before,
+#methodology.ix-4d-method *::after { box-sizing: border-box; }
+#methodology.ix-4d-method::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  width: 580px; height: 580px; border-radius: 50%; right: -270px; top: -220px;
+  border: 1px solid rgba(197,155,39,.07);
+  box-shadow: 0 0 0 75px rgba(197,155,39,.025), 0 0 0 150px rgba(197,155,39,.015);
+}
+#methodology.ix-4d-method::after {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: repeating-linear-gradient(90deg, transparent 0 159px, rgba(203,213,225,.018) 159px 160px);
+}
+#methodology.ix-4d-method:focus-visible { outline: 2px solid #c59b27; outline-offset: -3px; }
+#methodology.ix-4d-method .ix-4d-inner { max-width: 1280px; margin: 0 auto; padding: 96px 24px; }
+#methodology.ix-4d-method .ix-4d-intro { margin: 0 auto 48px; text-align: center; }
+#methodology.ix-4d-method .ix-4d-overline {
+  margin: 0 0 18px; color: #c59b27; font-size: 12px; font-weight: 600;
+  letter-spacing: .15em; line-height: 1.6; text-transform: uppercase;
+}
+#methodology.ix-4d-method h2 {
+  margin: 0; color: #ffffff; font-family: inherit; font-size: clamp(36px,3.4vw,46px);
+  font-weight: 750; line-height: 1.2; letter-spacing: -.035em; overflow-wrap: break-word;
+}
+#methodology.ix-4d-method .ix-4d-subtitle {
+  margin: 18px 0 0; color: #e8c15a; font-size: 12px; font-weight: 600;
+  line-height: 1.6; letter-spacing: .18em;
+}
+#methodology.ix-4d-method .ix-4d-lead {
+  max-width: 680px; margin: 18px auto 0; color: #cbd5e1; font-size: 18px;
+  font-weight: 400; line-height: 1.6; letter-spacing: 0;
+}
+#methodology.ix-4d-method .ix-4d-pipeline { position: relative; }
+#methodology.ix-4d-method .ix-4d-grid {
+  --ix4d-gap: 24px;
+  display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: var(--ix4d-gap);
+  align-items: stretch; padding: 0; margin: 0; list-style: none;
+}
+#methodology.ix-4d-method .ix-4d-stage { position: relative; min-width: 0; display: flex; flex-direction: column; margin: 0; padding: 0; }
+#methodology.ix-4d-method .ix-4d-track { position: relative; height: 64px; flex: 0 0 64px; }
+#methodology.ix-4d-method .ix-4d-node {
+  position: relative; z-index: 2; display: grid; place-items: center;
+  width: 42px; height: 42px; margin: 0 auto; border-radius: 50%;
+  border: 1px solid rgba(197,155,39,.5); color: #e8c15a; background: #0b1e3f;
+  font-size: 13px; font-weight: 700; letter-spacing: .04em;
+  box-shadow: 0 0 20px rgba(197,155,39,.07);
+}
+#methodology.ix-4d-method .ix-4d-stage:not(:last-child) .ix-4d-track::after {
+  content: ''; position: absolute; left: 50%; top: 20px;
+  width: calc(100% + var(--ix4d-gap)); height: 1px; background: var(--ix4d-rule);
+}
+#methodology.ix-4d-method .ix-4d-arrow {
+  position: absolute; top: 7px; right: calc(-.5 * var(--ix4d-gap) - 12px);
+  display: grid; place-items: center; width: 24px; height: 27px; z-index: 2;
+  color: #c59b27; background: #08172d; font-size: 16px; line-height: 1;
+  text-shadow: 0 0 10px rgba(197,155,39,.4);
+}
+#methodology.ix-4d-method .ix-4d-stage:last-child .ix-4d-arrow { display: none; }
+#methodology.ix-4d-method .ix-4d-card {
+  position: relative; overflow: hidden; flex: 1 1 auto; min-width: 0;
+  display: flex; flex-direction: column; align-items: flex-start;
+  padding: 24px; background: rgba(11,30,63,.6);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border: 1px solid rgba(51,65,85,.6); border-radius: 16px;
+  transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+#methodology.ix-4d-method .ix-4d-watermark {
+  position: absolute; right: 14px; top: 12px; color: #ffffff; opacity: .05;
+  font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -.06em;
+  pointer-events: none;
+}
+#methodology.ix-4d-method .ix-4d-card-header { position: relative; margin: 0 0 26px; width: 100%; }
+#methodology.ix-4d-method .ix-4d-stage-tag {
+  margin: 0 0 12px; color: #c59b27; font-size: 10px; font-weight: 600;
+  letter-spacing: .08em; line-height: 1.6;
+}
+#methodology.ix-4d-method h3 { margin: 0; color: #ffffff; font-family: inherit; font-size: 24px; line-height: 1.25; font-weight: 750; letter-spacing: -.02em; }
+#methodology.ix-4d-method .ix-4d-headline {
+  margin: 0 0 16px; color: #ffffff; font-family: inherit; font-size: 19px;
+  font-weight: 650; line-height: 1.45; letter-spacing: -.02em;
+}
+#methodology.ix-4d-method .ix-4d-description {
+  margin: 0 0 24px; color: #cbd5e1; font-size: 14px; font-weight: 400;
+  line-height: 1.75; letter-spacing: 0;
+}
+#methodology.ix-4d-method .ix-4d-output {
+  margin: auto 0 24px; max-width: 100%; border-radius: 999px;
+  padding: 8px 12px; border: 1px solid rgba(197,155,39,.3);
+  color: #e8c15a; background: rgba(197,155,39,.1);
+  font-size: 11px; font-weight: 600; line-height: 1.55; letter-spacing: .035em;
+  overflow-wrap: anywhere;
+}
+#methodology.ix-4d-method .ix-4d-checklist {
+  margin: 0; padding: 22px 0 0; width: 100%; list-style: none;
+  display: grid; gap: 14px; border-top: 1px solid rgba(51,65,85,.6);
+}
+#methodology.ix-4d-method .ix-4d-checklist li {
+  display: grid; grid-template-columns: 16px minmax(0,1fr); align-items: start; gap: 10px;
+  padding: 0; margin: 0; color: #cbd5e1; font-size: 13px; line-height: 1.65; letter-spacing: 0;
+}
+#methodology.ix-4d-method .ix-4d-checklist svg { color: #c59b27; margin-top: 3px; }
+#methodology.ix-4d-method .ix-4d-row-bridge { display: none; }
+@media(hover:hover) and (pointer:fine) {
+  #methodology.ix-4d-method .ix-4d-card:hover {
+    transform: translateY(-4px); border-color: rgba(197,155,39,.7);
+    box-shadow: 0 12px 30px rgba(197,155,39,.15);
+  }
+}
+@media(min-width:1024px) {
+  #methodology.ix-4d-method .ix-4d-inner { padding-inline: 32px; }
+  #methodology.ix-4d-method .ix-4d-card { padding: 32px; }
+}
+@media(min-width:768px) and (max-width:1023px) {
+  #methodology.ix-4d-method .ix-4d-grid { grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 24px; row-gap: 64px; grid-auto-rows: 1fr; }
+  #methodology.ix-4d-method .ix-4d-stage:nth-child(2) .ix-4d-track::after,
+  #methodology.ix-4d-method .ix-4d-stage:nth-child(2) .ix-4d-arrow { display: none; }
+  #methodology.ix-4d-method .ix-4d-row-bridge {
+    position: absolute; display: flex; align-items: center; justify-content: center; gap: 12px;
+    top: calc(50% - 16px); left: 25%; width: 50%; height: 32px;
+    color: #c59b27; font-size: 11px; font-weight: 600; pointer-events: none;
+    flex-direction: row-reverse;
+  }
+  #methodology.ix-4d-method .ix-4d-row-bridge svg { width: 100%; height: 20px; fill: none; stroke: #c59b27; stroke-width: 1; opacity: .6; overflow: visible; }
+}
+@media(max-width:767px) {
+  #methodology.ix-4d-method .ix-4d-grid { grid-template-columns: minmax(0,1fr); gap: 24px; }
+  #methodology.ix-4d-method .ix-4d-stage { padding-left: 44px; }
+  #methodology.ix-4d-method .ix-4d-track { position: absolute; inset: 0 auto 0 0; width: 32px; height: 100%; }
+  #methodology.ix-4d-method .ix-4d-node { width: 32px; height: 32px; font-size: 10px; }
+  #methodology.ix-4d-method .ix-4d-stage:not(:last-child) .ix-4d-track::after { left: 15px; top: 16px; width: 1px; height: calc(100% + 24px); }
+  #methodology.ix-4d-method .ix-4d-arrow { top: auto; right: 4px; bottom: -24px; width: 24px; height: 24px; transform: rotate(90deg); font-size: 13px; }
+  #methodology.ix-4d-method .ix-4d-card { padding: 24px 20px; }
+  #methodology.ix-4d-method .ix-4d-intro { margin-bottom: 40px; }
+  #methodology.ix-4d-method .ix-4d-lead { font-size: 17px; }
+  #methodology.ix-4d-method .ix-4d-output { margin-top: 0; }
+}
+@media(prefers-reduced-motion:reduce) {
+  #methodology.ix-4d-method .ix-4d-card { transition: none; }
+  #methodology.ix-4d-method .ix-4d-card:hover { transform: none; }
+}
+@supports not (backdrop-filter: blur(10px)) {
+  #methodology.ix-4d-method .ix-4d-card { background: #0b1e3f; }
+}
+/* Share the five card rows on desktop so outputs and checklists align.
+   Browsers without subgrid retain the equal-height flex-card fallback above. */
+@supports (grid-template-rows: subgrid) {
+  @media(min-width:1024px) {
+    #methodology.ix-4d-method .ix-4d-grid { grid-template-rows: 64px repeat(5,auto); row-gap: 0; }
+    #methodology.ix-4d-method .ix-4d-stage { display: grid; grid-template-rows: subgrid; grid-row: span 6; row-gap: 0; }
+    #methodology.ix-4d-method .ix-4d-card { display: grid; grid-template-rows: subgrid; grid-row: span 5; row-gap: 0; align-items: start; }
+    #methodology.ix-4d-method .ix-4d-output { margin-top: 0; justify-self: start; }
+  }
+}
