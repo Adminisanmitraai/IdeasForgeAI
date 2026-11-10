@@ -101,6 +101,25 @@
   toggle.addEventListener('click', openDrawer);
   closeButton.addEventListener('click', function () { closeDrawer(true, false); });
   drawer.addEventListener('cancel', function (event) { event.preventDefault(); closeDrawer(true, false); });
+  // Explicit keyboard containment complements native dialog behavior and keeps
+  // focus inside the drawer at both ends of its navigation sequence.
+  drawer.addEventListener('keydown', function (event) {
+    if (event.key !== 'Tab' || !drawer.open) return;
+    const focusable = Array.from(drawer.querySelectorAll(
+      'a[href], button:not([disabled]), summary, input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )).filter(function (element) {
+      return element.tabIndex >= 0 && element.getClientRects().length > 0 &&
+        getComputedStyle(element).visibility !== 'hidden' && !element.closest('[inert]');
+    });
+    if (!focusable.length) { event.preventDefault(); return; }
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && (document.activeElement === first || !drawer.contains(document.activeElement))) {
+      event.preventDefault(); last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || !drawer.contains(document.activeElement))) {
+      event.preventDefault(); first.focus();
+    }
+  });
   drawer.addEventListener('click', function (event) {
     if (event.target !== drawer) return;
     const rect = drawer.getBoundingClientRect();
