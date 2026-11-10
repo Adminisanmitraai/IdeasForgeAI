@@ -1,0 +1,188 @@
+/* Section 3 only: iCONEX core philosophy. All selectors are section-scoped. */
+#iconex-philosophy {
+  --ix-p-bg: #07152b;
+  --ix-p-gold: #c59b27;
+  --ix-p-white: #ffffff;
+  --ix-p-copy: #cbd5e1;
+  background: var(--ix-p-bg);
+  color: var(--ix-p-white);
+  position: relative;
+  isolation: isolate;
+  font-family: 'Manrope', 'Inter', Arial, sans-serif;
+}
+#iconex-philosophy, #iconex-philosophy * { box-sizing: border-box; }
+#iconex-philosophy .ix-philosophy-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding: 80px 24px;
+}
+#iconex-philosophy .ix-philosophy-intro {
+  position: static;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 800px;
+  text-align: center;
+  background: transparent;
+  border: 0;
+}
+#iconex-philosophy .ix-philosophy-overline {
+  margin: 0 0 16px;
+  color: var(--ix-p-gold);
+  font-size: clamp(12px, 1vw, 13px);
+  font-weight: 600;
+  line-height: 1.6;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+#iconex-philosophy h2 {
+  margin: 0;
+  color: var(--ix-p-white);
+  font-family: inherit;
+  font-size: clamp(36px, 3.2vw, 44px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+#iconex-philosophy .ix-philosophy-lead {
+  max-width: 700px;
+  margin: 22px auto 0;
+  color: var(--ix-p-copy);
+  font-size: clamp(17px, 1.4vw, 18px);
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+#iconex-philosophy .ix-philosophy-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  align-items: stretch;
+  margin-top: 48px;
+}
+#iconex-philosophy .ix-pillar-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  margin: 0;
+  padding: 20px;
+  background: rgba(11,30,63,.7);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(51,65,85,.6);
+  border-radius: 16px;
+  transition: transform .3s cubic-bezier(.16,1,.3,1), border-color .3s cubic-bezier(.16,1,.3,1), box-shadow .3s cubic-bezier(.16,1,.3,1);
+}
+#iconex-philosophy .ix-pillar-watermark {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  z-index: -1;
+  color: #ffffff;
+  opacity: .04;
+  font-size: 80px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.04em;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity .3s cubic-bezier(.16,1,.3,1);
+}
+#iconex-philosophy .ix-pillar-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 48px;
+  width: 48px;
+  height: 48px;
+  margin: 0 0 28px;
+  color: var(--ix-p-gold);
+  background: rgba(197,155,39,.15);
+  border-radius: 12px;
+  box-shadow: 0 0 22px rgba(197,155,39,.08);
+  transition: transform .3s cubic-bezier(.16,1,.3,1);
+}
+#iconex-philosophy .ix-pillar-icon svg { display: block; width: 26px; height: 26px; }
+#iconex-philosophy .ix-pillar-counter {
+  margin: 0;
+  color: var(--ix-p-gold);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+#iconex-philosophy .ix-pillar-card h3 {
+  margin: 8px 0 0;
+  color: var(--ix-p-white);
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -.015em;
+}
+#iconex-philosophy .ix-pillar-description {
+  margin: 18px 0 28px;
+  color: var(--ix-p-copy);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0;
+}
+#iconex-philosophy .ix-pillar-tag {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid rgba(197,155,39,.2);
+}
+#iconex-philosophy .ix-pillar-tag span {
+  display: inline-block;
+  max-width: 100%;
+  padding: 8px 11px;
+  border: 1px solid rgba(197,155,39,.22);
+  border-radius: 8px;
+  color: var(--ix-p-gold);
+  background: rgba(197,155,39,.07);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.55;
+  letter-spacing: .01em;
+  overflow-wrap: anywhere;
+}
+@media (hover: hover) and (pointer: fine) {
+  #iconex-philosophy .ix-pillar-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(197,155,39,.6);
+    box-shadow: 0 16px 36px rgba(197,155,39,.12);
+  }
+  #iconex-philosophy .ix-pillar-card:hover .ix-pillar-watermark { opacity: .08; }
+  #iconex-philosophy .ix-pillar-card:hover .ix-pillar-icon { transform: scale(1.05); }
+}
+@media (min-width: 768px) {
+  #iconex-philosophy .ix-philosophy-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  #iconex-philosophy .ix-pillar-card { padding: 36px 28px; }
+  #iconex-philosophy .ix-pillar-card:last-child { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  #iconex-philosophy .ix-philosophy-inner { padding-inline: 32px; }
+  #iconex-philosophy .ix-philosophy-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+  #iconex-philosophy .ix-pillar-card:last-child { grid-column: auto; }
+  #iconex-philosophy .ix-pillar-tag { min-height: 77px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #iconex-philosophy .ix-pillar-card,
+  #iconex-philosophy .ix-pillar-icon,
+  #iconex-philosophy .ix-pillar-watermark { transition: none; }
+  #iconex-philosophy .ix-pillar-card:hover,
+  #iconex-philosophy .ix-pillar-card:hover .ix-pillar-icon { transform: none; }
+}
+@media (forced-colors: active) {
+  #iconex-philosophy .ix-pillar-card { border-color: CanvasText; }
+  #iconex-philosophy .ix-pillar-icon,
+  #iconex-philosophy .ix-pillar-tag span { border: 1px solid CanvasText; }
+  #iconex-philosophy .ix-pillar-watermark { display: none; }
+}
