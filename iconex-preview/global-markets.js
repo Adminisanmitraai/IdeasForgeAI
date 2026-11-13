@@ -92,6 +92,21 @@
   withMarkets.iconexMarkets = true;
   window.heroSlider = withMarkets;
 
+  // The clean-URL bridge installs its route table after this module.
+  const initialMarketAnchor = location.hash === '#global-markets';
+  function connectDirectory() {
+    if (typeof routes === 'undefined') return;
+    routes['/global-presence'] = window.iconexGlobalPresencePage;
+    if (location.pathname.replace(/\/$/, '') === '/global-presence' &&
+        !document.getElementById('ix-markets-directory-page')) window.render();
+    if (initialMarketAnchor && document.getElementById('global-markets')) {
+      history.replaceState(history.state, '', location.pathname + location.search + '#global-markets');
+      requestAnimationFrame(() => document.getElementById('global-markets')?.scrollIntoView());
+    }
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', connectDirectory, {once: true});
+  else connectDirectory();
+
   class MarketMap extends HTMLElement {
     connectedCallback() {
       this.viewport = this.querySelector('.ix-markets-viewport');
