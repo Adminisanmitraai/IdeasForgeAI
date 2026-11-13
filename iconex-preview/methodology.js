@@ -4,7 +4,7 @@
  */
 (function () {
   'use strict';
-  const VERSION = '20261110-methodology-v1';
+  const VERSION = '20261113-methodology-v2';
   const originalHero = window.heroSlider;
   if (typeof originalHero !== 'function' || originalHero.iconexMethodologyVersion === VERSION) return;
 
@@ -12,30 +12,25 @@
     {
       number: '01', title: 'DISCOVER', headline: 'First, We Understand The Why',
       description: 'Before developing a concept, we clarify what the brand needs to communicate, who it needs to engage, and what the exhibition must achieve.',
-      output: 'OUTPUT: A CLEAR STRATEGIC BRIEF',
-      pillars: ['Business and communication objectives', 'Audience and stakeholder needs', 'Brand identity and content priorities', 'Space, technical constraints, and budget']
+      output: 'OUTPUT: A CLEAR STRATEGIC BRIEF'
     },
     {
       number: '02', title: 'DESIGN', headline: 'Then, We Give The Vision A Form',
       description: 'We translate strategy into a distinctive physical environment, connecting brand storytelling with architecture, visitor flow, product presentation, and engagement.',
-      output: 'OUTPUT: AN EXPERIENCE CONCEPT',
-      pillars: ['A concept rooted in the brand', 'A purposeful visitor journey', 'Integrated graphics, lighting, and digital experiences', 'Spaces designed for interaction and business']
+      output: 'OUTPUT: AN EXPERIENCE CONCEPT'
     },
     {
       number: '03', title: 'DEVELOP', headline: 'We Engineer The Experience Behind The Image',
       description: 'Design becomes reality through technical planning, material selection, fabrication detailing, and coordination of the elements that make the exhibition work.',
-      output: 'OUTPUT: AN EXECUTION-READY PLAN',
-      pillars: ['Precision technical & architectural drawings', 'Materials selection & structural engineering', 'Integrated AV, acoustics, and specialty lighting', 'Comprehensive costing and production scheduling']
+      output: 'OUTPUT: AN EXECUTION-READY PLAN'
     },
     {
       number: '04', title: 'DELIVER', headline: 'Bring The Experience To Life',
       description: 'Seamless execution and complete on-floor accountability—managing builds, operations, stakeholder logistics, and live transitions from first VIP arrivals to final debrief.',
-      output: 'OUTPUT: FLAWLESS ON-FLOOR EXECUTION',
-      pillars: ['Turnkey fabrication and precision on-site build', 'Real-time show management and delegate coordination', 'Dedicated technical support and rapid incident response', 'Post-event teardown, spatial audit, and ROI analytics']
+      output: 'OUTPUT: FLAWLESS ON-FLOOR EXECUTION'
     }
   ];
   const escapeText = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[char]));
-  const tick = '<svg viewBox="0 0 20 20" width="16" height="16" fill="none" aria-hidden="true" focusable="false"><path d="m4 10 4 4 8-8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
   function methodologySection() {
     const cards = stages.map(stage => `<li class="ix-4d-stage">
@@ -46,7 +41,6 @@
         <h4 class="ix-4d-headline">${escapeText(stage.headline)}</h4>
         <p class="ix-4d-description">${escapeText(stage.description)}</p>
         <p class="ix-4d-output">${escapeText(stage.output)}</p>
-        <ul class="ix-4d-checklist" role="list" aria-label="${stage.title.toLowerCase()} stage breakdown">${stage.pillars.map(pillar => `<li>${tick}<span>${escapeText(pillar)}</span></li>`).join('')}</ul>
       </article>
     </li>`).join('');
     return `<section id="methodology" class="ix-4d-method" aria-labelledby="ix-4d-title" tabindex="-1" data-ix-section="methodology" data-methodology-version="${VERSION}">
@@ -77,14 +71,6 @@
     current.replaceWith(section);
     const metrics = template.content.querySelector('[data-ix-section="impact-metrics"]');
     if (metrics && metrics.nextElementSibling !== section) metrics.after(section);
-    // Reserved, non-rendering insertion point for the next approved section.
-    // Never infer event dates, organisers or featured credentials.
-    if (!template.content.querySelector('#ix-featured-events-slot, [data-ix-section="featured-events"]')) {
-      const slot = document.createElement('template');
-      slot.id = 'ix-featured-events-slot';
-      slot.dataset.ixSlot = 'featured-events';
-      section.after(slot);
-    }
     return template.innerHTML;
   }
   Object.assign(heroWithMethodology, originalHero);

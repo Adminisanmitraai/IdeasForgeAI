@@ -96,21 +96,12 @@
   line-height: 1.75; letter-spacing: 0;
 }
 #methodology.ix-4d-method .ix-4d-output {
-  margin: auto 0 24px; max-width: 100%; border-radius: 999px;
+  margin: auto 0 0; max-width: 100%; border-radius: 999px;
   padding: 8px 12px; border: 1px solid rgba(197,155,39,.3);
   color: #e8c15a; background: rgba(197,155,39,.1);
   font-size: 11px; font-weight: 600; line-height: 1.55; letter-spacing: .035em;
   overflow-wrap: anywhere;
 }
-#methodology.ix-4d-method .ix-4d-checklist {
-  margin: 0; padding: 22px 0 0; width: 100%; list-style: none;
-  display: grid; gap: 14px; border-top: 1px solid rgba(51,65,85,.6);
-}
-#methodology.ix-4d-method .ix-4d-checklist li {
-  display: grid; grid-template-columns: 16px minmax(0,1fr); align-items: start; gap: 10px;
-  padding: 0; margin: 0; color: #cbd5e1; font-size: 13px; line-height: 1.65; letter-spacing: 0;
-}
-#methodology.ix-4d-method .ix-4d-checklist svg { color: #c59b27; margin-top: 3px; }
 #methodology.ix-4d-method .ix-4d-row-bridge { display: none; }
 @media(hover:hover) and (pointer:fine) {
   #methodology.ix-4d-method .ix-4d-card:hover {
@@ -153,13 +144,13 @@
 @supports not (backdrop-filter: blur(10px)) {
   #methodology.ix-4d-method .ix-4d-card { background: #0b1e3f; }
 }
-/* Share the five card rows on desktop so outputs and checklists align.
+/* Align the four content rows across the desktop cards.
    Browsers without subgrid retain the equal-height flex-card fallback above. */
 @supports (grid-template-rows: subgrid) {
   @media(min-width:1024px) {
-    #methodology.ix-4d-method .ix-4d-grid { grid-template-rows: 64px repeat(5,auto); row-gap: 0; }
-    #methodology.ix-4d-method .ix-4d-stage { display: grid; grid-template-rows: subgrid; grid-row: span 6; row-gap: 0; }
-    #methodology.ix-4d-method .ix-4d-card { display: grid; grid-template-rows: subgrid; grid-row: span 5; row-gap: 0; align-items: start; }
+    #methodology.ix-4d-method .ix-4d-grid { grid-template-rows: 64px repeat(4,auto); row-gap: 0; }
+    #methodology.ix-4d-method .ix-4d-stage { display: grid; grid-template-rows: subgrid; grid-row: span 5; row-gap: 0; }
+    #methodology.ix-4d-method .ix-4d-card { display: grid; grid-template-rows: subgrid; grid-row: span 4; row-gap: 0; align-items: start; }
     #methodology.ix-4d-method .ix-4d-output { margin-top: 0; justify-self: start; }
   }
 }

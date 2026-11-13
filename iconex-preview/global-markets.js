@@ -79,13 +79,11 @@
     const html = previousHero.apply(this, arguments);
     const fragment = document.createElement('template');
     fragment.innerHTML = html;
-    const showcase = fragment.content.querySelector('#featured-platforms');
-    if (!showcase || fragment.content.querySelector('#global-markets')) return html;
+    const methodology = fragment.content.querySelector('#methodology');
+    if (!methodology || fragment.content.querySelector('#global-markets')) return html;
     const addition = document.createElement('template');
     addition.innerHTML = section();
-    const slot = fragment.content.querySelector('#ix-global-presence-slot');
-    if (slot) slot.replaceWith(addition.content);
-    else showcase.after(addition.content);
+    methodology.after(addition.content);
     return fragment.innerHTML;
   }
   Object.assign(withMarkets, previousHero);
