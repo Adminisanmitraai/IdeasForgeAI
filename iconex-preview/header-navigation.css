@@ -42,9 +42,12 @@
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  padding: 8px 12px;
-  background: #ffffff;
-  border-radius: 4px;
+  margin-inline: 12px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
   text-decoration: none;
 }
 #iconex-header .ix-brand img {
@@ -53,6 +56,11 @@
   width: auto;
   max-width: none;
   object-fit: contain;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.95))
+          drop-shadow(0 0 6px rgba(255, 255, 255, 0.5));
 }
 #iconex-header .ix-desktop-nav { flex: 1 1 auto; min-width: 0; }
 #iconex-header .ix-nav-items {
@@ -225,7 +233,7 @@
 #iconex-nav-drawer .ix-drawer-note { margin: 14px 0 0; color: #ffffff; opacity: .85; font-size: 12px; }
 @media(max-width:1023px) {
   #iconex-header .ix-nav-bar { min-height: 80px; gap: 12px; }
-  #iconex-header .ix-brand { padding: 6px 8px; }
+  #iconex-header .ix-brand { margin-inline: 8px; }
   #iconex-header .ix-brand img { height: 40px; }
   #iconex-header .ix-desktop-nav, #iconex-header .ix-nav-actions > .ix-contact { display: none; }
   #iconex-header .ix-menu-toggle { display: grid; place-items: center; }
