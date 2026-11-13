@@ -101,14 +101,20 @@
   max-width: none;
   pointer-events: none;
 }
-:is(#global-markets, .ix-markets-page) .ix-markets-arc {
+#global-markets .map-route-arc {
   fill: none;
-  stroke-width: 1.45;
+  stroke: #E8C15A;
+  stroke-width: 2;
   stroke-linecap: round;
-  stroke-dasharray: 6 6;
-  opacity: .86;
+  stroke-dasharray: 2 7;
+  opacity: 0.85;
+  filter: drop-shadow(0 0 4px rgba(232, 193, 90, 0.45));
   vector-effect: non-scaling-stroke;
-  animation: ix-markets-route 12s linear infinite;
+  animation: flowDots 1.8s linear infinite;
+}
+@keyframes flowDots {
+  0% { stroke-dashoffset: 36; }
+  100% { stroke-dashoffset: 0; }
 }
 :is(#global-markets, .ix-markets-page) .ix-markets-directory {
   display: grid;
@@ -230,19 +236,6 @@
 :is(#global-markets, .ix-markets-page) :is(a, button, [tabindex]):focus-visible {
   outline: 3px solid #f4d888;
   outline-offset: 3px;
-}
-@keyframes ix-markets-route { to { stroke-dashoffset: -96; } }
-#global-markets .ix-markets-leader {
-  fill: none;
-  stroke: #cbb36e;
-  stroke-width: 1;
-  stroke-opacity: .74;
-  vector-effect: non-scaling-stroke;
-}
-#global-markets .ix-markets-anchor {
-  fill: #e8c15a;
-  stroke: #10233e;
-  stroke-width: .8;
 }
 #global-markets .ix-markets-pin {
   position: absolute;

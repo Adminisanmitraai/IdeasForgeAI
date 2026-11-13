@@ -21,23 +21,30 @@
   const text = value => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   // The Natural Earth base map uses this projection and the same 1000 × 403 canvas.
   const anchor = market => [(market.lon + 180) * 1000 / 360, (85 - market.lat) * 1000 / 360];
+  const pinPosition = market => market.callout || anchor(market);
   const point = coords => coords.map(value => value.toFixed(2)).join(' ');
-  function arc(from, to, lift) {
-    const a = anchor(byId.get(from));
-    const b = anchor(byId.get(to));
-    const control = [(a[0] + b[0]) / 2, Math.min(a[1], b[1]) - lift];
-    return `<path class="ix-markets-arc" fill="none" stroke="url(#ix-markets-route-gold)" stroke-dasharray="6 6" d="M${point(a)} Q${point(control)} ${point(b)}"/>`;
-  }
-  function leader(market) {
-    if (!market.callout) return '';
-    const [x, y] = anchor(market);
-    return `<path class="ix-markets-leader" stroke="#c59b27" stroke-opacity=".65" fill="none" d="M${point([x, y])} L${point(market.callout)}"/><circle class="ix-markets-anchor" cx="${x.toFixed(2)}" cy="${y.toFixed(2)}" r="2" fill="#e8c15a"/>`;
+
+  // Control points share the map's viewBox. Regional curves fan outward between
+  // the displayed beacons so short and near-vertical links have visible curvature.
+  const routes = [
+    { from: 'us', to: 'gb', control: [363, 36] },
+    { from: 'gb', to: 'kw', control: [550, 67] },
+    { from: 'kw', to: 'bh', control: [632, 74] },
+    { from: 'kw', to: 'sa', control: [548, 145] },
+    { from: 'bh', to: 'ae', control: [612, 166] },
+    { from: 'bh', to: 'om', control: [718, 136] },
+    { from: 'bh', to: 'in', control: [708, 100] }
+  ];
+  function routeArc({ from, to, control }) {
+    const start = pinPosition(byId.get(from));
+    const end = pinPosition(byId.get(to));
+    return `<path class="map-route-arc" d="M${point(start)} Q${point(control)} ${point(end)}"/>`;
   }
   function button(market, isPin) {
     const label = text(market.name);
     const attrs = `type="button" data-market="${market.id}" aria-controls="ix-markets-tip" aria-expanded="false" aria-pressed="false"`;
     if (!isPin) return `<button class="ix-markets-pill" ${attrs}>${label}</button>`;
-    const [x, y] = market.callout || anchor(market);
+    const [x, y] = pinPosition(market);
     return `<button class="ix-markets-pin" ${attrs} aria-label="${label}" style="left:${(x / 10).toFixed(3)}%;top:${(y * 100 / 403).toFixed(3)}%"><span class="ix-markets-pin-halo" aria-hidden="true"></span><span class="ix-markets-pin-dot" aria-hidden="true"></span><span class="ix-markets-pin-code" aria-hidden="true">${market.code}</span></button>`;
   }
   function mapStage() {
@@ -46,8 +53,7 @@
         <div class="ix-markets-canvas">
           <img class="ix-markets-base" src="./assets/world-markets.svg" width="1000" height="403" alt="" loading="lazy" decoding="async">
           <svg class="ix-markets-overlay" viewBox="0 0 1000 403" aria-hidden="true" focusable="false">
-            <defs><linearGradient id="ix-markets-route-gold"><stop stop-color="#b08d3d"/><stop offset=".5" stop-color="#ffdc86"/><stop offset="1" stop-color="#c59b27"/></linearGradient></defs>
-            ${arc('us', 'gb', 57)}${arc('gb', 'bh', 24)}${arc('bh', 'in', 27)}${markets.map(leader).join('')}
+            ${routes.map(routeArc).join('')}
           </svg>
           ${markets.map(market => button(market, true)).join('')}
         </div>
