@@ -18,6 +18,7 @@
   const mobileEvents = document.getElementById('ix-mobile-events');
   const closeButton = drawer.querySelector('.ix-close');
   const mainElement = document.getElementById('main');
+  const previewNotice = document.getElementById('ix-preview-notice');
   const desktop = window.matchMedia('(min-width: 1024px)');
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -182,6 +183,7 @@
     if (rendering) return;
     rendering = true;
     const path = currentPath();
+    if (previewNotice) previewNotice.hidden = path === '/';
     const search = location.search;
     const sectionAnchor = path === '/' && ['#global-markets', '#partner-with-iconex'].includes(location.hash) ? location.hash : '';
     closeDrawer(false, true);
