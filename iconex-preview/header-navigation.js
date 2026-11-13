@@ -183,7 +183,7 @@
     rendering = true;
     const path = currentPath();
     const search = location.search;
-    const sectionAnchor = path === '/' && ['#global-markets', '#event-highlights'].includes(location.hash) ? location.hash : '';
+    const sectionAnchor = path === '/' && ['#global-markets', '#event-highlights', '#partner-with-iconex'].includes(location.hash) ? location.hash : '';
     closeDrawer(false, true);
     setEvents(false);
     try {
