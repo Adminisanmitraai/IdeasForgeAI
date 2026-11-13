@@ -171,7 +171,7 @@
     routes['/events/upcoming-events'] = function () { return eventDestination(true); };
     routes['/events/all-events'] = function () { return eventDestination(false); };
     routes['/global-presence'] = window.iconexGlobalPresencePage;
-    routes['/gallery'] = function () { return typeof realEventGallery === 'function' ? '<h1 class="ix-sr">Gallery</h1>' + realEventGallery() : '<section class="ix-nav-destination"><h1>Gallery</h1><p>Event photography is being prepared.</p></section>'; };
+    routes['/gallery'] = window.iconexFullGallery || function () { return '<h1 class="ix-sr">Gallery</h1>' + realEventGallery(); };
     routes['/career'] = function () {
       return '<section class="ix-nav-destination"><h1>Career</h1><p>Interested in working with iCONEX?</p><div class="ix-notice"><p>No verified vacancies are published on this preview. For career enquiries, please use the contact page. Do not submit sensitive identity documents through the demonstration form.</p><a href="/contact" data-ix-route>Contact Us</a></div></section>';
     };
@@ -183,7 +183,7 @@
     rendering = true;
     const path = currentPath();
     const search = location.search;
-    const marketAnchor = path === '/' && location.hash === '#global-markets' ? '#global-markets' : '';
+    const sectionAnchor = path === '/' && ['#global-markets', '#event-highlights'].includes(location.hash) ? location.hash : '';
     closeDrawer(false, true);
     setEvents(false);
     try {
@@ -191,10 +191,10 @@
       // so no duplicate carousel timers or extra browser-history entries are created.
       history.replaceState(history.state, '', '/'+search+'#'+path);
       originalRender();
-      history.replaceState(history.state, '', routeURL(path)+(publicPaths.has(path)?search:'')+marketAnchor);
-      if (marketAnchor) requestAnimationFrame(function () {
-        const markets = document.getElementById('global-markets');
-        if (markets && location.hash === marketAnchor) markets.scrollIntoView();
+      history.replaceState(history.state, '', routeURL(path)+(publicPaths.has(path)?search:'')+sectionAnchor);
+      if (sectionAnchor) requestAnimationFrame(function () {
+        const section = document.getElementById(sectionAnchor.slice(1));
+        if (section && location.hash === sectionAnchor) section.scrollIntoView();
       });
       updateActive(path);
       if (titles[path]) document.title = titles[path] + ' | iCONEX Preview';
