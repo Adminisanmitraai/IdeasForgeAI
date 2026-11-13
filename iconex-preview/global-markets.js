@@ -151,6 +151,7 @@
     }
     scheduleRestore() {
       clearTimeout(this.dismissTimer);
+      if (!this.shown) return;
       this.dismissTimer = setTimeout(() => {
         const focused = this.marketButton(document.activeElement);
         this.show(focused?.dataset.market || this.selected, false);
@@ -192,11 +193,28 @@
       const height = this.tooltip.offsetHeight;
       const x = pinRect.left + pinRect.width / 2;
       this.tooltip.style.visibility = x < view.left || x > view.right ? 'hidden' : 'visible';
-      const left = Math.max(view.left + 4, Math.min(x - width / 2, view.right - width - 4));
-      const above = pinRect.top - 5 - height;
-      const top = above >= view.top + 4 ? above : Math.min(pinRect.bottom + 5, view.bottom - height - 4);
-      this.tooltip.style.left = `${left - stage.left - this.clientLeft}px`;
-      this.tooltip.style.top = `${Math.max(view.top + 4, top) - stage.top - this.clientTop}px`;
+      // Prefer the nearest placement that leaves neighbouring market buttons reachable.
+      const y = pinRect.top + pinRect.height / 2;
+      const visiblePins = this.buttons.filter(button => button.classList.contains('ix-markets-pin'))
+        .map(button => button.getBoundingClientRect());
+      const candidates = [
+        [x - width / 2, pinRect.top - height - 5],
+        [x - width / 2, pinRect.bottom + 5],
+        [pinRect.right + 5, y - height / 2],
+        [pinRect.left - width - 5, y - height / 2]
+      ];
+      let best = null;
+      for (const [candidateX, candidateY] of candidates) {
+        const left = Math.max(view.left + 4, Math.min(candidateX, view.right - width - 4));
+        const top = Math.max(view.top + 4, Math.min(candidateY, view.bottom - height - 4));
+        const overlap = visiblePins.reduce((area, other) => area +
+          Math.max(0, Math.min(left + width, other.right) - Math.max(left, other.left)) *
+          Math.max(0, Math.min(top + height, other.bottom) - Math.max(top, other.top)), 0);
+        if (!best || overlap < best.overlap) best = { left, top, overlap };
+        if (!overlap) break;
+      }
+      this.tooltip.style.left = `${best.left - stage.left - this.clientLeft}px`;
+      this.tooltip.style.top = `${best.top - stage.top - this.clientTop}px`;
     }
   }
   if (!customElements.get('ix-markets-map')) customElements.define('ix-markets-map', MarketMap);
