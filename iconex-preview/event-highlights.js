@@ -97,24 +97,21 @@
     </dialog>`;
   }
 
-  function highlights(archive) {
-    const id = archive ? 'ix-gallery-archive' : 'event-highlights';
-    const heading = archive ? 'h1' : 'h2';
+  function galleryArchive() {
+    const id = 'ix-gallery-archive';
     return `<ix-event-highlights class="ixg" id="${id}"><section class="ixg-inner" aria-labelledby="${id}-title">
       <header class="ixg-intro"><p class="ixg-overline">THE DELIVER STAGE IN ACTION</p>
-        <${heading} class="ixg-title" id="${id}-title">Visual Proof — Event Gallery &amp; Highlights</${heading}><p class="ixg-lead">${lead}</p>
+        <h1 class="ixg-title" id="${id}-title">Visual Proof — Event Gallery &amp; Highlights</h1><p class="ixg-lead">${lead}</p>
       </header>
       <div class="ixg-filters" role="group" aria-label="Filter gallery highlights">
         ${filters.map(([key, label]) => `<button class="ixg-filter" data-filter="${key}" type="button" aria-controls="${id}-grid" aria-pressed="${key === 'all'}">${escape(label)}</button>`).join('')}
       </div>
       <p class="ixg-sr" role="status" aria-atomic="true">6 highlights shown</p>
       <div class="ixg-grid" id="${id}-grid" data-filter="all">${frames.map(tile).join('')}</div>
-      ${archive ? '' : '<div class="ixg-footer"><a class="ixg-cta" href="/gallery" data-ix-route>Visit Full Gallery <span aria-hidden="true">→</span></a></div>'}
       ${lightbox(id)}
     </section></ix-event-highlights>`;
   }
-  window.iconexHighlightsHome = () => highlights(false);
-  window.iconexFullGallery = () => highlights(true) + window.realEventGallery();
+  window.iconexFullGallery = () => galleryArchive() + window.realEventGallery();
 
   class EventHighlights extends HTMLElement {
     connectedCallback() {
