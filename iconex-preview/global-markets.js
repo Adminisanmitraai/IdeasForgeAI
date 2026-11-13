@@ -5,55 +5,58 @@
   if (typeof previousHero !== 'function' || previousHero.iconexMarkets) return;
 
   const markets = [
-    { id: 'in', code: 'IN', name: 'Republic of India', region: 'South Asia HQ', city: 'New Delhi & Hyderabad', focus: 'Government exhibitions, international summits and turnkey pavilions.', lon: 77.209, lat: 28.614 },
-    { id: 'bh', code: 'BH', name: 'Kingdom of Bahrain', region: 'GCC Regional Hub', city: 'Manama', focus: 'Ministerial conferences, HSE forums and cross-border industry platforms.', lon: 50.587, lat: 26.223, callout: [666, 100] },
-    { id: 'sa', code: 'SA', name: 'Kingdom of Saudi Arabia', region: 'GCC Market', city: 'Al Khobar & Riyadh', focus: 'Energy conclaves, international summits and industry delegations.', lon: 46.675, lat: 24.714, callout: [574, 204] },
-    { id: 'ae', code: 'AE', name: 'United Arab Emirates', region: 'GCC Market', city: 'Dubai & Abu Dhabi', focus: 'International exhibitions, business delegations and industry platforms.', lon: 55.271, lat: 25.205, callout: [644, 235] },
-    { id: 'om', code: 'OM', name: 'Sultanate of Oman', region: 'GCC Market', city: 'Muscat', focus: 'Energy and HSE forums, industry conferences and delegate exchange.', lon: 58.406, lat: 23.589, callout: [724, 235] },
-    { id: 'kw', code: 'KW', name: 'State of Kuwait', region: 'GCC Market', city: 'Kuwait City', focus: 'Industry conferences, energy forums and government participation.', lon: 47.978, lat: 29.375, callout: [597, 106] },
-    { id: 'gb', code: 'UK', name: 'United Kingdom', region: 'European Partner Network', city: 'London', focus: 'Cross-border partnerships and international delegate participation.', lon: -0.128, lat: 51.507 },
-    { id: 'us', code: 'US', name: 'United States of America', region: 'North American Partner Network', city: '', focus: 'International delegate connections and cross-border industry partnerships.', lon: -98.58, lat: 39.83 }
+    { id: 'in', code: 'IN', name: 'Republic of India', region: 'South Asia HQ', city: 'New Delhi & Hyderabad', focus: 'Government exhibitions, international summits and turnkey pavilions.', pinLocation: 'New Delhi', lon: 77.2, lat: 28.6 },
+    { id: 'bh', code: 'BH', name: 'Kingdom of Bahrain', region: 'GCC Regional Hub', city: 'Manama', focus: 'Ministerial conferences, HSE forums and cross-border industry platforms.', lon: 50.6, lat: 26.2 },
+    { id: 'sa', code: 'SA', name: 'Kingdom of Saudi Arabia', region: 'GCC Market', city: 'Al Khobar & Riyadh', focus: 'Energy conclaves, international summits and industry delegations.', pinLocation: 'Riyadh', lon: 46.7, lat: 24.7 },
+    { id: 'ae', code: 'AE', name: 'United Arab Emirates', region: 'GCC Market', city: 'Dubai & Abu Dhabi', focus: 'International exhibitions, business delegations and industry platforms.', pinLocation: 'Abu Dhabi', lon: 54.4, lat: 24.5 },
+    { id: 'om', code: 'OM', name: 'Sultanate of Oman', region: 'GCC Market', city: 'Muscat', focus: 'Energy and HSE forums, industry conferences and delegate exchange.', lon: 58.4, lat: 23.6 },
+    { id: 'kw', code: 'KW', name: 'State of Kuwait', region: 'GCC Market', city: 'Kuwait City', focus: 'Industry conferences, energy forums and government participation.', lon: 48.0, lat: 29.4 },
+    { id: 'gb', code: 'UK', name: 'United Kingdom', region: 'European Partner Network', city: 'London', focus: 'Cross-border partnerships and international delegate participation.', lon: -0.1, lat: 51.5 },
+    { id: 'us', code: 'US', name: 'United States of America', region: 'North American Partner Network', city: '', focus: 'International delegate connections and cross-border industry partnerships.', pinLocation: 'Central United States', lon: -95.0, lat: 39.0 }
   ];
   const byId = new Map(markets.map(market => [market.id, market]));
   const overline = 'CROSS-BORDER REACH &amp; GLOBAL FOOTPRINT';
   const lead = 'iCONEX supports projects and industry platforms across multiple markets—connecting governments, international delegates, and enterprise ecosystems worldwide.';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const text = value => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // The Natural Earth base map uses this projection and the same 1000 × 403 canvas.
-  const anchor = market => [(market.lon + 180) * 1000 / 360, (85 - market.lat) * 1000 / 360];
-  const pinPosition = market => market.callout || anchor(market);
-  const point = coords => coords.map(value => value.toFixed(2)).join(' ');
+  // The land, pins and arcs use one plate carrée frame: 180°W–180°E, 90°N–60°S.
+  const mapWidth = 1200;
+  const mapHeight = 500;
+  const project = ({ lon, lat }) => [
+    (lon + 180) / 360 * mapWidth,
+    (90 - lat) / 150 * mapHeight
+  ];
+  const point = coords => coords.map(value => value.toFixed(4)).join(' ');
 
-  // Control points share the map's viewBox. Regional curves fan outward between
-  // the displayed beacons so short and near-vertical links have visible curvature.
-  const routes = [
-    { from: 'us', to: 'gb', control: [363, 36] },
-    { from: 'gb', to: 'kw', control: [550, 67] },
-    { from: 'kw', to: 'bh', control: [632, 74] },
-    { from: 'kw', to: 'sa', control: [548, 145] },
-    { from: 'bh', to: 'ae', control: [612, 166] },
-    { from: 'bh', to: 'om', control: [718, 136] },
-    { from: 'bh', to: 'in', control: [708, 100] }
+  // Only the control points are art-directed. Both ends always use geographic coordinates.
+  const marketRoutes = [
+    { from: 'us', to: 'gb', control: [451, 66] },
+    { from: 'gb', to: 'kw', control: [697, 95] },
+    { from: 'kw', to: 'bh', control: [773, 199] },
+    { from: 'bh', to: 'sa', control: [765, 225] },
+    { from: 'bh', to: 'ae', control: [778, 207] },
+    { from: 'bh', to: 'om', control: [784, 233] },
+    { from: 'bh', to: 'in', control: [811, 175] }
   ];
   function routeArc({ from, to, control }) {
-    const start = pinPosition(byId.get(from));
-    const end = pinPosition(byId.get(to));
+    const start = project(byId.get(from));
+    const end = project(byId.get(to));
     return `<path class="map-route-arc" d="M${point(start)} Q${point(control)} ${point(end)}"/>`;
   }
   function button(market, isPin) {
     const label = text(market.name);
     const attrs = `type="button" data-market="${market.id}" aria-controls="ix-markets-tip" aria-expanded="false" aria-pressed="false"`;
     if (!isPin) return `<button class="ix-markets-pill" ${attrs}>${label}</button>`;
-    const [x, y] = pinPosition(market);
-    return `<button class="ix-markets-pin" ${attrs} aria-label="${label}" style="left:${(x / 10).toFixed(3)}%;top:${(y * 100 / 403).toFixed(3)}%"><span class="ix-markets-pin-halo" aria-hidden="true"></span><span class="ix-markets-pin-dot" aria-hidden="true"></span><span class="ix-markets-pin-code" aria-hidden="true">${market.code}</span></button>`;
+    const [x, y] = project(market);
+    return `<button class="ix-markets-pin" ${attrs} aria-label="${label}" style="left:${(x / mapWidth * 100).toFixed(6)}%;top:${(y / mapHeight * 100).toFixed(6)}%"><span class="ix-markets-pin-halo" aria-hidden="true"></span><span class="ix-markets-pin-dot" aria-hidden="true"></span><span class="ix-markets-pin-code" aria-hidden="true">${market.code}</span></button>`;
   }
   function mapStage() {
     return `<ix-markets-map class="ix-markets-stage">
       <div class="ix-markets-viewport" role="group" aria-label="Interactive world map of eight iCONEX markets">
         <div class="ix-markets-canvas">
-          <img class="ix-markets-base" src="./assets/world-markets.svg" width="1000" height="403" alt="" loading="lazy" decoding="async">
-          <svg class="ix-markets-overlay" viewBox="0 0 1000 403" aria-hidden="true" focusable="false">
-            ${routes.map(routeArc).join('')}
+          <img class="ix-markets-base" src="./assets/world-markets.svg?v=20261113-geo" width="${mapWidth}" height="${mapHeight}" alt="" loading="lazy" decoding="async">
+          <svg class="ix-markets-overlay" viewBox="0 0 ${mapWidth} ${mapHeight}" aria-hidden="true" focusable="false">
+            ${marketRoutes.map(routeArc).join('')}
           </svg>
           ${markets.map(market => button(market, true)).join('')}
         </div>
@@ -193,8 +196,8 @@
       this.tooltip.querySelector('.ix-markets-tooltip-region').textContent = market.region;
       this.tooltip.querySelector('.ix-markets-tooltip-name').textContent = market.name;
       const city = this.tooltip.querySelector('.ix-markets-tooltip-city');
-      city.textContent = market.city;
-      city.hidden = !market.city;
+      city.textContent = market.pinLocation || market.city;
+      city.hidden = !city.textContent;
       this.tooltip.querySelector('.ix-markets-tooltip-focus').textContent = market.focus;
       const pin = this.querySelector(`.ix-markets-pin[data-market="${id}"]`);
       if (pan && this.viewport.scrollWidth > this.viewport.clientWidth) {
