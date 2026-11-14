@@ -30,12 +30,6 @@
     const entrance = !entered;
     entered = true;
     return `<section id="iconex-mission-hero" class="ix-mission-hero" aria-labelledby="ix-mission-title" data-entrance="${entrance}">
-      <div class="ix-mission-media" aria-hidden="true">
-        <img class="ix-mission-summit" src="./assets/iconex-global-hse-stage.avif" alt="" width="1280" height="853" fetchpriority="high" decoding="async">
-        <img class="ix-mission-pavilion" src="./assets/imr-slide3-background.avif" alt="" width="1200" height="675" decoding="async">
-      </div>
-      <div class="ix-mission-scrim" aria-hidden="true"></div>
-      <div class="ix-mission-geometry" aria-hidden="true"></div>
       <div class="ix-mission-content">
         <p class="ix-mission-badge">WE BELIEVE IN THE 3 I'S — INSPIRE, INNOVATE &amp; IMPLEMENT</p>
         <h1 id="ix-mission-title" class="ix-mission-title">Connecting Businesses<br> Creating Opportunities<br> for a <span>Sustainable Future</span></h1>

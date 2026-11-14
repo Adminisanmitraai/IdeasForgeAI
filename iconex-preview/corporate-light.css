@@ -174,3 +174,34 @@ footer.ixf .ixf-panel .ixf-lead{color:rgba(255,255,255,.85)}
 footer.ixf .ixf-panel .ixf-kicker{color:#FFFFFF}
 footer.ixf .ixf-status[data-state=error]{color:#374B8C}
 @media(max-width:767px){#iconex-philosophy .ix-pillar-card{min-height:0}#iconex-mission-hero::after{width:120vw;right:-66vw}#methodology.ix-4d-method .ix-4d-card-header{padding:12px 15px}}
+
+/* Hero image replacement — all copy and links preserved. */
+#iconex-mission-hero {
+  min-height:88vh; min-height:88svh;
+  display:flex; align-items:center; position:relative;
+  overflow:hidden; isolation:isolate;
+  background-color:#FFFFFF !important;
+  background-image:url("./assets/iconex-hero-background.webp") !important;
+  background-size:cover !important;
+  background-position:right center !important;
+  background-repeat:no-repeat !important;
+  color:#374B8C;
+}
+#iconex-mission-hero::before,#iconex-mission-hero::after {
+  content:none !important; display:none !important;
+  background:none !important; box-shadow:none !important;
+}
+#iconex-mission-hero .ix-mission-media,
+#iconex-mission-hero .ix-mission-scrim,
+#iconex-mission-hero .ix-mission-geometry { display:none !important; }
+#iconex-mission-hero .ix-mission-content { position:relative; z-index:1; }
+#iconex-mission-hero .ix-mission-badge { color:#374B8C; border-color:#374B8C; }
+#iconex-mission-hero .ix-mission-title,
+#iconex-mission-hero .ix-mission-title span,
+#iconex-mission-hero .ix-mission-lead,
+#iconex-mission-hero .ix-mission-scroll { color:#374B8C !important; }
+#iconex-mission-hero .ix-mission-primary { background:#374B8C; color:#FFFFFF; border-color:#374B8C; }
+#iconex-mission-hero .ix-mission-secondary { background:#FFFFFF; color:#374B8C; border-color:#374B8C; }
+@media(max-width:767px){
+ #iconex-mission-hero{min-height:88svh;background-position:65% center !important;}
+}
