@@ -29,6 +29,19 @@
   margin: 0 auto;
   text-align: left;
 }
+#iconex-mission-hero .ix-mission-badge {
+  display: inline-block;
+  max-width: 100%;
+  margin: 0 0 24px;
+  padding: 10px 16px;
+  border: 1px solid #374B8C;
+  border-radius: 999px;
+  background: #FFFFFF;
+  color: #374B8C;
+  font: 600 12px/1.7 'Manrope', 'Inter', Arial, sans-serif;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
 #iconex-mission-hero .ix-mission-title {
   max-width: 910px;
   margin: 0;
@@ -91,44 +104,18 @@
 }
 #iconex-mission-hero .ix-mission-button:hover { transform: translateY(-2px); }
 #iconex-mission-hero a:focus-visible { outline: 3px solid #374B8C; outline-offset: 5px; }
-#iconex-mission-hero .ix-mission-scroll {
-  position: absolute;
-  bottom: 23px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 44px;
-  min-height: 52px;
-  color: #374B8C;
-  text-decoration: none;
-}
-#iconex-mission-hero .ix-mission-scroll-label {
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: .2em;
-  white-space: nowrap;
-}
-#iconex-mission-hero .ix-mission-scroll svg {
-  stroke: #374B8C;
-  stroke-width: 1.6;
-  fill: none;
-}
+
+
+
 #iconex-mission-hero[data-entrance='true'] .ix-mission-title { animation: ix-mission-rise .65s ease .25s both; }
 #iconex-mission-hero[data-entrance='true'] .ix-mission-lead { animation: ix-mission-rise .65s ease .4s both; }
 #iconex-mission-hero[data-entrance='true'] .ix-mission-actions { animation: ix-mission-rise .65s ease .55s both; }
-#iconex-mission-hero[data-entrance='true'] .ix-mission-scroll svg { animation: ix-mission-chevron 2s ease-in-out 1.3s 2; }
+
 @keyframes ix-mission-rise {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: none; }
 }
-@keyframes ix-mission-chevron {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(5px); }
-}
+
 @media (min-width: 768px) and (max-width: 1023px) {
   #iconex-mission-hero { padding: 80px 42px 110px; }
   #iconex-mission-hero .ix-mission-title { font-size: clamp(40px, 4.7vw, 48px); }
@@ -162,7 +149,7 @@
     font-size: 14px;
     padding-inline: 18px;
   }
-  #iconex-mission-hero .ix-mission-scroll { bottom: 18px; }
+  
 }
 @media (prefers-reduced-motion: reduce) {
   #iconex-mission-hero *, #iconex-mission-hero *::before, #iconex-mission-hero *::after {

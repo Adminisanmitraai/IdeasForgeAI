@@ -31,6 +31,7 @@
     entered = true;
     return `<section id="iconex-mission-hero" class="ix-mission-hero" aria-labelledby="ix-mission-title" data-entrance="${entrance}">
       <div class="ix-mission-content">
+        <p class="ix-mission-badge">WE BELIEVE IN THE 3 I'S — INSPIRE, INNOVATE &amp; IMPLEMENT</p>
         <h1 id="ix-mission-title" class="ix-mission-title">Connecting Businesses<br> Creating Opportunities<br> for a <span>Sustainable Future</span></h1>
         <p class="ix-mission-lead">At iCONEX, we specialize in organizing international conferences, exhibitions, summits, workshops, and training programmes tailored for governments and major industries—accelerating a paradigm shift through collaborative global platforms.</p>
         <div class="ix-mission-actions">
@@ -38,10 +39,6 @@
           <a class="ix-mission-button ix-mission-secondary" href="#methodology" data-ix-hero-scroll>Discover Our 4D Approach <span aria-hidden="true">↓</span></a>
         </div>
       </div>
-      <a class="ix-mission-scroll" href="#methodology" data-ix-hero-scroll aria-label="Scroll to our 4D methodology">
-        <span class="ix-mission-scroll-label">SCROLL TO DISCOVER</span>
-        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-      </a>
     </section>${methodology()}`;
   }
   missionHero.iconexMissionVersion = VERSION;
