@@ -1,0 +1,61 @@
+/* iCONEX About page: two-color corporate design system. */
+.ixa-about{--blue:#374B8C;--white:#FFFFFF;--rule:rgba(55,75,140,.16);font-family:'Manrope','Inter',Arial,sans-serif;color:var(--blue);background:var(--white)}
+.ixa-about *{box-sizing:border-box}
+.ixa-container{max-width:1280px;margin:0 auto;padding:0 32px;position:relative}
+.ixa-section{padding:84px 0;background:#FFFFFF;color:#374B8C}
+.ixa-overline{font-size:12px;line-height:1.6;letter-spacing:.16em;font-weight:700;text-transform:uppercase;color:#374B8C;margin:0 0 14px}
+.ixa-about h1,.ixa-about h2,.ixa-about h3{color:#374B8C;letter-spacing:-.035em;font-family:inherit}
+.ixa-about h1{font-size:clamp(34px,4.2vw,56px);line-height:1.15;font-weight:800;max-width:850px;margin:0 0 24px}
+.ixa-about h2{font-size:clamp(31px,3.15vw,42px);line-height:1.2;font-weight:750;margin:0 0 22px}
+.ixa-about h3{font-size:clamp(20px,1.6vw,25px);line-height:1.28;font-weight:750;margin:0 0 18px}
+.ixa-about p{font-size:16px;line-height:1.75;color:rgba(55,75,140,.85);margin:0 0 20px}
+.ixa-hero{overflow:hidden;min-height:520px;padding:104px 0;background:linear-gradient(120deg,#FFFFFF 48%,rgba(55,75,140,.12) 100%)}
+.ixa-hero-content{position:relative;z-index:1;max-width:850px}
+.ixa-hero .ixa-lead{font-size:clamp(17px,1.35vw,19px);max-width:780px;line-height:1.65}
+.ixa-emblem{position:absolute;right:-250px;top:-25%;width:620px;aspect-ratio:1;border:30px solid rgba(55,75,140,.08);border-radius:50%;pointer-events:none;transform:rotate(45deg)}
+.ixa-emblem:before,.ixa-emblem:after,.ixa-emblem span{content:'';position:absolute;inset:18%;border:20px solid rgba(55,75,140,.08);border-radius:50%}
+.ixa-emblem:after{inset:20%;border-radius:0;transform:rotate(45deg)}
+.ixa-emblem span{inset:43%;border-radius:50%;background:rgba(55,75,140,.08)}
+.ixa-actions{display:flex;gap:16px;flex-wrap:wrap;margin-top:32px}
+.ixa-button{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:12px 25px;border-radius:6px;font-size:15px;font-weight:700;line-height:1.4;text-decoration:none;transition:transform .2s,background .2s}
+.ixa-button.primary{background:#374B8C;color:#FFFFFF;border:1.5px solid #374B8C}
+.ixa-button.secondary{background:#FFFFFF;color:#374B8C;border:1.5px solid #374B8C}
+.ixa-button:hover{transform:translateY(-2px)}
+.ixa-button.primary:hover{background:rgba(55,75,140,.88);color:#FFFFFF}
+.ixa-button.secondary:hover{background:rgba(55,75,140,.05);color:#374B8C}
+.ixa-button:focus-visible{outline:3px solid #374B8C;outline-offset:4px}
+.ixa-story{border-top:1px solid rgba(55,75,140,.1)}
+.ixa-split{display:grid;grid-template-columns:7fr 5fr;gap:clamp(30px,5vw,74px);align-items:center}
+.ixa-identity{padding:32px;border:1px solid rgba(55,75,140,.18);border-radius:16px;box-shadow:0 12px 32px rgba(55,75,140,.07)}
+.ixa-pill{display:inline-block;background:#374B8C;color:#FFFFFF;padding:9px 15px;border-radius:7px;font-size:11px;font-weight:750;letter-spacing:.1em;line-height:1.5}
+.ixa-identity>p{margin:25px 0}
+.ixa-identity dl{margin:0}
+.ixa-identity dl div{padding:15px 0;border-top:1px solid rgba(55,75,140,.12)}
+.ixa-identity dt{font-size:12px;font-weight:800;margin-bottom:5px}
+.ixa-identity dd{font-size:14px;line-height:1.55;margin:0;color:rgba(55,75,140,.85)}
+.ixa-heading{text-align:center;max-width:860px;margin:0 auto 42px}
+.ixa-heading p{margin:0 auto;max-width:810px}
+.ixa-impact{padding-top:48px;padding-bottom:48px}
+.ixa-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid rgba(55,75,140,.16);border-radius:16px;overflow:hidden}
+.ixa-metric{padding:30px 28px;border-right:1px solid rgba(55,75,140,.16);border-bottom:1px solid rgba(55,75,140,.16)}
+.ixa-metric:nth-child(3n){border-right:0}
+.ixa-metric:nth-last-child(-n+3){border-bottom:0}
+.ixa-metric strong{display:block;font-size:clamp(30px,3vw,43px);line-height:1.15;letter-spacing:-.045em}
+.ixa-metric h3{font-size:17px;margin:13px 0 5px}
+.ixa-metric p{font-size:13px;color:rgba(55,75,140,.72);margin:0}
+.ixa-grid{display:grid;gap:26px}
+.ixa-grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.ixa-grid.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+.ixa-card{position:relative;min-height:345px;padding:28px;border:1px solid rgba(55,75,140,.16);border-radius:16px;background:#FFFFFF;overflow:hidden;box-shadow:0 10px 28px rgba(55,75,140,.06)}
+.ixa-card h3{margin:25px 0 15px;position:relative;z-index:1}
+.ixa-card p{position:relative;z-index:1;font-size:15px}
+.ixa-watermark{position:absolute;right:13px;bottom:-34px;font-weight:800;font-size:108px;line-height:1;color:rgba(55,75,140,.08);pointer-events:none}
+.ixa-how{padding:96px 0;background:linear-gradient(135deg,rgba(55,75,140,.08) 0%,rgba(55,75,140,.22) 50%,rgba(55,75,140,.85) 100%)}
+.ixa-how .ixa-card{min-height:290px;box-shadow:0 12px 30px rgba(55,75,140,.12)}
+.ixa-how .ixa-card p{margin:26px 0 0}
+.ixa-partners{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;max-width:1024px;margin:0 auto}
+.ixa-partner{display:flex;align-items:center;justify-content:center;text-align:center;min-height:126px;padding:20px;border-radius:12px;border:1px solid rgba(55,75,140,.15);background:#FFFFFF;color:#374B8C;font-weight:750;font-size:17px;transition:border-color .2s,box-shadow .2s}
+.ixa-partner:hover{border-color:#374B8C;box-shadow:0 7px 20px rgba(55,75,140,.08)}
+@media(max-width:1000px){.ixa-grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}.ixa-split{grid-template-columns:1fr}.ixa-partners{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.ixa-section{padding:64px 0}.ixa-container{padding:0 24px}.ixa-hero{padding:72px 0}.ixa-emblem{right:-360px;opacity:.6}.ixa-grid.three,.ixa-grid.four,.ixa-metrics{grid-template-columns:1fr}.ixa-metric,.ixa-metric:nth-child(3n){border-right:0;border-bottom:1px solid rgba(55,75,140,.16)}.ixa-metric:last-child{border-bottom:0}.ixa-card{min-height:0}.ixa-partners{gap:12px}.ixa-partner{min-height:105px;font-size:14px;padding:12px}.ixa-how{background:linear-gradient(135deg,rgba(55,75,140,.08),rgba(55,75,140,.45))}}
+@media(prefers-reduced-motion:reduce){.ixa-button,.ixa-partner{transition:none}.ixa-button:hover{transform:none}}
