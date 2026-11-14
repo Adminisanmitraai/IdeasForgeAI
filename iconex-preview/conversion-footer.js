@@ -46,7 +46,7 @@
       '<a href="mailto:' + email + '">' + icon('mail') + '<span>' + email + '</span></a></address></div>';
   }
 
-  const logo = '<img class="ixf-logo" src="./iconex-footer-logo.png" width="229" height="42" loading="lazy" decoding="async" alt=""><span class="ixf-logo-company">Exhibitions Private Limited</span>';
+  const logo = '<img class="ixf-logo" src="./iconex-header-logo-transparent.png" width="480" height="88" loading="lazy" decoding="async" alt=""><span class="ixf-logo-company">Exhibitions Private Limited</span>';
 
   const motif = '<svg class="ixf-motif" viewBox="0 0 360 360" width="360" height="360" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor"><circle cx="180" cy="180" r="154"/><circle cx="180" cy="180" r="136" stroke-dasharray="1 8"/><path d="M180 26 289 71 334 180 289 289 180 334 71 289 26 180 71 71Z M180 26 334 180 180 334 26 180Z M71 71H289V289H71Z"/><circle cx="180" cy="180" r="109"/><circle cx="180" cy="180" r="54" stroke-dasharray="2 7"/></g></svg>';
 

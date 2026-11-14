@@ -128,7 +128,19 @@
   letter-spacing: .10em;
 }
 .ixf .ixf-brand-home { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; max-width: 100%; min-height: 44px; }
-.ixf .ixf-logo { display: block; width: min(229px,100%); height: auto; aspect-ratio: 480/88; }
+.ixf .ixf-logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  max-width: 100%;
+  aspect-ratio: 480/88;
+  object-fit: contain;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .95))
+          drop-shadow(0 0 6px rgba(255, 255, 255, .55));
+}
 .ixf .ixf-logo-company { color: #d1d8e3; font: 600 10px/1.4 Manrope,Inter,Arial,sans-serif; text-transform: uppercase; letter-spacing: .16em; }
 .ixf .ixf-mission { margin-top: 16px; max-width: 41ch; line-height: 1.65; color: var(--ixf-muted); }
 .ixf .ixf-doctrine {
@@ -244,7 +256,7 @@
   .ixf :is(.ixf-primary,.ixf-links a):hover { transform:none; }
 }
 @media (forced-colors: active) {
-  .ixf .ixf-logo { background: #050e1d; forced-color-adjust: none; }
+  .ixf .ixf-logo { background: transparent !important; forced-color-adjust: none; }
   .ixf .ixf-panel, .ixf .ixf-social-link, .ixf .ixf-actions a, .ixf .ixf-form button { border: 1px solid ButtonText; }
   .ixf .ixf-motif { display: none; }
 }
