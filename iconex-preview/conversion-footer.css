@@ -277,12 +277,12 @@ footer.ixf[hidden], body > footer.footer[hidden] { display: none !important; }
   z-index: -1;
   pointer-events: none;
   background: linear-gradient(90deg,
-    rgba(255,255,255,.98) 0%,
-    rgba(232,239,249,.96) 23%,
-    #354B80 36%,
-    #354B80 64%,
-    rgba(232,239,249,.96) 77%,
-    rgba(255,255,255,.98) 100%);
+    #F4FBFD 0%,
+    #48CAE4 29%,
+    #0B1E3F 41%,
+    #0B1E3F 69%,
+    #48CAE4 83%,
+    #F4FBFD 100%);
 }
 .ixf .ixf-brand-home .ixf-logo {
   background: transparent !important;
@@ -296,9 +296,32 @@ footer.ixf[hidden], body > footer.footer[hidden] { display: none !important; }
 .ixf .ixf-news h3 { color: #14264b; }
 .ixf .ixf-news > p { color: #24395b; }
 @media (max-width: 1023px) {
-  .ixf .ixf-grid::before { background: linear-gradient(110deg, rgba(255,255,255,.98), rgba(232,239,249,.96)); }
+  .ixf .ixf-grid::before { background: linear-gradient(110deg, #F4FBFD 0%, #48CAE4 52%, #F4FBFD 100%); }
   .ixf .ixf-grid h3, .ixf .ixf-links a, .ixf .ixf-desk a, .ixf .ixf-news h3 { color: #14264b; }
   .ixf .ixf-desk h4 { color: #795b16; }
   .ixf .ixf-desk svg { color: #354B80; }
   .ixf .ixf-social-link { background: rgba(232,239,249,.9); color: #354B80; border-color: rgba(53,75,128,.4); }
+}
+
+/* Accent-gradient contrast: logo remains original navy/crimson, with no effects. */
+.ixf .ixf-brand-home, .ixf .ixf-brand-home .ixf-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+@media (min-width: 1024px) {
+  .ixf .ixf-brand .ixf-logo-company, .ixf .ixf-brand .ixf-mission,
+  .ixf .ixf-brand .ixf-doctrine { color: #0B1E3F; }
+  .ixf .ixf-brand .ixf-doctrine { border-color: rgba(11,30,63,.45); }
+  .ixf .ixf-social-link { color: #0B1E3F; background: rgba(244,251,253,.85); border-color: rgba(11,30,63,.35); }
+  .ixf .ixf-links h3, .ixf .ixf-contacts h3 { color: #FFFFFF; }
+  .ixf .ixf-links a { color: #F4FBFD; }
+  .ixf .ixf-desk a { color: #F4FBFD; }
+  .ixf .ixf-news h3, .ixf .ixf-news > p { color: #0B1E3F; }
+  .ixf .ixf-news .ixf-form input[type="email"] { border-color: rgba(11,30,63,.65); }
+}
+@media (max-width: 1023px) {
+  .ixf .ixf-grid h3, .ixf .ixf-news h3, .ixf .ixf-news > p,
+  .ixf .ixf-links a, .ixf .ixf-desk a { color: #0B1E3F; }
 }
