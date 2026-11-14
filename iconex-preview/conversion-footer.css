@@ -127,7 +127,7 @@
   text-transform: uppercase;
   letter-spacing: .10em;
 }
-.ixf .ixf-brand-home { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; max-width: 100%; min-height: 44px; }
+.ixf .ixf-brand-home { display: inline-flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 6px; max-width: 100%; min-height: 44px; background: transparent !important; box-shadow: none !important; filter: none !important; text-shadow: none !important; }
 .ixf .ixf-logo {
   display: block;
   height: 44px;
@@ -138,8 +138,8 @@
   padding: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
-  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, .95))
-          drop-shadow(0 0 6px rgba(255, 255, 255, .55));
+  filter: none !important;
+  text-shadow: none !important;
 }
 .ixf .ixf-logo-company { color: #d1d8e3; font: 600 10px/1.4 Manrope,Inter,Arial,sans-serif; text-transform: uppercase; letter-spacing: .16em; }
 .ixf .ixf-mission { margin-top: 16px; max-width: 41ch; line-height: 1.65; color: var(--ixf-muted); }
@@ -263,3 +263,42 @@
 /* The client-side router preserves the form while another page is open. */
 footer.ixf[hidden], body > footer.footer[hidden] { display: none !important; }
 .ixf .ixf-status a { color: var(--ixf-glint); text-decoration: underline; }
+
+/* Full-width gradient in the brand-directory band: no logo patch and no glow.
+   The invitation and legal bar retain their original midnight-navy background. */
+.ixf .ixf-grid {
+  position: relative;
+  isolation: isolate;
+}
+.ixf .ixf-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    rgba(255,255,255,.98) 0%,
+    rgba(232,239,249,.96) 23%,
+    #354B80 36%,
+    #354B80 64%,
+    rgba(232,239,249,.96) 77%,
+    rgba(255,255,255,.98) 100%);
+}
+.ixf .ixf-brand-home .ixf-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  text-shadow: none !important;
+}
+.ixf .ixf-brand .ixf-logo-company,
+.ixf .ixf-brand .ixf-mission { color: #14264b; }
+.ixf .ixf-brand .ixf-doctrine { color: #795b16; border-color: rgba(121,91,22,.4); background: transparent; }
+.ixf .ixf-news h3 { color: #14264b; }
+.ixf .ixf-news > p { color: #24395b; }
+@media (max-width: 1023px) {
+  .ixf .ixf-grid::before { background: linear-gradient(110deg, rgba(255,255,255,.98), rgba(232,239,249,.96)); }
+  .ixf .ixf-grid h3, .ixf .ixf-links a, .ixf .ixf-desk a, .ixf .ixf-news h3 { color: #14264b; }
+  .ixf .ixf-desk h4 { color: #795b16; }
+  .ixf .ixf-desk svg { color: #354B80; }
+  .ixf .ixf-social-link { background: rgba(232,239,249,.9); color: #354B80; border-color: rgba(53,75,128,.4); }
+}
