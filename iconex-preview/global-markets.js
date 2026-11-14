@@ -19,7 +19,7 @@
   const lead = 'iCONEX supports projects and industry platforms across multiple markets—connecting governments, international delegates, and enterprise ecosystems worldwide.';
   const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const text = value => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-  // The land, pins and arcs use one plate carrée frame: 180°W–180°E, 90°N–60°S.
+  // The land, pins and callouts use one plate carrée frame: 180°W–180°E, 90°N–60°S.
   const mapWidth = 1200;
   const mapHeight = 500;
   const project = ({ lon, lat }) => [
@@ -28,27 +28,37 @@
   ];
   const point = coords => coords.map(value => value.toFixed(4)).join(' ');
 
-  // Only the control points are art-directed. Both ends always use geographic coordinates.
-  const marketRoutes = [
-    { from: 'us', to: 'gb', control: [451, 66] },
-    { from: 'gb', to: 'kw', control: [697, 95] },
-    { from: 'kw', to: 'bh', control: [773, 199] },
-    { from: 'bh', to: 'sa', control: [765, 225] },
-    { from: 'bh', to: 'ae', control: [778, 207] },
-    { from: 'bh', to: 'om', control: [784, 233] },
-    { from: 'bh', to: 'in', control: [811, 175] }
-  ];
-  function routeArc({ from, to, control }) {
-    const start = project(byId.get(from));
-    const end = project(byId.get(to));
-    return `<path class="map-route-arc" d="M${point(start)} Q${point(control)} ${point(end)}"/>`;
+  // Presentation-only vertical callouts. Geographic coordinates remain unchanged.
+  // All positions are in the same 1200 x 500 equirectangular map frame.
+  const callouts = {
+    sa: { y: 40, side: 'left', name: 'SAUDI ARABIA', direction: 'up' },
+    kw: { y: 80, side: 'right', name: 'KUWAIT', direction: 'up' },
+    us: { y: 425, side: 'center', name: 'USA', direction: 'down' },
+    gb: { y: 370, side: 'center', name: 'UK', direction: 'down' },
+    bh: { y: 375, side: 'left', name: 'BAHRAIN', direction: 'down' },
+    ae: { y: 430, side: 'center', name: 'UAE', direction: 'down' },
+    om: { y: 390, side: 'right', name: 'OMAN', direction: 'down' },
+    in: { y: 330, side: 'center', name: 'INDIA', direction: 'down' }
+  };
+  function leaderCallout(market) {
+    const [x, y] = project(market);
+    const spec = callouts[market.id];
+    const upper = spec.direction === 'up';
+    const labelX = x + (spec.side === 'left' ? -12 : spec.side === 'right' ? 12 : 0);
+    const anchor = spec.side === 'left' ? 'end' : spec.side === 'right' ? 'start' : 'middle';
+    const lineEnd = spec.y + (upper ? 12 : -14);
+    const labelY = spec.y + (upper ? 4 : 0);
+    return `<g class="ix-markets-callout" data-market="${market.id}">
+      <line class="ix-markets-leader" x1="${x.toFixed(4)}" y1="${y.toFixed(4)}" x2="${x.toFixed(4)}" y2="${lineEnd}"/>
+      <text class="ix-markets-callout-text" x="${labelX.toFixed(4)}" y="${labelY}" text-anchor="${anchor}">${spec.name}</text>
+    </g>`;
   }
   function button(market, isPin) {
     const label = text(market.name);
     const attrs = `type="button" data-market="${market.id}" aria-controls="ix-markets-tip" aria-expanded="false" aria-pressed="false"`;
     if (!isPin) return `<button class="ix-markets-pill" ${attrs}>${label}</button>`;
     const [x, y] = project(market);
-    return `<button class="ix-markets-pin" ${attrs} aria-label="${label}" style="left:${(x / mapWidth * 100).toFixed(6)}%;top:${(y / mapHeight * 100).toFixed(6)}%"><span class="ix-markets-pin-halo" aria-hidden="true"></span><span class="ix-markets-pin-dot" aria-hidden="true"></span><span class="ix-markets-pin-code" aria-hidden="true">${market.code}</span></button>`;
+    return `<button class="ix-markets-pin" ${attrs} aria-label="${label}" style="left:${(x / mapWidth * 100).toFixed(6)}%;top:${(y / mapHeight * 100).toFixed(6)}%"><svg class="ix-markets-teardrop" aria-hidden="true" viewBox="0 0 18 24" focusable="false"><path d="M9 0C3.9 0 0 4 0 9c0 6.2 5.8 12.2 9 15 3.2-2.8 9-8.8 9-15 0-5-3.9-9-9-9Z" fill="#E8C15A"/><circle cx="9" cy="8.5" r="3.6" fill="#07152B"/></svg></button>`;
   }
   function mapStage() {
     return `<ix-markets-map class="ix-markets-stage">
@@ -56,7 +66,7 @@
         <div class="ix-markets-canvas">
           <img class="ix-markets-base" src="./assets/world-markets.svg?v=20261113-geo" width="${mapWidth}" height="${mapHeight}" alt="" loading="lazy" decoding="async">
           <svg class="ix-markets-overlay" viewBox="0 0 ${mapWidth} ${mapHeight}" aria-hidden="true" focusable="false">
-            ${marketRoutes.map(routeArc).join('')}
+            ${markets.map(leaderCallout).join('')}
           </svg>
           ${markets.map(market => button(market, true)).join('')}
         </div>
@@ -191,6 +201,8 @@
         if (active) button.setAttribute('aria-describedby', 'ix-markets-tip');
         else button.removeAttribute('aria-describedby');
       }
+      this.canvas.classList.toggle('has-active', Boolean(market));
+      for (const callout of this.canvas.querySelectorAll('.ix-markets-callout')) callout.classList.toggle('is-active', callout.dataset.market === this.shown);
       this.tooltip.hidden = !market;
       if (!market) return;
       this.tooltip.querySelector('.ix-markets-tooltip-region').textContent = market.region;
