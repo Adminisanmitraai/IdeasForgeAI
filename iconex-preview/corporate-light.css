@@ -205,3 +205,21 @@ footer.ixf .ixf-status[data-state=error]{color:#374B8C}
 @media(max-width:767px){
  #iconex-mission-hero{min-height:88svh;background-position:65% center !important;}
 }
+
+/* Logo fidelity: preserve intrinsic proportions and smooth native raster rendering. */
+#iconex-header .ix-brand { transform:none !important; }
+#iconex-header .ix-brand img {
+  width:auto !important;
+  height:44px !important;
+  max-width:none !important;
+  object-fit:contain !important;
+  image-rendering:auto !important;
+  transform:none !important;
+  filter:none !important;
+  will-change:auto !important;
+}
+@media(max-width:1023px){
+  #iconex-header .ix-brand img { height:40px !important; }
+}
+/* Remove the redundant bottom hero prompt and its graphic line/chevron. */
+#iconex-mission-hero .ix-mission-scroll { display:none !important; }
