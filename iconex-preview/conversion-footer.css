@@ -325,3 +325,72 @@ footer.ixf[hidden], body > footer.footer[hidden] { display: none !important; }
   .ixf .ixf-grid h3, .ixf .ixf-news h3, .ixf .ixf-news > p,
   .ixf .ixf-links a, .ixf .ixf-desk a { color: #0B1E3F; }
 }
+
+/* November 14: uniform light-blue footer, without gradients or logo patches. */
+footer.ixf {
+  background: #CAF0F8 !important;
+  color: #0B1E3F;
+  border-top-color: rgba(11,30,63,.22);
+  --ixf-text: #183657;
+  --ixf-muted: #28415F;
+  --ixf-line: rgba(11,30,63,.20);
+}
+footer.ixf::before { background: none !important; }
+footer.ixf .ixf-grid::before { background: #CAF0F8 !important; }
+footer.ixf .ixf-panel {
+  background: #CAF0F8 !important;
+  border-color: rgba(11,30,63,.24);
+}
+footer.ixf .ixf-panel h2,
+footer.ixf .ixf-grid h3,
+footer.ixf .ixf-brand .ixf-logo-company,
+footer.ixf .ixf-brand .ixf-mission,
+footer.ixf .ixf-news > p,
+footer.ixf .ixf-links h3,
+footer.ixf .ixf-contacts h3,
+footer.ixf .ixf-news h3,
+footer.ixf .ixf-links a,
+footer.ixf .ixf-desk a,
+footer.ixf .ixf-base,
+footer.ixf .ixf-base nav a {
+  color: #0B1E3F;
+}
+footer.ixf .ixf-lead,
+footer.ixf .ixf-brand .ixf-doctrine { color: #193856; }
+footer.ixf .ixf-doctrine {
+  background: transparent;
+  border-color: rgba(11,30,63,.32);
+}
+footer.ixf .ixf-kicker,
+footer.ixf .ixf-desk h4,
+footer.ixf .ixf-base nav span { color: #71520C; }
+footer.ixf .ixf-social-link {
+  background: transparent !important;
+  color: #0B1E3F;
+  border-color: rgba(11,30,63,.40);
+}
+footer.ixf .ixf-social-link:hover,
+footer.ixf .ixf-links a:hover,
+footer.ixf .ixf-desk a:hover,
+footer.ixf .ixf-base nav a:hover { color: #0B1E3F; }
+footer.ixf .ixf-actions .ixf-secondary {
+  background: transparent;
+  color: #0B1E3F;
+  border-color: rgba(11,30,63,.48);
+}
+footer.ixf .ixf-actions .ixf-secondary:hover {
+  background: rgba(11,30,63,.06);
+  color: #0B1E3F;
+}
+footer.ixf .ixf-motif { color: rgba(11,30,63,.10); }
+footer.ixf .ixf-brand-home,
+footer.ixf .ixf-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+footer.ixf .ixf-status { color: #17492D; }
+footer.ixf .ixf-status[data-state="error"],
+footer.ixf .ixf-status.is-error { color: #8C2231; }
+footer.ixf .ixf-status a { color: #0B1E3F; }

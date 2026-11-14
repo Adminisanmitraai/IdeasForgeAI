@@ -306,3 +306,38 @@ body > a.skip:focus { z-index: 1101; }
   }
   #iconex-header .ix-nav-item:nth-last-child(-n+2) .ix-nav-link::after { background: #0B1E3F; }
 }
+
+/* November 14: solid #CAF0F8 header, with no gradient at any breakpoint. */
+#iconex-header,
+#iconex-header.is-scrolled {
+  background: #CAF0F8 !important;
+  border-bottom-color: rgba(11,30,63,.20);
+}
+#iconex-header .ix-nav-link,
+#iconex-header .ix-nav-link:hover,
+#iconex-header .ix-nav-link[aria-current="page"],
+#iconex-header .ix-nav-link[data-current="true"],
+#iconex-header .ix-nav-link[aria-expanded="true"],
+#iconex-header .ix-nav-item:nth-last-child(-n+2) .ix-nav-link,
+#iconex-header .ix-nav-item:nth-last-child(-n+2) .ix-nav-link:is(:hover,[aria-current="page"],[aria-expanded="true"]) {
+  color: #0B1E3F;
+}
+#iconex-header .ix-nav-link::after { background: #0B1E3F; }
+#iconex-header .ix-menu-toggle {
+  background: transparent !important;
+  color: #0B1E3F;
+  border-color: rgba(11,30,63,.55);
+}
+#iconex-header .ix-brand,
+#iconex-header .ix-brand img {
+  background: transparent !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  filter: none !important;
+}
+#iconex-header .ix-brand:focus-visible,
+#iconex-header .ix-contact:focus-visible,
+#iconex-header .ix-nav-link:focus-visible,
+#iconex-header .ix-menu-toggle:focus-visible {
+  outline-color: #0B1E3F;
+}
