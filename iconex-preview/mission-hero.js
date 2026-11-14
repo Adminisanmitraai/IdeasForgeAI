@@ -31,7 +31,6 @@
     entered = true;
     return `<section id="iconex-mission-hero" class="ix-mission-hero" aria-labelledby="ix-mission-title" data-entrance="${entrance}">
       <div class="ix-mission-content">
-        <p class="ix-mission-badge">WE BELIEVE IN THE 3 I'S — INSPIRE, INNOVATE &amp; IMPLEMENT</p>
         <h1 id="ix-mission-title" class="ix-mission-title">Connecting Businesses<br> Creating Opportunities<br> for a <span>Sustainable Future</span></h1>
         <p class="ix-mission-lead">At iCONEX, we specialize in organizing international conferences, exhibitions, summits, workshops, and training programmes tailored for governments and major industries—accelerating a paradigm shift through collaborative global platforms.</p>
         <div class="ix-mission-actions">
