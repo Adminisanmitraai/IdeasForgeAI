@@ -394,3 +394,38 @@ footer.ixf .ixf-status { color: #17492D; }
 footer.ixf .ixf-status[data-state="error"],
 footer.ixf .ixf-status.is-error { color: #8C2231; }
 footer.ixf .ixf-status a { color: #0B1E3F; }
+
+/* Restore the original midnight-navy CTA invitation section, only.
+   All other footer columns keep their current #CAF0F8 background. */
+footer.ixf .ixf-invite {
+  position: relative;
+  isolation: isolate;
+  border-bottom-color: rgba(197,155,39,.25);
+}
+footer.ixf .ixf-invite::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0 calc(50% - 50vw);
+  background: #050E1D;
+  pointer-events: none;
+}
+footer.ixf .ixf-panel {
+  background: radial-gradient(ellipse at 95% 65%,rgba(197,155,39,.09),transparent 48%),
+    linear-gradient(135deg,rgba(11,30,63,.85),rgba(7,21,43,.95)) !important;
+  border-color: rgba(197,155,39,.35);
+}
+footer.ixf .ixf-panel h2 { color: #FFFFFF; }
+footer.ixf .ixf-panel .ixf-lead { color: #CBD5E1; }
+footer.ixf .ixf-panel .ixf-kicker { color: #C59B27; }
+footer.ixf .ixf-panel .ixf-actions .ixf-secondary {
+  color: #FFFFFF;
+  border-color: rgba(255,255,255,.28);
+  background: rgba(255,255,255,.04);
+}
+footer.ixf .ixf-panel .ixf-actions .ixf-secondary:hover {
+  color: #F3D879;
+  border-color: #E8C15A;
+  background: rgba(255,255,255,.07);
+}
+footer.ixf .ixf-panel .ixf-motif { color: rgba(228,193,115,.17); }
