@@ -32,6 +32,7 @@ document.addEventListener('click',event=>{
  });
 });
 window.iconexEventsPage=function(kind){
+ if(kind==='execute' && typeof window.iconexExecuteCatalogue==='function') return window.iconexExecuteCatalogue();
  const data=kind==='execute'?execute:create, isCreate=kind==='create';
  const cards=data.cards.map((c,i)=> isCreate
   ? '<article class="ixe-card ixe-event-card" data-sector="'+esc(c.filter)+'">'+
