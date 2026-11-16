@@ -134,8 +134,8 @@
   }, {passive:true});
   updateScroll();
 
-  const publicPaths = new Set(['/', '/about', '/events/upcoming-events', '/events/all-events', '/global-presence', '/gallery', '/career', '/contact']);
-  const titles = {'/':'Exhibition Design & Services','/about':'About Us','/events/upcoming-events':'Upcoming Events','/events/all-events':'All Events','/global-presence':'Global Presence','/gallery':'Gallery','/career':'Career','/contact':'Contact Us'};
+  const publicPaths = new Set(['/', '/about', '/events/iconex-create', '/events/iconex-execute', '/events/upcoming-events', '/events/all-events', '/global-presence', '/gallery', '/career', '/contact']);
+  const titles = {'/':'Exhibition Design & Services','/about':'About Us','/events/iconex-create':'iCONEX Create','/events/iconex-execute':'iCONEX Execute','/events/upcoming-events':'Upcoming Events','/events/all-events':'All Events','/global-presence':'Global Presence','/gallery':'Gallery','/career':'Career','/contact':'Contact Us'};
   function normalise(path) {
     let result;
     try { result = decodeURIComponent(path); } catch (_) { return '/not-found'; }
@@ -169,6 +169,8 @@
   }
   // Add only destinations required by the new navigation. Reuse existing verified/review-labelled content.
   if (typeof routes !== 'undefined') {
+    routes['/events/iconex-create'] = function () { return window.iconexEventsPage('create'); };
+    routes['/events/iconex-execute'] = function () { return window.iconexEventsPage('execute'); };
     routes['/events/upcoming-events'] = function () { return eventDestination(true); };
     routes['/events/all-events'] = function () { return eventDestination(false); };
     routes['/global-presence'] = window.iconexGlobalPresencePage;

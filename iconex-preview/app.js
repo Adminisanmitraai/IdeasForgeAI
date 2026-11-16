@@ -216,12 +216,12 @@ let conversionFooter;
 function syncPageFooter(path) {
   const originalFooter = document.querySelector('body > footer.footer');
   if (!originalFooter || typeof window.iconexConversionFooter !== 'function') return;
-  if ((path === '/' || path === '/about') && !conversionFooter) {
+  if ((path === '/' || path === '/about' || path === '/events/iconex-create' || path === '/events/iconex-execute') && !conversionFooter) {
     originalFooter.insertAdjacentHTML('beforebegin', window.iconexConversionFooter());
     conversionFooter = document.getElementById('partner-with-iconex');
   }
-  originalFooter.hidden = path === '/' || path === '/about';
-  if (conversionFooter) conversionFooter.hidden = path !== '/' && path !== '/about';
+  originalFooter.hidden = ['/', '/about', '/events/iconex-create', '/events/iconex-execute'].includes(path);
+  if (conversionFooter) conversionFooter.hidden = !['/', '/about', '/events/iconex-create', '/events/iconex-execute'].includes(path);
 }
 function render(){disposeHeroSlider();let path=decodeURIComponent(location.hash.replace(/^#/,'')||'/');const fn=routes[path];const detail=path.match(/^\/project\/(\d+)$/);main.innerHTML=detail?projectDetail(detail[1]):fn?fn():intro('404','Nothing here.','The page you requested is unavailable.','404')+'<div class="shell section">'+button('Back to home','/')+'</div>';document.title=(path==='/'?'Exhibition Design & Services':path.slice(1).replace(/^\w/,a=>a.toUpperCase()))+' | ICONEX Preview';document.querySelectorAll('#links a').forEach(a=>{if(a.getAttribute('href')==='#'+path)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});const menu=document.getElementById('links'),toggle=document.getElementById('menu');menu.classList.remove('open');toggle.setAttribute('aria-expanded','false');window.scrollTo(0,0);syncPageFooter(path);if(path==='/')setupHeroSlider();}
 const navToggle=document.getElementById('menu');

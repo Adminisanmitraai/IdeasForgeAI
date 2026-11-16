@@ -4,7 +4,7 @@
 
   const destinations = [
     ['Home', '/'], ['About Us', '/about'],
-    ['Upcoming Events', '/events/upcoming-events'], ['All Events', '/events/all-events'],
+    ['iCONEX Create', '/events/iconex-create'], ['iCONEX Execute', '/events/iconex-execute'],
     ['Global Presence', '/global-presence'], ['Gallery', '/gallery'],
     ['Career', '/career'], ['Contact', '/contact']
   ];
