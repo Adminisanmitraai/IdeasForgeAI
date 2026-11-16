@@ -12,7 +12,7 @@
   const DURATION = 2200;
   const THRESHOLD = 0.25;
   const metrics = [
-    { value: 30, label: 'Global Events Organized', context: 'Across international markets' },
+    { value: 40, label: 'Global Events Organized', context: 'Across international markets' },
     { value: 1000, label: 'Industry & Government Stakeholders', context: 'Public & private sector leaders' },
     { value: 55000, unit: 'sq.mtr', label: 'Managed Exhibition Footprint', context: 'Turnkey spatial engineering' },
     { value: 30000, label: 'Participating Delegates', context: 'Global industry attendees' },
