@@ -154,3 +154,29 @@
 .ixe-create .ixe-event-card .ixe-index{z-index:0}
 @media(max-width:767px){.ixe-create .ixe-event-media{height:192px}}
 @media(prefers-reduced-motion:reduce){.ixe-create .ixe-event-media img{transition:none}.ixe-create .ixe-event-card:hover .ixe-event-media img{transform:none}}
+
+/* Uploaded original event photography: exact files, natural color, clean crop. */
+.ixe-create .ixe-event-media{
+  width:100%;
+  height:210px;
+  aspect-ratio:auto;
+  margin:16px 0;
+  border:1px solid rgba(55,75,140,.14);
+  border-radius:12px;
+  overflow:hidden;
+  background:#FFFFFF;
+}
+.ixe-create .ixe-event-media img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center top;
+  filter:none !important;
+  mix-blend-mode:normal !important;
+  transition:transform .4s ease;
+}
+.ixe-create .ixe-event-media::after{content:none !important;display:none !important}
+.ixe-create .ixe-event-card:hover .ixe-event-media img{transform:scale(1.04)}
+@media(max-width:767px){.ixe-create .ixe-event-media{height:210px}}
+@media(prefers-reduced-motion:reduce){.ixe-create .ixe-event-card:hover .ixe-event-media img{transform:none}}
