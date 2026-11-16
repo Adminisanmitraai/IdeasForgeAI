@@ -230,12 +230,49 @@
   .ixe-create .ixe-grid {grid-template-columns:minmax(0,1fr);}
 }
 
-/* Original iCONEX logo replaces abstract hero watermark — 2026-11-16 */
+/* Geometric emblem watermark aligned with approved home hero reference. */
 .ixe-hero .ixe-watermark{
-  position:absolute;top:50%;right:0;width:clamp(260px,39vw,560px);height:clamp(100px,15vw,190px);
-  border:0;border-radius:0;box-shadow:none;transform:translateY(-50%);opacity:.12;
-  background:transparent url("./iconex-header-logo-transparent.png") center/contain no-repeat;
+  position:absolute;
+  top:50%;
+  right:-140px;
+  width:520px;
+  height:520px;
+  aspect-ratio:1;
+  transform:translateY(-50%);
+  box-sizing:border-box;
+  border:22px solid rgba(55,75,140,.07);
+  border-radius:50%;
+  box-shadow:none;
+  background:none;
+  opacity:1;
   pointer-events:none;
 }
-.ixe-hero .ixe-watermark::before,.ixe-hero .ixe-watermark::after,.ixe-hero .ixe-watermark span{display:none!important;content:none!important}
-@media(max-width:767px){.ixe-hero .ixe-watermark{right:-90px;width:320px;height:125px;opacity:.075}}
+.ixe-hero .ixe-watermark::before{
+  display:block!important;
+  content:""!important;
+  position:absolute;
+  inset:20%;
+  border:16px solid rgba(55,75,140,.07);
+  border-radius:0;
+  background:none;
+  transform:rotate(45deg);
+}
+.ixe-hero .ixe-watermark::after{
+  display:block!important;
+  content:""!important;
+  position:absolute;
+  inset:34%;
+  border:12px solid rgba(55,75,140,.07);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(55,75,140,.07) 0 11px,transparent 12px);
+  transform:none;
+}
+.ixe-hero .ixe-watermark span{display:none!important}
+@media(max-width:767px){
+  .ixe-hero .ixe-watermark{
+    width:320px;
+    height:320px;
+    right:-120px;
+    opacity:.75;
+  }
+}
