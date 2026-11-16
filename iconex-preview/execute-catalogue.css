@@ -99,3 +99,56 @@
  .ixec-card .execute-logo-box img{transition:none!important}
  .ixec-card:hover .execute-logo-box img{transform:none!important}
 }
+
+/* Logo-only Execute tiles — scoped to the 43-event catalogue. */
+.ixec-page .ixec-grid {
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:24px;
+ max-width:1280px;
+ margin:0 auto;
+ align-items:stretch;
+}
+.ixec-page .ixec-card.execute-card {
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ min-width:0;
+ height:210px;
+ padding:20px 28px;
+ background:#FFFFFF;
+ border:1px solid rgba(55,75,140,.18);
+ border-radius:16px;
+ overflow:hidden;
+}
+.ixec-page .execute-card .execute-logo-box {
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ width:100%;
+ height:100%;
+ flex:1 1 auto;
+ padding:0;
+ margin:0;
+ border:0;
+ border-radius:0;
+ background:#FFFFFF;
+ overflow:hidden;
+}
+.ixec-page .execute-card .execute-logo-box img {
+ display:block;
+ max-width:100%;
+ max-height:100%;
+ width:auto;
+ height:auto;
+ object-fit:contain;
+ filter:none!important;
+ mix-blend-mode:normal!important;
+}
+.ixec-page .execute-card .execute-logo-box img[hidden]{display:none!important}
+@media (min-width:768px) and (max-width:1023px) {
+ .ixec-page .ixec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:767px) {
+ .ixec-page .ixec-grid{grid-template-columns:minmax(0,1fr)}
+}
