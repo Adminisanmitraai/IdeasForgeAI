@@ -1,4 +1,4 @@
-/* iCONEX homepage hero — supplied image, no extra patterns or photo overlays. */
+/* iCONEX homepage hero — corporate white-to-blue gradient, no raster or overlays. */
 #iconex-mission-hero {
   position: relative;
   isolation: isolate;
@@ -12,7 +12,13 @@
   overflow: hidden;
   color: #374B8C;
   background-color: #FFFFFF;
-  background-image: url("./assets/Gemini_Generated_Image_tuis7etuis7etuis.webp");
+  background-image: linear-gradient(
+    135deg,
+    #FFFFFF 0%,
+    #FFFFFF 48%,
+    rgba(55, 75, 140, 0.08) 100%
+  );
+  border-bottom: 1px solid rgba(55,75,140,.1);
   background-size: cover;
   background-position: right center;
   background-repeat: no-repeat;
@@ -187,4 +193,52 @@
   #methodology .ix-methodology-stages li { min-height: 82px; display: flex; align-items: center; gap: 22px; padding: 24px; border-right: 0; border-bottom: 1px solid rgba(55,75,140,.18); }
   #methodology .ix-methodology-stages strong { font-size: 20px; }
   #methodology .ix-methodology-arrow { right: auto; top: auto; left: 50%; bottom: -13px; transform: translateX(-50%) rotate(90deg); }
+}
+
+/* Shared corporate geometric emblem: same geometry and placement as About/Events. */
+#iconex-mission-hero .ix-mission-emblem {
+  position:absolute;
+  top:50%;
+  right:-140px;
+  width:520px;
+  height:520px;
+  aspect-ratio:1;
+  transform:translateY(-50%);
+  box-sizing:border-box;
+  border:22px solid rgba(55,75,140,.07);
+  border-radius:50%;
+  box-shadow:none;
+  background:none;
+  opacity:1;
+  pointer-events:none;
+  z-index:0;
+}
+#iconex-mission-hero .ix-mission-emblem::before {
+  display:block;
+  content:"";
+  position:absolute;
+  inset:20%;
+  border:16px solid rgba(55,75,140,.07);
+  border-radius:0;
+  background:none;
+  transform:rotate(45deg);
+}
+#iconex-mission-hero .ix-mission-emblem::after {
+  display:block;
+  content:"";
+  position:absolute;
+  inset:34%;
+  border:12px solid rgba(55,75,140,.07);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(55,75,140,.07) 0 11px,transparent 12px);
+  transform:none;
+}
+#iconex-mission-hero .ix-mission-emblem span {display:none}
+@media (max-width:767px) {
+  #iconex-mission-hero .ix-mission-emblem {
+    width:320px;
+    height:320px;
+    right:-120px;
+    opacity:.75;
+  }
 }
