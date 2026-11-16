@@ -7,10 +7,19 @@ const years=['All Years','2025','2024','2023','2022','2021–2016'];
 const safe=v=>String(v).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 function badgeButton(value,kind,index){return '<button type="button" class="ixec-filter'+(index===0?' active':'')+'" data-ixec-'+kind+'="'+safe(value)+'" aria-pressed="'+(index===0?'true':'false')+'">'+safe(value)+'</button>';}
 const glyph='<svg viewBox="0 0 112 112" width="72" height="72" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="25" y="26" width="62" height="60" rx="7"/><path d="M25 44 56 60l31-16M56 60v26M25 26l31 18 31-18M56 44v16"/><circle cx="56" cy="12" r="3"/><path d="M56 15v8M14 56h9M89 56h9"/></svg>';
-function card(e){return '<article class="ixec-card execute-card" data-sector="'+safe(e.sector)+'" data-year="'+e.year+'">'+
-'<div class="execute-logo-box">'+
-'<img src="'+safe(e.logo)+'" alt="'+safe(e.title)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="320" height="140">'+
-'</div></article>';}
+const calendarSvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>';
+const pinSvg='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+function card(e){
+ const split=e.meta.indexOf(' · ');
+ const date=split>=0?e.meta.slice(0,split):e.meta;
+ const location=split>=0?e.meta.slice(split+3):'';
+ return '<article class="ixec-card execute-card" data-sector="'+safe(e.sector)+'" data-year="'+e.year+'">'+
+  '<div class="execute-logo-box"><img src="'+safe(e.logo)+'" alt="'+safe(e.title)+'" loading="lazy" decoding="async" referrerpolicy="no-referrer" width="320" height="140"></div>'+
+  '<div class="execute-event-details"><h3 class="execute-event-title">'+safe(e.title)+'</h3>'+
+  '<div class="execute-meta-row">'+calendarSvg+'<span>'+safe(date)+'</span></div>'+
+  (location?'<div class="execute-meta-row">'+pinSvg+'<span>'+safe(location)+'</span></div>':'')+
+  '</div></article>';
+}
 
 window.iconexExecuteCatalogue=function(){return '<div class="ixec-page">'+
 '<section class="ixec-hero"><div class="ixec-container"><div class="ixec-emblem" aria-hidden="true"></div><p class="ixec-overline">iCONEX EXECUTE · YOUR VISION, OUR CRAFT</p><h1>Events, Conferences &amp; Exhibitions Executed for Global Partners</h1><p class="ixec-lead">From ministerial congresses and energy conclaves to international trade expos—we partner with organizations worldwide to engineer, manage, and deliver high-impact events from brief to handover.</p></div></section>'+

@@ -152,3 +152,97 @@
 @media (max-width:767px) {
  .ixec-page .ixec-grid{grid-template-columns:minmax(0,1fr)}
 }
+
+/* 43 partner event cards: original logos above accessible event details. */
+.ixec-page .ixec-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:32px;
+  align-items:stretch;
+  max-width:1280px;
+  margin:0 auto;
+}
+.ixec-page .ixec-card.execute-card {
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:flex-start;
+  text-align:left;
+  width:100%;
+  min-width:0;
+  height:auto;
+  padding:24px;
+  background:#FFFFFF;
+  border:1px solid rgba(55,75,140,.16);
+  border-radius:16px;
+  transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;
+}
+.ixec-page .ixec-card.execute-card:hover {
+  transform:translateY(-4px);
+  border-color:#374B8C;
+  box-shadow:0 14px 32px rgba(55,75,140,.1);
+}
+.ixec-page .execute-card .execute-logo-box {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:100%;
+  height:160px;
+  min-height:160px;
+  flex:0 0 160px;
+  padding:20px 28px;
+  margin:0 0 18px;
+  background:#FFFFFF;
+  border:1px solid rgba(55,75,140,.12);
+  border-radius:12px;
+  overflow:hidden;
+}
+.ixec-page .execute-card .execute-logo-box img {
+  max-width:100%;
+  max-height:100%;
+  width:auto;
+  height:auto;
+  object-fit:contain;
+  filter:none!important;
+  mix-blend-mode:normal!important;
+  transition:transform .3s ease;
+}
+.ixec-page .execute-card:hover .execute-logo-box img {transform:scale(1.04)}
+.ixec-page .execute-event-details {width:100%;flex:1 1 auto;text-align:left}
+.ixec-page .execute-event-title {
+  color:#374B8C;
+  font-size:19px;
+  font-weight:700;
+  line-height:1.3;
+  letter-spacing:0;
+  margin:0 0 10px;
+}
+.ixec-page .execute-meta-row {
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  color:rgba(55,75,140,.85);
+  font-size:15px;
+  font-weight:400;
+  line-height:1.45;
+  margin:0 0 6px;
+}
+.ixec-page .execute-meta-row svg {
+  width:16px;
+  height:16px;
+  color:#374B8C;
+  margin-top:3px;
+  flex-shrink:0;
+}
+.ixec-page .execute-meta-row span{min-width:0;overflow-wrap:break-word}
+@media(min-width:768px) and (max-width:1023px){
+ .ixec-page .ixec-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:767px){
+ .ixec-page .ixec-grid{grid-template-columns:minmax(0,1fr);gap:24px}
+}
+@media(prefers-reduced-motion:reduce){
+ .ixec-page .execute-card:hover{transform:none}
+ .ixec-page .execute-card .execute-logo-box img{transition:none}
+ .ixec-page .execute-card:hover .execute-logo-box img{transform:none}
+}
