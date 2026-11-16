@@ -30,7 +30,6 @@
     const entrance = !entered;
     entered = true;
     return `<section id="iconex-mission-hero" class="ix-mission-hero" aria-labelledby="ix-mission-title" data-entrance="${entrance}">
-      <div class="ix-mission-emblem" aria-hidden="true"><span></span></div>
       <div class="ix-mission-content">
         <p class="ix-mission-badge">WE BELIEVE IN THE 3 I'S — INSPIRE, INNOVATE &amp; IMPLEMENT</p>
         <h1 id="ix-mission-title" class="ix-mission-title">Connecting Businesses<br> Creating Opportunities<br> for a <span>Sustainable Future</span></h1>
