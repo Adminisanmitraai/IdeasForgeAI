@@ -74,3 +74,83 @@
 @media(max-width:1023px){.ixe-create .ixe-event-card,.ixe-create .ixe-event-card:nth-child(n+4){grid-column:span 6}}
 @media(max-width:767px){.ixe-create .ixe-event-card,.ixe-create .ixe-event-card:nth-child(n+4){grid-column:span 12}.ixe-filters{justify-content:flex-start}.ixe-filter{font-size:12px}}
 @media(prefers-reduced-motion:reduce){.ixe-create .ixe-event-card{transition:none}.ixe-create .ixe-event-card:hover{transform:none}}
+
+/* 2026-11-16 Create cards: disciplined badge > image > title > metadata > CTA. */
+.ixe-create .ixe-event-card{
+  padding:24px;
+  background:#FFFFFF;
+  border:1px solid rgba(55,75,140,.18);
+  border-radius:16px;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  min-height:0;
+}
+.ixe-create .ixe-event-card .ixe-card-tag{
+  align-self:flex-start;
+  max-width:100%;
+  background:#374B8C;
+  color:#FFFFFF;
+  font-weight:750;
+  font-size:11px;
+  letter-spacing:.075em;
+  text-transform:uppercase;
+}
+.ixe-create .ixe-event-media{
+  position:relative;
+  width:100%;
+  height:192px;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  border-radius:12px;
+  margin:16px 0;
+  flex-shrink:0;
+  background:rgba(55,75,140,.08);
+  isolation:isolate;
+}
+.ixe-create .ixe-event-media img{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:grayscale(.12);
+  transition:transform .4s ease;
+}
+.ixe-create .ixe-event-media::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(55,75,140,.12);
+  mix-blend-mode:multiply;
+  pointer-events:none;
+}
+.ixe-create .ixe-event-card:hover .ixe-event-media img{transform:scale(1.04)}
+.ixe-create .ixe-event-card h3{
+  margin:0 0 12px;
+  font-size:clamp(20px,1.7vw,25px);
+  line-height:1.28;
+  color:#374B8C;
+  font-weight:800;
+  position:relative;
+  z-index:1;
+}
+.ixe-create .ixe-event-card .ixe-details{
+  font-size:13.5px;
+  line-height:1.55;
+  color:rgba(55,75,140,.78);
+  font-weight:500;
+  margin:0 0 24px;
+}
+.ixe-create .ixe-event-card .ixe-card-action{
+  align-self:flex-start;
+  margin-top:auto;
+  background:#374B8C;
+  border:1px solid #374B8C;
+  color:#FFFFFF!important;
+  position:relative;
+  z-index:1;
+}
+.ixe-create .ixe-event-card .ixe-index{z-index:0}
+@media(max-width:767px){.ixe-create .ixe-event-media{height:192px}}
+@media(prefers-reduced-motion:reduce){.ixe-create .ixe-event-media img{transition:none}.ixe-create .ixe-event-card:hover .ixe-event-media img{transform:none}}
