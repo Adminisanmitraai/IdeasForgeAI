@@ -51,3 +51,26 @@
 @media(max-width:1023px){.ixe-grid{grid-template-columns:1fr}.ixe-panel{flex-direction:column;align-items:flex-start}}
 @media(max-width:767px){.ixe-wrap{padding:0 24px}.ixe-hero{padding:72px 0}.ixe-watermark{right:-300px}.ixe-showcase{padding:60px 0}.ixe-card{padding:24px;min-height:0}.ixe-panel{padding:32px}.ixe-cover{padding:30px 0 50px}}
 @media(prefers-reduced-motion:reduce){.ixe-page *{scroll-behavior:auto!important}}
+
+/* iCONEX Create five-platform grid and accessible sector filters. */
+.ixe-create .ixe-hero{background:linear-gradient(125deg,#FFFFFF 55%,rgba(55,75,140,.08) 100%)}
+.ixe-create .ixe-grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:28px}
+.ixe-create .ixe-event-card{grid-column:span 4;min-width:0;border-color:rgba(55,75,140,.18);transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
+.ixe-create .ixe-event-card:nth-child(n+4){grid-column:span 6}
+.ixe-create .ixe-event-card:hover{transform:translateY(-5px);box-shadow:0 18px 36px rgba(55,75,140,.12);border-color:#374B8C}
+.ixe-create .ixe-event-card[hidden]{display:none!important}
+.ixe-create .ixe-theme{border-left:3px solid #374B8C;margin:3px 0 20px;padding:5px 0 5px 15px;font-size:15px;font-weight:700;line-height:1.5;color:#374B8C}
+.ixe-filters{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:0 0 36px}
+.ixe-filter{font:650 13px/1.4 'Manrope','Inter',Arial,sans-serif;background:#FFFFFF;color:#374B8C;border:1px solid rgba(55,75,140,.28);border-radius:999px;padding:12px 19px;cursor:pointer;transition:background .15s,color .15s}
+.ixe-filter:hover{background:rgba(55,75,140,.06)}
+.ixe-filter.is-active{background:#374B8C;color:#FFFFFF;border-color:#374B8C}
+.ixe-filter:focus-visible{outline:3px solid #374B8C;outline-offset:3px}
+.ixe-closing-actions{display:flex;align-items:center;flex-wrap:wrap;gap:13px}
+.ixe-close-secondary{display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1.5px solid #FFFFFF;color:#FFFFFF!important;border-radius:6px;min-height:50px;padding:13px 22px;font-weight:750;text-decoration:none;white-space:nowrap}
+.ixe-close-secondary:hover{background:rgba(255,255,255,.12)}
+.ixe-create .ixe-panel{position:relative;overflow:hidden}
+.ixe-create .ixe-panel:before{content:'';position:absolute;width:340px;height:340px;right:-145px;top:-190px;border:20px solid rgba(255,255,255,.08);border-radius:50%;pointer-events:none}
+.ixe-create .ixe-panel>*{position:relative;z-index:1}
+@media(max-width:1023px){.ixe-create .ixe-event-card,.ixe-create .ixe-event-card:nth-child(n+4){grid-column:span 6}}
+@media(max-width:767px){.ixe-create .ixe-event-card,.ixe-create .ixe-event-card:nth-child(n+4){grid-column:span 12}.ixe-filters{justify-content:flex-start}.ixe-filter{font-size:12px}}
+@media(prefers-reduced-motion:reduce){.ixe-create .ixe-event-card{transition:none}.ixe-create .ixe-event-card:hover{transform:none}}
