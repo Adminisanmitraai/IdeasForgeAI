@@ -59,3 +59,14 @@
 @media(max-width:1000px){.ixa-grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}.ixa-split{grid-template-columns:1fr}.ixa-partners{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:767px){.ixa-section{padding:64px 0}.ixa-container{padding:0 24px}.ixa-hero{padding:72px 0}.ixa-emblem{right:-360px;opacity:.6}.ixa-grid.three,.ixa-grid.four,.ixa-metrics{grid-template-columns:1fr}.ixa-metric,.ixa-metric:nth-child(3n){border-right:0;border-bottom:1px solid rgba(55,75,140,.16)}.ixa-metric:last-child{border-bottom:0}.ixa-card{min-height:0}.ixa-partners{gap:12px}.ixa-partner{min-height:105px;font-size:14px;padding:12px}.ixa-how{background:linear-gradient(135deg,rgba(55,75,140,.08),rgba(55,75,140,.45))}}
 @media(prefers-reduced-motion:reduce){.ixa-button,.ixa-partner{transition:none}.ixa-button:hover{transform:none}}
+
+/* Original iCONEX logo replaces abstract hero watermark — 2026-11-16 */
+.ixa-hero .ixa-emblem{
+  position:absolute;top:50%;right:1%;width:clamp(260px,39vw,560px);height:clamp(100px,15vw,190px);
+  aspect-ratio:auto;border:0;border-radius:0;box-shadow:none;
+  transform:translateY(-50%);opacity:.12;
+  background:transparent url("./iconex-header-logo-transparent.png") center/contain no-repeat;
+  pointer-events:none;
+}
+.ixa-hero .ixa-emblem::before,.ixa-hero .ixa-emblem::after,.ixa-hero .ixa-emblem span{display:none!important;content:none!important}
+@media(max-width:767px){.ixa-hero .ixa-emblem{right:-90px;width:320px;height:125px;opacity:.075}}
