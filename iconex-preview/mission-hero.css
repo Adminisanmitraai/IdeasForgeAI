@@ -18,6 +18,34 @@
   background-repeat: no-repeat;
   font-family: 'Manrope', 'Inter', Arial, sans-serif;
 }
+/* The three inner heroes retain their gradients. Only their decorative layer uses the Home artwork. */
+:is(.ixa-hero, .ixe-create .ixe-hero, .ixec-hero) {
+  position: relative;
+  isolation: isolate;
+}
+:is(.ixa-hero, .ixe-create .ixe-hero, .ixec-hero)::before {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 88vh;
+  height: 88svh;
+  transform: translateY(-50%);
+  z-index: -1;
+  pointer-events: none;
+  background: url("./assets/home-hero-watermark.png") right center / cover no-repeat;
+}
+.ixa-hero .ixa-emblem,
+.ixe-create .ixe-hero .ixe-watermark,
+.ixec-hero .ixec-emblem {
+  display: none;
+}
+@media (max-width: 767px) {
+  :is(.ixa-hero, .ixe-create .ixe-hero, .ixec-hero)::before {
+    background-position: 65% center;
+  }
+}
+
 #iconex-mission-hero *, #methodology * { box-sizing: border-box; }
 #iconex-mission-hero::before,
 #iconex-mission-hero::after { content: none !important; display: none !important; }
