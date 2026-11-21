@@ -98,6 +98,54 @@ body:has(.slide.active) .toolbar{z-index:1000}
  .v3-render-note{display:block!important}
 }
 </style>
+<style id="compac-gallery-fullbleed-v4">
+/* Full-width CINEMATIC slides only. Other data-rich slides retain their
+   undistorted 16:9 scaling and the portrait mobile deck remains unchanged. */
+@media screen and (min-width:721px) {
+  body:has(.gallery-deck.active) .frame,
+  body:has(.photo-slide.active) .frame {
+    position:fixed!important;
+    inset:0!important;
+    top:0!important;
+    left:0!important;
+    width:100vw!important;
+    height:100dvh!important;
+    transform:none!important;
+    box-shadow:none!important;
+    margin:0!important;
+  }
+  .gallery-deck .gal-image,
+  .photo-slide .photo-backdrop {
+    object-fit:cover!important;
+    object-position:center center!important;
+  }
+  .gallery-deck .gal-tools {flex-wrap:wrap;row-gap:8px}
+  .gallery-deck .gal-top {padding-left:clamp(22px,3.8vw,64px);padding-right:clamp(22px,3.8vw,64px)}
+  .gallery-deck .gal-bottom {padding-left:clamp(22px,3.5vw,59px);padding-right:clamp(22px,3.5vw,59px)}
+}
+@media screen and (min-width:721px) and (max-width:1100px) {
+  .gallery-deck .gal-top {padding-top:22px}
+  .gallery-deck .gal-name {font-size:clamp(22px,3.3vw,34px)}
+  .gallery-deck .gal-tagline {font-size:13px;max-width:520px}
+  .gallery-deck .gal-bottom {padding-bottom:54px}
+  .gallery-deck .gal-caption {font-size:clamp(19px,3vw,30px)}
+  .gallery-deck .gal-tools {gap:6px;margin-top:10px}
+  .gallery-deck .gal-btn,.gallery-deck .gal-select {min-height:34px;font-size:12px;padding:7px 9px}
+  .gallery-deck .gal-captionline {margin-bottom:9px}
+}
+@media print {
+  /* Print every slide at its original 1600×900 size. */
+  body:has(.gallery-deck.active) .frame,
+  body:has(.photo-slide.active) .frame {
+    position:static!important;
+    top:auto!important;
+    left:auto!important;
+    width:1600px!important;
+    height:auto!important;
+    transform:none!important;
+  }
+}
+</style>
 </head><body><span class="hint">← → Navigate · F Fullscreen · Print/PDF available</span><div class="frame"><section class="slide cover" data-num="1" id="slide-1"><div class="corner-line"></div><header><div class="ident"><div class="brand"><span class="brand-arc">◜</span>COMPAC</div><span class="ident-sub">EXHIBITION DESIGN STUDY / 2027</span></div><div class="presented">PRESENTED BY <b>iCONEX</b></div></header><main><div class="kicker">INDIA ENERGY WEEK · EXHIBITION DESIGN</div><h1>Engineering confidence.<br><em>Designing connection.</em></h1><p class="lead">COMPAC Industries India Ltd. · Stall 3B077A<br>Three design directions. One strong corporate presence.</p><div class="cover-bottom"><div class="cover-stat"><b>03</b><span>Creative directions</span></div><div class="cover-stat"><b>03</b><span>Physical dispenser displays</span></div><div class="cover-stat"><b>32 m²</b><span>Two-side-open corner</span></div></div><div class="cover-visual"><img src="assets/compac-option-1-brand-proof-v3.webp" alt="COMPAC Signature Ribbon exhibition stall concept"/></div></main><footer><span>CONFIDENTIAL · MANAGEMENT REVIEW · CONCEPT DESIGN</span><span>01 / <strong class="total">00</strong></span></footer></section><section class="slide " data-num="2" id="slide-2"><div class="corner-line"></div><header><div class="ident"><div class="brand"><span class="brand-arc">◜</span>COMPAC</div><span class="ident-sub">EXHIBITION DESIGN STUDY / IEW 2027</span></div><div class="presented">PRESENTED BY <b>iCONEX</b></div></header><main><div class="kicker">THE ASSIGNMENT</div><h1>One exhibition. One functional brief.</h1><p class="lead">Create a premium, business-ready COMPAC pavilion at India Energy Week 2027 without compromising the three full-scale dispenser demonstrations.</p><div class="assignment-grid"><article class="assignment-primary"><div class="eyebrow">STALL 3B077A</div><div class="bigmetric">32 <span>m²</span></div><h2>4 × 8 metres</h2><p>Two-side-open corner with an 8 m aisle-facing side and a 4 m aisle-facing side.</p><div class="line"></div><dl><dt>CLIENT</dt><dd>COMPAC Industries India Ltd.</dd><dt>EVENT</dt><dd>India Energy Week 2027</dd><dt>STATUS</dt><dd>Preliminary concept study</dd></dl></article><div class="assignment-stats"><article><b>03</b><h3>Dispensers</h3><p>840 mm front × 450 mm side × 1,650 mm high each.</p></article><article><b>01</b><h3>Enclosed waiting room</h3><p>Sofa, TV and a keyed locker for guest comfort.</p></article><article><b>02</b><h3>Presentation screens</h3><p>One public demonstration display, one inside the waiting room.</p></article><article><b>01</b><h3>Reception + coffee</h3><p>Provision for 1–2 hostesses; hospitality and storage.</p></article></div></div></main><footer><span>CONFIDENTIAL CONCEPT STUDY · DISCUSSION DRAFT · NOT FOR FABRICATION</span><span>02 / <strong class="total">00</strong></span></footer></section><section class="slide " data-num="3" id="slide-3"><div class="corner-line"></div><header><div class="ident"><div class="brand"><span class="brand-arc">◜</span>COMPAC</div><span class="ident-sub">EXHIBITION DESIGN STUDY / IEW 2027</span></div><div class="presented">PRESENTED BY <b>iCONEX</b></div></header><main><div class="kicker">CLIENT BRIEF / REQUIREMENT MAP</div><h1>A compact space. A complete experience.</h1><p class="lead">Every concept has been assessed against the same operational requirements supplied by COMPAC.</p><div class="requirements-grid"><article class="requirement"><span>01</span><b>Product exhibition</b><p>Three full-scale dispenser display positions.</p></article><article class="requirement"><span>02</span><b>Guest privacy</b><p>An enclosed room with lockable storage.</p></article><article class="requirement"><span>03</span><b>Comfort</b><p>Sofa seating, lounge TV and accessible entry.</p></article><article class="requirement"><span>04</span><b>Front-of-house</b><p>Reception counter for 1–2 hostesses.</p></article><article class="requirement"><span>05</span><b>Live demonstration</b><p>Front TV and managed product power connections.</p></article><article class="requirement"><span>06</span><b>Hospitality</b><p>Coffee machine, cups and concealed service station.</p></article><article class="requirement"><span>07</span><b>Corporate identity</b><p>Branded fascia, rear wall and clean flooring.</p></article><article class="requirement"><span>08</span><b>Practical execution</b><p>Safe walkways, AV cabling, organizers’ approvals.</p></article></div><div class="note">This is a concept-stage accommodation plan. Actual clearances, dispenser service connections and working-height restrictions require the technical drawing and organizer regulations.</div></main><footer><span>CONFIDENTIAL CONCEPT STUDY · DISCUSSION DRAFT · NOT FOR FABRICATION</span><span>03 / <strong class="total">00</strong></span></footer></section><section class="slide " data-num="4" id="slide-4"><div class="corner-line"></div><header><div class="ident"><div class="brand"><span class="brand-arc">◜</span>COMPAC</div><span class="ident-sub">EXHIBITION DESIGN STUDY / IEW 2027</span></div><div class="presented">PRESENTED BY <b>iCONEX</b></div></header><main><div class="kicker">VERIFIED SITE / INDIA ENERGY WEEK</div><h1>A valuable corner. Two customer approaches.</h1><div class="site-grid"><div class="plan-panel"><svg class="plan-svg v3-plan" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 610 675" role="img" aria-label="Dimensionally proportional indicative 4 by 8 metre booth layout, open on left and bottom, adjoining exhibitors on top and right, concept 1">
       <defs><marker id="pv3arrow" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6" fill="none" stroke="#ba8836" stroke-width="1.3"/></marker><pattern id="pv3grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="#dde9f4" stroke-width="0.6"/></pattern><pattern id="pv3hat" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V9" stroke="#a9bbcb" stroke-width="2"/></pattern></defs>
       <rect x="165" y="78" width="256" height="512" fill="#f8fbff"/><rect x="165" y="78" width="256" height="512" fill="url(#pv3grid)"/>
