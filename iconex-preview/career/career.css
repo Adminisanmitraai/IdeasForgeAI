@@ -21,7 +21,7 @@ body.career-page{margin:0;background:#FFFFFF;color:#374B8C;font-family:Manrope,I
 .career-page .career-discipline .career-tag{margin:0 0 14px;font-size:12px;font-weight:600;letter-spacing:.06em;color:rgba(55,75,140,.7)}
 .career-page .career-discipline h3{font-size:20px;font-weight:700;line-height:1.28;margin:0 0 11px}
 .career-page .career-discipline p:not(.career-tag){font-size:14px;line-height:1.7;color:rgba(55,75,140,.82);margin:0 0 22px}
-.career-page .career-interest{margin-top:auto;border:1px solid #374B8C;background:#374B8C;color:#FFFFFF;font:700 12px/1.4 inherit;padding:11px 16px;border-radius:999px;cursor:pointer;transition:background .2s}
+.career-page .career-interest{margin-top:auto;border:1px solid #374B8C;background:#374B8C;color:#FFFFFF;font-family:inherit;font-size:12px;font-weight:700;line-height:1.4;padding:11px 16px;border-radius:999px;cursor:pointer;transition:background .2s}
 .career-page .career-interest:hover{background:rgba(55,75,140,.85)}
 .career-page .career-form-card{background:#FFFFFF;border:1px solid rgba(55,75,140,.18);border-radius:20px;padding:32px;box-shadow:0 16px 40px rgba(55,75,140,.08)}
 .career-page .career-form-title{background:#374B8C;color:#FFFFFF;text-align:center;border-radius:999px;padding:14px 24px;font-size:17px;font-weight:700;margin:0 0 24px}
