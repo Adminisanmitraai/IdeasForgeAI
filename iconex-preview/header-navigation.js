@@ -201,7 +201,7 @@
         if (section && location.hash === sectionAnchor) section.scrollIntoView();
       });
       updateActive(path);
-      if (titles[path]) document.title = titles[path] + ' | iCONEX Preview';
+      if (titles[path]) document.title = path === '/' ? 'iCONEX | International Exhibitions, Conferences & Business Events' : titles[path] + ' | iCONEX';
     } finally { rendering = false; }
   }
   window.render = renderRoute;
