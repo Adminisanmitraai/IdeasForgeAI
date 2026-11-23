@@ -225,7 +225,7 @@
     const hashRoute = url.hash.startsWith('#/');
     const path = normalise(hashRoute ? url.hash.slice(1) : url.pathname);
     // Career is a standalone document: navigate to its actual page instead of the old SPA placeholder.
-    if (path === '/career' && !hashRoute) return;
+    if ((path === '/career' || path === '/gallery' || path.startsWith('/gallery/')) && !hashRoute) return;
     if (!hashRoute && !publicPaths.has(path)) return;
     event.preventDefault();
     const destination = routeURL(path);
