@@ -1,0 +1,59 @@
+/* iCONEX Career — independent page styles, corporate white/navy only. */
+:root{--career-blue:#374B8C;--career-white:#FFFFFF}
+body.career-page{margin:0;background:#FFFFFF;color:#374B8C;font-family:Manrope,Inter,Arial,sans-serif}
+.career-page *, .career-page *::before,.career-page *::after{box-sizing:border-box}
+.career-page .career-container{width:min(100% - 48px,1280px);margin-inline:auto}
+.career-page .career-hero{position:relative;overflow:hidden;background-color:#FFFFFF;background-image:linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 48%,rgba(55,75,140,.08) 100%);border-bottom:1px solid rgba(55,75,140,.1)}
+.career-page .career-hero-inner{padding-block:90px 96px;position:relative;z-index:1}
+.career-page .career-emblem{position:absolute;right:3%;top:50%;width:min(42vw,480px);height:auto;transform:translateY(-50%);color:#374B8C;opacity:.07;pointer-events:none}
+.career-page .career-eyebrow{font-size:12px;line-height:1.5;letter-spacing:.15em;font-weight:600;text-transform:uppercase;margin:0 0 16px}
+.career-page .career-hero h1{font-size:clamp(48px,6vw,76px);line-height:1.08;letter-spacing:-.045em;font-weight:800;color:#374B8C;margin:0 0 24px}
+.career-page .career-hero p:last-child{max-width:700px;color:rgba(55,75,140,.85);font-size:clamp(18px,2vw,21px);line-height:1.7;margin:0}
+.career-page .career-intro{text-align:center;max-width:850px;margin:0 auto;padding:80px 0 42px}
+.career-page .career-pill{display:inline-block;padding:7px 18px;border:1px solid rgba(55,75,140,.15);border-radius:999px;background:rgba(55,75,140,.07);color:#374B8C;font-size:11px;font-weight:700;letter-spacing:.14em}
+.career-page h2,.career-page h3{color:#374B8C}
+.career-page .career-intro h2{margin:14px 0 15px;font-size:clamp(36px,4vw,44px);letter-spacing:-.04em;line-height:1.15;font-weight:800}
+.career-page .career-intro p{margin:0;color:rgba(55,75,140,.82);font-size:16px;line-height:1.7}
+.career-page .career-talent-layout{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:32px;align-items:start;padding-bottom:88px}
+.career-page .career-disciplines{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.career-page .career-discipline{display:flex;flex-direction:column;align-items:flex-start;min-height:280px;padding:28px;border:1px solid rgba(55,75,140,.16);border-radius:16px;background:#FFFFFF;box-shadow:0 10px 28px rgba(55,75,140,.05);transition:border-color .2s,box-shadow .2s}
+.career-page .career-discipline:hover,.career-page .career-discipline:focus-within{border-color:#374B8C;box-shadow:0 14px 32px rgba(55,75,140,.11)}
+.career-page .career-discipline .career-tag{margin:0 0 14px;font-size:12px;font-weight:600;letter-spacing:.06em;color:rgba(55,75,140,.7)}
+.career-page .career-discipline h3{font-size:20px;font-weight:700;line-height:1.28;margin:0 0 11px}
+.career-page .career-discipline p:not(.career-tag){font-size:14px;line-height:1.7;color:rgba(55,75,140,.82);margin:0 0 22px}
+.career-page .career-interest{margin-top:auto;border:1px solid #374B8C;background:#374B8C;color:#FFFFFF;font:700 12px/1.4 inherit;padding:11px 16px;border-radius:999px;cursor:pointer;transition:background .2s}
+.career-page .career-interest:hover{background:rgba(55,75,140,.85)}
+.career-page .career-form-card{background:#FFFFFF;border:1px solid rgba(55,75,140,.18);border-radius:20px;padding:32px;box-shadow:0 16px 40px rgba(55,75,140,.08)}
+.career-page .career-form-title{background:#374B8C;color:#FFFFFF;text-align:center;border-radius:999px;padding:14px 24px;font-size:17px;font-weight:700;margin:0 0 24px}
+.career-page .career-form{display:grid;gap:15px}
+.career-page .career-field{display:grid;gap:7px}
+.career-page .career-field label{font-size:13px;font-weight:700;color:#374B8C}
+.career-page .career-field input,.career-page .career-field select,.career-page .career-field textarea{width:100%;min-height:47px;background:rgba(55,75,140,.04);border:1px solid rgba(55,75,140,.14);border-radius:10px;padding:13px 16px;color:#374B8C;font:400 15px/1.5 Manrope,Inter,Arial,sans-serif}
+.career-page .career-field textarea{resize:vertical;min-height:116px}
+.career-page .career-field input::placeholder,.career-page .career-field textarea::placeholder{color:rgba(55,75,140,.58)}
+.career-page .career-submit{min-height:50px;margin-top:8px;padding:14px 24px;border:1px solid #374B8C;border-radius:999px;background:#374B8C;color:#FFFFFF;font-weight:700;font-size:13px;letter-spacing:.08em;cursor:pointer}
+.career-page .career-submit:hover{background:rgba(55,75,140,.85)}
+.career-page .career-form-note{font-size:12px;line-height:1.55;color:rgba(55,75,140,.8);margin:0}
+.career-page .career-form-status{margin:0;font-size:13px;line-height:1.6;color:#374B8C}
+.career-page .career-culture{background:rgba(55,75,140,.04);border-top:1px solid rgba(55,75,140,.1);padding:80px 0 88px}
+.career-page .career-culture-intro{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:center}
+.career-page .career-culture .career-pill{background:#FFFFFF}
+.career-page .career-culture h2{font-size:clamp(32px,3.5vw,40px);line-height:1.18;letter-spacing:-.035em;font-weight:800;margin:14px 0 0}
+.career-page .career-culture-copy p{margin:0 0 14px;font-size:15.5px;line-height:1.75;color:rgba(55,75,140,.85)}
+.career-page .career-culture-copy p:last-child{margin-bottom:0}
+.career-page .career-features{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-top:56px}
+.career-page .career-feature{display:flex;gap:18px;align-items:center;background:#FFFFFF;border:1px solid rgba(55,75,140,.15);border-radius:16px;padding:24px;box-shadow:0 8px 24px rgba(55,75,140,.05)}
+.career-page .career-feature-icon{width:54px;height:54px;flex:0 0 54px;border-radius:50%;display:grid;place-items:center;background:#374B8C;color:#FFFFFF}
+.career-page .career-feature-icon svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.career-page .career-feature h3{font-size:17px;line-height:1.3;margin:0 0 6px}
+.career-page .career-feature p{font-size:13px;line-height:1.55;margin:0;color:rgba(55,75,140,.82)}
+.career-page .career-page-skip{position:absolute;left:12px;top:-60px;z-index:2000;background:#FFFFFF;color:#374B8C;padding:10px 16px}
+.career-page .career-page-skip:focus{top:10px}
+.career-page #iconex-header .ix-brand img{background:transparent!important;filter:none!important}
+.career-page #iconex-header .ix-nav-link[href="/career"]{color:#374B8C!important}
+.career-page #iconex-header .ix-nav-link[href="/career"]::after{transform:scaleX(1)!important;background:#374B8C!important}
+.career-page :is(a,button,input,select,textarea,summary):focus-visible{outline:3px solid #374B8C;outline-offset:3px}
+.career-page #iconex-header .ix-contact:focus-visible,.career-page .career-interest:focus-visible,.career-page .career-submit:focus-visible{outline:3px solid #374B8C;outline-offset:3px;box-shadow:0 0 0 5px #FFFFFF}
+@media(max-width:1023px){.career-page .career-talent-layout{grid-template-columns:1fr}.career-page .career-form-card{max-width:720px;width:100%;margin-inline:auto}.career-page .career-features{grid-template-columns:1fr 1fr}}
+@media(max-width:767px){.career-page .career-container{width:min(100% - 40px,1280px)}.career-page .career-hero-inner{padding-block:72px}.career-page .career-emblem{width:320px;right:-140px}.career-page .career-intro{padding:64px 0 34px}.career-page .career-disciplines,.career-page .career-features,.career-page .career-culture-intro{grid-template-columns:1fr}.career-page .career-talent-layout{gap:28px;padding-bottom:68px}.career-page .career-disciplines{gap:18px}.career-page .career-discipline{min-height:0;padding:24px}.career-page .career-form-card{padding:24px}.career-page .career-culture{padding:64px 0}.career-page .career-features{margin-top:35px;gap:16px}.career-page .career-culture-intro{gap:22px}}
+@media(prefers-reduced-motion:reduce){.career-page .career-discipline,.career-page .career-interest{transition:none}}
