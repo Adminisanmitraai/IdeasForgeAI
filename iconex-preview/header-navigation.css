@@ -341,3 +341,42 @@ body > a.skip:focus { z-index: 1101; }
 #iconex-header .ix-menu-toggle:focus-visible {
   outline-color: #0B1E3F;
 }
+
+/* Stable Events navigation and active underline (Option A). */
+/* Underline only the actual current route; opening or hovering a menu is not a page change. */
+#iconex-header .ix-nav-items > .ix-nav-item > .ix-nav-link::after {
+  transform: scaleX(0) !important;
+}
+#iconex-header .ix-nav-items > .ix-nav-item > .ix-nav-link[aria-current="page"]::after,
+#iconex-header .ix-nav-items > .ix-nav-item > .ix-nav-link[data-current="true"]::after {
+  transform: scaleX(1) !important;
+}
+/* The Option A items retain the established white/navy dropdown styling. */
+#iconex-header .ix-dropdown .ix-event-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+#iconex-header .ix-dropdown .ix-event-icon,
+#iconex-nav-drawer .ix-event-icon {
+  display: inline-flex;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+#iconex-header .ix-dropdown .ix-event-icon svg,
+#iconex-nav-drawer .ix-event-icon svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#iconex-header .ix-dropdown .ix-event-copy,
+#iconex-nav-drawer .ix-event-copy { display: flex; flex-direction: column; gap: 3px; }
+#iconex-header .ix-dropdown .ix-event-copy small,
+#iconex-nav-drawer .ix-event-copy small { font-size: 12px; line-height: 1.5; font-weight: 400; }
+#iconex-nav-drawer .ix-event-link { display: flex; gap: 12px; align-items: flex-start; }
