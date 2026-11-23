@@ -88,7 +88,7 @@
     return `<header class="ix-markets-header"><p class="ix-markets-overline">${overline}</p><${tag} class="ix-markets-title" id="ix-markets-heading">${title}</${tag}><p class="ix-markets-lead">${lead}</p></header>`;
   }
   function section() {
-    return `<section class="ix-markets" id="global-markets" aria-labelledby="ix-markets-heading" data-ix-section="global-presence"><div class="ix-markets-inner">${header('h2', 'Experience Across Markets')}${mapStage()}${desks()}<div class="ix-markets-cta-wrap"><a class="ix-markets-cta" href="/global-presence" data-ix-route>Explore Our Global Presence <span class="ix-markets-cta-arrow" aria-hidden="true">→</span></a></div></div></section>`;
+    return `<section class="ix-markets" id="global-markets" aria-labelledby="ix-markets-heading" data-ix-section="global-presence"><div class="ix-markets-inner">${header('h2', 'Experience Across Markets')}${mapStage()}${desks()}</div></section>`;
   }
   window.iconexGlobalPresencePage = function globalPresencePage() {
     const countries = markets.map(market => `<article class="ix-markets-country"><p class="ix-markets-tooltip-region">${market.region}</p><h2 class="ix-markets-country-name">${text(market.name)}</h2>${market.city ? `<p class="ix-markets-country-city">${text(market.city)}</p>` : ''}<p class="ix-markets-country-focus">${text(market.focus)}</p></article>`);
