@@ -36,6 +36,9 @@
       links[focusLink === 'last' ? links.length - 1 : 0].focus();
     }
   }
+  // Reset browser-restored dropdown state on each load; content is fixed to Option A.
+  setEvents(false);
+  if (mobileEvents) mobileEvents.open = false;
   eventsButton.addEventListener('click', function () {
     setEvents(eventsButton.getAttribute('aria-expanded') !== 'true');
   });
