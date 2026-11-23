@@ -9,7 +9,6 @@ const albums=[
 ['GDEC','July 2023',2023,'gdec-july-2023','1--230913120748-5634.JPG'],
 ['SpillTech','2023',2023,'spilltech-2023','1--231202104620-9466.JPG']
 ].map(([name,date,year,slug,file])=>({name,date,year,slug,photos:['https://iconexglobal.com/uploads/gallery/'+file]}));
-const previewStrip=document.createElement('div');previewStrip.className='ixga-preview-strip';previewStrip.setAttribute('role','note');previewStrip.textContent='DESIGN PREVIEW — EXHIBITION FABRICATION CAPABILITIES & PROJECT CREDENTIALS REQUIRE ICONEX APPROVAL · ENQUIRIES OPEN AN EMAIL DRAFT';document.body.insertBefore(previewStrip,document.querySelector('.ixga-header'));
 const main=document.getElementById('main');const slug=location.pathname.replace(/\/$/,'').split('/')[2];const active=albums.find(a=>a.slug===slug);
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const pill=s=>'<span class="ixga-pill">'+escape(s)+'</span>';
