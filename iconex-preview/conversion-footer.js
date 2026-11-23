@@ -5,7 +5,7 @@
   const destinations = [
     ['Home', '/'], ['About Us', '/about'],
     ['iCONEX Create', '/events/iconex-create'], ['iCONEX Execute', '/events/iconex-execute'],
-    ['Global Presence', '/global-presence'], ['Gallery', '/gallery'],
+    ['Global Presence', '/global-presence'],
     ['Career', '/career'], ['Contact', '/contact']
   ];
 
