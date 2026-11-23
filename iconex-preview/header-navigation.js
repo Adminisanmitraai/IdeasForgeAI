@@ -188,7 +188,7 @@
     if (rendering) return;
     rendering = true;
     const path = currentPath();
-    if (previewNotice) previewNotice.hidden = path === '/';
+    if (previewNotice) previewNotice.hidden = false;
     const search = location.search;
     const sectionAnchor = path === '/' && ['#global-markets', '#partner-with-iconex'].includes(location.hash) ? location.hash : '';
     closeDrawer(false, true);
