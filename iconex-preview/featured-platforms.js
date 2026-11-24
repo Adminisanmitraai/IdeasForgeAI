@@ -36,18 +36,18 @@
     {id:'dgh', category:'pavilions', tag:'Custom Exhibitions & Pavilions', badge:'GOVERNMENT SHOWCASE',
       title:'DGH — High-Tech Integrated Exhibition Stall',
       subtitle:'Directorate General of Hydrocarbons, Ministry of Petroleum & Natural Gas, Govt of India',
-      image:'./assets/dgh-showcase.avif', alt:'DGH exhibition design visual from the supplied iCONEX presentation, with curved digital columns and a large globe display', mediaLabel:'Presentation visual · delivery unverified',
+      image:'./assets/dgh-showcase.avif', alt:'DGH exhibition design visual from the supplied iCONEX presentation, with curved digital columns and a large globe display', mediaLabel:'Presentation visual',
       meta:[['sector','Sector','Energy & Infrastructure / Oil & Gas'],['space','Brief footprint','19.5m × 11m Custom Turnkey Pavilion'],['feature','Features','Holographic Displays, Curved LED Columns & VIP Suite']],
       description:'Turnkey spatial engineering connecting high-impact architecture, immersive digital showcases, holographic exploration zones, and dedicated private VIP bilateral meeting rooms.',
-      note:'Project brief · final scope and delivery status require confirmation.',
-      evidence:'This case-study preview presents the supplied showcase brief and iCONEX presentation visual. The presentation describes delivered work, while other project materials describe concepts; completion and the 19.5m × 11m footprint have not been independently reconciled. No completion date, measured result or government endorsement is claimed.',
+      note:'Concept presentation · scope according to project brief.',
+      evidence:'Concept showcase based on the supplied design brief and presentation visual. It illustrates the proposed exhibition environment.',
       source:'Source: supplied Section 6 project brief and Iconex_High_Resolution_Master, slides 8–9.'},
     {id:'hindalco', category:'pavilions', tag:'Custom Exhibitions & Pavilions', badge:'PAVILION ARCHITECTURE',
       title:'Hindalco — Engineering Better Futures', subtitle:'Intelligent Mining, Advanced Materials & Circularity',
       image:'./assets/hindalco-showcase.avif', alt:'Proposed Hindalco pavilion visual with a circular canopy, planted central landmark and interactive mine model', mediaLabel:'Proposed pavilion concept',
       meta:[['sector','Sector','Mining & Metals / Sustainable Manufacturing'],['space','Architecture','Four-Side Open Immersive Pavilion'],['feature','Feature','Interactive Living Mine Model & Hologram Gateways']],
       description:'A four-side open experiential pavilion structuring complex industrial storytelling—from responsible resource extraction to high-precision aluminium and copper technologies.',
-      note:'Design proposal · not presented as completed construction.',
+      note:'Exhibition design proposal.',
       evidence:'This is a proposed pavilion concept, not evidence of completed construction. The features describe the supplied design brief and remain subject to client approval, organiser requirements and engineering review.',
       source:'Source: supplied Section 6 brief and Iconex_High_Resolution_Master, slide 13 (proposed pavilion concept).'},
     {id:'imr', category:'pavilions', tag:'Custom Exhibitions & Pavilions', badge:'CORPORATE TRADE EXPERIENCE',
@@ -55,8 +55,8 @@
       image:'./assets/imr-slide3-background.avif', alt:'IMR Resources exhibition pavilion concept with a continuous canopy, reception, media wall and meeting spaces', mediaLabel:'Exhibition design proposal',
       meta:[['sector','Sector','Corporate Trade & Multi-Vertical Commodities'],['space','Layout','Connected Multi-Vertical Journey & Business Lounge'],['feature','Focus','B2B Matchmaking & Sector Hospitality']],
       description:'Unifying six distinct business divisions under one continuous architectural canopy, combining global media walls, executive suites, and structured B2B trade engagement.',
-      note:'Design proposal · not presented as completed construction.',
-      evidence:'This is an exhibition design proposal using the supplied IMR visual. Spaces and engagement features represent design intent, not verified built work or measured business results.',
+      note:'Exhibition design proposal.',
+      evidence:'Exhibition design proposal featuring spatial concepts and visitor engagement ideas from the supplied IMR brief.',
       source:'Source: supplied Section 6 brief and the IMR concept image previously supplied for this website.'}
   ];
   function gemsState(now = Date.now()) {
@@ -72,7 +72,7 @@
     </div>`;
   }
   function photo(item) {
-    return `<div class="ix-platform-media"><img class="ix-platform-photo" src="${item.image}" alt="${esc(item.alt)}" width="800" height="450" loading="lazy" decoding="async"><span class="ix-platform-media-label">${esc(item.mediaLabel)}</span><span class="ix-platform-media-fallback" hidden>Preview image unavailable</span></div>`;
+    return `<div class="ix-platform-media"><img class="ix-platform-photo" src="${item.image}" alt="${esc(item.alt)}" width="800" height="450" loading="lazy" decoding="async"><span class="ix-platform-media-label">${esc(item.mediaLabel)}</span><span class="ix-platform-media-fallback" hidden>Image unavailable</span></div>`;
   }
   function card(item) {
     const gems = item.id === 'gems';
