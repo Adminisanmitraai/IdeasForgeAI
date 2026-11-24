@@ -1,0 +1,14 @@
+/* Shared iCONEX page-hero backdrop, identical to the existing Homepage asset.
+   Scope: background paint only. Do not alter text, watermarks, cards, layout or controls. */
+:where(.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) {
+  background-color: #FFFFFF !important;
+  background-image: url("/assets/Gemini_Generated_Image_tuis7etuis7etuis.webp") !important;
+  background-size: cover !important;
+  background-position: right center !important;
+  background-repeat: no-repeat !important;
+}
+@media (max-width: 767px) {
+  :where(.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) {
+    background-position: 65% center !important;
+  }
+}
