@@ -1,6 +1,8 @@
 /* Shared iCONEX chrome: the only header/footer styling for every route.
    Corporate palette: #FFFFFF, #374B8C, and navy alpha tints. */
 #ix-shared-header,#ix-shared-footer { color:#374B8C; font-family:'Manrope','Inter',Arial,sans-serif; }
+#ix-shared-header { position:sticky;top:0;z-index:1000;background:#FFFFFF; }
+#iconex-header.ixc-header { position:relative;top:auto; }
 #ix-shared-header *,#ix-shared-footer *,#ix-shared-header *::before,#ix-shared-header *::after,#ix-shared-footer *::before,#ix-shared-footer *::after { box-sizing:border-box; }
 #iconex-header.ixc-header { position:sticky;top:0;z-index:1000;width:100%;background:#FFFFFF!important;color:#374B8C!important;border-bottom:1px solid rgba(55,75,140,.14)!important;box-shadow:none!important;font:600 14px/1.5 'Manrope','Inter',Arial,sans-serif; }
 #iconex-header.ixc-header.is-scrolled { background:#FFFFFF!important; }
