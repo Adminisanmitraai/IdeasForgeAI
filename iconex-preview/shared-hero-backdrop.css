@@ -1,14 +1,28 @@
-/* Shared iCONEX page-hero backdrop, identical to the existing Homepage asset.
-   Scope: background paint only. Do not alter text, watermarks, cards, layout or controls. */
-:where(.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) {
+/* iCONEX hero background parity. One white/navy gradient and the existing
+   Homepage watermark artwork on all public heroes; foreground content untouched. */
+:where(#iconex-mission-hero,.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) {
+  position: relative;
+  overflow: hidden;
   background-color: #FFFFFF !important;
-  background-image: url("/assets/Gemini_Generated_Image_tuis7etuis7etuis.webp") !important;
-  background-size: cover !important;
-  background-position: right center !important;
-  background-repeat: no-repeat !important;
+  background-image:
+    url("/assets/Gemini_Generated_Image_tuis7etuis7etuis.webp"),
+    linear-gradient(135deg,#FFFFFF 0%,#FFFFFF 48%,rgba(55,75,140,0.08) 100%) !important;
+  background-size: cover,cover !important;
+  background-position: right center,right center !important;
+  background-repeat: no-repeat,no-repeat !important;
+  border-bottom: 1px solid rgba(55,75,140,0.1);
 }
-@media (max-width: 767px) {
-  :where(.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) {
-    background-position: 65% center !important;
+:where(#iconex-mission-hero,.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) > :where(.hero-content,.ix-mission-content,.ixga-front,.career-hero-inner,.ixa-container,.ixe-wrap,.ixec-container,.shell) {
+  position: relative;
+  z-index: 10;
+}
+/* Prevent a second geometric motif from appearing over the Homepage artwork. */
+.ixa-hero::before,.ixe-create .ixe-hero::before,.ixec-hero::before {
+  content:none !important;
+  display:none !important;
+}
+@media (max-width:767px) {
+  :where(#iconex-mission-hero,.ixa-hero,.ixe-create .ixe-hero,.ixec-hero,.career-page .career-hero,.ixga-hero,.inner-hero,.ix-markets-page) {
+    background-position:65% center,65% center !important;
   }
 }
