@@ -158,3 +158,42 @@ footer.ixf .ixf-panel .ixf-kicker{color:#FFFFFF}
 footer.ixf .ixf-status[data-state=error]{color:#374B8C}
 @media(max-width:767px){#iconex-philosophy .ix-pillar-card{min-height:0}#methodology.ix-4d-method .ix-4d-card-header{padding:12px 15px}}
 
+
+/* Step 2: finish white/navy painting in the existing visual archive and focus states. */
+.ixg {
+  --ixg-navy:#FFFFFF;
+  --ixg-gold:#374B8C;
+  --ixg-glint:#374B8C;
+  --ixg-muted:rgba(55,75,140,.8);
+  --ixg-rule:rgba(55,75,140,.16);
+  background:#FFFFFF!important;
+  color:#374B8C!important;
+  border-color:rgba(55,75,140,.14)!important;
+}
+.ixg .ixg-title,.ixg .ixg-overline,.ixg .ixg-lead { color:#374B8C!important; }
+.ixg .ixg-filter {
+  background:#FFFFFF!important;
+  color:#374B8C!important;
+  border-color:rgba(55,75,140,.25)!important;
+  box-shadow:none!important;
+}
+.ixg .ixg-filter:hover { background:rgba(55,75,140,.06)!important; }
+.ixg .ixg-filter[aria-pressed="true"] { background:#374B8C!important;color:#FFFFFF!important;border-color:#374B8C!important; }
+.ixg .ixg-tile { background:#FFFFFF!important;border-color:rgba(55,75,140,.16)!important; }
+.ixg .ixg-tile:is(:hover,:focus-within) { border-color:#374B8C!important; }
+.ixg .ixg-tile img,.ixg .ixg-dialog-photo {filter:none!important;}
+.ixg .ixg-scrim {background:linear-gradient(180deg,transparent 24%,rgba(55,75,140,.85) 100%)!important;}
+.ixg .ixg-open {background:rgba(55,75,140,.8)!important;color:#FFFFFF!important;}
+.ixg .ixg-badge,.ixg .ixg-dialog-badge,.ixg .ixg-provenance,.ixg .ixg-expand {background:rgba(55,75,140,.85)!important;color:#FFFFFF!important;}
+.ixg .ixg-name,.ixg .ixg-meta,.ixg .ixg-caption {color:#FFFFFF!important;}
+.ixg .ixg-cta {color:#374B8C!important;border-color:#374B8C!important;background:#FFFFFF!important;}
+.ixg .ixg-cta:hover {color:#FFFFFF!important;background:#374B8C!important;}
+.ixg .ixg-dialog {background:#FFFFFF!important;color:#374B8C!important;border-color:rgba(55,75,140,.2)!important;}
+.ixg .ixg-dialog::backdrop {background:rgba(55,75,140,.85)!important;}
+.ixg .ixg-dialog-media {background:#FFFFFF!important;}
+.ixg .ixg-dialog-name,.ixg .ixg-dialog-meta,.ixg .ixg-dialog-caption,.ixg .ixg-dialog-note,.ixg .ixg-position {color:#374B8C!important;}
+.ixg :is(.ixg-close,.ixg-prev,.ixg-next) {background:#374B8C!important;color:#FFFFFF!important;border-color:#374B8C!important;}
+.ixg :is(.ixg-close,.ixg-prev,.ixg-next):hover {background:rgba(55,75,140,.85)!important;color:#FFFFFF!important;}
+#methodology:focus-visible {outline-color:#374B8C!important;}
+#methodology .ix-methodology-deliver {color:#374B8C!important;}
+#methodology.ix-4d-method {--ix4d-gold:#374B8C;--ix4d-light-gold:#374B8C;--ix4d-rule:rgba(55,75,140,.16);}
