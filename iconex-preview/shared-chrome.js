@@ -78,12 +78,12 @@
   const footerLinks = labels.map(([name, href]) => '<li><a href="' + href + '">' + name + '</a></li>').join("");
   const footerHTML = '<footer class="ixc-footer" aria-label="iCONEX corporate footer">' +
     '<div class="ixc-footer-grid">' +
-      '<div class="ixc-footer-brand"><a href="/" aria-label="iCONEX home"><img src="/iconex-header-logo-transparent.png" alt="iCONEX Exhibitions Private Limited" width="480" height="88"></a>' +
-        '<p>Conferences, exhibitions and industry connections across India and the Middle East.</p></div>' +
+      '<div class="ixc-footer-brand"><a href="/" aria-label="iCONEX home"><img src="/iconex-header-logo-transparent.png" alt="iCONEX Exhibitions Private Limited" width="480" height="88"></a><h2>iCONEX Exhibitions Private Limited</h2>' +
+        '<p>Conferences, exhibitions and industry connections — bringing governments, industries, and global leaders together across India and the Middle East.</p></div>' +
       '<nav class="ixc-footer-links" aria-label="Footer quick links"><h2>Quick Links</h2><ul>' + footerLinks + '</ul></nav>' +
       '<section class="ixc-footer-connect" aria-labelledby="ixc-connect-title"><h2 id="ixc-connect-title">Connect</h2>' +
-        '<p>New Delhi, India<br><a href="mailto:connect@iconex.in">connect@iconex.in</a></p>' +
-        '<p>Middle East Operations<br><a href="mailto:info@iconexgulf.com">info@iconexgulf.com</a></p></section>' +
+        '<p><strong>India Operations</strong><br>New Delhi, India<br><a href="tel:+911149122344">+91 11 4912 2344</a><br><a href="mailto:connect@iconex.in">connect@iconex.in</a></p>' +
+        '<p><strong>Middle East Operations</strong><br>Kingdom of Bahrain · GCC<br><a href="tel:+97317402889">+973 1740 2889</a><br><a href="mailto:info@iconexgulf.com">info@iconexgulf.com</a></p></section>' +
     '</div><div class="ixc-footer-base">© 2026 iCONEX Exhibitions Private Limited. All rights reserved.</div></footer>';
 
   const head = document.getElementById("ix-shared-header");
