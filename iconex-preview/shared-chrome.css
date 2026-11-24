@@ -75,3 +75,21 @@
   #iconex-header.ixc-header *,#iconex-nav-drawer.ixc-drawer * {transition:none!important;animation:none!important;}
   #iconex-nav-drawer.ixc-drawer {transition:none!important;}
 }
+
+/* Step 2 footer brand/contact polish */
+#ix-shared-footer .ixc-footer-brand h2 {
+  margin: 16px 0 0;
+  color: #374B8C;
+  font: 700 15px/1.45 'Manrope','Inter',Arial,sans-serif;
+}
+#ix-shared-footer .ixc-footer-brand p {
+  margin-top: 10px;
+}
+#ix-shared-footer .ixc-footer-connect strong {
+  color: #374B8C;
+  font-weight: 700;
+}
+#ix-shared-footer .ixc-footer-connect a {
+  color: #374B8C !important;
+  overflow-wrap: anywhere;
+}
