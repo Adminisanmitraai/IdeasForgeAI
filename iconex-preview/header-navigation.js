@@ -165,7 +165,7 @@
     const title = upcoming ? 'Upcoming Events' : 'All Events';
     return '<section class="ix-nav-destination"><h1>' + title + '</h1>' +
       '<p>Explore iCONEX conferences, exhibitions and industry programmes.</p>' +
-      '<div class="ix-notice"><h2>Official event information</h2><p>This preview does not host a verified event schedule. Please check the official event directory for dates, locations and registration details.</p>' +
+      '<div class="ix-notice"><h2>Official event information</h2><p>Find the latest dates, venues and registration information in the official event directory.</p>' +
       '<a href="https://www.iconexglobal.com/events/all-events" target="_blank" rel="noopener noreferrer">View the official event directory <span aria-hidden="true">↗</span><span class="ix-sr"> (opens in a new tab)</span></a></div>' +
       '<p>For event enquiries, <a href="/contact" data-ix-route>contact iCONEX</a>.</p></section>';
   }
@@ -178,7 +178,7 @@
     routes['/global-presence'] = window.iconexGlobalPresencePage;
     routes['/gallery'] = window.iconexFullGallery || function () { return '<h1 class="ix-sr">Gallery</h1>' + realEventGallery(); };
     routes['/career'] = function () {
-      return '<section class="ix-nav-destination"><h1>Career</h1><p>Interested in working with iCONEX?</p><div class="ix-notice"><p>No verified vacancies are published on this preview. For career enquiries, please use the contact page. Do not submit sensitive identity documents through the demonstration form.</p><a href="/contact" data-ix-route>Contact Us</a></div></section>';
+      return '<section class="ix-nav-destination"><h1>Career</h1><p>Interested in working with iCONEX?</p><div class="ix-notice"><p>Explore our professional disciplines and share your profile on the Career page.</p><a href="/career" data-ix-route>Explore Careers</a></div></section>';
     };
   }
   const originalRender = window.render;
