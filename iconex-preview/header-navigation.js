@@ -225,9 +225,10 @@
     if (url.origin !== location.origin) return;
     const hashRoute = url.hash.startsWith('#/');
     const path = normalise(hashRoute ? url.hash.slice(1) : url.pathname);
-    // Career is a standalone document: navigate to its actual page instead of the old SPA placeholder.
-    if ((path === '/career' || path === '/gallery' || path.startsWith('/gallery/')) && !hashRoute) return;
-    if (!hashRoute && !publicPaths.has(path)) return;
+    // Public pages have their own real index.html; always navigate natively so
+    // required per-route scripts and metadata load on direct links and refreshes.
+    // Preserve the original hash router only for legacy internal hash routes.
+    if (!hashRoute) return;
     event.preventDefault();
     const destination = routeURL(path);
     if (location.pathname + location.hash !== destination) history.pushState({iconexRoute:path},'',destination);
