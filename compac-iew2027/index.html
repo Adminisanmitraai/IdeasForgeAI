@@ -227,6 +227,29 @@ button:disabled { cursor: default }
   }
   #stall-gallery .cg-frame:last-child { break-after:auto }
 }
+.plan-sheet {display:grid;grid-template-rows:auto minmax(0,1fr);gap:.55rem;height:100%;min-height:0;width:100%;padding:clamp(.6rem,1.4vh,1rem) var(--margin);background:white}
+.plan-heading {display:flex;align-items:center;justify-content:space-between;gap:.75rem}
+.plan-heading h2 {margin:0;font:670 clamp(1.5rem,2.3vw,2.2rem)/1.1 var(--ui);letter-spacing:-.045em;color:var(--navy)}
+.plan-expand,.plan-close {display:inline-flex;align-items:center;gap:.45rem;white-space:nowrap;padding:.55rem .8rem;min-height:38px;border-radius:7px;font:600 .92rem/1.1 var(--ui)}
+.plan-expand {border:1px solid var(--line);color:var(--navy);background:white}
+.plan-expand:hover {background:#f0f4fa}
+.plan-sheet svg {width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.plan-preview {display:grid;place-items:center;min-width:0;min-height:0;width:100%;height:100%;border:0;background:white;padding:0;cursor:zoom-in}
+.plan-preview img {display:block;width:100%;height:100%;min-height:0;min-width:0;object-fit:contain}
+.plan-fullscreen-host {position:absolute;width:0;height:0;overflow:visible}
+.plan-fullscreen-host:fullscreen {width:100vw;height:100vh;background:#10151e}
+.plan-dialog {position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;max-width:none;max-height:none;margin:0;padding:0;border:0;background:#10151e;align-items:center;justify-content:center;overflow:hidden;color:white}
+.plan-dialog[open] {display:flex}
+.plan-dialog::backdrop {background:#10151e}
+.plan-dialog img {display:block;width:min(100%,125vh);width:min(100%,125dvh);height:auto;max-width:100%;max-height:100%;object-fit:contain}
+.plan-dialog .plan-close {position:absolute;top:max(.6rem,env(safe-area-inset-top));right:max(.6rem,env(safe-area-inset-right));color:white;border:1px solid #ffffff68;background:#1c2737;z-index:1}
+.plan-close:hover {background:#30435e}
+@media print {
+  .plan-sheet {display:block;height:auto;padding:3mm 0}
+  .plan-heading {justify-content:center}
+  .plan-expand,.plan-fullscreen-host,.plan-dialog {display:none!important}
+  .plan-preview,.plan-preview img {width:100%;height:152mm;max-height:152mm;border:0}
+}
 </style>
 </head>
 <body>
@@ -254,18 +277,6 @@ button:disabled { cursor: default }
   <div class="deck-inner deck-reverse">
     <div class="deck-copy"><p class="deck-overline">Stall layout</p><h2 id="layout-title">One stand, two open aisles.</h2><p class="deck-lead">The blue-and-gold fascia wraps the open corner of the 4 × 8 m footprint. Visitors can approach the dispensers from either aisle.</p><ul class="deck-points"><li><b>Front and right</b> &nbsp;Open to exhibition traffic</li><li><b>Left and rear</b> &nbsp;Closed stall boundaries</li><li><b>32 m²</b> &nbsp;Carpeted display and guest space</li></ul></div>
     <figure class="deck-figure"><img src="assets/compac-stall-scene-03.webp" width="1672" height="941" alt="Corner view showing both fascia faces and all three green dispensers on the raised platform." loading="lazy"><figcaption>Open-corner view</figcaption></figure>
-  </div>
-</section>
-<section id="display" class="slide" data-tab="Dispensers" aria-labelledby="display-title">
-  <div class="deck-inner">
-    <div class="deck-copy"><p class="deck-overline">Product display</p><h2 id="display-title">Three dispensers at the aisle.</h2><p class="deck-lead">Each unit has an 840 mm front, a 450 mm depth and a height of 1,650 mm. The open display gives visitors a clear view of the meters and dispensing hardware.</p><ul class="deck-points"><li><b>2,500 mm</b> &nbsp;Platform to fascia underside</li><li><b>Front screen</b> &nbsp;Product demonstrations and company presentations</li></ul></div>
-    <figure class="deck-figure"><img src="assets/compac-stall-scene-05.webp" width="1672" height="941" alt="Close aisle view of the green-front dispenser cabinets, meters and hoses, with the coffee counter behind." loading="lazy"><figcaption>Dispenser display and hospitality counter</figcaption></figure>
-  </div>
-</section>
-<section id="hospitality" class="slide" data-tab="Hospitality" aria-labelledby="hospitality-title">
-  <div class="deck-inner deck-reverse">
-    <div class="deck-copy"><p class="deck-overline">Guest experience</p><h2 id="hospitality-title">Reception and a glass-enclosed meeting space.</h2><p class="deck-lead">The reception counter faces the aisle. Behind it, visitors can meet away from foot traffic while retaining a view of the display.</p><ul class="deck-points"><li><b>Waiting room</b> &nbsp;Dedicated television for guests</li><li><b>Coffee service</b> &nbsp;Machine and cups at the back counter</li></ul></div>
-    <figure class="deck-figure"><img src="assets/compac-stall-scene-02.webp" width="1672" height="941" alt="Reception counter and host at left, visitors seated in the glazed meeting room and the coffee machine on the rear counter." loading="lazy"><figcaption>Reception approach</figcaption></figure>
   </div>
 </section>
 <section class="slide cg" id="stall-gallery" aria-label="Stall gallery">
@@ -310,6 +321,42 @@ button:disabled { cursor: default }
     <audio class="cg-audio" src="assets/compac-gallery-music.mp3" loop preload="none"></audio>
   </div>
 </section>
+<section id="slide-9" class="slide" data-tab="Top layout" aria-labelledby="plan-title">
+  <div class="plan-sheet">
+    <div class="plan-heading">
+      <h2 id="plan-title">Top layout</h2>
+      <button type="button" class="plan-expand" aria-haspopup="dialog" aria-controls="plan-viewer">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></svg>
+        Full screen
+      </button>
+    </div>
+    <button type="button" class="plan-preview" aria-haspopup="dialog" aria-controls="plan-viewer" aria-label="Open the dimensioned top layout in full screen">
+      <img src="assets/compac-top-layout.png" width="1600" height="1280" alt="Dimensioned 8,000 × 4,000 mm COMPAC floor plan showing the reception, store, conference room, coffee counter, branding and three numbered dispensers." decoding="async">
+    </button>
+    <div class="plan-fullscreen-host">
+      <dialog id="plan-viewer" class="plan-dialog" aria-label="Full-screen top layout">
+        <img src="assets/compac-top-layout.png" width="1600" height="1280" alt="Top layout with all original labels and dimension lines for the 8,000 × 4,000 mm stand." decoding="async">
+        <button type="button" class="plan-close" aria-label="Close full-screen layout and return to slide 9" autofocus>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+          Close
+        </button>
+      </dialog>
+    </div>
+  </div>
+</section>
+<section id="display" class="slide" data-tab="Dispensers" aria-labelledby="display-title">
+  <div class="deck-inner">
+    <div class="deck-copy"><p class="deck-overline">Product display</p><h2 id="display-title">Three dispensers at the aisle.</h2><p class="deck-lead">Each unit has an 840 mm front, a 450 mm depth and a height of 1,650 mm. The open display gives visitors a clear view of the meters and dispensing hardware.</p><ul class="deck-points"><li><b>2,500 mm</b> &nbsp;Platform to fascia underside</li><li><b>Front screen</b> &nbsp;Product demonstrations and company presentations</li></ul></div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-05.webp" width="1672" height="941" alt="Close aisle view of the green-front dispenser cabinets, meters and hoses, with the coffee counter behind." loading="lazy"><figcaption>Dispenser display and hospitality counter</figcaption></figure>
+  </div>
+</section>
+<section id="hospitality" class="slide" data-tab="Hospitality" aria-labelledby="hospitality-title">
+  <div class="deck-inner deck-reverse">
+    <div class="deck-copy"><p class="deck-overline">Guest experience</p><h2 id="hospitality-title">Reception and a glass-enclosed meeting space.</h2><p class="deck-lead">The reception counter faces the aisle. Behind it, visitors can meet away from foot traffic while retaining a view of the display.</p><ul class="deck-points"><li><b>Waiting room</b> &nbsp;Dedicated television for guests</li><li><b>Coffee service</b> &nbsp;Machine and cups at the back counter</li></ul></div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-02.webp" width="1672" height="941" alt="Reception counter and host at left, visitors seated in the glazed meeting room and the coffee machine on the rear counter." loading="lazy"><figcaption>Reception approach</figcaption></figure>
+  </div>
+</section>
+
 <section id="brief" class="slide" data-tab="Design brief" aria-labelledby="brief-title">
   <div class="deck-brief">
     <div><p class="deck-overline">Stand requirements</p><h2 id="brief-title">Design brief</h2><dl class="deck-specs">
@@ -328,11 +375,80 @@ button:disabled { cursor: default }
   <nav aria-label="Presentation sections" class="deck-tabs"></nav>
   <select aria-label="Select presentation section" class="deck-mobile-select"></select>
   <div class="deck-controls">
-    <button type="button" class="deck-step" id="deck-prev" aria-label="Previous section"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m11 4-5 5 5 5"/></svg></button>
-    <span class="deck-count" aria-label="Section number"></span>
-    <button type="button" class="deck-step" id="deck-next" aria-label="Next section"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m7 4 5 5-5 5"/></svg></button>
+    <button type="button" class="deck-step" id="deck-prev" aria-label="Previous slide"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m11 4-5 5 5 5"/></svg></button>
+    <span class="deck-count" aria-label="Slide number"></span>
+    <button type="button" class="deck-step" id="deck-next" aria-label="Next slide"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m7 4 5 5-5 5"/></svg></button>
   </div>
 </footer></div>
+<script>
+(() => {
+  const slide = document.getElementById('slide-9');
+  const host = slide.querySelector('.plan-fullscreen-host');
+  const dialog = slide.querySelector('.plan-dialog');
+  const closeButton = dialog.querySelector('.plan-close');
+  let trigger = null;
+  let seenNative = false;
+  let activation = 0;
+
+  function closeViewer() {
+    if (!trigger) return;
+    const returnTo = trigger;
+    const closingActivation = activation;
+    trigger = null;
+    seenNative = false;
+    if (dialog.open) dialog.close();
+    const restoreFocus = () => {
+      if (closingActivation === activation && !trigger && slide.classList.contains('is-current')) {
+        returnTo.focus({preventScroll:true});
+      }
+    };
+    const afterExit = () => {
+      restoreFocus();
+      requestAnimationFrame(restoreFocus);
+    };
+    if (document.fullscreenElement === host) {
+      document.exitFullscreen().then(afterExit, afterExit);
+    } else {
+      afterExit();
+    }
+  }
+  function openViewer(event) {
+    if (trigger) return;
+    activation++;
+    trigger = event.currentTarget;
+    function show() {
+      if (!trigger) {
+        if (document.fullscreenElement === host) document.exitFullscreen().catch(() => {});
+        return;
+      }
+      if (!dialog.open) dialog.showModal();
+      closeButton.focus({preventScroll:true});
+    }
+    if (document.fullscreenEnabled && !document.fullscreenElement && host.requestFullscreen) {
+      host.requestFullscreen().then(show, show);
+    } else {
+      show();
+    }
+  }
+  slide.querySelectorAll('.plan-preview,.plan-expand').forEach(button => button.addEventListener('click', openViewer));
+  closeButton.addEventListener('click', closeViewer);
+  dialog.addEventListener('click', event => { if (event.target === dialog) closeViewer(); });
+  dialog.addEventListener('cancel', event => { event.preventDefault(); closeViewer(); });
+  document.addEventListener('fullscreenchange', () => {
+    if (document.fullscreenElement === host) seenNative = true;
+    else if (seenNative) closeViewer();
+  });
+  document.addEventListener('keydown', event => {
+    if (!trigger) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      closeViewer();
+    }
+    event.stopPropagation();
+  }, true);
+  window.addEventListener('hashchange', () => { if (trigger) closeViewer(); });
+})();
+</script>
 <script>
 (() => {
   const gallery = document.getElementById('stall-gallery');
@@ -447,7 +563,12 @@ button:disabled { cursor: default }
 
   function manual(offset) {
     revealControls();
-    show(index + offset, { notify: true });
+    const nextIndex = index + offset;
+    if ((nextIndex < 0 || nextIndex >= frames.length) && document.fullscreenElement !== gallery) {
+      gallery.dispatchEvent(new CustomEvent('compac:gallery-boundary', { detail: { offset } }));
+      return;
+    }
+    show(nextIndex, { notify: true });
   }
 
   function toggleMusic() {
@@ -551,85 +672,97 @@ button:disabled { cursor: default }
   const fullscreen = document.getElementById('deck-fullscreen');
   const voice = window.speechSynthesis;
   const viewer = window.CompacGallery;
-  const galleryIndex = slides.indexOf(gallery);
+  const frames = Array.from(gallery.querySelectorAll('.cg-frame'));
+  const steps = slides.flatMap(section => section === gallery
+    ? frames.map((frame, photo) => ({ section, photo, hash: 'stall-render-' + (photo + 1) }))
+    : [{ section, hash: section.id }]);
   let current = -1;
   let utterance = null;
   function sectionName(s) { return s === gallery ? 'Slideshow' : s.dataset.tab; }
-  function sectionId(s) { return s === gallery ? 'stall-render-' + (viewer.index() + 1) : s.id; }
-  slides.forEach((slide, index) => {
+  slides.forEach(section => {
+    const first = steps.findIndex(step => step.section === section);
     const link = document.createElement('a');
-    link.href = '#' + (slide === gallery ? 'stall-render-1' : slide.id);
-    link.textContent = sectionName(slide);
+    link.href = '#' + steps[first].hash;
+    link.textContent = sectionName(section);
     tabs.append(link);
-    select.add(new Option(sectionName(slide), String(index)));
+    select.add(new Option(sectionName(section), String(first)));
   });
   function stopReading() {
     if (utterance && voice) voice.cancel();
     utterance = null;
     read.textContent = 'Read slide aloud';
   }
-  function display(index, photo) {
-    if (index < 0 || index >= slides.length) return;
-    const previous = current;
+  function updateCounter() {
+    prev.disabled = current === 0;
+    next.disabled = current === steps.length - 1;
+    count.textContent = (current + 1) + ' / ' + steps.length;
+  }
+  function display(index) {
+    const step = steps[index];
+    if (!step) return;
+    const previousSection = steps[current]?.section;
     current = index;
-    const slide = slides[index];
-    slides.forEach((item, i) => {
-      item.classList.toggle('is-current', i === index);
-      item.setAttribute('aria-hidden', String(i !== index));
-    });
-    if (previous !== current) {
+    const slide = step.section;
+    if (slide !== previousSection) {
       stopReading();
+      slides.forEach(item => {
+        item.classList.toggle('is-current', item === slide);
+        item.setAttribute('aria-hidden', String(item !== slide));
+      });
       slide.scrollTop = 0;
       tools.open = false;
       viewer.setActive(slide === gallery);
+      Array.from(tabs.children).forEach((link, i) => {
+        if (slides[i] === slide) link.setAttribute('aria-current','page');
+        else link.removeAttribute('aria-current');
+      });
+      select.value = String(steps.findIndex(item => item.section === slide));
+      read.hidden = !voice || !window.SpeechSynthesisUtterance || slide === gallery;
+      document.title = sectionName(slide) + ' · COMPAC | India Energy Week 2027';
     }
-    if (slide === gallery && Number.isInteger(photo)) viewer.show(photo);
-    Array.from(tabs.children).forEach((link, i) => {
-      if (i === index) link.setAttribute('aria-current','page');
-      else link.removeAttribute('aria-current');
-    });
-    select.value = String(index);
-    prev.disabled = index === 0;
-    next.disabled = index === slides.length - 1;
-    count.textContent = (index + 1) + ' / ' + slides.length;
-    read.hidden = !voice || !window.SpeechSynthesisUtterance || slide === gallery;
-    document.title = sectionName(slide) + ' · COMPAC | India Energy Week 2027';
+    if (slide === gallery && viewer.index() !== step.photo) viewer.show(step.photo);
+    updateCounter();
   }
   function route() {
     const id = location.hash.slice(1);
-    const render = /^stall-render-([1-6])$/.exec(id);
-    if (render) return display(galleryIndex, Number(render[1])-1);
-    if (id === 'stall-gallery' || id === 'slide-21') return display(galleryIndex, 0);
-    const index = slides.findIndex(slide => slide.id === id);
+    const numeric = /^slide-(\d+)$/.exec(id);
+    if (numeric && steps[Number(numeric[1]) - 1]) return display(Number(numeric[1]) - 1);
+    let target = id;
+    if (id === 'stall-gallery' || id === 'slide-21') target = 'stall-render-1';
+    if (id === 'top-layout') target = 'slide-9';
+    const index = steps.findIndex(step => step.hash === target);
     display(index >= 0 ? index : 0);
   }
   function go(index) {
-    if (index < 0 || index >= slides.length) return;
-    const id = sectionId(slides[index]);
-    if (location.hash === '#' + id) display(index);
-    else location.hash = id;
+    const step = steps[index];
+    if (!step) return;
+    if (location.hash === '#' + step.hash) display(index);
+    else location.hash = step.hash;
   }
-  gallery.addEventListener('compac:photo', updatePhotoHash);
-  function updatePhotoHash(event) {
-    if (current !== galleryIndex) return;
-    const index = event.detail && event.detail.index;
-    if (!Number.isInteger(index) || index < 0 || index > 5) return;
-    const hash = '#stall-render-' + (index + 1);
+  gallery.addEventListener('compac:photo', event => {
+    if (steps[current]?.section !== gallery) return;
+    const photo = event.detail?.index;
+    const index = steps.findIndex(step => step.section === gallery && step.photo === photo);
+    if (index < 0) return;
+    current = index;
+    updateCounter();
+    const hash = '#' + steps[index].hash;
     if (location.hash !== hash) history.replaceState(null, '', hash);
-  }
+  });
+  gallery.addEventListener('compac:gallery-boundary', event => go(current + event.detail.offset));
   prev.addEventListener('click', () => go(current - 1));
   next.addEventListener('click', () => go(current + 1));
   select.addEventListener('change', () => go(Number(select.value)));
   document.addEventListener('keydown', event => {
-    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || document.querySelector('#plan-viewer[open]')) return;
     if (event.key === 'Escape') { tools.open = false; return; }
     if (event.target.closest('input, select, textarea, [contenteditable="true"]')) return;
     if ((event.key === ' ' || event.key === 'Enter') && event.target.closest('button, a, summary')) return;
-    if (current === galleryIndex && ['ArrowLeft','ArrowRight',' ','f','F','m','M'].includes(event.key)) return;
+    if (steps[current]?.section === gallery && [' ','f','F','m','M'].includes(event.key)) return;
     const directions = {ArrowLeft:-1, ArrowRight:1, PageUp:-1, PageDown:1, ArrowUp:-1, ArrowDown:1};
     let target = current;
     if (event.key === 'Home') target = 0;
-    else if (event.key === 'End') target = slides.length - 1;
+    else if (event.key === 'End') target = steps.length - 1;
     else if (event.key in directions) target += directions[event.key];
     else if (event.key === ' ') target += event.shiftKey ? -1 : 1;
     else if (event.key.toLowerCase() === 'f') { fullscreen.click(); return; }
@@ -652,7 +785,7 @@ button:disabled { cursor: default }
   read.addEventListener('click', () => {
     tools.open = false;
     if (utterance) { stopReading(); return; }
-    const copy = slides[current].querySelector('.deck-copy,.deck-brief');
+    const copy = steps[current].section.querySelector('.deck-copy,.deck-brief,.plan-heading');
     if (!copy || !voice || !window.SpeechSynthesisUtterance) return;
     utterance = new SpeechSynthesisUtterance(copy.innerText);
     utterance.lang = 'en-IN'; utterance.rate = .95;
