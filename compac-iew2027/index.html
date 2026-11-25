@@ -1,92 +1,669 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#102b59"><meta name="description" content="COMPAC Industries India Ltd. exhibition design concepts for India Energy Week 2027, presented by iCONEX. Three cinematic booth options with confirmed client-directed stall orientation."><title>COMPAC | India Energy Week 2027 — Exhibition Concepts</title><style>
-:root{--navy:#102b59;--blue:#244b91;--gold:#d6ac5b;--gold-light:#f6d38b;--ink:#122b51;--muted:#63758c;--paper:#f6f8fb;--line:#dbe3ed;--ease:cubic-bezier(.22,.61,.36,1)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}html,body{margin:0;padding:0;min-height:100%;width:100%;font-family:Inter,"Segoe UI",Arial,sans-serif;background:#fff;color:var(--ink)}body{height:100svh;overflow-y:auto;overflow-x:hidden;scroll-snap-type:y mandatory;scrollbar-width:none}body::-webkit-scrollbar{display:none}img{display:block;max-width:100%}button,a{font:inherit}button{cursor:pointer}a{color:inherit}button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:4px}
-.slide{height:100svh;min-height:100svh;width:100%;position:relative;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;display:flex;flex-direction:column;justify-content:center;padding:105px clamp(30px,5.5vw,100px) 84px;background:#fff}.slide--paper{background:linear-gradient(140deg,#fff 46%,#f5f8fc)}.slide--soft{background:linear-gradient(140deg,#f3f6fa,#eaf0f7)}.reveal{opacity:0;transform:translateY(22px);transition:opacity .73s var(--ease),transform .83s var(--ease)}.slide.active .reveal{opacity:1;transform:none}.reveal.d1{transition-delay:.12s}.reveal.d2{transition-delay:.22s}.reveal.d3{transition-delay:.34s}
-.kicker{font-size:11px;font-weight:850;letter-spacing:.24em;text-transform:uppercase;color:#aa7c37;margin-bottom:18px;display:flex;align-items:center;gap:13px}.kicker:before{content:"";width:34px;height:2px;background:var(--gold)}.display{font-size:clamp(40px,5.1vw,81px);font-weight:790;line-height:.94;letter-spacing:-.063em;margin:0 0 20px;max-width:1160px}.display em,.hero-head em{font-style:normal;color:#b58a4a}.lead{font-size:clamp(17px,1.45vw,22px);line-height:1.55;color:var(--muted);max-width:730px;margin:0 0 20px}.footnote,.technical-note{font-size:12px;line-height:1.5;color:#7f8fa2;margin-top:18px}.technical-note{padding:14px 17px;border-left:3px solid var(--gold);background:#f2f5f9;color:#4b6383;border-radius:0 9px 9px 0}.pill{background:#ffffff24;border:1px solid #ffffff66;color:#fff;font-weight:800;padding:9px 14px;border-radius:999px;letter-spacing:.065em;font-size:11px}.section-label{font-size:11px;font-weight:850;letter-spacing:.23em;color:#efc878;display:flex;align-items:center;gap:14px}.rule{display:inline-block;width:38px;height:2px;background:#f1ce81}.diamond{font-size:6px;color:#e2b259}
-/* Fixed IMR-style presentation chrome */
-.brandbar{position:fixed;top:0;left:0;right:0;z-index:100;height:72px;padding:0 clamp(22px,4vw,70px);display:flex;justify-content:space-between;align-items:center;pointer-events:none;transition:color .25s}.brand{pointer-events:auto;display:flex;align-items:baseline;gap:16px;text-decoration:none;font-size:22px;font-weight:950;font-style:italic;letter-spacing:-.065em;color:var(--navy)}.brand b{position:relative;font-size:28px}.brand b:before{content:"";position:absolute;left:5px;right:-2px;top:-4px;height:7px;border-top:3px solid var(--gold);border-radius:50%;transform:rotate(-9deg)}.brand small{font-size:9px;letter-spacing:.13em;font-weight:800;font-style:normal;color:#6681a0}.brand-right{display:flex;align-items:center;gap:14px;pointer-events:auto}.by{font-size:11px;font-weight:700;letter-spacing:.1em;color:#71829b}.by b{font-size:18px;color:var(--blue);letter-spacing:-.035em}.count{font-size:12px;font-weight:850;letter-spacing:.15em;color:#6e83a0;min-width:65px;text-align:right}.chrome-dark .brand,.chrome-dark .brand small,.chrome-dark .by,.chrome-dark .count{color:#fff}.chrome-dark .by b{color:#fff}.chrome-dark .count{color:#d8e4fa}
-.iconbtn{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:50%;color:var(--blue);background:#f1f5fa;font-size:17px}.iconbtn:hover{background:#dce7f5}.chrome-dark .iconbtn{background:#ffffff31;color:white}
-.bottom-nav{position:fixed;z-index:120;bottom:18px;right:clamp(20px,4vw,70px);display:flex;align-items:center;gap:8px;border-radius:50px;padding:7px;background:#ffffffed;box-shadow:0 5px 30px #071e3d27;backdrop-filter:blur(14px);border:1px solid #e1e9f2}.bottom-nav button{border:0;background:transparent;color:#204876;min-height:36px;border-radius:30px;padding:4px 12px;font-size:14px;font-weight:750}.bottom-nav button:hover{background:#e3edf8}.bottom-nav .nav-num{color:#264b7b;font-size:12px;font-weight:850;letter-spacing:.13em;min-width:75px;text-align:center}.bottom-nav .muted{color:#7e91a5;font-size:10px}.progress{position:fixed;left:0;bottom:0;width:0%;height:3px;background:linear-gradient(90deg,#ad7e35,#f8d48a);z-index:130;transition:width .35s}.hint{position:fixed;bottom:34px;left:clamp(20px,4vw,70px);z-index:110;letter-spacing:.13em;font-size:10px;font-weight:700;color:#73869a}.chrome-dark~.hint,.hint.is-light{color:#d9e3ed}
-/* Photos and full-bleed cinematic slides */
-.slide--hero,.slide--cinematic,.slide--gallery{padding:0;color:white;background:#081b3a}.full-photo,.gallery-images{position:absolute;inset:0}.full-photo>img,.gallery-bg{width:100%;height:100%;object-fit:cover;object-position:center center}.hero-mask{position:absolute;inset:0;background:linear-gradient(90deg,#06152eea 0%,#06152ebc 29%,#06152e57 58%,#06152e14 100%),linear-gradient(0deg,#071d3654,transparent 42%)}.cover-inner{z-index:3;position:relative;max-width:970px;margin:0 7vw;padding-top:40px}.hero-head{font-size:clamp(66px,7.4vw,128px);letter-spacing:-.075em;line-height:.83;margin:28px 0;font-weight:780}.hero-head em{color:#edc578}.hero-sub{font-size:clamp(20px,1.75vw,27px);line-height:1.5;color:#e4eef9;max-width:720px}.facts{display:flex;flex-wrap:wrap;gap:30px;margin-top:32px;border-top:1px solid #ffffff54;padding-top:18px;width:max-content;max-width:100%}.facts span{display:flex;flex-direction:column;gap:4px}.facts b{font-size:18px;color:white}.facts small{font-size:10px;letter-spacing:.13em;color:#d7e2f1}.photo-credit{position:absolute;bottom:29px;left:clamp(20px,4vw,70px);font-size:10px;color:#e6edfaab;letter-spacing:.15em;z-index:9;font-weight:700}.full-tint{position:absolute;inset:0;background:linear-gradient(0deg,#06152ed9,transparent 52%),linear-gradient(90deg,#06152e7d,transparent 43%)}.full-tint.subtle{background:linear-gradient(0deg,#06152ecc,transparent 42%)}.cinematic-copy{position:absolute;left:clamp(28px,6vw,105px);bottom:13vh;z-index:4}.cinematic-copy h2{font-size:clamp(52px,7vw,115px);line-height:.9;letter-spacing:-.065em;margin:17px 0}.cinematic-copy p{font-size:clamp(18px,2vw,28px);color:#d6e6f7;margin:0}.cinema-pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.closing-copy .close-sign{font-size:13px;text-transform:uppercase;letter-spacing:.13em;color:#e2edf9;margin-top:48px}.closing-copy .close-sign b{font-size:19px;letter-spacing:0;color:white}
-/* Brief / split */
-.split{display:grid;grid-template-columns:.9fr 1.1fr;gap:5%;align-items:center;width:100%;max-height:100%}.split--near{grid-template-columns:1.03fr .97fr}.copycol{padding-top:8px}.visual-panel{margin:0;min-width:0;border-radius:22px;overflow:hidden;position:relative;background:#d8e4f1;box-shadow:0 22px 42px #12325621;aspect-ratio:1.25}.visual-panel.tall{aspect-ratio:1.28}.visual-panel img{width:100%;height:100%;object-fit:cover}.visual-panel figcaption{position:absolute;right:18px;bottom:16px;font-size:10px;letter-spacing:.12em;font-weight:800;background:#0e2859db;color:white;padding:10px 12px;border-radius:6px}.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:15px;max-width:650px;margin-top:26px}.mini-stats>div{padding-top:12px;border-top:2px solid #caa65f;display:flex;flex-direction:column}.mini-stats b{font-size:33px;color:#244b8c}.mini-stats span{font-size:13px;color:#7185a0;line-height:1.4}.accent-list{display:grid;gap:11px;margin:28px 0}.accent-list>div{display:flex;align-items:center;gap:14px;color:#315173;font-size:16px;font-weight:650}.accent-list i{display:inline-block;width:8px;height:8px;background:#cfa95c;border-radius:50%;flex:0 0 auto}
-/* Orientation */
-.orientation-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:4vw;align-items:center;min-height:0}.plan-visual{margin:0;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 15px 40px #0b2c5014;max-height:56vh}.plan-visual img{width:100%;height:100%;max-height:56vh;object-fit:contain}.boundary-row{display:grid;grid-template-columns:28px 1fr 75px;gap:14px;align-items:center;border-bottom:1px solid #d7e0eb;padding:14px 0}.boundary-row span{font-size:12px;color:#aa833e;font-weight:800}.boundary-row strong{font-size:16px;color:#23446d}.boundary-row small{display:block;margin-top:3px;font-size:12px;color:#778aa4}.boundary-row>b{text-align:right;font-size:11px;letter-spacing:.04em}.boundary-row.closed>b{color:#a77e44}.boundary-row.open>b{color:#286398}
-/* Journey */
-.journey-grid,.gates-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:40px}.journey-grid article,.gates-grid article{padding:28px 24px 34px;border-radius:20px;background:white;box-shadow:0 12px 30px #163b6111;min-height:255px;border-top:4px solid var(--gold)}.journey-num,.gates-grid article>span{font-size:47px;letter-spacing:-.06em;color:#bd9651;font-weight:850}.journey-grid h3,.gates-grid h3{font-size:20px;color:#234d83;margin:14px 0}.journey-grid p,.gates-grid p{color:#6b7e95;line-height:1.5;font-size:15px}.narrative-bottom{display:flex;gap:20px;align-items:center;border-top:1px solid #d7e1ee;margin-top:34px;padding-top:18px}.narrative-bottom span{font-size:11px;letter-spacing:.18em;color:#ad8749;font-weight:800}.narrative-bottom strong{font-size:20px;color:#24456e}
-/* Option cards */
-.option-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:24px}.option-card{display:block;min-width:0;text-decoration:none;background:white;border-radius:20px;overflow:hidden;box-shadow:0 18px 40px #16375a16;transition:transform .2s}.option-card:hover{transform:translateY(-5px)}.option-img{display:block;height:26vh;min-height:172px;max-height:255px;overflow:hidden}.option-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}.option-card:hover img{transform:scale(1.04)}.option-number{display:block;color:#b58b4a;letter-spacing:.12em;font-size:11px;font-weight:850;margin:23px 22px 0}.option-card h3{font-size:28px;letter-spacing:-.04em;color:var(--navy);margin:9px 22px}.option-card p{font-size:15px;color:#6f8096;margin:0 22px}.option-view{display:flex;margin:20px 22px 22px;font-size:11px;letter-spacing:.1em;color:#2b548d;font-weight:850;justify-content:space-between}
-/* Plans */
-.plan-content{display:grid;grid-template-columns:1.15fr .85fr;gap:4vw;min-height:0;align-items:center}.plan-main{margin:0;min-width:0;border-radius:20px;overflow:hidden;background:white;box-shadow:0 12px 40px #1b3d5a1b;max-height:61vh}.plan-main img{width:100%;height:100%;max-height:61vh;object-fit:contain}.large-figure{font-size:clamp(70px,8vw,130px);font-weight:780;line-height:.8;color:#183e77;letter-spacing:-.08em}.large-figure small{font-size:35px;letter-spacing:-.02em;color:#a97c37}.small-caps{font-size:12px;letter-spacing:.15em;color:#7b90a5;font-weight:850}.plan-priorities{display:grid;gap:14px;margin-top:28px}.plan-priorities article{display:flex;gap:14px;border-top:1px solid #d5dfec;padding-top:14px}.plan-priorities span{font-weight:900;color:#bc9554}.plan-priorities p{margin:0;font-size:17px;color:#44627f;font-weight:650}
-/* Details */
-.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:center;margin-top:30px}.detail-tile{background:white;overflow:hidden;border-radius:17px;box-shadow:0 13px 29px #0f31521a}.detail-crop{height:40vh;min-height:230px;max-height:390px;overflow:hidden}.detail-crop img{height:100%;width:100%;object-fit:cover}.detail-tile.left img{object-position:0% 50%}.detail-tile.center img{object-position:43% 50%}.detail-tile.right img{object-position:94% 50%}.detail-tile>span{display:block;font-size:12px;letter-spacing:.13em;font-weight:800;padding:17px 19px;color:#244776}.detail-foot{font-size:13px;color:#8092a7;line-height:1.4;max-width:800px;margin-top:24px}
-/* Gallery */
-.gallery-bg{position:absolute;inset:0;opacity:0;transform:scale(1.02);transition:opacity .85s var(--ease),transform 5s}.gallery-bg.is-active{opacity:1;transform:scale(1)}.gallery-shade{position:absolute;inset:0;background:linear-gradient(0deg,#06142df2 0%,#06142d84 37%,transparent 75%),linear-gradient(90deg,#07192d7d,transparent 70%)}.gallery-content{position:absolute;left:clamp(28px,5.5vw,90px);right:clamp(28px,5.5vw,90px);bottom:8vh;z-index:5}.gallery-content h2{font-size:clamp(58px,7vw,110px);line-height:.88;letter-spacing:-.06em;margin:15px 0}.gallery-content p{font-size:clamp(18px,2vw,28px);color:#dce7f4;margin:0}.gallery-browse{display:flex;gap:9px;align-items:center;margin-top:21px}.gallery-browse button{background:#ffffff16;border:1px solid #ffffff8a;color:white;border-radius:40px;font-weight:750;padding:8px 15px}.gallery-browse button:hover{background:#ffffff37}.gallery-browse span{font-size:13px;letter-spacing:.15em}.gallery-browse .gallery-play{font-size:12px;margin-left:10px}.gallery-thumbs{display:flex;gap:11px;margin-top:18px}.gallery-thumb{width:160px;background:#10254a89;border:1px solid #ffffff57;color:white;text-align:left;padding:4px;border-radius:9px;opacity:.7}.gallery-thumb.selected{opacity:1;border-color:#f6d08a;box-shadow:0 0 0 2px #e1b86853}.gallery-thumb img{width:100%;height:74px;object-fit:cover;border-radius:5px}.gallery-thumb span{font-size:11px;font-weight:700;display:block;padding:6px 4px}
-/* Tables & requirements */
-.comparison-wrap{margin-top:25px;background:white;border-radius:16px;overflow:hidden;box-shadow:0 12px 34px #122e531a}.comparison{border-collapse:collapse;width:100%;color:#25486f}.comparison th{background:#163e73;color:white;text-align:left;font-size:13px;letter-spacing:.06em;padding:21px 18px}.comparison td{font-size:15px;line-height:1.4;padding:21px 18px;border-bottom:1px solid #e4eaf2}.comparison tbody td:first-child{font-weight:850;color:#294d77}.comparison tbody tr:nth-child(even){background:#f5f7fa}.requirement-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:28px}.requirement-grid article{border-radius:16px;background:#f4f7fb;padding:20px 18px;border:1px solid #dae3ef;min-height:155px}.requirement-grid b{font-size:32px;color:#bf9853}.requirement-grid h3{font-size:18px;margin:10px 0 5px;color:#244e81}.requirement-grid p{font-size:14px;line-height:1.4;color:#6b8096;margin:0}
-.services-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.services-grid article{border:1px solid #d9e3ed;border-radius:15px;padding:20px 22px;background:white}.services-grid article>span{font-size:13px;color:#aa874b;font-weight:850}.services-grid h3{font-size:18px;color:#264f81;margin:12px 0}.services-grid p{font-size:14px;color:#6b7d91;line-height:1.55}
-.palette-layout{display:grid;grid-template-columns:1.3fr .7fr;gap:4vw;max-height:58vh;min-height:0}.palette-visual{border-radius:20px;overflow:hidden;background:#eee}.palette-visual img{width:100%;height:100%;object-fit:cover}.palette-cards{display:grid;gap:12px}.palette-cards article{display:flex;gap:17px;align-items:center;padding:12px;background:#f5f8fb;border-radius:10px}.palette-cards .swatch{height:60px;width:60px;border-radius:8px;flex:0 0 60px;box-shadow:0 2px 9px #0001}.palette-cards .wood{background:repeating-linear-gradient(90deg,#bd8d57 0px,#e2b883 9px,#aa7f52 12px)}.palette-cards b{font-size:14px;color:#2b4f79}.palette-cards p{font-size:13px;color:#697f94;margin:6px 0 0}
-.shortlist{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-height:0;margin-top:22px}.shortlist article{border-radius:16px;background:white;overflow:hidden;box-shadow:0 12px 30px #233e5818}.shortlist-img{height:30vh;min-height:210px;overflow:hidden}.shortlist-img img{height:100%;width:100%;object-fit:cover}.shortlist article>span{display:block;margin:16px 22px 4px;color:#b68c48;font-size:11px;font-weight:850;letter-spacing:.14em}.shortlist h3{font-size:26px;letter-spacing:-.04em;margin:0 22px;color:var(--navy)}.shortlist p{margin:8px 22px 20px;color:#708299;font-size:15px;line-height:1.45}.source-panel{margin-top:27px;background:#e9eff7;border-radius:13px;padding:21px 27px;display:flex;align-items:center;justify-content:space-between}.source-panel span{font-weight:850;letter-spacing:.13em;font-size:12px;color:#587399}.source-panel a{color:#244c8a;font-size:16px;font-weight:800;text-decoration:none}.source-panel a:hover{text-decoration:underline}
-/* Responsive & accessibility */
-@media(max-width:1120px){.display{font-size:clamp(38px,5vw,62px)}.slide{padding:92px 38px 90px}.cover-inner{margin-left:7vw}.option-card h3{font-size:23px}.option-card p{font-size:13px}.journey-grid article{min-height:200px;padding:20px}.journey-grid h3{font-size:17px}.journey-grid p{font-size:13px}.requirement-grid{gap:10px}.requirement-grid article{min-height:140px}.comparison td{font-size:13px;padding:14px}.gallery-content{bottom:10vh}}
-@media(max-width:760px){html{scroll-behavior:smooth}body{height:auto;scroll-snap-type:y proximity}.slide{height:auto;min-height:100svh;padding:100px 22px 96px;overflow:visible;justify-content:flex-start}.slide--hero,.slide--cinematic,.slide--gallery{height:100svh;min-height:620px;overflow:hidden;padding:0}.brandbar{padding:0 16px;height:62px}.brand{font-size:15px;gap:7px}.brand b{font-size:21px}.brand small{display:none}.brand-right{gap:6px}.by{font-size:9px}.by b{font-size:14px}.count{font-size:10px;min-width:54px}.iconbtn{width:29px;height:29px;font-size:13px}.bottom-nav{right:12px;bottom:12px;gap:1px;padding:4px}.bottom-nav button{padding:5px 10px;min-height:29px;font-size:12px}.bottom-nav .nav-num{font-size:10px;min-width:52px}.hint{left:15px;bottom:26px;font-size:8px;max-width:140px}.display{font-size:clamp(34px,10vw,58px);margin-bottom:20px}.lead{font-size:17px}.hero-head{font-size:clamp(52px,12vw,86px)}.cover-inner{margin:0 22px;max-width:90%;padding-top:40px}.hero-sub{font-size:17px}.facts{gap:11px}.facts b{font-size:14px}.facts small{font-size:8px}.full-photo img{object-position:55% center}.hero-mask{background:linear-gradient(90deg,#05142ee5,#05142e84 75%),linear-gradient(0deg,#081a3194,transparent)}.photo-credit{left:20px;bottom:80px;font-size:8px;max-width:80%}.cinematic-copy{left:25px;right:24px;bottom:17vh}.cinematic-copy h2{font-size:clamp(43px,12vw,72px)}.cinematic-copy p{font-size:17px}.cinema-pills{gap:5px}.pill{font-size:9px;padding:7px}.split,.orientation-layout,.plan-content,.palette-layout{grid-template-columns:1fr;gap:23px;max-height:none}.copycol{padding-top:0}.visual-panel,.plan-main,.plan-visual{height:34vh;min-height:215px;aspect-ratio:auto;max-height:none}.visual-panel img,.plan-main img,.plan-visual img{height:100%;max-height:none}.plan-main{height:32vh}.orientation-copy{padding-bottom:18px}.boundary-row{grid-template-columns:20px 1fr 55px;gap:8px;padding:9px 0}.boundary-row strong{font-size:14px}.boundary-row small{font-size:11px}.boundary-row b{font-size:10px}.journey-grid,.gates-grid,.option-grid,.requirement-grid{grid-template-columns:1fr 1fr;gap:11px;margin-top:15px}.journey-grid article,.gates-grid article{min-height:140px;padding:15px}.journey-num,.gates-grid article>span{font-size:30px}.journey-grid h3,.gates-grid h3{font-size:14px;margin:8px 0}.journey-grid p,.gates-grid p{font-size:11px;line-height:1.4}.narrative-bottom{display:block}.narrative-bottom strong{display:block;font-size:15px;margin-top:10px}.option-grid{grid-template-columns:1fr}.option-card{margin-bottom:8px}.option-img{height:23vh;min-height:140px}.option-card h3{font-size:24px}.option-card p{font-size:13px}.option-number{margin-top:13px}.option-view{margin-bottom:12px}.accent-list{margin-top:15px}.accent-list>div{font-size:14px}.mini-stats{gap:8px}.mini-stats span{font-size:12px}.mini-stats b{font-size:26px}.large-figure{font-size:58px}.large-figure small{font-size:24px}.plan-priorities{gap:7px;margin-top:12px}.plan-priorities article{padding-top:6px}.plan-priorities p{font-size:14px}.detail-grid{grid-template-columns:1fr;gap:12px;margin-top:12px}.detail-crop{height:160px;min-height:160px}.detail-tile>span{padding:10px;font-size:11px}.detail-foot{font-size:11px}.gallery-content{left:22px;right:22px;bottom:11vh}.gallery-content h2{font-size:48px}.gallery-content p{font-size:17px}.gallery-thumbs{gap:6px}.gallery-thumb{width:31%;font-size:8px}.gallery-thumb img{height:47px}.gallery-thumb span{font-size:9px}.gallery-browse button{font-size:12px;padding:6px 9px}.gallery-browse .gallery-play{font-size:10px;margin-left:0}.comparison-wrap{overflow-x:auto}.comparison{min-width:720px}.requirement-grid article{padding:14px 12px;min-height:125px}.requirement-grid b{font-size:23px}.requirement-grid h3{font-size:13px}.requirement-grid p{font-size:11px}.services-grid{grid-template-columns:1fr}.services-grid article{padding:13px}.palette-visual{height:30vh}.palette-cards{gap:6px}.palette-cards article{padding:7px}.palette-cards .swatch{width:40px;height:40px;flex-basis:40px}.palette-cards p{font-size:11px}.shortlist{grid-template-columns:1fr}.shortlist-img{height:20vh;min-height:140px}.shortlist article>span{font-size:9px;margin:9px 15px 2px}.shortlist h3{font-size:21px;margin:0 15px}.shortlist p{font-size:12px;margin:4px 15px 12px}.source-panel{display:block;padding:12px}.source-panel a{display:block;margin-top:9px;font-size:13px}.closing-copy{padding-top:0}}
-@media(max-width:410px){.brand-right .by{display:none}.display{font-size:35px}.journey-grid,.gates-grid{grid-template-columns:1fr 1fr}.photo-credit{bottom:72px}.gallery-content{bottom:10vh}.gallery-thumbs{margin-top:9px}.gallery-browse{margin-top:12px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.reveal,.gallery-bg,.option-card,.option-img img{transition:none!important;transform:none!important}}
-@media print{@page{size:16in 9in;margin:0}html,body{height:auto!important;scroll-snap-type:none!important;overflow:visible!important;background:white!important}.slide{height:9in!important;min-height:9in!important;width:16in!important;padding:80px 90px 80px;page-break-after:always;scroll-snap-align:none}.slide--hero,.slide--cinematic,.slide--gallery{padding:0!important}.brandbar,.bottom-nav,.progress,.hint{display:none!important}.reveal{opacity:1!important;transform:none!important}.gallery-bg:not(.is-active){display:none!important}.photo-credit{bottom:20px!important}*{print-color-adjust:exact!important;-webkit-print-color-adjust:exact!important}}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffffff">
+<meta name="description" content="Explore the COMPAC exhibition stand for India Energy Week 2027 in Kolkata. Six views show the dispenser display, reception and guest lounge. Presented by iCONEX.">
+<title>COMPAC Exhibition Stand | India Energy Week 2027</title>
+<style>
+:root {
+  color-scheme: light;
+  --ink: #122744;
+  --navy: #102954;
+  --blue: #164594;
+  --gold: #edbd45;
+  --subtle: #516275;
+  --line: #dce2e9;
+  --sheet: #fff;
+  --margin: clamp(1.1rem, 3.1vw, 4rem);
+  --ui: Inter, "Segoe UI", Arial, sans-serif;
+}
+* { box-sizing: border-box }
+html,body { margin: 0; min-width: 280px; height: 100% }
+body { color: var(--ink); font-family: var(--ui); background: var(--sheet); -webkit-font-smoothing: antialiased }
+button,select,a { font: inherit }
+button,select { color: inherit }
+button,a { touch-action: manipulation }
+button { cursor: pointer }
+button:disabled { cursor: default }
+:focus-visible { outline: 3px solid #246ed2; outline-offset: 3px }
+.deck-shell { display: grid; height: 100vh; height: 100dvh; grid-template-rows: auto minmax(0,1fr) auto; overflow: hidden }
+.deck-header { display: flex; gap: 1.5rem; align-items: center; justify-content: space-between; padding: .65rem var(--margin); min-height: 68px; border-bottom: 1px solid var(--line); position: relative; z-index: 3; background: #fff }
+.deck-client { display: inline-flex; align-items: center; max-width: min(36vw,182px); height: 44px }
+.deck-client img,.deck-presenter img { width: 100%; height: 100%; display: block; object-fit: contain }
+.deck-client img { object-position: left center }
+.deck-header-end { display: flex; align-items: center; gap: clamp(.7rem, 2.1vw, 2.4rem) }
+.deck-presenter { display: flex; align-items: center; gap: .6rem; font-size: .78rem; color: var(--subtle); white-space: nowrap }
+.deck-presenter img { width: 88px; height: 38px }
+.deck-tools { position: relative }
+.deck-tools summary { display: flex; align-items:center; justify-content:center; min-width:40px; min-height:40px; padding:0 .55rem; border:1px solid var(--line); border-radius:8px; color:var(--navy); cursor:pointer; list-style:none; line-height:1 }
+.deck-tools summary::-webkit-details-marker { display:none }
+.deck-tools summary:hover,.deck-tools[open] summary { background:#eff4fa }
+.deck-tools-list { position: absolute; right:0; top:calc(100% + 8px); padding:.35rem; min-width: 166px; background:white; border:1px solid var(--line); border-radius:9px; box-shadow:0 8px 32px #14294720 }
+.deck-tools-list button { display:block; width:100%; text-align:left; border:0; padding:.65rem .85rem; background:none; border-radius:5px; color:var(--navy); font-size:.92rem }
+.deck-tools-list button:hover { background:#eff4fa }
+.deck-tools-list [hidden] { display:none }
+.deck-main { min-height:0; min-width:0; position:relative }
+.deck-main > .slide { position: relative; width:100%; height:100%; min-height:0; display:none; overflow:auto; overscroll-behavior:contain; background:white }
+.deck-main > .slide.is-current { display:flex; flex-direction:column }
+.deck-main > #stall-gallery { overflow:hidden }
+.deck-inner { width:100%; max-width:1840px; margin:auto; padding:clamp(1.25rem,3.5vw,4.25rem) var(--margin); display:grid; align-items:center; grid-template-columns:minmax(238px,.71fr) minmax(0,1.68fr); gap:clamp(1.3rem,3vw,4.5rem) }
+.deck-reverse { grid-template-columns:minmax(0,1.55fr) minmax(255px,.78fr) }
+.deck-reverse .deck-copy { order:2 }
+.deck-reverse .deck-figure { order:1 }
+.deck-copy { min-width:0 }
+.deck-overline { font-size:.77rem; letter-spacing:.13em; text-transform:uppercase; font-weight:740; color:var(--blue); margin:0 0 1.1rem; display:flex; align-items:center; gap:.63rem }
+.deck-overline::before { content:""; display:block; flex:0 0 24px; height:3px; background:var(--gold) }
+.deck-copy h1,.deck-copy h2,.deck-brief h2 { margin:0; font-family:var(--ui); color:var(--navy); letter-spacing:-.055em; line-height:1.025; text-wrap:balance; font-weight:670 }
+.deck-copy h1 { font-size:clamp(2.6rem,4.3vw,6.5rem) }
+.deck-copy h2,.deck-brief h2 { font-size:clamp(2.15rem,3.45vw,5rem) }
+.deck-lead { font-size:clamp(1rem,1.15vw,1.25rem); line-height:1.52; color:var(--subtle); margin:1.05rem 0 0; max-width:43ch }
+.deck-place { color:var(--subtle); margin:1.3rem 0 0; font-size:clamp(.93rem, 1vw, 1.1rem); line-height:1.65 }
+.deck-place strong { color:var(--ink); font-weight:620 }
+.deck-cta { display:inline-flex; align-items:center; justify-content:center; gap:.55rem; color:white; background:var(--navy); text-decoration:none; font-weight:660; margin-top:1.45rem; padding:.82rem 1.1rem; border-radius:7px; font-size:1rem; min-height:44px }
+.deck-cta:hover { background:var(--blue) }
+.deck-figure { margin:0; min-width:0; width:100% }
+.deck-figure img { width:100%; height:auto; aspect-ratio:1672/941; max-height:calc(100dvh - 200px); display:block; object-fit:contain; object-position:center; border-radius:6px }
+.deck-figure figcaption { display:flex; align-items:center; gap:.55rem; color:#526278; font-size:.82rem; line-height:1.4; margin-top:.65rem }
+.deck-figure figcaption::before { content:""; flex:0 0 16px; height:2px; background:var(--gold) }
+.deck-points { margin:1.3rem 0 0; padding:0; list-style:none; max-width:43ch }
+.deck-points li { font-size:clamp(.91rem,1.03vw,1.12rem); line-height:1.4; padding:.64rem 0; border-top:1px solid var(--line); color:var(--subtle) }
+.deck-points b { color:var(--ink); font-weight:650 }
+.deck-brief { width:100%; max-width:1700px; margin:auto; padding:clamp(1.1rem,3vw,3.5rem) var(--margin); display:grid; grid-template-columns:minmax(290px,1fr) minmax(0,1.1fr); gap:clamp(1.5rem,4vw,5.5rem); align-items:center }
+.deck-brief h2 { margin-bottom:1.2rem }
+.deck-specs { display:grid; grid-template-columns: minmax(104px,.4fr) minmax(0,1fr); margin:0; line-height:1.4; font-size:clamp(.9rem,1.03vw,1.15rem) }
+.deck-specs dt,.deck-specs dd { margin:0; padding:.47rem 0; border-top:1px solid var(--line) }
+.deck-specs dt { font-weight:660; color:var(--ink); padding-right:.6rem }
+.deck-specs dd { color:var(--subtle) }
+.deck-reference { display:inline-flex; margin-top:1rem; color:var(--blue); text-decoration-thickness:1px; text-underline-offset:.18em; font-weight:620; font-size:.94rem }
+.deck-footer { display:flex; align-items:center; justify-content:space-between; gap:1rem; min-height:56px; padding:.35rem var(--margin); border-top:1px solid var(--line); background:#fff; position:relative; z-index:2 }
+.deck-tabs { display:flex; align-items:center; gap:clamp(.7rem,1.7vw,2.1rem); min-width:0 }
+.deck-tabs a { position:relative; display:inline-flex; align-items:center; min-height:42px; color:var(--subtle); text-decoration:none; font-size:.92rem; font-weight:520; white-space:nowrap }
+.deck-tabs a[aria-current="page"] { color:var(--navy); font-weight:710 }
+.deck-tabs a[aria-current="page"]::after { content:""; position:absolute; bottom:2px; height:3px; background:var(--gold); border-radius:3px; left:0; right:0 }
+.deck-controls { display:flex; align-items:center; gap:.55rem }
+.deck-count { color:var(--subtle); font-variant-numeric:tabular-nums; font-size:.86rem; min-width:3rem; text-align:center }
+.deck-step { display:inline-grid; place-items:center; color:var(--navy); width:38px; height:38px; border:1px solid var(--line); background:white; border-radius:50% }
+.deck-step:hover:not(:disabled) { background:#eff4fa }
+.deck-step:disabled { opacity:.3 }
+.deck-mobile-select { display:none }
+.deck-sr { clip-path:inset(50%); width:1px; height:1px; position:absolute; overflow:hidden; white-space:nowrap }
+@media (max-width:800px) {
+  .deck-header { min-height:56px; padding:.4rem var(--margin) }
+  .deck-client { height:36px; max-width:126px }
+  .deck-presenter img { width:69px; height:33px }
+  .deck-footer { min-height:50px }
+  .deck-tabs { display:none }
+  .deck-mobile-select { display:block; max-width:56vw; border:0; background:#fff; color:var(--navy); font-weight:650; font-size:1rem; padding: .4rem .2rem }
+  .deck-inner,.deck-brief { grid-template-columns:1fr; align-content:center; gap:1.1rem; max-width:720px; padding:1.25rem var(--margin) }
+  .deck-reverse .deck-copy,.deck-reverse .deck-figure { order:initial }
+  .deck-copy h1 { max-width:16ch; font-size:clamp(2.15rem,7.3vw,4rem) }
+  .deck-copy h2,.deck-brief h2 { font-size:clamp(1.9rem,5.9vw,3rem) }
+  .deck-overline { margin-bottom:.7rem }
+  .deck-place,.deck-lead { margin-top:.65rem }
+  .deck-cta { margin-top:.85rem; min-height:40px; padding:.6rem .85rem }
+  .deck-points { margin-top:.7rem; max-width:none }
+  .deck-points li { padding:.4rem 0 }
+  .deck-figure img { max-height:none }
+  .deck-brief h2 { margin-bottom:.8rem }
+}
+@media (max-width:480px) {
+  .deck-presenter { gap:.35rem;font-size:.65rem }
+  .deck-header-end { gap:.5rem }
+  .deck-presenter img { width:62px;height:30px }
+  .deck-client { max-width:112px;height:34px }
+  .deck-tools summary { width:36px;height:36px;min-width:36px;min-height:36px }
+  .deck-inner,.deck-brief { padding:1.25rem 1rem }
+  .deck-specs { grid-template-columns:minmax(85px,.35fr) minmax(0,1fr) }
+}
+@media (max-height:610px) and (orientation:landscape) {
+  .deck-header { min-height:42px;padding:.15rem var(--margin) }
+  .deck-client { height:30px }
+  .deck-presenter img { height:26px; width:65px }
+  .deck-tools summary { min-width:32px;min-height:32px }
+  .deck-footer { min-height:38px; padding:.12rem var(--margin) }
+  .deck-step { height:29px; width:29px }
+  .deck-tabs a { min-height:30px }
+  .deck-inner,.deck-brief { max-width:none;grid-template-columns:minmax(220px,.75fr) minmax(0,1.45fr);padding:1rem var(--margin); gap:1.3rem }
+  .deck-copy h1,.deck-copy h2,.deck-brief h2 { font-size:clamp(1.65rem,3.5vw,2.6rem) }
+  .deck-figure img { max-height:calc(100dvh - 147px) }
+  .deck-overline,.deck-lead,.deck-place,.deck-points,.deck-cta { margin-top:.4rem;margin-bottom:.4rem }
+  .deck-brief .deck-figure { position:sticky;top:1rem;align-self:start }
+}
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { scroll-behavior:auto!important }
+}
+@media print {
+  @page {size:landscape;margin:8mm}
+  html,body,.deck-shell,.deck-main {height:auto;display:block;overflow:visible}
+  .deck-header { min-height:0;padding:0 0 4mm;position:static }
+  .deck-tools,.deck-footer,.deck-cta {display:none!important}
+  .deck-main > .slide,.deck-main > .slide.is-current {display:block;height:auto;overflow:visible;break-after:page;break-inside:avoid}
+  .deck-inner,.deck-brief {grid-template-columns:1fr 1.55fr;min-height:125mm;padding:5mm 0}
+  .deck-inner img,.deck-brief img { max-height:115mm }
+  .deck-main > .slide:last-child {break-after:auto}
+}
+#stall-gallery{background:#0d1118;color:#fafafa;padding:0;overflow:hidden}
+.cg-shell{--cg-ease:cubic-bezier(.2,.66,.28,1);--cg-rail:126px;position:absolute;inset:0;isolation:isolate;background:#0d1118;overflow:hidden;color:#fafafa;color-scheme:dark;font-family:inherit}
+.cg-stage{position:absolute;inset:0 0 var(--cg-rail);overflow:hidden;touch-action:pan-y pinch-zoom;transition:bottom .32s var(--cg-ease)}
+.cg-stage:focus{outline:none}
+.cg-stage:focus-visible{outline:2px solid white;outline-offset:-4px}
+.cg-frame{position:absolute;inset:0;display:block;width:100%;height:100%;max-width:none;object-fit:contain;object-position:center;opacity:0;pointer-events:none;transform:scale(1);transition:opacity .68s var(--cg-ease)}
+.cg-frame.cg-current{z-index:1;opacity:1}
+.cg[data-cg-effect=zoom] .cg-frame{transform:scale(.975);transition:opacity .65s var(--cg-ease),transform 1.15s var(--cg-ease)}
+.cg[data-cg-effect=zoom] .cg-frame.cg-current{transform:scale(1)}
+.cg[data-cg-effect=none] .cg-frame{transition:none}
+.cg-dock{box-sizing:border-box;position:absolute;z-index:2;inset:auto 0 0;display:grid;height:var(--cg-rail);align-content:center;gap:7px;padding:4px max(14px,env(safe-area-inset-right)) max(5px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));background:#151a22;border-top:1px solid #ffffff18;transition:opacity .26s var(--cg-ease),transform .32s var(--cg-ease)}
+.cg-toolbar{box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);width:100%;max-width:1360px;margin:0 auto;align-items:center;gap:14px}
+.cg-caption,.cg-playback,.cg-settings,.cg-strip{display:flex;align-items:center}
+.cg-caption{gap:12px;min-width:0;font-size:.94rem;font-weight:550}
+.cg-name{white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.cg-counter{font-size:.8rem;color:#c8d0dd;white-space:nowrap;font-variant-numeric:tabular-nums}
+.cg-playback{gap:3px;justify-content:center}
+.cg-settings{justify-content:flex-end;gap:2px}
+.cg .cg-button,.cg .cg-thumb,.cg-transition,.cg-transition select{box-sizing:border-box;color:inherit;font:inherit}
+.cg .cg-button{display:inline-grid;place-items:center;cursor:pointer;border:0;background:transparent;width:42px;height:42px;border-radius:9px;padding:0;margin:0;flex:0 0 auto}
+.cg .cg-button:hover,.cg-transition:hover{background:#ffffff15}
+.cg .cg-play{width:40px;height:40px;border-radius:50%;background:#f6f8fc;color:#111824}
+.cg .cg-play:hover{background:#fff}
+.cg .cg-button svg,.cg-transition svg{display:block;width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.cg .cg-play-icon{fill:currentColor;stroke:none}
+.cg-pause-icon,.cg-muted-icon,.cg-playing .cg-play-icon{display:none}
+.cg-playing .cg-pause-icon,.cg-music[aria-pressed=false] .cg-muted-icon{display:block}
+.cg .cg-button:focus-visible,.cg .cg-thumb:focus-visible,.cg-transition:focus-within{outline:2px solid #fff;outline-offset:2px}
+.cg-transition{display:flex;align-items:center;gap:6px;position:relative;border-radius:7px;padding-left:8px}
+.cg-transition svg{width:16px;height:16px;pointer-events:none}
+.cg-transition select{font-size:.82rem;min-height:42px;padding:0 3px 0 0;cursor:pointer;border:none;background:transparent;outline:none}
+.cg-transition option{color:#f6f8fc;background:#151a22}
+.cg-strip{justify-content:center;gap:7px}
+.cg .cg-thumb{display:block;width:70px;height:42px;padding:2px;margin:0;overflow:hidden;cursor:pointer;border:2px solid transparent;background:transparent;border-radius:6px;opacity:.7}
+.cg .cg-thumb img{display:block;object-fit:contain;width:100%;height:100%;border-radius:2px}
+.cg .cg-thumb:hover,.cg .cg-thumb:focus-visible,.cg .cg-thumb[aria-current=true]{opacity:1}
+.cg .cg-thumb[aria-current=true]{border-color:#f2c346}
+.cg.cg-quiet .cg-stage{bottom:0}
+.cg.cg-quiet .cg-dock{opacity:0;transform:translateY(100%);pointer-events:none}
+.cg.cg-quiet .cg-dock:focus-within:has(:focus-visible){opacity:1;transform:none;pointer-events:auto}
+.cg-sr{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.cg:fullscreen{width:100vw;height:100dvh;background:#0d1118}
+.cg [hidden]{display:none!important}
+@media(max-width:730px){
+  .cg-shell{--cg-rail:135px}
+  .cg-toolbar{grid-template-columns:1fr auto auto;gap:6px}
+  .cg-caption{align-items:flex-start;flex-direction:column;gap:1px;font-size:.82rem;line-height:1.3}
+  .cg-counter{font-size:.72rem}
+  .cg .cg-button{width:38px;height:38px}
+  .cg .cg-play{width:36px;height:36px}
+  .cg .cg-thumb{width:clamp(38px,12vw,64px);height:40px}
+  .cg-strip{gap:3px}
+  .cg-settings{gap:0}
+  .cg-transition{width:38px;height:38px;justify-content:center;padding:0}
+  .cg-transition svg{width:19px;height:19px}
+  .cg-transition select{position:absolute;inset:0;width:100%;opacity:0}
+}
+@media(max-width:365px){
+  .cg-dock{padding-left:6px;padding-right:6px}
+  .cg .cg-button{width:33px}
+  .cg-toolbar{gap:2px}
+}
+@media(max-height:520px) and (min-width:550px){
+  .cg-shell{--cg-rail:62px}
+  .cg-strip{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  .cg .cg-frame,.cg .cg-frame.cg-current,.cg .cg-dock,.cg .cg-stage{transition:none!important;transform:none}
+}
+@media print{
+  .cg-dock,.cg-sr{display:none!important}
+  .cg-stage{inset:0}
+}
+@media print {
+  #stall-gallery, #stall-gallery .cg-shell, #stall-gallery .cg-stage {
+    position:static; display:block; height:auto; min-height:0; overflow:visible; background:white;
+  }
+  #stall-gallery .cg-frame {
+    position:static; display:block; width:100%; height:160mm; opacity:1; object-fit:contain;
+    transform:none; transition:none; break-inside:avoid; break-after:page;
+  }
+  #stall-gallery .cg-frame:last-child { break-after:auto }
+}
+</style>
+</head>
+<body>
+<div class="deck-shell">
+<header class="deck-header">
+  <a href="#slide-1" class="deck-client" aria-label="COMPAC presentation overview"><img src="assets/compac-official.png" alt="COMPAC"></a>
+  <div class="deck-header-end">
+    <div class="deck-presenter"><span>Presented by</span><img src="assets/iconex-official.png" alt="iCONEX"></div>
+    <details class="deck-tools"><summary aria-label="Presentation tools" title="Presentation tools"><svg width="23" height="11" viewBox="0 0 23 11" aria-hidden="true" fill="currentColor"><circle cx="3" cy="5.5" r="2"/><circle cx="11.5" cy="5.5" r="2"/><circle cx="20" cy="5.5" r="2"/></svg></summary><div class="deck-tools-list"><button id="deck-fullscreen" type="button">Full screen</button><button id="deck-narration" type="button">Read slide aloud</button><button id="deck-print" type="button">Print presentation</button></div></details>
+  </div>
+</header>
+<main id="presentation" class="deck-main" aria-label="COMPAC exhibition stand presentation">
+<section id="slide-1" class="slide is-current" data-tab="Overview" aria-labelledby="cover-title">
+  <div class="deck-inner">
+    <div class="deck-copy">
+      <p class="deck-overline">India Energy Week 2027</p>
+      <h1 id="cover-title">Engineering the future of fuel dispensing.</h1>
+      <p class="deck-place"><strong>COMPAC Industries India Ltd.</strong><br>Kolkata · Hall 3 · Stand 3B077A</p>
+      <a class="deck-cta" href="#stall-render-1"><svg aria-hidden="true" width="15" height="16" viewBox="0 0 15 16" fill="currentColor"><path d="M2 1l12 7-12 7z"/></svg>View slideshow</a>
+    </div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-01.webp" width="1672" height="941" alt="Wide front-aisle view of the COMPAC stall with reception on the left, a glass meeting room and green dispensers on the right." fetchpriority="high"><figcaption>Front aisle view</figcaption></figure>
+  </div>
+</section>
+<section id="layout" class="slide" data-tab="Layout" aria-labelledby="layout-title">
+  <div class="deck-inner deck-reverse">
+    <div class="deck-copy"><p class="deck-overline">Stall layout</p><h2 id="layout-title">One stand, two open aisles.</h2><p class="deck-lead">The blue-and-gold fascia wraps the open corner of the 4 × 8 m footprint. Visitors can approach the dispensers from either aisle.</p><ul class="deck-points"><li><b>Front and right</b> &nbsp;Open to exhibition traffic</li><li><b>Left and rear</b> &nbsp;Closed stall boundaries</li><li><b>32 m²</b> &nbsp;Carpeted display and guest space</li></ul></div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-03.webp" width="1672" height="941" alt="Corner view showing both fascia faces and all three green dispensers on the raised platform." loading="lazy"><figcaption>Open-corner view</figcaption></figure>
+  </div>
+</section>
+<section id="display" class="slide" data-tab="Dispensers" aria-labelledby="display-title">
+  <div class="deck-inner">
+    <div class="deck-copy"><p class="deck-overline">Product display</p><h2 id="display-title">Three dispensers at the aisle.</h2><p class="deck-lead">Each unit has an 840 mm front, a 450 mm depth and a height of 1,650 mm. The open display gives visitors a clear view of the meters and dispensing hardware.</p><ul class="deck-points"><li><b>2,500 mm</b> &nbsp;Platform to fascia underside</li><li><b>Front screen</b> &nbsp;Product demonstrations and company presentations</li></ul></div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-05.webp" width="1672" height="941" alt="Close aisle view of the green-front dispenser cabinets, meters and hoses, with the coffee counter behind." loading="lazy"><figcaption>Dispenser display and hospitality counter</figcaption></figure>
+  </div>
+</section>
+<section id="hospitality" class="slide" data-tab="Hospitality" aria-labelledby="hospitality-title">
+  <div class="deck-inner deck-reverse">
+    <div class="deck-copy"><p class="deck-overline">Guest experience</p><h2 id="hospitality-title">Reception and a glass-enclosed meeting space.</h2><p class="deck-lead">The reception counter faces the aisle. Behind it, visitors can meet away from foot traffic while retaining a view of the display.</p><ul class="deck-points"><li><b>Waiting room</b> &nbsp;Dedicated television for guests</li><li><b>Coffee service</b> &nbsp;Machine and cups at the back counter</li></ul></div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-02.webp" width="1672" height="941" alt="Reception counter and host at left, visitors seated in the glazed meeting room and the coffee machine on the rear counter." loading="lazy"><figcaption>Reception approach</figcaption></figure>
+  </div>
+</section>
+<section class="slide cg" id="stall-gallery" aria-label="Stall gallery">
+  <div class="cg-shell" role="region" aria-roledescription="carousel" aria-label="COMPAC stall renders">
+    <div class="cg-stage" tabindex="0" aria-label="Stall photographs. Use the left and right arrow keys to browse.">
+      <img class="cg-frame cg-current" src="assets/compac-stall-scene-01.webp" width="1672" height="941" alt="Front aisle view of the COMPAC fascia, reception counter, glazed meeting area and dispenser display." decoding="async">
+      <img class="cg-frame" src="assets/compac-stall-scene-02.webp" width="1672" height="941" alt="Approach from reception, looking across the lounge toward the stainless steel dispensers." loading="lazy" decoding="async" aria-hidden="true">
+      <img class="cg-frame" src="assets/compac-stall-scene-03.webp" width="1672" height="941" alt="Open corner view showing both fascia faces and all three green-front dispensers." loading="lazy" decoding="async" aria-hidden="true">
+      <img class="cg-frame" src="assets/compac-stall-scene-04.webp" width="1672" height="941" alt="Front elevation of the dispenser display, with visitors seated in the glazed meeting room." loading="lazy" decoding="async" aria-hidden="true">
+      <img class="cg-frame" src="assets/compac-stall-scene-05.webp" width="1672" height="941" alt="Aisle-level detail of the three dispenser cabinets and the hospitality counter." loading="lazy" decoding="async" aria-hidden="true">
+      <img class="cg-frame" src="assets/compac-stall-scene-06.webp" width="1672" height="941" alt="Exhibition-floor view of visitors, the coffee counter and the dispenser display beneath the fascia." loading="lazy" decoding="async" aria-hidden="true">
+    </div>
+    <div class="cg-dock">
+      <div class="cg-toolbar">
+        <div class="cg-caption"><span class="cg-counter">1 / 6</span><span class="cg-name">Front aisle</span></div>
+        <div class="cg-playback">
+          <button class="cg-button" type="button" data-cg="previous" aria-label="Previous photo" title="Previous photo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m14.5 5.5-6.5 6.5 6.5 6.5"/></svg></button>
+          <button class="cg-button cg-play" type="button" data-cg="play" aria-label="Play slideshow" title="Play slideshow"><svg aria-hidden="true" viewBox="0 0 24 24"><path class="cg-play-icon" d="M8 5.5v13l10-6.5Z"/><path class="cg-pause-icon" d="M9 6v12m6-12v12"/></svg></button>
+          <button class="cg-button" type="button" data-cg="next" aria-label="Next photo" title="Next photo"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9.5 5.5 6.5 6.5-6.5 6.5"/></svg></button>
+        </div>
+        <div class="cg-settings">
+          <label class="cg-transition" title="Transition effect">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="7" y="7" width="13" height="13" rx="2"/><path d="M16 4H6a2 2 0 0 0-2 2v10"/></svg>
+            <select data-cg="effect" aria-label="Transition effect">
+              <option value="fade">Dissolve</option><option value="zoom">Gentle zoom</option><option value="none">No transition</option>
+            </select>
+          </label>
+          <button class="cg-button cg-music" type="button" data-cg="music" aria-label="Background music" aria-pressed="true" title="Turn background music off"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M10 16V6l10-2v10M10 9l10-2"/><ellipse cx="7.5" cy="17.5" rx="2.5" ry="2"/><ellipse cx="17.5" cy="15.5" rx="2.5" ry="2"/><path class="cg-muted-icon" d="m3 3 18 18"/></svg></button>
+          <button class="cg-button" type="button" data-cg="fullscreen" aria-label="Enter gallery fullscreen" title="Enter gallery fullscreen"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M9 4H4v5m11-5h5v5M4 15v5h5m11-5v5h-5"/></svg></button>
+        </div>
+      </div>
+      <div class="cg-strip" role="group" aria-label="Choose a photograph">
+        <button class="cg-thumb" type="button" aria-label="Photo 1, Front aisle" aria-current="true"><img src="assets/compac-stall-scene-01.webp" alt="" loading="lazy"></button>
+        <button class="cg-thumb" type="button" aria-label="Photo 2, Reception approach"><img src="assets/compac-stall-scene-02.webp" alt="" loading="lazy"></button>
+        <button class="cg-thumb" type="button" aria-label="Photo 3, Open corner"><img src="assets/compac-stall-scene-03.webp" alt="" loading="lazy"></button>
+        <button class="cg-thumb" type="button" aria-label="Photo 4, Front elevation"><img src="assets/compac-stall-scene-04.webp" alt="" loading="lazy"></button>
+        <button class="cg-thumb" type="button" aria-label="Photo 5, Dispenser display"><img src="assets/compac-stall-scene-05.webp" alt="" loading="lazy"></button>
+        <button class="cg-thumb" type="button" aria-label="Photo 6, Exhibition floor"><img src="assets/compac-stall-scene-06.webp" alt="" loading="lazy"></button>
+      </div>
+    </div>
+    <p class="cg-sr" aria-live="polite" aria-atomic="true"></p>
+    <audio class="cg-audio" src="assets/compac-gallery-music.mp3" loop preload="none"></audio>
+  </div>
+</section>
+<section id="brief" class="slide" data-tab="Design brief" aria-labelledby="brief-title">
+  <div class="deck-brief">
+    <div><p class="deck-overline">Stand requirements</p><h2 id="brief-title">Design brief</h2><dl class="deck-specs">
+      <dt>Display</dt><dd>Three dispensers with dedicated power connections and cable routing.</dd>
+      <dt>Reception</dt><dd>Counter with seating for one or two hosts. Final staffing is to be confirmed.</dd>
+      <dt>Guest room</dt><dd>Sofa seating, a television and a keyed locker are requested.</dd>
+      <dt>Hospitality</dt><dd>Coffee machine, cups and service counter.</dd>
+      <dt>Branding</dt><dd>COMPAC fascia, back-wall signage and a front presentation screen.</dd>
+      <dt>Flooring</dt><dd>Carpet or floor mat throughout the stand.</dd>
+    </dl><a class="deck-reference" href="technical/">Open technical reference</a></div>
+    <figure class="deck-figure"><img src="assets/compac-stall-scene-06.webp" width="1672" height="941" alt="Visitors in the stand, with the glass guest room, coffee service and green dispenser faces below the COMPAC fascia." loading="lazy"><figcaption>Exhibition-floor view</figcaption></figure>
+  </div>
+</section>
+</main>
+<footer class="deck-footer">
+  <nav aria-label="Presentation sections" class="deck-tabs"></nav>
+  <select aria-label="Select presentation section" class="deck-mobile-select"></select>
+  <div class="deck-controls">
+    <button type="button" class="deck-step" id="deck-prev" aria-label="Previous section"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m11 4-5 5 5 5"/></svg></button>
+    <span class="deck-count" aria-label="Section number"></span>
+    <button type="button" class="deck-step" id="deck-next" aria-label="Next section"><svg width="17" height="17" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m7 4 5 5-5 5"/></svg></button>
+  </div>
+</footer></div>
+<script>
+(() => {
+  const gallery = document.getElementById('stall-gallery');
+  if (!gallery) return;
+  const stage = gallery.querySelector('.cg-stage');
+  const frames = [...gallery.querySelectorAll('.cg-frame')];
+  const thumbs = [...gallery.querySelectorAll('.cg-thumb')];
+  const names = ['Front aisle', 'Reception approach', 'Open corner', 'Front elevation', 'Dispenser display', 'Exhibition floor'];
+  const control = name => gallery.querySelector('[data-cg="' + name + '"]');
+  const play = control('play');
+  const music = control('music');
+  const fullscreen = control('fullscreen');
+  const effect = control('effect');
+  const audio = gallery.querySelector('.cg-audio');
+  const counter = gallery.querySelector('.cg-counter');
+  const caption = gallery.querySelector('.cg-name');
+  const announcement = gallery.querySelector('.cg-sr');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let index = 0;
+  let active = false;
+  let playing = false;
+  let musicEnabled = true;
+  let timer = 0;
+  let idleTimer = 0;
+  let lastRequest = 0;
+  let touchStart;
 
-.slide.slide--render{height:100svh;min-height:100svh;padding:0;overflow:hidden;background:#101821}
-.slide--render>img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
-.gallery-browse{flex-wrap:wrap}
-.gallery-browse .render-link{display:inline-block;padding:8px 14px;border:1px solid #fff9;border-radius:40px;background:#10254a99;color:white;text-decoration:none;font-weight:700;font-size:14px}
-.gallery-browse .render-link:hover{background:#10254acc}
-@media print{.slide.slide--render{padding:0!important}.gallery-browse .render-link{display:none}}
-</style></head><body><header class="brandbar" id="brandbar"><a class="brand" href="#slide-1" aria-label="COMPAC presentation home"><b>COMPAC</b><small>EXHIBITION CONCEPTS / 2027</small></a><div class="brand-right"><span class="by">PRESENTED BY <b>iCONEX</b></span><span class="count" id="slide-counter">01 / 34</span><button class="iconbtn" id="narrate" title="Browser voice narration for current slide" aria-label="Narrate current slide" aria-pressed="false">♫</button><button class="iconbtn" id="stop-narrate" title="Stop narration" aria-label="Stop narration">■</button></div></header><div class="hint" id="hint">← → NAVIGATE · F FULLSCREEN</div><nav class="bottom-nav" aria-label="Presentation navigation"><button id="nav-prev" aria-label="Previous slide">←</button><span class="nav-num" id="nav-count">01 / 34</span><button id="nav-next" aria-label="Next slide">→</button><button id="fullscreen" aria-label="Fullscreen" title="Fullscreen">⛶</button><button id="print" aria-label="Print or save PDF" title="Print / PDF">PDF</button></nav><div class="progress" id="progress"></div><main id="presentation"><section class="slide slide--hero" id="slide-1" data-title="COMPAC — Three exhibition design directions" data-story="Introduction to COMPAC India Energy Week 2027 and three design concepts." aria-label="Slide 1: COMPAC — Three exhibition design directions"><div class="full-photo"><img src="assets/signature-hero.webp" alt="Signature Ribbon COMPAC concept booth, open front and right-hand aisles" loading="lazy" decoding="async" loading="eager" fetchpriority="high"/></div><div class="hero-mask"></div>
-<div class="cover-inner reveal">
- <div class="section-label"><span class="rule"></span> INDIA ENERGY WEEK 2027 <span class="diamond">◆</span> STALL 3B077A</div>
- <h1 class="hero-head">The future<br/>of <em>fuel dispensing.</em></h1>
- <p class="hero-sub">Three architectural design directions.<br/>One unmistakable COMPAC experience.</p>
- <div class="facts"><span><b>32 m²</b><small>STAND AREA</small></span><span><b>4 × 8 m</b><small>FOOTPRINT</small></span><span><b>03</b><small>DISPENSER EXHIBITS</small></span><span><b>02</b><small>OPEN SIDES</small></span></div>
-</div><div class="photo-credit">CONCEPT VISUALIZATION · NOT FOR FABRICATION</div></section><section class="slide slide--paper" id="slide-2" data-title="The assignment" data-story="The brief requires three dispensers, a private lounge with sofa and locker, two screens, and reception and hospitality." aria-label="Slide 2: The assignment"><div class="split split--near"><div class="copycol"><div class="kicker reveal">01 / THE ASSIGNMENT</div><h2 class="display reveal d1">A smaller footprint.<br/><em>A bigger impression.</em></h2><p class="lead reveal d2">A premium, meeting-ready exhibition stand that puts COMPAC’s technology at the centre—without compromising visitor comfort or circulation.</p>
-<div class="mini-stats"><div><b>03</b><span>Physical dispenser displays</span></div><div><b>01</b><span>Enclosed guest waiting room</span></div><div><b>02</b><span>Communication screens</span></div><div><b>01</b><span>Reception and coffee service</span></div></div></div><figure class="visual-panel"><img src="assets/precision-hero.webp" alt="COMPAC precision concept booth in exhibition hall" loading="lazy" decoding="async" /><figcaption>DESIGN INTENT / PHOTOREALISTIC STUDY</figcaption></figure></div></section><section class="slide slide--paper" id="slide-3" data-title="Site geometry and wall orientation" data-story="The client specifies the left and back boundaries closed, right 8 metre aisle and front 4 metre aisle open." aria-label="Slide 3: Site geometry and wall orientation"><div class="kicker reveal">02 / CLIENT-CONFIRMED ORIENTATION</div><h2 class="display reveal d1">Two walls closed.<br/><em>Two aisles open.</em></h2>
-<div class="orientation-layout"><figure class="plan-visual"><img src="assets/signature-plan.webp" alt="Plan of 4 by 8 metre stall with left and back walls closed, front and right sides open" loading="lazy" decoding="async" /></figure>
-<div class="orientation-copy"><div class="boundary-row closed"><span>01</span><div><strong>LEFT · 8.0 m</strong><small>Closed wall · adjoining stall</small></div><b>CLOSED</b></div><div class="boundary-row closed"><span>02</span><div><strong>BACK · 4.0 m</strong><small>Closed wall · adjoining stall</small></div><b>CLOSED</b></div><div class="boundary-row open"><span>03</span><div><strong>RIGHT · 8.0 m</strong><small>Open product-facing aisle</small></div><b>OPEN</b></div><div class="boundary-row open"><span>04</span><div><strong>FRONT · 4.0 m</strong><small>Open visitor approach</small></div><b>OPEN</b></div><p class="technical-note">The client-directed orientation supersedes the earlier concept interpretation. Reconcile against the organizer’s final allotment CAD before fabrication.</p></div></div></section><section class="slide slide--soft" id="slide-4" data-title="Visitor journey" data-story="Visitor journey: arrival, product discovery, technical engagement, and private conversation." aria-label="Slide 4: Visitor journey"><div class="kicker reveal">03 / THE VISITOR EXPERIENCE</div><h2 class="display reveal d1">A clear journey.<br/><em>From product to partnership.</em></h2>
-<div class="journey-grid"><article><span class="journey-num">01</span><h3>ARRIVE</h3><p>Open front-right corner reception welcomes visitors without blocking the exhibition aisle.</p></article><article><span class="journey-num">02</span><h3>DISCOVER</h3><p>Three full-scale dispensers sit along the right-hand open product edge.</p></article><article><span class="journey-num">03</span><h3>ENGAGE</h3><p>Product demonstrations, brand screens and technical conversations remain easy to access.</p></article><article><span class="journey-num">04</span><h3>CONNECT</h3><p>Private guest waiting room, sofa seating, refreshments and a lockable locker support longer meetings.</p></article></div>
-<div class="narrative-bottom"><span>EXHIBIT PRIORITY</span><strong>Products visible. Conversations comfortable. Circulation clear.</strong></div></section><section class="slide slide--paper" id="slide-5" data-title="Three concept directions" data-story="Choose between Signature Ribbon, Precision Showcase, and Energy Edge." aria-label="Slide 5: Three concept directions"><div class="kicker reveal">04 / THREE CREATIVE DIRECTIONS</div><h2 class="display reveal d1">One brief.<br/><em>Three distinct expressions.</em></h2><div class="option-grid"><a class="option-card" href="#slide-6"><span class="option-img"><img src="assets/signature-hero.webp" alt="Signature Ribbon concept render" loading="lazy" decoding="async" /></span><span class="option-number">CONCEPT 01</span><h3>Signature Ribbon</h3><p>Curved. Welcoming. Recognisable.</p><span class="option-view">EXPLORE DIRECTION <b>↗</b></span></a><a class="option-card" href="#slide-11"><span class="option-img"><img src="assets/precision-hero.webp" alt="Precision Showcase concept render" loading="lazy" decoding="async" /></span><span class="option-number">CONCEPT 02</span><h3>Precision Showcase</h3><p>Minimal. Rational. Product-first.</p><span class="option-view">EXPLORE DIRECTION <b>↗</b></span></a><a class="option-card" href="#slide-16"><span class="option-img"><img src="assets/edge-hero.webp" alt="Energy Edge concept render" loading="lazy" decoding="async" /></span><span class="option-number">CONCEPT 03</span><h3>Energy Edge</h3><p>Angular. Confident. Technology-led.</p><span class="option-view">EXPLORE DIRECTION <b>↗</b></span></a></div></section><section class="slide slide--cinematic" id="slide-6" data-title="Signature Ribbon hero perspective" data-story="Option 01, Signature Ribbon: A continuous illuminated ribbon builds brand recognition from both open aisles. The reception and lounge feel approachable and premium." aria-label="Slide 6: Signature Ribbon hero perspective"><div class="full-photo"><img src="assets/signature-hero.webp" alt="Signature Ribbon realistic concept stall showing closed left wall and open right aisle" loading="lazy" decoding="async" /></div><div class="full-tint"></div><div class="cinematic-copy"><span class="section-label">CONCEPT 01 / HERO PERSPECTIVE</span><h2>Signature Ribbon</h2><p>The premium corporate landmark</p><div class="cinema-pills"><span class="pill">4 × 8 m</span><span class="pill">3 DISPENSERS</span><span class="pill">RIGHT + FRONT OPEN</span></div></div><div class="photo-credit">ILLUSTRATIVE ARCHITECTURAL CONCEPT · VERIFY FINAL ENGINEERING</div></section><section class="slide slide--paper" id="slide-7" data-title="Signature Ribbon design rationale" data-story="Design rationale for Signature Ribbon. A continuous illuminated ribbon builds brand recognition from both open aisles. The reception and lounge feel approachable and premium." aria-label="Slide 7: Signature Ribbon design rationale"><div class="split"><div class="copycol"><div class="kicker reveal">CONCEPT 01 / DESIGN RATIONALE</div><h2 class="display reveal d1">Signature Ribbon.<br/><em>Designed with purpose.</em></h2><p class="lead reveal d2">A continuous illuminated ribbon builds brand recognition from both open aisles. The reception and lounge feel approachable and premium.</p><div class="accent-list"><div><i></i>Soft illuminated fascia</div><div><i></i>Warm timber hospitality</div><div><i></i>Clear right-side product gallery</div></div><p class="footnote">Photorealistic concept image · not a surveyed fabrication model.</p></div><figure class="visual-panel tall"><img src="assets/signature-hero.webp" alt="Signature Ribbon materials and architecture" loading="lazy" decoding="async" /></figure></div></section><section class="slide slide--cinematic" id="slide-8" data-title="Signature Ribbon alternate visual study" data-story="Alternate material, fascia, and lighting visualization for Signature Ribbon." aria-label="Slide 8: Signature Ribbon alternate visual study"><div class="full-photo"><img src="assets/signature-alternate.webp" alt="Signature Ribbon alternate photorealistic material and lighting study" loading="lazy" decoding="async" /></div><div class="full-tint subtle"></div><div class="cinematic-copy"><span class="section-label">CONCEPT 01 / ALTERNATE VISUAL STUDY</span><h2>Signature Ribbon</h2><p>Architecture, light and material character.</p></div><div class="photo-credit">ALTERNATE DESIGN EXPRESSION · NOT A SECOND CAMERA FROM A SINGLE APPROVED MODEL</div></section><section class="slide slide--soft" id="slide-9" data-title="Signature Ribbon floor-plan study" data-story="Concept zoning plan for Signature Ribbon, left and back closed, right and front open." aria-label="Slide 9: Signature Ribbon floor-plan study"><div class="kicker reveal">CONCEPT 01 / ZONING STUDY</div><h2 class="display reveal d1">Signature Ribbon. <em>Planned around the plot.</em></h2><div class="plan-content"><figure class="plan-main"><img src="assets/signature-plan.webp" alt="Signature Ribbon indicative master plan, left/back closed, front/right open" loading="lazy" decoding="async" /></figure><div class="plan-text"><div class="large-figure">32 <small>m²</small></div><p class="small-caps">4 m FRONT × 8 m DEPTH</p><div class="plan-priorities"><article><span>01</span><p>A fluid luminous signature</p></article><article><span>02</span><p>Warm business hospitality</p></article><article><span>03</span><p>Dispensers along the right aisle</p></article></div><div class="technical-note">Indicative zoning study, not measured construction CAD; room door, product fixings and visitor clearances require validation.</div></div></div></section><section class="slide slide--paper" id="slide-10" data-title="Signature Ribbon material details" data-story="Fascia, hospitality and product experience details from the Signature Ribbon render." aria-label="Slide 10: Signature Ribbon material details"><div class="kicker reveal">CONCEPT 01 / MATERIAL & DETAIL STUDY</div><h2 class="display reveal d1">One design language.<br/><em>Across every touchpoint.</em></h2><div class="detail-grid"><div class="detail-tile left"><div class="detail-crop"><img src="assets/signature-hero.webp" alt="Signature Ribbon brand presence crop" loading="lazy" decoding="async" /></div><span>BRAND PRESENCE</span></div><div class="detail-tile center"><div class="detail-crop"><img src="assets/signature-hero.webp" alt="Signature Ribbon hospitality crop" loading="lazy" decoding="async" /></div><span>HOSPITALITY</span></div><div class="detail-tile right"><div class="detail-crop"><img src="assets/signature-hero.webp" alt="Signature Ribbon product experience crop" loading="lazy" decoding="async" /></div><span>PRODUCT EXPERIENCE</span></div></div><p class="detail-foot">Detail crops are taken from the same concept hero render for consistency; product markings and fascia dimensions require final artwork and CAD checks.</p></section><section class="slide slide--cinematic" id="slide-11" data-title="Precision Showcase hero perspective" data-story="Option 02, Precision Showcase: A disciplined white architectural frame and crisp navy graphics create a technical showroom aesthetic, keeping the dispensers at the centre of the visitor experience." aria-label="Slide 11: Precision Showcase hero perspective"><div class="full-photo"><img src="assets/precision-hero.webp" alt="Precision Showcase realistic concept stall showing closed left wall and open right aisle" loading="lazy" decoding="async" /></div><div class="full-tint"></div><div class="cinematic-copy"><span class="section-label">CONCEPT 02 / HERO PERSPECTIVE</span><h2>Precision Showcase</h2><p>Product technology, precisely presented</p><div class="cinema-pills"><span class="pill">4 × 8 m</span><span class="pill">3 DISPENSERS</span><span class="pill">RIGHT + FRONT OPEN</span></div></div><div class="photo-credit">ILLUSTRATIVE ARCHITECTURAL CONCEPT · VERIFY FINAL ENGINEERING</div></section><section class="slide slide--paper" id="slide-12" data-title="Precision Showcase design rationale" data-story="Design rationale for Precision Showcase. A disciplined white architectural frame and crisp navy graphics create a technical showroom aesthetic, keeping the dispensers at the centre of the visitor experience." aria-label="Slide 12: Precision Showcase design rationale"><div class="split"><div class="copycol"><div class="kicker reveal">CONCEPT 02 / DESIGN RATIONALE</div><h2 class="display reveal d1">Precision Showcase.<br/><em>Designed with purpose.</em></h2><p class="lead reveal d2">A disciplined white architectural frame and crisp navy graphics create a technical showroom aesthetic, keeping the dispensers at the centre of the visitor experience.</p><div class="accent-list"><div><i></i>Straight-line canopy</div><div><i></i>Clean visual hierarchy</div><div><i></i>Practical exhibition construction</div></div><p class="footnote">Photorealistic concept image · not a surveyed fabrication model.</p></div><figure class="visual-panel tall"><img src="assets/precision-hero.webp" alt="Precision Showcase materials and architecture" loading="lazy" decoding="async" /></figure></div></section><section class="slide slide--cinematic" id="slide-13" data-title="Precision Showcase alternate visual study" data-story="Alternate material, fascia, and lighting visualization for Precision Showcase." aria-label="Slide 13: Precision Showcase alternate visual study"><div class="full-photo"><img src="assets/precision-alternate.webp" alt="Precision Showcase alternate photorealistic material and lighting study" loading="lazy" decoding="async" /></div><div class="full-tint subtle"></div><div class="cinematic-copy"><span class="section-label">CONCEPT 02 / ALTERNATE VISUAL STUDY</span><h2>Precision Showcase</h2><p>Architecture, light and material character.</p></div><div class="photo-credit">ALTERNATE DESIGN EXPRESSION · NOT A SECOND CAMERA FROM A SINGLE APPROVED MODEL</div></section><section class="slide slide--soft" id="slide-14" data-title="Precision Showcase floor-plan study" data-story="Concept zoning plan for Precision Showcase, left and back closed, right and front open." aria-label="Slide 14: Precision Showcase floor-plan study"><div class="kicker reveal">CONCEPT 02 / ZONING STUDY</div><h2 class="display reveal d1">Precision Showcase. <em>Planned around the plot.</em></h2><div class="plan-content"><figure class="plan-main"><img src="assets/precision-plan.webp" alt="Precision Showcase indicative master plan, left/back closed, front/right open" loading="lazy" decoding="async" /></figure><div class="plan-text"><div class="large-figure">32 <small>m²</small></div><p class="small-caps">4 m FRONT × 8 m DEPTH</p><div class="plan-priorities"><article><span>01</span><p>Architectural clarity</p></article><article><span>02</span><p>Confident technical branding</p></article><article><span>03</span><p>Intuitive customer flow</p></article></div><div class="technical-note">Indicative zoning study, not measured construction CAD; room door, product fixings and visitor clearances require validation.</div></div></div></section><section class="slide slide--paper" id="slide-15" data-title="Precision Showcase material details" data-story="Fascia, hospitality and product experience details from the Precision Showcase render." aria-label="Slide 15: Precision Showcase material details"><div class="kicker reveal">CONCEPT 02 / MATERIAL & DETAIL STUDY</div><h2 class="display reveal d1">One design language.<br/><em>Across every touchpoint.</em></h2><div class="detail-grid"><div class="detail-tile left"><div class="detail-crop"><img src="assets/precision-hero.webp" alt="Precision Showcase brand presence crop" loading="lazy" decoding="async" /></div><span>BRAND PRESENCE</span></div><div class="detail-tile center"><div class="detail-crop"><img src="assets/precision-hero.webp" alt="Precision Showcase hospitality crop" loading="lazy" decoding="async" /></div><span>HOSPITALITY</span></div><div class="detail-tile right"><div class="detail-crop"><img src="assets/precision-hero.webp" alt="Precision Showcase product experience crop" loading="lazy" decoding="async" /></div><span>PRODUCT EXPERIENCE</span></div></div><p class="detail-foot">Detail crops are taken from the same concept hero render for consistency; product markings and fascia dimensions require final artwork and CAD checks.</p></section><section class="slide slide--cinematic" id="slide-16" data-title="Energy Edge hero perspective" data-story="Option 03, Energy Edge: An angular, faceted façade adds dynamism and strong visual identity while keeping the same essential technical and guest-facing functions." aria-label="Slide 16: Energy Edge hero perspective"><div class="full-photo"><img src="assets/edge-hero.webp" alt="Energy Edge realistic concept stall showing closed left wall and open right aisle" loading="lazy" decoding="async" /></div><div class="full-tint"></div><div class="cinematic-copy"><span class="section-label">CONCEPT 03 / HERO PERSPECTIVE</span><h2>Energy Edge</h2><p>An energetic technology statement</p><div class="cinema-pills"><span class="pill">4 × 8 m</span><span class="pill">3 DISPENSERS</span><span class="pill">RIGHT + FRONT OPEN</span></div></div><div class="photo-credit">ILLUSTRATIVE ARCHITECTURAL CONCEPT · VERIFY FINAL ENGINEERING</div></section><section class="slide slide--paper" id="slide-17" data-title="Energy Edge design rationale" data-story="Design rationale for Energy Edge. An angular, faceted façade adds dynamism and strong visual identity while keeping the same essential technical and guest-facing functions." aria-label="Slide 17: Energy Edge design rationale"><div class="split"><div class="copycol"><div class="kicker reveal">CONCEPT 03 / DESIGN RATIONALE</div><h2 class="display reveal d1">Energy Edge.<br/><em>Designed with purpose.</em></h2><p class="lead reveal d2">An angular, faceted façade adds dynamism and strong visual identity while keeping the same essential technical and guest-facing functions.</p><div class="accent-list"><div><i></i>Faceted sculptural fascia</div><div><i></i>Bold blue-gold intersections</div><div><i></i>Strong long-aisle recognition</div></div><p class="footnote">Photorealistic concept image · not a surveyed fabrication model.</p></div><figure class="visual-panel tall"><img src="assets/edge-hero.webp" alt="Energy Edge materials and architecture" loading="lazy" decoding="async" /></figure></div></section><section class="slide slide--cinematic" id="slide-18" data-title="Energy Edge alternate visual study" data-story="Alternate material, fascia, and lighting visualization for Energy Edge." aria-label="Slide 18: Energy Edge alternate visual study"><div class="full-photo"><img src="assets/edge-alternate.webp" alt="Energy Edge alternate photorealistic material and lighting study" loading="lazy" decoding="async" /></div><div class="full-tint subtle"></div><div class="cinematic-copy"><span class="section-label">CONCEPT 03 / ALTERNATE VISUAL STUDY</span><h2>Energy Edge</h2><p>Architecture, light and material character.</p></div><div class="photo-credit">ALTERNATE DESIGN EXPRESSION · NOT A SECOND CAMERA FROM A SINGLE APPROVED MODEL</div></section><section class="slide slide--soft" id="slide-19" data-title="Energy Edge floor-plan study" data-story="Concept zoning plan for Energy Edge, left and back closed, right and front open." aria-label="Slide 19: Energy Edge floor-plan study"><div class="kicker reveal">CONCEPT 03 / ZONING STUDY</div><h2 class="display reveal d1">Energy Edge. <em>Planned around the plot.</em></h2><div class="plan-content"><figure class="plan-main"><img src="assets/edge-plan.webp" alt="Energy Edge indicative master plan, left/back closed, front/right open" loading="lazy" decoding="async" /></figure><div class="plan-text"><div class="large-figure">32 <small>m²</small></div><p class="small-caps">4 m FRONT × 8 m DEPTH</p><div class="plan-priorities"><article><span>01</span><p>High-impact entry</p></article><article><span>02</span><p>Distinctive angular identity</p></article><article><span>03</span><p>A premium technology feel</p></article></div><div class="technical-note">Indicative zoning study, not measured construction CAD; room door, product fixings and visitor clearances require validation.</div></div></div></section><section class="slide slide--paper" id="slide-20" data-title="Energy Edge material details" data-story="Fascia, hospitality and product experience details from the Energy Edge render." aria-label="Slide 20: Energy Edge material details"><div class="kicker reveal">CONCEPT 03 / MATERIAL & DETAIL STUDY</div><h2 class="display reveal d1">One design language.<br/><em>Across every touchpoint.</em></h2><div class="detail-grid"><div class="detail-tile left"><div class="detail-crop"><img src="assets/edge-hero.webp" alt="Energy Edge brand presence crop" loading="lazy" decoding="async" /></div><span>BRAND PRESENCE</span></div><div class="detail-tile center"><div class="detail-crop"><img src="assets/edge-hero.webp" alt="Energy Edge hospitality crop" loading="lazy" decoding="async" /></div><span>HOSPITALITY</span></div><div class="detail-tile right"><div class="detail-crop"><img src="assets/edge-hero.webp" alt="Energy Edge product experience crop" loading="lazy" decoding="async" /></div><span>PRODUCT EXPERIENCE</span></div></div><p class="detail-foot">Detail crops are taken from the same concept hero render for consistency; product markings and fascia dimensions require final artwork and CAD checks.</p></section><section class="slide slide--gallery" id="slide-21" data-title="Cinematic three-option gallery" data-story="Gallery comparing the three options: Signature Ribbon, Precision Showcase and Energy Edge." aria-label="Slide 21: Cinematic three-option gallery"><div class="gallery-images"><img class="gallery-bg is-active" data-image="0" src="assets/signature-hero.webp" alt="Signature Ribbon concept gallery view" loading="lazy"/><img class="gallery-bg" data-image="1" src="assets/precision-hero.webp" alt="Precision Showcase concept gallery view" loading="lazy"/><img class="gallery-bg" data-image="2" src="assets/edge-hero.webp" alt="Energy Edge concept gallery view" loading="lazy"/></div><div class="gallery-shade"></div><div class="gallery-content"><span class="section-label">THE THREE DIRECTIONS / CINEMATIC GALLERY</span><h2 id="gallery-name">Signature Ribbon</h2><p id="gallery-line">The premium corporate landmark</p><div class="gallery-browse"><button type="button" id="gal-prev" aria-label="Previous option">←</button><span id="gal-count">01 / 03</span><button type="button" id="gal-next" aria-label="Next option">→</button><button type="button" id="gal-play" class="gallery-play">Pause slideshow</button><a class="render-link" href="#stall-render-1">View stall renders</a></div><div class="gallery-thumbs"><button type="button" class="gallery-thumb selected" data-gallery="0" aria-label="Show Signature Ribbon"><img src="assets/signature-hero.webp" alt="Signature Ribbon gallery thumbnail" loading="lazy" decoding="async" /><span>01 · Signature Ribbon</span></button><button type="button" class="gallery-thumb" data-gallery="1" aria-label="Show Precision Showcase"><img src="assets/precision-hero.webp" alt="Precision Showcase gallery thumbnail" loading="lazy" decoding="async" /><span>02 · Precision Showcase</span></button><button type="button" class="gallery-thumb" data-gallery="2" aria-label="Show Energy Edge"><img src="assets/edge-hero.webp" alt="Energy Edge gallery thumbnail" loading="lazy" decoding="async" /><span>03 · Energy Edge</span></button></div></div><div class="photo-credit">THREE ARCHITECTURAL CONCEPTS · PHOTOREALISTIC DESIGN STUDIES</div></section>
-<section class="slide slide--render" id="stall-render-1" data-title="Stall render 1 · Front aisle" data-story="The reception desk, glazed meeting area and green dispensers seen from the front aisle." aria-label="Slide 22: Front aisle"><img src="assets/compac-stall-scene-01.webp" width="1672" height="941" alt="The reception desk, glazed meeting area and green dispensers seen from the front aisle." loading="lazy" decoding="async"></section>
-<section class="slide slide--render" id="stall-render-2" data-title="Stall render 2 · Reception approach" data-story="The COMPAC reception counter at left and the dispenser display along the open aisle." aria-label="Slide 23: Reception approach"><img src="assets/compac-stall-scene-02.webp" width="1672" height="941" alt="The COMPAC reception counter at left and the dispenser display along the open aisle." loading="lazy" decoding="async"></section>
-<section class="slide slide--render" id="stall-render-3" data-title="Stall render 3 · Open corner" data-story="The three dispensers and both sides of the curved COMPAC fascia seen from the open corner." aria-label="Slide 24: Open corner"><img src="assets/compac-stall-scene-03.webp" width="1672" height="941" alt="The three dispensers and both sides of the curved COMPAC fascia seen from the open corner." loading="lazy" decoding="async"></section>
-<section class="slide slide--render" id="stall-render-4" data-title="Stall render 4 · Front elevation" data-story="Two front-facing dispenser panels beside the glass meeting room." aria-label="Slide 25: Front elevation"><img src="assets/compac-stall-scene-04.webp" width="1672" height="941" alt="Two front-facing dispenser panels beside the glass meeting room." loading="lazy" decoding="async"></section>
-<section class="slide slide--render" id="stall-render-5" data-title="Stall render 5 · Dispenser display" data-story="A close view of the dispenser cabinets, hoses and hospitality counter from the aisle." aria-label="Slide 26: Dispenser display"><img src="assets/compac-stall-scene-05.webp" width="1672" height="941" alt="A close view of the dispenser cabinets, hoses and hospitality counter from the aisle." loading="lazy" decoding="async"></section>
-<section class="slide slide--render" id="stall-render-6" data-title="Stall render 6 · Exhibition floor" data-story="Visitors around the dispenser display, glazed lounge and coffee counter beneath the COMPAC fascia." aria-label="Slide 27: Exhibition floor"><img src="assets/compac-stall-scene-06.webp" width="1672" height="941" alt="Visitors around the dispenser display, glazed lounge and coffee counter beneath the COMPAC fascia." loading="lazy" decoding="async"></section>
-<section class="slide slide--soft" id="slide-22" data-title="Design comparison" data-story="Comparison of the three stall concepts by visual presence, product visibility, business conversations and fabrication complexity." aria-label="Slide 28: Design comparison"><div class="kicker reveal">05 / DESIGN COMPARISON</div><h2 class="display reveal d1">The same brief.<br/><em>Different strengths.</em></h2><div class="comparison-wrap"><table class="comparison"><thead><tr><th>CRITERIA</th><th>01 · RIBBON</th><th>02 · PRECISION</th><th>03 · EDGE</th></tr></thead><tbody><tr><td>Corporate landmark</td><td>Highest brand presence</td><td>Elegant and restrained</td><td>Dynamic and bold</td></tr><tr><td>Exhibit visibility</td><td>Strong right-side gallery</td><td>Cleanest product focus</td><td>Strong right-side gallery</td></tr><tr><td>Visitor conversation</td><td>Warm and inviting</td><td>Ordered and practical</td><td>Energetic and expressive</td></tr><tr><td>Fabrication character</td><td>Curved illuminated fascia</td><td>Rectilinear architectural system</td><td>Angled / sculptural elements</td></tr><tr><td>Approval status</td><td>Concept only</td><td>Concept only</td><td>Concept only</td></tr></tbody></table></div><p class="footnote">Qualitative design-team assessment. No relative costs, load ratings, or approvals are implied.</p></section><section class="slide slide--paper" id="slide-23" data-title="Client requirement checklist" data-story="Client requirements include three dispensers, closed waiting room, two screens, reception, coffee service, branded back wall, flooring and power." aria-label="Slide 29: Client requirement checklist"><div class="kicker reveal">06 / CLIENT REQUIREMENTS</div><h2 class="display reveal d1">Every essential.<br/><em>Built into the brief.</em></h2><div class="requirement-grid"><article><b>03</b><h3>Dispensers</h3><p>840 mm front × 450 mm side × 1650 mm high each</p></article><article><b>01</b><h3>Waiting room</h3><p>Enclosed, sofa, TV and keyed locker</p></article><article><b>02</b><h3>Televisions</h3><p>Front demo screen plus waiting-room TV</p></article><article><b>01</b><h3>Reception</h3><p>Desk with provision for 1–2 hostesses</p></article><article><b>01</b><h3>Hospitality</h3><p>Coffee machine, cups and service cabinet</p></article><article><b>01</b><h3>Back wall</h3><p>Corporate hoardings and approved signage</p></article><article><b>32</b><h3>Floor area</h3><p>Carpet/floor mat across the stand</p></article><article><b>100%</b><h3>Electrical</h3><p>Safe power distribution and cable management</p></article></div><p class="footnote">Client-provided brief; all items remain subject to final sizing, engineering, organizer rules and confirmation.</p></section><section class="slide slide--soft" id="slide-24" data-title="Services and execution" data-story="Execution requirements include power, safe circulation, hospitality clearances and organizer requirements." aria-label="Slide 30: Services and execution"><div class="split"><div class="copycol"><div class="kicker reveal">07 / BEHIND THE EXPERIENCE</div><h2 class="display reveal d1">The best design<br/><em>works beautifully.</em></h2><p class="lead reveal d2">These technical systems are essential to convert a compelling image into an executable exhibition stand.</p></div><div class="services-grid"><article><span>01</span><h3>POWER & CABLING</h3><p>Protected routing and circuits for dispensers, lighting, two screens and coffee equipment.</p></article><article><span>02</span><h3>VISITOR & STAFF FLOW</h3><p>Verify entrance width, product demonstration approach, reception staff positions and safe egress.</p></article><article><span>03</span><h3>GUEST ROOM</h3><p>Test actual room occupancy, furniture dimensions, lockable locker and TV sightline.</p></article><article><span>04</span><h3>FABRICATION & SITE RULES</h3><p>Height limits, load capacity, rigging, fire safety, visible edges and allowed access require organizer sign-off.</p></article></div></div></section><section class="slide slide--paper" id="slide-25" data-title="Material palette" data-story="The material palette uses COMPAC navy, pure white, warm gold accents, timber and glass." aria-label="Slide 31: Material palette"><div class="kicker reveal">08 / DESIGN MATERIALS</div><h2 class="display reveal d1">Confident corporate colour.<br/><em>Controlled luxury.</em></h2><div class="palette-layout"><div class="palette-visual"><img src="assets/precision-alternate.webp" alt="COMPAC blue and gold booth materials with lighting" loading="lazy" decoding="async" /></div><div class="palette-cards"><article><span class="swatch" style="background:#102b59"></span><div><b>COMPAC NAVY</b><p>Clear architectural authority</p></div></article><article><span class="swatch" style="background:#ffffff;border:1px solid #d2dce7"></span><div><b>PURE WHITE</b><p>Bright, confident product displays</p></div></article><article><span class="swatch" style="background:#dbb562"></span><div><b>WARM GOLD</b><p>Focused accent illumination</p></div></article><article><span class="swatch wood"></span><div><b>WOOD & GLASS</b><p>Comfortable enclosed hospitality</p></div></article><p class="footnote">Final materials and exact corporate logo colours must match COMPAC’s approved artwork.</p></div></div></section><section class="slide slide--soft" id="slide-26" data-title="Shortlist recommendation" data-story="Signature Ribbon is the initial design recommendation and Precision Showcase is a practical alternative; all remain unapproved." aria-label="Slide 32: Shortlist recommendation"><div class="kicker reveal">09 / MANAGEMENT SHORTLIST</div><h2 class="display reveal d1">Choose a direction.<br/><em>Then engineer the detail.</em></h2><div class="shortlist"><article><div class="shortlist-img"><img src="assets/signature-hero.webp" alt="Signature Ribbon proposal" loading="lazy" decoding="async" /></div><span>01 / PRIMARY SHORTLIST</span><h3>Signature Ribbon</h3><p>Premium brand recall, hospitality-led design, and a strong open-aisle product experience.</p></article><article><div class="shortlist-img"><img src="assets/precision-hero.webp" alt="Precision Showcase proposal" loading="lazy" decoding="async" /></div><span>02 / ALTERNATIVE</span><h3>Precision Showcase</h3><p>Clear product storytelling and a disciplined architectural expression.</p></article></div><p class="footnote">Energy Edge remains a valid third direction if management favours higher-impact sculptural identity. Shortlisting is a creative suggestion, not client approval.</p></section><section class="slide slide--paper" id="slide-27" data-title="Next steps and technical verification" data-story="Next steps are design shortlist, site and product verification, detailed CAD, and cost approval." aria-label="Slide 33: Next steps and technical verification"><div class="kicker reveal">10 / NEXT DECISION GATES</div><h2 class="display reveal d1">From inspiring images<br/><em>to a buildable stand.</em></h2><div class="gates-grid"><article><span>01</span><h3>CHOOSE</h3><p>Shortlist an architectural direction and agree on the functions to retain.</p></article><article><span>02</span><h3>VERIFY</h3><p>Check final stall orientation, actual dispenser models, electrical inputs and organizer rules.</p></article><article><span>03</span><h3>ENGINEER</h3><p>Prepare coordinated CAD, elevations, actual clearances, AV and services layouts.</p></article><article><span>04</span><h3>APPROVE</h3><p>Review final render angles, BOQ, fabrication sequencing and management authorization.</p></article></div><div class="source-panel"><span>TECHNICAL STUDIES AVAILABLE</span><a href="/technical/">Open existing coordinated geometry reference ↗</a></div></section><section class="slide slide--hero" id="slide-28" data-title="Thank you" data-story="COMPAC exhibition proposal closing slide. Presented by iCONEX." aria-label="Slide 34: Thank you"><div class="full-photo"><img src="assets/edge-hero.webp" alt="Energy Edge COMPAC exhibition booth final concept photo" loading="lazy" decoding="async" /></div><div class="hero-mask"></div><div class="cover-inner closing-copy"><div class="section-label"><span class="rule"></span> THANK YOU</div><h1 class="hero-head">Designed for<br/><em>the conversation.</em></h1><p class="hero-sub">COMPAC Industries India Ltd.<br/>India Energy Week 2027 · Stall 3B077A</p><p class="close-sign">Exhibition design concepts presented by <b>iCONEX</b></p></div><div class="photo-credit">ILLUSTRATIVE CREATIVE PROPOSAL · NOT FOR FABRICATION</div></section></main><script>
-(()=>{
- const slides=[...document.querySelectorAll('section.slide')],counter=document.getElementById('slide-counter'),navcount=document.getElementById('nav-count'),bar=document.getElementById('progress'),head=document.getElementById('brandbar'),hint=document.getElementById('hint');
- const ids=slides.map(x=>x.id);let idx=0,programScroll=false,lock=false;
- function active(i){i=Math.max(0,Math.min(i,slides.length-1));idx=i;slides.forEach((s,k)=>s.classList.toggle('active',k===i));const num=String(i+1).padStart(2,'0'),total=String(slides.length).padStart(2,'0');counter.textContent=num+' / '+total;navcount.textContent=num+' / '+total;bar.style.width=((i+1)/slides.length*100)+'%';head.classList.toggle('chrome-dark',slides[i].classList.contains('slide--hero')||slides[i].classList.contains('slide--cinematic')||slides[i].classList.contains('slide--gallery')||slides[i].classList.contains('slide--render'));hint.classList.toggle('is-light',head.classList.contains('chrome-dark'));document.title=`COMPAC IEW 2027 · ${slides[i].dataset.title}`;try{history.replaceState(null,'','#'+ids[i])}catch(e){} }
- function go(i,smooth=true){if(!slides[i])return;active(i);slides[i].scrollIntoView({behavior:smooth&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'instant',block:'start'});}
- document.getElementById('nav-prev').onclick=()=>go(idx-1);
- document.getElementById('nav-next').onclick=()=>go(idx+1);
- document.getElementById('fullscreen').onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.().catch(()=>{})};
- document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA|SELECT/.test(e.target?.tagName||''))return;if(['ArrowRight','ArrowDown','PageDown',' '].includes(e.key)&&!e.shiftKey){e.preventDefault();go(idx+1)}else if(['ArrowLeft','ArrowUp','PageUp'].includes(e.key)||(e.key===' '&&e.shiftKey)){e.preventDefault();go(idx-1)}else if(e.key==='Home'){e.preventDefault();go(0)}else if(e.key==='End'){e.preventDefault();go(slides.length-1)}else if(e.key.toLowerCase()==='f'){e.preventDefault();document.getElementById('fullscreen').click()}else if(e.key.toLowerCase()==='n'){e.preventDefault();narrate()} });
- const obs=new IntersectionObserver(entries=>{const chosen=entries.filter(x=>x.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(chosen){const i=slides.indexOf(chosen.target);if(i>=0&&i!==idx)active(i)}},{threshold:[0.5,.6,.75]});slides.forEach(s=>obs.observe(s));
- if(matchMedia('(pointer:fine)').matches){let wheelHold=false;addEventListener('wheel',e=>{if(innerWidth<760||wheelHold||Math.abs(e.deltaY)<25)return;e.preventDefault();wheelHold=true;go(idx+(e.deltaY>0?1:-1));setTimeout(()=>wheelHold=false,720)},{passive:false})}
- const initial=ids.indexOf(location.hash.slice(1));
- requestAnimationFrame(()=>go(initial<0?0:initial,false));
- window.addEventListener('hashchange',()=>{const next=ids.indexOf(location.hash.slice(1));if(next>=0&&next!==idx)go(next,false)});
- // Gallery switcher operates independently from page navigation.
- let gi=0,autoplay=true;const galleryImages=[...document.querySelectorAll('[data-image]')],thumbs=[...document.querySelectorAll('[data-gallery]')],names=['Signature Ribbon','Precision Showcase','Energy Edge'],taglines=['The premium corporate landmark','Product technology, precisely presented','An energetic technology statement'];
- function switchGallery(i){gi=(i+3)%3;galleryImages.forEach((im,k)=>im.classList.toggle('is-active',k===gi));thumbs.forEach((b,k)=>{b.classList.toggle('selected',k===gi);b.setAttribute('aria-pressed',String(k===gi))});document.getElementById('gallery-name').textContent=names[gi];document.getElementById('gallery-line').textContent=taglines[gi];document.getElementById('gal-count').textContent=String(gi+1).padStart(2,'0')+' / 03';}
- thumbs.forEach(b=>b.onclick=()=>switchGallery(Number(b.dataset.gallery)));
- document.getElementById('gal-next').onclick=()=>switchGallery(gi+1);document.getElementById('gal-prev').onclick=()=>switchGallery(gi-1);
- const play=document.getElementById('gal-play');play.onclick=()=>{autoplay=!autoplay;play.textContent=autoplay?'Pause slideshow':'Play slideshow'};
- setInterval(()=>{if(autoplay&&idx===20&&!document.hidden)switchGallery(gi+1)},7200);
- // Optional browser-native spoken slide summary, user initiated only (no remote calls).
- const narrBtn=document.getElementById('narrate'),stopBtn=document.getElementById('stop-narrate');let utter=null;const canSpeak=!!(window.speechSynthesis&&window.SpeechSynthesisUtterance);
- if(!canSpeak){narrBtn.hidden=true;stopBtn.hidden=true;}
- function narrate(){if(!canSpeak)return;window.speechSynthesis.cancel();utter=new SpeechSynthesisUtterance(slides[idx].dataset.story||slides[idx].dataset.title);utter.lang='en-IN';utter.rate=.93;utter.pitch=1;utter.onend=()=>narrBtn.setAttribute('aria-pressed','false');narrBtn.setAttribute('aria-pressed','true');window.speechSynthesis.speak(utter)}
- narrBtn.onclick=()=>{if(window.speechSynthesis.speaking&&!window.speechSynthesis.paused){window.speechSynthesis.pause();narrBtn.textContent='▶ Resume';return}if(window.speechSynthesis.paused){window.speechSynthesis.resume();narrBtn.textContent='♫ Narrate';return}narrBtn.textContent='♫ Narrate';narrate()};
- stopBtn.onclick=()=>{window.speechSynthesis.cancel();narrBtn.textContent='♫ Narrate';narrBtn.setAttribute('aria-pressed','false')};
- document.getElementById('print').onclick=()=>window.print();
+  function revealControls() {
+    gallery.classList.remove('cg-quiet');
+    clearTimeout(idleTimer);
+    if (active && playing) {
+      idleTimer = setTimeout(() => {
+        if (!gallery.querySelector('.cg-dock :focus-visible')) gallery.classList.add('cg-quiet');
+      }, 3000);
+    }
+  }
+
+  function scheduleNext() {
+    clearTimeout(timer);
+    if (playing && active) timer = setTimeout(() => show(index + 1, { notify: true }), 6000);
+  }
+
+  function show(value, options = {}) {
+    if (!Number.isFinite(value)) return;
+    index = ((Math.trunc(value) % frames.length) + frames.length) % frames.length;
+    const selected = index;
+    const request = ++lastRequest;
+    const next = frames[selected];
+    // Request the selected photograph immediately even when the browser has deferred it.
+    next.loading = 'eager';
+    const display = () => {
+      if (request !== lastRequest) return;
+      frames.forEach((frame, i) => {
+        frame.classList.toggle('cg-current', i === selected);
+        if (i === selected) frame.removeAttribute('aria-hidden');
+        else frame.setAttribute('aria-hidden', 'true');
+      });
+    };
+    if (next.complete && next.naturalWidth) display();
+    else if (typeof next.decode === 'function') next.decode().then(display, display);
+    else next.addEventListener('load', display, { once: true });
+    thumbs.forEach((thumb, i) => {
+      if (i === selected) thumb.setAttribute('aria-current', 'true');
+      else thumb.removeAttribute('aria-current');
+    });
+    counter.textContent = (selected + 1) + ' / ' + frames.length;
+    caption.textContent = names[selected];
+    if (options.notify) {
+      if (!playing) announcement.textContent = 'Photo ' + (selected + 1) + ' of ' + frames.length + '. ' + names[selected];
+      gallery.dispatchEvent(new CustomEvent('compac:photo', { bubbles: true, detail: { index: selected } }));
+    }
+    scheduleNext();
+  }
+
+  function syncMusic() {
+    music.setAttribute('aria-pressed', String(musicEnabled));
+    music.title = musicEnabled ? 'Turn background music off' : 'Turn background music on';
+    if (active && playing && musicEnabled) {
+      audio.volume = 0.42;
+      const attempt = audio.play();
+      if (attempt) attempt.catch(error => {
+        if (error.name !== 'AbortError' && active && playing && musicEnabled) {
+          announcement.textContent = 'Music could not start. The slideshow will continue.';
+        }
+      });
+    } else {
+      audio.pause();
+    }
+  }
+
+  function setPlaying(value) {
+    playing = value && active;
+    const label = playing ? 'Pause slideshow' : 'Play slideshow';
+    play.setAttribute('aria-label', label);
+    play.title = label;
+    gallery.classList.toggle('cg-playing', playing);
+    syncMusic();
+    scheduleNext();
+    revealControls();
+  }
+
+  function setActive(value) {
+    if (active === Boolean(value)) return;
+    active = Boolean(value);
+    if (!active) {
+      setPlaying(false);
+      if (document.fullscreenElement === gallery) document.exitFullscreen().catch(() => {});
+    } else {
+      revealControls();
+    }
+  }
+
+  function manual(offset) {
+    revealControls();
+    show(index + offset, { notify: true });
+  }
+
+  function toggleMusic() {
+    musicEnabled = !musicEnabled;
+    syncMusic();
+    revealControls();
+  }
+
+  function toggleFullscreen() {
+    const isGalleryFullscreen = document.fullscreenElement === gallery;
+    if (isGalleryFullscreen) document.exitFullscreen().catch(() => {});
+    else if (document.fullscreenEnabled && gallery.requestFullscreen) {
+      gallery.requestFullscreen().catch(() => { announcement.textContent = 'Fullscreen is unavailable in this browser.'; });
+    }
+    revealControls();
+  }
+
+  function updateFullscreen() {
+    const label = document.fullscreenElement === gallery ? 'Exit gallery fullscreen' : 'Enter gallery fullscreen';
+    fullscreen.title = label;
+    fullscreen.setAttribute('aria-label', label);
+    revealControls();
+  }
+
+  function selectEffect() {
+    gallery.dataset.cgEffect = effect.value;
+    revealControls();
+  }
+
+  effect.value = reducedMotion.matches ? 'none' : 'fade';
+  selectEffect();
+  reducedMotion.addEventListener?.('change', event => {
+    if (event.matches) { effect.value = 'none'; selectEffect(); }
+  });
+  control('previous').addEventListener('click', () => manual(-1));
+  control('next').addEventListener('click', () => manual(1));
+  play.addEventListener('click', () => setPlaying(!playing));
+  music.addEventListener('click', toggleMusic);
+  fullscreen.addEventListener('click', toggleFullscreen);
+  if (!document.fullscreenEnabled || !gallery.requestFullscreen) fullscreen.hidden = true;
+  effect.addEventListener('change', selectEffect);
+  thumbs.forEach((thumb, i) => thumb.addEventListener('click', () => {
+    revealControls();
+    show(i, { notify: true });
+  }));
+  stage.addEventListener('touchstart', event => {
+    touchStart = event.touches.length === 1 ? event.touches[0] : null;
+  }, { passive: true });
+  stage.addEventListener('touchend', event => {
+    if (!touchStart || !event.changedTouches.length) return;
+    const touch = event.changedTouches[0];
+    const dx = touch.clientX - touchStart.clientX;
+    const dy = touch.clientY - touchStart.clientY;
+    if (Math.abs(dx) > 55 && Math.abs(dx) > 1.5 * Math.abs(dy)) manual(dx < 0 ? 1 : -1);
+    touchStart = null;
+  }, { passive: true });
+  stage.addEventListener('touchcancel', () => { touchStart = null; });
+  gallery.addEventListener('pointermove', revealControls, { passive: true });
+  gallery.addEventListener('pointerdown', revealControls, { passive: true });
+  gallery.addEventListener('focusin', revealControls);
+  document.addEventListener('fullscreenchange', updateFullscreen);
+  document.addEventListener('visibilitychange', () => { if (document.hidden && playing) setPlaying(false); });
+  window.addEventListener('pagehide', () => { if (playing) setPlaying(false); });
+  document.addEventListener('keydown', event => {
+    if (!active || event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+    if (event.key === 'Tab') { revealControls(); return; }
+    const target = event.target;
+    const pageFocus = target === document || target === document.body || target === document.documentElement;
+    if (!pageFocus && !gallery.contains(target)) return;
+    if (target.closest?.('select,input,textarea,a,[contenteditable="true"]')) return;
+    const arrow = event.key === 'ArrowLeft' || event.key === 'ArrowRight';
+    if (target.closest?.('button') && !arrow) return;
+    let action;
+    switch (event.key.toLowerCase()) {
+      case 'arrowleft': action = () => manual(-1); break;
+      case 'arrowright': action = () => manual(1); break;
+      case ' ': action = () => setPlaying(!playing); break;
+      case 'm': action = toggleMusic; break;
+      case 'f': if (!fullscreen.hidden) action = toggleFullscreen; break;
+    }
+    if (!action) return;
+    event.preventDefault();
+    event.stopPropagation();
+    action();
+  }, true);
+
+  window.CompacGallery = Object.freeze({ setActive, show, index: () => index });
 })();
-</script></body></html>
+</script>
+<script>
+(() => {
+  const slides = Array.from(document.querySelectorAll('.deck-main > .slide'));
+  const gallery = document.getElementById('stall-gallery');
+  const tabs = document.querySelector('.deck-tabs');
+  const select = document.querySelector('.deck-mobile-select');
+  const prev = document.getElementById('deck-prev');
+  const next = document.getElementById('deck-next');
+  const count = document.querySelector('.deck-count');
+  const tools = document.querySelector('.deck-tools');
+  const read = document.getElementById('deck-narration');
+  const fullscreen = document.getElementById('deck-fullscreen');
+  const voice = window.speechSynthesis;
+  const viewer = window.CompacGallery;
+  const galleryIndex = slides.indexOf(gallery);
+  let current = -1;
+  let utterance = null;
+  function sectionName(s) { return s === gallery ? 'Slideshow' : s.dataset.tab; }
+  function sectionId(s) { return s === gallery ? 'stall-render-' + (viewer.index() + 1) : s.id; }
+  slides.forEach((slide, index) => {
+    const link = document.createElement('a');
+    link.href = '#' + (slide === gallery ? 'stall-render-1' : slide.id);
+    link.textContent = sectionName(slide);
+    tabs.append(link);
+    select.add(new Option(sectionName(slide), String(index)));
+  });
+  function stopReading() {
+    if (utterance && voice) voice.cancel();
+    utterance = null;
+    read.textContent = 'Read slide aloud';
+  }
+  function display(index, photo) {
+    if (index < 0 || index >= slides.length) return;
+    const previous = current;
+    current = index;
+    const slide = slides[index];
+    slides.forEach((item, i) => {
+      item.classList.toggle('is-current', i === index);
+      item.setAttribute('aria-hidden', String(i !== index));
+    });
+    if (previous !== current) {
+      stopReading();
+      slide.scrollTop = 0;
+      tools.open = false;
+      viewer.setActive(slide === gallery);
+    }
+    if (slide === gallery && Number.isInteger(photo)) viewer.show(photo);
+    Array.from(tabs.children).forEach((link, i) => {
+      if (i === index) link.setAttribute('aria-current','page');
+      else link.removeAttribute('aria-current');
+    });
+    select.value = String(index);
+    prev.disabled = index === 0;
+    next.disabled = index === slides.length - 1;
+    count.textContent = (index + 1) + ' / ' + slides.length;
+    read.hidden = !voice || !window.SpeechSynthesisUtterance || slide === gallery;
+    document.title = sectionName(slide) + ' · COMPAC | India Energy Week 2027';
+  }
+  function route() {
+    const id = location.hash.slice(1);
+    const render = /^stall-render-([1-6])$/.exec(id);
+    if (render) return display(galleryIndex, Number(render[1])-1);
+    if (id === 'stall-gallery' || id === 'slide-21') return display(galleryIndex, 0);
+    const index = slides.findIndex(slide => slide.id === id);
+    display(index >= 0 ? index : 0);
+  }
+  function go(index) {
+    if (index < 0 || index >= slides.length) return;
+    const id = sectionId(slides[index]);
+    if (location.hash === '#' + id) display(index);
+    else location.hash = id;
+  }
+  gallery.addEventListener('compac:photo', updatePhotoHash);
+  function updatePhotoHash(event) {
+    if (current !== galleryIndex) return;
+    const index = event.detail && event.detail.index;
+    if (!Number.isInteger(index) || index < 0 || index > 5) return;
+    const hash = '#stall-render-' + (index + 1);
+    if (location.hash !== hash) history.replaceState(null, '', hash);
+  }
+  prev.addEventListener('click', () => go(current - 1));
+  next.addEventListener('click', () => go(current + 1));
+  select.addEventListener('change', () => go(Number(select.value)));
+  document.addEventListener('keydown', event => {
+    if (event.defaultPrevented || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (event.key === 'Escape') { tools.open = false; return; }
+    if (event.target.closest('input, select, textarea, [contenteditable="true"]')) return;
+    if ((event.key === ' ' || event.key === 'Enter') && event.target.closest('button, a, summary')) return;
+    if (current === galleryIndex && ['ArrowLeft','ArrowRight',' ','f','F','m','M'].includes(event.key)) return;
+    const directions = {ArrowLeft:-1, ArrowRight:1, PageUp:-1, PageDown:1, ArrowUp:-1, ArrowDown:1};
+    let target = current;
+    if (event.key === 'Home') target = 0;
+    else if (event.key === 'End') target = slides.length - 1;
+    else if (event.key in directions) target += directions[event.key];
+    else if (event.key === ' ') target += event.shiftKey ? -1 : 1;
+    else if (event.key.toLowerCase() === 'f') { fullscreen.click(); return; }
+    else return;
+    event.preventDefault();
+    go(target);
+  });
+  document.addEventListener('click', event => {
+    if (tools.open && !tools.contains(event.target)) tools.open = false;
+  });
+  function updateFullscreen() { fullscreen.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; }
+  fullscreen.hidden = !document.documentElement.requestFullscreen;
+  fullscreen.addEventListener('click', () => {
+    tools.open = false;
+    const change = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+    if (change) change.catch(() => {});
+  });
+  document.addEventListener('fullscreenchange', updateFullscreen);
+  document.getElementById('deck-print').addEventListener('click', () => { tools.open = false; window.print(); });
+  read.addEventListener('click', () => {
+    tools.open = false;
+    if (utterance) { stopReading(); return; }
+    const copy = slides[current].querySelector('.deck-copy,.deck-brief');
+    if (!copy || !voice || !window.SpeechSynthesisUtterance) return;
+    utterance = new SpeechSynthesisUtterance(copy.innerText);
+    utterance.lang = 'en-IN'; utterance.rate = .95;
+    utterance.onend = () => { utterance = null; read.textContent = 'Read slide aloud'; };
+    voice.speak(utterance); read.textContent = 'Stop reading';
+  });
+  window.addEventListener('beforeprint', () => {
+    document.querySelectorAll('#presentation img[loading="lazy"]').forEach(image => { image.loading = 'eager'; });
+  });
+  window.addEventListener('hashchange', route);
+  route();
+})();
+</script>
+</body></html>
